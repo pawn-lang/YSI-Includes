@@ -113,24 +113,18 @@ stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, const 
 	return Dialog_ShowCallback(playerid, F@_@iiiis:callback[E_CALLBACK_DATA:0], style, title, caption, button1, button2);
 }
 
-#if defined _ALS_ShowPlayerDialog
-	#define Dialog_ShowPlayerNative ShowPlayerDialog
-#else
-	native Dialog_ShowPlayerNative(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
-#endif
-
 stock Dialog_Show(playerid, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID);
 	YSI_g_sPlayerMaster[playerid] = true;
-	return Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID, style, title, caption, button1, button2);
+	return YSI_ShowPlayerDialog(playerid, YSI_DIALOG_ID, style, title, caption, button1, button2);
 }
 
 stock Dialog_Hide(playerid)
 {
 	// This almost looks like a Windows API function call!
 	broadcastfunc Dialog_Set(playerid, -1);
-	return Dialog_ShowPlayerNative(playerid, -1, 0, NULL, NULL, NULL, NULL);
+	return YSI_ShowPlayerDialog(playerid, -1, 0, NULL, NULL, NULL, NULL);
 }
 
 HOOK__ OnPlayerDisconnect(playerid, reason)
@@ -189,7 +183,7 @@ stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], con
 		return 0;
 	broadcastfunc Dialog_Set(playerid, dialog);
 	YSI_g_sPlayerMaster[playerid] = true;
-	return Dialog_ShowPlayerNative(playerid, dialog, style, title, caption, button1, button2);
+	return YSI_ShowPlayerDialog(playerid, dialog, style, title, caption, button1, button2);
 }
 
 #if defined _ALS_ShowPlayerDialog
@@ -197,7 +191,7 @@ stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], con
 #else
 	#define _ALS_ShowPlayerDialog
 #endif
-#define ShowPlayerDialog Dialog_ShowPlayerDialog
+#define ShowPlayerDialog( Dialog_ShowPlayerDialog(
 
 #define _ALS_HidePlayerDialog
 #define HidePlayerDialog Dialog_Hide

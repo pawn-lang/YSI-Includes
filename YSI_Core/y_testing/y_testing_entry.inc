@@ -311,8 +311,6 @@ stock _Testing_Start(const name[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-native YSI_ShowPlayerDialog(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
-
 stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused str
