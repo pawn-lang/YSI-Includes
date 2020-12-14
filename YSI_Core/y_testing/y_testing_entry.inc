@@ -79,7 +79,6 @@ forward bool:_Testing_End();
 
 #include "..\y_utils"
 #include "..\..\YSI_Server\y_stringise"
-#include "..\..\YSI_Coding\y_hooks"
 
 #tryinclude "..\..\amx\amx_memory"
 #tryinclude <amx_assembly\amx_memory>
@@ -629,8 +628,8 @@ Testing_Next_retry:
 			}
 		}
 	}
-
-	HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+	
+	public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	{
 		if (dialogid == Y_TESTING_DIALOG_ID)
 		{
@@ -647,10 +646,24 @@ Testing_Next_retry:
 				++YSI_g_sFails;
 			}
 			Testing_Next(playerid);
-			return Y_HOOKS_BREAK_RETURN_1;
+			return 1;
 		}
-		return Y_HOOKS_CONTINUE_RETURN_0;
+		#if defined Testing_OnDialogResponse
+			return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
+		#else
+			return 1;
+		#endif
 	}
+	
+	#if defined _ALS_OnDialogResponse
+		#undef OnDialogResponse
+	#else
+		#define _ALS_OnDialogResponse
+	#endif
+	#define OnDialogResponse Testing_OnDialogResponse
+	#if defined Testing_OnDialogResponse
+		forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
+	#endif
 #endif
 
 forward OnTestsComplete(tests, checks, fails);
