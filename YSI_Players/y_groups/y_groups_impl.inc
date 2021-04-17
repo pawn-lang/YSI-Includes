@@ -481,7 +481,7 @@ GLOBAL__ void:_Group_TryRemove()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-HOOK__ OnPlayerDisconnect(playerid, reason)
+HOOK__ OnPlayerDisconnect@999(playerid, reason)
 {
 	#pragma unused reason
 	P:2("hook OnPlayerDisconnect called: %d, %d", playerid, reason);
