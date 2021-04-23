@@ -1745,7 +1745,6 @@ stock ftouch(const filename[])
  *//*------------------------------------------------------------------------**/
 
 // "Interpolation" is the technical name for what you are doing here.
-#define InterpolateColor InterpolateColour
 stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 {
     if (value >= maxvalue) return endcolor;
@@ -1767,6 +1766,13 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 		a += ((endcolor        & 0xFF) - a) * stage / time,
 		// Step 3:  Combine the individual components.
 		(r << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | (a & 0xFF);
+}
+
+#pragma deprecate Use `InterpolateColour` instead.
+stock InterpolateColor(startcolor, endcolor, value, maxvalue, minvalue = 0)
+{
+	P:W("`InterpolateColor()` called, please use `InterpolateColour()` isntead,");
+	return InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue);
 }
 
 /*-------------------------------------------------------------------------*//**
