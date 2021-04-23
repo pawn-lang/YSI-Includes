@@ -1789,6 +1789,62 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  InterpolateColourGamma(startcolor, endcolor, value, maxvalue, minvalue = 0);
+ * </summary>
+ * <param name="startcolor">One of the two colours.</param>
+ * <param name="endcolor">The other of the two colours.</param>
+ * <param name="value">The interpolation value between the endpoints.</param>
+ * <param name="maxvalue">One of the two numbers.</param>
+ * <param name="minvalue">The other of the two numbers.</param>
+ * <remarks>
+ *  This function takes two endpoint values (minvalue and maxvalue, with
+ *  minvalue defaulting to 0), along with a third value (value) whose distance
+ *  between the two endpoints is calculated (as a percentage).  This percentage
+ *  value is then applied to the two colours given to find a third colour at
+ *  some point between those two colours.
+ *
+ *  For example, if the endpoints given are "0" and "10", and the value given is
+ *  "3", then that is "30%" of the way between the two endpoints.  We therefore
+ *  want to find a colour that is 30% of the way between the two given colours.
+ *
+ *  This function performs linear interpolation between the colours, which isn't
+ * usually the best way wrt human vision.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+// "Interpolation" is the technical name for what you are doing here.
+stock InterpolateColourGamma(startcolor, endcolor, value, maxvalue, minvalue = 0)
+{
+    if (value >= maxvalue) return endcolor;
+    if (value <= minvalue) return startcolor;
+	static r = 0, g = 0, b = 0, a = 0;
+	new
+		time  = maxvalue - minvalue,
+		stage = value    - minvalue;
+	return
+		// Step 1:  Get the starting colour components.
+		r = startcolor >>> 24       ,
+		g = startcolor >>> 16 & 0xFF,
+		b = startcolor >>> 8  & 0xFF,
+		a = startcolor        & 0xFF,
+		// Step 2:  Interpolate between the end points, and add to the start.
+		r += ((endcolor >>> 24       ) - r) * stage / time,
+		g += ((endcolor >>> 16 & 0xFF) - g) * stage / time,
+		b += ((endcolor >>> 8  & 0xFF) - b) * stage / time,
+		a += ((endcolor        & 0xFF) - a) * stage / time,
+		// Step 3:  Combine the individual components.
+		(r << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | (a & 0xFF);
+}
+
+#pragma deprecate Use `InterpolateColourGamma` instead.
+stock InterpolateColorGamma(startcolor, endcolor, value, maxvalue, minvalue = 0)
+{
+	P:W("`InterpolateColorGamma()` called, please use `InterpolateColourGamma()` isntead,");
+	return InterpolateColourGamma(startcolor, endcolor, value, maxvalue, minvalue);
+}
+
+/*-------------------------------------------------------------------------*//**
  * <param name="str">The string to skip over part of.</param>
  * <param name="pos">The start of the whitespace.</param>
  * <returns>
