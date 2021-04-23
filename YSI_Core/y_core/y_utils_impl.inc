@@ -1756,7 +1756,7 @@ stock InterpolateColourLinear(startcolor, endcolor, Float:fraction)
 		// Step 1: Get the starting colour components.
 		r = startcolor >>> 24       ,
 		g = startcolor >>> 16 & 0xFF,
-		b = startcolor >>> 8  & 0xFF,
+		b = startcolor >>>  8 & 0xFF,
 		a = startcolor        & 0xFF,
 		stage = floatround(fraction * 256.0);
 	return
@@ -1764,7 +1764,7 @@ stock InterpolateColourLinear(startcolor, endcolor, Float:fraction)
 		// Step 3: Combine the individual components.
 		((r + ((endcolor >>> 24       ) - r) * stage)  << 16 & 0xFF000000) |
 		((g + ((endcolor >>> 16 & 0xFF) - g) * stage)  <<  8 & 0x00FF0000) |
-		((b + ((endcolor >>> 8  & 0xFF) - b) * stage)        & 0x0000FF00) |
+		((b + ((endcolor >>>  8 & 0xFF) - b) * stage)        & 0x0000FF00) |
 		((a + ((endcolor        & 0xFF) - a) * stage) >>>  8 & 0x000000FF) ;
 }
 
