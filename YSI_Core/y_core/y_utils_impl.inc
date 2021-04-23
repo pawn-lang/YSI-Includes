@@ -1724,128 +1724,331 @@ stock ftouch(const filename[])
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  InterpolateColourLinear(startcolor, endcolor, value, maxvalue, minvalue = 0);
+ *  InterpolateColourLinear(startColour, endColour, Float:fraction);
  * </summary>
- * <param name="startcolor">One of the two colours.</param>
- * <param name="endcolor">The other of the two colours.</param>
- * <param name="value">The interpolation value between the endpoints.</param>
- * <param name="maxvalue">One of the two numbers.</param>
- * <param name="minvalue">The other of the two numbers.</param>
+ * <param name="startColour">One of the two colours.</param>
+ * <param name="endColour">The other of the two colours.</param>
+ * <param name="fraction">How far to interpolate between the colours.</param>
  * <remarks>
- *  This function takes two endpoint values (minvalue and maxvalue, with
- *  minvalue defaulting to 0), along with a third value (value) whose distance
- *  between the two endpoints is calculated (as a percentage).  This percentage
- *  value is then applied to the two colours given to find a third colour at
- *  some point between those two colours.
- *
- *  For example, if the endpoints given are "0" and "10", and the value given is
- *  "3", then that is "30%" of the way between the two endpoints.  We therefore
- *  want to find a colour that is 30% of the way between the two given colours.
+ *  This function takes a value (fraction) which is a distance between the two
+ *  endpoints as a fraction.  This fraction is applied to the two colours given
+ *  to find a third colour at some point between those two colours.
  *
  *  This function performs linear interpolation between the colours, which isn't
- * usually the best way wrt human vision.
+ *  usually the best way wrt human vision, but is fast.
+ *
+ *  The fraction is optional, and uses the second colour's alpha for blending
+ *  if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 // "Interpolation" is the technical name for what you are doing here.
-stock InterpolateColourLinear(startcolor, endcolor, Float:fraction)
+stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-    if (fraction >= 1.0) return endcolor;
-    if (fraction <= 0.0) return startcolor;
+	new a;
+	if (IsNaN(fraction))
+	{
+		// Extract the fraction from the second alpha.
+		fraction = (endColour & 0xFF) / 255.0,
+		// Use the first alpha for output transparency.
+		a = startColour;
+	}
+	else
+	{
+		// Interpolate alphas.
+		a = startColour & 0xFF,
+		a = floatround(a + ((endColour & 0xFF) - a) * fraction);
+	}
+	if (fraction >= 1.0)
+	{
+		return endColour;
+	}
+    if (fraction <= 0.0)
+	{
+		return startColour;
+	}
 	new
 		// Step 1: Get the starting colour components.
-		r = startcolor >>> 24       ,
-		g = startcolor >>> 16 & 0xFF,
-		b = startcolor >>>  8 & 0xFF,
-		a = startcolor        & 0xFF,
+		r = startColour >>> 24       ,
+		g = startColour >>> 16 & 0xFF,
+		b = startColour >>>  8 & 0xFF,
 		// Manipulate the format of floats to multiply by 256 by increasing the exponent by 8.
 		stage = floatround(Float:(_:fraction + 0x04000000)); // fraction * 256.0
 	return
 		// Step 2: Interpolate between the end points, and add to the start.
 		// Step 3: Combine the individual components.
-		((r + ((endcolor >>> 24       ) - r) * stage)  << 16 & 0xFF000000) |
-		((g + ((endcolor >>> 16 & 0xFF) - g) * stage)  <<  8 & 0x00FF0000) |
-		((b + ((endcolor >>>  8 & 0xFF) - b) * stage)        & 0x0000FF00) |
-		((a + ((endcolor        & 0xFF) - a) * stage) >>>  8 & 0x000000FF) ;
+		((r + ((endColour >>> 24       ) - r) * stage)  << 16 & 0xFF000000) |
+		((g + ((endColour >>> 16 & 0xFF) - g) * stage)  <<  8 & 0x00FF0000) |
+		((b + ((endColour >>>  8 & 0xFF) - b) * stage)        & 0x0000FF00) |
+		(a & 0xFF);
 	// Because we use a base of 256 instead of 100 to multiply the fractions, we would adjust the
 	// numbers down via `>>> 8` instead of `/ 100`, but since we then shift them up again to their
 	// final locations in the number we can skip a manipulation stage.
 }
 
 #pragma deprecate Use `InterpolateColourLinear` instead.
-stock InterpolateColorLinear(startcolor, endcolor, Float:fraction)
+stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 {
 	P:W("`InterpolateColorLinear()` called, please use `InterpolateColourLinear()` isntead,");
-	return InterpolateColourLinear(startcolor, endcolor, value, maxvalue, minvalue);
+	return InterpolateColourLinear(startColour, endColour, value, maxvalue, minvalue);
 }
 
 #pragma deprecate Use `InterpolateColourLinear` instead.
-stock InterpolateColor(startcolor, endcolor, value, maxvalue, minvalue = 0)
+stock InterpolateColor(startColour, endColour, value, maxvalue, minvalue = 0)
 {
-	return InterpolateColourLinear(startcolor, endcolor, floatdiv(value - minvalue, maxvalue - minvalue));
+	return InterpolateColourLinear(startColour, endColour, floatdiv(value - minvalue, maxvalue - minvalue));
 }
 
 #pragma deprecate Use `InterpolateColourLinear` instead.
-stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
+stock InterpolateColour(startColour, endColour, value, maxvalue, minvalue = 0)
 {
-	return InterpolateColourLinear(startcolor, endcolor, floatdiv(value - minvalue, maxvalue - minvalue));
+	return InterpolateColourLinear(startColour, endColour, floatdiv(value - minvalue, maxvalue - minvalue));
 }
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  InterpolateColourGamma(startcolor, endcolor, value, maxvalue, minvalue = 0);
+ *  InterpolateColourGamma(startColour, endColour, Float:fraction);
  * </summary>
- * <param name="startcolor">One of the two colours.</param>
- * <param name="endcolor">The other of the two colours.</param>
- * <param name="value">The interpolation value between the endpoints.</param>
- * <param name="maxvalue">One of the two numbers.</param>
- * <param name="minvalue">The other of the two numbers.</param>
+ * <param name="startColour">One of the two colours.</param>
+ * <param name="endColour">The other of the two colours.</param>
+ * <param name="fraction">How far to interpolate between the colours.</param>
  * <remarks>
- *  This function takes two endpoint values (minvalue and maxvalue, with
- *  minvalue defaulting to 0), along with a third value (value) whose distance
- *  between the two endpoints is calculated (as a percentage).  This percentage
- *  value is then applied to the two colours given to find a third colour at
- *  some point between those two colours.
+ *  This function takes a value (fraction) which is a distance between the two
+ *  endpoints as a fraction.  This fraction is applied to the two colours given
+ *  to find a third colour at some point between those two colours.
  *
- *  For example, if the endpoints given are "0" and "10", and the value given is
- *  "3", then that is "30%" of the way between the two endpoints.  We therefore
- *  want to find a colour that is 30% of the way between the two given colours.
+ *  This function performs gamma interpolation between the colours, which is a
+ *  good balance between complexity and perception.
  *
- *  This function performs linear interpolation between the colours, which isn't
- * usually the best way wrt human vision.
+ *  The fraction is optional, and uses the second colour's alpha for blending
+ *  if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-// "Interpolation" is the technical name for what you are doing here.
-stock InterpolateColourGamma(startcolor, endcolor, value, maxvalue, minvalue = 0)
+#define FLOAT_GAMMA (2.2)
+#define FLOAT_INVERSE_GAMMA (0.45454545454545454545454545454545) // 1 / 2.2
+
+stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-    if (value >= maxvalue) return endcolor;
-    if (value <= minvalue) return startcolor;
-	static r = 0, g = 0, b = 0, a = 0;
+	new a;
+	if (IsNaN(fraction))
+	{
+		// Extract the fraction from the second alpha.
+		fraction = (endColour & 0xFF) / 255.0,
+		// Use the first alpha for output transparency.
+		a = startColour;
+	}
+	else
+	{
+		// Interpolate alphas.
+		a = startColour & 0xFF,
+		a = floatround(a + ((endColour & 0xFF) - a) * fraction);
+	}
+	if (fraction >= 1.0)
+	{
+		return endColour;
+	}
+    if (fraction <= 0.0)
+	{
+		return startColour;
+	}
 	new
-		time  = maxvalue - minvalue,
-		stage = value    - minvalue;
+		// Gamma decode the colour channels.
+		r1 = floatpower((startColour >>> 24       ) / 255.0, FLOAT_GAMMA),
+		g1 = floatpower((startColour >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA),
+		b1 = floatpower((startColour >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA),
+		a1 = startColour & 0xFF,
+		r2 = floatpower((endColour >>> 24       ) / 255.0, FLOAT_GAMMA),
+		g2 = floatpower((endColour >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA),
+		b2 = floatpower((endColour >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA),
+		a2 = endColour & 0xFF,
+		// Interpolate and encode.
+		r3 = floatpower(r1 + (r2 - r1) * fraction, FLOAT_INVERSE_GAMMA) * 255.0,
+		g3 = floatpower(g1 + (g2 - g1) * fraction, FLOAT_INVERSE_GAMMA) * 255.0,
+		b3 = floatpower(b1 + (b2 - b1) * fraction, FLOAT_INVERSE_GAMMA) * 255.0;
+	// Recombine and return.
 	return
-		// Step 1:  Get the starting colour components.
-		r = startcolor >>> 24       ,
-		g = startcolor >>> 16 & 0xFF,
-		b = startcolor >>> 8  & 0xFF,
-		a = startcolor        & 0xFF,
-		// Step 2:  Interpolate between the end points, and add to the start.
-		r += ((endcolor >>> 24       ) - r) * stage / time,
-		g += ((endcolor >>> 16 & 0xFF) - g) * stage / time,
-		b += ((endcolor >>> 8  & 0xFF) - b) * stage / time,
-		a += ((endcolor        & 0xFF) - a) * stage / time,
-		// Step 3:  Combine the individual components.
-		(r << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | (a & 0xFF);
+		(floatround(r3) << 24 & 0xFF000000) |
+		(floatround(g3) << 16 & 0x00FF0000) |
+		(floatround(b3) <<  8 & 0x0000FF00) |
+		(a & 0xFF);
 }
 
 #pragma deprecate Use `InterpolateColourGamma` instead.
-stock InterpolateColorGamma(startcolor, endcolor, value, maxvalue, minvalue = 0)
+stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
 	P:W("`InterpolateColorGamma()` called, please use `InterpolateColourGamma()` isntead,");
-	return InterpolateColourGamma(startcolor, endcolor, value, maxvalue, minvalue);
+	return InterpolateColourGamma(startColour, endColour, fraction);
 }
+
+#undef FLOAT_GAMMA
+#undef FLOAT_INVERSE_GAMMA
+
+#define FLOAT_SRGB_ADJUST (14.025) // 0.055 * 255.0
+#define FLOAT_SRGB_TRANSFORM_LOW  (3294.6) // 12.92 * 255.0
+#define FLOAT_SRGB_TRANSFORM_HIGH (269.025) // 1.055 * 255.0
+#define FLOAT_SRGB_GAMMA (2.4)
+#define FLOAT_SRGB_CUTOFF (11) // 0.04045 * 255
+
+#define FLOAT_CIE_ADJUST (14.025) // 0.055 * 255.0
+#define FLOAT_CIE_TRANSFORM_LOW  (3294.6) // 12.92 * 255.0
+#define FLOAT_CIE_TRANSFORM_HIGH (269.025) // 1.055 * 255.0
+#define FLOAT_CIE_GAMMA     (0.41666666666666666666666666666667) // 1 / 2.4
+#define FLOAT_CIE_CUTOFF    (0.0031308)
+
+stock CIEMultiply(Float:r, Float:g, Float:b, &Float:x, &Float:y, &Float:z)
+{
+	// See: https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ)
+	x = 0.4124 * r + 0.3576 * g + 0.1805 * b;
+	y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+	z = 0.0193 * r + 0.1192 * g + 0.9505 * b;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  SRGBToCIE(colour, &Float:x, &Float:y, &Float:z);
+ * </summary>
+ * <param name="colour">The sRGB colour to convert.</param>
+ * <param name="x">The x return value.</param>
+ * <param name="y">The y return value.</param>
+ * <param name="z">The z return value.</param>
+ * <remarks>
+ *  Converts a colour from sRGB colour space to CIE XYZ colour space.  See:
+ *
+ *      https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ)
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock SRGBToCIE(colour, &Float:x, &Float:y, &Float:z)
+{
+	// See: https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ)
+	new
+		ir = colour >>> 24       ,
+		ig = colour >>> 16 & 0xFF,
+		ib = colour >>>  8 & 0xFF,
+		Float:fr = ir < FLOAT_SRGB_CUTOFF
+			? ir / FLOAT_SRGB_TRANSFORM_LOW
+			: floatpower((ir + FLOAT_SRGB_ADJUST) / FLOAT_SRGB_TRANSFORM_HIGH, FLOAT_SRGB_GAMMA),
+		Float:fg = ig < FLOAT_SRGB_CUTOFF
+			? ig / FLOAT_SRGB_TRANSFORM_LOW
+			: floatpower((ig + FLOAT_SRGB_ADJUST) / FLOAT_SRGB_TRANSFORM_HIGH, FLOAT_SRGB_GAMMA),
+		Float:fb = ib < FLOAT_SRGB_CUTOFF
+			? ib / FLOAT_SRGB_TRANSFORM_LOW
+			: floatpower((ib + FLOAT_SRGB_ADJUST) / FLOAT_SRGB_TRANSFORM_HIGH, FLOAT_SRGB_GAMMA);
+	x = 0.4124 * fr + 0.3576 * fg + 0.1805 * fb,
+	y = 0.2126 * fr + 0.7152 * fg + 0.0722 * fb,
+	z = 0.0193 * fr + 0.1192 * fg + 0.9505 * fb;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  SRGBToCIE(colour, &Float:x, &Float:y, &Float:z);
+ * </summary>
+ * <param name="a">The alpha to add on.</param>
+ * <param name="x">The x return value.</param>
+ * <param name="y">The y return value.</param>
+ * <param name="z">The z return value.</param>
+ * <remarks>
+ *  Converts a colour from CIE XYZ colour space to sRGB colour space.  See:
+ *
+ *      https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB)
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock CIEToSRGB(a, Float:x, Float:y, Float:z)
+{
+	// See: https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB)
+	new
+		// To linear.
+		Float:fr = x *  3.2406 + y * -1.5372 + z * -0.4986,
+		Float:fg = x * -0.9689 + y *  1.8758 + z *  0.0415,
+		Float:fb = x *  0.0557 + y * -0.2040 + z *  1.0570,
+		// To RGB.
+		ir = fr <= FLOAT_CIE_CUTOFF
+			? floatround(FLOAT_CIE_TRANSFORM_LOW * fr)
+			: floatround(FLOAT_CIE_TRANSFORM_HIGH * floatpower(fr, FLOAT_CIE_GAMMA) - FLOAT_CIE_ADJUST),
+		ig = fg <= FLOAT_CIE_CUTOFF
+			? floatround(FLOAT_CIE_TRANSFORM_LOW * fg)
+			: floatround(FLOAT_CIE_TRANSFORM_HIGH * floatpower(fg, FLOAT_CIE_GAMMA) - FLOAT_CIE_ADJUST),
+		ib = fb <= FLOAT_CIE_CUTOFF
+			? floatround(FLOAT_CIE_TRANSFORM_LOW * fb)
+			: floatround(FLOAT_CIE_TRANSFORM_HIGH * floatpower(fb, FLOAT_CIE_GAMMA) - FLOAT_CIE_ADJUST);
+	return (ir << 24) | (ig << 16 & 0x00FF0000) | (ib << 8 & 0x0000FF00) | (a & 0xFF);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  InterpolateColourSRGB(startColour, endColour, Float:fraction);
+ * </summary>
+ * <param name="startColour">One of the two colours.</param>
+ * <param name="endColour">The other of the two colours.</param>
+ * <param name="fraction">How far to interpolate between the colours.</param>
+ * <remarks>
+ *  This function takes a value (fraction) which is a distance between the two
+ *  endpoints as a fraction.  This fraction is applied to the two colours given
+ *  to find a third colour at some point between those two colours.
+ *
+ *  This function performs full sRGB colour space interpolation, which is more
+ *  exact even than gamma interpolation, but also a lot slower.
+ *
+ *  The fraction is optional, and uses the second colour's alpha for blending
+ *  if not given.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
+{
+	new a;
+	if (IsNaN(fraction))
+	{
+		// Extract the fraction from the second alpha.
+		fraction = (endColour & 0xFF) / 255.0,
+		// Use the first alpha for output transparency.
+		a = startColour;
+	}
+	else
+	{
+		// Interpolate alphas.
+		a = startColour & 0xFF,
+		a = floatround(a + ((endColour & 0xFF) - a) * fraction);
+	}
+	if (fraction >= 1.0)
+	{
+		return endColour;
+	}
+    if (fraction <= 0.0)
+	{
+		return startColour;
+	}
+	new
+		// Convert colour 1.
+		Float:x1, Float:y1, Float:z1,
+		Float:x2, Float:y2, Float:z2;
+	SRGBToCIE(startColour, x1, y1, z1),
+	SRGBToCIE(endColour, x2, y2, z2);
+	// Now a simple linear interpolation.
+	return CIEToSRGB(a, x1 + (x2 - x1) * fraction, y1 + (y2 - y1) * fraction, z1 + (z2 - z1) * fraction);
+}
+
+#pragma deprecate Use `InterpolateColourSRGB` instead.
+stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
+{
+	P:W("`InterpolateColorSRGB()` called, please use `InterpolateColourSRGB()` isntead,");
+	return InterpolateColourSRGB(startColour, endColour, fraction);
+}
+
+#undef FLOAT_CIE_ADJUST
+#undef FLOAT_CIE_TRANSFORM_LOW
+#undef FLOAT_CIE_TRANSFORM_HIGH
+#undef FLOAT_CIE_GAMMA
+#undef FLOAT_CIE_CUTOFF
+#undef FLOAT_SRGB_ADJUST
+#undef FLOAT_SRGB_TRANSFORM_LOW
+#undef FLOAT_SRGB_TRANSFORM_HIGH
+#undef FLOAT_SRGB_GAMMA
+#undef FLOAT_SRGB_CUTOFF
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">The string to skip over part of.</param>
