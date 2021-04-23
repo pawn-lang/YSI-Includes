@@ -1724,7 +1724,7 @@ stock ftouch(const filename[])
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0);
+ *  InterpolateColourLinear(startcolor, endcolor, value, maxvalue, minvalue = 0);
  * </summary>
  * <param name="startcolor">One of the two colours.</param>
  * <param name="endcolor">The other of the two colours.</param>
@@ -1741,11 +1741,14 @@ stock ftouch(const filename[])
  *  For example, if the endpoints given are "0" and "10", and the value given is
  *  "3", then that is "30%" of the way between the two endpoints.  We therefore
  *  want to find a colour that is 30% of the way between the two given colours.
+ *
+ *  This function performs linear interpolation between the colours, which isn't
+ * usually the best way wrt human vision.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 // "Interpolation" is the technical name for what you are doing here.
-stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
+stock InterpolateColourLinear(startcolor, endcolor, value, maxvalue, minvalue = 0)
 {
     if (value >= maxvalue) return endcolor;
     if (value <= minvalue) return startcolor;
@@ -1768,11 +1771,16 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 		(r << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | (a & 0xFF);
 }
 
-#pragma deprecate Use `InterpolateColour` instead.
+#pragma deprecate Use `InterpolateColourLinear` instead.
 stock InterpolateColor(startcolor, endcolor, value, maxvalue, minvalue = 0)
 {
-	P:W("`InterpolateColor()` called, please use `InterpolateColour()` isntead,");
-	return InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue);
+	return InterpolateColourLinear(startcolor, endcolor, value, maxvalue, minvalue);
+}
+
+#pragma deprecate Use `InterpolateColourLinear` instead.
+stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
+{
+	return InterpolateColourLinear(startcolor, endcolor, value, maxvalue, minvalue);
 }
 
 /*-------------------------------------------------------------------------*//**
