@@ -612,8 +612,7 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 	case 3: mul = 1000.0;
 	default: mul = floatpower(10.0, float(dp));
 	}
-	// NOT a silly check - "IsNaN".
-	if (max != max)
+	if (IsNaN(max))
 	{
 		if (min < 0.0)
 			return -(float(random(floatround(-min * mul))) / mul);
