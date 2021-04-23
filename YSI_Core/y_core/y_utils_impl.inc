@@ -598,6 +598,7 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 	case 3: mul = 1000.0;
 	default: mul = floatpower(10.0, float(dp));
 	}
+	// NOT a silly check - "IsNaN".
 	if (max != max)
 	{
 		if (min < 0.0)
@@ -607,7 +608,6 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 	// Parameters are the wrong way around - do it anyway.
 	if (max < min)
 		return float(random(floatround(min * mul - max * mul))) / mul + max;
-	// NOT a silly check - "IsNaN".
 	return float(random(floatround(max * mul - min * mul))) / mul + min;
 }
 
