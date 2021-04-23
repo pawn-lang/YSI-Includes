@@ -1758,7 +1758,8 @@ stock InterpolateColourLinear(startcolor, endcolor, Float:fraction)
 		g = startcolor >>> 16 & 0xFF,
 		b = startcolor >>>  8 & 0xFF,
 		a = startcolor        & 0xFF,
-		stage = floatround(fraction * 256.0);
+		// Manipulate the format of floats to multiply by 256 by increasing the exponent by 8.
+		stage = floatround(Float:(_:fraction + 0x04000000)); // fraction * 256.0
 	return
 		// Step 2: Interpolate between the end points, and add to the start.
 		// Step 3: Combine the individual components.
