@@ -1748,39 +1748,44 @@ stock ftouch(const filename[])
  *//*------------------------------------------------------------------------**/
 
 // "Interpolation" is the technical name for what you are doing here.
-stock InterpolateColourLinear(startcolor, endcolor, value, maxvalue, minvalue = 0)
+stock InterpolateColourLinear(startcolor, endcolor, Float:fraction)
 {
-    if (value >= maxvalue) return endcolor;
-    if (value <= minvalue) return startcolor;
-	static r = 0, g = 0, b = 0, a = 0;
+    if (fraction >= 1.0) return endcolor;
+    if (fraction <= 0.0) return startcolor;
 	new
-		time  = maxvalue - minvalue,
-		stage = value    - minvalue;
-	return
-		// Step 1:  Get the starting colour components.
 		r = startcolor >>> 24       ,
 		g = startcolor >>> 16 & 0xFF,
 		b = startcolor >>> 8  & 0xFF,
 		a = startcolor        & 0xFF,
+		stage = floatround(fraction * 256.0);
+	return
+		// Step 1:  Get the starting colour components.
 		// Step 2:  Interpolate between the end points, and add to the start.
-		r += ((endcolor >>> 24       ) - r) * stage / time,
-		g += ((endcolor >>> 16 & 0xFF) - g) * stage / time,
-		b += ((endcolor >>> 8  & 0xFF) - b) * stage / time,
-		a += ((endcolor        & 0xFF) - a) * stage / time,
+		r += ((endcolor >>> 24       ) - r) * stage, // Implicitly `>>> 8`.
+		g += ((endcolor >>> 16 & 0xFF) - g) * stage, // Implicitly `>>> 8`.
+		b += ((endcolor >>> 8  & 0xFF) - b) * stage, // Implicitly `>>> 8`.
+		a += ((endcolor        & 0xFF) - a) * stage, // Implicitly `>>> 8`.
 		// Step 3:  Combine the individual components.
-		(r << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | (a & 0xFF);
+		((r & 0xFF00) << 16) | ((g & 0xFF00) << 8) | ((b & 0xFF00)) | ((a & 0xFF00) >> 8);
+}
+
+#pragma deprecate Use `InterpolateColourLinear` instead.
+stock InterpolateColorLinear(startcolor, endcolor, Float:fraction)
+{
+	P:W("`InterpolateColorLinear()` called, please use `InterpolateColourLinear()` isntead,");
+	return InterpolateColourLinear(startcolor, endcolor, value, maxvalue, minvalue);
 }
 
 #pragma deprecate Use `InterpolateColourLinear` instead.
 stock InterpolateColor(startcolor, endcolor, value, maxvalue, minvalue = 0)
 {
-	return InterpolateColourLinear(startcolor, endcolor, value, maxvalue, minvalue);
+	return InterpolateColourLinear(startcolor, endcolor, floatdiv(value - minvalue, maxvalue - minvalue));
 }
 
 #pragma deprecate Use `InterpolateColourLinear` instead.
 stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 {
-	return InterpolateColourLinear(startcolor, endcolor, value, maxvalue, minvalue);
+	return InterpolateColourLinear(startcolor, endcolor, floatdiv(value - minvalue, maxvalue - minvalue));
 }
 
 /*-------------------------------------------------------------------------*//**
