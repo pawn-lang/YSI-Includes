@@ -363,6 +363,20 @@ P:D(bool:UCMP(value, upper));
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="value">The unsigned number to compare.</param>
+ * <param name="upper">The upper limit.</param>
+ * <returns>
+ *  An IEEE754 floating-point number is defined as Not-A-Number when all the exponent bits are set,
+ *  and the mantissa is non-zero.  The sign bit is ignored, so we first remove that and test the
+ *  result is `> 0x7F800000`.  Because any signed number bigger than that must have all the MSBs
+ *  set, plus at least one more.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+P:D(bool:IsNaN(Float:value));
+#define IsNaN(%0) ((_:(%0) & 0x7FFFFFFF) > 0x7F800000)
+
+/*-------------------------------------------------------------------------*//**
  * <param name="playerid">The player to check.</param>
  * <returns>
  *  Is this a valid playerid (NOT, is the player connected).
@@ -1769,37 +1783,37 @@ stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN
 	}
 	new
 		// Step 1: Get the starting colour components.
-		r = startColour >>> 24       ,
-		g = startColour >>> 16 & 0xFF,
-		b = startColour >>>  8 & 0xFF,
+		r = startColour & 0xFF000000,
+		g = startColour & 0x00FF0000,
+		b = startColour & 0x0000FF00,
 		// Manipulate the format of floats to multiply by 256 by increasing the exponent by 8.
 		stage = floatround(Float:(_:fraction + 0x04000000)); // fraction * 256.0
 	return
 		// Step 2: Interpolate between the end points, and add to the start.
 		// Step 3: Combine the individual components.
-		((r + ((endColour >>> 24       ) - r) * stage)  << 16 & 0xFF000000) |
-		((g + ((endColour >>> 16 & 0xFF) - g) * stage)  <<  8 & 0x00FF0000) |
-		((b + ((endColour >>>  8 & 0xFF) - b) * stage)        & 0x0000FF00) |
+		(((r >>> 16) + ((endColour >>> 24       ) - (r >>> 24)) * stage) << 16 & 0xFF000000) |
+		(((g >>>  8) + ((endColour >>> 16 & 0xFF) - (g >>> 16)) * stage) <<  8 & 0x00FF0000) |
+		(((b       ) + ((endColour >>>  8 & 0xFF) - (b >>>  8)) * stage)       & 0x0000FF00) |
 		(a & 0xFF);
 	// Because we use a base of 256 instead of 100 to multiply the fractions, we would adjust the
 	// numbers down via `>>> 8` instead of `/ 100`, but since we then shift them up again to their
 	// final locations in the number we can skip a manipulation stage.
 }
 
-#pragma deprecate Use `InterpolateColourLinear` instead.
+#pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 {
 	P:W("`InterpolateColorLinear()` called, please use `InterpolateColourLinear()` isntead,");
 	return InterpolateColourLinear(startColour, endColour, value, maxvalue, minvalue);
 }
 
-#pragma deprecate Use `InterpolateColourLinear` instead.
+#pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColor(startColour, endColour, value, maxvalue, minvalue = 0)
 {
 	return InterpolateColourLinear(startColour, endColour, floatdiv(value - minvalue, maxvalue - minvalue));
 }
 
-#pragma deprecate Use `InterpolateColourLinear` instead.
+#pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColour(startColour, endColour, value, maxvalue, minvalue = 0)
 {
 	return InterpolateColourLinear(startColour, endColour, floatdiv(value - minvalue, maxvalue - minvalue));
@@ -1854,18 +1868,16 @@ stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 	}
 	new
 		// Gamma decode the colour channels.
-		r1 = floatpower((startColour >>> 24       ) / 255.0, FLOAT_GAMMA),
-		g1 = floatpower((startColour >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA),
-		b1 = floatpower((startColour >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA),
-		a1 = startColour & 0xFF,
-		r2 = floatpower((endColour >>> 24       ) / 255.0, FLOAT_GAMMA),
-		g2 = floatpower((endColour >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA),
-		b2 = floatpower((endColour >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA),
-		a2 = endColour & 0xFF,
+		Float:r1 = floatpower((startColour >>> 24       ) / 255.0, FLOAT_GAMMA),
+		Float:g1 = floatpower((startColour >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA),
+		Float:b1 = floatpower((startColour >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA),
+		Float:r2 = floatpower((endColour >>> 24       ) / 255.0, FLOAT_GAMMA),
+		Float:g2 = floatpower((endColour >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA),
+		Float:b2 = floatpower((endColour >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA),
 		// Interpolate and encode.
-		r3 = floatpower(r1 + (r2 - r1) * fraction, FLOAT_INVERSE_GAMMA) * 255.0,
-		g3 = floatpower(g1 + (g2 - g1) * fraction, FLOAT_INVERSE_GAMMA) * 255.0,
-		b3 = floatpower(b1 + (b2 - b1) * fraction, FLOAT_INVERSE_GAMMA) * 255.0;
+		Float:r3 = floatpower(r1 + (r2 - r1) * fraction, FLOAT_INVERSE_GAMMA) * 255.0,
+		Float:g3 = floatpower(g1 + (g2 - g1) * fraction, FLOAT_INVERSE_GAMMA) * 255.0,
+		Float:b3 = floatpower(b1 + (b2 - b1) * fraction, FLOAT_INVERSE_GAMMA) * 255.0;
 	// Recombine and return.
 	return
 		(floatround(r3) << 24 & 0xFF000000) |
@@ -1874,7 +1886,7 @@ stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 		(a & 0xFF);
 }
 
-#pragma deprecate Use `InterpolateColourGamma` instead.
+#pragma deprecated Use `InterpolateColourGamma` instead.
 stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
 	P:W("`InterpolateColorGamma()` called, please use `InterpolateColourGamma()` isntead,");
@@ -2032,7 +2044,7 @@ stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 	return CIEToSRGB(a, x1 + (x2 - x1) * fraction, y1 + (y2 - y1) * fraction, z1 + (z2 - z1) * fraction);
 }
 
-#pragma deprecate Use `InterpolateColourSRGB` instead.
+#pragma deprecated Use `InterpolateColourSRGB` instead.
 stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
 	P:W("`InterpolateColorSRGB()` called, please use `InterpolateColourSRGB()` isntead,");
