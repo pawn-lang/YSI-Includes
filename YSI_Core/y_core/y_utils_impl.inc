@@ -1753,20 +1753,19 @@ stock InterpolateColourLinear(startcolor, endcolor, Float:fraction)
     if (fraction >= 1.0) return endcolor;
     if (fraction <= 0.0) return startcolor;
 	new
+		// Step 1: Get the starting colour components.
 		r = startcolor >>> 24       ,
 		g = startcolor >>> 16 & 0xFF,
 		b = startcolor >>> 8  & 0xFF,
 		a = startcolor        & 0xFF,
 		stage = floatround(fraction * 256.0);
 	return
-		// Step 1:  Get the starting colour components.
-		// Step 2:  Interpolate between the end points, and add to the start.
-		r += ((endcolor >>> 24       ) - r) * stage, // Implicitly `>>> 8`.
-		g += ((endcolor >>> 16 & 0xFF) - g) * stage, // Implicitly `>>> 8`.
-		b += ((endcolor >>> 8  & 0xFF) - b) * stage, // Implicitly `>>> 8`.
-		a += ((endcolor        & 0xFF) - a) * stage, // Implicitly `>>> 8`.
-		// Step 3:  Combine the individual components.
-		((r & 0xFF00) << 16) | ((g & 0xFF00) << 8) | ((b & 0xFF00)) | ((a & 0xFF00) >> 8);
+		// Step 2: Interpolate between the end points, and add to the start.
+		// Step 3: Combine the individual components.
+		((r + ((endcolor >>> 24       ) - r) * stage)  << 16 & 0xFF000000) |
+		((g + ((endcolor >>> 16 & 0xFF) - g) * stage)  <<  8 & 0x00FF0000) |
+		((b + ((endcolor >>> 8  & 0xFF) - b) * stage)        & 0x0000FF00) |
+		((a + ((endcolor        & 0xFF) - a) * stage) >>>  8 & 0x000000FF) ;
 }
 
 #pragma deprecate Use `InterpolateColourLinear` instead.
