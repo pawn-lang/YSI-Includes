@@ -1767,6 +1767,9 @@ stock InterpolateColourLinear(startcolor, endcolor, Float:fraction)
 		((g + ((endcolor >>> 16 & 0xFF) - g) * stage)  <<  8 & 0x00FF0000) |
 		((b + ((endcolor >>>  8 & 0xFF) - b) * stage)        & 0x0000FF00) |
 		((a + ((endcolor        & 0xFF) - a) * stage) >>>  8 & 0x000000FF) ;
+	// Because we use a base of 256 instead of 100 to multiply the fractions, we would adjust the
+	// numbers down via `>>> 8` instead of `/ 100`, but since we then shift them up again to their
+	// final locations in the number we can skip a manipulation stage.
 }
 
 #pragma deprecate Use `InterpolateColourLinear` instead.
