@@ -1048,16 +1048,24 @@ GCHAIN__ _yGU(&pid, Bit:p[], Bit:c[])
 
 static stock Group_PartPlayerUpdate(playerid, el, const Bit:p[], const Bit:c[], const Bit:a[], const Bit:d[])
 {
+	// p = Previous
+	// c = Current
+	// a = Allowed
+	// d = Denied
+	P:4("Group_PartPlayerUpdate called: %d %d\n    %s\n    %s\n    %s\n    %s", playerid, el, Bit_Display(p, bits<_MAX_GROUPS_G>), Bit_Display(c, bits<_MAX_GROUPS_G>), Bit_Display(a, bits<_MAX_GROUPS_G>), Bit_Display(d, bits<_MAX_GROUPS_G>));
 	_GROUPS_CHECK_ANY(p,d)
 	{
+		P:6("Group_PartPlayerUpdate: Previously Denied.");
 		// Any previous denials.
 		_GROUPS_CHECK_ANY(c,d)
 		{
+			P:6("Group_PartPlayerUpdate: Currently Denied.");
 			// No change there.
 			return;
 		}
 		_GROUPS_CHECK_ANY(c,a)
 		{
+			P:6("Group_PartPlayerUpdate: Currently Allowed.");
 			// Now allowed.
 			_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, true);
 			return;
@@ -1066,30 +1074,38 @@ static stock Group_PartPlayerUpdate(playerid, el, const Bit:p[], const Bit:c[], 
 	}
 	_GROUPS_CHECK_ANY(c,d)
 	{
+		P:6("Group_PartPlayerUpdate: Currently Denied.");
 		_GROUPS_CHECK_ANY(p,a)
 		{
+			P:6("Group_PartPlayerUpdate: Previously Allowed.");
 			// Previously allowed, now denied.
 			_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, false);
 			return;
 		}
+		P:6("Group_PartPlayerUpdate: Previously Nothing.");
 		return;
 	}
 	_GROUPS_CHECK_ANY(p,a)
 	{
+		P:6("Group_PartPlayerUpdate: Previously Allowed.");
 		_GROUPS_CHECK_ANY(c,a)
 		{
+			P:6("Group_PartPlayerUpdate: Currently Allowed.");
 			return;
 		}
+		P:6("Group_PartPlayerUpdate: Currently Nothing.");
 		// Were allowed, now aren't.
 		_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, false);
 		return;
 	}
 	_GROUPS_CHECK_ANY(c,a)
 	{
+		P:6("Group_PartPlayerUpdate: Currently Allowed.");
 		// Currently allowed.
 		_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, true);
 		return;
 	}
+	P:6("Group_PartPlayerUpdate: Currently Nothing.");
 }
 
 /*

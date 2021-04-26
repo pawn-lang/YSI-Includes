@@ -183,7 +183,7 @@ MASTER_HOOK__ OnPlayerLeaveArea(playerid, areaid)
 	return 1;
 }
 
-MASTER_HOOK__ OnScriptInit()
+MASTER_HOOK__ OnYSIInit()
 {
 	#define SAZ_AddCuboid(%0) (YSI_g_sZoneIDs[Area_AddCuboid(%0)] = idx++)
 	#define SAZ_AddPoly(%0) (YSI_g_sZoneIDs[Area_AddPoly(%0)] = idx++)

@@ -298,7 +298,7 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 #endif
 
 #if defined YSI_LOCK_MODE
-	public OnScriptInit()
+	public OnYSIInit()
 	{
 		new
 			find = strfind(YSI_gLockData[5], YSI_gLockData[1]) + 6;
@@ -309,21 +309,21 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 		{
 			y_lock 1;
 		}
-		#if defined _y_utils_OnScriptInit
-			_y_utils_OnScriptInit();
+		#if defined _y_utils_OnYSIInit
+			_y_utils_OnYSIInit();
 		#endif
 		return 1;
 	}
 
-	#if defined _ALS_OnScriptInit
-		#undef OnScriptInit
+	#if defined _ALS_OnYSIInit
+		#undef OnYSIInit
 	#else
-		#define _ALS_OnScriptInit
+		#define _ALS_OnYSIInit
 	#endif
-	#define OnScriptInit _y_utils_OnScriptInit
+	#define OnYSIInit _y_utils_OnYSIInit
 
-	#if defined _y_utils_OnScriptInit
-		forward _y_utils_OnScriptInit();
+	#if defined _y_utils_OnYSIInit
+		forward _y_utils_OnYSIInit();
 	#endif
 #endif
 

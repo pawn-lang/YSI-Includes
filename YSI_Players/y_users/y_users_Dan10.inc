@@ -296,17 +296,17 @@ stock Player_IsRegistered(playerid)
 	return YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID] > 0;
 }
 
-HOOK__ OnScriptInit()
+HOOK__ OnYSIInit()
 {
 	sql_debug(LOG_NONE, LOG_ALL);
 	#define SQL_CLEANUP(%0) if (sql_error((%0))){sql_error_string((%0),error),P:E("SQL Error: %s",error);return sql_free_result((%0)),sql_disconnect(mkH),0;}sql_free_result((%0))
 	YSI_g_sModeNameLength = strlen(MODE_NAME),
 	YSI_g_sPreloadHandle = sql_connect(SQL_HANDLER_MYSQL, Y_USERS_SQL_HOST, Y_USERS_SQL_READ_USER, Y_USERS_SQL_READ_PASS, Y_USERS_SQL_DB),
-	P:5("Users_OnScriptInit: YSI_g_sPreloadHandle = %d", _:YSI_g_sPreloadHandle);
+	P:5("Users_OnYSIInit: YSI_g_sPreloadHandle = %d", _:YSI_g_sPreloadHandle);
 	YSI_g_sLoadHandle = sql_connect(SQL_HANDLER_MYSQL, Y_USERS_SQL_HOST, Y_USERS_SQL_READ_USER, Y_USERS_SQL_READ_PASS, Y_USERS_SQL_DB),
-	P:5("Users_OnScriptInit: YSI_g_sLoadHandle = %d", _:YSI_g_sLoadHandle);
+	P:5("Users_OnYSIInit: YSI_g_sLoadHandle = %d", _:YSI_g_sLoadHandle);
 	YSI_g_sWriteHandle = sql_connect(SQL_HANDLER_MYSQL, Y_USERS_SQL_HOST, Y_USERS_SQL_WRITE_USER, Y_USERS_SQL_WRITE_PASS, Y_USERS_SQL_DB);
-	P:5("Users_OnScriptInit: YSI_g_sWriteHandle = %d", _:YSI_g_sWriteHandle);
+	P:5("Users_OnYSIInit: YSI_g_sWriteHandle = %d", _:YSI_g_sWriteHandle);
 	// There are two main tables.
 	new
 		SQL:mkH = sql_connect(SQL_HANDLER_MYSQL, Y_USERS_SQL_HOST, Y_USERS_SQL_MAKE_USER, Y_USERS_SQL_MAKE_PASS, Y_USERS_SQL_DB),
@@ -320,7 +320,7 @@ HOOK__ OnScriptInit()
 			"play_time INT UNSIGNED, last_ip INT UNSIGNED,"				\
 			"last_seen DATETIME"										\
 			") ENGINE InnoDB;");
-	P:5("Users_OnScriptInit: mkH = %d", _:mkH);
+	P:5("Users_OnYSIInit: mkH = %d", _:mkH);
 	// "options" was "BIT(32)".
 	#pragma tabsize 4 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);

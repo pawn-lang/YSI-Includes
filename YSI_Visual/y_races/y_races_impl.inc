@@ -914,7 +914,7 @@ public Race_Countdown(race, time)
  * Sets up important variables
  *//*------------------------------------------------------------------------**/
 
-MASTER_HOOK__ OnScriptInit()
+MASTER_HOOK__ OnYSIInit()
 {
 	for (new i = 0; i < MAX_PLAYERS; i++)
 	{

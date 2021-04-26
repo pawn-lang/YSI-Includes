@@ -11,7 +11,7 @@
  * Core
  * </subsection><ul>
  *  <symbol name="OnPlayerConnect">Called to check IPs.</symbol>
- *  <symbol name="OnScriptInit">Sets the OnPlayerConnect function flag.</symbol>
+ *  <symbol name="OnYSIInit">Sets the OnPlayerConnect function flag.</symbol>
  * </ul><subsection>
  * API
  * </subsection><ul>

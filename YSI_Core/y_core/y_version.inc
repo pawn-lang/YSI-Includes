@@ -90,8 +90,8 @@ CHAIN_HOOK(YVers)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(YVers)
 
-// Amazingly, this fixes hooking OnScriptInit...
-CHAIN_FORWARD:YVers_OnScriptInit() = 1;
+// Amazingly, this fixes hooking OnYSIInit...
+CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 
 #define YSI_VERSION_RESPO               2
 
@@ -107,7 +107,7 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 
 #if defined _YSI_NO_VERSION_CHECK
 	
-	public OnScriptInit()
+	public OnYSIInit()
 	{
 		#if defined YSI_LOCK_MODE
 			new
@@ -116,17 +116,17 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04;
 			YSI_gLockData[2] *= (6 * x) - 5;
 		#endif
-		YVers_OnScriptInit();
+		YVers_OnYSIInit();
 		return 1;
 	}
 	
-	#undef OnScriptInit
-	#define OnScriptInit(%0) CHAIN_PUBLIC:YVers_OnScriptInit(%0)
+	#undef OnYSIInit
+	#define OnYSIInit(%0) CHAIN_PUBLIC:YVers_OnYSIInit(%0)
 	
 #else
 /*-------------------------------------------------------------------------*//*+
  * <returns>
- *  OnScriptInit
+ *  OnYSIInit
  * </returns>
  * <remarks>
  *      Constructor.  Checks to see if there is a new version available.  This
@@ -137,7 +137,7 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 	
 	#if !defined HTTP
 	
-		public OnScriptInit()
+		public OnYSIInit()
 		{
 			#if defined YSI_LOCK_MODE
 				new
@@ -166,19 +166,19 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 			YSI_Print(" |                                        | ");
 			YSI_Print(" ========================================== ");
 			YSI_Print(" ");
-			YVers_OnScriptInit();
+			YVers_OnYSIInit();
 			return 1;
 		}
 		
-		#undef OnScriptInit
-		#define OnScriptInit(%0) CHAIN_PUBLIC:YVers_OnScriptInit(%0)
+		#undef OnYSIInit
+		#define OnYSIInit(%0) CHAIN_PUBLIC:YVers_OnYSIInit(%0)
 		
 		#endinput
 	#endif
 	
 	forward YVers_Callback(index, code, data[]);
 	
-	public OnScriptInit()
+	public OnYSIInit()
 	{
 		#if defined YSI_LOCK_MODE
 			YSI_gLockData[0] += 1;
@@ -232,12 +232,12 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 		// This remote script has now been updated to include changelog
 		// information and keeps a record of what IPs are connecting.
 		//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
-		YVers_OnScriptInit();
+		YVers_OnYSIInit();
 		return 1;
 	}
 	
-	#undef OnScriptInit
-	#define OnScriptInit(%0) CHAIN_PUBLIC:YVers_OnScriptInit(%0)
+	#undef OnYSIInit
+	#define OnYSIInit(%0) CHAIN_PUBLIC:YVers_OnYSIInit(%0)
 	
 	/*---------------------------------------------------------------------*//*+
 	 *

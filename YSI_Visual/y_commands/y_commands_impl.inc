@@ -1407,9 +1407,9 @@ MASTER_HOOK__ OnPlayerCommandText(playerid, cmdtext[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-HOOK__ OnScriptInit()
+HOOK__ OnYSIInit()
 {
-	P:1("Command_OnScriptInit called");
+	P:1("Command_OnYSIInit called");
 	YSI_g_sCommandFlags = e_COMMAND_FLAGS_OK | e_COMMAND_FLAGS_SILENT;
 	#if YSIM_NOT_CLIENT
 		#if defined Y_COMMANDS_USE_CHARS
@@ -1428,11 +1428,11 @@ HOOK__ OnScriptInit()
 		buffer[32 char],
 		idx = 0,
 		id2 = 0;
-	P:5("Command_OnScriptInit: Pre-loop");
+	P:5("Command_OnYSIInit: Pre-loop");
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entryPublic, _A<@yC_>)))
 	{
 		// Add the command name and pointer, but skip the leading "@yC_".
-		P:6("Command_OnScriptInit: Adding %d", entryPublic);
+		P:6("Command_OnYSIInit: Adding %d", entryPublic);
 		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entryPublic + 4), buffer),
 		// buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00),
 		buffer[0] = _C<@_yC>,
@@ -1445,7 +1445,7 @@ HOOK__ OnScriptInit()
 		}
 		// Add the command regardless.
 		Command_Add(buffer[1], ResolveJITAddress(AMX_Read(entryPublic)));
-		P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
+		P:6("Command_OnYSIInit: Name %s", unpack(buffer[1]));
 	}
 	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();

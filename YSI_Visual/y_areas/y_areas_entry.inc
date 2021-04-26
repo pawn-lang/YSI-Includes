@@ -370,13 +370,13 @@ forward Area_Loop();
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Sets up required variables.  Note that this hooks "OnScriptInit",
+ *  Sets up required variables.  Note that this hooks "OnYSIInit",
  *  "OnGameModeInit" and "OnFilterScript".  This is because ALL scripts need to
  *  initialise some things, and only the master needs to initialise others.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-MASTER_HOOK__ OnScriptInit()
+MASTER_HOOK__ OnYSIInit()
 {
 	for (new i = 0; i != MAX_AREAS - 1; ++i)
 	{

@@ -142,9 +142,9 @@ Optional plugins:
 
 #if defined YSI_LOCK_MODE
 	#if Y_UNIQUE_LOCK_CONTRIBUTION < 2
-		forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
+		forward UNIQUE_FUNCTION<@yH_OnYSIInit@...>();
 
-		public UNIQUE_FUNCTION<@yH_OnScriptInit@...>()
+		public UNIQUE_FUNCTION<@yH_OnYSIInit@...>()
 		{
 			#if Y_UNIQUE_LOCK_CONTRIBUTION == 0
 				#undef Y_UNIQUE_LOCK_CONTRIBUTION

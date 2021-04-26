@@ -429,7 +429,7 @@ enum _E_YCM
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
- *  OnScriptInit
+ *  OnYSIInit
  * </returns>
  * <remarks>
  *  Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
@@ -438,9 +438,9 @@ enum _E_YCM
  * <transition keep="true" target="_ALS : _ALS_go" />
  *//*------------------------------------------------------------------------**/
 
-public OnScriptInit()
+public OnYSIInit()
 {
-	P:1("Master_OnScriptInit");
+	P:1("Master_OnYSIInit");
 	state _ALS : _ALS_go;
 	#if !defined YSI_NO_MASTER
 		getproperty(8, "", YSIM_STRING + 1, YSI_g_sModuleName);
@@ -467,17 +467,17 @@ public OnScriptInit()
 	// Make sure this is called before all other YSI initialisations, at least all the ones which
 	// use the master system.
 	CallLocalFunction("OnMasterSystemInit", "i", Master_ID());
-	Master_OnScriptInit();
+	Master_OnYSIInit();
 	return 1;
 }
 
-CHAIN_FORWARD:Master_OnScriptInit() = 0;
-#if defined _ALS_OnScriptInit
-	#undef OnScriptInit
+CHAIN_FORWARD:Master_OnYSIInit() = 0;
+#if defined _ALS_OnYSIInit
+	#undef OnYSIInit
 #else
-	#define _ALS_OnScriptInit
+	#define _ALS_OnYSIInit
 #endif
-#define OnScriptInit(%0) CHAIN_PUBLIC:Master_OnScriptInit(%0)
+#define OnYSIInit(%0) CHAIN_PUBLIC:Master_OnYSIInit(%0)
 
 forward OnMasterSystemInit(id);
 
@@ -924,190 +924,190 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 	return ret;
 }
 
-#if defined @aOnScriptInit
-	forward @aOnScriptInit(id);
+#if defined @aOnYSIInit
+	forward @aOnYSIInit(id);
 #endif
-#if defined @bOnScriptInit
-	forward @bOnScriptInit(id);
+#if defined @bOnYSIInit
+	forward @bOnYSIInit(id);
 #endif
-#if defined @cOnScriptInit
-	forward @cOnScriptInit(id);
+#if defined @cOnYSIInit
+	forward @cOnYSIInit(id);
 #endif
-#if defined @dOnScriptInit
-	forward @dOnScriptInit(id);
+#if defined @dOnYSIInit
+	forward @dOnYSIInit(id);
 #endif
-#if defined @eOnScriptInit
-	forward @eOnScriptInit(id);
+#if defined @eOnYSIInit
+	forward @eOnYSIInit(id);
 #endif
-#if defined @fOnScriptInit
-	forward @fOnScriptInit(id);
+#if defined @fOnYSIInit
+	forward @fOnYSIInit(id);
 #endif
-#if defined @gOnScriptInit
-	forward @gOnScriptInit(id);
+#if defined @gOnYSIInit
+	forward @gOnYSIInit(id);
 #endif
-#if defined @hOnScriptInit
-	forward @hOnScriptInit(id);
+#if defined @hOnYSIInit
+	forward @hOnYSIInit(id);
 #endif
-#if defined @iOnScriptInit
-	forward @iOnScriptInit(id);
+#if defined @iOnYSIInit
+	forward @iOnYSIInit(id);
 #endif
-#if defined @jOnScriptInit
-	forward @jOnScriptInit(id);
+#if defined @jOnYSIInit
+	forward @jOnYSIInit(id);
 #endif
-#if defined @kOnScriptInit
-	forward @kOnScriptInit(id);
+#if defined @kOnYSIInit
+	forward @kOnYSIInit(id);
 #endif
-#if defined @lOnScriptInit
-	forward @lOnScriptInit(id);
+#if defined @lOnYSIInit
+	forward @lOnYSIInit(id);
 #endif
-#if defined @mOnScriptInit
-	forward @mOnScriptInit(id);
+#if defined @mOnYSIInit
+	forward @mOnYSIInit(id);
 #endif
-#if defined @nOnScriptInit
-	forward @nOnScriptInit(id);
+#if defined @nOnYSIInit
+	forward @nOnYSIInit(id);
 #endif
-#if defined @oOnScriptInit
-	forward @oOnScriptInit(id);
+#if defined @oOnYSIInit
+	forward @oOnYSIInit(id);
 #endif
-#if defined @pOnScriptInit
-	forward @pOnScriptInit(id);
+#if defined @pOnYSIInit
+	forward @pOnYSIInit(id);
 #endif
-#if defined @qOnScriptInit
-	forward @qOnScriptInit(id);
+#if defined @qOnYSIInit
+	forward @qOnYSIInit(id);
 #endif
-#if defined @rOnScriptInit
-	forward @rOnScriptInit(id);
+#if defined @rOnYSIInit
+	forward @rOnYSIInit(id);
 #endif
-#if defined @sOnScriptInit
-	forward @sOnScriptInit(id);
+#if defined @sOnYSIInit
+	forward @sOnYSIInit(id);
 #endif
-#if defined @tOnScriptInit
-	forward @tOnScriptInit(id);
+#if defined @tOnYSIInit
+	forward @tOnYSIInit(id);
 #endif
-#if defined @uOnScriptInit
-	forward @uOnScriptInit(id);
+#if defined @uOnYSIInit
+	forward @uOnYSIInit(id);
 #endif
-#if defined @vOnScriptInit
-	forward @vOnScriptInit(id);
+#if defined @vOnYSIInit
+	forward @vOnYSIInit(id);
 #endif
-#if defined @wOnScriptInit
-	forward @wOnScriptInit(id);
+#if defined @wOnYSIInit
+	forward @wOnYSIInit(id);
 #endif
-#if defined @xOnScriptInit
-	forward @xOnScriptInit(id);
+#if defined @xOnYSIInit
+	forward @xOnYSIInit(id);
 #endif
-#if defined @yOnScriptInit
-	forward @yOnScriptInit(id);
+#if defined @yOnYSIInit
+	forward @yOnYSIInit(id);
 #endif
-#if defined @zOnScriptInit
-	forward @zOnScriptInit(id);
+#if defined @zOnYSIInit
+	forward @zOnYSIInit(id);
 #endif
-#if defined @AOnScriptInit
-	forward @AOnScriptInit(id);
+#if defined @AOnYSIInit
+	forward @AOnYSIInit(id);
 #endif
-#if defined @BOnScriptInit
-	forward @BOnScriptInit(id);
+#if defined @BOnYSIInit
+	forward @BOnYSIInit(id);
 #endif
-#if defined @COnScriptInit
-	forward @COnScriptInit(id);
+#if defined @COnYSIInit
+	forward @COnYSIInit(id);
 #endif
-#if defined @DOnScriptInit
-	forward @DOnScriptInit(id);
+#if defined @DOnYSIInit
+	forward @DOnYSIInit(id);
 #endif
-#if defined @EOnScriptInit
-	forward @EOnScriptInit(id);
+#if defined @EOnYSIInit
+	forward @EOnYSIInit(id);
 #endif
-#if defined @FOnScriptInit
-	forward @FOnScriptInit(id);
+#if defined @FOnYSIInit
+	forward @FOnYSIInit(id);
 #endif
-#if defined @GOnScriptInit
-	forward @GOnScriptInit(id);
+#if defined @GOnYSIInit
+	forward @GOnYSIInit(id);
 #endif
-#if defined @HOnScriptInit
-	forward @HOnScriptInit(id);
+#if defined @HOnYSIInit
+	forward @HOnYSIInit(id);
 #endif
-#if defined @IOnScriptInit
-	forward @IOnScriptInit(id);
+#if defined @IOnYSIInit
+	forward @IOnYSIInit(id);
 #endif
-#if defined @JOnScriptInit
-	forward @JOnScriptInit(id);
+#if defined @JOnYSIInit
+	forward @JOnYSIInit(id);
 #endif
-#if defined @KOnScriptInit
-	forward @KOnScriptInit(id);
+#if defined @KOnYSIInit
+	forward @KOnYSIInit(id);
 #endif
-#if defined @LOnScriptInit
-	forward @LOnScriptInit(id);
+#if defined @LOnYSIInit
+	forward @LOnYSIInit(id);
 #endif
-#if defined @MOnScriptInit
-	forward @MOnScriptInit(id);
+#if defined @MOnYSIInit
+	forward @MOnYSIInit(id);
 #endif
-#if defined @NOnScriptInit
-	forward @NOnScriptInit(id);
+#if defined @NOnYSIInit
+	forward @NOnYSIInit(id);
 #endif
-#if defined @OOnScriptInit
-	forward @OOnScriptInit(id);
+#if defined @OOnYSIInit
+	forward @OOnYSIInit(id);
 #endif
-#if defined @POnScriptInit
-	forward @POnScriptInit(id);
+#if defined @POnYSIInit
+	forward @POnYSIInit(id);
 #endif
-#if defined @QOnScriptInit
-	forward @QOnScriptInit(id);
+#if defined @QOnYSIInit
+	forward @QOnYSIInit(id);
 #endif
-#if defined @ROnScriptInit
-	forward @ROnScriptInit(id);
+#if defined @ROnYSIInit
+	forward @ROnYSIInit(id);
 #endif
-#if defined @SOnScriptInit
-	forward @SOnScriptInit(id);
+#if defined @SOnYSIInit
+	forward @SOnYSIInit(id);
 #endif
-#if defined @TOnScriptInit
-	forward @TOnScriptInit(id);
+#if defined @TOnYSIInit
+	forward @TOnYSIInit(id);
 #endif
-#if defined @UOnScriptInit
-	forward @UOnScriptInit(id);
+#if defined @UOnYSIInit
+	forward @UOnYSIInit(id);
 #endif
-#if defined @VOnScriptInit
-	forward @VOnScriptInit(id);
+#if defined @VOnYSIInit
+	forward @VOnYSIInit(id);
 #endif
-#if defined @WOnScriptInit
-	forward @WOnScriptInit(id);
+#if defined @WOnYSIInit
+	forward @WOnYSIInit(id);
 #endif
-#if defined @XOnScriptInit
-	forward @XOnScriptInit(id);
+#if defined @XOnYSIInit
+	forward @XOnYSIInit(id);
 #endif
-#if defined @YOnScriptInit
-	forward @YOnScriptInit(id);
+#if defined @YOnYSIInit
+	forward @YOnYSIInit(id);
 #endif
-#if defined @ZOnScriptInit
-	forward @ZOnScriptInit(id);
+#if defined @ZOnYSIInit
+	forward @ZOnYSIInit(id);
 #endif
-#if defined @0OnScriptInit
-	forward @0OnScriptInit(id);
+#if defined @0OnYSIInit
+	forward @0OnYSIInit(id);
 #endif
-#if defined @1OnScriptInit
-	forward @1OnScriptInit(id);
+#if defined @1OnYSIInit
+	forward @1OnYSIInit(id);
 #endif
-#if defined @2OnScriptInit
-	forward @2OnScriptInit(id);
+#if defined @2OnYSIInit
+	forward @2OnYSIInit(id);
 #endif
-#if defined @3OnScriptInit
-	forward @3OnScriptInit(id);
+#if defined @3OnYSIInit
+	forward @3OnYSIInit(id);
 #endif
-#if defined @4OnScriptInit
-	forward @4OnScriptInit(id);
+#if defined @4OnYSIInit
+	forward @4OnYSIInit(id);
 #endif
-#if defined @5OnScriptInit
-	forward @5OnScriptInit(id);
+#if defined @5OnYSIInit
+	forward @5OnYSIInit(id);
 #endif
-#if defined @6OnScriptInit
-	forward @6OnScriptInit(id);
+#if defined @6OnYSIInit
+	forward @6OnYSIInit(id);
 #endif
-#if defined @7OnScriptInit
-	forward @7OnScriptInit(id);
+#if defined @7OnYSIInit
+	forward @7OnYSIInit(id);
 #endif
-#if defined @8OnScriptInit
-	forward @8OnScriptInit(id);
+#if defined @8OnYSIInit
+	forward @8OnYSIInit(id);
 #endif
-#if defined @9OnScriptInit
-	forward @9OnScriptInit(id);
+#if defined @9OnYSIInit
+	forward @9OnYSIInit(id);
 #endif
 

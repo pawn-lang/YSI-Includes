@@ -3,7 +3,7 @@
  * <section>
  *  Description
  * </section>
- *  This file provides "OnScriptInit" and "OnScriptExit" which are called at the
+ *  This file provides "OnYSIInit" and "OnScriptExit" which are called at the
  *  start and end of the current script, regardless of what the type of the
  *  script is (note: doesn't support NPC modes).  It also provides
  *  "YSI_FILTERSCRIPT" as a (partial) replacement for "FILTERSCRIPT" which
@@ -16,7 +16,7 @@
  * </library>
  *//** *//*
 	
-	Now also provides OnCodeInit, which comes before OnScriptInit and should
+	Now also provides OnCodeInit, which comes before OnYSIInit and should
 	mostly be used for @emit code generation and other assembly related stuff
 	(since it is called by the JIT if that exists).
 Legal:

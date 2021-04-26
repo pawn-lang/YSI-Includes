@@ -359,7 +359,7 @@ stock Iter_All_Internal(const array[], size, value)
  *//*------------------------------------------------------------------------**/
 
 #if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
-	HOOK__ OnScriptInit()
+	HOOK__ OnYSIInit()
 	{
 		#if _FOREACH_VEHICLES
 			Iter_Clear(Vehicle);

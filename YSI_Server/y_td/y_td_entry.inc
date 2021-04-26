@@ -200,7 +200,7 @@ P:D(bool:TD_IsValidStyle(Style:id));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-HOOK__ OnScriptInit()
+HOOK__ OnYSIInit()
 {
 	if (YSI_g_sXMLRules == NO_XML_FILE)
 	{

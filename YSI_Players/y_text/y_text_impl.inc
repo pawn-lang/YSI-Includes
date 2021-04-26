@@ -243,11 +243,11 @@ public OnFilterScriptInit()
  * <transition keep="true" target="y_render_show : y_render_show_print" />
  *//*------------------------------------------------------------------------**/
 
-HOOK__ OnScriptInit()
+HOOK__ OnYSIInit()
 {
 	new
 		fakePtrs[YSI_MAX_LANGUAGES] = { -1, ... };
-	P:1("Text_OnScriptInit called");
+	P:1("Text_OnYSIInit called");
 	HashMap_Init(YSI_g_sTextMap, YSI_g_sTextEntries, E_TEXT_ENTRY_HASHMAP);
 	for (new i = 0; i != sizeof (YSI_g_sTextEntries); ++i)
 		YSI_g_sTextEntries[i][E_TEXT_ENTRY_POINTERS] = fakePtrs;

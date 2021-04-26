@@ -571,6 +571,9 @@ public OnFilterScriptInit()
 		if (!ScriptInit_CallOnCodeInit(false, true))
 			return 0;
 	}
+	#if defined ScriptInit_OnYSIInit
+		ScriptInit_OnYSIInit();
+	#endif
 	ScriptInit_PreInitFuncs_();
 	#if defined ScriptInit_OnScriptInit
 		ScriptInit_OnScriptInit();
@@ -624,6 +627,9 @@ public OnGameModeInit()
 			if (!ScriptInit_CallOnCodeInit(false, false))
 				return 0;
 		}
+		#if defined ScriptInit_OnYSIInit
+			ScriptInit_OnYSIInit();
+		#endif
 		ScriptInit_PreInitFuncs_();
 		#if defined ScriptInit_OnScriptInit
 			ScriptInit_OnScriptInit();
@@ -675,6 +681,7 @@ public OnFilterScriptExit()
 		ScriptInit_PreExitFuncs_();
 		ScriptInit_OnScriptExit();
 		ScriptInit_PostExitFuncs_();
+		ScriptInit_OnYSIExit();
 	}
 	return 1;
 }
@@ -687,6 +694,7 @@ public OnGameModeExit()
 		ScriptInit_PreExitFuncs_();
 		ScriptInit_OnScriptExit();
 		ScriptInit_PostExitFuncs_();
+		ScriptInit_OnYSIExit();
 	}
 	return 1;
 }
@@ -711,7 +719,6 @@ public OnGameModeExit()
 #endif
 
 CHAIN_FORWARD:ScriptInit_OnScriptInit() = 1;
-
 #define _ALS_OnScriptInit
 #define OnScriptInit(%0) CHAIN_PUBLIC:ScriptInit_OnScriptInit(%0)
 
@@ -762,6 +769,22 @@ CHAIN_FORWARD:ScriptInit_OnScriptExit() = 1;
 	#define _ALS_OnScriptExit
 #endif
 #define OnScriptExit(%0) CHAIN_PUBLIC:ScriptInit_OnScriptExit(%0)
+
+CHAIN_FORWARD:ScriptInit_OnYSIInit() = 1;
+#if defined _ALS_OnYSIInit
+	#undef OnYSIInit
+#else
+	#define _ALS_OnYSIInit
+#endif
+#define OnYSIInit(%0) CHAIN_PUBLIC:ScriptInit_OnYSIInit(%0)
+
+CHAIN_FORWARD:ScriptInit_OnYSIExit() = 1;
+#if defined _ALS_OnYSIExit
+	#undef OnYSIExit
+#else
+	#define _ALS_OnYSIExit
+#endif
+#define OnYSIExit(%0) CHAIN_PUBLIC:ScriptInit_OnYSIExit(%0)
 
 #if !defined _ALS_OnRuntimeError
 	forward OnRuntimeError(code, &bool:suppress);

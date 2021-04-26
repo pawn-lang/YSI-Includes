@@ -407,7 +407,7 @@ public Styles_3DTag()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-//hook OnScriptInit()
+//hook OnYSIInit()
 public _Styles_SpecialInit()
 {
 	if (YSI_g_sXMLRules == NO_XML_FILE)

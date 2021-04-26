@@ -272,7 +272,7 @@ stock Player_IsRegistered(playerid)
 
 */
 
-HOOK__ OnScriptInit()
+HOOK__ OnYSIInit()
 {
 	switch (ftouch(USER_FILE_PATH "index.YSI"))
 	{

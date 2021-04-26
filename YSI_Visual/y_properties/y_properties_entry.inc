@@ -315,7 +315,7 @@ stock Property_GetType(property)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-HOOK__ OnScriptInit()
+HOOK__ OnYSIInit()
 {
 	P:2("Property_Property() start");
 	P:5("Property_Property() 0");

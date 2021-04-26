@@ -307,9 +307,9 @@ static stock Group_DefineStates_() <YSI_has_groups : other>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-HOOK__ OnScriptInit()
+HOOK__ OnYSIInit()
 {
-	P:1("Group_OnScriptInit called");
+	P:1("Group_OnYSIInit called");
 	state YSI_has_groups : y;
 	// Set up the global groups.
 	#if !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT))
@@ -317,7 +317,7 @@ HOOK__ OnScriptInit()
 			if (_YCM@y)
 		#endif
 			{
-				P:5("Group_OnScriptInit: Master");
+				P:5("Group_OnYSIInit: Master");
 				Iter_Init(GroupPlayers);
 				strpack(YSI_gGroupData[_MAX_GROUPS][E_GROUP_DATA_NAME], YSI_g_scGlobalName, MAX_GROUP_NAME char);
 				YSI_gGroupData[_MAX_GROUPS][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS_ACTIVE | e_GROUP_FLAGS_GLOBAL;
@@ -333,9 +333,9 @@ HOOK__ OnScriptInit()
 		ni = AMX_GetPublicPointerPrefix(0, YSI_g_sNextInitFunc, _A<_yGI>),
 		na = AMX_GetPublicPointerPrefix(0, YSI_g_sNextAddFunc, _A<_yGA>),
 		nu = AMX_GetPublicPointerPrefix(0, YSI_g_sNextUpdFunc, _A<_yGU>);
-	//printf("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
-	P:4("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
-	P:4("Group_OnScriptInit: %d, %d, %d", AMX_HEADER_COD - AMX_BASE_ADDRESS, YSI_g_sNextInitFunc, AMX_HEADER_DAT - AMX_BASE_ADDRESS);
+	//printf("Group_OnYSIInit: %d, %d, %d", ni, na, nu);
+	P:4("Group_OnYSIInit: %d, %d, %d", ni, na, nu);
+	P:4("Group_OnYSIInit: %d, %d, %d", AMX_HEADER_COD - AMX_BASE_ADDRESS, YSI_g_sNextInitFunc, AMX_HEADER_DAT - AMX_BASE_ADDRESS);
 	// So just below the call to `GROUP_CHAIN` is this code:
 	//   
 	//   heapspace(); // I'm sure there's a reason this is here.  But I forgot it!
@@ -348,7 +348,7 @@ HOOK__ OnScriptInit()
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(ni, na, nu);
 	//CallLocalFunction("_Group_SpecialInit", "");
 	heapspace(); // I'm sure there's a reason this is here.  But I forgot it!
-	P:1("Group_OnScriptInit end");
+	P:1("Group_OnYSIInit end");
 	return 1;
 }
 
@@ -360,7 +360,7 @@ HOOK__ OnScriptInit()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-public OnScriptExit()
+public OnYSIExit()
 {
 	#if defined _Group_SpecialExit
 		_Group_SpecialExit();
@@ -369,8 +369,8 @@ public OnScriptExit()
 	return 1;
 }
 
-#undef OnScriptExit
-#define OnScriptExit _Group_SpecialExit
+#undef OnYSIExit
+#define OnYSIExit _Group_SpecialExit
 #if defined _Group_SpecialExit
 	forward _Group_SpecialExit();
 #endif

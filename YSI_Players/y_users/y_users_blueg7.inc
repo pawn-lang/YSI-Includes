@@ -258,7 +258,7 @@ stock Player_IsRegistered(playerid)
 	return YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID] != -1;
 }
 
-HOOK__ OnScriptInit()
+HOOK__ OnYSIInit()
 {
 	switch (ftouch(USER_FILE_PATH "index.YSI"))
 	{

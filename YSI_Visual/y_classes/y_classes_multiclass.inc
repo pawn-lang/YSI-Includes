@@ -177,7 +177,7 @@ P:D(Class_Skin(classid));
  * <transition keep="true" target="_YCM : y"/>
  *//*------------------------------------------------------------------------**/
 
-HOOK__ OnScriptInit()
+HOOK__ OnYSIInit()
 {
 	#if !_YSIM_IS_CLIENT
 		if (!YSI_FILTERSCRIPT)
@@ -192,7 +192,7 @@ HOOK__ OnScriptInit()
 				P:E("y_classes assumptions failed.  Do you have \"AddPlayerClass\" in your modes?");
 			}
 			//printf("==========================");
-			P:4("Class_OnScriptInit: classes = %d %d %d", classLeft, classMiddle, classRight);
+			P:4("Class_OnYSIInit: classes = %d %d %d", classLeft, classMiddle, classRight);
 			//printf("==========================");
 			#if !defined YSI_NO_MASTER
 				switch (_Master_Get(#_YCM, true))

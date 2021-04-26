@@ -79,7 +79,7 @@ static stock
 
 public OnCodeInit()
 {
-	P:1("hook Timers_OnScriptInit called");
+	P:1("hook Timers_OnYSIInit called");
 	new
 		pointer = 0,
 		time = 0,
@@ -88,13 +88,13 @@ public OnCodeInit()
 	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@yT_>)))
 	//while ((idx = AMX_GetPublicPointerSuffix(idx, pointer, _A<@yT_>)))
 	{
-		P:6("Timer_OnScriptInit: publicTableEntry: %d", publicTableEntry);
+		P:6("Timer_OnYSIInit: publicTableEntry: %d", publicTableEntry);
 		#emit LREF.S.pri publicTableEntry
 		#emit STOR.S.pri pointer
 		//YSI_g_sCurFunc = pointer;
 		// Don't bother with the real name, call the function by address to get
 		// the time the function runs for.
-		P:7("Timer_OnScriptInit: pointer: %d", pointer);
+		P:7("Timer_OnYSIInit: pointer: %d", pointer);
 		// Push the address of the current function.
 		#emit PUSH.S     pointer
 		#emit PUSH.C     0xFFFFFFFF
@@ -107,7 +107,7 @@ public OnCodeInit()
 		#emit SCTRL      6
 		#emit STOR.S.pri time
 		//YSI_g_sCurFunc = 0;
-		P:7("Timer_OnScriptInit: time: %d", time);
+		P:7("Timer_OnYSIInit: time: %d", time);
 		if (time != -1)
 		{
 			// Find all the functions with the same time.  This is less
@@ -144,7 +144,7 @@ public OnCodeInit()
 					}
 				}
 			}
-			P:7("Timer_OnScriptInit: total: %d, time: %d, pre: %d", total, time, pre);
+			P:7("Timer_OnYSIInit: total: %d, time: %d, pre: %d", total, time, pre);
 			// Now we know what time this function has, how many others have
 			// that time and how many have already been started.
 			new
@@ -153,13 +153,13 @@ public OnCodeInit()
 			#emit LREF.S.pri publicTableEntry
 			#emit STOR.S.pri pointer
 			AMX_ReadString(AMX_BASE_ADDRESS + pointer, buffer);
-			P:7("Timer_OnScriptInit: %s", unpack(buffer));
+			P:7("Timer_OnYSIInit: %s", unpack(buffer));
 			// Get the time offset for the current call.  This should mean that
 			// all the functions are nicely spread out.
 			YSI_SetTimerEx(buffer, time * pre / total, 0, "ii", 1, -1);
 		}
 	}
-	P:1("hook Timers_OnScriptInit ended");
+	P:1("hook Timers_OnYSIInit ended");
 	
 	#if defined Timers_OnCodeInit
 		Timers_OnCodeInit();
