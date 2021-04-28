@@ -538,7 +538,7 @@ static stock BlendThree(Bitmap:ctx, y, left, right)
 		colour = InterpolateColourLinear(left, right, x / 255.0);
 		for (new i = 0; i != 20; ++i)
 		{
-			Bitmap_WritePixel(ctx, x, y + i, colour | 0xFF);
+			Bitmap_WritePixel(ctx, x, y + i, colour);
 		}
 	}
 	for (new x = 0; x != 256; ++x)
@@ -546,7 +546,7 @@ static stock BlendThree(Bitmap:ctx, y, left, right)
 		colour = InterpolateColourGamma(left, right, x / 255.0);
 		for (new i = 20; i != 40; ++i)
 		{
-			Bitmap_WritePixel(ctx, x, y + i, colour | 0xFF);
+			Bitmap_WritePixel(ctx, x, y + i, colour);
 		}
 	}
 	for (new x = 0; x != 256; ++x)
@@ -554,7 +554,7 @@ static stock BlendThree(Bitmap:ctx, y, left, right)
 		colour = InterpolateColourSRGB(left, right, x / 255.0);
 		for (new i = 40; i != 60; ++i)
 		{
-			Bitmap_WritePixel(ctx, x, y + i, colour | 0xFF);
+			Bitmap_WritePixel(ctx, x, y + i, colour);
 		}
 	}
 }
@@ -569,6 +569,19 @@ TEST__ y_bitmap_Interpolations()
 	BlendThree(ctx, 180, 0xFFFF00FF, 0x0000FFFF);
 	BlendThree(ctx, 240, 0xFFFFFFFF, 0x000000FF);
 	Bitmap_Write(ctx, "y_bitmap_Interpolations.bmp");
+	Bitmap_Destroy(ctx);
+}
+
+TEST__ y_bitmap_Alpha1()
+{
+	new
+		Bitmap:ctx = Bitmap_Create(256, 300);
+	BlendThree(ctx,   0, 0xFF0000FF, 0x00FF00FF);
+	BlendThree(ctx,  60, 0xFF000080, 0x00FF00FF);
+	BlendThree(ctx, 120, 0xFF0000FF, 0x00FF0080);
+	BlendThree(ctx, 180, 0xFF000055, 0x00FF00AA);
+	BlendThree(ctx, 240, 0xFF0000AA, 0x00FF0055);
+	Bitmap_Write(ctx, "y_bitmap_Alpha1.bmp");
 	Bitmap_Destroy(ctx);
 }
 

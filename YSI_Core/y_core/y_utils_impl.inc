@@ -1758,19 +1758,25 @@ stock ftouch(const filename[])
 // "Interpolation" is the technical name for what you are doing here.
 stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-	new a;
+	new a = startColour & 0xFF;
 	if (IsNaN(fraction))
 	{
 		// Extract the fraction from the second alpha.
-		fraction = (endColour & 0xFF) / 255.0,
+		fraction = (endColour & 0xFF) / 255.0;
 		// Use the first alpha for output transparency.
-		a = startColour;
 	}
 	else
 	{
-		// Interpolate alphas.
-		a = startColour & 0xFF,
-		a = floatround(a + ((endColour & 0xFF) - a) * fraction);
+		// Combine the alpha values to give a relative fraction and a final alpha.
+		a = _:((a / 255.0) * (1.0 - fraction)),
+		fraction = ((endColour & 0xFF) / 255.0) * fraction,
+
+		// The final fraction is given comes from the relative ratio of the two alphas.
+		a = _:(Float:a + fraction),
+		fraction = fraction / Float:a,
+
+		// The final alpha comes from their sum, as a fraction of 1.
+		a = floatround(Float:a * 255.0);
 	}
 	if (fraction >= 1.0)
 	{
@@ -1843,19 +1849,25 @@ stock InterpolateColour(startColour, endColour, value, maxvalue, minvalue = 0)
 
 stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-	new a;
+	new a = startColour & 0xFF;
 	if (IsNaN(fraction))
 	{
 		// Extract the fraction from the second alpha.
-		fraction = (endColour & 0xFF) / 255.0,
+		fraction = (endColour & 0xFF) / 255.0;
 		// Use the first alpha for output transparency.
-		a = startColour;
 	}
 	else
 	{
-		// Interpolate alphas.
-		a = startColour & 0xFF,
-		a = floatround(a + ((endColour & 0xFF) - a) * fraction);
+		// Combine the alpha values to give a relative fraction and a final alpha.
+		a = _:((a / 255.0) * (1.0 - fraction)),
+		fraction = ((endColour & 0xFF) / 255.0) * fraction,
+
+		// The final fraction is given comes from the relative ratio of the two alphas.
+		a = _:(Float:a + fraction),
+		fraction = fraction / Float:a,
+
+		// The final alpha comes from their sum, as a fraction of 1.
+		a = floatround(Float:a * 255.0);
 	}
 	if (fraction >= 1.0)
 	{
@@ -2011,19 +2023,25 @@ stock CIEToSRGB(a, Float:x, Float:y, Float:z)
 
 stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-	new a;
+	new a = startColour & 0xFF;
 	if (IsNaN(fraction))
 	{
 		// Extract the fraction from the second alpha.
-		fraction = (endColour & 0xFF) / 255.0,
+		fraction = (endColour & 0xFF) / 255.0;
 		// Use the first alpha for output transparency.
-		a = startColour;
 	}
 	else
 	{
-		// Interpolate alphas.
-		a = startColour & 0xFF,
-		a = floatround(a + ((endColour & 0xFF) - a) * fraction);
+		// Combine the alpha values to give a relative fraction and a final alpha.
+		a = _:((a / 255.0) * (1.0 - fraction)),
+		fraction = ((endColour & 0xFF) / 255.0) * fraction,
+
+		// The final fraction is given comes from the relative ratio of the two alphas.
+		a = _:(Float:a + fraction),
+		fraction = fraction / Float:a,
+
+		// The final alpha comes from their sum, as a fraction of 1.
+		a = floatround(Float:a * 255.0);
 	}
 	if (fraction >= 1.0)
 	{
