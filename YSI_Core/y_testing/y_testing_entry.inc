@@ -311,8 +311,6 @@ stock _Testing_Start(const name[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-native YSI_ShowPlayerDialog(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
-
 stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused str
@@ -650,11 +648,7 @@ Testing_Next_retry:
 			Testing_Next(playerid);
 			return 1;
 		}
-		#if defined Testing_OnDialogResponse
-			return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
-		#else
-			return 1;
-		#endif
+		return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
 	}
 	
 	#if defined _ALS_OnDialogResponse
@@ -662,10 +656,8 @@ Testing_Next_retry:
 	#else
 		#define _ALS_OnDialogResponse
 	#endif
-	#define OnDialogResponse Testing_OnDialogResponse
-	#if defined Testing_OnDialogResponse
-		forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
-	#endif
+	#define OnDialogResponse(%0) CHAIN_PUBLIC:Testing_OnDialogResponse(%0)
+	CHAIN_FORWARD:Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) = 0;
 #endif
 
 forward OnTestsComplete(tests, checks, fails);

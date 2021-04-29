@@ -72,6 +72,10 @@ Optional plugins:
 
 #define YSI_DIALOG_ID _A<_yD@>
 
+CHAIN_HOOK(Dialog)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(Dialog)
+
 static stock
 	YSI_g_sPlayerDialog[MAX_PLAYERS] = {-1, ...},
 	bool:YSI_g_sPlayerMaster[MAX_PLAYERS] = {false, ...},
@@ -113,24 +117,18 @@ stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, const 
 	return Dialog_ShowCallback(playerid, F@_@iiiis:callback[E_CALLBACK_DATA:0], style, title, caption, button1, button2);
 }
 
-#if defined _ALS_ShowPlayerDialog
-	#define Dialog_ShowPlayerNative ShowPlayerDialog
-#else
-	native Dialog_ShowPlayerNative(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
-#endif
-
 stock Dialog_Show(playerid, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID);
 	YSI_g_sPlayerMaster[playerid] = true;
-	return Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID, style, title, caption, button1, button2);
+	return YSI_ShowPlayerDialog(playerid, YSI_DIALOG_ID, style, title, caption, button1, button2);
 }
 
 stock Dialog_Hide(playerid)
 {
 	// This almost looks like a Windows API function call!
 	broadcastfunc Dialog_Set(playerid, -1);
-	return Dialog_ShowPlayerNative(playerid, -1, 0, NULL, NULL, NULL, NULL);
+	return YSI_ShowPlayerDialog(playerid, -1, 0, NULL, NULL, NULL, NULL);
 }
 
 HOOK__ OnPlayerDisconnect(playerid, reason)
@@ -147,7 +145,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
-HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	// Apparently there's a hack to alter this.
 	dialogid = YSI_g_sPlayerDialog[playerid];
@@ -182,6 +180,14 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
+#if defined _ALS_OnDialogResponse
+	#undef OnDialogResponse
+#else
+	#define _ALS_OnDialogResponse
+#endif
+#define OnDialogResponse(%0) CHAIN_PUBLIC:Dialog_OnDialogResponse(%0)
+CHAIN_FORWARD:Dialog_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) = 0;
+
 stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], const string:caption[], const string:button1[], const string:button2[])
 {
 	// Fail.
@@ -189,7 +195,7 @@ stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], con
 		return 0;
 	broadcastfunc Dialog_Set(playerid, dialog);
 	YSI_g_sPlayerMaster[playerid] = true;
-	return Dialog_ShowPlayerNative(playerid, dialog, style, title, caption, button1, button2);
+	return YSI_ShowPlayerDialog(playerid, dialog, style, title, caption, button1, button2);
 }
 
 #if defined _ALS_ShowPlayerDialog
@@ -197,7 +203,7 @@ stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], con
 #else
 	#define _ALS_ShowPlayerDialog
 #endif
-#define ShowPlayerDialog Dialog_ShowPlayerDialog
+#define ShowPlayerDialog( Dialog_ShowPlayerDialog(
 
 #define _ALS_HidePlayerDialog
 #define HidePlayerDialog Dialog_Hide
