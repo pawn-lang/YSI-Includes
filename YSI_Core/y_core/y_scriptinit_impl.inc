@@ -560,6 +560,8 @@ public OnScriptInit(id)
 		// Dump the final assembly of this script so we can inspect it.
 		DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 	}
+	ScriptInit_OnFilterScriptInit();
+	ScriptInit_OnGameModeInit();
 	return 1;
 }
 
@@ -595,29 +597,29 @@ public OnFilterScriptInit()
 			// Dump the final assembly of this script so we can inspect it.
 			DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 		}
-	}
-	#if defined YSI_LOCK_MODE
-		#if defined FILTERSCRIPT
-			if (strlen(YSI_gLockData[5]) !=
-				floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
-				floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
-				floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) + 1 +
-				floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil))
-			{
-				y_lock 6;
-			}
-		#else
-			new
-				str[16];
-			format(str, sizeof (str), "%c%c%c%c%c%c%c%c%c%c%c", '%', 'd', '.', '%', 'd', '.', '%', 'd', '.', '%', 'd');
-			format(str, sizeof (str), str, _LOCK_IP_0, _LOCK_IP_1, _LOCK_IP_2, _LOCK_IP_3);
-			if (strlen(YSI_gLockData[5]) != strlen(str))
-			{
-				y_lock 7;
-			}
+		#if defined YSI_LOCK_MODE
+			#if defined FILTERSCRIPT
+				if (strlen(YSI_gLockData[5]) !=
+					floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
+					floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
+					floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) + 1 +
+					floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil))
+				{
+					y_lock 6;
+				}
+			#else
+				new
+					str[16];
+				format(str, sizeof (str), "%c%c%c%c%c%c%c%c%c%c%c", '%', 'd', '.', '%', 'd', '.', '%', 'd', '.', '%', 'd');
+				format(str, sizeof (str), str, _LOCK_IP_0, _LOCK_IP_1, _LOCK_IP_2, _LOCK_IP_3);
+				if (strlen(YSI_gLockData[5]) != strlen(str))
+				{
+					y_lock 7;
+				}
+			#endif
 		#endif
-	#endif
-	ScriptInit_OnFilterScriptInit();
+		ScriptInit_OnFilterScriptInit();
+	}
 	return 1;
 }
 
@@ -655,24 +657,27 @@ public OnGameModeInit()
 				// Dump the final assembly of this script so we can inspect it.
 				DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 			}
+			#if defined YSI_LOCK_MODE
+				if (YSI_gLockData[
+					floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
+					floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
+					floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) +
+					floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil)] == '\0'
+				 || YSI_gLockData[
+					floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
+					floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
+					floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) + 1 +
+					floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil) + 1] == '\0')
+				{
+					y_lock 8;
+				}
+			#endif
 		}
-		#if defined YSI_LOCK_MODE
-			if (YSI_gLockData[
-				floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
-				floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
-				floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) +
-				floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil)] == '\0'
-			 || YSI_gLockData[
-				floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
-				floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
-				floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) + 1 +
-				floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil) + 1] == '\0')
-			{
-				y_lock 8;
-			}
-		#endif
 	}
-	ScriptInit_OnGameModeInit();
+	if (!YSI_OPEN_MP)
+	{
+		ScriptInit_OnGameModeInit();
+	}
 	return 1;
 }
 
