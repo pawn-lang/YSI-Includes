@@ -96,7 +96,9 @@ CHAIN_HOOK(ScriptInit)
 #define CHAIN_ORDER CHAIN_NEXT(ScriptInit)
 
 stock
-	bool:YSI_FILTERSCRIPT = false;
+	bool:YSI_FILTERSCRIPT = false,
+	bool:YSI_GAMEMODE = false,
+	bool:YSI_OPEN_MP = false;
 
 enum E_SCRIPTINIT_STATE (<<= 1)
 {
@@ -179,7 +181,12 @@ stock bool:Server_IsFilterscript()
 
 stock bool:Server_IsGameMode()
 {
-	return !YSI_FILTERSCRIPT;
+	return YSI_GAMEMODE;
+}
+
+stock bool:Server_IsOpenMP()
+{
+	return YSI_OPEN_MP;
 }
 
 stock bool:Server_CrashDetectExists()
@@ -525,45 +532,14 @@ public OnJITCompile()
 	#error OnCodeInit defined
 #endif
 
-#if defined Script_GetID
-	forward OnScriptInit(id);
-	public OnScriptInit(id)
-	{
-		if (id != Script_GetID())
-		{
-			return 0;
-		}
-		#if !defined FILTERSCRIPT
-			if (funcidx("OnFilterScriptInit") != -1)
-		#endif
-			{
-				// This is a legacy filterscript.
-				printf("*** This script has been detected as a legacy filterscript.");
-				R@("OnFilterScriptInit", "");
-			}
-		#if !defined FILTERSCRIPT
-			else
-			{
-				printf("*** This script has been detected as a legacy gamemode.");
-				W@("OnGameModeInit", "");
-			}
-		#endif
-		return 0;
-	}
-#elseif defined _ALS_OnScriptInit || (__COMPILER_1ST_PASS && defined OnScriptInit)
-	#error OnScriptInit defined
-#endif
+// open.mp
+forward OnScriptInit(id);
 
-/*-------------------------------------------------------------------------*//**
- * <transition keep="true" target="_script_init_fix_state : true"/>
- * <transition keep="true" target="_ALS : _ALS_go"/>
- *//*------------------------------------------------------------------------**/
-
-public OnFilterScriptInit()
+public OnScriptInit(id)
 {
-	YSI_FILTERSCRIPT = true;
-	state _script_init_fix_state : true;
 	state _ALS : _ALS_go;
+	YSI_OPEN_MP = true;
+	state _script_init_fix_state : false;
 	// Dump the final assembly of this script so we can inspect it.
 	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
@@ -583,6 +559,42 @@ public OnFilterScriptInit()
 	{
 		// Dump the final assembly of this script so we can inspect it.
 		DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+	}
+	return 1;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="_script_init_fix_state : true"/>
+ * <transition keep="true" target="_ALS : _ALS_go"/>
+ *//*------------------------------------------------------------------------**/
+
+public OnFilterScriptInit()
+{
+	state _ALS : _ALS_go;
+	YSI_FILTERSCRIPT = true;
+	if (!YSI_OPEN_MP)
+	{
+		state _script_init_fix_state : true;
+		// Dump the final assembly of this script so we can inspect it.
+		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+		{
+			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
+			if (!ScriptInit_CallOnCodeInit(false, true))
+				return 0;
+		}
+		#if defined ScriptInit_OnYSIInit
+			ScriptInit_OnYSIInit();
+		#endif
+		ScriptInit_PreInitFuncs_();
+		#if defined ScriptInit_OnScriptInit
+			ScriptInit_OnScriptInit();
+		#endif
+		ScriptInit_PostInitFuncs_();
+		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+		{
+			// Dump the final assembly of this script so we can inspect it.
+			DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+		}
 	}
 	#if defined YSI_LOCK_MODE
 		#if defined FILTERSCRIPT
@@ -619,26 +631,30 @@ public OnGameModeInit()
 	state _ALS : _ALS_go;
 	if (!YSI_FILTERSCRIPT)
 	{
-		state _script_init_fix_state : false;
-		// Dump the final assembly of this script so we can inspect it.
-		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+		YSI_GAMEMODE = true;
+		if (!YSI_OPEN_MP)
 		{
-			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
-			if (!ScriptInit_CallOnCodeInit(false, false))
-				return 0;
-		}
-		#if defined ScriptInit_OnYSIInit
-			ScriptInit_OnYSIInit();
-		#endif
-		ScriptInit_PreInitFuncs_();
-		#if defined ScriptInit_OnScriptInit
-			ScriptInit_OnScriptInit();
-		#endif
-		ScriptInit_PostInitFuncs_();
-		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
-		{
+			state _script_init_fix_state : false;
 			// Dump the final assembly of this script so we can inspect it.
-			DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+			{
+				DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
+				if (!ScriptInit_CallOnCodeInit(false, false))
+					return 0;
+			}
+			#if defined ScriptInit_OnYSIInit
+				ScriptInit_OnYSIInit();
+			#endif
+			ScriptInit_PreInitFuncs_();
+			#if defined ScriptInit_OnScriptInit
+				ScriptInit_OnScriptInit();
+			#endif
+			ScriptInit_PostInitFuncs_();
+			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+			{
+				// Dump the final assembly of this script so we can inspect it.
+				DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+			}
 		}
 		#if defined YSI_LOCK_MODE
 			if (YSI_gLockData[
@@ -676,7 +692,7 @@ public OnGameModeInit()
 public OnFilterScriptExit()
 {
 	ScriptInit_OnFilterScriptExit();
-	if (YSI_FILTERSCRIPT)
+	if (YSI_FILTERSCRIPT && !YSI_OPEN_MP)
 	{
 		ScriptInit_PreExitFuncs_();
 		ScriptInit_OnScriptExit();
@@ -689,7 +705,21 @@ public OnFilterScriptExit()
 public OnGameModeExit()
 {
 	ScriptInit_OnGameModeExit();
-	if (!YSI_FILTERSCRIPT)
+	if (YSI_GAMEMODE && !YSI_OPEN_MP)
+	{
+		ScriptInit_PreExitFuncs_();
+		ScriptInit_OnScriptExit();
+		ScriptInit_PostExitFuncs_();
+		ScriptInit_OnYSIExit();
+	}
+	return 1;
+}
+
+forward OnScriptExit(id);
+
+public OnScriptExit(id)
+{
+	if (YSI_OPEN_MP)
 	{
 		ScriptInit_PreExitFuncs_();
 		ScriptInit_OnScriptExit();
