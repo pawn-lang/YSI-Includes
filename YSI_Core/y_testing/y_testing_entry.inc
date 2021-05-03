@@ -221,6 +221,17 @@ static stock const
 	#define TEST_COMPILE__%1() static stock Q@_y%1()
 #endif
 
+#if defined NO_PLAYER_TESTS
+	#undef PTEST_INIT__
+	#undef PTEST__
+	#undef PTEST_CLOSE__
+	#undef ASK
+
+	#define YSI_NO_KEYWORD_PTestInit
+	#define YSI_NO_KEYWORD_PTest
+	#define YSI_NO_KEYWORD_PTestClose
+#endif
+
 #if YSI_KEYWORD(TestInit)
 	#define TestInit:%1() TEST_INIT__ %1()
 #endif
@@ -311,44 +322,46 @@ stock _Testing_Start(const name[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-native YSI_ShowPlayerDialog(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
+#if !defined NO_PLAYER_TESTS
+	native YSI_ShowPlayerDialog(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
 
-stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
-{
-	#pragma unused str
-	new
-		i = 0,
-		end = 0; // 12 + 4 + 4.
-	// Get the stack position after `playerid`.
-	#emit ADDR.pri         16
-	#emit STOR.S.pri       end
-	// Get the stack position after everything.
-	#emit ADDR.pri         12
-	#emit LOAD.S.alt       8
-	#emit ADD
-	#emit STOR.S.pri       i
-	while (i > end)
+	stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 	{
-		i -= 4;
-		#emit LREF.S.pri       i
+		#pragma unused str
+		new
+			i = 0,
+			end = 0; // 12 + 4 + 4.
+		// Get the stack position after `playerid`.
+		#emit ADDR.pri         16
+		#emit STOR.S.pri       end
+		// Get the stack position after everything.
+		#emit ADDR.pri         12
+		#emit LOAD.S.alt       8
+		#emit ADD
+		#emit STOR.S.pri       i
+		while (i > end)
+		{
+			i -= 4;
+			#emit LREF.S.pri       i
+			#emit PUSH.pri
+		}
+		{}
+		#emit PUSH.C           512
+		#emit PUSH.C           YSI_g_sFailMessage
+		#emit LOAD.S.pri       8
+		#emit ADD.C            4
 		#emit PUSH.pri
+		#emit SYSREQ.C         format
+		// Remove the data from the stack.
+		#emit POP.alt
+		#emit LCTRL            4
+		#emit ADD
+		#emit SCTRL            4
+		//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
+		YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
+		YSI_g_sAsked = true;
 	}
-	{}
-	#emit PUSH.C           512
-	#emit PUSH.C           YSI_g_sFailMessage
-	#emit LOAD.S.pri       8
-	#emit ADD.C            4
-	#emit PUSH.pri
-	#emit SYSREQ.C         format
-	// Remove the data from the stack.
-	#emit POP.alt
-	#emit LCTRL            4
-	#emit ADD
-	#emit SCTRL            4
-	//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
-	YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
-	YSI_g_sAsked = true;
-}
+#endif
 
 stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
@@ -780,7 +793,7 @@ stock Testing_RunAll()
 		fails = 0;
 	// The timing will be inaccurate since it will include many prints, but it
 	// isn't that important to be accurate.
-	startTime = GetTickCount();
+	startTime = tickcount();
 	TEST_REPORT(" ");
 	TEST_REPORT("  ||===================||  ");
 	TEST_REPORT("  || STARTING TESTS... ||  ");
@@ -812,7 +825,7 @@ stock Testing_RunAll()
 		}
 		TEST_REPORT(" ");
 	}
-	endTime = GetTickCount();
+	endTime = tickcount();
 	printf("*** Time: %dms", endTime - startTime);
 	TEST_REPORT(" ");
 	//state ysi_debug : on;
