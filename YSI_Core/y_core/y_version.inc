@@ -136,7 +136,6 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
  *//*------------------------------------------------------------------------**/
 	
 	#if !defined HTTP
-	
 		public OnYSIInit()
 		{
 			#if defined YSI_LOCK_MODE

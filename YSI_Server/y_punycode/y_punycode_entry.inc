@@ -544,7 +544,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 			P:2("Puny_HTTP Domain: \"%s\" -> \"%s\"", url, sEncoded);
 		#endif
 		// Call the original "HTTP".
-		return HTTP(index, type, sEncoded, data, callback);
+		return YSI_HTTP(index, type, sEncoded, data, callback);
 	}
 	
 	#if defined _ALS_HTTP
