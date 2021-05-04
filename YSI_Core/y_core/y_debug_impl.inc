@@ -549,7 +549,7 @@ P:D(Debug_Print7(const str[], GLOBAL_TAG_TYPES:...));
 	Debug_CodeX(%1);
 
 /*-------------------------------------------------------------------------*//**
- * <param name="format">str.</param>
+ * <param name="YSI_Format">str.</param>
  * <param name=""></param>
  * <remarks>
  *  This isn't really a function as the first parameter is part of the name:
@@ -601,17 +601,17 @@ stock Debug_PrintArray(arr[], size = sizeof (arr))
 		case 0:
 			str = "<>";
 		case 1:
-			format(str, sizeof (str), "<%d>", arr[0]);
+			YSI_Format(str, sizeof (str), "<%d>", arr[0]);
 		case 2:
-			format(str, sizeof (str), "<%d, %d>", arr[0], arr[1]);
+			YSI_Format(str, sizeof (str), "<%d, %d>", arr[0], arr[1]);
 		case 3:
-			format(str, sizeof (str), "<%d, %d, %d>", arr[0], arr[1], arr[2]);
+			YSI_Format(str, sizeof (str), "<%d, %d, %d>", arr[0], arr[1], arr[2]);
 		case 4:
-			format(str, sizeof (str), "<%d, %d, %d, %d>", arr[0], arr[1], arr[2], arr[3]);
+			YSI_Format(str, sizeof (str), "<%d, %d, %d, %d>", arr[0], arr[1], arr[2], arr[3]);
 		case 5:
-			format(str, sizeof (str), "<%d, %d, %d, %d, %d>", arr[0], arr[1], arr[2], arr[3], arr[4]);
+			YSI_Format(str, sizeof (str), "<%d, %d, %d, %d, %d>", arr[0], arr[1], arr[2], arr[3], arr[4]);
 		default:
-			format(str, sizeof (str), "<%d, %d, %d, %d, %d, ... (+ %d)>", arr[0], arr[1], arr[2], arr[3], arr[4], size - 5);
+			YSI_Format(str, sizeof (str), "<%d, %d, %d, %d, %d, ... (+ %d)>", arr[0], arr[1], arr[2], arr[3], arr[4], size - 5);
 	}
 	return str;
 }
