@@ -994,11 +994,10 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
 
 stock isnumeric(const str[])
 {
-	P:7("isnumeric called: \"%s\"", str);
+	P:4("isnumeric called: \"%s\"", str);
 	new
-		i = 0;
-	while (IS_IN_RANGE(str[i], '0', '9' + 1)) ++i;
-	//while ((ch = str[i++])) if (!('0' <= ch <= '9')) return 0;
+		i = -1;
+	while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
 	return !str[i];
 }
 
