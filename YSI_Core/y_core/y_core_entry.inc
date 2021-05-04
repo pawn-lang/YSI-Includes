@@ -116,8 +116,6 @@ Optional plugins:
 // used by literally any other include.
 #include "y_compilerdata"
 
-native YSI_HTTP(index, type, const url[], const data[], const callback[]) = HTTP;
-
 // Avoid an error with `forward OnRuntimeError(code, &bool:suppress);` in here after already ALS
 // hooking it (#266).
 #tryinclude "..\..\crashdetect"
