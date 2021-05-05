@@ -1,12 +1,6 @@
 static stock const
 	FIXES_gscRconFixFS[] = "callbackfix.amx";
 
-#if defined _ALS_SendRconCommand
-	#define y_rconfix_SendRconCommand SendRconCommand
-#else
-	native y_rconfix_SendRconCommand(const str[]) = SendRconCommand;
-#endif
-
 y_rconfix_Load()
 {
 	// It is.  Create the file.
@@ -49,7 +43,7 @@ y_rconfix_Load()
 	}
 	if (fexist(FIXES_gscRconFixFS))
 	{
-		y_rconfix_SendRconCommand("loadfs ../scriptfiles/callbackfix");
+		YSI_SendRconCommand("loadfs ../scriptfiles/callbackfix");
 	}
 	else
 	{
@@ -60,6 +54,6 @@ y_rconfix_Load()
 
 y_rconfix_Unload()
 {
-	y_rconfix_SendRconCommand("unloadfs ../scriptfiles/callbackfix");
+	YSI_SendRconCommand("unloadfs ../scriptfiles/callbackfix");
 }
 
