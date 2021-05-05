@@ -83,3 +83,5 @@ native YSI_SetTimerEx(const funcname[], interval, repeating, const format[], GLO
 native YSI_HTTP(index, type, const url[], const data[], const callback[]) = HTTP;
 native YSI_Format(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYPES:...) = format;
 
+native YSI_SendRconCommand(const str[]) = SendRconCommand;
+
