@@ -122,6 +122,7 @@ stock Circular_GetCount_(s1, s2, ...)
 #define Circular_Full(%0) Circular_IsFull_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
 #define Circular_Count(%0) Circular_GetCount_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
 #define Circular_Push(%0,%1) Circular_Push_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0), (%1))
+#define Circular_Rotate(%0) Circular_Rotate_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
 #define Circular_Init(%0) Circular_Init_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
 #define Circular_Capacity(%0) (sizeof (%0))
 
@@ -208,8 +209,8 @@ stock Circular_Push_(s1, s2, ...)
 		#emit POP.pri
 		// Return the final slot.
 		#emit MOVE.pri
-		#emit ADD.C        0xFFFFFFFC
 		#emit SHR.C.pri    2
+		#emit DEC.pri
 		#emit RETN
 	}
 	else
@@ -238,6 +239,111 @@ stock Circular_Push_(s1, s2, ...)
 		#emit SYSREQ.C     memcpy
 		#emit STACK        24
 		// Adjust the final count.
+		count += 4;
+		if (count == 0)
+		{
+			// The array is full.  Reset the final slot pointer.
+			#emit LOAD.S.pri   s1
+			#emit LOAD.S.alt   20
+			#emit ADD.C        0xFFFFFFFC
+			#emit XCHG
+			#emit ADD
+			#emit STOR.S.pri   count
+			#emit LOAD.S.pri   s2
+			#emit SMUL
+			#emit ADD.C        4
+			#emit SREF.S.pri   count
+			#emit POP.pri
+			// Return the final slot ID.
+			#emit MOVE.pri
+			#emit SHR.C.pri    2
+			#emit RETN
+		}
+		else
+		{
+			// Store the new count in the final slot.
+			#emit LOAD.S.alt   s1
+			#emit LOAD.S.pri   20
+			#emit ADD
+			#emit ADD.C        0xFFFFFFFC
+			#emit LOAD.S.alt   count
+			#emit STOR.S.pri   count
+			#emit SREF.S.alt   count
+			#emit POP.pri
+			#emit LOAD.S.pri   s1
+			#emit ADD
+			#emit SHR.C.pri    2
+			#emit DEC.pri
+			#emit RETN
+		}
+	}
+	return 0;
+}
+
+stock Circular_Rotate_(s1, s2, ...)
+{
+	new
+		count = 0;
+	// Get the address of the final slot.
+	#emit LOAD.S.alt   s1
+	#emit LOAD.S.pri   20
+	#emit ADD
+	#emit ADD.C        0xFFFFFFFC
+	// Load the data there.
+	#emit STOR.S.pri   count
+	#emit LREF.S.pri   count
+	#emit STOR.S.pri   count
+	// Test if it is `> 0`.  If so the circular buffer is full.
+	if (count > 0)
+	{
+		new data = 0;
+		// Just rotate the numbers.
+		// Get the start end end pointers.
+		#emit LOAD.S.pri   s1
+		#emit LOAD.S.alt   20
+		#emit ADD
+		#emit ADD.C        0xFFFFFFFC
+		#emit STOR.S.pri   count
+		#emit STOR.S.alt   s2
+		// Load the first value, adjusted for its new slot.
+		#emit LREF.S.pri   count
+		#emit ADD.C        4
+		#emit STOR.S.pri   data
+		while (count != s2)
+		{
+			// Move to the next slot.
+			count -= 4;
+			// `start` is actually a pointer to an array header index.
+			// Load the offset here.  Swap slots through the registers.
+			#emit LREF.S.pri   count
+			#emit LOAD.S.alt   data
+			#emit SREF.S.alt   count
+			#emit ADD.C        4
+			#emit STOR.S.pri   data
+		}
+		{}
+		// `count` now contains the value from slot 0, ready to be moved to the end of the array.
+		// We overwrote slot 0 earlier, when writing the new data, so NOW we move it to the end.
+		#emit LOAD.S.pri   s1
+		#emit LOAD.S.alt   20
+		#emit ADD.C        0xFFFFFFFC
+		#emit ADD
+		#emit STOR.S.pri   count
+		#emit LOAD.S.alt   s1
+		#emit LOAD.S.pri   data
+		#emit SUB
+		#emit SREF.S.pri   count
+		#emit POP.pri
+		// Return the final slot.
+		#emit POP.pri
+		#emit MOVE.pri
+		#emit SHR.C.pri    2
+		#emit DEC.pri
+		#emit RETN
+	}
+	else
+	{
+		// Just adjust the final count.
 		count += 4;
 		if (count == 0)
 		{

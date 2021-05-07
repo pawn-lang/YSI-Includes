@@ -167,6 +167,70 @@ Test:Circular_Slot()
 	ASSERT_EQ(Circular_Push(arr, data), 3);
 	ASSERT_EQ(Circular_Push(arr, data), 4);
 	ASSERT_EQ(Circular_Push(arr, data), 4);
+	ASSERT_EQ(Circular_Push(arr, data), 4);
+	ASSERT_EQ(Circular_Push(arr, data), 4);
+	ASSERT_EQ(Circular_Push(arr, data), 4);
+}
+
+Test:Circular_Rotate()
+{
+	new arr[5][5];
+	Circular_Init(arr);
+	ASSERT_EQ(Circular_Rotate(arr), 0);
+	ASSERT_EQ(Circular_Rotate(arr), 1);
+	ASSERT_EQ(Circular_Rotate(arr), 2);
+	ASSERT_EQ(Circular_Rotate(arr), 3);
+	ASSERT_EQ(Circular_Rotate(arr), 4);
+	ASSERT_EQ(Circular_Rotate(arr), 4);
+	ASSERT_EQ(Circular_Rotate(arr), 4);
+	ASSERT_EQ(Circular_Rotate(arr), 4);
+	ASSERT_EQ(Circular_Rotate(arr), 4);
+}
+
+Test:Circular_RotateContent()
+{
+	new buffer[5][5];
+	Circular_Init(buffer);
+	ASSERT_EQ(Circular_Push(buffer, "h 0"), 0);
+	ASSERT_EQ(Circular_Push(buffer, "h 1"), 1);
+	ASSERT_EQ(Circular_Push(buffer, "h 2"), 2);
+	ASSERT_EQ(Circular_Push(buffer, "h 3"), 3);
+	ASSERT_EQ(Circular_Push(buffer, "h 4"), 4);
+	ASSERT_SAME(buffer[0], "h 0");
+	ASSERT_SAME(buffer[1], "h 1");
+	ASSERT_SAME(buffer[2], "h 2");
+	ASSERT_SAME(buffer[3], "h 3");
+	ASSERT_SAME(buffer[4], "h 4");
+	ASSERT_EQ(Circular_Rotate(buffer), 4);
+	ASSERT_SAME(buffer[0], "h 1");
+	ASSERT_SAME(buffer[1], "h 2");
+	ASSERT_SAME(buffer[2], "h 3");
+	ASSERT_SAME(buffer[3], "h 4");
+	ASSERT_SAME(buffer[4], "h 0");
+	ASSERT_EQ(Circular_Rotate(buffer), 4);
+	ASSERT_SAME(buffer[0], "h 2");
+	ASSERT_SAME(buffer[1], "h 3");
+	ASSERT_SAME(buffer[2], "h 4");
+	ASSERT_SAME(buffer[3], "h 0");
+	ASSERT_SAME(buffer[4], "h 1");
+	ASSERT_EQ(Circular_Rotate(buffer), 4);
+	ASSERT_SAME(buffer[0], "h 3");
+	ASSERT_SAME(buffer[1], "h 4");
+	ASSERT_SAME(buffer[2], "h 0");
+	ASSERT_SAME(buffer[3], "h 1");
+	ASSERT_SAME(buffer[4], "h 2");
+	ASSERT_EQ(Circular_Rotate(buffer), 4);
+	ASSERT_SAME(buffer[0], "h 4");
+	ASSERT_SAME(buffer[1], "h 0");
+	ASSERT_SAME(buffer[2], "h 1");
+	ASSERT_SAME(buffer[3], "h 2");
+	ASSERT_SAME(buffer[4], "h 3");
+	ASSERT_EQ(Circular_Rotate(buffer), 4);
+	ASSERT_SAME(buffer[0], "h 0");
+	ASSERT_SAME(buffer[1], "h 1");
+	ASSERT_SAME(buffer[2], "h 2");
+	ASSERT_SAME(buffer[3], "h 3");
+	ASSERT_SAME(buffer[4], "h 4");
 }
 
 Test:Circular_IsFull1()
@@ -319,7 +383,7 @@ Test:Circular_PushFull()
 	ASSERT_EQ(Circular_Count(arr), 5);
 }
 
-Test:Circular_Contents()
+Test:Circular_PushContent()
 {
 	new strings[6][32];
 	Circular_Init(strings);
@@ -327,17 +391,42 @@ Test:Circular_Contents()
 	ASSERT_SAME(strings[0], "String 1");
 	Circular_Push(strings, "String 2");
 	ASSERT_SAME(strings[0], "String 1");
+	ASSERT_SAME(strings[1], "String 2");
 	Circular_Push(strings, "String 3");
 	ASSERT_SAME(strings[0], "String 1");
+	ASSERT_SAME(strings[1], "String 2");
+	ASSERT_SAME(strings[2], "String 3");
 	Circular_Push(strings, "String 4");
 	ASSERT_SAME(strings[0], "String 1");
+	ASSERT_SAME(strings[1], "String 2");
+	ASSERT_SAME(strings[2], "String 3");
+	ASSERT_SAME(strings[3], "String 4");
 	Circular_Push(strings, "String 5");
 	ASSERT_SAME(strings[0], "String 1");
+	ASSERT_SAME(strings[1], "String 2");
+	ASSERT_SAME(strings[2], "String 3");
+	ASSERT_SAME(strings[3], "String 4");
+	ASSERT_SAME(strings[4], "String 5");
 	Circular_Push(strings, "String 6");
 	ASSERT_SAME(strings[0], "String 1");
+	ASSERT_SAME(strings[1], "String 2");
+	ASSERT_SAME(strings[2], "String 3");
+	ASSERT_SAME(strings[3], "String 4");
+	ASSERT_SAME(strings[4], "String 5");
+	ASSERT_SAME(strings[5], "String 6");
 	Circular_Push(strings, "String 7");
 	ASSERT_SAME(strings[0], "String 2");
+	ASSERT_SAME(strings[1], "String 3");
+	ASSERT_SAME(strings[2], "String 4");
+	ASSERT_SAME(strings[3], "String 5");
+	ASSERT_SAME(strings[4], "String 6");
+	ASSERT_SAME(strings[5], "String 7");
 	Circular_Push(strings, "String 8");
 	ASSERT_SAME(strings[0], "String 3");
+	ASSERT_SAME(strings[1], "String 4");
+	ASSERT_SAME(strings[2], "String 5");
+	ASSERT_SAME(strings[3], "String 6");
+	ASSERT_SAME(strings[4], "String 7");
+	ASSERT_SAME(strings[5], "String 8");
 }
 
