@@ -87,6 +87,26 @@ Test:Circular_Init()
 	ASSERT_EQ(GetHeaderValue(arr, 4), -20);
 }
 
+Test:Circular_Capacity()
+{
+	new arr[5][5];
+	new data[5];
+	ASSERT_EQ(Circular_Capacity(arr), 5);
+	Circular_Init(arr);
+	ASSERT_EQ(Circular_Capacity(arr), 5);
+	Circular_Push(arr, data);
+	ASSERT_EQ(Circular_Capacity(arr), 5);
+	Circular_Push(arr, data);
+	Circular_Push(arr, data);
+	Circular_Push(arr, data);
+	Circular_Push(arr, data);
+	Circular_Push(arr, data);
+	Circular_Push(arr, data);
+	Circular_Push(arr, data);
+	Circular_Push(arr, data);
+	ASSERT_EQ(Circular_Capacity(arr), 5);
+}
+
 Test:Circular_Push1()
 {
 	new arr[5][5];
@@ -428,5 +448,24 @@ Test:Circular_PushContent()
 	ASSERT_SAME(strings[3], "String 6");
 	ASSERT_SAME(strings[4], "String 7");
 	ASSERT_SAME(strings[5], "String 8");
+}
+
+Test:Circular_Contents()
+{
+	new arr[5][5];
+	new data[5] = { 5, 6, 7, 8, 9 };
+	Circular_Init(arr);
+	ASSERT_EQ(Circular_Push(arr, data), 0);
+	ASSERT_EQ(arr[0][0], 5);
+	ASSERT_EQ(arr[0][1], 6);
+	ASSERT_EQ(arr[0][2], 7);
+	ASSERT_EQ(arr[0][3], 8);
+	ASSERT_EQ(arr[0][4], 9);
+	ASSERT_EQ(Circular_Push(arr, data), 1);
+	ASSERT_EQ(Circular_Push(arr, data), 2);
+	ASSERT_EQ(Circular_Push(arr, data), 3);
+	ASSERT_EQ(Circular_Push(arr, data), 4);
+	ASSERT_EQ(Circular_Push(arr, data), 4);
+	ASSERT_EQ(Circular_Push(arr, data), 4);
 }
 
