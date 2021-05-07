@@ -40,6 +40,7 @@ Data structures and algorithms.
 
 * [y_bintree](YSI_Data/y_bintree.md)
 * [y_bit](YSI_Data/y_bit.md)
+* [y_circular](YSI_Data/y_circular.md)
 * [y_iterate](YSI_Data/y_iterate.md) (AKA y_foreach)
 * [y_hashmap](YSI_Data/y_hashmap.md)
 * [y_jaggedarray](YSI_Data/y_jaggedarray.md)
