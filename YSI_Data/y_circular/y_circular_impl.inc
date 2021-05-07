@@ -137,7 +137,7 @@ stock void:Circular_Init_(s1, s2, ...)
 	#emit SREF.S.pri   s2
 }
 
-stock void:Circular_Push_(s1, s2, ...)
+stock Circular_Push_(s1, s2, ...)
 {
 	new
 		count = 0;
@@ -198,14 +198,18 @@ stock void:Circular_Push_(s1, s2, ...)
 		// We overwrote slot 0 earlier, when writing the new data, so NOW we move it to the end.
 		#emit LOAD.S.pri   s1
 		#emit LOAD.S.alt   20
-		#emit ADD
 		#emit ADD.C        0xFFFFFFFC
+		#emit ADD
 		#emit STOR.S.pri   count
-		#emit LOAD.S.pri   s1
-		#emit LOAD.S.alt   24
-		#emit SUB.alt
+		#emit LOAD.S.alt   s1
+		#emit LOAD.S.pri   24
+		#emit SUB
 		#emit SREF.S.pri   count
 		#emit POP.pri
+		// Return the final slot.
+		#emit MOVE.pri
+		#emit ADD.C        0xFFFFFFFC
+		#emit SHR.C.pri    2
 		#emit RETN
 	}
 	else
@@ -249,6 +253,9 @@ stock void:Circular_Push_(s1, s2, ...)
 			#emit ADD.C        4
 			#emit SREF.S.pri   count
 			#emit POP.pri
+			// Return the final slot ID.
+			#emit MOVE.pri
+			#emit SHR.C.pri    2
 			#emit RETN
 		}
 		else
@@ -262,10 +269,13 @@ stock void:Circular_Push_(s1, s2, ...)
 			#emit STOR.S.pri   count
 			#emit SREF.S.alt   count
 			#emit POP.pri
+			#emit LOAD.S.pri   s1
+			#emit ADD
+			#emit SHR.C.pri    2
+			#emit DEC.pri
 			#emit RETN
 		}
-		{}
 	}
-	{}
+	return 0;
 }
 

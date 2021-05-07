@@ -156,6 +156,19 @@ Test:Circular_Push6()
 	ASSERT_EQ(GetHeaderValue(arr, 4),  4 + 5 * 4 * 0);
 }
 
+Test:Circular_Slot()
+{
+	new arr[5][5];
+	new data[5];
+	Circular_Init(arr);
+	ASSERT_EQ(Circular_Push(arr, data), 0);
+	ASSERT_EQ(Circular_Push(arr, data), 1);
+	ASSERT_EQ(Circular_Push(arr, data), 2);
+	ASSERT_EQ(Circular_Push(arr, data), 3);
+	ASSERT_EQ(Circular_Push(arr, data), 4);
+	ASSERT_EQ(Circular_Push(arr, data), 4);
+}
+
 Test:Circular_IsFull1()
 {
 	new arr[5][5];
