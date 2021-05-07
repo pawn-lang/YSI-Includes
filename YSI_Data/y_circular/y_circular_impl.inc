@@ -124,7 +124,7 @@ stock Circular_GetCount_(s1, s2, ...)
 #define Circular_Push(%0,%1) Circular_Push_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0), (%1))
 #define Circular_Init(%0) Circular_Init_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
 
-stock bool:Circular_Init_(s1, s2, ...)
+stock void:Circular_Init_(s1, s2, ...)
 {
 	#emit LOAD.S.alt   s1
 	#emit LOAD.S.pri   20
@@ -136,7 +136,7 @@ stock bool:Circular_Init_(s1, s2, ...)
 	#emit SREF.S.pri   s2
 }
 
-stock bool:Circular_Push_(s1, s2, ...)
+stock void:Circular_Push_(s1, s2, ...)
 {
 	new
 		count = 0;
@@ -168,29 +168,29 @@ stock bool:Circular_Push_(s1, s2, ...)
 		#emit SYSREQ.C     memcpy
 		#emit STACK        24
 		// And rotate the numbers.
-		new start = 0;
 		// Get the start end end pointers.
 		#emit LOAD.S.pri   s1
 		#emit LOAD.S.alt   20
 		#emit ADD
 		#emit ADD.C        0xFFFFFFFC
-		#emit STOR.S.pri   start
+		#emit STOR.S.pri   count
 		#emit STOR.S.alt   s2
 		// Load the first value, adjusted for its new slot.
-		#emit LREF.S.pri   start
+		#emit LREF.S.pri   count
 		#emit ADD.C        4
-		#emit STOR.S.pri   count
-		while (start != s2)
+		// 24 (`src`) is clobbered from this point on.  But it saves a stack allocation.
+		#emit STOR.S.pri   24
+		while (count != s2)
 		{
 			// Move to the next slot.
-			start -= 4;
+			count -= 4;
 			// `start` is actually a pointer to an array header index.
 			// Load the offset here.  Swap slots through the registers.
-			#emit LREF.S.pri   start
-			#emit LOAD.S.alt   count
-			#emit SREF.S.alt   start
+			#emit LREF.S.pri   count
+			#emit LOAD.S.alt   24
+			#emit SREF.S.alt   count
 			#emit ADD.C        4
-			#emit STOR.S.pri   count
+			#emit STOR.S.pri   24
 		}
 		{}
 		// `count` now contains the value from slot 0, ready to be moved to the end of the array.
@@ -199,11 +199,13 @@ stock bool:Circular_Push_(s1, s2, ...)
 		#emit LOAD.S.alt   20
 		#emit ADD
 		#emit ADD.C        0xFFFFFFFC
-		#emit STOR.S.pri   start
+		#emit STOR.S.pri   count
 		#emit LOAD.S.pri   s1
-		#emit LOAD.S.alt   count
+		#emit LOAD.S.alt   24
 		#emit SUB.alt
-		#emit SREF.S.pri   start
+		#emit SREF.S.pri   count
+		#emit POP.pri
+		#emit RETN
 	}
 	else
 	{
@@ -245,6 +247,8 @@ stock bool:Circular_Push_(s1, s2, ...)
 			#emit SMUL
 			#emit ADD.C        4
 			#emit SREF.S.pri   count
+			#emit POP.pri
+			#emit RETN
 		}
 		else
 		{
@@ -256,6 +260,8 @@ stock bool:Circular_Push_(s1, s2, ...)
 			#emit LOAD.S.alt   count
 			#emit STOR.S.pri   count
 			#emit SREF.S.alt   count
+			#emit POP.pri
+			#emit RETN
 		}
 		{}
 	}
