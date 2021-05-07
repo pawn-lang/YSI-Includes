@@ -579,7 +579,7 @@ stock Debug_Print0(const str[], GLOBAL_TAG_TYPES:...) <ysi_debug : on>
 	#emit STOR.pri     tmp1
 	#emit POP.alt
 	#emit STOR.alt     tmp2
-	#emit SYSREQ.C     YSI_PrintF
+	#emit SYSREQ.C     printf
 	#emit PUSH         tmp2
 	#emit PUSH         tmp1
 	#pragma unused str

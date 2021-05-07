@@ -186,13 +186,13 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	if (YSI_g_sCallData)
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     W@
+		#emit SYSREQ.C     CallRemoteFunction
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	else
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     R@
+		#emit SYSREQ.C     CallLocalFunction
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
@@ -316,13 +316,13 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	if (YSI_g_sCallData)
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     W@
+		#emit SYSREQ.C     CallRemoteFunction
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	else
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     R@
+		#emit SYSREQ.C     CallLocalFunction
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
