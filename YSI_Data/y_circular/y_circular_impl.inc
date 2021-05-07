@@ -78,16 +78,16 @@ Optional plugins:
 //	
 //}
 
-stock bool:Circular_IsFull_(...)
+stock bool:Circular_IsFull_(s1, s2, ...)
 {
 	// Get the address of the final slot.
-	#emit LREF.S.alt   16
-	#emit LOAD.S.pri   12
+	#emit LOAD.S.alt   s1
+	#emit LOAD.S.pri   20
 	#emit ADD
 	#emit ADD.C        0xFFFFFFFC
 	// Load the data there.
-	#emit STOR.S.pri   20
-	#emit LREF.S.pri   20
+	#emit STOR.S.pri   s2
+	#emit LREF.S.pri   s2
 	// Test if it is `> 0`.  If so the circular buffer is full.
 	#emit ZERO.alt
 	#emit SGRTR
@@ -95,54 +95,50 @@ stock bool:Circular_IsFull_(...)
 	return false; //__COMPILER_NAKED
 }
 
-stock Circular_GetCount_(...)
+stock Circular_GetCount_(s1, s2, ...)
 {
-	new
-		full = 0;
 	// Get the address of the final slot.
-	#emit LREF.S.alt   16
-	#emit LOAD.S.pri   12
+	#emit LOAD.S.alt   s1
+	#emit LOAD.S.pri   20
 	#emit ADD
 	#emit ADD.C        0xFFFFFFFC
 	// Load the data there.
-	#emit STOR.S.pri   full
-	#emit LREF.S.pri   full
-	#emit STOR.S.pri   full
-	if (full > 0)
+	#emit STOR.S.pri   s2
+	#emit LREF.S.pri   s2
+	#emit STOR.S.pri   s2
+	if (s2 > 0)
 	{
 		// Full.  Return the size (adjusted to cells).
-		#emit LREF.S.pri   16
+		#emit LOAD.S.pri   s1
 		#emit SHR.C.pri    2
-		#emit POP.alt
 		#emit RETN
 	}
 	{}
 	// Subtract the offset from the original size.
-	#emit LREF.S.alt   16
-	#emit LOAD.S.pri   full
+	#emit LOAD.S.alt   s1
+	#emit LOAD.S.pri   s2
 	#emit ADD
 	#emit SHR.C.pri    2
-	#emit POP.alt
 	#emit RETN
 	return 0; //__COMPILER_NAKED
 }
 
-#define Circular_Rotate(%0) Circular_Rotate_((%0), sizeof (%0) * cellbytes, sizeof (%0[]))
-#define Circular_IsFull(%0) Circular_IsFull_((%0), sizeof (%0) * cellbytes, sizeof (%0[]))
-#define Circular_GetCount(%0) Circular_GetCount_((%0), sizeof (%0) * cellbytes, sizeof (%0[]))
-#define Circular_Push(%0,%1) Circular_Push_((%0), sizeof (%0) * cellbytes, sizeof (%0[]), (%1))
-#define Circular_Init(%0) Circular_Init_((%0), sizeof (%0) * cellbytes, sizeof (%0[]))
+#define Circular_Rotate(%0) Circular_Rotate_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
+#define Circular_IsFull(%0) Circular_IsFull_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
+#define Circular_GetCount(%0) Circular_GetCount_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
+#define Circular_Push(%0,%1) Circular_Push_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0), (%1))
+#define Circular_Init(%0) Circular_Init_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
 
-stock bool:Circular_Init_(...)
+stock bool:Circular_Init_(s1, s2, ...)
 {
-	#emit LREF.S.alt   16
-	#emit LOAD.S.pri   12
+	#emit LOAD.S.alt   s1
+	#emit LOAD.S.pri   20
 	#emit ADD
 	#emit ADD.C        0xFFFFFFFC
-	#emit STOR.S.pri   20
+	#emit STOR.S.pri   s2
 	#emit ZERO.pri
 	#emit SUB
-	#emit SREF.S.pri   20
+	#emit SREF.S.pri   s2
 }
 
 //native Circular_Memcpy(dest[], const source[], index = 0, numbytes) = memcpy;
@@ -154,13 +150,13 @@ stock bool:Circular_Init_(...)
 //	memcpy(dst, "", 0, 0, 0);
 //}
 
-stock bool:Circular_Push_(...)
+stock bool:Circular_Push_(s1, s2, ...)
 {
 	new
 		full = 0;
 	// Get the address of the final slot.
-	#emit LREF.S.alt   16
-	#emit LOAD.S.pri   12
+	#emit LOAD.S.alt   s1
+	#emit LOAD.S.pri   20
 	#emit ADD
 	#emit ADD.C        0xFFFFFFFC
 	// Load the data there.
@@ -172,10 +168,10 @@ stock bool:Circular_Push_(...)
 	{
 		// Just rotate.
 		// Simple copy to the first slot
-		#emit LREF.S.alt   12 // NOT 16
-		#emit LOAD.S.pri   12
+		#emit LREF.S.alt   20 // NOT s1
+		#emit LOAD.S.pri   20
 		#emit ADD
-		#emit LREF.S.alt   20
+		#emit LOAD.S.alt   s2
 		#emit PUSH.alt
 		#emit SHL.C.alt    2
 		#emit PUSH.alt
@@ -188,8 +184,8 @@ stock bool:Circular_Push_(...)
 		// And rotate the numbers.
 		new start = 0, end = 0;
 		// Get the start end end pointers.
-		#emit LREF.S.pri   16
-		#emit LOAD.S.alt   12
+		#emit LOAD.S.pri   s1
+		#emit LOAD.S.alt   20
 		#emit ADD
 		#emit ADD.C        0xFFFFFFFC
 		#emit STOR.S.pri   start
@@ -213,12 +209,12 @@ stock bool:Circular_Push_(...)
 		{}
 		// `full` now contains the value from slot 0, ready to be moved to the end of the array.
 		// We overwrote slot 0 earlier, when writing the new data, so NOW we move it to the end.
-		#emit LREF.S.pri   16
-		#emit LOAD.S.alt   12
+		#emit LOAD.S.pri   s1
+		#emit LOAD.S.alt   20
 		#emit ADD
 		#emit ADD.C        0xFFFFFFFC
 		#emit STOR.S.pri   start
-		#emit LREF.S.pri   16
+		#emit LOAD.S.pri   s1
 		#emit LOAD.S.alt   full
 		#emit SUB.alt
 		#emit SREF.S.pri   start
@@ -226,19 +222,19 @@ stock bool:Circular_Push_(...)
 	else
 	{
 		// Just append.  `-full` is the slot to write to.
-		#emit LREF.S.alt   16
+		#emit LOAD.S.alt   s1
 		#emit LOAD.S.pri   full
 		#emit ADD
 		// `pri` is now the offset of the slot to write to in the header.
-		#emit LREF.S.alt   20
+		#emit LOAD.S.alt   s2
 		#emit SMUL
 		// `pri` is now an offset in the main data.
-		#emit LOAD.S.alt   12
+		#emit LOAD.S.alt   20
 		#emit ADD
-		#emit LREF.S.alt   16
+		#emit LOAD.S.alt   s1
 		#emit ADD
 		// `pri` is now the full address of the destination.  Copy it.
-		#emit LREF.S.alt   20
+		#emit LOAD.S.alt   s2
 		#emit PUSH.alt
 		#emit SHL.C.alt    2
 		#emit PUSH.alt
@@ -253,13 +249,13 @@ stock bool:Circular_Push_(...)
 		if (full == 0)
 		{
 			// The array is full.  Reset the final slot pointer.
-			#emit LREF.S.pri   16
-			#emit LOAD.S.alt   12
+			#emit LOAD.S.pri   s1
+			#emit LOAD.S.alt   20
 			#emit ADD.C        0xFFFFFFFC
 			#emit XCHG
 			#emit ADD
 			#emit STOR.S.pri   full
-			#emit LREF.S.pri   20
+			#emit LOAD.S.pri   s2
 			#emit SMUL
 			#emit ADD.C        4
 			#emit SREF.S.pri   full
@@ -267,8 +263,8 @@ stock bool:Circular_Push_(...)
 		else
 		{
 			// Store the new count in the final slot.
-			#emit LREF.S.alt   16
-			#emit LOAD.S.pri   12
+			#emit LOAD.S.alt   s1
+			#emit LOAD.S.pri   20
 			#emit ADD
 			#emit ADD.C        0xFFFFFFFC
 			#emit LOAD.S.alt   full
