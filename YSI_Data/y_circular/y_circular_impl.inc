@@ -87,7 +87,11 @@ stock bool:Circular_IsFull_(s1, s2, ...)
 	#emit ZERO.alt
 	#emit SGRTR
 	#emit RETN
-	return false; //__COMPILER_NAKED
+#if __COMPILER_MODIFIED
+	#pragma naked
+#else
+	return false;
+#endif
 }
 
 stock Circular_GetCount_(s1, s2, ...)
@@ -115,7 +119,7 @@ stock Circular_GetCount_(s1, s2, ...)
 	#emit ADD
 	#emit SHR.C.pri    2
 	#emit RETN
-	return 0; //__COMPILER_NAKED
+	__COMPILER_NAKED();
 }
 
 #define Circular_Rotate(%0) Circular_Rotate_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
