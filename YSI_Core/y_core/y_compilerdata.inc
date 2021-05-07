@@ -235,10 +235,7 @@ static stock const
 	#define __nameof(%0) (__CMPREMCLN:tagof(%0),#%0)
 #endif
 
-//const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
-#define __COMPILER_DEFAULT(%0) (__CompilerDefault:(%0)__CompilerRemove:0)
-#define __CompilerDefault:()__CompilerRemove: __CompilerDefault:
-#define __CompilerRemove:0
+const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
 #if YSI_KEYWORD(default)
 	// Return a version of `undefined` for any tag.
@@ -246,15 +243,15 @@ static stock const
 	//   new                Float:a = default(); // 0.0
 	//   new             Language:b = default(); // -1
 	//   new PR_PacketReliability:a = default(); // 6
-	#define default(%0) __COMPILER_DEFAULT(%0)
+	#define default() __COMPILER_DEFAULT
 #endif
-#define DEFAULT__ __COMPILER_DEFAULT()
+#define DEFAULT__ __COMPILER_DEFAULT
 
 #if __COMPILER_MODIFIED
 	#if __COMPILER_PRAGMA
-		#define __COMPILER_NAKED(%0) __pragma("naked")
+		#define __COMPILER_NAKED() __pragma("naked")
 	#else
-		#define __COMPILER_NAKED(%0) return __COMPILER_DEFAULT(%0)
+		#define __COMPILER_NAKED() return __COMPILER_DEFAULT
 	#endif
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
@@ -403,7 +400,7 @@ static stock const
 	// Disable the warning for `const &var`.
 	#define __COMPILER_CONST_REF (1)
 #else
-	#define __COMPILER_NAKED(%0) return __COMPILER_DEFAULT(%0)
+	#define __COMPILER_NAKED() return __COMPILER_DEFAULT
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
