@@ -73,11 +73,6 @@ Optional plugins:
 // An array of `[1][1]` would still have a second dimension offset of `4`, never `0`.  The offset to
 // the data in the second dimension is relative to the current index.
 
-//static stock Circular_Rotate(...)
-//{
-//	
-//}
-
 stock bool:Circular_IsFull_(s1, s2, ...)
 {
 	// Get the address of the final slot.
@@ -141,30 +136,21 @@ stock bool:Circular_Init_(s1, s2, ...)
 	#emit SREF.S.pri   s2
 }
 
-//native Circular_Memcpy(dest[], const source[], index = 0, numbytes) = memcpy;
-//
-//public _@_y_circular_@_();
-//public _@_y_circular_@_()
-//{
-//	new dst[2];
-//	memcpy(dst, "", 0, 0, 0);
-//}
-
 stock bool:Circular_Push_(s1, s2, ...)
 {
 	new
-		full = 0;
+		count = 0;
 	// Get the address of the final slot.
 	#emit LOAD.S.alt   s1
 	#emit LOAD.S.pri   20
 	#emit ADD
 	#emit ADD.C        0xFFFFFFFC
 	// Load the data there.
-	#emit STOR.S.pri   full
-	#emit LREF.S.pri   full
-	#emit STOR.S.pri   full
+	#emit STOR.S.pri   count
+	#emit LREF.S.pri   count
+	#emit STOR.S.pri   count
 	// Test if it is `> 0`.  If so the circular buffer is full.
-	if (full > 0)
+	if (count > 0)
 	{
 		// Just rotate.
 		// Simple copy to the first slot
@@ -182,32 +168,32 @@ stock bool:Circular_Push_(s1, s2, ...)
 		#emit SYSREQ.C     memcpy
 		#emit STACK        24
 		// And rotate the numbers.
-		new start = 0, end = 0;
+		new start = 0;
 		// Get the start end end pointers.
 		#emit LOAD.S.pri   s1
 		#emit LOAD.S.alt   20
 		#emit ADD
 		#emit ADD.C        0xFFFFFFFC
 		#emit STOR.S.pri   start
-		#emit STOR.S.alt   end
+		#emit STOR.S.alt   s2
 		// Load the first value, adjusted for its new slot.
 		#emit LREF.S.pri   start
 		#emit ADD.C        4
-		#emit STOR.S.pri   full
-		while (start != end)
+		#emit STOR.S.pri   count
+		while (start != s2)
 		{
 			// Move to the next slot.
 			start -= 4;
 			// `start` is actually a pointer to an array header index.
 			// Load the offset here.  Swap slots through the registers.
 			#emit LREF.S.pri   start
-			#emit LOAD.S.alt   full
+			#emit LOAD.S.alt   count
 			#emit SREF.S.alt   start
 			#emit ADD.C        4
-			#emit STOR.S.pri   full
+			#emit STOR.S.pri   count
 		}
 		{}
-		// `full` now contains the value from slot 0, ready to be moved to the end of the array.
+		// `count` now contains the value from slot 0, ready to be moved to the end of the array.
 		// We overwrote slot 0 earlier, when writing the new data, so NOW we move it to the end.
 		#emit LOAD.S.pri   s1
 		#emit LOAD.S.alt   20
@@ -215,15 +201,15 @@ stock bool:Circular_Push_(s1, s2, ...)
 		#emit ADD.C        0xFFFFFFFC
 		#emit STOR.S.pri   start
 		#emit LOAD.S.pri   s1
-		#emit LOAD.S.alt   full
+		#emit LOAD.S.alt   count
 		#emit SUB.alt
 		#emit SREF.S.pri   start
 	}
 	else
 	{
-		// Just append.  `-full` is the slot to write to.
+		// Just append.  `-count` is the slot to write to.
 		#emit LOAD.S.alt   s1
-		#emit LOAD.S.pri   full
+		#emit LOAD.S.pri   count
 		#emit ADD
 		// `pri` is now the offset of the slot to write to in the header.
 		#emit LOAD.S.alt   s2
@@ -245,8 +231,8 @@ stock bool:Circular_Push_(s1, s2, ...)
 		#emit SYSREQ.C     memcpy
 		#emit STACK        24
 		// Adjust the final count.
-		full += 4;
-		if (full == 0)
+		count += 4;
+		if (count == 0)
 		{
 			// The array is full.  Reset the final slot pointer.
 			#emit LOAD.S.pri   s1
@@ -254,11 +240,11 @@ stock bool:Circular_Push_(s1, s2, ...)
 			#emit ADD.C        0xFFFFFFFC
 			#emit XCHG
 			#emit ADD
-			#emit STOR.S.pri   full
+			#emit STOR.S.pri   count
 			#emit LOAD.S.pri   s2
 			#emit SMUL
 			#emit ADD.C        4
-			#emit SREF.S.pri   full
+			#emit SREF.S.pri   count
 		}
 		else
 		{
@@ -267,9 +253,9 @@ stock bool:Circular_Push_(s1, s2, ...)
 			#emit LOAD.S.pri   20
 			#emit ADD
 			#emit ADD.C        0xFFFFFFFC
-			#emit LOAD.S.alt   full
-			#emit STOR.S.pri   full
-			#emit SREF.S.alt   full
+			#emit LOAD.S.alt   count
+			#emit STOR.S.pri   count
+			#emit SREF.S.alt   count
 		}
 		{}
 	}
