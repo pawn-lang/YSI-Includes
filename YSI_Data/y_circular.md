@@ -1,6 +1,6 @@
 # y_circular
 
-Binary search tree code.
+Circular (rotating) array library.
 
 ## YSI
 

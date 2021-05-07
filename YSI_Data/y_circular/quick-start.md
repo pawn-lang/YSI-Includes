@@ -1,137 +1,53 @@
 # Quick Start
 
-Here we will look at how y_iterate (aka "foreach") works. To begin with,
-lets review declaring and using a standard simple iterator. This will be the
-example used throughout this tutorial:
+A circular buffer is an array you can keep adding data to the end of, and once it reaches its
+capacity the earliest data added will be removed.  For example:
 
 ```pawn
-// Declare the iterator:
-new
-	Iterator:MyIter<7>;
-// Add any value between 0 and 6 to the iterator:
-Iter_Add(MyIter, 0);
-Iter_Add(MyIter, 4);
-Iter_Add(MyIter, 6);
-// Use the iterator:
-foreach (new i : MyIter)
+new buffer[4][1];
+Circular_Init(buffer);
+// Count: 0, Contents: - - - -
+Circular_Push(buffer, 1);
+// Count: 1, Contents: 1 - - -
+Circular_Push(buffer, 2);
+// Count: 2, Contents: 1 2 - -
+Circular_Push(buffer, 3);
+// Count: 3, Contents: 1 2 3 -
+Circular_Push(buffer, 4);
+// Count: 4, Contents: 1 2 3 4
+Circular_Push(buffer, 5);
+// Count: 4, Contents: 2 3 4 5
+Circular_Push(buffer, 6);
+// Count: 4, Contents: 3 4 5 6
+Circular_Push(buffer, 7);
+// Count: 4, Contents: 4 5 6 7
+```
+
+Because the buffer is defined as `[4]` it can only hold `4` items.  Once a fifth item is added the
+first item is lost and all the other data shifts up one space.  And, because a circular buffer is
+just a normal array, all normal array functions and accesses work normally.
+
+This library is very simple.  There are two main functions and several auxiliary functions.  The
+main functions are `Circular_Init` to initialise a circular buffer, and `Circular_Push` to add data
+(both seen above).  The auxiliary functions are `Circular_Full`, to check if a circular buffer has
+reached its capacity yet; `Circular_Count`, which does almost the same thing but returns a number
+not a boolean; `Circular_Capacity`, which returns the maximum size; and `Circular_Rotate`, which
+updates the pointers without copying data.
+
+* `Circular_Full` is basically:
+
+```pawn
+bool:Circular_Full(buffer)
 {
-	printf("%d", i);
+	return Circular_Count(buffer) == Circular_Capacity(buffer);
 }
 ```
 
-Output:
+* `Circular_Capacity` is basically (exactly) `sizeof (buffer)`.
 
-```
-0
-4
-6
-```
+* `Circular_Count` is the only slightly interesting one, but once the buffer is full always returns
+the same value (`Count:` in the example above).
 
-You can add any value less than the iterator limit to the iterator, so for this
-example "7" cannot be added because it is not LESS THAN 7. We also can't add
-negative numbers, so the following lines will not work (they will compile, but
-do nothing):
+* `Circular_Rotate` is like `Circular_Push` in that it rotates data and returns a new slot, but
+doesn't clobber any old data.  You can use this to return a new slot, or cycle existing data.
 
-```pawn
-Iter_Add(MyIter, -11);
-Iter_Add(MyIter, 7);
-Iter_Add(MyIter, 100);
-```
-
-## Standard Iterators
-
-The most common use of y_iterate is just using the in-built iterators, ones already defined by the library.  The most common of these is `Player`:
-
-```pawn
-foreach (new i : Player)
-{
-	SendClientMessage(i, COLOR_WELCOME, "Hi");
-}
-```
-
-That will loop over all connected players (so no need for `IsPlayerConnected`) and send them all a message.  It is `Player` not `Players` because of how the code is read - the sentence in English would be `for each player, do this`.
-	
-## Multi-Dimensional Iterators
-
-From the original release topic it should be known that you can have arrays of
-iterators (multi-dimensional, or MD, iterators):
-
-```pawn
-new
-	Iterator:OwnedVehicle[MAX_PLAYERS]<MAX_VEHICLES>;
-Iter_Init(OwnedVehicle);
-// Add vehicles to players here...
-Iter_Add(OwnedVehicle[playerid], 42);
-Iter_Add(OwnedVehicle[playerid], 43);
-Iter_Add(OwnedVehicle[playerid], 44);
-// Other code...
-foreach (new vehicleid : OwnedVehicle[playerid])
-{
-	printf("Player %d owns vehicle %d", playerid, vehicleid).
-}
-```
-
-Originally this used "IteratorArray:" instead of "Iterator:", but that has since
-been changed so you can always use either (generally using just "Iterator:").
-As a result, the only important difference is the use of "Iter_Init", the
-reasons for which are addressed later. Everywhere you would normally use an
-iterator you can instead use a selected dimension of a multi-dimensional
-iterator (in exactly the same way as you can normally use a variable or array
-slot in the same places).
-
-As a side note. Currently everything but "Iter_Init" supports 3-dimensional
-iterator arrays - this function must be called for all multi-dimensional
-iterators, but can't be easily if there are more than two dimensions. You can
-do:
-
-```pawn
-new
-	Iterator:Iter2[5]<10>;
-Iter_Init(Iter2);
-Iter_Add(Iter2[3], 7);
-```
-
-You can also do:
-
-```pawn
-new
-	Iterator:Iter3[5][8]<10>;
-//Iter_Init(Iter3);
-Iter_Add(Iter3[3][6], 7);
-```
-
-But you can't currently call "Iter_Init" directly on 3d iterator arrays, despite
-the fact that you need to. Instead, you have to do:
-
-```pawn
-new
-	Iterator:Iter3[5][8]<10>;
-for (new i = 0; i != Iter_InternalSize(Iter3); ++i)
-{
-	Iter_Init(Iter3[i]);
-}
-Iter_Add(Iter3[3][6], 7);
-```
-
-A possibly clearer way is:
-
-```pawn
-#define SIZE 5
-new
-	Iterator:Iter3[SIZE][8]<10>;
-for (new i = 0; i != SIZE; ++i)
-{
-	Iter_Init(Iter3[i]);
-}
-Iter_Add(Iter3[3][6], 7);
-```
-
-Note that you can only do even this as of very recently. If you have a slightly
-older version the code becomes:
-
-```pawn
-for (new i = 0; i != Iter_InternalSize(Iter3); ++i)
-{
-	Iter_InitInternal(Iter_InternalArray(Iter3[i]), Iter_InternalSize(Iter3[]), Iter_InternalSize(Iter3[][]) - 1);
-}
-```

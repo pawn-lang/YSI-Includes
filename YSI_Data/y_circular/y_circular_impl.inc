@@ -119,10 +119,11 @@ stock Circular_GetCount_(s1, s2, ...)
 }
 
 #define Circular_Rotate(%0) Circular_Rotate_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
-#define Circular_IsFull(%0) Circular_IsFull_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
-#define Circular_GetCount(%0) Circular_GetCount_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
+#define Circular_Full(%0) Circular_IsFull_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
+#define Circular_Count(%0) Circular_GetCount_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
 #define Circular_Push(%0,%1) Circular_Push_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0), (%1))
 #define Circular_Init(%0) Circular_Init_(sizeof (%0) * cellbytes, sizeof (%0[]), (%0))
+#define Circular_Capacity(%0) (sizeof (%0))
 
 stock void:Circular_Init_(s1, s2, ...)
 {

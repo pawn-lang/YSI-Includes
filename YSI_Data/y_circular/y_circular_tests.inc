@@ -160,7 +160,7 @@ Test:Circular_IsFull1()
 {
 	new arr[5][5];
 	Circular_Init(arr);
-	ASSERT_ZE(Circular_IsFull(arr));
+	ASSERT_ZE(Circular_Full(arr));
 }
 
 Test:Circular_IsFull2()
@@ -173,14 +173,14 @@ Test:Circular_IsFull2()
 	Circular_Push(arr, data);
 	Circular_Push(arr, data);
 	Circular_Push(arr, data);
-	ASSERT_NZ(Circular_IsFull(arr));
+	ASSERT_NZ(Circular_Full(arr));
 }
 
 Test:Circular_GetCount0()
 {
 	new arr[5][5];
 	Circular_Init(arr);
-	ASSERT_EQ(Circular_GetCount(arr), 0);
+	ASSERT_EQ(Circular_Count(arr), 0);
 }
 
 Test:Circular_GetCount1()
@@ -189,7 +189,7 @@ Test:Circular_GetCount1()
 	new data[5];
 	Circular_Init(arr);
 	Circular_Push(arr, data);
-	ASSERT_EQ(Circular_GetCount(arr), 1);
+	ASSERT_EQ(Circular_Count(arr), 1);
 }
 
 Test:Circular_GetCount4()
@@ -201,7 +201,7 @@ Test:Circular_GetCount4()
 	Circular_Push(arr, data);
 	Circular_Push(arr, data);
 	Circular_Push(arr, data);
-	ASSERT_EQ(Circular_GetCount(arr), 4);
+	ASSERT_EQ(Circular_Count(arr), 4);
 }
 
 Test:Circular_GetCount5()
@@ -214,7 +214,7 @@ Test:Circular_GetCount5()
 	Circular_Push(arr, data);
 	Circular_Push(arr, data);
 	Circular_Push(arr, data);
-	ASSERT_EQ(Circular_GetCount(arr), 5);
+	ASSERT_EQ(Circular_Count(arr), 5);
 }
 
 Test:Circular_GetCount6()
@@ -228,7 +228,7 @@ Test:Circular_GetCount6()
 	Circular_Push(arr, data);
 	Circular_Push(arr, data);
 	Circular_Push(arr, data);
-	ASSERT_EQ(Circular_GetCount(arr), 5);
+	ASSERT_EQ(Circular_Count(arr), 5);
 }
 
 Test:Circular_PushFull()
@@ -243,67 +243,67 @@ Test:Circular_PushFull()
 	ASSERT_EQ(GetHeaderValue(arr, 4),  4 + 5 * 4 * 4);
 	Circular_Init(arr);
 	ASSERT_EQ(GetHeaderValue(arr, 4), -20);
-	ASSERT_ZE(Circular_IsFull(arr));
-	ASSERT_EQ(Circular_GetCount(arr), 0);
+	ASSERT_ZE(Circular_Full(arr));
+	ASSERT_EQ(Circular_Count(arr), 0);
 	Circular_Push(arr, data);
 	ASSERT_EQ(GetHeaderValue(arr, 4), -16);
-	ASSERT_ZE(Circular_IsFull(arr));
-	ASSERT_EQ(Circular_GetCount(arr), 1);
+	ASSERT_ZE(Circular_Full(arr));
+	ASSERT_EQ(Circular_Count(arr), 1);
 	Circular_Push(arr, data);
 	ASSERT_EQ(GetHeaderValue(arr, 4), -12);
-	ASSERT_ZE(Circular_IsFull(arr));
-	ASSERT_EQ(Circular_GetCount(arr), 2);
+	ASSERT_ZE(Circular_Full(arr));
+	ASSERT_EQ(Circular_Count(arr), 2);
 	Circular_Push(arr, data);
 	ASSERT_EQ(GetHeaderValue(arr, 4), -8);
-	ASSERT_ZE(Circular_IsFull(arr));
-	ASSERT_EQ(Circular_GetCount(arr), 3);
+	ASSERT_ZE(Circular_Full(arr));
+	ASSERT_EQ(Circular_Count(arr), 3);
 	Circular_Push(arr, data);
 	ASSERT_EQ(GetHeaderValue(arr, 4), -4);
-	ASSERT_ZE(Circular_IsFull(arr));
-	ASSERT_EQ(Circular_GetCount(arr), 4);
+	ASSERT_ZE(Circular_Full(arr));
+	ASSERT_EQ(Circular_Count(arr), 4);
 	Circular_Push(arr, data);
 	ASSERT_EQ(GetHeaderValue(arr, 4),  4 + 5 * 4 * 4);
 	Circular_Push(arr, data);
-	ASSERT_EQ(Circular_GetCount(arr), 5);
+	ASSERT_EQ(Circular_Count(arr), 5);
 	ASSERT_EQ(GetHeaderValue(arr, 0), 20 + 5 * 4 * 1);
 	ASSERT_EQ(GetHeaderValue(arr, 1), 16 + 5 * 4 * 2);
 	ASSERT_EQ(GetHeaderValue(arr, 2), 12 + 5 * 4 * 3);
 	ASSERT_EQ(GetHeaderValue(arr, 3),  8 + 5 * 4 * 4);
 	ASSERT_EQ(GetHeaderValue(arr, 4),  4 + 5 * 4 * 0);
-	ASSERT_NZ(Circular_IsFull(arr));
-	ASSERT_EQ(Circular_GetCount(arr), 5);
+	ASSERT_NZ(Circular_Full(arr));
+	ASSERT_EQ(Circular_Count(arr), 5);
 	Circular_Push(arr, data);
 	ASSERT_EQ(GetHeaderValue(arr, 0), 20 + 5 * 4 * 2);
 	ASSERT_EQ(GetHeaderValue(arr, 1), 16 + 5 * 4 * 3);
 	ASSERT_EQ(GetHeaderValue(arr, 2), 12 + 5 * 4 * 4);
 	ASSERT_EQ(GetHeaderValue(arr, 3),  8 + 5 * 4 * 0);
 	ASSERT_EQ(GetHeaderValue(arr, 4),  4 + 5 * 4 * 1);
-	ASSERT_NZ(Circular_IsFull(arr));
-	ASSERT_EQ(Circular_GetCount(arr), 5);
+	ASSERT_NZ(Circular_Full(arr));
+	ASSERT_EQ(Circular_Count(arr), 5);
 	Circular_Push(arr, data);
 	ASSERT_EQ(GetHeaderValue(arr, 0), 20 + 5 * 4 * 3);
 	ASSERT_EQ(GetHeaderValue(arr, 1), 16 + 5 * 4 * 4);
 	ASSERT_EQ(GetHeaderValue(arr, 2), 12 + 5 * 4 * 0);
 	ASSERT_EQ(GetHeaderValue(arr, 3),  8 + 5 * 4 * 1);
 	ASSERT_EQ(GetHeaderValue(arr, 4),  4 + 5 * 4 * 2);
-	ASSERT_NZ(Circular_IsFull(arr));
-	ASSERT_EQ(Circular_GetCount(arr), 5);
+	ASSERT_NZ(Circular_Full(arr));
+	ASSERT_EQ(Circular_Count(arr), 5);
 	Circular_Push(arr, data);
 	ASSERT_EQ(GetHeaderValue(arr, 0), 20 + 5 * 4 * 4);
 	ASSERT_EQ(GetHeaderValue(arr, 1), 16 + 5 * 4 * 0);
 	ASSERT_EQ(GetHeaderValue(arr, 2), 12 + 5 * 4 * 1);
 	ASSERT_EQ(GetHeaderValue(arr, 3),  8 + 5 * 4 * 2);
 	ASSERT_EQ(GetHeaderValue(arr, 4),  4 + 5 * 4 * 3);
-	ASSERT_NZ(Circular_IsFull(arr));
-	ASSERT_EQ(Circular_GetCount(arr), 5);
+	ASSERT_NZ(Circular_Full(arr));
+	ASSERT_EQ(Circular_Count(arr), 5);
 	Circular_Push(arr, data);
 	ASSERT_EQ(GetHeaderValue(arr, 0), 20 + 5 * 4 * 0);
 	ASSERT_EQ(GetHeaderValue(arr, 1), 16 + 5 * 4 * 1);
 	ASSERT_EQ(GetHeaderValue(arr, 2), 12 + 5 * 4 * 2);
 	ASSERT_EQ(GetHeaderValue(arr, 3),  8 + 5 * 4 * 3);
 	ASSERT_EQ(GetHeaderValue(arr, 4),  4 + 5 * 4 * 4);
-	ASSERT_NZ(Circular_IsFull(arr));
-	ASSERT_EQ(Circular_GetCount(arr), 5);
+	ASSERT_NZ(Circular_Full(arr));
+	ASSERT_EQ(Circular_Count(arr), 5);
 }
 
 Test:Circular_Contents()
