@@ -1,0 +1,282 @@
+/*
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 the "License"; you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI framework.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright C 2011
+	the Initial Developer. All Rights Reserved.
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
+// An array of `[1][1]` would still have a second dimension offset of `4`, never `0`.  The offset to
+// the data in the second dimension is relative to the current index.
+
+//static stock Circular_Rotate(...)
+//{
+//	
+//}
+
+stock bool:Circular_IsFull_(...)
+{
+	// Get the address of the final slot.
+	#emit LREF.S.alt   16
+	#emit LOAD.S.pri   12
+	#emit ADD
+	#emit ADD.C        0xFFFFFFFC
+	// Load the data there.
+	#emit STOR.S.pri   20
+	#emit LREF.S.pri   20
+	// Test if it is `> 0`.  If so the circular buffer is full.
+	#emit ZERO.alt
+	#emit SGRTR
+	#emit RETN
+	return false; //__COMPILER_NAKED
+}
+
+stock Circular_GetCount_(...)
+{
+	new
+		full = 0;
+	// Get the address of the final slot.
+	#emit LREF.S.alt   16
+	#emit LOAD.S.pri   12
+	#emit ADD
+	#emit ADD.C        0xFFFFFFFC
+	// Load the data there.
+	#emit STOR.S.pri   full
+	#emit LREF.S.pri   full
+	#emit STOR.S.pri   full
+	if (full > 0)
+	{
+		// Full.  Return the size (adjusted to cells).
+		#emit LREF.S.pri   16
+		#emit SHR.C.pri    2
+		#emit POP.alt
+		#emit RETN
+	}
+	{}
+	// Subtract the offset from the original size.
+	#emit LREF.S.alt   16
+	#emit LOAD.S.pri   full
+	#emit ADD
+	#emit SHR.C.pri    2
+	#emit POP.alt
+	#emit RETN
+	return 0; //__COMPILER_NAKED
+}
+
+#define Circular_Rotate(%0) Circular_Rotate_((%0), sizeof (%0) * cellbytes, sizeof (%0[]))
+#define Circular_IsFull(%0) Circular_IsFull_((%0), sizeof (%0) * cellbytes, sizeof (%0[]))
+#define Circular_GetCount(%0) Circular_GetCount_((%0), sizeof (%0) * cellbytes, sizeof (%0[]))
+#define Circular_Push(%0,%1) Circular_Push_((%0), sizeof (%0) * cellbytes, sizeof (%0[]), (%1))
+#define Circular_Init(%0) Circular_Init_((%0), sizeof (%0) * cellbytes, sizeof (%0[]))
+
+stock bool:Circular_Init_(...)
+{
+	#emit LREF.S.alt   16
+	#emit LOAD.S.pri   12
+	#emit ADD
+	#emit ADD.C        0xFFFFFFFC
+	#emit STOR.S.pri   20
+	#emit ZERO.pri
+	#emit SUB
+	#emit SREF.S.pri   20
+}
+
+//native Circular_Memcpy(dest[], const source[], index = 0, numbytes) = memcpy;
+//
+//public _@_y_circular_@_();
+//public _@_y_circular_@_()
+//{
+//	new dst[2];
+//	memcpy(dst, "", 0, 0, 0);
+//}
+
+stock bool:Circular_Push_(...)
+{
+	new
+		full = 0;
+	// Get the address of the final slot.
+	#emit LREF.S.alt   16
+	#emit LOAD.S.pri   12
+	#emit ADD
+	#emit ADD.C        0xFFFFFFFC
+	// Load the data there.
+	#emit STOR.S.pri   full
+	#emit LREF.S.pri   full
+	#emit STOR.S.pri   full
+	// Test if it is `> 0`.  If so the circular buffer is full.
+	if (full > 0)
+	{
+		// Just rotate.
+		// Simple copy to the first slot
+		#emit LREF.S.alt   12 // NOT 16
+		#emit LOAD.S.pri   12
+		#emit ADD
+		#emit LREF.S.alt   20
+		#emit PUSH.alt
+		#emit SHL.C.alt    2
+		#emit PUSH.alt
+		#emit PUSH.C       0
+		#emit PUSH.S       24
+		#emit PUSH.pri
+		#emit PUSH.C       20
+		#emit SYSREQ.C     memcpy
+		#emit STACK        24
+		// And rotate the numbers.
+		new start = 0, end = 0;
+		// Get the start end end pointers.
+		#emit LREF.S.pri   16
+		#emit LOAD.S.alt   12
+		#emit ADD
+		#emit ADD.C        0xFFFFFFFC
+		#emit STOR.S.pri   start
+		#emit STOR.S.alt   end
+		// Load the first value, adjusted for its new slot.
+		#emit LREF.S.pri   start
+		#emit ADD.C        4
+		#emit STOR.S.pri   full
+		while (start != end)
+		{
+			// Move to the next slot.
+			start -= 4;
+			// `start` is actually a pointer to an array header index.
+			// Load the offset here.  Swap slots through the registers.
+			#emit LREF.S.pri   start
+			#emit LOAD.S.alt   full
+			#emit SREF.S.alt   start
+			#emit ADD.C        4
+			#emit STOR.S.pri   full
+		}
+		{}
+		// `full` now contains the value from slot 0, ready to be moved to the end of the array.
+		// We overwrote slot 0 earlier, when writing the new data, so NOW we move it to the end.
+		#emit LREF.S.pri   16
+		#emit LOAD.S.alt   12
+		#emit ADD
+		#emit ADD.C        0xFFFFFFFC
+		#emit STOR.S.pri   start
+		#emit LREF.S.pri   16
+		#emit LOAD.S.alt   full
+		#emit SUB.alt
+		#emit SREF.S.pri   start
+	}
+	else
+	{
+		// Just append.  `-full` is the slot to write to.
+		#emit LREF.S.alt   16
+		#emit LOAD.S.pri   full
+		#emit ADD
+		// `pri` is now the offset of the slot to write to in the header.
+		#emit LREF.S.alt   20
+		#emit SMUL
+		// `pri` is now an offset in the main data.
+		#emit LOAD.S.alt   12
+		#emit ADD
+		#emit LREF.S.alt   16
+		#emit ADD
+		// `pri` is now the full address of the destination.  Copy it.
+		#emit LREF.S.alt   20
+		#emit PUSH.alt
+		#emit SHL.C.alt    2
+		#emit PUSH.alt
+		#emit PUSH.C       0
+		#emit PUSH.S       24
+		#emit PUSH.pri
+		#emit PUSH.C       20
+		#emit SYSREQ.C     memcpy
+		#emit STACK        24
+		// Adjust the final count.
+		full += 4;
+		if (full == 0)
+		{
+			// The array is full.  Reset the final slot pointer.
+			#emit LREF.S.pri   16
+			#emit LOAD.S.alt   12
+			#emit ADD.C        0xFFFFFFFC
+			#emit XCHG
+			#emit ADD
+			#emit STOR.S.pri   full
+			#emit LREF.S.pri   20
+			#emit SMUL
+			#emit ADD.C        4
+			#emit SREF.S.pri   full
+		}
+		else
+		{
+			// Store the new count in the final slot.
+			#emit LREF.S.alt   16
+			#emit LOAD.S.pri   12
+			#emit ADD
+			#emit ADD.C        0xFFFFFFFC
+			#emit LOAD.S.alt   full
+			#emit STOR.S.pri   full
+			#emit SREF.S.alt   full
+		}
+		{}
+	}
+	{}
+}
+
