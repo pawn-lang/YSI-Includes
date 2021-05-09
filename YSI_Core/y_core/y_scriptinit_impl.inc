@@ -274,6 +274,10 @@ stock Server_GetLongCallDefault()
 	return 0;
 }
 
+#if !defined YSI_YES_MODE_CACHE
+	#define YSI_NO_MODE_CACHE
+#endif
+
 #if !defined YSI_NO_MODE_CACHE
 	#if !defined DumpAMX_Included_ && !defined YSI_YES_MODE_CACHE && __COMPILER_2ND_PASS
 		#define YSI_NO_MODE_CACHE
@@ -298,10 +302,6 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			YSI_Print(" ========================================== ");
 			YSI_Print(" |                                        | ");
 			YSI_Print(" |  File loaded from YSI code cache.      | ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" | You can disable this message with:     | ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" |   #define YSI_NO_CACHE_MESSAGE         | ");
 			YSI_Print(" |                                        | ");
 			YSI_Print(" ========================================== ");
 			YSI_Print(" ");
@@ -357,10 +357,6 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			YSI_Print(" |                                        | ");
 			YSI_Print(" |             Please wait...             | ");
 			YSI_Print(" |                                        | ");
-			YSI_Print(" | You can disable this message with:     | ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" |   #define YSI_NO_OPTIMISATION_MESSAGE  | ");
-			YSI_Print(" |                                        | ");
 			if (!jit)
 			{
 				YSI_Print(" ========================================== ");
@@ -407,18 +403,6 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					YSI_Print(" | \"server.cfg\", the following works:     | ");
 					YSI_Print(" |                                        | ");
 					YSI_Print(" |   gamemode0 ../scriptfiles/YSI_CACHE 1 | ");
-					YSI_Print(" |                                        | ");
-					YSI_Print(" | You can disable this message with:     | ");
-					YSI_Print(" |                                        | ");
-					YSI_Print(" |   #define YSI_NO_CACHE_MESSAGE         | ");
-					YSI_Print(" |                                        | ");
-					YSI_Print(" | You can disable this caching with:     | ");
-					YSI_Print(" |                                        | ");
-					YSI_Print(" |   #define YSI_NO_MODE_CACHE            | ");
-					YSI_Print(" |                                        | ");
-					YSI_Print(" | You can explicitly enable it with:     | ");
-					YSI_Print(" |                                        | ");
-					YSI_Print(" |   #define YSI_YES_MODE_CACHE           | ");
 					YSI_Print(" |                                        | ");
 					YSI_Print(" ========================================== ");
 					YSI_Print(" ");
