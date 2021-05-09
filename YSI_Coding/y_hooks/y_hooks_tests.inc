@@ -909,6 +909,7 @@ hook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
 
 TEST__ y_hooks_State1()
 {
+	g_y_hooksVar = 0;
 	state y_hooks_state : y_hooks_state_1;
 	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
 	ASSERT_EQ(g_y_hooksVar, 1000);

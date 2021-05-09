@@ -94,7 +94,11 @@ CHAIN_HOOK(CGen)
 #define CHAIN_ORDER CHAIN_NEXT(CGen)
 
 #if !defined CGEN_MEMORY
-	#define CGEN_MEMORY (10000)
+	#if defined YSI_TESTS
+		#define CGEN_MEMORY (20000)
+	#else
+		#define CGEN_MEMORY (10000)
+	#endif
 #endif
 
 static stock
@@ -232,10 +236,12 @@ public CGen_OOM(ctx[AsmContext])
 		// has (on average) half a parameter.
 		excess += 6;
 		P:F("Out of code generation (CGen) space.  The current value of `CGEN_MEMORY` is `%d`, please recompile with a higher value (approximately %d).", CGEN_MEMORY, CGEN_MEMORY + excess);
+		P:I("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
 	}
 	case ASM_ERROR_LABEL_OVERFLOW:
 	{
 		P:F("Out of label space.  The current value of `ASM_MAX_LABELS` is `%d`, please recompile with a higher value.", ASM_MAX_LABELS);
+		P:I("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
 	}
 	case ASM_ERROR_LABEL_DUPLICATE:
 	{
