@@ -108,7 +108,6 @@ public OnCodeInit()
 		Malloc_OnCodeInit();
 	#endif
 	// Check the heap base, to ensure nothing is currently allocated.
-	// Loop through all the exposed public functions.
 	new heap;
 	// Should also be the same as `LCTRL 2`, but no need for a third comparison.
 	#emit HEAP         0
@@ -122,10 +121,51 @@ public OnCodeInit()
 	{}
 	// Allocate the heap space initially.
 	heap = MALLOC_MEMORY * 4;
-	#emit LCTRL            2
-	#emit LOAD.S.alt       heap
+	#emit LCTRL        2
+	#emit LOAD.S.alt   heap
 	#emit ADD
 	#emit SCTRL        2
+	// Get the offset to the heap relative to the access var `YSI_gMallocMemory`.
+	#emit CONST.alt    YSI_gMallocMemory
+	#emit LOAD.pri     AMX_HEADER_HEA
+	#emit SUB
+	#emit SHR.C.pri    2 // Divide by 4 to get cells.
+	#emit STOR.pri     __YSI_g_sHeapStart
+	#emit INC.pri
+	#emit STOR.pri     __YSI_g_sUnusedStart
+	// Initialise the linked lists, now we have code access.
+	YSI_gMallocMemory[YSI_g_sHeapStart] = MALLOC_MEMORY - 1;
+	// Write something to the original array location (so it is used at least).
+	YSI_gMallocMemory[0] = MALLOC_MEMORY;
+	#if _DEBUG > 4
+		// The "#if" is actually ignored by these "#emit" codes, as always.
+		#emit CONST.alt    YSI_gMallocMemory
+		#emit STOR.S.alt   heap
+		printf("Malloc_OnCodeInit: AMX_HEADER_HEA = %d, YSI_gMallocMemory = %d, YSI_g_sHeapStart = %d", _:AMX_HEADER_HEA, heap, YSI_g_sHeapStart);
+		printf("Malloc_OnCodeInit: YSI_gMallocMemory + 4 * YSI_g_sHeapStart = %d", heap + 4 * YSI_g_sHeapStart);
+	#endif
+	// Loop through all the exposed public functions.
+	new
+		idx,
+		entry,
+		addr;
+	heap = ref(__YSI_g_sHeapAllocated);
+	while ((idx = AMX_GetPublicEntry(idx, entry)))
+	{
+		addr = AMX_Read(entry);
+		// Check if the heap has already been modified in the current stack.
+		@emit LOAD.pri     heap
+		@emit JNZ          addr
+		// It hasn't, modify it.
+		@emit HEAP         (MALLOC_MEMORY * 4)
+		@emit STOR.alt     heap
+		// Then CALL the target, so we return to here.
+		@emit CALL         addr
+		// Once back, reset our reference.
+		@emit ZERO         heap
+		@emit RETN
+		// Move the pointer in the header to our stub.
+	}
 	return 1;
 }
 
@@ -134,183 +174,4 @@ public OnCodeInit()
 #if defined Malloc_OnCodeInit
 	forward Malloc_OnCodeInit();
 #endif
-
-/*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Move the heap pointer up a load.  This is called multiple times at the start
- *  of the mode because we need to beat protections added in by the virtual
- *  machine to steal away its heap area.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static Malloc_TrySetup()
-{
-	P:1("Malloc_TrySetup called");
-	new
-		temp = 0;
-	#emit LCTRL        3
-	#emit STOR.S.pri   temp
-	if (temp > Malloc_FindStackTop() + 4)
-	{
-		P:W("y_malloc set up via \"CallLocalFunction\", memory corruption is a remote possibility");
-	}
-	temp = MALLOC_MEMORY * 4;
-	// Allocate a ton of space on the heap.
-	#emit LCTRL            2
-	#emit LOAD.S.alt       temp
-	#emit ADD
-	#emit STOR.S.pri       temp
-	// Now there's only the normal bit of the stack and heap left.
-	if (temp == AMX_HEADER_HEA + MALLOC_MEMORY * 4 * 2)
-	{
-		// Already allocated and now trying to double allocate.
-		return;
-	}
-	if (temp != AMX_HEADER_HEA + MALLOC_MEMORY * 4)
-	{
-		P:F("y_malloc: Not the first HEAP allocation!");
-		return;
-	}
-	else
-	{
-		#emit LOAD.S.pri   temp
-		#emit SCTRL        2
-		if (YSI_g_sHeapStart) return;
-	}
-	YSI_g_sHeapStart = temp - MALLOC_MEMORY * 4;
-	P:2("Malloc_OnCodeInit: %d %d %d", YSI_g_sHeapStart, MALLOC_MEMORY * 4, AMX_HEADER_HEA);
-	#emit CONST.alt    YSI_gMallocMemory
-	#emit LOAD.pri     __YSI_g_sHeapStart
-	#emit SUB
-	#emit SHR.C.pri    2 // Divide by 4 to get cells.
-	#emit STOR.pri     __YSI_g_sHeapStart
-	YSI_gMallocMemory[YSI_g_sHeapStart] = MALLOC_MEMORY - 1;
-	YSI_g_sUnusedStart = YSI_g_sHeapStart + 1;
-	// Blank the whole memory.  Maybe required if the heap has been used
-	// already (better to be safe than sorry).
-	memset(YSI_gMallocMemory[YSI_g_sHeapStart + 1], 0, MALLOC_MEMORY - 1);
-	#if _DEBUG > 4
-		// The "#if" is actually ignored by these "#emit" codes, as always.
-		#emit CONST.alt    YSI_gMallocMemory
-		#emit STOR.S.alt   temp
-		printf("Malloc_OnCodeInit: AMX_HEADER_HEA = %d, YSI_gMallocMemory = %d, YSI_g_sHeapStart = %d", _:AMX_HEADER_HEA, temp, YSI_g_sHeapStart);
-		printf("Malloc_OnCodeInit: YSI_gMallocMemory + 4 * YSI_g_sHeapStart = %d", temp + 4 * YSI_g_sHeapStart);
-	#endif
-	// This is never read, but we now have a spare cell because we HAD to
-	// allocate an array of some size.
-	YSI_gMallocMemory[0] = MALLOC_MEMORY;
-}
-
-static
-	YSI_g_sHeapSetup = 0;
-
-static const
-	// Split in to three because of line length limits.
-	YSI_g_scErrorMessage1[] = 
-		" \n" \
-		" \n" \
-		"    ============================================================================\n" \
-		"    |                                                                          |\n" \
-		"    |                            ******************                            |\n" \
-		"    |                            * VERY IMPORTANT *                           |\n" \
-		"    |                            ******************                            |",
-	YSI_g_scErrorMessage2[] = 
-		"    |                                                                          |\n" \
-		"    | Your \"crashdetect\" plugin is out of date, ignore the \"error 12\" above!   |\n" \
-		"    |                                                                          |\n" \
-		"    |  [debug] Run time error 12: \"(sleep mode)\"                               |\n" \
-		"    |  [debug] AMX backtrace:                                                  |",
-		//"    |  [debug] #0 <SOME ADDRESS> in %s () from <FILE>%s|\n"
-	YSI_g_scErrorMessage3[] = 
-		"    |  [debug] #0 <HEX NUMBER> in public Malloc_SolidifyTimer ()               |\n" \
-		"    |                                                                          |\n" \
-		"    | For more information, see the YSI.tl release topic.                      |\n" \
-		"    |                                                                          |\n" \
-		"    ============================================================================\n" \
-		" \n";
-
-#if !defined _ALS_OnRuntimeError
-	forward OnRuntimeError(code, &bool:suppress);
-#endif
-
-public OnRuntimeError(code, &bool:suppress)
-{
-	// This is called if the "crashdetect" plugin is installed.
-	if (code == 12)
-	{
-		P:0(YSI_g_scErrorMessage1);
-		P:0(YSI_g_scErrorMessage2);
-		P:0(YSI_g_scErrorMessage3);
-	}
-	Malloc_OnRuntimeError(code, suppress);
-	if (code == 12)
-	{
-		// Make sure our heap is correctly set still...
-		return Malloc_SolidifyHeap();
-	}
-	else return 0;
-}
-
-CHAIN_FORWARD:Malloc_OnRuntimeError(code, &bool:suppress) = 1;
-#if defined _ALS_OnRuntimeError
-	#undef OnRuntimeError
-#else
-	#define _ALS_OnRuntimeError
-#endif
-#define OnRuntimeError(%0) CHAIN_PUBLIC:Malloc_OnRuntimeError(%0)
-
-forward Malloc_SolidifyTimer();
-
-public Malloc_SolidifyTimer()
-{
-	P:1("Malloc_SolidifyTimer called");
-	Malloc_TrySetup();
-	Malloc_SolidifyHeap();
-}
-
-static Malloc_SolidifyHeap()
-{
-	if (YSI_g_sHeapSetup == 2) return 1;
-	++YSI_g_sHeapSetup;
-	#emit LCTRL      3
-	#emit MOVE.alt
-	#emit SCTRL      5
-	#emit SCTRL      4 // Set the original stack pointer.
-	// Call to save "stk" and "frm", since they aren't in early builds.
-	#emit PUSH.C      0
-	#emit SYSREQ.C    heapspace // The pre-processor can't touch this.
-	#emit STACK       4
-	// Unfortunately, "heapspace" has a parameter pushed first so it saves the
-	// wrong stack value (the value 4 below where it should be).  The only other
-	// opcode that reliably saves "stk" in "amx->stk" without trying to call a
-	// native function is "OP_RETN", so let's BADLY invoke it!  Note that we
-	// still need the "heapspace" call (or any function call) to save "hea" and
-	// "frm", which are NOT saved by "OP_RETN" but are by "OP_SYSREQ_C".
-	#emit PUSH.C      0 // No parameters
-	#emit LCTRL       6 // Return to the next instruction...
-	#emit ADD.C       20
-	#emit PUSH.pri
-	#emit PUSH.alt      // Same frame.
-	#emit RETN
-	// "return" to here...
-	#emit HALT        12
-	return 0;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <param name="playerid">Player that just connected.</param>
- * <remarks>
- *  This is the only callback that can be called before our timers when the mode
- *  starts.  Make sure the heap is set up correctly.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-forward Malloc_DoPlayerConnect(playerid);
-
-public Malloc_DoPlayerConnect(playerid)
-{
-	if (YSI_g_sHeapSetup != 2) Malloc_TrySetup();
-	// Ensure we only call the originsl.
-	return call OnPlayerConnect(playerid);
-}
 

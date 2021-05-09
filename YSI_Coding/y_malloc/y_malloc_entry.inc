@@ -182,7 +182,7 @@ forward Alloc:calloc(size);
 new
 	YSI_gMallocMemory[1];
 
-#include "y_malloc_impl"
+#include "y_malloc_heapalloc"
 
 // Functions to access the data on the heap.
 #include "y_malloc_funcs"
