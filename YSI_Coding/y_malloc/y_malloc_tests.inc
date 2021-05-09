@@ -289,3 +289,35 @@ TEST__ y_malloc_NewS_1()
 	}
 }
 
+forward y_malloc_Deferred(Alloc:alloc);
+
+public y_malloc_Deferred(Alloc:alloc)
+{
+	new
+		Alloc:clobber = malloc(1000);
+	for (new i = 0; i != 1000; ++i)
+	{
+		mset(clobber, i, 0);
+	}
+	for (new i = 0; i != 1000; ++i)
+	{
+		if (mget(alloc, i) != i * 2)
+		{
+			P:E("y_malloc_Deferred test error");
+		}
+	}
+	free(clobber);
+	free(alloc);
+}
+
+TEST__ y_malloc_Deferred()
+{
+	new
+		Alloc:alloc = malloc(1000);
+	for (new i = 0; i != 1000; ++i)
+	{
+		mset(alloc, i, i * 2);
+	}
+	SetTimerEx("y_malloc_Deferred", 10, false, "i", _:alloc);
+}
+
