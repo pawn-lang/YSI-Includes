@@ -179,56 +179,10 @@ stock
 forward Alloc:Malloc_Allocate(size, const bool:clear = false);
 forward Alloc:calloc(size);
 
-#if defined YSI_NO_HEAP_MALLOC
-	new
-		YSI_gMallocMemory[MALLOC_MEMORY];
-	
-	public OnCodeInit()
-	{
-		YSI_g_sHeapStart = 0;
-		YSI_gMallocMemory[0] = MALLOC_MEMORY - 1;
-		YSI_g_sUnusedStart = 1;
-		#if defined Malloc_OnCodeInit
-			Malloc_OnCodeInit();
-		#endif
-		return 1;
-	}
-	
-	#undef OnCodeInit
-	#define OnCodeInit Malloc_OnCodeInit
-	#if defined Malloc_OnCodeInit
-		forward Malloc_OnCodeInit();
-	#endif
-#else
-	new
-		YSI_gMallocMemory[1];
-	
-	#if !defined _ALS_OnJITCompile
-		forward OnJITCompile();
-	#endif
-	
-	public OnJITCompile()
-	{
-		P:E("y_malloc with JIT requires \"#define YSI_NO_HEAP_MALLOC\"");
-		// Disable the JIT.
-		Malloc_OnJITCompile();
-		return 0;
-	}
-	
-	CHAIN_FORWARD:Malloc_OnJITCompile() = 1;
-	#if defined _ALS_OnJITCompile
-		#undef OnJITCompile
-	#else
-		#define _ALS_OnJITCompile
-	#endif
-	#define OnJITCompile(%0) CHAIN_PUBLIC:Malloc_OnJITCompile(%0)
-	
-	// Allocate space on the heap permanently.
-	#if !defined YSI_YES_HEAP_MALLOC
-		#include "y_malloc_warning"
-	#endif
-	#include "y_malloc_heapalloc"
-#endif
+new
+	YSI_gMallocMemory[1];
+
+#include "y_malloc_impl"
 
 // Functions to access the data on the heap.
 #include "y_malloc_funcs"

@@ -70,102 +70,62 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-main()
-{
-	P:1("Malloc_main called");
-	Malloc_TrySetup();
-	#if defined Malloc_main
-		Malloc_main();
-	#endif
-	return 1;
-}
-
-#if defined _ALS_main
-	#undef main
-#else
-	#define _ALS_main
-#endif
-#define main() forward Malloc_main();public Malloc_main()
-
-
-/*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Loop back up through the stack and find the start of the current stack.  If
- *  it doesn't equal the top of the true stack then we've been called via
- *  "CallLocalFunction" at some point and thus MAY get some memory corruption.
- *
- *  Based on ZeeX's GetStackTrace, but gets frames instead of returns.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static Malloc_FindStackTop()
-{
-	new
-		frm_addr = 0;
-	#emit LCTRL       5
-	#emit STOR.S.pri  frm_addr
-	// Loop until we hit a return address of 0.  Limited to being within the
-	// stack.
-	while (GetFrameReturn(frm_addr))
-	{
-		#emit LREF.S.pri  frm_addr
-		#emit STOR.S.pri  frm_addr
-		if (!frm_addr)
-		{
-			// Return the top of the stack on the JIT.
-			#emit LCTRL       3
-			#emit STACK       4
-			#emit RETN
-		}
-	}
-	// We can't accurately get the number or parameters because of y_hooks :(.
-	return frm_addr + 12;
-}
-
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Finds all "BOUNDS 0" OpCodes in the AMX and rewrites them to "NOP NOP".  The
  *  byte pattern for this code is "OP_BOUNDS 0", which (AFAIK) can not appear
- *  anywhere else in the DAT segment.  You can have "OP_BOUNDS" as a parameter
+ *  anywhere else in the COD segment.  You can have "OP_BOUNDS" as a parameter
  *  to something, but it would then be followed by an OpCode of "0", which is
  *  never valid (OP_NONE).
- *
- *  I've tried to make this as resiliant as possible to being called via
- *  "CallLocalFunction" as not the first callback in the script but there may
- *  still be a few problems - we won't see till people start testing I guess...
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 public OnCodeInit()
 {
 	P:1("Malloc_OnCodeInit called");
-	// First ever LEGITIMATE call to "heapspace"!
 	if (heapspace() < MALLOC_MEMORY + 4 * 1024)
 	{
 		P:E("heapspace too low for y_malloc: Did you use \"#pragma dynamic\"?");
 	}
 	new
 		Opcode:bounds = RelocateOpcode(OP_BOUNDS),
-		nop = _:RelocateOpcode(OP_NOP);
+		Opcode:nop = RelocateOpcode(OP_NOP);
 	for (new i = AMX_HEADER_COD, end = AMX_HEADER_DAT - 4; i < end; i += 4)
 	{
 		// Make sure this isn't just something that LOOKS like "bounds 0",
 		// although I don't think there can be because "0" is not a valid
 		// opcode.
-		if ((AMX_Read(i) == _:bounds) && (!AMX_Read(i + 4)))
+		if (AMX_Read(i) == _:bounds && AMX_Read(i + 4) == 0)
 		{
 			// Found a bounds code.
-			AMX_Write(i, nop);
+			AMX_Write(i, _:nop);
 			i += 4;
-			AMX_Write(i, nop);
+			AMX_Write(i, _:nop);
 		}
 	}
-	Malloc_TrySetup();
+	// Run all other code setup first (most notably, y_hooks setup).
 	#if defined Malloc_OnCodeInit
 		Malloc_OnCodeInit();
 	#endif
-	YSI_SetTimer("Malloc_SolidifyTimer", 0, false);
-	YSI_SetTimer("Malloc_SolidifyTimer", 0, false);
+	// Check the heap base, to ensure nothing is currently allocated.
+	// Loop through all the exposed public functions.
+	new heap;
+	// Should also be the same as `LCTRL 2`, but no need for a third comparison.
+	#emit HEAP         0
+	#emit STOR.S.alt   heap
+	if (heap != AMX_HEADER_HEA)
+	{
+		// Some heap allocation ocurred somewhere in this call chain and hasn't
+		// been freed yet.
+		P:F("Unexpected heap allocations in y_malloc.  Try changing include orders");
+	}
+	{}
+	// Allocate the heap space initially.
+	heap = MALLOC_MEMORY * 4;
+	#emit LCTRL            2
+	#emit LOAD.S.alt       heap
+	#emit ADD
+	#emit SCTRL        2
 	return 1;
 }
 
@@ -188,18 +148,18 @@ static Malloc_TrySetup()
 	P:1("Malloc_TrySetup called");
 	new
 		temp = 0;
-	#emit LCTRL       3
-	#emit STOR.S.pri  temp
+	#emit LCTRL        3
+	#emit STOR.S.pri   temp
 	if (temp > Malloc_FindStackTop() + 4)
 	{
 		P:W("y_malloc set up via \"CallLocalFunction\", memory corruption is a remote possibility");
 	}
 	temp = MALLOC_MEMORY * 4;
 	// Allocate a ton of space on the heap.
-	#emit LCTRL         2
-	#emit LOAD.S.alt    temp
+	#emit LCTRL            2
+	#emit LOAD.S.alt       temp
 	#emit ADD
-	#emit STOR.S.pri    temp
+	#emit STOR.S.pri       temp
 	// Now there's only the normal bit of the stack and heap left.
 	if (temp == AMX_HEADER_HEA + MALLOC_MEMORY * 4 * 2)
 	{
@@ -213,17 +173,17 @@ static Malloc_TrySetup()
 	}
 	else
 	{
-		#emit LOAD.S.pri    temp
-		#emit SCTRL         2
+		#emit LOAD.S.pri   temp
+		#emit SCTRL        2
 		if (YSI_g_sHeapStart) return;
 	}
 	YSI_g_sHeapStart = temp - MALLOC_MEMORY * 4;
 	P:2("Malloc_OnCodeInit: %d %d %d", YSI_g_sHeapStart, MALLOC_MEMORY * 4, AMX_HEADER_HEA);
-	#emit CONST.alt     YSI_gMallocMemory
-	#emit LOAD.pri      __YSI_g_sHeapStart
+	#emit CONST.alt    YSI_gMallocMemory
+	#emit LOAD.pri     __YSI_g_sHeapStart
 	#emit SUB
-	#emit SHR.C.pri     2 // Divide by 4 to get cells.
-	#emit STOR.pri      __YSI_g_sHeapStart
+	#emit SHR.C.pri    2 // Divide by 4 to get cells.
+	#emit STOR.pri     __YSI_g_sHeapStart
 	YSI_gMallocMemory[YSI_g_sHeapStart] = MALLOC_MEMORY - 1;
 	YSI_g_sUnusedStart = YSI_g_sHeapStart + 1;
 	// Blank the whole memory.  Maybe required if the heap has been used
@@ -231,8 +191,8 @@ static Malloc_TrySetup()
 	memset(YSI_gMallocMemory[YSI_g_sHeapStart + 1], 0, MALLOC_MEMORY - 1);
 	#if _DEBUG > 4
 		// The "#if" is actually ignored by these "#emit" codes, as always.
-		#emit CONST.alt     YSI_gMallocMemory
-		#emit STOR.S.alt    temp
+		#emit CONST.alt    YSI_gMallocMemory
+		#emit STOR.S.alt   temp
 		printf("Malloc_OnCodeInit: AMX_HEADER_HEA = %d, YSI_gMallocMemory = %d, YSI_g_sHeapStart = %d", _:AMX_HEADER_HEA, temp, YSI_g_sHeapStart);
 		printf("Malloc_OnCodeInit: YSI_gMallocMemory + 4 * YSI_g_sHeapStart = %d", temp + 4 * YSI_g_sHeapStart);
 	#endif
