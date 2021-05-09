@@ -121,11 +121,11 @@ public OnCodeInit()
 	{}
 	// Allocate the heap space initially.
 	heap = MALLOC_MEMORY * 4;
+	P:6("Malloc_OnCodeInit: allocate %d", heap);
 	#emit LCTRL        2
 	#emit LOAD.S.alt   heap
 	#emit ADD
 	#emit SCTRL        2
-	#emit STOR.pri     __YSI_g_sHeapAllocated
 	// Get the offset to the heap relative to the access var `YSI_gMallocMemory`.
 	#emit CONST.alt    YSI_gMallocMemory
 	#emit LOAD.pri     AMX_HEADER_HEA
@@ -147,35 +147,33 @@ public OnCodeInit()
 	#endif
 	// Loop through all the exposed public functions.
 	new
-		idx,
+		idx = 0,
 		entry,
-		addr;
-	heap = ref(__YSI_g_sHeapAllocated);
-	while ((idx = AMX_GetPublicEntry(idx, entry)))
+		addr,
+		ctx[AsmContext];
+	CGen_UseCodeSpace(ctx);
+	// Get the pointer to `main` as well - don't forget that one!
+	#emit LCTRL                     1
+	#emit STOR.S.pri                addr
+	entry = -addr + 28;
+	P:6("Malloc_OnCodeInit: main = %d", entry);
+	new offset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
+	do
 	{
 		addr = AMX_Read(entry);
+		P:7("Malloc_OnCodeInit: addr = %08x, new = %08x", addr, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_HEADER_COD);
+		// Move the pointer in the header to our stub.
+		AMX_Write(entry, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_HEADER_COD);
 		// Check if the heap has already been modified in the current stack.
 		@emit LCTRL        2
 		@emit CONST.alt    AMX_HEADER_HEA
-		@emit JNEQ         addr
+		@emit JNEQ         addr + offset
 		// It hasn't, modify it.
 		@emit HEAP         (MALLOC_MEMORY * 4)
-		@emit JUMP         addr
-		
-		
-		
-		
-		
-		@emit LOAD.pri     heap
-		@emit JNZ          addr
-		@emit STOR.alt     heap
-		// Then CALL the target, so we return to here.
-		@emit CALL         addr
-		// Once back, reset our reference.
-		@emit ZERO         heap
-		@emit RETN
-		// Move the pointer in the header to our stub.
+		@emit JUMP         addr + offset
 	}
+	while ((idx = AMX_GetPublicEntry(idx, entry)));
+	P:6("Malloc_OnCodeInit done");
 	return 1;
 }
 

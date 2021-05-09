@@ -45,6 +45,7 @@ TEST_COMPILE__ y_utils()
 	chrfind(' ', str);
 	chrfindp(' ', str);
 	IPToInt(str);
+	// Gives a deprecation warning.  That's fine (for tests).
 	bernstein(str);
 	ishex(str);
 	unpack(str);

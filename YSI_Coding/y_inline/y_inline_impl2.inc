@@ -605,10 +605,7 @@ CHAIN_FORWARD:Inline_OnRuntimeError(code, &bool:suppress) = 1;
 public OnCodeInit()
 {
 	P:2("Inline_OnCodeInit called");
-	new
-		hdr[AMX_HDR];
-	GetAmxHeader(hdr);
-	YSI_g_sJumpOffset = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
+	YSI_g_sJumpOffset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
 	if (FALSE)
 		Callback_CallHandler_();
 	{}

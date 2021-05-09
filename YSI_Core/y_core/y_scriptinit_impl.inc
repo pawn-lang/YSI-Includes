@@ -372,7 +372,10 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			YSI_Print(" ");
 		#endif
 		#if defined ScriptInit_OnCodeInit
+			printf("t0:");
+			new t0 = GetTickCount();
 			ScriptInit_OnCodeInit();
+			printf("%d", GetTickCount() - t0);
 		#endif
 		#if !defined YSI_NO_MODE_CACHE
 			new
