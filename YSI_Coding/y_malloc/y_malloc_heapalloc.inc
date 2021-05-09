@@ -125,6 +125,7 @@ public OnCodeInit()
 	#emit LOAD.S.alt   heap
 	#emit ADD
 	#emit SCTRL        2
+	#emit STOR.pri     __YSI_g_sHeapAllocated
 	// Get the offset to the heap relative to the access var `YSI_gMallocMemory`.
 	#emit CONST.alt    YSI_gMallocMemory
 	#emit LOAD.pri     AMX_HEADER_HEA
@@ -154,10 +155,19 @@ public OnCodeInit()
 	{
 		addr = AMX_Read(entry);
 		// Check if the heap has already been modified in the current stack.
-		@emit LOAD.pri     heap
-		@emit JNZ          addr
+		@emit LCTRL        2
+		@emit CONST.alt    AMX_HEADER_HEA
+		@emit JNEQ         addr
 		// It hasn't, modify it.
 		@emit HEAP         (MALLOC_MEMORY * 4)
+		@emit JUMP         addr
+		
+		
+		
+		
+		
+		@emit LOAD.pri     heap
+		@emit JNZ          addr
 		@emit STOR.alt     heap
 		// Then CALL the target, so we return to here.
 		@emit CALL         addr
