@@ -77,8 +77,8 @@ Optional plugins:
 native YSI_Print(const string[]) = print;
 native YSI_PrintF(const format[], GLOBAL_TAG_TYPES:...) = printf;
 
-native YSI_SetTimer(const funcname[], interval, repeating) = SetTimer;
-native YSI_SetTimerEx(const funcname[], interval, repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
+native YSI_SetTimer(const funcname[], interval, bool:repeating) = SetTimer;
+native YSI_SetTimerEx(const funcname[], interval, bool:repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
 
 native YSI_HTTP(index, type, const url[], const data[], const callback[]) = HTTP;
 native YSI_Format(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYPES:...) = format;

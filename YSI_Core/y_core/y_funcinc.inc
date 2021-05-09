@@ -101,7 +101,7 @@ public _@_y_funcinc_@_()
 	strlen(tmp);
 	CallRemoteFunction(tmp, tmp);
 	CallLocalFunction(tmp, tmp);
-	SetTimerEx(tmp, 0, 0, tmp);
+	SetTimerEx(tmp, 0, false, tmp);
 	heapspace();
 	setproperty(0, tmp, 0, tmp);
 	getproperty(0, tmp, 0, tmp);

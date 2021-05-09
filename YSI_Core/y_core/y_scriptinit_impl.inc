@@ -276,13 +276,13 @@ stock Server_GetLongCallDefault()
 
 #if !defined YSI_YES_MODE_CACHE
 	#define YSI_NO_MODE_CACHE
+	#define YSI_NO_CACHE_MESSAGE
 #endif
 
 #if !defined YSI_NO_MODE_CACHE
 	#if !defined DumpAMX_Included_ && !defined YSI_YES_MODE_CACHE && __COMPILER_2ND_PASS
 		#define YSI_NO_MODE_CACHE
 		#define YSI_NO_CACHE_MESSAGE
-		#define YSI_NO_OPTIMISATION_MESSAGE
 	#endif
 #endif
 

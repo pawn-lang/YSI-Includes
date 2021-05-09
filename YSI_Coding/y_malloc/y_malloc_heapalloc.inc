@@ -164,8 +164,8 @@ public OnCodeInit()
 	#if defined Malloc_OnCodeInit
 		Malloc_OnCodeInit();
 	#endif
-	YSI_SetTimer("Malloc_SolidifyTimer", 0, 0);
-	YSI_SetTimer("Malloc_SolidifyTimer", 0, 0);
+	YSI_SetTimer("Malloc_SolidifyTimer", 0, false);
+	YSI_SetTimer("Malloc_SolidifyTimer", 0, false);
 	return 1;
 }
 
