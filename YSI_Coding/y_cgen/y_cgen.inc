@@ -95,7 +95,7 @@ CHAIN_HOOK(CGen)
 
 #if !defined CGEN_MEMORY
 	#if defined YSI_TESTS
-		#define CGEN_MEMORY (20000)
+		#define CGEN_MEMORY (50000)
 	#else
 		#define CGEN_MEMORY (10000)
 	#endif
