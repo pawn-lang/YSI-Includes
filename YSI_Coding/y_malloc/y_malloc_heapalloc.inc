@@ -136,6 +136,7 @@ public OnCodeInit()
 	#emit STOR.pri     __YSI_g_sUnusedStart
 	// Initialise the linked lists, now we have code access.
 	YSI_gMallocMemory[YSI_g_sHeapStart] = MALLOC_MEMORY - 1;
+	YSI_gMallocMemory[YSI_g_sUnusedStart] = 0;
 	// Write something to the original array location (so it is used at least).
 	YSI_gMallocMemory[0] = MALLOC_MEMORY;
 	#if _DEBUG > 4
