@@ -602,16 +602,13 @@ CHAIN_FORWARD:Inline_OnRuntimeError(code, &bool:suppress) = 1;
 #endif
 #define OnRuntimeError(%0) CHAIN_PUBLIC:Inline_OnRuntimeError(%0)
 
+#define CALL@Callback_CallHandler_ Callback_CallHandler_()
+
 public OnCodeInit()
 {
 	P:2("Inline_OnCodeInit called");
 	YSI_g_sJumpOffset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
-	if (FALSE)
-		Callback_CallHandler_();
-	{}
-	#emit CONST.pri        Callback_CallHandler_
-	#emit STOR.pri         YSI_g_sCallbackCallAddress
-	YSI_g_sCallbackCallAddress += YSI_g_sJumpOffset;
+	YSI_g_sCallbackCallAddress = addressof(Callback_CallHandler_) + YSI_g_sJumpOffset;
 	
 	new scanner[CodeScanner];
 	CodeScanInit(scanner);

@@ -75,9 +75,94 @@ static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA], const f[] = "")
 	return Callback_Get(c, ret, f);
 }
 
+static stock y_inline_Get2(Func:c<>, &Func:d<>)
+{
+	d = c;
+}
+
 static stock bool:y_inline_Restore(ret[E_CALLBACK_DATA])
 {
 	Callback_Restore(ret);
+}
+
+TEST__ y_inline0a()
+{
+	new Func:cc<>;
+	inline const func()
+	{
+	}
+	y_inline_Get2(using inline func, cc);
+	@.cc();
+}
+
+TEST__ y_inline0b()
+{
+	new Func:cc<>;
+	inline const func()
+	{
+		//printf("1");
+		@return 42;
+	}
+	y_inline_Get2(using inline func, cc);
+	@.cc();
+}
+
+TEST__ y_inline0c()
+{
+	new Func:cc<>;
+	inline const func()
+	{
+		//printf("1");
+		@return 42;
+	}
+	y_inline_Get2(using inline func, cc);
+	ASSERT_EQ(@.cc(), 42);
+}
+
+TEST__ y_inline0d()
+{
+	new Func:cc<>;
+	inline const func()
+	{
+		//printf("1");
+		@return 42;
+	}
+	y_inline_Get2(using inline func, cc);
+	new
+		dd[E_CALLBACK_DATA];
+	dd[0] = _:cc;
+	ASSERT_EQ(Callback_Call(dd, 42), 42);
+}
+
+TEST__ y_inline0e()
+{
+	new Func:cc<>;
+	inline func()
+	{
+		//printf("1");
+		@return 42;
+	}
+	y_inline_Get2(using inline func, cc);
+	new
+		dd[E_CALLBACK_DATA];
+	dd[0] = _:cc;
+	ASSERT_EQ(Callback_Call(dd, 42), 42);
+}
+
+TEST__ y_inline0f()
+{
+	new Func:cc<>;
+	inline func()
+	{
+		//printf("1");
+		@return 42;
+	}
+	y_inline_Get2(using inline func, cc);
+	new
+		dd[E_CALLBACK_DATA];
+	dd[0] = _:cc;
+	ASSERT_EQ(Callback_Call(dd, 42), 42);
+	Callback_Restore(cc);
 }
 
 TEST__ y_inline1()
