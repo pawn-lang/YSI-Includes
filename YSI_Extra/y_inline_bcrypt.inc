@@ -153,23 +153,8 @@ Optional plugins:
 
 	public _Inline_BCryptHashDone(Func:cb<s>, hashid)
 	{
-		printf("cb: %d", cb);
-		printf("hashid: %d", hashid);
 		new hash[61];
 		_YSI_bcrypt_get_hash_unconst(hash);
-		printf("hash: %s", hash);
-		printf("hash: %d", hash[0]);
-		printf("hash: %d", hash[1]);
-		printf("hash: %d", hash[2]);
-		new Alloc:a = Malloc_Reconcile(Indirect_DeRef2(cb));
-		printf("%08x", mget(a, 0));
-		printf("%08x", mget(a, 1));
-		printf("%08x", mget(a, 2));
-		printf("%08x", mget(a, 3));
-		printf("%08x", mget(a, 4));
-		printf("%08x", mget(a, 5));
-		printf("%08x", mget(a, 6));
-		printf("%08x", mget(a, 7));
 		new ret = @.cb(hash);
 		Indirect_Release(cb);
 		return ret;
@@ -190,27 +175,7 @@ Optional plugins:
 
 	stock BCrypt_HashInline(const text[], cost = 12, Func:cb<s>)
 	{
-		printf("cc: %d", cb);
-		printf("%d", Indirect_DeRef2(cb));
-		printf("%d", Malloc_Reconcile(Indirect_DeRef2(cb)));
-		new test = malloc(100);
-		printf("%d", test);
-		printf("%d", Malloc_Resolve(test));
-		printf("%d", Malloc_Reconcile(Malloc_Resolve(test)));
-		printf("%d", Indirect_Ptr(Malloc_Resolve(test)));
-		printf("%d", Indirect_DeRef2(Indirect_Ptr(Malloc_Resolve(test))));
-		printf("%d", Malloc_Reconcile(Indirect_DeRef2(Indirect_Ptr(Malloc_Resolve(test)))));
-		new Alloc:a = Malloc_Reconcile(Indirect_DeRef2(cb));
-		printf("%08x", mget(a, 0));
-		printf("%08x", mget(a, 1));
-		printf("%08x", mget(a, 2));
-		printf("%08x", mget(a, 3));
-		printf("%08x", mget(a, 4));
-		printf("%08x", mget(a, 5));
-		printf("%08x", mget(a, 6));
-		printf("%08x", mget(a, 7));
 		new ret = _YSI_bcrypt_hash_const(cb, "_Inline_BCryptHashDone", text, cost);
-		printf("ret: %d", ret);
 		if (ret)
 		{
 			Indirect_Claim(cb);

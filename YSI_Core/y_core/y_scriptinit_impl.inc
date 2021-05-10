@@ -372,10 +372,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			YSI_Print(" ");
 		#endif
 		#if defined ScriptInit_OnCodeInit
-			new s0 = tickcount();
-			printf("Generation Time:");
 			ScriptInit_OnCodeInit();
-			printf("%d", tickcount() - s0);
 		#endif
 		#if !defined YSI_NO_MODE_CACHE
 			new
@@ -383,11 +380,8 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			// Set the variable to something unique for next load.  This will be written out, thus
 			// loaded in next time.
 			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
-			new s1 = tickcount();
-			printf("Dump Time:");
 			if (DumpAMX_Write(name))
 			{
-				printf("%d", tickcount() - s1);
 				// Clear this flag after dumping.  This is so we can tell when a mode is cached.
 				YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
 				#if !defined YSI_NO_CACHE_MESSAGE
