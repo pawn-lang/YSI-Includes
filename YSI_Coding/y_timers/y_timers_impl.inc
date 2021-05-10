@@ -156,7 +156,7 @@ public OnCodeInit()
 			P:7("Timer_OnYSIInit: %s", unpack(buffer));
 			// Get the time offset for the current call.  This should mean that
 			// all the functions are nicely spread out.
-			YSI_SetTimerEx(buffer, time * pre / total, 0, "ii", 1, -1);
+			YSI_SetTimerEx(buffer, time * pre / total, false, "ii", 1, -1);
 		}
 	}
 	P:1("hook Timers_OnYSIInit ended");
