@@ -75,9 +75,16 @@ static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA], const f[] = "")
 	return Callback_Get(c, ret, f);
 }
 
-static stock y_inline_Get2(Func:c<>, &Func:d<>)
+static stock y_inline_GetX(Func:c<>, &Func:d<>)
 {
 	d = c;
+	Indirect_Claim(c);
+}
+
+static stock y_inline_GetS(Func:c<s>, &Func:d<s>)
+{
+	d = c;
+	Indirect_Claim(c);
 }
 
 static stock bool:y_inline_Restore(ret[E_CALLBACK_DATA])
@@ -91,7 +98,7 @@ TEST__ y_inline0a()
 	inline const func()
 	{
 	}
-	y_inline_Get2(using inline func, cc);
+	y_inline_GetX(using inline func, cc);
 	@.cc();
 }
 
@@ -103,7 +110,7 @@ TEST__ y_inline0b()
 		//printf("1");
 		@return 42;
 	}
-	y_inline_Get2(using inline func, cc);
+	y_inline_GetX(using inline func, cc);
 	@.cc();
 }
 
@@ -115,7 +122,7 @@ TEST__ y_inline0c()
 		//printf("1");
 		@return 42;
 	}
-	y_inline_Get2(using inline func, cc);
+	y_inline_GetX(using inline func, cc);
 	ASSERT_EQ(@.cc(), 42);
 }
 
@@ -127,7 +134,7 @@ TEST__ y_inline0d()
 		//printf("1");
 		@return 42;
 	}
-	y_inline_Get2(using inline func, cc);
+	y_inline_GetX(using inline func, cc);
 	new
 		dd[E_CALLBACK_DATA];
 	dd[0] = _:cc;
@@ -142,7 +149,7 @@ TEST__ y_inline0e()
 		//printf("1");
 		@return 42;
 	}
-	y_inline_Get2(using inline func, cc);
+	y_inline_GetX(using inline func, cc);
 	new
 		dd[E_CALLBACK_DATA];
 	dd[0] = _:cc;
@@ -157,7 +164,7 @@ TEST__ y_inline0f()
 		//printf("1");
 		@return 42;
 	}
-	y_inline_Get2(using inline func, cc);
+	y_inline_GetX(using inline func, cc);
 	new
 		dd[E_CALLBACK_DATA];
 	dd[0] = _:cc;
@@ -1199,6 +1206,22 @@ TEST__ nu_y_inline6()
 	y_inline_Get(USING_INLINE__ func, cc);
 	Callback_Call(cc, "hello");
 	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline6b()
+{
+	new Func:cc<s>;
+	INLINE_CONST__ func(string:g[])
+	{
+		#if !(sizeof (g) == YSI_MAX_STRING))
+			#error sizeof (g) != YSI_MAX_STRING
+		#endif
+		ASSERT_SAME(g, "hello");
+	}
+	y_inline_GetS(USING_INLINE__ func, cc);
+	new hash[61] = "hello";
+	@.cc(hash);
+	Indirect_Release(cc);
 }
 
 TEST__ nu_y_inline7b()

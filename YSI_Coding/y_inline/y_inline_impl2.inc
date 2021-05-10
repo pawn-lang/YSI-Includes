@@ -609,6 +609,12 @@ public OnCodeInit()
 	P:2("Inline_OnCodeInit called");
 	YSI_g_sJumpOffset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
 	YSI_g_sCallbackCallAddress = addressof(Callback_CallHandler_) + YSI_g_sJumpOffset;
+	if (FALSE)
+	{
+		// Ensure this function is included.  It causes HUGE issues when not.
+		new tmp[2];
+		strunpack(tmp, tmp);
+	}
 	
 	new scanner[CodeScanner];
 	CodeScanInit(scanner);
