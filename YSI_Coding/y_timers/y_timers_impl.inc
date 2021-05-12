@@ -264,7 +264,7 @@ stock _Timer_I(const func[], interval, action, &result)
 		{
 			if (result == -1)
 			{
-				result = YSI_SetTimer(func, interval, 1);
+				result = YSI_SetTimer(func, interval, true);
 			}
 		}
 	}
