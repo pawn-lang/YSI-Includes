@@ -70,6 +70,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+// Allocate some space right at the top of the stack for callback parameters.
+#if !defined YSI_DEFAULT_MALLOC
+	// Will actually allocate 271 bytes (rounds up to 16n-1).
+	#define YSI_DEFAULT_MALLOC (256)
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Finds all "BOUNDS 0" OpCodes in the AMX and rewrites them to "NOP NOP".  The
@@ -166,14 +172,14 @@ public OnCodeInit()
 		// Move the pointer in the header to our stub.
 		AMX_Write(entry, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_HEADER_COD);
 		// Check if the heap has already been modified in the current stack.
-		@emit LCTRL        2
-		@emit CONST.alt    AMX_HEADER_HEA
-		@emit JNEQ         addr + offset
-		// It hasn't, modify it.
-		@emit HEAP         (MALLOC_MEMORY * 4)
-		@emit JUMP         addr + offset
+		@emit HEAP         0                                    // Get heap location in `alt`.
+		@emit CONST.pri    (AMX_HEADER_HEA + MALLOC_MEMORY * 4) // Get the end of malloc data.
+		@emit JSLEQ        addr + offset                        // Already allocated.
+		@emit SCTRL        2                                    // Store the new end.
+		@emit JUMP         addr + offset                        // Continue with code.
 	}
 	while ((idx = AMX_GetPublicEntry(idx, entry)));
+	malloc(YSI_DEFAULT_MALLOC);
 	P:6("Malloc_OnCodeInit done");
 	return 1;
 }
