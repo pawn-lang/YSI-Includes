@@ -179,7 +179,7 @@ public OnCodeInit()
 		@emit JUMP         addr + offset                        // Continue with code.
 	}
 	while ((idx = AMX_GetPublicEntry(idx, entry)));
-	malloc(YSI_DEFAULT_MALLOC);
+	calloc(YSI_DEFAULT_MALLOC);
 	P:6("Malloc_OnCodeInit done");
 	return 1;
 }
