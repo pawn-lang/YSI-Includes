@@ -76,6 +76,8 @@ Optional plugins:
 	#define YSI_DEFAULT_MALLOC (256)
 #endif
 
+forward Alloc:Malloc_Allocate(size, const bool:clear = false);
+
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Finds all "BOUNDS 0" OpCodes in the AMX and rewrites them to "NOP NOP".  The
@@ -179,7 +181,10 @@ public OnCodeInit()
 		@emit JUMP         addr + offset                        // Continue with code.
 	}
 	while ((idx = AMX_GetPublicEntry(idx, entry)));
-	malloc(YSI_DEFAULT_MALLOC);
+	// Allocate memory for callback parameters to use.  They use some of the heap when passing
+	// strings etc, so save some space at the bottom of the heap for them to use.  This just leaks
+	// memory from the allocation system, and allows it to be safely clobbered by those calls.
+	Malloc_Allocate(YSI_DEFAULT_MALLOC);
 	P:6("Malloc_OnCodeInit done");
 	return 1;
 }
