@@ -1,3 +1,8 @@
+#if defined _INC_y_inline_mysql
+	#endinput
+#endif
+#define _INC_y_inline_mysql
+
 /*
 Legal:
 	Version: MPL 1.1

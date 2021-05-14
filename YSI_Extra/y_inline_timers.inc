@@ -1,3 +1,8 @@
+#if defined _INC_y_inline_timers
+	#endinput
+#endif
+#define _INC_y_inline_timers
+
 /*
 Legal:
 	Version: MPL 1.1
