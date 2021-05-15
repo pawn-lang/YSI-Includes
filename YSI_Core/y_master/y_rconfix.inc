@@ -1,35 +1,41 @@
 static stock const
-	FIXES_OnClientCheckResponse[] = "FIXES_OnClientCheckResponse",
-	FIXES_gscRconFixFS[] = "callbackfix.amx";
+	YSI_gscOnClientCheckResponse[] = "FIXES_OnClientCheckResponse",
+	YSI_gscRconFixFS[] = "callbackfix.amx";
 
 y_rconfix_Load()
 {
 	// Test if the fix has already been loaded.
-	setproperty(27, FIXES_OnClientCheckResponse, 0);
-	YSI_SendRconCommand(FIXES_OnClientCheckResponse);
-	if (getproperty(27, FIXES_OnClientCheckResponse) == 27)
+	setproperty(27, YSI_gscOnClientCheckResponse, 0);
+	YSI_SendRconCommand(YSI_gscOnClientCheckResponse);
+	if (getproperty(27, YSI_gscOnClientCheckResponse) == 27)
 	{
 		return;
 	}
 	// It is.  Create the file.
-	if (!fexist(FIXES_gscRconFixFS))
+	if (!fexist(YSI_gscRconFixFS))
 	{
 		/*
+			// Minimise code size.
 			#pragma option -d0
 			#pragma option -O1
 
+			// Declare some natives for use.
 			native CallRemoteFunction(const function[], const format[], ...);
 			native setproperty(id = 0, const name[] = "", value = cellmin, const string[] = "");
 			native strcmp(const string1[], const string2[], bool:ignorecase = false, length = cellmax);
 
+			// Use the same string for everything, so we only need one.  And pack it.
 			new const FIXES_OnClientCheckResponse[] = !"FIXES_OnClientCheckResponse";
 
 			forward OnRconCommand(const cmd[]);
 
+			// This callback just needs to exist in one filterscript.
 			public OnRconCommand(const cmd[])
 			{
+				// The smallest I could make the assembly without `#emit`.
 				if (strcmp(cmd, FIXES_OnClientCheckResponse, true) == 0)
 				{
+					// Add 2 cells of padding here to make the AMX a nice size.
 					return !setproperty(27, FIXES_OnClientCheckResponse, 27, "\0\0");
 				}
 				return 0;
@@ -37,8 +43,10 @@ y_rconfix_Load()
 
 			forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
 
+			// This callback needs to invoke a different callback in GMs.
 			public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 			{
+				// Invoke the global callback.
 				return CallRemoteFunction(FIXES_OnClientCheckResponse, !"iiii", playerid, actionid, memaddr, retndata);
 			}
 		*/
@@ -55,14 +63,14 @@ y_rconfix_Load()
 				0x8665D2B1, 0x6886D1F3, 0xD68DAB86, 0xCDAB8652, 0xF3866FE0, 0x0000CACD, 0xCB860000, 0x0069D2A5
 			};
 		new
-			File:fs = fopen(FIXES_gscRconFixFS, io_write);
+			File:fs = fopen(YSI_gscRconFixFS, io_write);
 		if (fs)
 		{
 			fblockwrite(fs, lRCFixCode);
 			fclose(fs);
 		}
 	}
-	if (fexist(FIXES_gscRconFixFS))
+	if (fexist(YSI_gscRconFixFS))
 	{
 		YSI_SendRconCommand("loadfs ../scriptfiles/callbackfix");
 	}
