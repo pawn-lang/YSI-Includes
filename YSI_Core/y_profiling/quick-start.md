@@ -6,7 +6,7 @@
 #include <a_samp>
 #include <YSI_Core\y_profiling>
 
-Profile:LoopV1()
+PROFILE__ LoopV1()
 {
 	new i = 0;
 	while (i != 10)
@@ -15,7 +15,7 @@ Profile:LoopV1()
 	}
 }
 
-Profile:LoopV2()
+PROFILE__ LoopV2()
 {
 	for (new i = 0; i != 10; ++i)
 	{
