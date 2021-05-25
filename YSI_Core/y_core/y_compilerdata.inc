@@ -150,31 +150,32 @@ static stock __CompilerSecondPass() {}
 #if (__Pawn & 0x0F) >= 0x0A
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
-	#if defined __PawnBuild
-		#if __PawnBuild >= 2
-			#undef __COMPILER_STATIC_ENUM
-			#define __COMPILER_STATIC_ENUM static enum
-		#endif
-		#if __PawnBuild >= 4
-			#pragma option -(+
-		#endif
-		#if __PawnBuild >= 8
-			#undef __COMPILER_BUG_317
-			#define __COMPILER_BUG_317 (0)
-		#endif
-		#if __PawnBuild >= 10
-			#undef __COMPILER___EMIT_U
-			#define __COMPILER___EMIT_U (1)
-		#endif
-		// Disable `__COMPILER_PRAGMA` for now, while there's no `PROC` generated.
-		#if __PawnBuild >= 11
-			#undef __COMPILER_NAMEOF
-			//#undef __COMPILER_PRAGMA
-			
-			#define __COMPILER_NAMEOF (1)
-			//#define __COMPILER_PRAGMA (1)
-		#endif
-		#endif
+	#if !defined __PawnBuild
+		#define __PawnBuild 0
+	#endif
+	#if __PawnBuild >= 2
+		#undef __COMPILER_STATIC_ENUM
+		#define __COMPILER_STATIC_ENUM static enum
+	#endif
+	#if __PawnBuild >= 4
+		#pragma option -(+
+	#endif
+	#if __PawnBuild >= 8
+		#undef __COMPILER_BUG_317
+		#define __COMPILER_BUG_317 (0)
+	#endif
+	#if __PawnBuild >= 10
+		#undef __COMPILER___EMIT_U
+		#define __COMPILER___EMIT_U (1)
+	#endif
+	// Disable `__COMPILER_PRAGMA` for now, while there's no `PROC` generated.
+	#if __PawnBuild >= 11
+		#undef __COMPILER_NAMEOF
+		//#undef __COMPILER_PRAGMA
+		
+		#define __COMPILER_NAMEOF (1)
+		//#define __COMPILER_PRAGMA (1)
+	#endif
 #else
 	#define __COMPILER_MODIFIED (0)
 	#define __COMPILER_OFFICIAL (1)
