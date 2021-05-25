@@ -146,16 +146,6 @@ stock const YSIM_VERMAX[] = "X";
 #define YSIM_LOG_IN #U
 #define YSIM_VARARG #V
 
-#define PP_LEFT_BRACKET<> (
-#define PP_RIGHT_BRACKET<> )
-#define PP_LEFT_BRACE<> {
-#define PP_RIGHT_BRACE<> }
-#define PP_LEFT_SQUARE_BRACKET<> [
-#define PP_RIGHT_SQUARE_BRACKET<> ]
-#define PP_LEFT_ANGLE_BRACKET<> <
-#define PP_RIGHT_ANGLE_BRACKET<> >
-#define PP_NULL<>
-
 // New create the `OnScriptInit` and `OnCodeInit` callbacks, which many YSI
 // includes use to start themselves.
 #include "y_scriptinit_impl"

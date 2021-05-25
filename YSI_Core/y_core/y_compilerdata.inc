@@ -205,7 +205,7 @@ static stock __CompilerSecondPass() {}
 #else
 	#define Debug_PrintD(%1);
 #endif
-#define __DISABLE__(%0) @NOPE_%0();@NOPE_%0(){%0(__ARGS__%0);}DONT_USE_%0(){}
+#define __DISABLE(%0) @NOPE_%0();@NOPE_%0(){%0(__ARGS__%0);}DONT_USE_%0(){}
 #define DONT_USE(%9);}%9(){} }
 
 #define __MACRO__bool: bool:__MACRO__

@@ -231,8 +231,6 @@ Optional plugins:
 #define PP_RIGHT_ANGLE_BRACKET<> >
 #define PP_NULL<>
 
-#define PP_OPEN_BRACKET (
-#define PP_CLOSE_BRACKET )
 #if defined _ALS_main
 	main()
 	{
@@ -240,9 +238,9 @@ Optional plugins:
 			PP_main();
 		#endif
 	}
-	#define main( __DISABLE(SCM) PP_main(
+	#define main( __DISABLE__ PP_main(
 #else
-	#define main( __DISABLE(SCM) main PP_LEFT_BRACKET<>
+	#define main( __DISABLE__ main PP_LEFT_BRACKET<>
 #endif
-#define __DISABLE __DISABLE__
+#define __DISABLE__ __DISABLE_ALL__
 
