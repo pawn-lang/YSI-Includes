@@ -278,12 +278,8 @@ native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = mem
 	#include "y_thirdpartyinclude"
 #endif
 
-#if defined SCM //&& __COMPILER_1ST_PASS
-	#undef SCM
-#endif
-
 //
-// I yried so many ways to fully break `SCM` for all cases:
+// I tried so many ways to fully break `SCM` for all cases:
 //
 //     `#define` to give a redefinition warning.
 //     Using a function to stop `#undef`.
@@ -291,8 +287,15 @@ native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = mem
 //
 // Couldn't get it to work in all cases.  There's always a way around it.
 //
+#pragma deprecated It's just unreadable rubbish.
+stock DONT_USE_SCM(a, b, const c[])
+{
+	#pragma unused a, b, c
+}
+#if defined SCM
+	#undef SCM
+#endif
+#define SCM DONT_USE_SCM
 
-#pragma deprecated Stop using `SCM()` - Learn to code properly!
-forward STOP_USING_SCM(playerid, colour, const string[], GLOBAL_TAG_TYPES:...);
-#define SCM STOP_USING_SCM
+#define __COMPILER_EARLY_PASS
 

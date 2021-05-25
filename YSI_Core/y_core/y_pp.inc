@@ -231,3 +231,7 @@ Optional plugins:
 #define PP_RIGHT_ANGLE_BRACKET<> >
 #define PP_NULL<>
 
+#define PP_OPEN_BRACKET (
+#define PP_CLOSE_BRACKET )
+#define main( __DISABLE main PP_LEFT_BRACKET<>
+

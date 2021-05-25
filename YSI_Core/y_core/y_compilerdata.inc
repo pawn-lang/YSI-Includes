@@ -204,6 +204,10 @@ static stock __CompilerSecondPass() {}
 #else
 	#define Debug_PrintD(%1);
 #endif
+#define __DISABLE__ @NOPE();@NOPE(){SCM(0,0,"");}DONT_USE_SCM(){}
+#define __DISABLE __DISABLE__
+#define DONT_USE_SCM(0,0,"");}DONT_USE_SCM(){} }
+
 #define __MACRO__bool: bool:__MACRO__
 #define __MACRO__Iterator: Iterator:__MACRO__
 #define __MACRO__Float: Float:__MACRO__
