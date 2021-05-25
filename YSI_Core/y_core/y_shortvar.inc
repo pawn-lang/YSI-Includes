@@ -145,3 +145,5 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 	}
 #endif
 
+#define __ARGS__SCM 0,0,""
+

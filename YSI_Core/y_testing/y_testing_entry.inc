@@ -707,6 +707,8 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 			#endif
 		#else
 			// Hook main in gamemodes.
+			#undef __DISABLE
+			#define __DISABLE(%0)
 			main()
 			{
 				#if defined Testing_main
@@ -720,7 +722,9 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 			#else
 				#define _ALS_main
 			#endif
-			#define main forward Testing_main(); public Testing_main
+			#undef __DISABLE
+			#define __DISABLE __DISABLE__
+			#define main( __DISABLE(SCM) Testing_main(
 		#endif
 
 		#if !defined NO_PLAYER_TESTS		

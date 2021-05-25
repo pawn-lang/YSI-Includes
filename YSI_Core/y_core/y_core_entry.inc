@@ -295,7 +295,7 @@ stock DONT_USE_SCM(a, b, const c[])
 #if defined SCM
 	#undef SCM
 #endif
-#define SCM DONT_USE_SCM
+#define SCM DONT_USE
 
 #define __COMPILER_EARLY_PASS
 
