@@ -125,15 +125,30 @@ CHAIN_HOOK(Profiling)
 
 #if defined RUN_PROFILINGS
 	#define PROFILE_INIT__%0(%1) @yP_%0();@yP_%0()
-	#define PROFILE__%0(%1) __TZ:@y_P%0();__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_P@%0();static y_P@%0()
+	#define PROFILE__ u@(u[_:__TZ:__TB:__TC:u@$
 	#define PROFILE_CLOSE__%0(%1) @P_y%0();@P_y%0()
-	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0(%1);%0(%1)RUN_TIMING(%3,%2)%4(%6);static %4(%6)
+
+	// With explicit count.
+	#define __TZ:__TB:%8$%0[%2](%1) %8$%0(%1);@y_P%0();@y_P%0()RUN_TIMING(#%0,%2)%0();%0(%1)
+
+	// Without explicit count.
+	#define __TB:%8$%0(%1) %8$%0(%1);@y_P%0();@y_P%0()RUN_TIMING(#%0)%0();%0(%1)
+
+	// Strip tags.
+	#define __TC:%8$%1:%3();%9:%0();%9:%0()RUN_TIMING(#%9:%2)%9: %8$%1:%3();@y_P%0();@y_P%0()RUN_TIMING(#%2)
+
+//	// Strip `stock` and `static`.
+//	#define @y_Pstock%0()%9()RUN_TIMING(#%9stock%2)%9stock @y_P%0();@y_P%0()RUN_TIMING(#%2)
+//	#define @y_Pstatic%0()%9()RUN_TIMING(#%9static%2)%9static @y_P%0();@y_P%0()RUN_TIMING(#%2)
+//	#define @y_Pconst%0()%9()RUN_TIMING(#%9const%2)%9const @y_P%0();@y_P%0()RUN_TIMING(#%2)
+
 #else
 	#define PROFILE_INIT__%0(%1) static stock yP_@%0()
-	#define PROFILE__%0(%1) static stock __TZ:y_P@%0()
+	#define PROFILE__ u@(u[_:__TZ:u@$
 	#define PROFILE_CLOSE__%0(%1) static stock P_y@%0()
-	#define __TZ:%0[%2](%1) __TZ:%0_%2(%1)
+	#define __TZ:%8$%0[%2](%1) %8$%0(%1)
 #endif
+
 
 #if YSI_KEYWORD(ProfileInit)
 	#define ProfileInit:%1() PROFILE_INIT__ %1()
