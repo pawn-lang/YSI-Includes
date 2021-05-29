@@ -238,9 +238,11 @@ Optional plugins:
 			PP_main();
 		#endif
 	}
+	#undef main
 	#define main( __DISABLE__ PP_main(
 #else
 	#define main( __DISABLE__ main PP_LEFT_BRACKET<>
+	#define _ALS_main
 #endif
 #define __DISABLE__ __DISABLE_ALL__
 
