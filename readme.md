@@ -14,6 +14,8 @@ The libraries are split up approximately by usage.  Each one is included by grou
 #include <YSI_Coding\y_va>
 ```
 
+Although YSI provides a lot of libraries, they aren't included unless you include them.  So if you don't want *y_zonepulse* just don't include it and it won't appear in your mode at all.  This means YSI can contain a lot of functions, but they're all optional.
+
 ### Coding
 
 PAWN scripting improvements (i.e. new language features).
