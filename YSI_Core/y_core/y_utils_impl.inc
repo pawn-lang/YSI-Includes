@@ -2351,7 +2351,7 @@ stock LevenshteinDistance(const a[], const b[])
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-static stock ValstrWithOrdinal(n)
+stock ValstrWithOrdinal(n)
 {
 	new str[32];
 	valstr(str, n);
