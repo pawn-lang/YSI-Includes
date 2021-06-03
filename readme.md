@@ -8,6 +8,12 @@
 
 ## Libraries
 
+The libraries are split up approximately by usage.  Each one is included by group and name, so to include *y_va*, which is in *Coding* use:
+
+```pawn
+#include <YSI_Coding\y_va>
+```
+
 ### Coding
 
 PAWN scripting improvements (i.e. new language features).
