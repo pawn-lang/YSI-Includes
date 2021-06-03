@@ -2345,9 +2345,9 @@ stock LevenshteinDistance(const a[], const b[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="n">The numeric parameter position to print.</param>
+ * <param name="n">The number to convert to a string with ordinal.</param>
  * <returns>
- *  Prints a string passed as a vararg to the calling function.
+ *  Stringises a number, then adds <c>st/nd/rd/th</c>.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
