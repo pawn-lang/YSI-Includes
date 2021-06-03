@@ -1382,30 +1382,6 @@ Hooks_NumArgs_negative:
 #endif
 #define numargs Hooks_NumArgs
 
-static stock Hooks_Ordinal(n)
-{
-	new str[8];
-	valstr(str, n);
-	switch (n % 100)
-	{
-	case 11, 12, 13:
-		strcat(str, "th");
-	default:
-		switch (n % 10)
-		{
-		case 1:
-			strcat(str, "st");
-		case 2:
-			strcat(str, "nd");
-		case 3:
-			strcat(str, "rd");
-		default:
-			strcat(str, "th");
-		}
-	}
-	return str;
-}
-
 public OnRuntimeError(code, &bool:suppress)
 {
 	#if defined Hooks_OnRuntimeError
@@ -1440,7 +1416,7 @@ public OnRuntimeError(code, &bool:suppress)
 				printf("[debug]");
 			}
 			// Not 8, because `cur` is `- 8`.
-			printf("[debug] The %s mangled argments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", Hooks_Ordinal(i), AMX_Read(cur + 16) / 4);
+			printf("[debug] The %s mangled argments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", ValstrWithOrdinal(i), AMX_Read(cur + 16) / 4);
 			//// Get the current parameter count.
 			//printf("count: %d", count);
 			//// Write this out to the lower parameter count copy.

@@ -2351,6 +2351,34 @@ stock LevenshteinDistance(const a[], const b[])
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+static stock ValstrWithOrdinal(n)
+{
+	new str[32];
+	valstr(str, n);
+	if (11 <= (n % 100) <= 13)
+	{
+		strcat(str, "th");
+	}
+	else switch (n % 10)
+	{
+	case 1:
+		strcat(str, "st");
+	case 2:
+		strcat(str, "nd");
+	case 3:
+		strcat(str, "rd");
+	default:
+		strcat(str, "th");
+	}
+	return str;
+}
+/*-------------------------------------------------------------------------*//**
+ * <param name="n">The numeric parameter position to print.</param>
+ * <returns>
+ *  Prints a string passed as a vararg to the calling function.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock PrintArg(n)
 {
 	#emit LOAD.S.pri   n
