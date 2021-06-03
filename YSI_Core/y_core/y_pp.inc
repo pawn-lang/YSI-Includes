@@ -231,18 +231,19 @@ Optional plugins:
 #define PP_RIGHT_ANGLE_BRACKET<> >
 #define PP_NULL<>
 
+main()
+{
+	#if defined PP_main
+		PP_main();
+	#endif
+}
+
 #if defined _ALS_main
-	main()
-	{
-		#if defined PP_main
-			PP_main();
-		#endif
-	}
 	#undef main
-	#define main( __DISABLE__ PP_main(
 #else
-	#define main( __DISABLE__ main PP_LEFT_BRACKET<>
 	#define _ALS_main
 #endif
+
+#define main( __DISABLE__ PP_main(
 #define __DISABLE__ __DISABLE_ALL__
 
