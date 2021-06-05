@@ -431,6 +431,8 @@ stock _Timer_C(tt, g)
 stock _Timer_F(slot)
 {
 	P:3("_Timer_F called");
+	if (slot == -1)
+		return 0;
 	// This is done here for convenience.
 	if (slot & 0x80000000)
 	{
