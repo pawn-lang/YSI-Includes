@@ -412,7 +412,7 @@ enum _E_YCM
 		bool:YSI_gModuleShutdown = false;
 
 	static stock
-		YSI_g_sModuleName[32];
+		YSI_g_sModuleName[YSI_NAMEMAX];
 
 	static stock const
 		YSI_g_scModulePath[] = YSI_MODULE_PATH;
@@ -421,7 +421,7 @@ enum _E_YCM
 		YSI_g_sMasterCount = 0,
 		YSI_g_sMasterData[MAX_MASTERS];
 
-	stock Master_GetModuleName(ret[32])
+	stock Master_GetModuleName(ret[YSI_NAMEMAX])
 	{
 		ret = YSI_g_sModuleName;
 	}
@@ -882,7 +882,7 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 		else if (!force)
 		{
 			new
-				func[32];
+				func[YSI_NAMEMAX];
 			format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
 			master = CallLocalFunction(func, "");
 			// Might still be able to steal the master if we're a higher version.  We must be
@@ -900,7 +900,7 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 	else if (!force && existproperty(8, YSIM_VERMAX))
 	{
 		new
-			func[32];
+			func[YSI_NAMEMAX];
 		format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
 		if (CallLocalFunction(func, "") < getproperty(8, YSIM_VERMAX))
 		{

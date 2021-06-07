@@ -894,7 +894,7 @@ Format_Render_start:
 		ts[YSI_MAX_STRING],
 		//  Max handleable input string length is 128 (hopefully sufficient).
 		// =====================================================================
-		func[32],
+		func[YSI_NAMEMAX],
 		scNewLineString[] = "~n~",
 		scDialogLineString[] = "\r\n";
 	new
@@ -1119,7 +1119,7 @@ Format_Render_start:
 						{
 							func = "@yR_";
 							// Get the function name.
-							for (new _k = 4; _k != 32; ++_k)
+							for (new _k = 4; _k != YSI_NAMEMAX; ++_k)
 							{
 								if (!(func[_k] = getarg(curArg, _k - 4)))
 								{
@@ -1253,7 +1253,7 @@ Format_Render_start:
 								if(ch&_:e_COMPRESS_FORMAT_DATA_FUNC)
 								{
 									_b=1,func="@yR_";
-									for(new _k=4;_k!=32;++_k)
+									for(new _k=4;_k!=YSI_NAMEMAX;++_k)
 										if(!(func[_k]=getarg(curArg,_k-4)))
 											break;
 									if(funcidx(func)==-1)func[2]='r',_b=2;
@@ -1357,7 +1357,7 @@ Format_Render_start:
 						else
 						{
 							static
-								sFunc2[32] = "F";
+								sFunc2[YSI_NAMEMAX] = "F";
 							strunpack(sFunc2[1], string[idx], sizeof (sFunc2) - 1);
 							// Limit the function name to the function length.
 							sFunc2[sFunc2[1]] = '\0';

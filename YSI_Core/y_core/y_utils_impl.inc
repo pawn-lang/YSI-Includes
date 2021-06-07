@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#define FUNCTION_LENGTH                 (32)
+#define FUNCTION_LENGTH                 (YSI_NAMEMAX)
 
 // Better handling of operator precedences and floating point numbers.  This
 // will now work for ALL regular numbers (including -0.5 which broke the old

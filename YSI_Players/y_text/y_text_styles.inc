@@ -138,7 +138,7 @@ static stock
 	//YSI_g_s3DBlankData[E_3D_DATA],
 	YSI_g_sStyleBlankData[E_STYLE_DATA] = {e_STYLE_TYPE_CLIENT | e_STYLE_TYPE:0x0FF0000A, -1},
 	XML:YSI_g_sXMLRules = NO_XML_FILE,
-	YSI_g_sCurFile[32] = "\1\0",
+	YSI_g_sCurFile[YSI_NAMEMAX] = "\1\0",
 	YSI_g_sCur3D = 0;
 
 stock _Style_Init(id)
@@ -430,8 +430,8 @@ public _Styles_SpecialInit()
 	YSI_g_sCur3D = 0;
 	new
 		idx = 0,
-		buffer[32],
-		b2[32],
+		buffer[YSI_NAMEMAX],
+		b2[YSI_NAMEMAX],
 		pos = 0;
 	// Load the data for ALL the files this script uses (to get textdraw data).
 	while ((idx = AMX_GetPublicNameSuffix(idx, buffer, _A<@yX_>)))

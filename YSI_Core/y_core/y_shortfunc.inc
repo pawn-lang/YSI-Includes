@@ -441,6 +441,7 @@ stock H@(GLOBAL_TAG_TYPES:...)
 #define _UNUSED(%0) H@(_:_H@0:_H@1:%0)
 #define _H@0:_H@1:%0&%1) _H@0:_H@1:%0%1)
 #define _H@1:%0[%9]%1) _H@1:%0%1)
+#define OnChaosTimer(%0,%1) OnAndr%0Timer(%1)
 
 // Correctly stringise "On" callbacks without ALS interferring.
 #define B@:#On%0) "On"#%0)

@@ -416,7 +416,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 				quick = (pattern[0]) | (pattern[1] << 8) | (pattern[2] << 16) | (pattern[3] << 24),
 				addr = 0,
 				pos = idx * 8 + base + 4,
-				str[32];
+				str[YSI_NAMEMAX];
 			do
 			{
 				++idx;
@@ -555,7 +555,7 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 #define AMX_GetPubvarName( AMX_GetName(AMX_TABLE_PUBVARS,
 #define AMX_GetTagName( AMX_GetName(AMX_TABLE_TAGS,
 
-stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "", const bool:exact = false)
+stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[YSI_NAMEMAX], const pattern[] = "", const bool:exact = false)
 {
 	P:7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
 	new
@@ -589,7 +589,7 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "", cons
 #define AMX_GetPubvarNamePrefix( AMX_GetNamePrefix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagNamePrefix( AMX_GetNamePrefix(AMX_TABLE_TAGS,
 
-stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[32], pattern)
+stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[YSI_NAMEMAX], pattern)
 {
 	P:7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
@@ -630,7 +630,7 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 #define AMX_GetPubvarNameSuffix( AMX_GetNameSuffix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagNameSuffix( AMX_GetNameSuffix(AMX_TABLE_TAGS,
 
-stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[32], pattern)
+stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[YSI_NAMEMAX], pattern)
 {
 	P:7("AMX_GetNameSuffix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
@@ -1032,7 +1032,7 @@ stock AMX_DumpHeader()
 {
 	new
 		idx = 0,
-		buffer[32];
+		buffer[YSI_NAMEMAX];
 	printf("================================");
 	while ((idx = AMX_GetPublicName(idx, buffer)))
 	{

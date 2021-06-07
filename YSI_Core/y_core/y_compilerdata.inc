@@ -515,9 +515,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#error YSI assumes `charbits` is 8.
 #endif
 
-#if __COMPILER_sNAMEMAX != 31
-	#error YSI assumes `sNAMEMAX` is 31.
-#endif
+#define YSI_NAMEMAX (__COMPILER_sNAMEMAX + 1)
 
 __COMPILER_TAG_DATA(_, 0);
 __COMPILER_TAG_DATA(bool, 0);

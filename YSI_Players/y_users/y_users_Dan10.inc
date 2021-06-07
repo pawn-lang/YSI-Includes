@@ -719,8 +719,8 @@ remotefunc void:Player_DoLogin(playerid, uid)
 public y_users_SQLLoaded(playerid, uid, Result:r)
 {
 	static
-		func[32] = "@yU_",
-		name[32];
+		func[YSI_NAMEMAX] = "@yU_",
+		name[YSI_NAMEMAX];
 	if (sql_error(r))
 	{
 		sql_error_string(r, YSI_g_sSQLQuery),

@@ -106,9 +106,9 @@ _Y_INI_STATIC stock
 	Alloc:YSI_g_sExtendedLine = NO_ALLOC,
 	YSI_g_sExtendedName[MAX_INI_ENTRY_NAME],
 	YSI_g_sExtra = 0,
-	YSI_g_sFile[32],
-	YSI_g_sTag[32],
-	YSI_g_sFormat[32],
+	YSI_g_sFile[YSI_NAMEMAX],
+	YSI_g_sTag[YSI_NAMEMAX],
+	YSI_g_sFormat[YSI_NAMEMAX],
 	bool:YSI_g_sRemote = false,
 	YSI_g_sCurLine[MAX_INI_LINE];
 
@@ -632,7 +632,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 		// Set up the initial callback.
 		new
 			pos = -1,
-			cb[32];
+			cb[YSI_NAMEMAX];
 		YSI_g_sTag[0] = '\1';
 		YSI_g_sTag[1] = '\0';
 		if (bFileFirst)
@@ -646,7 +646,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 	{
 		// Read the file.  We have no parent and want to be in read mode.  What we
 		// do with the lines is determined by the state and the current line type.
-		new parent[32] = "";
+		new parent[YSI_NAMEMAX] = "";
 		INI_ReadFile(fhnd, parent, !!start),
 		fclose(fhnd);
 	}
@@ -1352,7 +1352,7 @@ stock bool:INI_WriteFloat(INI:file, const name[], Float:data, accuracy = 6)
 
 */
 
-static stock INI_ReadFile(File:fhnd, parent[32], bool:handle = true)
+static stock INI_ReadFile(File:fhnd, parent[YSI_NAMEMAX], bool:handle = true)
 {
 	new
 		bool:doneParent = false,
@@ -1713,7 +1713,7 @@ static stock INI_HandleTag(const tag[]) <
 {
 	new
 		pos = -1,
-		cb[32];
+		cb[YSI_NAMEMAX];
 	strcpy(YSI_g_sTag, tag),
 	format(cb, sizeof (cb), YSI_g_sFormat, YSI_g_sFile, tag);
 	while ((pos = strfind(cb, " ", false, pos + 1)) != -1)
@@ -1729,7 +1729,7 @@ static stock INI_HandleTag(const tag[]) <
 {
 	new
 		pos = -1,
-		cb[32];
+		cb[YSI_NAMEMAX];
 	strcpy(YSI_g_sTag, tag),
 	format(cb, sizeof (cb), YSI_g_sFormat, tag, YSI_g_sFile);
 	while ((pos = strfind(cb, " ", false, pos + 1)) != -1)
@@ -1901,7 +1901,7 @@ static stock INI_Flush_(INI:file)
 	}
 	// Now parse the file.
 	{
-		new parent[32] = "";
+		new parent[YSI_NAMEMAX] = "";
 		INI_ReadFile(fhnd, parent);
 	}
 	// Now write it back out.

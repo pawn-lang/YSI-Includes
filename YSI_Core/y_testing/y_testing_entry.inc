@@ -172,7 +172,7 @@ static stock
 	YSI_g_sFails = 0;
 
 stock
-	YSI_gCurTestName[32];
+	YSI_gCurTestName[YSI_NAMEMAX];
 
 static stock const
 	YSI_gscStringS[] = "s",
@@ -457,8 +457,8 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 	new
 		idx = 0,
 		bidx = 0,
-		buffer2[32],
-		buffer[32];
+		buffer2[YSI_NAMEMAX],
+		buffer[YSI_NAMEMAX];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST_SEARCH)))
 	{
@@ -575,7 +575,7 @@ Testing_Run_after_fail:
 		P:2("Testing_Next() called");
 		YSI_g_sInTest = false;
 		new
-			buffer[32];
+			buffer[YSI_NAMEMAX];
 		for ( ; ; )
 		{
 			new
