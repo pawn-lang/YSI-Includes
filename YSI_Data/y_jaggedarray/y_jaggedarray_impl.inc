@@ -186,6 +186,76 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 }
 #define Jagged_ResizeOne(%0,%1) _Jagged_ResizeOne(_Jagged(%0),%1)
 
+///*-------------------------------------------------------------------------*//**
+// * <param name="array">The array we want to relocate a slot in.</param>
+// * <param name="size1">The number of slots in the array.</param>
+// * <param name="size2">The ORIGINAL size of every slot.</param>
+// * <param name="slot">The slot to relocate.</param>
+// * <param name="newSlot">The new location of the slot.</param>
+// * <remarks>
+// *  Make a slot point to the data of an EARLIER slot.
+// * </remarks>
+// *//*------------------------------------------------------------------------**/
+//
+//stock bool:_Jagged_RelocateOne(array[][], size1, size2, slot, newSlot)
+//{
+//	if (slot <= newSlot)
+//	{
+//		return false;
+//	}
+//	// SLOT GETS INCREMENTED VERY FAST!
+//	if (0 < ++slot <= size1)
+//	{
+//		// Get the slot's current size and address.
+//		newSize *= 4;
+//		new
+//			newEnd = _Jagged_Address(array, slot - 1) + newSize,
+//			arrayEnd = _Jagged_End(array, size1, size2);
+//		if (newEnd > arrayEnd)
+//		{
+//			P:1("Insufficient space to grow jagged array.");
+//			return false;
+//		}
+//		new
+//			slotEnd = _Jagged_Address(array, slot),
+//			//oldSize = slotEnd - slotStart,
+//			shift = newEnd - slotEnd; //newSize - oldSize;
+//		P:5("Jagged_ResizeOne: Resizing slot %d from %d to %d", slot - 1, _Jagged_SizeOf(array, size1, size2, slot - 1), newSize);
+//		if (shift != 0)
+//		{
+//			new
+//				remain = arrayEnd - newEnd;
+//			// Grow the slot.  This has to be done largely in assembly to remove
+//			// the "BOUNDS" OpCodes that would otherwise be inserted.  Actually,
+//			// we can't have "BOUNDS" here because there's no way for the
+//			// compiler to know the array's size in advance.  This works even
+//			// when "shift" is negative.
+//			memcpy(array[slot][shift / 4], array[slot], 0, remain, remain / 4);
+//			// Now shift all the subsequent slots.
+//			size2 = size2 * size1 * 4;
+//			while (slot < size1)
+//			{
+//				Jagged_MovePtr(array, size2 + (size1 - slot) * 4, slot, shift);
+//				++slot;
+//			}
+//			if (shift > 0)
+//			{
+//				// Blank the remainder of the slot we are growing.
+//				rawMemset(slotEnd, 0, shift);
+//			}
+//			else
+//			{
+//				// Blank the end of the array.
+//				rawMemset(arrayEnd + shift, 0, -shift);
+//			}
+//		}
+//		// Do nothing if they're the same.
+//		return true;
+//	}
+//	return false;
+//}
+//#define Jagged_ResizeOne(%0,%1) _Jagged_ResizeOne(_Jagged(%0),%1)
+
 /*-------------------------------------------------------------------------*//**
  * <param name="array">The array we want to resize a slot in.</param>
  * <param name="size1">The number of slots in the array.</param>
@@ -463,8 +533,6 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">The array we want to get the address of a slot in.</param>
- * <param name="size1">The number of slots in the array.</param>
- * <param name="size2">The ORIGINAL size of every slot.</param>
  * <param name="slot">The slot to get the address of.</param>
  * <returns>
  *  The absolute address of this slot.

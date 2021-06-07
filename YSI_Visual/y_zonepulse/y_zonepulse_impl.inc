@@ -74,7 +74,7 @@ Optional plugins:
 //task DoPulse1
 
 static stock
-	YSI_g_sTimer[32] = "y_zonepulse_";
+	YSI_g_sTimer[YSI_NAMEMAX] = "y_zonepulse_";
 
 forward __GangZonePulse(playerid, zone, from, to, time, stage, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1);
 
@@ -130,9 +130,6 @@ public __GangZonePulse(playerid, zone, from, to, time, stage, delay, time2, dela
 
 stock _GangZonePulse(@PlayerSet:ps, zone, from, to, time, delay = ZONE_PULSE_STAGE_TIME, time2 = -1, delay2 = -1)
 {
-	//static
-	//	YSI_g_sTimer[32];
-	//format(YSI_g_sTimer, sizeof (YSI_g_sTimer), "y_zonepulse_%d", zone);
 	valstr(YSI_g_sTimer[12], zone);
 	if (time2 == -1)
 	{
@@ -189,9 +186,6 @@ stock _GangZonePulse(@PlayerSet:ps, zone, from, to, time, delay = ZONE_PULSE_STA
 
 stock _GangZoneStopPulse(@PlayerSet:ps, zone)
 {
-	//static
-	//	YSI_g_sTimer[32];
-	//format(YSI_g_sTimer, sizeof (YSI_g_sTimer), "y_zonepulse_%d", zone);
 	valstr(YSI_g_sTimer[12], zone);
 	FOREACH__ (new p : PS(ps))
 	{

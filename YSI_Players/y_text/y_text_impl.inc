@@ -125,13 +125,6 @@ enum e_TEXT_DISPLAY_TYPE:
 #define core#:#%1[%2]%9#|,%3) %1#:#%2#|,%3)
 
 // This holds the data for all entry points.
-enum E_TEXT_SETS
-{
-	E_TEXT_SETS_NAME[28],
-	E_TEXT_SETS_HASH,
-	bool:E_TEXT_SETS_LOAD
-}
-
 enum E_TEXT_ENTRY
 {
 	E_TEXT_ENTRY_NAME[MAX_INI_ENTRY_NAME],
@@ -141,35 +134,25 @@ enum E_TEXT_ENTRY
 
 #define TEXT_MASTER YSI_g_sDistributionID
 
-#if !defined MAX_SINGLE_TEXT_ITEM
-	#define MAX_SINGLE_TEXT_ITEM (1024)
+#if !defined Y_TEXT_AVERAGE_USAGE
+	// DO NOT use brackets here.
+	#define Y_TEXT_AVERAGE_USAGE 2/3
 #endif
+
 
 static stock
 	HashMap:YSI_g_sTextMap<>,
 	YSI_g_sTextLength = 0,
-	YSI_g_sTextSets[Y_TEXT_MAX_SETS][E_TEXT_SETS],
 	YSI_g_sTextEntries[MAX_TEXT_ENTRIES][E_TEXT_ENTRY],
-	YSI_g_sTextStrings[MAX_TEXT_ENTRIES * _:YSI_MAX_LANGUAGES][MAX_INI_ENTRY_TEXT / 2],
+	// Enough space for all the strings for all languages, assuming that on average they're 2/3 of
+	// the maximum length.
+	YSI_g_sTextStrings[MAX_TEXT_ENTRIES * _:YSI_MAX_LANGUAGES * MAX_INI_ENTRY_TEXT * Y_TEXT_AVERAGE_USAGE],
 	YSI_g_sDistributionID = -1,
 	YSI_g_sUnusedSlot = 0,
-	YSI_g_sRemaining = sizeof (YSI_g_sTextStrings) * sizeof (YSI_g_sTextStrings[]);
+	YSI_g_sRemaining = sizeof (YSI_g_sTextStrings);
 
 P:D(Text_FindEntry(set, name, hash));
 #define Text_FindEntry(%0,%1,%2) HashMap_GetWithHash(YSI_g_sTextMap, (%1), (%0) + (%2))
-
-/*-------------------------------------------------------------------------*//**
- * <param name="len">Length to make the array slot.</param>
- * <remarks>
- *   Adjusts the first index table in "YSI_g_sTextStrings" such that the next
- *   call to "Text_GetFreeSlot" will point to a non-zero length target string.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static stock bool:Text_UpdateSlotSize(slot, len)
-{
-	return Jagged_Resize(YSI_g_sTextStrings, { slot, len });
-}
 
 //                                                                                               
 //    88           ,ad8888ba,         db         88888888ba,    88  888b      88    ,ad8888ba,   
@@ -430,7 +413,8 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 	P:5("Text_INILoad: IsPacked? %08x%08x", value[0], value[1]);
 	new
 		fname[32];
-	format(fname, sizeof (fname), "%s:%s", file, tag);
+	// format(fname, sizeof (fname), "%s:%s", file, tag);
+	// Find or add `name` to the hashmap.
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
 		if (!strcmp(YSI_g_sTextSets[i][E_TEXT_SETS_NAME], fname, true))
@@ -456,7 +440,9 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 			}
 			#if !defined Y_TEXT_ACCEPT_BREAKING_CHANGE_1
 				if (number)
+				{
 					P:W("y_text line extensions must now use \"NAME-part\" not \"NAME_part\".\n\tTo acknowledge this change and disable this warning, recompile with:\n\n\t\t#define Y_TEXT_ACCEPT_BREAKING_CHANGE_1\n.");
+				}
 			#endif
 			// So "MY_TEXT-1" becomes "MY_TEXT", not "MY_TEXT-".
 			if (slot == '-')
@@ -808,7 +794,7 @@ static stock Text_AddEntry(set, name[], value[], hash)
 	}
 	// Save the string.
 	//strpack(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
-	Text_UpdateSlotSize(Format_Standardise(value, YSI_g_sTextStrings[slot], YSI_g_sRemaining));
+	//Text_UpdateSlotSize(Format_Standardise(value, YSI_g_sTextStrings[slot], YSI_g_sRemaining));
 	//strpack(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
 	//strcpy(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
 	// Save the identifier.

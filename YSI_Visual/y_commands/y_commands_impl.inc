@@ -1425,7 +1425,7 @@ HOOK__ OnYSIInit()
 	P:2("_Command_DoInit <> called");
 	new
 		entryPublic = 0,
-		buffer[32 char],
+		buffer[YSI_NAMEMAX char],
 		idx = 0,
 		id2 = 0;
 	P:5("Command_OnYSIInit: Pre-loop");
@@ -1487,7 +1487,7 @@ HOOK__ OnScriptExit()
 	MASTER_HOOK__ OnMasterSystemClose(id)
 	{
 		new
-			cmdname[32 char] = {_C<@_yC>, 0, 0, ...},
+			cmdname[YSI_NAMEMAX char] = {_C<@_yC>, 0, 0, ...},
 			Bit:cur = Bit:Master_ID(),
 			Bit:bit = Bit:(1 << id),
 			Bit:rem = ~bit;
@@ -1546,7 +1546,7 @@ FOREIGN__ void:_Command_Rebuild();
 GLOBAL__ void:_Command_Rebuild()
 {
 	new
-		cmdname[32 char] = {('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00), 0, 0, ...};
+		cmdname[YSI_NAMEMAX char] = {('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00), 0, 0, ...};
 	HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands, E_COMMAND_HASH_MAP);
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
