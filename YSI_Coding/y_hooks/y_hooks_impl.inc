@@ -218,7 +218,7 @@ stock Hooks_MakeLongName(name[64])
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Function name to modify.</param>
  * <remarks>
- *  Compresses function names when required to fit within YSI_NAMEMAX characters
+ *  Compresses function names when required to fit within FUNCTION_LENGTH characters
  *  according to well defined rules (see "YSI_g_sReplacements").
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -230,7 +230,7 @@ stock Hooks_MakeShortName(name[64])
 		len = 0,
 		pos = -1,
 		idx = YSI_g_sReplacementsLongOrder[0];
-	for (new i = 0; (len = strlen(name)) >= YSI_NAMEMAX && i != YSI_g_sReplacePtr; )
+	for (new i = 0; (len = strlen(name)) >= FUNCTION_LENGTH && i != YSI_g_sReplacePtr; )
 	{
 		if ((pos = strfind(name, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_LONG], false, pos + 1)) == -1)
 		{
@@ -290,7 +290,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 		idx = 0;
 	{
 		new
-			name[YSI_NAMEMAX char],
+			name[FUNCTION_LENGTH char],
 			addr = 0;
 		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
 		{
@@ -307,7 +307,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 			if (strlen(name) > 15)
 				P:E("Overflow in prehook name \"%s\"", unpack(name));
 			// {
-				// new buffer[YSI_NAMEMAX];
+				// new buffer[FUNCTION_LENGTH];
 				// strunpack(buffer, name);
 				// printf("preload: %s", buffer);
 			// }
@@ -362,7 +362,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 		P:5("Hooks_GetPreHooks: search = %s", unpack(lfunc));
 		P:C(new oc = count;);
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
-		P:C(if (oc != count) { new buffer[YSI_NAMEMAX]; AMX_ReadString(AMX_Read(hooks[count] + 4) + AMX_BASE_ADDRESS, buffer); P:5("Hooks_GetPreHooks: found = %s", unpack(buffer)); });
+		P:C(if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[count] + 4) + AMX_BASE_ADDRESS, buffer); P:5("Hooks_GetPreHooks: found = %s", unpack(buffer)); });
 		strcpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
 		strcat(lfunc, "_");
 	}
@@ -395,7 +395,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, c
 				// We need to add the name of the callback to the AMX header,
 				// and we have enough space in which to do so.
 				new
-					str[YSI_NAMEMAX];
+					str[FUNCTION_LENGTH];
 				strpack(str, name),
 				AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(ptr + 4), str, len);
 			}
@@ -599,7 +599,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	Hooks_GetPreloadLibraries(preloads, precount);
 	// Main loop
 	new
-		name[YSI_NAMEMAX],
+		name[FUNCTION_LENGTH],
 		idx = 0;
 	// Get the next hook type.
 	while ((idx = AMX_GetPublicNamePrefix(idx, name, _A<@yH_>)))
@@ -609,7 +609,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	}
 }
 
-_Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, const name[YSI_NAMEMAX], idx)
+_Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, const name[FUNCTION_LENGTH], idx)
 {
 	P:4("Hooks_Collate called: %s %d", unpack(name), idx);
 	// This records the amount of space available in the nametable, currently
@@ -1433,7 +1433,7 @@ public OnRuntimeError(code, &bool:suppress)
 			// then the second corrections won't get displayed.
 			YSI_g_sActiveHooks = 0;
 		}
-		//new trace[YSI_NAMEMAX];
+		//new trace[FUNCTION_LENGTH];
 		//GetStackTrace(trace);
 		//PrintStackTrace(trace);
 	}

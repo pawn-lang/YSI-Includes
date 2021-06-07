@@ -256,7 +256,7 @@ static stock Text_LoadAll()
 	}
 	new
 		idx = 0,
-		buffer[YSI_NAMEMAX],
+		buffer[FUNCTION_LENGTH],
 		pos = 0;
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@yX_>)))
 	{
@@ -412,7 +412,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 	P:5("Text_INILoad called: %s, %s, %s, %s", file, tag, name, value);
 	P:5("Text_INILoad: IsPacked? %08x%08x", value[0], value[1]);
 	new
-		fname[YSI_NAMEMAX];
+		fname[FUNCTION_LENGTH];
 	// format(fname, sizeof (fname), "%s:%s", file, tag);
 	// Find or add `name` to the hashmap.
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)

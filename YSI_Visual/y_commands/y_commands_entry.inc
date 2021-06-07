@@ -77,7 +77,7 @@ Optional plugins:
 
 #include "..\..\YSI_Core\y_utils"
 
-#define MAX_COMMAND_LENGTH              (YSI_NAMEMAX)
+#define MAX_COMMAND_LENGTH              (FUNCTION_LENGTH)
 
 #define COMMAND_NOT_FOUND               (-1)
 

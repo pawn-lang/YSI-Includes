@@ -74,7 +74,7 @@ Optional plugins:
 //task DoPulse1
 
 static stock
-	YSI_g_sTimer[YSI_NAMEMAX] = "y_zonepulse_";
+	YSI_g_sTimer[FUNCTION_LENGTH] = "y_zonepulse_";
 
 forward __GangZonePulse(playerid, zone, from, to, time, stage, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1);
 

@@ -200,7 +200,7 @@ stock bool:Profiling_Run(&profilings)
 	P:2("Profiling_Run() called");
 	new
 		idx = 0,
-		buffer[YSI_NAMEMAX];
+		buffer[FUNCTION_LENGTH];
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_PROFILING_PROFILE_SEARCH)))
 	{
 		buffer[0] = Y_PROFILING_INIT,

@@ -127,7 +127,7 @@ Optional plugins:
 static stock
 	YSI_g_sFirstUVarData = -1,
 	// These three variables are used to speed up data loading through caching.
-	YSI_g_sLastName[YSI_NAMEMAX] = "\1\0",
+	YSI_g_sLastName[FUNCTION_LENGTH] = "\1\0",
 	YSI_g_sLastAddr = 0,
 	YSI_g_sLastPlayers = 0,
 	YSI_g_sLastSize = 0;

@@ -135,7 +135,7 @@ stock const
 stock _Bitmap_MakePattern(const pattern[], const posX, const posY, const offsetX, const offsetY)
 {
 	static
-		func[YSI_NAMEMAX] = "_BMP_PAT@";
+		func[FUNCTION_LENGTH] = "_BMP_PAT@";
 	new
 		pos = strfind(pattern, ",");
 	func[9] = '\0',

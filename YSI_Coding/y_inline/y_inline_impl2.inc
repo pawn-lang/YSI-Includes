@@ -194,7 +194,7 @@ __COMPILER_STATIC_ENUM E_PUBLIC_CALL
 	/*  5 */ E_PUBLIC_CALL_TIMER, // To release unneeded remotes.
 	/*  6 */ E_PUBLIC_CALL_FLAGS,
 	/*  7 */ E_PUBLIC_CALL_SPECIFIER[32],
-	/* 39 */ E_PUBLIC_CALL_FUNCTION[YSI_NAMEMAX]
+	/* 39 */ E_PUBLIC_CALL_FUNCTION[FUNCTION_LENGTH]
 }
 
 #if 0
@@ -493,7 +493,7 @@ static stock Inline_StoreData(const data[E_INLINE_DATA])
 	// Store the tag data.  TODO: Put this in the compiler with
 	// `InlineName = tagof (InlineName);`.
 	new
-		tag[YSI_NAMEMAX] = "F@_@";
+		tag[FUNCTION_LENGTH] = "F@_@";
 	for (new cur = 0; cur != data[E_INLINE_DATA_PARAMETER_COUNT]; ++cur)
 	{
 		switch (data[E_INLINE_DATA_PARAMETERS][cur])
@@ -1210,14 +1210,14 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 	if (remote)
 	{
 		new
-			tagname[YSI_NAMEMAX];
+			tagname[FUNCTION_LENGTH];
 		GetTagNameFromID(tag, tagname);
 		return !!(dest = _:GetRemoteFunction(name, tagname[4]));
 	}
 	else if (funcidx(name) != -1)
 	{
 		new
-			tagname[YSI_NAMEMAX];
+			tagname[FUNCTION_LENGTH];
 		GetTagNameFromID(tag, tagname);
 		return !!(dest = _:GetLocalFunction(name, tagname[4]));
 	}
@@ -1302,10 +1302,10 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 		// prototype can take both old-style strings and new-style resolved
 		// callbacks from `using inline`.
 		new
-			name[YSI_NAMEMAX],
+			name[FUNCTION_LENGTH],
 			numArgs = numargs(),
 			ret = 0,
-			expect[YSI_NAMEMAX] = "F@_@",
+			expect[FUNCTION_LENGTH] = "F@_@",
 			bool:remote = false;
 		assert(2 + __COMPILER_BUG_317 <= numArgs <= 4 + __COMPILER_BUG_317);
 		getstringarg(name, 0 + __COMPILER_BUG_317);

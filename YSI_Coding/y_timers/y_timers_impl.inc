@@ -148,7 +148,7 @@ public OnCodeInit()
 			// Now we know what time this function has, how many others have
 			// that time and how many have already been started.
 			new
-				buffer[YSI_NAMEMAX];
+				buffer[FUNCTION_LENGTH];
 			publicTableEntry += 4;
 			#emit LREF.S.pri publicTableEntry
 			#emit STOR.S.pri pointer

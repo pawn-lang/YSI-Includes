@@ -329,7 +329,7 @@ public _PHP_Result(index, response, data[])
 					//P:I("PHP: Got response.");
 					// Now parse the data.
 					static
-						sFunc[YSI_NAMEMAX],
+						sFunc[FUNCTION_LENGTH],
 						bool:sTrue = true,
 						bool:sFalse = false;
 					for (new i = 1, len = strlen(data); i < len; )

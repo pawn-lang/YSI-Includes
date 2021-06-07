@@ -98,7 +98,7 @@ stock bool:Timer_RunPTask_(const name[], &ptr, const interval, const E_TIMER_ACT
 			else
 			{
 				// Get the entry point, not the action.
-				new entryPoint[YSI_NAMEMAX];
+				new entryPoint[FUNCTION_LENGTH];
 				strunpack(entryPoint, name);
 				entryPoint[0] = '@';
 				entryPoint[0] = 'y';

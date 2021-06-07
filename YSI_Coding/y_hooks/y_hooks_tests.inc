@@ -539,7 +539,7 @@ TEST__ y_hooks_Ony_hooksTest5()
 static stock y_hooks_funcidx2(const str[])
 {
 	new
-		func[YSI_NAMEMAX],
+		func[FUNCTION_LENGTH],
 		buf = 0,
 		idx = 0;
 	while ((idx = AMX_GetPublicName(idx, func, str)))
@@ -594,7 +594,7 @@ TEST__ y_hooks_Invalidate23()
 TEST__ y_hooks_IsolateName1()
 {
 	new
-		name[YSI_NAMEMAX];
+		name[FUNCTION_LENGTH];
 	name = "@yH_Hello@Other";
 	Hooks_IsolateName(name);
 	ASSERT_FALSE(strcmp(name, "Hello"));
@@ -612,7 +612,7 @@ TEST__ y_hooks_IsolateName1()
 TEST__ y_hooks_IsolateName2()
 {
 	new
-		func[YSI_NAMEMAX];
+		func[FUNCTION_LENGTH];
 	#define FUNC:%0; func = "_yH@"#%0"@";Hooks_IsolateName(func);ASSERT(!strcmp(func, #%0));
 	FUNC:A;
 	FUNC:AAA;
