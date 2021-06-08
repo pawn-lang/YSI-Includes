@@ -36,15 +36,18 @@ public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 	return 1;
 }
 
-forward Android_Timer(playerid);
+forward OnAndroidTimer(playerid);
 
-public Android_Timer(playerid)
+public OnAndroidTimer(playerid)
 {
 	if (YSI_g_sIsAndoid[playerid] != true)
 	{
 		CallRemoteFunction("OnAndroidCheck", "ii", playerid, true);
 		YSI_g_sIsAndoid[playerid] = true;
 	}
+#if defined Android_OnAndroidTimer
+	Android_OnAndroidTimer(playerid);
+#endif
 }
 
 public OnPlayerDisconnect(playerid, reason)
@@ -53,7 +56,6 @@ public OnPlayerDisconnect(playerid, reason)
 	{
 		KillTimer(gTimers[playerid]);
 		gTimers[playerid] = 0;
-		CallRemoteFunction()
 	}
 #if defined Android_OnPlayerDisconnect
 	Android_OnPlayerDisconnect(playerid, reason);
@@ -66,7 +68,7 @@ public OnPlayerConnect(playerid)
 	if (!IS_FILTERSCRIPT)
 	{
 		SendClientCheck(playerid, 0x48, 0, 0, 2);
-		gTimers[playerid] = YSI_SetTimerEx("Android_Timer", 10000, true, "i", playerid);
+		gTimers[playerid] = YSI_SetTimerEx("OnAndroidTimer", 10000, true, "i", playerid);
 	}
 #if defined Android_OnPlayerConnect
 	Android_OnPlayerConnect(playerid);
@@ -102,5 +104,15 @@ public OnPlayerConnect(playerid)
 #define OnPlayerDisconnect Android_OnPlayerDisconnect
 #if defined Android_OnPlayerDisconnect
 	forward Android_OnPlayerDisconnect(playerid, reason);
+#endif
+
+#if defined _ALS_OnAndroidTimer
+	#undef OnAndroidTimer
+#else
+	#define _ALS_OnAndroidTimer
+#endif
+#define OnAndroidTimer Android_OnAndroidTimer
+#if defined Android_OnAndroidTimer
+	forward Android_OnAndroidTimer(playerid, reason);
 #endif
 
