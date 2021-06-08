@@ -1,7 +1,19 @@
 
-static stock gTimers[MAX_PLAYERS];
+static stock
+	YSI_g_sTimers[MAX_PLAYERS],
+	bool:YSI_g_sIsAndoid[MAX_PLAYERS] = bool:-1;
 
 forward FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+
+stock bool:IsPCPlayer(playerid)
+{
+	return YSI_g_sIsAndoid[playerid] == false;
+}
+
+stock bool:IsAndroidPlayer(playerid)
+{
+	return YSI_g_sIsAndoid[playerid] == true;
+}
 
 public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 {
@@ -11,11 +23,54 @@ public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 		{
 			KillTimer(gTimers[playerid]);
 			gTimers[playerid] = 0;
+			if (YSI_g_sIsAndoid[playerid] != false)
+			{
+				YSI_g_sIsAndoid[playerid] = false;
+				CallRemoteFunction("OnAndroidCheck", "ii", playerid, false);
+			}
 		}
 	}
 	#if defined Android_OnClientCheckResponse
 		Android_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
 	#endif
+	return 1;
+}
+
+forward Android_Timer(playerid);
+
+public Android_Timer(playerid)
+{
+	if (YSI_g_sIsAndoid[playerid] != true)
+	{
+		CallRemoteFunction("OnAndroidCheck", "ii", playerid, true);
+		YSI_g_sIsAndoid[playerid] = true;
+	}
+}
+
+public OnPlayerDisconnect(playerid, reason)
+{
+	if (gTimers[playerid])
+	{
+		KillTimer(gTimers[playerid]);
+		gTimers[playerid] = 0;
+		CallRemoteFunction()
+	}
+#if defined Android_OnPlayerDisconnect
+	Android_OnPlayerDisconnect(playerid, reason);
+#endif
+	return 1;
+}
+
+public OnPlayerConnect(playerid)
+{
+	if (!IS_FILTERSCRIPT)
+	{
+		SendClientCheck(playerid, 0x48, 0, 0, 2);
+		gTimers[playerid] = YSI_SetTimerEx("Android_Timer", 10000, true, "i", playerid);
+	}
+#if defined Android_OnPlayerConnect
+	Android_OnPlayerConnect(playerid);
+#endif
 	return 1;
 }
 
@@ -29,26 +84,23 @@ public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 	forward Android_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
 #endif
 
-forward Android_OnCheckFinished(playerid);
+#if defined _ALS_OnPlayerConnect
+	#undef OnPlayerConnect
+#else
+	#define _ALS_OnPlayerConnect
+#endif
+#define OnPlayerConnect Android_OnPlayerConnect
+#if defined Android_OnPlayerConnect
+	forward Android_OnPlayerConnect(playerid);
+#endif
 
-public Android_OnCheckFinished(playerid)
-{
-	// Silent ban.
-	new str[32] = "banip ";
-	GetPlayerIp(playerid, str[6], sizeof (str) - 6);
-	YSI_SendRconCommand(str);
-	gTimers[playerid] = YSI_SetTimerEx("Android_Unban", 1000, false, "i", PlayerIp(playerid));
-}
-
-public OnPlayerConnect(playerid)
-{
-	if (gTimers[playerid])
-	{
-		KillTimer(gTimers[playerid]);
-		gTimers[playerid] = 0;
-	}
-	SendClientCheck(playerid, 0x48, 0, 0, 2);
-	gTimers[playerid] = YSI_SetTimerEx("Android_OnCheckFinished", 1000, false, "i", playerid);
-	return 1;
-}
+#if defined _ALS_OnPlayerDisconnect
+	#undef OnPlayerDisconnect
+#else
+	#define _ALS_OnPlayerDisconnect
+#endif
+#define OnPlayerDisconnect Android_OnPlayerDisconnect
+#if defined Android_OnPlayerDisconnect
+	forward Android_OnPlayerDisconnect(playerid, reason);
+#endif
 
