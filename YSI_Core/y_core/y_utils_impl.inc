@@ -1001,6 +1001,56 @@ stock isnumeric(const str[])
 	return !str[i];
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player to mess up</param>
+ * <remarks>
+ *  Make some random effects on the player.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Utils_ChaosMod(playerid)
+{
+	new tmp;
+	switch (random(36))
+	{
+		case 0:
+		{
+			if (tmp = GetPlayerVehicleId(playerid))
+				SetVehicleVelocity(tmp, 0.0, 0.0, 0.0);
+			else
+				SetPlayerVelocity(playerid, 0.0, 0.0, 0.0);
+		}
+		case 1:
+		{
+			if (tmp = GetPlayerVehicleId(playerid))
+				SetVehicleVelocity(tmp, 0.0, 0.0, 1000.0);
+			else
+				SetPlayerVelocity(playerid, 0.0, 0.0, 1000.0);
+		}
+		case 2:
+		{
+			if (tmp = GetPlayerVehicleId(playerid))
+				SetVehicleHealth(tmp, 0.0);
+			else
+				SetPlayerHealth(playerid, 0.0);
+		}
+		case 3:
+		{
+			SetPlayerArmedWeapon(playerid, 0);
+		}
+		case 4:
+		{
+			SetPlayerWorldBounds(playerid, 0.1, -0.1, 0.1, -0.1);
+		}
+		case 5:
+		{
+			if (tmp = GetPlayerVehicleId(playerid))
+				LinkVehicleToInterior(tmp, GetPlayerInterior(playerid) ^ 1);
+			SetPlayerInterior(playerid, GetPlayerInterior(playerid) ^ 1);
+		}
+	}
+}
+
 #if !defined _inc_sscanf || 1
 	/*---------------------------------------------------------------------*//**
 	 *
