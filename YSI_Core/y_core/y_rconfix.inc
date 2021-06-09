@@ -4,7 +4,6 @@ static stock const
 
 y_rconfix_Load()
 {
-#if defined YSI_FIX_CALLBACKS
 	// Test if the fix has already been loaded.
 	setproperty(27, YSI_gscOnClientCheckResponse, 0);
 	YSI_SendRconCommand(YSI_gscOnClientCheckResponse);
@@ -80,7 +79,6 @@ y_rconfix_Load()
 		P:W("Could not load RconCommand/ClientCheckResponse fix FS.");
 		P:I("Ignore this error if the FS already loaded.");
 	}
-#endif
 }
 
 stock y_rconfix_Unload()
