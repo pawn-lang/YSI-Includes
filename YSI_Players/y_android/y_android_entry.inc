@@ -70,11 +70,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if defined _INC_y_android
+	#endinput
+#endif
+#define _INC_y_android
+
+#if !defined _samp_included
+	#endinput
+#endif
+
+#include "..\..\YSI_Core\y_core\y_rconfix"
+
 static stock
 	YSI_g_sTimers[MAX_PLAYERS],
 	bool:YSI_g_sIsAndoid[MAX_PLAYERS] = bool:-1;
 
-forward FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+forward OnAndroidCheck(playerid, bool:isDisgustingThiefToBeBanned);
 
 stock bool:IsPCPlayer(playerid)
 {

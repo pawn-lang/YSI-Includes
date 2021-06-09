@@ -92,13 +92,16 @@ Optional plugins:
 #define _Y_MASTER_INCLUDED
 
 #if !defined _INC_y_master
-	#include "..\..\YSI_Core\y_utils"
-	#include "..\..\YSI_Core\y_core\y_codeparse"
+	#include "..\y_utils"
+	#include "..\y_core\y_codeparse"
 
 	CHAIN_HOOK(Master)
 	#undef CHAIN_ORDER
 	#define CHAIN_ORDER CHAIN_NEXT(Master)
 	
+	#if !defined YSI_NO_MASTER
+		#include "..\y_core\y_rconfix"
+	#endif
 	#include "y_master_once"
 	#if !defined YSI_NO_MASTER
 		#include "y_distribute"
