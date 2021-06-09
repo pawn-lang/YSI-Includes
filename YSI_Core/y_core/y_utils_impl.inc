@@ -1015,21 +1015,21 @@ stock Utils_ChaosMod(playerid)
 	{
 		case 0:
 		{
-			if (tmp = GetPlayerVehicleId(playerid))
+			if ((tmp = GetPlayerVehicleID(playerid)))
 				SetVehicleVelocity(tmp, 0.0, 0.0, 0.0);
 			else
 				SetPlayerVelocity(playerid, 0.0, 0.0, 0.0);
 		}
 		case 1:
 		{
-			if (tmp = GetPlayerVehicleId(playerid))
+			if ((tmp = GetPlayerVehicleID(playerid)))
 				SetVehicleVelocity(tmp, 0.0, 0.0, 1000.0);
 			else
 				SetPlayerVelocity(playerid, 0.0, 0.0, 1000.0);
 		}
 		case 2:
 		{
-			if (tmp = GetPlayerVehicleId(playerid))
+			if ((tmp = GetPlayerVehicleID(playerid)))
 				SetVehicleHealth(tmp, 0.0);
 			else
 				SetPlayerHealth(playerid, 0.0);
@@ -1044,7 +1044,7 @@ stock Utils_ChaosMod(playerid)
 		}
 		case 5:
 		{
-			if (tmp = GetPlayerVehicleId(playerid))
+			if ((tmp = GetPlayerVehicleID(playerid)))
 				LinkVehicleToInterior(tmp, GetPlayerInterior(playerid) ^ 1);
 			SetPlayerInterior(playerid, GetPlayerInterior(playerid) ^ 1);
 		}
