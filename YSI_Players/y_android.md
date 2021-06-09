@@ -11,11 +11,11 @@ For general YSI information, see the following links:
 
 ## Documentation
 
-* [Quick Start](y_text/quick-start.md) - One very simple example of getting started with this library.
-* [Features](y_text/features.md) - More features and examples.
-* [FAQs](y_text/faqs.md) - Frequently Asked Questions, including errors and solutions.
-* [API](y_text/api.md) - Full list of all functions and their meaning.
-* [Internal](y_text/internal.md) - Internal developer documentation for the system.
+* [Quick Start](y_android/quick-start.md) - One very simple example of getting started with this library.
+* [Features](y_android/features.md) - More features and examples.
+* [FAQs](y_android/faqs.md) - Frequently Asked Questions, including errors and solutions.
+* [API](y_android/api.md) - Full list of all functions and their meaning.
+* [Internal](y_android/internal.md) - Internal developer documentation for the system.
 
 ## External Links
 
