@@ -123,6 +123,27 @@ Optional plugins:
 #tryinclude "..\..\..\crashdetect"
 #tryinclude "crashdetect"
 
+// `FIX_OnRconCommand` and `FIX_OnClientCheckResponse` might use `_FIXES_DEFAULT`.
+#if defined FIXES_DefaultDisabled
+	#if FIXES_DefaultDisabled == 1
+		#define _FIXES_DEFAULT (0)
+	#elseif FIXES_DefaultDisabled == 2
+		#define _FIXES_DEFAULT FIXES_EnableAll
+	#else
+		#define _FIXES_DEFAULT (1)
+	#endif
+#endif
+
+#if defined _INC_SAMP_Community_fixes
+	#if FIX_OnRconCommand == 0 && FIX_OnClientCheckResponse == 0
+		#define YSI_FIX_CALLBACKS
+	#endif
+#else
+	#define YSI_FIX_CALLBACKS
+#endif
+
+#undef _FIXES_DEFAULT
+
 // These three includes are just defines.  They declare no code at all, only
 // variables.
 #include "y_globaltags"

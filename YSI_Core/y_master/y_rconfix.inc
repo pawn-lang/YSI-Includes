@@ -4,7 +4,7 @@ static stock const
 
 y_rconfix_Load()
 {
-#if !defined _INC_SAMP_Community_fixes
+#if defined YSI_FIX_CALLBACKS
 	// Test if the fix has already been loaded.
 	setproperty(27, YSI_gscOnClientCheckResponse, 0);
 	YSI_SendRconCommand(YSI_gscOnClientCheckResponse);

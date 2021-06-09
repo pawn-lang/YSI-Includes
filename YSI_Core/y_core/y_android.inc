@@ -86,7 +86,7 @@ stock bool:IsAndroidPlayer(playerid)
 	return YSI_g_sIsAndoid[playerid] == true;
 }
 
-#if !defined _INC_SAMP_Community_fixes
+#if defined YSI_FIX_CALLBACKS
 	public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 	{
 		// Enable, then disable, the call in to the real version (if it exists).
