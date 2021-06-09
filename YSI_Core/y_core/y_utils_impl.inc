@@ -1011,7 +1011,7 @@ stock isnumeric(const str[])
 stock Utils_ChaosMod(playerid)
 {
 	new tmp;
-	switch (random(36))
+	switch (random(72))
 	{
 		case 0:
 		{
