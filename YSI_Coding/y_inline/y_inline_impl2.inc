@@ -940,9 +940,11 @@ Note:
 #define _@const%0\32; _@
 
 #define USING_INLINE__ (@Ik:@Il:Inline_UI_(),)
-#define USING__%0\32; (@Ip:@Iq:@Io:@Iu:@Ia:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
+#define USING__%0\32; (@Ip:@Iq:@Iw:@Iv:@Io:@Iu:@Ia:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
 #define USING_PUBLIC__ (@Ik:@Il:Inline_UP_(),)
 #define USING_CALLBACK__ (@Ik:@Il:Inline_UP_(),)
+#define USING_FUNCTION__ (@Ik:@Il:Inline_US_(),)
+#define USING_STOCK__ (@Ik:@Il:Inline_US_(),)
 #define USING_RESOLVED__ (@Ik:@Il:0,)
 #define USING_ASYNC__ (@Ik:@Il:Inline_UA_(),)
 
@@ -957,6 +959,8 @@ Note:
 // Parameter type for passing callbacks about.
 #define @Ip:%0)inline @Ik:@Il:Inline_UI_(),)
 #define @Iq:%0)callback @Ik:@Il:Inline_UP_(),)
+#define @Iw:%0)function @Ik:@Il:Inline_US_(),)
+#define @Iv:%0)stock @Ik:@Il:Inline_US_(),)
 #define @Io:%0)public @Ik:@Il:Inline_UP_(),)
 #define @Iu:%0)resolved @Ik:@Il:0,)
 #define @Ia:%0)async @Ik:@Il:Inline_UA_(),)
@@ -988,6 +992,7 @@ Note:
 #define @In:%0(%1)%3),%2$) %0%3),%2$),.bExtra=true,.extra=%1)
 
 // Move the callback parameter inside the brackets.
+#define Inline_US_(),%0) I@,addressof(%0))
 #define Inline_UI_(),%0) Inline_UI_(_:%0),%0)
 #define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),F@_@:I@ I@O$)
 #define @Im:Callback_Find_(,I@),F@_@:I@%0) Callback_Find_(#%0,I@),F@_@:I@)
