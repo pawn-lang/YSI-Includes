@@ -1049,9 +1049,9 @@ stock Utils_ChaosMod(playerid)
 	}
 }
 
-public OnChaosTimer(oid, pid)
+public OnChaosTimer(oid, playerid)
 {
-	Utils_ChaosMod(pid);
+	Utils_ChaosMod(playerid);
 }
 
 #if !defined _inc_sscanf || 1

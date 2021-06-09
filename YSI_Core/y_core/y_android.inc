@@ -1,3 +1,74 @@
+/*
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 (the "License"); you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI framework.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright (C) 2011
+	the Initial Developer. All Rights Reserved.
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 static stock
 	YSI_g_sTimers[MAX_PLAYERS],
@@ -15,14 +86,48 @@ stock bool:IsAndroidPlayer(playerid)
 	return YSI_g_sIsAndoid[playerid] == true;
 }
 
-public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata)
+#if !defined _INC_SAMP_Community_fixes
+	public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
+	{
+		// Enable, then disable, the call in to the real version (if it exists).
+		state OnClientCheckResponse : OnClientCheckResponse_GM;
+		new
+			ret = FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+		state OnClientCheckResponse : OnClientCheckResponse_FS;
+		return ret;
+	}
+
+	forward FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+	public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata) <OnClientCheckResponse : OnClientCheckResponse_FS>
+	{
+		return 0;
+	}
+
+	public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata) <>
+	{
+		return 0;
+	}
+
+	static stock _FIXES_OnClientCheckResponse() <OnClientCheckResponse : OnClientCheckResponse_GM, OnClientCheckResponse : OnClientCheckResponse_FS>
+	{
+		// Define states only.
+	}
+
+	#if defined _ALS_OnClientCheckResponse
+		#error _ALS_OnClientCheckResponse defined
+	#endif
+	#define _ALS_OnClientCheckResponse
+	#define OnClientCheckResponse(%0) FIXES_OnClientCheckResponse(%0) <OnClientCheckResponse : OnClientCheckResponse_GM>
+#endif
+
+public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 {
 	if (actionid == 0x48) 
 	{
-		if (gTimers[playerid])
+		if (YSI_g_sTimers[playerid])
 		{
-			KillTimer(gTimers[playerid]);
-			gTimers[playerid] = 0;
+			KillTimer(YSI_g_sTimers[playerid]);
+			YSI_g_sTimers[playerid] = 0;
 			if (YSI_g_sIsAndoid[playerid] != false)
 			{
 				YSI_g_sIsAndoid[playerid] = false;
@@ -52,10 +157,10 @@ public OnAndroidTimer(playerid)
 
 public OnPlayerDisconnect(playerid, reason)
 {
-	if (gTimers[playerid])
+	if (YSI_g_sTimers[playerid])
 	{
-		KillTimer(gTimers[playerid]);
-		gTimers[playerid] = 0;
+		KillTimer(YSI_g_sTimers[playerid]);
+		YSI_g_sTimers[playerid] = 0;
 	}
 #if defined Android_OnPlayerDisconnect
 	Android_OnPlayerDisconnect(playerid, reason);
@@ -68,7 +173,7 @@ public OnPlayerConnect(playerid)
 	if (!IS_FILTERSCRIPT)
 	{
 		SendClientCheck(playerid, 0x48, 0, 0, 2);
-		gTimers[playerid] = YSI_SetTimerEx("OnAndroidTimer", 10000, true, "i", playerid);
+		YSI_g_sTimers[playerid] = YSI_SetTimerEx("OnAndroidTimer", 10000, true, "i", playerid);
 	}
 #if defined Android_OnPlayerConnect
 	Android_OnPlayerConnect(playerid);
@@ -76,12 +181,12 @@ public OnPlayerConnect(playerid)
 	return 1;
 }
 
-#if defined _ALS_FIXES_OnClCheckResponse
-	#undef FIXES_OnClientCheckResponse
+#if defined _ALS_OnClientCheckResponse
+	#undef OnClientCheckResponse
 #else
-	#define _ALS_FIXES_OnClCheckResponse
+	#define _ALS_OnClientCheckResponse
 #endif
-#define FIXES_OnClientCheckResponse Android_OnClientCheckResponse
+#define OnClientCheckResponse( Android_OnClientCheckResponse(
 #if defined Android_OnClientCheckResponse
 	forward Android_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
 #endif
@@ -91,7 +196,7 @@ public OnPlayerConnect(playerid)
 #else
 	#define _ALS_OnPlayerConnect
 #endif
-#define OnPlayerConnect Android_OnPlayerConnect
+#define OnPlayerConnect( Android_OnPlayerConnect(
 #if defined Android_OnPlayerConnect
 	forward Android_OnPlayerConnect(playerid);
 #endif
@@ -101,7 +206,7 @@ public OnPlayerConnect(playerid)
 #else
 	#define _ALS_OnPlayerDisconnect
 #endif
-#define OnPlayerDisconnect Android_OnPlayerDisconnect
+#define OnPlayerDisconnect( Android_OnPlayerDisconnect(
 #if defined Android_OnPlayerDisconnect
 	forward Android_OnPlayerDisconnect(playerid, reason);
 #endif
@@ -111,8 +216,8 @@ public OnPlayerConnect(playerid)
 #else
 	#define _ALS_OnAndroidTimer
 #endif
-#define OnAndroidTimer Android_OnAndroidTimer
+#define OnAndroidTimer( Android_OnAndroidTimer(
 #if defined Android_OnAndroidTimer
-	forward Android_OnAndroidTimer(playerid, reason);
+	forward Android_OnAndroidTimer(playerid);
 #endif
 

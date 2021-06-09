@@ -158,6 +158,7 @@ stock const YSIM_VERMAX[] = "X";
 #include "y_cell_impl"
 #include "y_amx_impl"
 #include "y_shortfunc"
+#include "y_android"
 #include "y_utils_impl"
 
 // Part of "y_scriptinit", but requires "y_amx".
@@ -263,7 +264,6 @@ native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = mem
 #if defined YSI_TESTS
 	#include "..\y_testing"
 #endif
-#include "y_android"
 
 #if defined YSI_YES_MODE_CACHE
 	#include "y_thirdpartyinclude"
