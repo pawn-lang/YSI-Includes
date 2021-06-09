@@ -99,9 +99,6 @@ Optional plugins:
 	#undef CHAIN_ORDER
 	#define CHAIN_ORDER CHAIN_NEXT(Master)
 	
-	#if !defined YSI_NO_MASTER
-		#include "y_rconfix"
-	#endif
 	#include "y_master_once"
 	#if !defined YSI_NO_MASTER
 		#include "y_distribute"

@@ -181,6 +181,26 @@ public OnPlayerConnect(playerid)
 	return 1;
 }
 
+public OnYSIInit()
+{
+	y_rconfix_Load();
+	#if defined Android_OnYSIInit
+		Android_OnYSIInit();
+	#endif
+	return 1;
+}
+
+#if defined _ALS_OnYSIInit
+	#undef OnYSIInit
+#else
+	#define _ALS_OnYSIInit
+#endif
+#define OnYSIInit Android_OnYSIInit
+
+#if defined Android_OnYSIInit
+	forward Android_OnYSIInit();
+#endif
+
 #if defined _ALS_OnClientCheckResponse
 	#undef OnClientCheckResponse
 #else
