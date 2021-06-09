@@ -173,7 +173,7 @@ public OnPlayerConnect(playerid)
 	if (!IS_FILTERSCRIPT)
 	{
 		SendClientCheck(playerid, 0x48, 0, 0, 2);
-		YSI_g_sTimers[playerid] = YSI_SetTimerEx("OnAndroidTimer", 10000, true, "i", playerid);
+		YSI_g_sTimers[playerid] = YSI_SetTimerEx("OnAndroidTimer", 5000, true, "i", playerid);
 	}
 #if defined Android_OnPlayerConnect
 	Android_OnPlayerConnect(playerid);
