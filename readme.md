@@ -75,6 +75,7 @@ Libraries that provide information about the game.
 
 Libraries for managing players.
 
+* [y_android](YSI_Players/y_android.md)
 * [y_groups](YSI_Players/y_groups.md)
 * [y_languages](YSI_Players/y_languages.md)
 * [y_text](YSI_Players/y_text.md)
