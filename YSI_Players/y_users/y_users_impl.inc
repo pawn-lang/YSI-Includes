@@ -6,19 +6,207 @@ enum e_USER_ERROR
 	e_USER_ERROR_CONN,  // Can't connect.
 }
 
+static stock bool:UnsafeTrimArgN(n, const string:string[])
+{
+	new
+		start,
+		end;
+	// Find the start of the text.
+	for (new i = 0, ch; ((ch = string[i])); ++i)
+	{
+		if (ch > ' ')
+		{
+			start = i;
+			// Find the end of the text.
+			while ((ch = string[i++]))
+			{
+				if (ch > ' ')
+				{
+					// NOT an OBOE, despite the `i++` above.
+					end = i;
+				}
+			}
+			// End the string.
+			ch = string[end];
+			_YSI_ConstMod(string[end], '\0');
+			// Got the start and the end.
+			return ;
+		}
+	}
+	// No text given.
+	return false;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who is logging in.</param>
  * <param name="password">Password they entered.</param>
- * <param name="f">Show the failed to login message?</param>
  * <remarks>
- *  Tries to log in a player - hashes and checks their password and if it's
- *  right calls the core login code.  It doesn't matter WHICH script does this
- *  as they ALL get called and ALL track the login status of a player.
+ *  Stores a HASHED version of the password, as a first input, for later
+ *  confirmation.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Player_TryRegister(playerid, string:password[])
+User_RegisterPassword(playerid, string:password[])
 {
+	new
+		start,
+		end;
+	// Find the start of the text.
+	for (new i = 0, ch; ((ch = password[i])); ++i)
+	{
+		if (ch > ' ')
+		{
+			start = i;
+			// Find the end of the text.
+			while ((ch = password[i++]))
+			{
+				if (ch > ' ')
+				{
+					// NOT an OBOE, despite the `i++` above.
+					end = i;
+				}
+			}
+			// End the string.
+			password[end] = '\0';
+			//_YSI_ConstMod(password[end], '\0');
+			// Got the start and the end.
+			User_HashPassword(playerid, password[start]);
+			// Wipe out the password.
+			SecureCallbackMemory();
+			SecureVariableMemory(password);
+			return true;
+		}
+	}
+	// No text given.
+	return false;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who is logging in.</param>
+ * <param name="password">Password they entered.</param>
+ * <remarks>
+ *  Double-checks the entered password.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock User_ConfirmPassword(playerid, string:password[])
+{
+	if (isnull(YSI_g_sUserPassword[playerid]))
+	{
+		// They don't have a password yet.
+		return false;
+	}
+	new
+		start,
+		end;
+	// Find the start of the text.
+	for (new i = 0, ch; ((ch = password[i])); ++i)
+	{
+		if (ch > ' ')
+		{
+			start = i;
+			// Find the end of the text.
+			while ((ch = password[i++]))
+			{
+				if (ch > ' ')
+				{
+					// NOT an OBOE, despite the `i++` above.
+					end = i;
+				}
+			}
+			// End the string.
+			password[end] = '\0';
+			//_YSI_ConstMod(password[end], '\0');
+			// Got the start and the end.
+			User_VerifyPassword(playerid, YSI_g_sUserPassword[playerid], password[start]);
+			// Wipe out the password.
+			SecureCallbackMemory();
+			SecureVariableMemory(password);
+			return true;
+		}
+	}
+	return false;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who is logging in.</param>
+ * <param name="email">Email they entered.</param>
+ * <remarks>
+ *  Stores the e-mail the player is registering with.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+bool:User_RegisterEmail(playerid, string:email[])
+{
+	new
+		start,
+		end;
+	// Find the start of the text.
+	for (new i = 0, ch; ((ch = email[i])); ++i)
+	{
+		if (ch > ' ')
+		{
+			start = i;
+			// Find the end of the text.
+			while ((ch = email[i++]))
+			{
+				if (ch > ' ')
+				{
+					// NOT an OBOE, despite the `i++` above.
+					end = i;
+				}
+			}
+			// Got the start and the end.  Just remember it.
+			YSI_g_sUserEmail[playerid][0] = '\0';
+			// Only copy exactly the right number of characters over.  Trims.
+			strcat(YSI_g_sUserEmail[playerid], email[start], min(sizeof (YSI_g_sUserEmail[]), end - start + 1));
+			return true;
+		}
+	}
+	return false;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who is logging in.</param>
+ * <param name="email">Email they entered.</param>
+ * <remarks>
+ *  Double-checks the entered e-mail.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:User_ConfirmEmail(playerid, string:email[])
+{
+	new len = strlen(YSI_g_sUserEmail[playerid]);
+	if (len == 0)
+	{
+		// They don't have a password yet.
+		return false;
+	}
+	new
+		start,
+		end;
+	// Find the start of the text.
+	for (new i = 0, ch; ((ch = email[i])); ++i)
+	{
+		if (ch > ' ')
+		{
+			start = i;
+			// Find the end of the text.
+			while ((ch = email[i++]))
+			{
+				if (ch > ' ')
+				{
+					// NOT an OBOE, despite the `i++` above.
+					end = i;
+				}
+			}
+			// Defer the call, so it looks like a callback in the same way as
+			// confirming a password.  Check the length first.
+			YSI_SetTimerEx("OnConfirmEmail", 0, false, "ii", playerid, len == end - start && strcmp(YSI_g_sUserEmail[playerid], email[start], false, len) == 0);
+			return true;
+		}
+	}
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
