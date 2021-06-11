@@ -1601,7 +1601,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	#emit LOAD.S.pri arr
 	#emit STOR.S.pri addr
 	// Convert the size from cells to bytes.
-	return rawMemset(addr, val, size * 4);
+	return rawMemset(addr, val, size * cellbytes);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1626,7 +1626,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 
 stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 {
-	if (iSize < 4)
+	if (iSize < cellbytes)
 		return 0;
 	if (iAddress < 0)
 	{
@@ -1638,9 +1638,9 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 		{
 			#emit LOAD.S.pri iValue
 			#emit SREF.S.pri iAddress
-			iAddress += 4;
+			iAddress += cellbytes;
 		}
-		while ((iSize -= 4) > 0);
+		while ((iSize -= cellbytes) > 0);
 		return 1;
 	}
 	else //if (Server_JITComplete())
@@ -2425,6 +2425,7 @@ stock ValstrWithOrdinal(n)
 	}
 	return str;
 }
+
 /*-------------------------------------------------------------------------*//**
  * <param name="n">The numeric parameter position to print.</param>
  * <returns>

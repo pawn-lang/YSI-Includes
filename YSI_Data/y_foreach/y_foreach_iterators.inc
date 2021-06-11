@@ -139,6 +139,12 @@ iterfunc stock Range[cellmin](cur, min, max, step = 1)
 	return (min <= cur < max || max < cur <= min) ? cur : cellmin;
 }
 
+iterfunc stock N(cur, n)
+{
+	if (++cur == n) return -1;
+	return cur;
+}
+
 iterfunc stock Powers(&iterstate, cur, base)
 {
 	// Returns all the powers of the given number that can be stored in a PAWN

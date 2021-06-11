@@ -6,35 +6,23 @@ enum e_USER_ERROR
 	e_USER_ERROR_CONN,  // Can't connect.
 }
 
-static stock bool:UnsafeTrimArgN(n, const string:string[])
+static stock SecureVariableMemory(string:string[])
 {
-	new
-		start,
-		end;
-	// Find the start of the text.
-	for (new i = 0, ch; ((ch = string[i])); ++i)
-	{
-		if (ch > ' ')
-		{
-			start = i;
-			// Find the end of the text.
-			while ((ch = string[i++]))
-			{
-				if (ch > ' ')
-				{
-					// NOT an OBOE, despite the `i++` above.
-					end = i;
-				}
-			}
-			// End the string.
-			ch = string[end];
-			_YSI_ConstMod(string[end], '\0');
-			// Got the start and the end.
-			return ;
-		}
-	}
-	// No text given.
-	return false;
+	// Removes the password from memory.
+	memset(string, 0, strlen(string));
+}
+
+static stock SecureCallbackMemory()
+{
+	// Blanks the first page in y_malloc space, which is used for callback heap-
+	// allocated arguments.  This goes some way to trying to ensure that any
+	// copies of the password still in that memory are also destroyed.  This
+	// requires y_malloc, not because we allocate things (though we might), but
+	// just to know for certain what is in any page of memory.
+
+	// Unfortunately `YSI_DEFAULT_MALLOC` can't be used directly in `FILL`,
+	// because compiler reasons...
+	rawMemset(AMX_HEADER_HEA, 0, YSI_DEFAULT_MALLOC * cellbytes);
 }
 
 /*-------------------------------------------------------------------------*//**
