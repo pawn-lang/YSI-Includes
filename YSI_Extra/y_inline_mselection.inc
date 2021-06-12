@@ -110,9 +110,9 @@ stock ShowModelSelectionInline(playerid, listid, const headerText[], Func:cb<ii>
 	return ret;
 }
 
-stock ShowModelSelectionInlineEx(playerid, const items_array[], item_amount, const header_text[], extraid, Func:cb<ii>, Float:Xrot = 0.0, Float:Yrot = 0.0, Float:Zrot = 0.0, Float:mZoom = 1.0, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
+stock ShowModelSelectionInlineEx(playerid, const itemsArray[], itemAmount, const headerText[], extraid, Func:cb<ii>, Float:Xrot = 0.0, Float:Yrot = 0.0, Float:Zrot = 0.0, Float:mZoom = 1.0, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
 {
-	new ret = ShowModelSelectionMenuEx(playerid, items_array, item_amount, header_text, extraid, Xrot, Yrot, Zrot, mZoom, dialogBGcolor, previewBGcolor, selectionColour);
+	new ret = ShowModelSelectionMenuEx(playerid, itemsArray, itemAmount, headerText, extraid, Xrot, Yrot, Zrot, mZoom, dialogBGcolor, previewBGcolor, selectionColour);
 
 	if (ret) {
 		Indirect_Claim(cb);
