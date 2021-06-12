@@ -94,6 +94,9 @@ Optional plugins:
 	#error Could not find y_inline
 #endif
 
+// Using this to prevent any problem due to PAWN Limitations
+DEFINE_HOOK_REPLACEMENT__(ModelSelection, ModSel);
+
 static stock
 	Func:YSI_g_sRequestModelSelection[MAX_PLAYERS]<iii>,
 	YSI_g_PlayerCurrentListID[MAX_PLAYERS] = {mS_INVALID_LISTID, ...};
@@ -129,7 +132,7 @@ stock ShowModelSelectionInlineEx({F@_@iii, F@_@ii}:callback, playerid, const ite
 	return ret;
 }
 
-HOOK__ OP_ModelSelection(playerid, response, listid, modelid) 
+HOOK__ OnPlayerModSel(playerid, response, listid, modelid) 
 {
 	new 
 		Func:cb<iii> = YSI_g_sRequestModelSelection[playerid];
@@ -153,7 +156,7 @@ HOOK__ OP_ModelSelection(playerid, response, listid, modelid)
 	return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
-HOOK__ OP_ModelSelectionEx(playerid, response, extraid, modelid) 
+HOOK__ OnPlayerModSelEx(playerid, response, extraid, modelid) 
 {
 	new 
 		Func:cb<iii> = YSI_g_sRequestModelSelection[playerid];
