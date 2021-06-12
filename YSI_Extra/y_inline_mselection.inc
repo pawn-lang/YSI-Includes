@@ -95,38 +95,42 @@ Optional plugins:
 #endif
 
 stock const
-	YSI_g_PlayerCurrentListID[MAX_PLAYERS] = {mS_INVALID_LISTID, ...},
-	Func:YSI_g_sRequestModelSelection[MAX_PLAYERS]<ii>;
+	Func:YSI_g_sRequestModelSelection[MAX_PLAYERS]<ii>,
+	YSI_g_PlayerCurrentListID[MAX_PLAYERS] = {mS_INVALID_LISTID, ...};
 
-stock ShowModelSelectionInline(playerid, ListID, const header_text[], Func:cb<ii>, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, tdSelectionColor = 0xFFFF00AA) {
-	new ret = ShowModelSelectionMenu(playerid, ListID, header_text, dialogBGcolor, previewBGcolor, tdSelectionColor);
-
-	if (ret) {
-		Indirect_Claim(cb);
-		YSI_g_PlayerCurrentListID[playerid] = cb;
-		YSI_g_sRequestModelSelection[playerid] = ListID;
-	}
-	return ret;
-}
-
-stock ShowModelSelectionInlineEx(playerid, const items_array[], item_amount, const header_text[], extraid, Func:cb<ii>, Float:Xrot = 0.0, Float:Yrot = 0.0, Float:Zrot = 0.0, Float:mZoom = 1.0, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899 , tdSelectionColor = 0xFFFF00AA) {
-	new ret = ShowModelSelectionMenuEx(playerid, items_array, item_amount, header_text, extraid, Xrot, Yrot, Zrot, mZoom, dialogBGcolor, previewBGcolor, tdSelectionColor);
+stock ShowModelSelectionInline(playerid, listid, const headerText[], Func:cb<ii>, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
+{
+	new ret = ShowModelSelectionMenu(playerid, listid, headerText, dialogBGcolor, previewBGcolor, selectionColour);
 
 	if (ret) {
 		Indirect_Claim(cb);
 		YSI_g_PlayerCurrentListID[playerid] = cb;
-		YSI_g_sRequestModelSelection[playerid] = ListID;
+		YSI_g_sRequestModelSelection[playerid] = listid;
 	}
 	return ret;
 }
 
-HOOK__ OnPlayerModelSelection(playerid, response, listid, modelid) {
+stock ShowModelSelectionInlineEx(playerid, const items_array[], item_amount, const header_text[], extraid, Func:cb<ii>, Float:Xrot = 0.0, Float:Yrot = 0.0, Float:Zrot = 0.0, Float:mZoom = 1.0, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
+{
+	new ret = ShowModelSelectionMenuEx(playerid, items_array, item_amount, header_text, extraid, Xrot, Yrot, Zrot, mZoom, dialogBGcolor, previewBGcolor, selectionColour);
+
+	if (ret) {
+		Indirect_Claim(cb);
+		YSI_g_PlayerCurrentListID[playerid] = cb;
+		YSI_g_sRequestModelSelection[playerid] = extraid;
+	}
+	return ret;
+}
+
+HOOK__ OnPlayerModelSelection(playerid, response, listid, modelid) 
+{
 	new 
 		Func:cb<ii> = YSI_g_sRequestModelSelection[playerid];
 
 	YSI_g_sRequestModelSelection[playerid] = Func:0<ii>;
 
-	if (listid != mS_INVALID_LISTID && listid == YSI_g_PlayerCurrentListID[playerid]) {
+	if (listid != mS_INVALID_LISTID && listid == YSI_g_PlayerCurrentListID[playerid]) 
+	{
 		YSI_g_PlayerCurrentListID[playerid] = mS_INVALID_LISTID;
 		@.cb(response, modelid);
 	}
@@ -134,13 +138,15 @@ HOOK__ OnPlayerModelSelection(playerid, response, listid, modelid) {
 	return 1;
 }
 
-HOOK__ OnPlayerModelSelectionEx(playerid, response, extraid, modelid) {
+HOOK__ OnPlayerModelSelectionEx(playerid, response, extraid, modelid) 
+{
 	new 
 		Func:cb<ii> = YSI_g_sRequestModelSelection[playerid];
 
 	YSI_g_sRequestModelSelection[playerid] = Func:0<ii>;
 
-	if (extraid != mS_INVALID_LISTID && extraid == YSI_g_PlayerCurrentListID[playerid]) {
+	if (extraid != mS_INVALID_LISTID && extraid == YSI_g_PlayerCurrentListID[playerid]) 
+	{
 		YSI_g_PlayerCurrentListID[playerid] = mS_INVALID_LISTID;
 		@.cb(response, modelid);
 	}
