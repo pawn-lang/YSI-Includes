@@ -98,15 +98,15 @@ stock const
 	Func:YSI_g_sRequestModelSelection[MAX_PLAYERS]<ii>,
 	YSI_g_PlayerCurrentListID[MAX_PLAYERS] = {mS_INVALID_LISTID, ...};
 
-stock ShowModelSelectionInline( Func:cb<ii>, playerid, listid, const headerText[], dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
+stock ShowModelSelectionInline(Func:cb<ii>, playerid, listid, const headerText[], dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
 {
 	new ret = ShowModelSelectionMenu(playerid, listid, headerText, dialogBGcolor, previewBGcolor, selectionColour);
 
 	if (ret) 
 	{
 		Indirect_Claim(cb);
-		YSI_g_PlayerCurrentListID[playerid] = cb;
-		YSI_g_sRequestModelSelection[playerid] = listid;
+		YSI_g_PlayerCurrentListID[playerid] = listid;
+		YSI_g_sRequestModelSelection[playerid] = cb;
 	}
 	return ret;
 }
@@ -118,8 +118,8 @@ stock ShowModelSelectionInlineEx(Func:cb<ii>, playerid, const itemsArray[], item
 	if (ret) 
 	{
 		Indirect_Claim(cb);
-		YSI_g_PlayerCurrentListID[playerid] = cb;
-		YSI_g_sRequestModelSelection[playerid] = extraid;
+		YSI_g_PlayerCurrentListID[playerid] = extraid;
+		YSI_g_sRequestModelSelection[playerid] = cb;
 	}
 	return ret;
 }
