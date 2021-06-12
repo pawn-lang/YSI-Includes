@@ -94,8 +94,6 @@ Optional plugins:
 	#error Could not find y_inline
 #endif
 
-#define YSI_MSELECTION_EXTRA_ID _A<_ymS@>
-
 static stock
 	Func:YSI_g_sRequestModelSelection[MAX_PLAYERS]<iii>,
 	YSI_g_PlayerCurrentListID[MAX_PLAYERS] = {mS_INVALID_LISTID, ...};
@@ -119,7 +117,7 @@ stock ShowModelSelectionInline({F@_@iii, F@_@ii}:callback, playerid, listid, con
 // Func:callback<iii> | Func:callback<ii>
 stock ShowModelSelectionInlineEx({F@_@iii, F@_@ii}:callback, playerid, const itemsArray[], itemAmount, const string:headerText[], Float:Xrot = 0.0, Float:Yrot = 0.0, Float:Zrot = 0.0, Float:mZoom = 1.0, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA, tag = tagof (callback)) 
 {
-	new ret = ShowModelSelectionMenuEx(playerid, itemsArray, itemAmount, headerText, YSI_MSELECTION_EXTRA_ID, Xrot, Yrot, Zrot, mZoom, dialogBGcolor, previewBGcolor, selectionColour);
+	new ret = ShowModelSelectionMenuEx(playerid, itemsArray, itemAmount, headerText, -1, Xrot, Yrot, Zrot, mZoom, dialogBGcolor, previewBGcolor, selectionColour);
 
 	if (ret) 
 	{
@@ -162,7 +160,7 @@ HOOK__ OP_ModelSelectionEx(playerid, response, extraid, modelid)
 
 	YSI_g_sRequestModelSelection[playerid] = Func:0<iii>;
 	P:1("OnPlayerModelSelectionEx(%d, %d, %d, %d)", playerid, response, extraid, modelid);
-	if (extraid == YSI_MSELECTION_EXTRA_ID) 
+	if (cb != Func:0<iii>) 
 	{
 		if (Indirect_GetMeta(cb) == tagof (F@_@iii:))
 		{
