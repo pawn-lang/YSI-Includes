@@ -102,7 +102,8 @@ stock ShowModelSelectionInline(playerid, listid, const headerText[], Func:cb<ii>
 {
 	new ret = ShowModelSelectionMenu(playerid, listid, headerText, dialogBGcolor, previewBGcolor, selectionColour);
 
-	if (ret) {
+	if (ret) 
+	{
 		Indirect_Claim(cb);
 		YSI_g_PlayerCurrentListID[playerid] = cb;
 		YSI_g_sRequestModelSelection[playerid] = listid;
@@ -114,7 +115,8 @@ stock ShowModelSelectionInlineEx(playerid, const itemsArray[], itemAmount, const
 {
 	new ret = ShowModelSelectionMenuEx(playerid, itemsArray, itemAmount, headerText, extraid, Xrot, Yrot, Zrot, mZoom, dialogBGcolor, previewBGcolor, selectionColour);
 
-	if (ret) {
+	if (ret) 
+	{
 		Indirect_Claim(cb);
 		YSI_g_PlayerCurrentListID[playerid] = cb;
 		YSI_g_sRequestModelSelection[playerid] = extraid;
