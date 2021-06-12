@@ -94,77 +94,100 @@ Optional plugins:
 	#error Could not find y_inline
 #endif
 
-stock const
-	Func:YSI_g_sRequestModelSelection[MAX_PLAYERS]<ii>,
+#define YSI_MSELECTION_EXTRA_ID _A<_ymS@>
+
+static stock
+	Func:YSI_g_sRequestModelSelection[MAX_PLAYERS]<iii>,
 	YSI_g_PlayerCurrentListID[MAX_PLAYERS] = {mS_INVALID_LISTID, ...};
 
-stock ShowModelSelectionInline(Func:cb<ii>, playerid, listid, const headerText[], dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
+// Func:callback<iii> | Func:callback<ii>
+stock ShowModelSelectionInline({F@_@iii, F@_@ii}:callback, playerid, listid, const string:headerText[], dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA, tag = tagof (callback)) 
 {
 	new ret = ShowModelSelectionMenu(playerid, listid, headerText, dialogBGcolor, previewBGcolor, selectionColour);
 
 	if (ret) 
 	{
-		Indirect_Claim(cb);
+		Indirect_Claim(callback);
+		Indirect_SetMeta(callback, tag);
+
 		YSI_g_PlayerCurrentListID[playerid] = listid;
-		YSI_g_sRequestModelSelection[playerid] = cb;
+		YSI_g_sRequestModelSelection[playerid] = callback;
 	}
 	return ret;
 }
 
-stock ShowModelSelectionInlineEx(Func:cb<ii>, playerid, const itemsArray[], itemAmount, const headerText[], extraid, Float:Xrot = 0.0, Float:Yrot = 0.0, Float:Zrot = 0.0, Float:mZoom = 1.0, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
+// Func:callback<iii> | Func:callback<ii>
+stock ShowModelSelectionInlineEx({F@_@iii, F@_@ii}:callback, playerid, const itemsArray[], itemAmount, const string:headerText[], Float:Xrot = 0.0, Float:Yrot = 0.0, Float:Zrot = 0.0, Float:mZoom = 1.0, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA, tag = tagof (callback)) 
 {
-	new ret = ShowModelSelectionMenuEx(playerid, itemsArray, itemAmount, headerText, extraid, Xrot, Yrot, Zrot, mZoom, dialogBGcolor, previewBGcolor, selectionColour);
+	new ret = ShowModelSelectionMenuEx(playerid, itemsArray, itemAmount, headerText, YSI_MSELECTION_EXTRA_ID, Xrot, Yrot, Zrot, mZoom, dialogBGcolor, previewBGcolor, selectionColour);
 
 	if (ret) 
 	{
-		Indirect_Claim(cb);
-		YSI_g_PlayerCurrentListID[playerid] = extraid;
-		YSI_g_sRequestModelSelection[playerid] = cb;
+		Indirect_Claim(callback);
+		Indirect_SetMeta(callback, tag);
+
+		YSI_g_sRequestModelSelection[playerid] = callback;
 	}
 	return ret;
 }
 
-HOOK__ OnPlayerModelSelection(playerid, response, listid, modelid) 
+HOOK__ OP_ModelSelection(playerid, response, listid, modelid) 
 {
 	new 
-		Func:cb<ii> = YSI_g_sRequestModelSelection[playerid];
+		Func:cb<iii> = YSI_g_sRequestModelSelection[playerid];
 
-	YSI_g_sRequestModelSelection[playerid] = Func:0<ii>;
-
+	YSI_g_sRequestModelSelection[playerid] = Func:0<iii>;
+	P:1("OnPlayerModelSelection(%d, %d, %d, %d)", playerid, response, listid, modelid);
 	if (listid != mS_INVALID_LISTID && listid == YSI_g_PlayerCurrentListID[playerid]) 
 	{
-		YSI_g_PlayerCurrentListID[playerid] = mS_INVALID_LISTID;
-		@.cb(response, modelid);
+		if (Indirect_GetMeta(cb) == tagof (F@_@iii:))
+		{
+			Indirect_Call(_:cb, tagof (F@_@iii:), playerid, response, modelid);
+		}
+		else
+		{
+			Indirect_Call(_:cb, tagof (F@_@ii:), response, modelid);
+		}
+		// Free the data after call.
+		Indirect_Release(cb);
+		return Y_HOOKS_BREAK_RETURN_1;
 	}
-	Indirect_Release(cb);
-	return 1;
+	return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
-HOOK__ OnPlayerModelSelectionEx(playerid, response, extraid, modelid) 
+HOOK__ OP_ModelSelectionEx(playerid, response, extraid, modelid) 
 {
 	new 
-		Func:cb<ii> = YSI_g_sRequestModelSelection[playerid];
+		Func:cb<iii> = YSI_g_sRequestModelSelection[playerid];
 
-	YSI_g_sRequestModelSelection[playerid] = Func:0<ii>;
-
-	if (extraid != mS_INVALID_LISTID && extraid == YSI_g_PlayerCurrentListID[playerid]) 
+	YSI_g_sRequestModelSelection[playerid] = Func:0<iii>;
+	P:1("OnPlayerModelSelectionEx(%d, %d, %d, %d)", playerid, response, extraid, modelid);
+	if (extraid == YSI_MSELECTION_EXTRA_ID) 
 	{
-		YSI_g_PlayerCurrentListID[playerid] = mS_INVALID_LISTID;
-		@.cb(response, modelid);
+		if (Indirect_GetMeta(cb) == tagof (F@_@iii:))
+		{
+			Indirect_Call(_:cb, tagof (F@_@iii:), playerid, response, modelid);
+		}
+		else 
+		{
+			Indirect_Call(_:cb, tagof (F@_@ii:), response, modelid);
+		}
+		// Free the data after call.
+		Indirect_Release(cb);
+		return Y_HOOKS_BREAK_RETURN_1;
 	}
-	Indirect_Release(cb);
-	return 1;
+	return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
 HOOK__ OnPlayerDisconnect(playerid, reason) 
 {
 	#pragma unused reason
 
-	// If the current callback not invalid, then we need to clear it
-	if (YSI_g_sRequestModelSelection[playerid] != Func:0<ii>) 
+	// If the current cb not invalid, then we need to clear it
+	if (YSI_g_sRequestModelSelection[playerid] != Func:0<iii>) 
 	{
 		Indirect_Release(YSI_g_sRequestModelSelection[playerid]);
-		YSI_g_sRequestModelSelection[playerid] = Func:0<ii>;
+		YSI_g_sRequestModelSelection[playerid] = Func:0<iii>;
 	}
 
 	// Setting it to mS_INVALID_LISTID to prevent anything happend.
