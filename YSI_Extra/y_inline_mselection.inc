@@ -161,7 +161,8 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	#pragma unused reason
 
 	// If the current callback not invalid, then we need to clear it
-	if (YSI_g_sRequestModelSelection[playerid] != Func:0<ii>) {
+	if (YSI_g_sRequestModelSelection[playerid] != Func:0<ii>) 
+	{
 		Indirect_Release(YSI_g_sRequestModelSelection[playerid]);
 		YSI_g_sRequestModelSelection[playerid] = Func:0<ii>;
 	}
