@@ -98,7 +98,7 @@ stock const
 	Func:YSI_g_sRequestModelSelection[MAX_PLAYERS]<ii>,
 	YSI_g_PlayerCurrentListID[MAX_PLAYERS] = {mS_INVALID_LISTID, ...};
 
-stock ShowModelSelectionInline(playerid, listid, const headerText[], Func:cb<ii>, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
+stock ShowModelSelectionInline( Func:cb<ii>, playerid, listid, const headerText[], dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
 {
 	new ret = ShowModelSelectionMenu(playerid, listid, headerText, dialogBGcolor, previewBGcolor, selectionColour);
 
@@ -111,7 +111,7 @@ stock ShowModelSelectionInline(playerid, listid, const headerText[], Func:cb<ii>
 	return ret;
 }
 
-stock ShowModelSelectionInlineEx(playerid, const itemsArray[], itemAmount, const headerText[], extraid, Func:cb<ii>, Float:Xrot = 0.0, Float:Yrot = 0.0, Float:Zrot = 0.0, Float:mZoom = 1.0, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
+stock ShowModelSelectionInlineEx(Func:cb<ii>, playerid, const itemsArray[], itemAmount, const headerText[], extraid, Float:Xrot = 0.0, Float:Yrot = 0.0, Float:Zrot = 0.0, Float:mZoom = 1.0, dialogBGcolor = 0x4A5A6BBB, previewBGcolor = 0x88888899, selectionColour = 0xFFFF00AA) 
 {
 	new ret = ShowModelSelectionMenuEx(playerid, itemsArray, itemAmount, headerText, extraid, Xrot, Yrot, Zrot, mZoom, dialogBGcolor, previewBGcolor, selectionColour);
 
