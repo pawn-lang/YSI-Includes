@@ -79,7 +79,6 @@ Optional plugins:
 	#endinput
 #endif
 
-#include "..\..\YSI_Core\y_core\y_core_entry"
 #include "..\..\YSI_Core\y_core\y_rconfix"
 
 static stock
@@ -97,6 +96,12 @@ stock bool:IsAndroidPlayer(playerid)
 {
 	return YSI_g_sIsAndoid[playerid] == true;
 }
+
+#if !defined SendClientCheck
+	native SendClientCheck(playerid, type, memAddr, memOffset, byteCount);
+#endif
+
+forward OnClientCheckResponse(playerid, type, arg, response);
 
 #if defined YSI_FIX_CALLBACKS
 	public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
