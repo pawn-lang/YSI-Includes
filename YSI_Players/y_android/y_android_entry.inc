@@ -79,6 +79,7 @@ Optional plugins:
 	#endinput
 #endif
 
+#include "..\..\YSI_Core\y_core\y_core_entry"
 #include "..\..\YSI_Core\y_core\y_rconfix"
 
 static stock
