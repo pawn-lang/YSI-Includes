@@ -159,12 +159,12 @@ public OnAndroidTimer(playerid)
 {
 	if (YSI_g_sIsAndoid[playerid] != true)
 	{
-		CallRemoteFunction("OnAndroidCheck", "ii", playerid, true);
 		YSI_g_sIsAndoid[playerid] = true;
+		CallRemoteFunction("OnAndroidCheck", "ii", playerid, true);
 	}
-#if defined Android_OnAndroidTimer
-	Android_OnAndroidTimer(playerid);
-#endif
+//#if defined Android_OnAndroidTimer
+//	Android_OnAndroidTimer(playerid);
+//#endif
 }
 
 public OnPlayerDisconnect(playerid, reason)
