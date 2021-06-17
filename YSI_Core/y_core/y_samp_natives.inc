@@ -84,4 +84,8 @@ native YSI_HTTP(index, type, const url[], const data[], const callback[]) = HTTP
 native YSI_Format(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYPES:...) = format;
 
 native YSI_SendRconCommand(const str[]) = SendRconCommand;
+native YSI_SendClientCheck(playerid, type, memoryAddress, memoryOffset, byteCount) = SendClientCheck;
+
+#define YSI_JOIN(%0,%1,%2) %0And%1And%2
+
 
