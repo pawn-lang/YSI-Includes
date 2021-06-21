@@ -84,18 +84,18 @@ Optional plugins:
 
 static stock
 	YSI_g_sTimers[MAX_PLAYERS],
-	bool:YSI_g_sIsAndoid[MAX_PLAYERS] = bool:-1;
+	bool:YSI_g_sIsAndroid[MAX_PLAYERS] = bool:-1;
 
 forward OnAndroidCheck(playerid, bool:isDisgustingThiefToBeBanned);
 
 stock bool:IsPCPlayer(playerid)
 {
-	return YSI_g_sIsAndoid[playerid] == false;
+	return YSI_g_sIsAndroid[playerid] == false;
 }
 
 stock bool:IsAndroidPlayer(playerid)
 {
-	return YSI_g_sIsAndoid[playerid] == true;
+	return YSI_g_sIsAndroid[playerid] == true;
 }
 
 #if defined YSI_FIX_CALLBACKS
@@ -140,9 +140,9 @@ public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 		{
 			KillTimer(YSI_g_sTimers[playerid]);
 			YSI_g_sTimers[playerid] = 0;
-			if (YSI_g_sIsAndoid[playerid] != false)
+			if (YSI_g_sIsAndroid[playerid] != false)
 			{
-				YSI_g_sIsAndoid[playerid] = false;
+				YSI_g_sIsAndroid[playerid] = false;
 				CallRemoteFunction("OnAndroidCheck", "ii", playerid, false);
 			}
 		}
@@ -157,9 +157,9 @@ forward OnAndroidTimer(playerid);
 
 public OnAndroidTimer(playerid)
 {
-	if (YSI_g_sIsAndoid[playerid] != true)
+	if (YSI_g_sIsAndroid[playerid] != true)
 	{
-		YSI_g_sIsAndoid[playerid] = true;
+		YSI_g_sIsAndroid[playerid] = true;
 		CallRemoteFunction("OnAndroidCheck", "ii", playerid, true);
 	}
 //#if defined Android_OnAndroidTimer
@@ -252,4 +252,3 @@ public OnYSIInit()
 #if defined Android_OnAndroidTimer
 	forward Android_OnAndroidTimer(playerid);
 #endif
-
