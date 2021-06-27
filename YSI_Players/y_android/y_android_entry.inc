@@ -98,9 +98,9 @@ stock bool:IsAndroidPlayer(playerid)
 	return YSI_g_sIsAndroid[playerid] == true;
 }
 
-forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
-
 #if defined YSI_FIX_CALLBACKS
+	forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+
 	public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 	{
 		// Enable, then disable, the call in to the real version (if it exists).
