@@ -91,11 +91,6 @@ Optional plugins:
 	#define YSIM_STRING (1000)
 #endif
 
-// J@ is a "nul" target - send things there if they need ignoring or if a
-// parameter needs using.  I@ is too now.
-stock
-	I@ = 0;
-
 // Public variable.  `-1` initially in case there is no master system.  So we respond to everything.
 #define Master_ID() (@_)
 public
@@ -104,7 +99,10 @@ public
 new
 	Q@[YSI_MAX_STRING];
 
+// J@ is a "nul" target - send things there if they need ignoring or if a
+// parameter needs using.  I@ is too now.
 stock
+	I@ = 0,
 	J@ = 0;
 
 #if !defined MAX_LANGUAGES

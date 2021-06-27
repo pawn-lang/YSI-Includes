@@ -150,12 +150,12 @@ Optional plugins:
 // These three includes are just defines.  They declare no code at all, only
 // variables.
 #include "y_globaltags"
-#include "y_pp"
 #include "y_prehook"
 #include "y_stripnumbers"
 #include "y_samp_natives"
 
 #include "y_shortvar"
+#include "y_pp"
 #include "y_als_impl"
 
 // A few nicely named short strings used for properties.

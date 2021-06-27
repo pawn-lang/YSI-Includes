@@ -233,6 +233,8 @@ Optional plugins:
 
 main()
 {
+	I@ = J@;
+	Q@[0] = @_;
 	#if defined PP_main
 		PP_main();
 	#endif
