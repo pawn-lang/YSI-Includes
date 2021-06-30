@@ -722,9 +722,13 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 			#else
 				#define _ALS_main
 			#endif
+
+			#if defined Testing_main
+				forward Testing_main();
+			#endif
 			#undef __DISABLE__
 			#define __DISABLE__ __DISABLE_ALL__
-			#define main( __DISABLE__ Testing_main(
+			#define main( __DISABLE__ public Testing_main(
 		#endif
 
 		#if !defined NO_PLAYER_TESTS		

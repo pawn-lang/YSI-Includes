@@ -233,8 +233,6 @@ Optional plugins:
 
 main()
 {
-	I@ = J@;
-	Q@[0] = @_;
 	#if defined PP_main
 		PP_main();
 	#endif
@@ -246,6 +244,9 @@ main()
 	#define _ALS_main
 #endif
 
-#define main( __DISABLE__ PP_main(
+#if defined PP_main
+	forward PP_main();
+#endif
+#define main( __DISABLE__ public PP_main(
 #define __DISABLE__ __DISABLE_ALL__
 
