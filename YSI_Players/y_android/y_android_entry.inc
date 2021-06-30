@@ -75,6 +75,13 @@ Optional plugins:
 #endif
 #define _INC_y_android
 
+#if defined YSI_NO_ANDROID_CHECK
+	forward Android_UnusedPublic(playerid);
+	#define Android_OnAndroidTimer(%0) Android_UnusedPublic(%0){} static stock Android_UnusedStock(%0)
+
+	#endinput
+#endif
+
 #if !defined _samp_included
 	#endinput
 #endif
@@ -254,3 +261,4 @@ public OnYSIInit()
 #if defined Android_OnAndroidTimer
 	forward Android_OnAndroidTimer(playerid);
 #endif
+
