@@ -1,10 +1,50 @@
+/*
+
+       =====================================================================================
+       | Why is y_users using `SHA256_PassHash`, when it is such a terrible password hash? |
+       =====================================================================================
+
+Simple - it isn't using it to hash the password.  At least, not alone.  Unfortunately, one problem
+with a user system like this is that at some point it contains the unhashed password in memory,
+because the player just typed it in and we need to verify it.  This means we need to pass it around.
+The code does this as little as possible, and cleans up as much memory as possible afterwards
+(though it remains in the SA:MP server in memory from raknet packets, which we have no way of
+fixing).  To minimise this, we do a single basic (cheap fast) hash of the password using
+`SHA256_PassHash` first, and pass the result of THAT to the proper `BCrypt` hash function.  This
+means we keep a slightly insecure password in memory during processing, instead of a VERY insecure
+password.  It also bypasses the `BCrypt` limit of 77 charater passwords by converting the input to
+a constant 64 charaters regardless of the initial length.  Even a bug in the BCrypt plugin won't
+expose the original password, because it isn't even passed to there.
+
+*/
+
 enum e_USER_ERROR
 {
 	e_USER_ERROR_OK = 0,
-	e_USER_ERROR_TAKEN, // Name is already registered.
-	e_USER_ERROR_FAIL,  // Login failed (username or password).
-	e_USER_ERROR_CONN,  // Can't connect.
+	e_USER_ERROR_TAKEN,           // Name is already registered.
+	e_USER_ERROR_UNMATCHED_PASS,  // Two passwords didn't match when registering.
+	e_USER_ERROR_UNMATCHED_EMAIL, // Two emails didn't match when registering.
+	e_USER_ERROR_LOGIN,           // Login failed (unregistered OR password mismatch).
+	e_USER_ERROR_CONNECTION,      // Can't connect to the database.
+	e_USER_ERROR_UNKNOWN,         // Other general error.
 }
+
+// Both SHA256 and BCrypt are 256bit hashes.
+#define Y_USERS_HASH_LENGTH (64 + 1)
+
+static stock
+	// HASHES ONLY!  These shouldn't be kept in memory in an ideal solution, but solely compared in
+	// a query, i.e. `WHERE password = %e".  However, that can't work with BCrypt because the seeds
+	// and complexities are stored in the hash, thus must be loaded before we can hash the second.
+	YSI_g_sUserPassword[MAX_PLAYERS][Y_USERS_HASH_LENGTH],
+	// We can somewhat mitigate this by only ever having a SHA256 version of the plaintext password
+	// in memory.  This is NOT a secure password hash (despite the SA:MP native being called
+	// `SHA256_PassHash`); however, it is fast and marginally better than keeping the entirely
+	// unhashed password around in memory until the real hashing is complete.
+	YSI_g_sSHA256FirstPhase[Y_USERS_HASH_LENGTH];
+
+static stock const
+	Y_USERS_FIRST_PASS_SALT[] = "y_users_salt";
 
 static stock SecureVariableMemory(string:string[])
 {
@@ -58,10 +98,12 @@ User_RegisterPassword(playerid, string:password[])
 			password[end] = '\0';
 			//_YSI_ConstMod(password[end], '\0');
 			// Got the start and the end.
-			User_HashPassword(playerid, password[start]);
+			YSI_SHA256Hash_BAD_DONT_USE(password[start], Y_USERS_FIRST_PASS_SALT, YSI_g_sSHA256FirstPhase);
 			// Wipe out the password.
 			SecureCallbackMemory();
 			SecureVariableMemory(password);
+			// Now do the full hash on the SHA256 hash of the original password.
+			User_HashPassword(playerid, YSI_g_sSHA256FirstPhase);
 			return true;
 		}
 	}
