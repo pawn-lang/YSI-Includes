@@ -85,7 +85,7 @@ native YSI_Format(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYPES
 
 native YSI_SendRconCommand(const str[]) = SendRconCommand;
 native YSI_SendClientCheck(playerid, type, memoryAddress, memoryOffset, byteCount) = SendClientCheck;
+native YSI_SHA256Hash_BAD_DONT_USE(const password[], const salt[], output[], size = sizeof (output)) = SHA256_PassHash;
 
 #define YSI_JOIN(%0,%1,%2) %0And%1And%2
-
 
