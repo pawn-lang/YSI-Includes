@@ -26,7 +26,28 @@ enum e_USER_ERROR
 	e_USER_ERROR_UNMATCHED_EMAIL, // Two emails didn't match when registering.
 	e_USER_ERROR_LOGIN,           // Login failed (unregistered OR password mismatch).
 	e_USER_ERROR_CONNECTION,      // Can't connect to the database.
+	e_USER_ERROR_STATE,           // In the wrong state for the current call.
+	e_USER_ERROR_EMPTY,           // No email/password entered.
 	e_USER_ERROR_UNKNOWN,         // Other general error.
+}
+
+// This is used to try and avoid race conditions, like where a player starts registering, but then
+// disconnects and a new player starts registering with the same ID.  Race conditions are difficult
+// in pawn, but not impossible with async callbacks.
+enum e_USER_REGISTRATION_STATE
+{
+	e_USER_REGISTRATION_STATE_NONE, // Just connected, not started registering yet.
+	e_USER_REGISTRATION_STATE_P1,   // Typed the password once.
+	e_USER_REGISTRATION_STATE_P2,   // Verified the password once.
+	e_USER_REGISTRATION_STATE_P3,   // Typed the password twice.
+	e_USER_REGISTRATION_STATE_P4,   // Verified the password twice.
+	e_USER_REGISTRATION_STATE_E1,   // Typed the email once.
+	e_USER_REGISTRATION_STATE_E2,   // Verified the email once.
+	e_USER_REGISTRATION_STATE_E3,   // Typed the email twice.
+	e_USER_REGISTRATION_STATE_E4,   // Verified the email twice.
+	e_USER_REGISTRATION_STATE_WAIT, // Awaiting verification.
+	e_USER_REGISTRATION_STATE_DONE, // Registered.
+	e_USER_REGISTRATION_STATE_DISC, // Disconnected, but waiting for a callback to complete.
 }
 
 // Both SHA256 and BCrypt are 256bit hashes.
@@ -41,18 +62,29 @@ static stock
 	// in memory.  This is NOT a secure password hash (despite the SA:MP native being called
 	// `SHA256_PassHash`); however, it is fast and marginally better than keeping the entirely
 	// unhashed password around in memory until the real hashing is complete.
-	YSI_g_sSHA256FirstPhase[Y_USERS_HASH_LENGTH];
+	YSI_g_sSHA256FirstPhase[Y_USERS_HASH_LENGTH],
+	e_USER_REGISTRATION_STATE:YSI_g_sRegistrationState[MAX_PLAYERS];
 
 static stock const
 	Y_USERS_FIRST_PASS_SALT[] = "y_users_salt";
 
-static stock SecureVariableMemory(string:string[])
+forward User_OnFirstRegistration(playerid);
+
+forward User_OnSecondRegistration(playerid, bool:success);
+
+static stock User_ResetPlayer(playerid)
+{
+	// Removes the password from memory.
+	memset(YSI_g_sUserPassword[playerid], 0, Y_USERS_HASH_LENGTH);
+}
+
+static stock User_SecureVariableMemory(string:string[])
 {
 	// Removes the password from memory.
 	memset(string, 0, strlen(string));
 }
 
-static stock SecureCallbackMemory()
+static stock User_SecureCallbackMemory()
 {
 	// Blanks the first page in y_malloc space, which is used for callback heap-
 	// allocated arguments.  This goes some way to trying to ensure that any
@@ -74,41 +106,144 @@ static stock SecureCallbackMemory()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+hook OnPlayerDisconnect(playerid, reason)
+{
+	switch (YSI_g_sRegistrationState[playerid])
+	{
+	// These states are waiting on a callback to complete.
+	case e_USER_REGISTRATION_STATE_P1:
+	case e_USER_REGISTRATION_STATE_P3:
+	case e_USER_REGISTRATION_STATE_E1:
+	case e_USER_REGISTRATION_STATE_E3:
+		YSI_g_sRegistrationState[playerid] = e_USER_REGISTRATION_STATE_DISC;
+	default:
+		YSI_g_sRegistrationState[playerid] = e_USER_REGISTRATION_STATE_NONE;
+	}
+	User_ResetPlayer(playerid);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player.</param>
+ * <param name="error">What went wrong during processing.</param>
+ * <remarks>
+ *  Signal the main error callback, then reset all the player's parameters.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static User_Error(playerid, e_USER_ERROR:error)
+{
+	if (error == e_USER_ERROR_STATE)
+	{
+		switch (YSI_g_sRegistrationState[playerid])
+		{
+		case e_USER_REGISTRATION_STATE_DISC:
+		case e_USER_REGISTRATION_STATE_NONE:
+		{
+			// Do nothing.  Extra errors now are pointless.
+		}
+		default:
+			// Signal the error callback.
+		}
+	}
+	else
+	{
+		// Signal the error callback.
+	}
+	// Reset the user.
+	if (error != e_USER_ERROR_EMPTY)
+	{
+		User_ResetPlayer(playerid);
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who is logging in.</param>
+ * <param name="password">Password they entered.</param>
+ * <remarks>
+ *  Stores a HASHED version of the password, as a first input, for later
+ *  confirmation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+public User_OnFirstRegistration(playerid)
+{
+	if (YSI_g_sRegistrationState[playerid] == e_USER_REGISTRATION_STATE_P1)
+	{
+		YSI_g_sRegistrationState[playerid] = e_USER_REGISTRATION_STATE_P2;
+	}
+	else if (YSI_g_sRegistrationState[playerid] == e_USER_REGISTRATION_STATE_DISC)
+	{
+		YSI_g_sRegistrationState[playerid] = e_USER_REGISTRATION_STATE_NONE;
+	}
+	else
+	{
+		// Reset the player.
+		User_Error(playerid, e_USER_ERROR_STATE);
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who is logging in.</param>
+ * <param name="password">Password they entered.</param>
+ * <remarks>
+ *  Stores a HASHED version of the password, as a first input, for later
+ *  confirmation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+public User_OnSecondRegistration(playerid, bool:success)
+{
+	
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who is logging in.</param>
+ * <param name="password">Password they entered.</param>
+ * <remarks>
+ *  Stores a HASHED version of the password, as a first input, for later
+ *  confirmation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 User_RegisterPassword(playerid, string:password[])
 {
 	new
+		bool:ret = false,
 		start,
 		end;
-	// Find the start of the text.
-	for (new i = 0, ch; ((ch = password[i])); ++i)
+	if (YSI_g_sRegistrationState[playerid] == e_USER_REGISTRATION_STATE_NONE)
 	{
-		if (ch > ' ')
+		// Find the start of the text.
+		for (new i = 0, ch; ((ch = password[i])); ++i)
 		{
-			start = i;
-			// Find the end of the text.
-			while ((ch = password[i++]))
+			if (ch > ' ')
 			{
-				if (ch > ' ')
+				start = i;
+				// Find the end of the text.
+				while ((ch = password[i++]))
 				{
-					// NOT an OBOE, despite the `i++` above.
-					end = i;
+					if (ch > ' ')
+					{
+						// NOT an OBOE, despite the `i++` above.
+						end = i;
+					}
 				}
+				// End the string.
+				password[end] = '\0';
+				// Got the start and the end.
+				YSI_SHA256Hash_BAD_DONT_USE(password[start], Y_USERS_FIRST_PASS_SALT, YSI_g_sSHA256FirstPhase);
+				// Now do the full hash on the SHA256 hash of the original password.
+				YSI_g_sRegistrationState[playerid] = e_USER_REGISTRATION_STATE_P1;
+				BCrypt_Hash(playerid, "User_OnFirstRegistration", YSI_g_sSHA256FirstPhase, 12);
+				ret = true;
+				break;
 			}
-			// End the string.
-			password[end] = '\0';
-			//_YSI_ConstMod(password[end], '\0');
-			// Got the start and the end.
-			YSI_SHA256Hash_BAD_DONT_USE(password[start], Y_USERS_FIRST_PASS_SALT, YSI_g_sSHA256FirstPhase);
-			// Wipe out the password.
-			SecureCallbackMemory();
-			SecureVariableMemory(password);
-			// Now do the full hash on the SHA256 hash of the original password.
-			User_HashPassword(playerid, YSI_g_sSHA256FirstPhase);
-			return true;
 		}
 	}
-	// No text given.
-	return false;
+	// Wipe out the password.
+	User_SecureCallbackMemory();
+	User_SecureVariableMemory(password);
+	return ret;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -121,41 +256,56 @@ User_RegisterPassword(playerid, string:password[])
 
 stock User_ConfirmPassword(playerid, string:password[])
 {
-	if (isnull(YSI_g_sUserPassword[playerid]))
-	{
-		// They don't have a password yet.
-		return false;
-	}
 	new
+		bool:ret = false,
 		start,
 		end;
-	// Find the start of the text.
-	for (new i = 0, ch; ((ch = password[i])); ++i)
+	if (YSI_g_sRegistrationState[playerid] != e_USER_REGISTRATION_STATE_P2)
 	{
-		if (ch > ' ')
-		{
-			start = i;
-			// Find the end of the text.
-			while ((ch = password[i++]))
-			{
-				if (ch > ' ')
-				{
-					// NOT an OBOE, despite the `i++` above.
-					end = i;
-				}
-			}
-			// End the string.
-			password[end] = '\0';
-			//_YSI_ConstMod(password[end], '\0');
-			// Got the start and the end.
-			User_VerifyPassword(playerid, YSI_g_sUserPassword[playerid], password[start]);
-			// Wipe out the password.
-			SecureCallbackMemory();
-			SecureVariableMemory(password);
-			return true;
-		}
+		// Do nothing.
+		User_Error(playerid, e_USER_ERROR_STATE, true);
 	}
-	return false;
+	if (isnull(YSI_g_sUserPassword[playerid]))
+	{
+		// Is P2, but no existing password to compare against.
+		User_Error(playerid, e_USER_ERROR_UNKNOWN, true);
+	}
+	else
+	{
+		// Find the start of the text.
+		for (new i = 0, ch; ((ch = password[i])); ++i)
+		{
+			if (ch > ' ')
+			{
+				start = i;
+				// Find the end of the text.
+				while ((ch = password[i++]))
+				{
+					if (ch > ' ')
+					{
+						// NOT an OBOE, despite the `i++` above.
+						end = i;
+					}
+				}
+				// End the string.
+				password[end] = '\0';
+				// Got the start and the end.
+				YSI_SHA256Hash_BAD_DONT_USE(password[start], Y_USERS_FIRST_PASS_SALT, YSI_g_sSHA256FirstPhase);
+				// Verify the passwords match.
+				YSI_g_sRegistrationState[playerid] = e_USER_REGISTRATION_STATE_P3;
+				BCrypt_Check(playerid, "User_OnSecondRegistration", YSI_g_sSHA256FirstPhase, YSI_g_sUserPassword[playerid]);
+				ret = true;
+				goto User_ConfirmPassword_end;
+			}
+		}
+		// If we get here, 
+		User_Error(playerid, e_USER_ERROR_EMPTY, false);
+	}
+User_ConfirmPassword_end:
+	// Wipe out the password.
+	User_SecureCallbackMemory();
+	User_SecureVariableMemory(password);
+	return ret;
 }
 
 /*-------------------------------------------------------------------------*//**

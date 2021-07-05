@@ -126,7 +126,7 @@ public _Inline_BCryptCheckDone(Func:cb<i>, bool:success)
 public _Inline_BCryptHashDone(Func:cb<s>, hashid)
 {
 	new hash[61];
-	YSI_BCryptGetHash(hash);
+	BCrypt_GetHash(hash);
 	new ret = @.cb(hash);
 	Indirect_Release(cb);
 	return ret;
@@ -134,7 +134,7 @@ public _Inline_BCryptHashDone(Func:cb<s>, hashid)
 
 stock BCrypt_CheckInline(const text[], const hash[], Func:cb<i>)
 {
-	new ret = YSI_BCryptCheck(_:cb, "_Inline_BCryptCheckDone", text, hash);
+	new ret = BCrypt_Check(_:cb, "_Inline_BCryptCheckDone", text, hash);
 	if (ret)
 	{
 		Indirect_Claim(cb);
@@ -144,7 +144,7 @@ stock BCrypt_CheckInline(const text[], const hash[], Func:cb<i>)
 
 stock BCrypt_HashInline(const text[], cost = 12, Func:cb<s>)
 {
-	new ret = YSI_BCryptHash(_:cb, "_Inline_BCryptHashDone", text, cost);
+	new ret = BCrypt_Hash(_:cb, "_Inline_BCryptHashDone", text, cost);
 	if (ret)
 	{
 		Indirect_Claim(cb);

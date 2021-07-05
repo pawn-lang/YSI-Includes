@@ -117,7 +117,7 @@ Optional plugins:
 	native _YSI_BCryptHash(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_hash;
 	native bool:_YSI_BCryptIsEqual(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_is_equal;
 
-	stock YSI_BCryptCheck(extra, const callback[], const input[], const hash[])
+	stock BCrypt_Check(extra, const callback[], const input[], const hash[])
 	{
 		new ptr;
 		if (AMX_GetPublicPointer(0, ptr, callback))
@@ -130,7 +130,7 @@ Optional plugins:
 		}
 	}
 
-	stock YSI_BCryptHash(extra, const callback[], const input[], cost)
+	stock BCrypt_Hash(extra, const callback[], const input[], cost)
 	{
 		new ptr;
 		static hashid = 0;
@@ -150,9 +150,9 @@ Optional plugins:
 #elseif defined _samp_bcrypt_included
 	// I've never had to de-const a native before!
 	// Wait, that's not true - `GetPlayerName` is over-const!
-	native YSI_BCryptGetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
-	native YSI_BCryptCheck(extra, const callback[], const input[], const hash[]) = bcrypt_verify;
-	native YSI_BCryptHash(extra, const callback[], const input[], cost) = bcrypt_hash;
+	native BCrypt_GetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
+	native BCrypt_Check(extra, const callback[], const input[], const hash[]) = bcrypt_verify;
+	native BCrypt_Hash(extra, const callback[], const input[], cost) = bcrypt_hash;
 #else
 	// We used to not have an error for this case, just gave undefined errors.  But now they must
 	// include it explicitly, so add a real error.
