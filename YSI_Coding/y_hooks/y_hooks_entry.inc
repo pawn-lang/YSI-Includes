@@ -88,6 +88,8 @@ Optional plugins:
 	#define MAX_Y_HOOKS (128)
 #endif
 
+#include "y_hooks_limiter"
+
 #include "y_hooks_macros"
 #include "y_hooks_impl"
 #include "y_hooks_nps"
