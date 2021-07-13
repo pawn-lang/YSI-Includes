@@ -16,6 +16,9 @@
 
 */
 
+#define YSI_INTERIORS_TRUE 1
+#define YSI_INTERIORS_FALSE 0
+
 gYSI_InteriorLoadingTime(const playerid)
 {
 	TogglePlayerControllable(playerid,true);
@@ -32,6 +35,12 @@ public YSI_OnPlayerNearEntrance(playerid)
 		&& GetPlayerVirtualWorld( playerid ) == gYSI_InteriorData[ i ][e_YSI_INTERIOR_VWID_OUT] \
 		&& !IsPlayerInAnyVehicle( playerid ))
 		{
+			
+			new YSI_InteriorFunctionName[100];
+			format(YSI_InteriorFunctionName,sizeof(YSI_InteriorFunctionName),
+				"@yI_%s",gYSI_InteriorData[ i ][e_YSI_INTERIOR_NAME]);
+
+			if(funcidx(YSI_InteriorFunctionName) != -1) CallLocalFunction(YSI_InteriorFunctionName,"i",playerid);
 
 			SetPlayerInterior( playerid, gYSI_InteriorData[ i ][e_YSI_INTERIOR_INTID] );
 			SetPlayerVirtualWorld( playerid, gYSI_InteriorData[ i ][e_YSI_INTERIOR_VWID] );
@@ -65,7 +74,7 @@ public YSI_OnPlayerNearEntrance(playerid)
 		    gYSI_PlayersInterior[ playerid ] = -1;
 		}
     }
-    return true;
+    return YSI_INTERIORS_TRUE;
 }
 
 hook OnPlayerDisconnect(playerid, reason)
@@ -121,19 +130,19 @@ stock Interiors_Create3DLabelAndPickup(
 		Float:YSI_LabelRadius ) 
 {
 	if(isnull(YSI_LabelString))
-		return 0;
+		return YSI_INTERIORS_FALSE;
 
 	if(YSI_Interior < 0)
-		return 0;
+		return YSI_INTERIORS_FALSE;
 
 	if(YSI_VirtualWorld < 0)
-		return 0;
+		return YSI_INTERIORS_FALSE;
 
 	if(YSI_LabelRadius <= 0)
-		return 0;
+		return YSI_INTERIORS_FALSE;
 
 	if(YSI_Pickupid < 0)
-		return 0;
+		return YSI_INTERIORS_FALSE;
 
 	CreateDynamic3DTextLabel(
 							YSI_LabelString, 
@@ -157,6 +166,7 @@ stock Interiors_Create3DLabelAndPickup(
 					YSI_zPosition, 
 					YSI_VirtualWorld, 
 					YSI_Interior);
+	return YSI_INTERIORS_TRUE;
 }
 
 stock Interiors_CreateInterior(
@@ -204,7 +214,7 @@ stock Interiors_CreateInterior(
 	Interiors_Create3DLabelAndPickup(YSI_EntranceLabelString, YSI_xEntrance,YSI_yEntrance,YSI_zEntrance, -1, -1, 19133, 2.0);
 
 	Interiors_Create3DLabelAndPickup("Exit here!", YSI_xExit,YSI_yExit,YSI_zExit, -1, -1, 19133, 2.0);
-	return 1;
+	return YSI_INTERIORS_TRUE;
 }
 
 stock bool:Interiors_IsPlayerInInterior(playerid)
@@ -216,7 +226,7 @@ stock bool:Interiors_IsPlayerInInterior(playerid)
 stock Interiors_ClearPlayerInteriorData(playerid)
 {
 	gYSI_PlayersInterior[playerid] = -1;
-	return 1;
+	return YSI_INTERIORS_TRUE;
 }
 
 stock Interiors_SetInteriorAngles(
@@ -226,5 +236,32 @@ stock Interiors_SetInteriorAngles(
 {
 	gYSI_InteriorData[YSI_CustomInteriorid][e_YSI_INTENTRANCE_A] = YSI_aAngle;
 	gYSI_InteriorData[YSI_CustomInteriorid][e_YSI_INTEXIT_A] = YSI_bAngle;
-	return 1;
+	return YSI_INTERIORS_TRUE;
+}
+
+/*
+
+___________         __                     _____ __________.___ 
+\_   _____/__  ____/  |_____________      /  _  \\______   \   |
+ |    __)_\  \/  /\   __\_  __ \__  \    /  /_\  \|     ___/   |
+ |        \>    <  |  |  |  | \// __ \_ /    |    \    |   |   |
+/_______  /__/\_ \ |__|  |__|  (____  / \____|__  /____|   |___|
+        \/      \/                  \/          \/              
+
+*/
+
+#define Interiors_DeclareInteriorFunction:%0(%1) \
+	forward @yI_%0(%1); \
+	public @yI_%0(%1)
+
+#define Interiors_HookInteriorFunction:%0(%1) \
+	hook @yI_%0(%1)
+
+stock Interiors_SetPlayerInterior(YSI_p_Playerid, pYSI_Interiorid)
+{
+	if(pYSI_Interiorid < -1)
+		return YSI_INTERIORS_FALSE;
+
+	gYSI_PlayersInterior[YSI_p_Playerid] = pYSI_Interiorid;
+	return YSI_INTERIORS_TRUE;
 }
