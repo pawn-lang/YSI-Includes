@@ -120,6 +120,21 @@ stock Interiors_Create3DLabelAndPickup(
 		YSI_Pickupid, 
 		Float:YSI_LabelRadius ) 
 {
+	if(isnull(YSI_LabelString))
+		return 0;
+
+	if(YSI_Interior < 0)
+		return 0;
+
+	if(YSI_VirtualWorld < 0)
+		return 0;
+
+	if(YSI_LabelRadius <= 0)
+		return 0;
+
+	if(YSI_Pickupid < 0)
+		return 0;
+
 	CreateDynamic3DTextLabel(
 							YSI_LabelString, 
 							0x0059FFAA, 
