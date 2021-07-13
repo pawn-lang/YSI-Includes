@@ -19,6 +19,9 @@
 #define YSI_INTERIORS_TRUE 1
 #define YSI_INTERIORS_FALSE 0
 
+#define YSI_INTERIOR_ACTION_ENTER 0
+#define YSI_INTERIOR_ACTION_EXIT 1
+
 gYSI_InteriorLoadingTime(const playerid)
 {
 	TogglePlayerControllable(playerid,true);
@@ -27,6 +30,8 @@ gYSI_InteriorLoadingTime(const playerid)
 YSI_OnPlayerNearEntrance(playerid);
 public YSI_OnPlayerNearEntrance(playerid)
 {
+	new YSI_InteriorFunctionName[100];
+	new YSI_InteriorActionid;
     TogglePlayerControllable(playerid,false);
 	for(new i; i < MAX_INTERIORS; i++)
 	{
@@ -35,12 +40,11 @@ public YSI_OnPlayerNearEntrance(playerid)
 		&& GetPlayerVirtualWorld( playerid ) == gYSI_InteriorData[ i ][e_YSI_INTERIOR_VWID_OUT] \
 		&& !IsPlayerInAnyVehicle( playerid ))
 		{
-			
-			new YSI_InteriorFunctionName[100];
+			YSI_InteriorActionid = 0;
 			format(YSI_InteriorFunctionName,sizeof(YSI_InteriorFunctionName),
 				"@yI_%s",gYSI_InteriorData[ i ][e_YSI_INTERIOR_NAME]);
 
-			if(funcidx(YSI_InteriorFunctionName) != -1) CallLocalFunction(YSI_InteriorFunctionName,"i",playerid);
+			if(funcidx(YSI_InteriorFunctionName) != -1) CallLocalFunction(YSI_InteriorFunctionName,"ii",playerid,YSI_InteriorActionid);
 
 			SetPlayerInterior( playerid, gYSI_InteriorData[ i ][e_YSI_INTERIOR_INTID] );
 			SetPlayerVirtualWorld( playerid, gYSI_InteriorData[ i ][e_YSI_INTERIOR_VWID] );
@@ -70,6 +74,12 @@ public YSI_OnPlayerNearEntrance(playerid)
 		    SetPlayerFacingAngle( playerid, gYSI_InteriorData[ i ][e_YSI_INTENTRANCE_A] );
 		    SetCameraBehindPlayer( playerid );
 			gYSI_InteriorLoadingTime(playerid);
+
+			YSI_InteriorActionid = 1;
+			format(YSI_InteriorFunctionName,sizeof(YSI_InteriorFunctionName),
+				"@yI_%s",gYSI_InteriorData[ i ][e_YSI_INTERIOR_NAME]);
+
+			if(funcidx(YSI_InteriorFunctionName) != -1) CallLocalFunction(YSI_InteriorFunctionName,"ii",playerid,YSI_InteriorActionid);
 
 		    gYSI_PlayersInterior[ playerid ] = -1;
 		}
@@ -251,11 +261,11 @@ ___________         __                     _____ __________.___
 */
 
 #define Interiors_DeclareInteriorFunction:%0(%1) \
-	forward @yI_%0(%1); \
-	public @yI_%0(%1)
+	forward @yI_%0(%1,YSI_Actionid); \
+	public @yI_%0(%1,YSI_Actionid)
 
 #define Interiors_HookInteriorFunction:%0(%1) \
-	hook @yI_%0(%1)
+	hook @yI_%0(%1,YSI_Actionid)
 
 stock Interiors_SetPlayerInterior(YSI_p_Playerid, pYSI_Interiorid)
 {
@@ -265,3 +275,6 @@ stock Interiors_SetPlayerInterior(YSI_p_Playerid, pYSI_Interiorid)
 	gYSI_PlayersInterior[YSI_p_Playerid] = pYSI_Interiorid;
 	return YSI_INTERIORS_TRUE;
 }
+
+#define Interiors_InteriorActionPerformed(%0) \
+	if(YSI_Actionid == %0)
