@@ -42,7 +42,7 @@ public YSI_OnPlayerNearEntrance(playerid)
 		{
 			YSI_InteriorActionid = 0;
 			format(YSI_InteriorFunctionName,sizeof(YSI_InteriorFunctionName),
-				"@yI_%s",gYSI_InteriorData[ i ][e_YSI_INTERIOR_NAME]);
+				"%s@_yI",gYSI_InteriorData[ i ][e_YSI_INTERIOR_NAME]);
 
 			if(funcidx(YSI_InteriorFunctionName) != -1) CallLocalFunction(YSI_InteriorFunctionName,"ii",playerid,YSI_InteriorActionid);
 
@@ -77,7 +77,7 @@ public YSI_OnPlayerNearEntrance(playerid)
 
 			YSI_InteriorActionid = 1;
 			format(YSI_InteriorFunctionName,sizeof(YSI_InteriorFunctionName),
-				"@yI_%s",gYSI_InteriorData[ i ][e_YSI_INTERIOR_NAME]);
+				"%s@_yI",gYSI_InteriorData[ i ][e_YSI_INTERIOR_NAME]);
 
 			if(funcidx(YSI_InteriorFunctionName) != -1) CallLocalFunction(YSI_InteriorFunctionName,"ii",playerid,YSI_InteriorActionid);
 
@@ -260,12 +260,12 @@ ___________         __                     _____ __________.___
 
 */
 
-#define Interiors_DeclareInteriorFunction(%0,%1) \
-	forward @yI_%0(%1,YSI_Actionid); \
-	public @yI_%0(%1,YSI_Actionid)
+#define interior%0(%1) \
+	forward%0@_yI(%1,YSI_Actionid); \
+	public%0@_yI(%1,YSI_Actionid)
 
-#define Interiors_HookInteriorFunction(%0,%1) \
-	hook @yI_%0(%1,YSI_Actionid)
+#define hookinterior%0(%1) \
+	hook%0@_yI(%1,YSI_Actionid)
 
 stock Interiors_SetPlayerInterior(YSI_p_Playerid, pYSI_Interiorid)
 {
@@ -277,4 +277,4 @@ stock Interiors_SetPlayerInterior(YSI_p_Playerid, pYSI_Interiorid)
 }
 
 #define Interiors_InteriorActionPerformed(%0) \
-	if(YSI_Actionid == %0)
+	(YSI_Actionid == %0)
