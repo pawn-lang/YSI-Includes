@@ -260,11 +260,11 @@ ___________         __                     _____ __________.___
 
 */
 
-#define interior%0(%1) \
+#define interiorcall%0(%1) \
 	forward%0@_yI(%1,YSI_Actionid); \
 	public%0@_yI(%1,YSI_Actionid)
 
-#define hookinterior%0(%1) \
+#define hookinteriorcall%0(%1) \
 	hook%0@_yI(%1,YSI_Actionid)
 
 stock Interiors_SetPlayerInterior(YSI_p_Playerid, pYSI_Interiorid)
