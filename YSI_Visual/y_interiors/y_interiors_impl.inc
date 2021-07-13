@@ -111,6 +111,24 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 	return 1;
 }
 
+hook OnPlayerUpdate(playerid)
+{
+	for(new i; i < MAX_INTERIORS; i++)
+	{
+		if( IsPlayerInRangeOfPoint( playerid, 1.5, gYSI_InteriorData[ i ][e_YSI_INTENTRANCE_X], \
+		gYSI_InteriorData[ i ][e_YSI_INTENTRANCE_Y], gYSI_InteriorData[ i ][e_YSI_INTENTRANCE_Z]) \
+		&& GetPlayerVirtualWorld( playerid ) == gYSI_InteriorData[ i ][e_YSI_INTERIOR_VWID_OUT] \
+		&& !IsPlayerInAnyVehicle( playerid ))
+		{
+			new YSI_InteriorName[100];
+			format(YSI_InteriorName,sizeof(YSI_InteriorName),"Property: %s",gYSI_InteriorData[ i ][ e_YSI_INTERIOR_NAME ]);
+			
+			GameTextForPlayer(playerid, YSI_InteriorName, 5000, 2);
+		}
+	}
+	return 1;
+}
+
 /*
 
                                                                                          
