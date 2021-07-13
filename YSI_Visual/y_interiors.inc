@@ -65,7 +65,8 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 
-Library y_interiors made by: DEntisT Brace
+Library y_interiors made by: 
+	DEntisT Brace
 */
 
 #if !defined _INC_y_interiors

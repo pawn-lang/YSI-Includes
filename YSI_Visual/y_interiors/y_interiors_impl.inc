@@ -1,4 +1,4 @@
-#include "y_interiors_decl"//decl-arations
+#include "y_interiors_decl"// decl-arations
 
 /*
 

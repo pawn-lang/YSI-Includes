@@ -18,7 +18,7 @@ _______
 
 #define DisableDefaultInteriors DisableInteriorEnterExits
 
-#define MAX_INTERIORS 100
+#define MAX_INTERIORS 300
 
 /*
 
