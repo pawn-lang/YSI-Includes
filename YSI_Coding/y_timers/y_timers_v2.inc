@@ -92,15 +92,15 @@ Optional plugins:
 #define _YT@CR:%0,%1)%8>%2||| @Yf:@Yg:@Yh:#i#,@Yx:J@|||%0|||%1;%8>%2|||
 
 // Define for "DEFER__" with timer, parameters and main function.
-#define TIMER__%0[%1]%3(%2) stock%0_yT@(%2)return _Timer_C(O@(#%0@_yT,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
+#define TIMER__%0[%1]%3(%2) stock _yT@%0(%2)return _Timer_C(O@(#@_yT%0,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
 
 // Expand additional parameters out to three functions after processing.
-//#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:%1@_yT(%2);public @Yu:%1@_yT(%2){%4(%2);}%4
-#define @Yx:%0||||||;%8>%1,%2|||%4||| %0),%8);@Yj:%1@_yT(__r,%2);public @Yj:%1@_yT(__r,%2){%4(%2);}%4
+//#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:@_yT%1(%2);@Yu:@_yT%1(%2){%4(%2);}%4
+#define @Yx:%0||||||;%8>%1,%2|||%4||| %0),%8);@Yj:@_yT%1(__r,%2);@Yj:@_yT%1(__r,%2){%4(%2);}%4
 
 // Can't believe I never thought of this before!  If only there was a way to
 // make it less generic than "id".
-#define id#,@Yx:J@,||||||;%8>%1,%2|||%4||| ),0);%1@_yT();public%1@_yT(){%4();}%4
+#define id#,@Yx:J@,||||||;%8>%1,%2|||%4||| ),0);@_yT%1();@_yT%1(){%4();}%4
 
 // Remove excess "_Timer_G" and "_Timer_B".
 #define @Yj:%0(%5){%1(%8&%2&%3)%9} @Yj:%0(%5){%1(%8:YSI_gMallocMemory[%2]%3);@Yl(@Yk:%2)%9}
@@ -111,11 +111,12 @@ Optional plugins:
 #define @Yk:%0);@Yl(@Yk:%1); @Yk:%0);
 #define @Yl if(!__r)_Timer_F
 
-#define DEFER__%0(%1) (J@=0,I@=-1,Timer:%0_yT@(%1))
+#define DEFER__%0(%1) (J@=0,I@=-1,Timer:_yT@%0(%1))
 
-#define REPEAT__%0(%1) (J@=1,I@=-1,Timer:%0_yT@(%1))
+#define REPEAT__%0(%1) (J@=1,I@=-1,Timer:_yT@%0(%1))
 
 // Custom time.
-#define Timer:%0[%1]_yT@(%2) I@=%1,Timer:%0_yT@(%2)
+#define Timer:%0[%1](%2) I@=%1,Timer:%0(%2)
 
 #define STOP__%0; {_Timer_F(_:%0);}
+

@@ -469,8 +469,9 @@ stock _Timer_H(slot)
 // 
 #define PTASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s[MAX_PLAYERS]={-1,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
 
-#define @yT_%0\32;%1(%2) @yT_%0%1(%2)
-//#define @_yT%0;\32%1(%2) @_yT%0%1(%2)
+#define _yT@%0\32; _yT@
+#define @_yT%0\32; @_yT
+#define @yT_%0\32; @yT_
 
 #define PAUSE__%0; {J@=_:@Ym:@yT_%0(0,-1);}
 #define RESUME__%0; {J@=_:@Ym:@yT_%0(1,-1);}
