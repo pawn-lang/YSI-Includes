@@ -2188,9 +2188,9 @@ stock GetNearestColourGamma(colour, const options[], count = sizeof (options))
 		// Initial huge distance (everything else is closer).
 		Float:distance = FLOAT_INFINITY,
 		// Gamma decode the colour channels.
-		Float:r1 = floatpower((colour >>> 24       ) / 255.0, FLOAT_GAMMA),
-		Float:g1 = floatpower((colour >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA),
-		Float:b1 = floatpower((colour >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA),
+		Float:r1 = floatpower((colour >>> 24       ) / 100.0, FLOAT_GAMMA),
+		Float:g1 = floatpower((colour >>> 16 & 0xFF) / 100.0, FLOAT_GAMMA),
+		Float:b1 = floatpower((colour >>>  8 & 0xFF) / 100.0, FLOAT_GAMMA),
 		Float:r2,
 		Float:g2,
 		Float:b2,
@@ -2198,9 +2198,9 @@ stock GetNearestColourGamma(colour, const options[], count = sizeof (options))
 	while (count--)
 	{
 		// Get the current colour.
-		r2 = floatpower((options[count] >>> 24       ) / 255.0, FLOAT_GAMMA) - r1,
-		g2 = floatpower((options[count] >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA) - g1,
-		b2 = floatpower((options[count] >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA) - b1,
+		r2 = floatpower((options[count] >>> 24       ) / 100.0, FLOAT_GAMMA) - r1,
+		g2 = floatpower((options[count] >>> 16 & 0xFF) / 100.0, FLOAT_GAMMA) - g1,
+		b2 = floatpower((options[count] >>>  8 & 0xFF) / 100.0, FLOAT_GAMMA) - b1,
 		// Find the distance.
 		cur = (r2 * r2) + (g2 * g2) + (b2 * b2);
 		if (cur < distance)
@@ -2236,9 +2236,9 @@ stock GetNearestColourGammaCached(colour, const Float:options[][3], count = size
 		// Initial huge distance (everything else is closer).
 		Float:distance = FLOAT_INFINITY,
 		// Gamma decode the colour channels.
-		Float:r1 = floatpower((colour >>> 24       ) / 255.0, FLOAT_GAMMA),
-		Float:g1 = floatpower((colour >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA),
-		Float:b1 = floatpower((colour >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA),
+		Float:r1 = floatpower((colour >>> 24       ) / 100.0, FLOAT_GAMMA),
+		Float:g1 = floatpower((colour >>> 16 & 0xFF) / 100.0, FLOAT_GAMMA),
+		Float:b1 = floatpower((colour >>>  8 & 0xFF) / 100.0, FLOAT_GAMMA),
 		Float:r2,
 		Float:g2,
 		Float:b2,
