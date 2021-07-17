@@ -1956,9 +1956,6 @@ stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 	return InterpolateColourGamma(startColour, endColour, fraction);
 }
 
-#undef FLOAT_GAMMA
-#undef FLOAT_INVERSE_GAMMA
-
 #define FLOAT_SRGB_ADJUST (14.025) // 0.055 * 255.0
 #define FLOAT_SRGB_TRANSFORM_LOW  (3294.6) // 12.92 * 255.0
 #define FLOAT_SRGB_TRANSFORM_HIGH (269.025) // 1.055 * 255.0
@@ -2119,6 +2116,244 @@ stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 	P:W("`InterpolateColorSRGB()` called, please use `InterpolateColourSRGB()` isntead,");
 	return InterpolateColourSRGB(startColour, endColour, fraction);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  GetNearestColourLinear(colour, const options[], count = sizeof (options));
+ * </summary>
+ * <param name="colour">The RGB(A) colour to restrict.</param>
+ * <param name="options">The list of valid RGB(A) colour options.</param>
+ * <param name="count">The size of the options array.</param>
+ * <returns>
+ *  The INDEX of the nearst colour.  Or <c>-1</c> for errors.
+ * </returns>
+ * <remarks>
+ *  Find the closest colour to the given colour from the array.  Uses RGB colour
+ *  space for the distance function, which is not very accurate.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock GetNearestColourLinear(colour, const options[], count = sizeof (options))
+{
+	new
+		idx = -1,
+		// Initial huge distance (everything else is closer).
+		// We can use integers because there's no `floatsqrt` used.
+		distance = cellmax,
+		r1 = colour >>> 24,
+		g1 = colour >>> 16 & 0xFF,
+		b1 = colour >>>  8 & 0xFF,
+		r2,
+		g2,
+		b2,
+		cur;
+	while (count--)
+	{
+		// Get the current colour.
+		r2 = (options[count] >>> 24) - r1,
+		g2 = (options[count] >>> 16 & 0xFF) - g1,
+		b2 = (options[count] >>>  8 & 0xFF) - b1,
+		// Find the distance.
+		cur = (r2 * r2) + (g2 * g2) + (b2 * b2);
+		if (cur < distance)
+		{
+			distance = cur,
+			idx = count;
+		}
+	}
+	
+	return idx;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  GetNearestColourGamma(colour, const options[], count = sizeof (options));
+ * </summary>
+ * <param name="colour">The RGB(A) colour to restrict.</param>
+ * <param name="options">The list of valid RGB(A) colour options.</param>
+ * <param name="count">The size of the options array.</param>
+ * <returns>
+ *  The INDEX of the nearst colour.  Or <c>-1</c> for errors.
+ * </returns>
+ * <remarks>
+ *  Find the closest colour to the given colour from the array.  Uses gamma
+ *  colour space for slightly more accuracy.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock GetNearestColourGamma(colour, const options[], count = sizeof (options))
+{
+	new
+		idx = -1,
+		// Initial huge distance (everything else is closer).
+		Float:distance = FLOAT_INFINITY,
+		// Gamma decode the colour channels.
+		Float:r1 = floatpower((colour >>> 24       ) / 255.0, FLOAT_GAMMA),
+		Float:g1 = floatpower((colour >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA),
+		Float:b1 = floatpower((colour >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA),
+		Float:r2,
+		Float:g2,
+		Float:b2,
+		Float:cur;
+	while (count--)
+	{
+		// Get the current colour.
+		r2 = floatpower((options[count] >>> 24       ) / 255.0, FLOAT_GAMMA) - r1,
+		g2 = floatpower((options[count] >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA) - g1,
+		b2 = floatpower((options[count] >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA) - b1,
+		// Find the distance.
+		cur = (r2 * r2) + (g2 * g2) + (b2 * b2);
+		if (cur < distance)
+		{
+			distance = cur,
+			idx = count;
+		}
+	}
+	
+	return idx;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  GetNearestColourGammaCached(colour, const options[], count = sizeof (options));
+ * </summary>
+ * <param name="colour">The RGB(A) colour to restrict.</param>
+ * <param name="options">The list of valid gamma colour options.</param>
+ * <param name="count">The size of the options array.</param>
+ * <returns>
+ *  The INDEX of the nearst colour.  Or <c>-1</c> for errors.
+ * </returns>
+ * <remarks>
+ *  Find the closest colour to the given colour from the array.  Uses gamma
+ *  colour space for slightly more accuracy.  Options are in gamma format.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock GetNearestColourGammaCached(colour, const Float:options[][3], count = sizeof (options))
+{
+	new
+		idx = -1,
+		// Initial huge distance (everything else is closer).
+		Float:distance = FLOAT_INFINITY,
+		// Gamma decode the colour channels.
+		Float:r1 = floatpower((colour >>> 24       ) / 255.0, FLOAT_GAMMA),
+		Float:g1 = floatpower((colour >>> 16 & 0xFF) / 255.0, FLOAT_GAMMA),
+		Float:b1 = floatpower((colour >>>  8 & 0xFF) / 255.0, FLOAT_GAMMA),
+		Float:r2,
+		Float:g2,
+		Float:b2,
+		Float:cur;
+	while (count--)
+	{
+		// Get the current colour.
+		r2 = options[count][0] - r1,
+		g2 = options[count][1] - g1,
+		b2 = options[count][2] - b1,
+		// Find the distance.
+		cur = (r2 * r2) + (g2 * g2) + (b2 * b2);
+		if (cur < distance)
+		{
+			distance = cur,
+			idx = count;
+		}
+	}
+	
+	return idx;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  GetNearestColourGamma(colour, const options[], count = sizeof (options));
+ * </summary>
+ * <param name="colour">The RGB(A) colour to restrict.</param>
+ * <param name="options">The list of valid RGB(A) colour options.</param>
+ * <param name="count">The size of the options array.</param>
+ * <returns>
+ *  The INDEX of the nearst colour.  Or <c>-1</c> for errors.
+ * </returns>
+ * <remarks>
+ *  Find the closest colour to the given colour from the array.  Uses SRGB
+ *  colour space for the most accuracy.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock GetNearestColourSRGB(colour, const options[], count = sizeof (options))
+{
+	new
+		idx = -1,
+		// Initial huge distance (everything else is closer).
+		Float:distance = FLOAT_INFINITY,
+		Float:cur,
+		Float:x1, Float:y1, Float:z1,
+		Float:x2, Float:y2, Float:z2;
+	// Gamma decode the colour channels.
+	SRGBToCIE(colour, x1, y1, z1);
+	while (count--)
+	{
+		// Get the current colour.
+		SRGBToCIE(options[count], x2, y2, z2),
+		x2 -= x1,
+		y2 -= y1,
+		z2 -= z1,
+		// Find the distance.
+		cur = (x2 * x2) + (y2 * y2) + (z2 * z2);
+		if (cur < distance)
+		{
+			distance = cur,
+			idx = count;
+		}
+	}
+	
+	return idx;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  GetNearestColourSRGBCached(colour, const options[], count = sizeof (options));
+ * </summary>
+ * <param name="colour">The RGB(A) colour to restrict.</param>
+ * <param name="options">The list of valid SRGB colour options.</param>
+ * <param name="count">The size of the options array.</param>
+ * <returns>
+ *  The INDEX of the nearst colour.  Or <c>-1</c> for errors.
+ * </returns>
+ * <remarks>
+ *  Find the closest colour to the given colour from the array.  Uses SRGB
+ *  colour space for the most accuracy.  Options are in SRGB format.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock GetNearestColourSRGBCached(colour, const Float:options[][3], count = sizeof (options))
+{
+	new
+		idx = -1,
+		// Initial huge distance (everything else is closer).
+		Float:distance = FLOAT_INFINITY,
+		Float:cur,
+		Float:x1, Float:y1, Float:z1,
+		Float:x2, Float:y2, Float:z2;
+	// Gamma decode the colour channels.
+	SRGBToCIE(colour, x1, y1, z1);
+	while (count--)
+	{
+		// Get the current colour.
+		x2 = options[count][0] - x1,
+		y2 = options[count][1] - y1,
+		z2 = options[count][2] - z1,
+		// Find the distance.
+		cur = (x2 * x2) + (y2 * y2) + (z2 * z2);
+		if (cur < distance)
+		{
+			distance = cur,
+			idx = count;
+		}
+	}
+	
+	return idx;
+}
+
+#undef FLOAT_GAMMA
+#undef FLOAT_INVERSE_GAMMA
 
 #undef FLOAT_CIE_ADJUST
 #undef FLOAT_CIE_TRANSFORM_LOW
