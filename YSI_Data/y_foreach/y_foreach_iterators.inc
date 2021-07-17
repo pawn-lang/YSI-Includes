@@ -713,7 +713,7 @@ stock Iter_All_Internal(const array[], size, value)
 			Iter_Remove(Vehicle, vehicleid);
 	}
 	
-	stock Iter_CreateVehicle(modelid, Float:x, Float:y, Float:z, Float:angle, color1, color2, respawn_delay, addsiren = 0)
+	stock Iter_CreateVehicle(modelid, Float:x, Float:y, Float:z, Float:angle, color1, color2, respawn_delay, bool:addsiren = false)
 	{
 		#if _FOREACH_ACTORS
 			new
@@ -761,7 +761,7 @@ stock Iter_All_Internal(const array[], size, value)
 	#endif
 	#define AddStaticVehicle Iter_AddStaticVehicle
 	
-	stock Iter_AddStaticVehicleEx(modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:angle, color1, color2, respawn_delay, addsiren = 0)
+	stock Iter_AddStaticVehicleEx(modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:angle, color1, color2, respawn_delay, bool:addsiren = false)
 	{
 		#if _FOREACH_ACTORS
 			new
