@@ -78,7 +78,7 @@ static stock
 	YSI_g_sPlayerTimers = -1;
 
 stock
-	_YSI_g_sCurrentTimer = 0;
+	Timer:_YSI_g_sCurrentTimer = Timer:0;
 
 public OnCodeInit()
 {
@@ -381,7 +381,7 @@ stock Timer_GetCallCount(Timer:slot = Timer:0)
 {
 	if (!slot)
 	{
-		slot = Timer:_YSI_g_sCurrentTimer;
+		slot = _YSI_g_sCurrentTimer;
 	}
 	new count = mget(Alloc:slot, 2);
 	// Repeat forever, or repeat N?  If forever, `count` is `0` and slto 3 is
@@ -424,7 +424,7 @@ stock _Timer_A(const str[], len)
 }
 
 // Create the timer setup.
-stock _Timer_C(timerID)
+stock Timer:_Timer_C(timerID)
 {
 	P:3("_Timer_C called: %d", timerID);
 	// This is done here for convenience.
@@ -439,7 +439,7 @@ stock _Timer_C(timerID)
 	timerID = _:YSI_g_sFirstSlot;
 	YSI_g_sFirstSlot = NO_ALLOC;
 	YSI_g_sLastSlot = NO_ALLOC;
-	return timerID;
+	return Timer:timerID;
 }
 
 // Allocate the ID.
@@ -470,12 +470,17 @@ stock _Timer_B(repeatCount)
 }
 
 // Free all timer resources.
-stock _Timer_F(slot = 0, force = 0)
+stock _Timer_F(Timer:slot = Timer:0, force = 0)
 {
 	if (!slot)
 	{
-		slot = _YSI_g_sCurrentTimer;
+		if (!(slot = _YSI_g_sCurrentTimer))
+		{
+			return 0;
+		}
 	}
+	// Clear the current timer ID.
+	_YSI_g_sCurrentTimer = Timer:0;
 	P:3("_Timer_F called");
 	// This is done here for convenience.
 	// Always called with the first ID.
@@ -505,7 +510,7 @@ stock _Timer_F(slot = 0, force = 0)
 		P:6("_Timer_F: slot = %d, next = %d", slot, force);
 		free(Alloc:slot);
 	}
-	while ((slot = force) != -1);
+	while ((slot = Timer:force) != Timer:-1);
 	return 1;
 }
 
