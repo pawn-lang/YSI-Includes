@@ -344,7 +344,8 @@ static stock Alloc:Timer_GetSingleSlot(len)
 	//
 	// 0 - Next.
 	// 1 - Timer ID.
-	// 2 - Repeat count.
+	// 2 - Repeat count remaining.
+	// 3 - Repeat count total (or count for `0`).
 	//
 	new
 		Alloc:slot = malloc(len ? len : 3);
@@ -374,6 +375,18 @@ static stock Alloc:Timer_GetSingleSlot(len)
 	mset(slot, 0, -1);
 	YSI_g_sLastSlot = slot;
 	return slot;
+}
+
+stock Timer_GetCallCount(Timer:slot = Timer:0)
+{
+	if (!slot)
+	{
+		slot = Timer:_YSI_g_sCurrentTimer;
+	}
+	new count = mget(Alloc:slot, 2);
+	// Repeat forever, or repeat N?  If forever, `count` is `0` and slto 3 is
+	// the true count.
+	return mget(Alloc:slot, 3) - count;
 }
 
 // Allocate memory to store a string.
@@ -444,16 +457,24 @@ stock _Timer_B(repeatCount)
 		return 0;
 	}
 	mset(YSI_g_sFirstSlot, 2, repeatCount);
+	if (repeatCount)
+	{
+		mset(YSI_g_sFirstSlot, 3, repeatCount);
+	}
+	else
+	{
+		mset(YSI_g_sFirstSlot, 3, 0);
+	}
 	// Just so it isn't a real timer ID (or possibly isn't).
 	return _:YSI_g_sFirstSlot;
 }
 
 // Free all timer resources.
-stock _Timer_F(slot, force = 0)
+stock _Timer_F(slot = 0, force = 0)
 {
 	if (!slot)
 	{
-		return 0;
+		slot = _YSI_g_sCurrentTimer;
 	}
 	P:3("_Timer_F called");
 	// This is done here for convenience.
@@ -464,7 +485,8 @@ stock _Timer_F(slot, force = 0)
 		force = mget(Alloc:slot, 2);
 		if (--force == -1)
 		{
-			// Repeat forever.
+			// Repeat forever, update the count.
+			mset(Alloc:slot, 3, mget(Alloc:slot, 3) + 1);
 			return 0;
 		}
 		else if (force)
