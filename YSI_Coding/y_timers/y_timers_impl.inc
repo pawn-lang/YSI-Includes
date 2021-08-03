@@ -335,9 +335,10 @@ stock _Timer_D(const func[], interval, const action, who, results[], a[2])
 static stock Alloc:Timer_GetSingleSlot(len)
 {
 	// Allocates memory and secretly appends data to the start.
+	++len;
 	P:4("Timer_GetSingleSlot called: %d", len);
 	new
-		Alloc:slot = malloc(len + 1);
+		Alloc:slot = malloc(len ? len : 3);
 	if (slot == NO_ALLOC)
 	{
 		return NO_ALLOC;
@@ -346,7 +347,16 @@ static stock Alloc:Timer_GetSingleSlot(len)
 	// Standard linked list.
 	if (YSI_g_sFirstSlot == NO_ALLOC)
 	{
-		YSI_g_sFirstSlot = slot;
+		if (len)
+		{
+			// Initial value allocation to store the timer ID.
+			Timer_GetSingleSlot(-1);
+			mset(YSI_g_sLastSlot, 0, _:slot);
+		}
+		else
+		{
+			YSI_g_sFirstSlot = slot;
+		}
 	}
 	else
 	{
@@ -354,7 +364,7 @@ static stock Alloc:Timer_GetSingleSlot(len)
 	}
 	YSI_g_sLastSlot = slot;
 	mset(YSI_g_sLastSlot, 0, -1);
-	return slot;// + Alloc:1;
+	return slot;
 }
 
 // Allocate memory to store a string.
@@ -395,36 +405,38 @@ stock _Timer_A(const str[], len)
 //	I@ = -1;
 
 // Create the timer setup.
-stock _Timer_C(tt, g)
+stock _Timer_C(timerID)
 {
-	P:3("_Timer_C called: %d, %d", tt, g);
-	//P:3("_Timer_C called: %d", tt);
+	P:3("_Timer_C called: %d", timerID);
 	// This is done here for convenience.
 	I@ = -1;
 	// Only repeating timers are freed like this.
 	// UPDATE: Now all timers with array parameters, regardless of repeat status
 	// are freed like this.  Only timers with no malloc aren't.
-	if (g)
-	{
-		new
-			Alloc:slot = Timer_GetSingleSlot(1);
-		P:5("_Timer_C: slot = %d", _:slot);
-		if (slot == NO_ALLOC)
-		{
-			// Not a graceful fail!
-			return 0;
-		}
-		mset(slot, 1, tt);
-		// Just so it isn't a real timer ID (or possibly isn't).
-		slot = ~YSI_g_sFirstSlot;// ^ Alloc:-1;
-		YSI_g_sFirstSlot = NO_ALLOC;
-		YSI_g_sLastSlot = NO_ALLOC;
-		return _:slot;
-	}
-	// Reset these variables on all timers, including self-cleaning ones.
+	// UPDATE 2: Now ALL timers are freed like this, because we need an ID we
+	// can know in advance.
+	mset(YSI_g_sFirstSlot, 1, timerID);
+	// Just so it isn't a real timer ID (or possibly isn't).
+	timerID = YSI_g_sFirstSlot;// ^ Alloc:-1;
 	YSI_g_sFirstSlot = NO_ALLOC;
 	YSI_g_sLastSlot = NO_ALLOC;
-	return tt;
+	return timerID;
+}
+
+// Allocate the ID.
+stock _Timer_B(repeating)
+{
+	P:3("_Timer_B called: %d", repeating);
+	Timer_GetSingleSlot(-1);
+	P:5("_Timer_B: slot = %d", _:YSI_g_sFirstSlot);
+	if (YSI_g_sFirstSlot == NO_ALLOC)
+	{
+		// Not a graceful fail!
+		return 0;
+	}
+	mset(YSI_g_sFirstSlot, 2, repeating);
+	// Just so it isn't a real timer ID (or possibly isn't).
+	return YSI_g_sFirstSlot;
 }
 
 // Free all timer resources.
@@ -432,36 +444,23 @@ stock _Timer_F(slot)
 {
 	P:3("_Timer_F called");
 	// This is done here for convenience.
-	if (slot & 0x80000000)
+	new
+		next = 0;
+	for ( ; ; )
 	{
-		new
-			next = 0;
-		slot = ~slot; //^= -1;
-		for ( ; ; )
+		next = mget(Alloc:slot, 0);
+		P:6("_Timer_F: slot = %d, next = %d", slot, next);
+		// Out of stored strings and arrays.
+		if (next == -1)
 		{
-			next = mget(Alloc:slot, 0);
-			P:6("_Timer_F: slot = %d, next = %d", slot, next);
-			// Out of stored strings and arrays.
-			if (next == -1)
-			{
-				KillTimer(mget(Alloc:slot, 1));
-				free(Alloc:slot);
-				break;
-			}
+			KillTimer(mget(Alloc:slot, 1));
 			free(Alloc:slot);
-			slot = next;
+			break;
 		}
-	}
-	else
-	{
-		KillTimer(slot);
+		free(Alloc:slot);
+		slot = next;
 	}
 	return 1;
-}
-
-stock _Timer_H(slot)
-{
-	_Timer_F(~(slot - 1));
 }
 
 #define TASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s=-1;return _Timer_I(#%0,%1,g,s);}%0();public%0()

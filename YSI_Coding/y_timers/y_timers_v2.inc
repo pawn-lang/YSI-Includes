@@ -72,35 +72,35 @@ Optional plugins:
 
 // These are the tag-type definitions for the various possible parameter types.
 // Array-like definitions.
-#define @Yf:@Yg:@Yh:#%0#%1|||%3[%4]|||%5,%6;%8>%9||| @Yc:@Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
+#define @Yf:@Yg:@Yh:#%0#%1|||%3[%4]|||%5,%6;%9||| @Yc:@Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
 
 // `const`
 #define @Yc:@Ye:@Yw:#%0#%1|||%2const%3|||%5,%6;%9||| @Ye:@Yw:#%0#%1|||%3|||%5,%6;%9|||
-#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_S(%3)|||%5|||%6;1>%9,@Yv&%3&|||
+#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_S(%3)|||%5|||%6;%9,@Yv&%3&|||
 
 // This one has an extra parameter because arrays must always be followed by
 // their length.
-#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_A(%3,%5)|||%5|||%6,%7;1>%9,@Yv&%3&|||
+#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_A(%3,%5)|||%5|||%6,%7;%9,@Yv&%3&|||
 
 // Tag-like definitions.
-#define @Yg:@Yh:#%0#%1|||%2:%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%2:%3|||%5|||%6;%8>%9,%2:%3|||
+#define @Yg:@Yh:#%0#%1|||%2:%3|||%5,%6;%9||| @Yf:@Yg:@Yh:#%0d#%1,%2:%3|||%5|||%6;%9,%2:%3|||
 
 // Others.
-#define @Yh:#%0#%1|||%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%3|||%5|||%6;%8>%9,%3|||
+#define @Yh:#%0#%1|||%3|||%5,%6;%9||| @Yf:@Yg:@Yh:#%0d#%1,%3|||%5|||%6;%9,%3|||
 
 // Main entry point for DEFER__ type determination.
-#define _YT@CR:%0,%1)%8>%2||| @Yf:@Yg:@Yh:#i#,@Yx:J@|||%0|||%1;%8>%2|||
+#define _YT@CR:%0,%1)%2||| @Yf:@Yg:@Yh:#i#,@Yx:_Timer_B(J@)|||%0|||%1;%2|||
 
 // Define for "DEFER__" with timer, parameters and main function.
-#define TIMER__%0[%1]%3(%2) stock _yT@%0(%2)return _Timer_C(O@(#@_yT%0,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
+#define TIMER__%0[%1]%3(%2) stock _yT@%0(%2)return _Timer_C(O@(#@_yT%0,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)%0|||%0|||(%2)
 
 // Expand additional parameters out to three functions after processing.
 //#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:@_yT%1(%2);@Yu:@_yT%1(%2){%4(%2);}%4
-#define @Yx:%0||||||;%8>%1,%2|||%4||| %0),%8);@Yj:@_yT%1(__r,%2);@Yj:@_yT%1(__r,%2){%4(%2);}%4
+#define @Yx:%0||||||;%1,%2|||%4||| %0));@Yj:@_yT%1(__r,%2);@Yj:@_yT%1(__r,%2){%4(%2);}%4
 
 // Can't believe I never thought of this before!  If only there was a way to
 // make it less generic than "id".
-#define id#,@Yx:J@,||||||;%8>%1,%2|||%4||| ),0);@_yT%1();@_yT%1(){%4();}%4
+#define id#,@Yx:_Timer_B(J@),||||||;%1,%2|||%4||| i,_Timer_B(J@)));@Yj:@_yT%1(__r);@Yj:@_yT%1(__r){%4();}%4
 
 // Remove excess "_Timer_G" and "_Timer_B".
 #define @Yj:%0(%5){%1(%8&%2&%3)%9} @Yj:%0(%5){%1(%8:YSI_gMallocMemory[%2]%3);@Yl(@Yk:%2)%9}
@@ -119,4 +119,7 @@ Optional plugins:
 #define Timer:%0[%1](%2) I@=%1,Timer:%0(%2)
 
 #define STOP__%0; {_Timer_F(_:%0);}
+
+// `stop` given without a timer ID - kill the current one.
+#define _Timer_F(_:) _Timer_F()
 

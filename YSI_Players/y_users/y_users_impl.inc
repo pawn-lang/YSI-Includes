@@ -27,7 +27,7 @@ enum e_USER_ERROR
 	e_USER_ERROR_LOGIN,           // Login failed (unregistered OR password mismatch).
 	e_USER_ERROR_CONNECTION,      // Can't connect to the database.
 	e_USER_ERROR_STATE,           // In the wrong state for the current call.
-	e_USER_ERROR_EMPTY,           // No email/password entered.
+	e_USER_ERROR_EMPTY,           // No email/password entered.  Try again.
 	e_USER_ERROR_UNKNOWN,         // Other general error.
 }
 
@@ -132,26 +132,11 @@ hook OnPlayerDisconnect(playerid, reason)
 
 static User_Error(playerid, e_USER_ERROR:error)
 {
-	if (error == e_USER_ERROR_STATE)
+	// Signal the error callback.
+
+	if (error != e_USER_ERROR_EMPTY && YSI_g_sRegistrationState[playerid] != e_USER_REGISTRATION_STATE_DISC)
 	{
-		switch (YSI_g_sRegistrationState[playerid])
-		{
-		case e_USER_REGISTRATION_STATE_DISC:
-		case e_USER_REGISTRATION_STATE_NONE:
-		{
-			// Do nothing.  Extra errors now are pointless.
-		}
-		default:
-			// Signal the error callback.
-		}
-	}
-	else
-	{
-		// Signal the error callback.
-	}
-	// Reset the user.
-	if (error != e_USER_ERROR_EMPTY)
-	{
+		// Reset the user.  Unless they're already reset.
 		User_ResetPlayer(playerid);
 	}
 }
@@ -173,6 +158,10 @@ public User_OnFirstRegistration(playerid)
 	}
 	else if (YSI_g_sRegistrationState[playerid] == e_USER_REGISTRATION_STATE_DISC)
 	{
+		// The pending operations have completed.  The new player with this ID
+		// can now register.  They'll probably never notice this, unless they
+		// manage to start registering within about 1 second of the previous
+		// player disconnecting...
 		YSI_g_sRegistrationState[playerid] = e_USER_REGISTRATION_STATE_NONE;
 	}
 	else
@@ -236,10 +225,18 @@ User_RegisterPassword(playerid, string:password[])
 				YSI_g_sRegistrationState[playerid] = e_USER_REGISTRATION_STATE_P1;
 				BCrypt_Hash(playerid, "User_OnFirstRegistration", YSI_g_sSHA256FirstPhase, 12);
 				ret = true;
-				break;
+				goto User_RegisterPassword_end;
 			}
 		}
+		// If we get here, they didn't type anything.
+		User_Error(playerid, e_USER_ERROR_EMPTY);
 	}
+	else
+	{
+		// Do nothing.
+		User_Error(playerid, e_USER_ERROR_STATE);
+	}
+User_RegisterPassword_end:
 	// Wipe out the password.
 	User_SecureCallbackMemory();
 	User_SecureVariableMemory(password);
@@ -263,12 +260,12 @@ stock User_ConfirmPassword(playerid, string:password[])
 	if (YSI_g_sRegistrationState[playerid] != e_USER_REGISTRATION_STATE_P2)
 	{
 		// Do nothing.
-		User_Error(playerid, e_USER_ERROR_STATE, true);
+		User_Error(playerid, e_USER_ERROR_STATE);
 	}
-	if (isnull(YSI_g_sUserPassword[playerid]))
+	else if (isnull(YSI_g_sUserPassword[playerid]))
 	{
 		// Is P2, but no existing password to compare against.
-		User_Error(playerid, e_USER_ERROR_UNKNOWN, true);
+		User_Error(playerid, e_USER_ERROR_UNKNOWN);
 	}
 	else
 	{
@@ -298,8 +295,8 @@ stock User_ConfirmPassword(playerid, string:password[])
 				goto User_ConfirmPassword_end;
 			}
 		}
-		// If we get here, 
-		User_Error(playerid, e_USER_ERROR_EMPTY, false);
+		// If we get here, they didn't type anything.
+		User_Error(playerid, e_USER_ERROR_EMPTY);
 	}
 User_ConfirmPassword_end:
 	// Wipe out the password.
