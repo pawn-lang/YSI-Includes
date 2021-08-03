@@ -96,30 +96,26 @@ Optional plugins:
 
 // Expand additional parameters out to three functions after processing.
 //#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:@_yT%1(%2);@Yu:@_yT%1(%2){%4(%2);}%4
-#define @Yx:%0||||||;%1,%2|||%4||| %0));@Yj:@_yT%1(__r,%2);@Yj:@_yT%1(__r,%2){%4(%2);}%4
+#define @Yx:%0||||||;%1,%2|||%4||| %0));@Yj:@_yT%1(__r,%2);@Yj:@_yT%1(__r,%2){_YSI_g_sCurrentTimer=__r,%4(%2),_Timer_F(__r);}%4
 
 // Can't believe I never thought of this before!  If only there was a way to
 // make it less generic than "id".
-#define id#,@Yx:_Timer_B(J@),||||||;%1,%2|||%4||| i,_Timer_B(J@)));@Yj:@_yT%1(__r);@Yj:@_yT%1(__r){%4();}%4
+#define id#,@Yx:_Timer_B(J@),||||||;%1,%2|||%4||| i,_Timer_B(J@)));@Yj:@_yT%1(__r);@Yj:@_yT%1(__r){_YSI_g_sCurrentTimer=__r,%4(),_Timer_F(__r);}%4
 
 // Remove excess "_Timer_G" and "_Timer_B".
-#define @Yj:%0(%5){%1(%8&%2&%3)%9} @Yj:%0(%5){%1(%8:YSI_gMallocMemory[%2]%3);@Yl(@Yk:%2)%9}
+#define @Yj:%0(%5){%1(%8&%2&%3)%9} @Yj:%0(%5){%1(%8:YSI_gMallocMemory[%2]%3)%9}
 //#define @Yu:%0{%1(%8&%2&%3)%9} @Yu:%0{%1(%8:YSI_gMallocMemory[%2]%3)%9}
 #define @Yv&%0& %0
 
-// I'm not entirely sure why this works in reverse order, but I'm glad it does!
-#define @Yk:%0);@Yl(@Yk:%1); @Yk:%0);
-#define @Yl if(!__r)_Timer_F
+#define DEFER__%0(%1) (J@=1,I@=-1,Timer:_yT@%0(%1))
 
-#define DEFER__%0(%1) (J@=0,I@=-1,Timer:_yT@%0(%1))
-
-#define REPEAT__%0(%1) (J@=1,I@=-1,Timer:_yT@%0(%1))
+#define REPEAT__%0(%1) (J@=0,I@=-1,Timer:_yT@%0(%1))
 
 // Custom time.
 #define Timer:%0[%1](%2) I@=%1,Timer:%0(%2)
 
-#define STOP__%0; {_Timer_F(_:%0);}
+#define STOP__%0; {_Timer_F(_:%0,1);}
 
 // `stop` given without a timer ID - kill the current one.
-#define _Timer_F(_:) _Timer_F()
+#define _Timer_F(_:,1) _Timer_F(_YSI_g_sCurrentTimer,1)
 

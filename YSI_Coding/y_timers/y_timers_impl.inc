@@ -77,6 +77,9 @@ static stock
 	Alloc:YSI_g_sFirstSlot = NO_ALLOC,
 	YSI_g_sPlayerTimers = -1;
 
+stock
+	_YSI_g_sCurrentTimer = 0;
+
 public OnCodeInit()
 {
 	P:1("hook Timers_OnYSIInit called");
@@ -337,6 +340,12 @@ static stock Alloc:Timer_GetSingleSlot(len)
 	// Allocates memory and secretly appends data to the start.
 	++len;
 	P:4("Timer_GetSingleSlot called: %d", len);
+	// `4` is for the timer header.  Slots:
+	//
+	// 0 - Next.
+	// 1 - Timer ID.
+	// 2 - Repeat count.
+	//
 	new
 		Alloc:slot = malloc(len ? len : 3);
 	if (slot == NO_ALLOC)
@@ -362,8 +371,8 @@ static stock Alloc:Timer_GetSingleSlot(len)
 	{
 		mset(YSI_g_sLastSlot, 0, _:slot);
 	}
+	mset(slot, 0, -1);
 	YSI_g_sLastSlot = slot;
-	mset(YSI_g_sLastSlot, 0, -1);
 	return slot;
 }
 
@@ -424,42 +433,60 @@ stock _Timer_C(timerID)
 }
 
 // Allocate the ID.
-stock _Timer_B(repeating)
+stock _Timer_B(repeatCount)
 {
-	P:3("_Timer_B called: %d", repeating);
-	Timer_GetSingleSlot(-1);
+	P:3("_Timer_B called: %d", repeatCount);
+	if (YSI_g_sFirstSlot == NO_ALLOC)
+	{
+		Timer_GetSingleSlot(-1);
+	}
 	P:5("_Timer_B: slot = %d", _:YSI_g_sFirstSlot);
 	if (YSI_g_sFirstSlot == NO_ALLOC)
 	{
 		// Not a graceful fail!
 		return 0;
 	}
-	mset(YSI_g_sFirstSlot, 2, repeating);
+	mset(YSI_g_sFirstSlot, 2, repeatCount);
 	// Just so it isn't a real timer ID (or possibly isn't).
-	return YSI_g_sFirstSlot;
+	return _:YSI_g_sFirstSlot;
 }
 
 // Free all timer resources.
-stock _Timer_F(slot)
+stock _Timer_F(slot, force = 0)
 {
+	if (!slot)
+	{
+		return 0;
+	}
 	P:3("_Timer_F called");
 	// This is done here for convenience.
-	new
-		next = 0;
-	for ( ; ; )
+	// Always called with the first ID.
+	if (!force)
 	{
-		next = mget(Alloc:slot, 0);
-		P:6("_Timer_F: slot = %d, next = %d", slot, next);
-		// Out of stored strings and arrays.
-		if (next == -1)
+		// `force` is used by `stop`.
+		force = mget(Alloc:slot, 2);
+		if (--force == -1)
 		{
-			KillTimer(mget(Alloc:slot, 1));
-			free(Alloc:slot);
-			break;
+			// Repeat forever.
+			return 0;
 		}
-		free(Alloc:slot);
-		slot = next;
+		else if (force)
+		{
+			// Decremented the count, still runs left.
+			mset(Alloc:slot, 2, force);
+			return 0;
+		}
 	}
+	// Kill time timer.
+	KillTimer(mget(Alloc:slot, 1));
+	do
+	{
+		// Free all the slots in the linked list of allocations.
+		force = mget(Alloc:slot, 0);
+		P:6("_Timer_F: slot = %d, next = %d", slot, force);
+		free(Alloc:slot);
+	}
+	while ((slot = force) != -1);
 	return 1;
 }
 
