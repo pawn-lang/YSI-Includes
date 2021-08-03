@@ -410,9 +410,6 @@ stock _Timer_A(const str[], len)
 	return _:slot + 1;
 }
 
-//stock
-//	I@ = -1;
-
 // Create the timer setup.
 stock _Timer_C(timerID)
 {
@@ -426,7 +423,7 @@ stock _Timer_C(timerID)
 	// can know in advance.
 	mset(YSI_g_sFirstSlot, 1, timerID);
 	// Just so it isn't a real timer ID (or possibly isn't).
-	timerID = _:YSI_g_sFirstSlot;// ^ Alloc:-1;
+	timerID = _:YSI_g_sFirstSlot;
 	YSI_g_sFirstSlot = NO_ALLOC;
 	YSI_g_sLastSlot = NO_ALLOC;
 	return timerID;

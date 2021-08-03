@@ -92,7 +92,7 @@ Optional plugins:
 #define _YT@CR:%0,%1)%2||| @Yf:@Yg:@Yh:#i#,@Yx:_Timer_B(J@)|||%0|||%1;%2|||
 
 // Define for "DEFER__" with timer, parameters and main function.
-#define TIMER__%0[%1]%3(%2) stock _yT@%0(%2)return _Timer_C(O@(#@_yT%0,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)%0|||%0|||(%2)
+#define TIMER__%0[%1]%3(%2) stock _yT@%0(%2)return _Timer_C(O@(#@_yT%0,(I@==-1)?(%1):I@,true,_YT@CR:%2,,)%0|||%0|||(%2)
 
 // Expand additional parameters out to three functions after processing.
 //#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:@_yT%1(%2);@Yu:@_yT%1(%2){%4(%2);}%4
@@ -110,6 +110,9 @@ Optional plugins:
 #define DEFER__%0(%1) (J@=1,I@=-1,Timer:_yT@%0(%1))
 
 #define REPEAT__%0(%1) (J@=0,I@=-1,Timer:_yT@%0(%1))
+
+// Detect explicit repeat counts.
+#define J@=0,I@=-1,Timer:_yT@[%4] J@=(%4),I@=-1,Timer:_yT@
 
 // Custom time.
 #define Timer:%0[%1](%2) I@=%1,Timer:%0(%2)
