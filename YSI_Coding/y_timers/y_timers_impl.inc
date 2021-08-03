@@ -100,7 +100,7 @@ public OnCodeInit()
 		P:7("Timer_OnYSIInit: pointer: %d", pointer);
 		// Push the address of the current function.
 		#emit PUSH.S     pointer
-		#emit PUSH.C     0xFFFFFFFF
+		#emit PUSH.C     0xFFFFFFFF // -1: Initial list action for `_Timer_D`.
 		#emit PUSH.C     8
 		#emit LCTRL      6
 		#emit ADD.C      36
@@ -257,15 +257,15 @@ stock _Timer_I(const func[], interval, action, &result)
 	{
 		case 0:
 		{
-			if (result != -1)
+			if (result)
 			{
 				KillTimer(result),
-				result =- 1;
+				result = 0;
 			}
 		}
 		case 1:
 		{
-			if (result == -1)
+			if (!result)
 			{
 				result = YSI_SetTimer(func, interval, true);
 			}
@@ -299,17 +299,17 @@ stock _Timer_D(const func[], interval, const action, who, results[], a[2])
 			{
 				FOREACH__ (who : Player)
 				{
-					if (results[who] != -1)
+					if (results[who])
 					{
 						KillTimer(results[who]);
-						results[who] = -1;
+						results[who] = 0;
 					}
 				}
 			}
-			else if (results[who] != -1)
+			else if (results[who])
 			{
 				KillTimer(results[who]);
-				results[who] = -1;
+				results[who] = 0;
 			}
 		}
 		case 1:
@@ -319,20 +319,20 @@ stock _Timer_D(const func[], interval, const action, who, results[], a[2])
 			{
 				FOREACH__ (who : Player)
 				{
-					if (results[who] == -1)
+					if (!results[who])
 					{
 						results[who] = YSI_SetTimerEx(func, interval, true, "i", who);
 					}
 				}
 			}
-			else if (results[who] == -1)
+			else if (!results[who])
 			{
 				results[who] = YSI_SetTimerEx(func, interval, true, "i", who);
 			}
 		}
 	}
 	// No global interval for per-player timers.
-	return -1;
+	return 0;
 }
 
 static stock Alloc:Timer_GetSingleSlot(len)
@@ -510,14 +510,14 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 		P:6("_Timer_F: slot = %d, next = %d", slot, force);
 		free(Alloc:slot);
 	}
-	while ((slot = Timer:force) != Timer:-1);
+	while ((_:slot = force) != 1);
 	return 1;
 }
 
-#define TASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s=-1;return _Timer_I(#%0,%1,g,s);}%0();public%0()
+#define TASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public%0()
 
 // 
-#define PTASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s[MAX_PLAYERS]={-1,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
+#define PTASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
 
 #define _yT@%0\32; _yT@
 #define @_yT%0\32; @_yT
