@@ -95,7 +95,6 @@ Optional plugins:
 #define TIMER__%0[%1]%3(%2) stock Timer:_yT@%0(%2)return _Timer_C(O@(#@_yT%0,(I@==-1)?(%1):I@,true,_YT@CR:%2,,)%0|||%0|||(%2)
 
 // Expand additional parameters out to three functions after processing.
-//#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:@_yT%1(%2);@Yu:@_yT%1(%2){%4(%2);}%4
 #define @Yx:%0||||||;%1,%2|||%4||| %0));@Yj:@_yT%1(Timer:__r,%2);@Yj:@_yT%1(Timer:__r,%2){_YSI_g_sCurrentTimer=__r,%4(%2),_Timer_F(__r);}%4
 
 // Can't believe I never thought of this before!  If only there was a way to
@@ -104,7 +103,6 @@ Optional plugins:
 
 // Remove excess "_Timer_G" and "_Timer_B".
 #define @Yj:%0(%5){%1(%8&%2&%3)%9} @Yj:%0(%5){%1(%8:YSI_gMallocMemory[%2]%3)%9}
-//#define @Yu:%0{%1(%8&%2&%3)%9} @Yu:%0{%1(%8:YSI_gMallocMemory[%2]%3)%9}
 #define @Yv&%0& %0
 
 #define DEFER__%0(%1) (J@=1,I@=-1,Timer:_yT@%0(%1))
