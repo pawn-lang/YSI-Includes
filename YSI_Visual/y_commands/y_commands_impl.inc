@@ -500,7 +500,10 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	#endif
 	P:5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
 	// Can the player use this command?  `Command_OnReceived` sets "sErr".
-	sRet = Command_OnReceived(((h&2) || _Command_GetPlayer(YSI_g_sCurrentID, p)) ? OK : DENIED, p, c);
+	if ((h&2) || _Command_GetPlayer(YSI_g_sCurrentID, p))
+		sRet = Command_OnReceived(OK, p, c);
+	else
+		sRet = Command_OnReceived(DENIED, p, c);
 	if (sErr != COMMAND_OK)
 		return sRet;
 	// Find the true version of the command (alts etc).
@@ -543,7 +546,10 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 			// This is in another script, or multiple scripts.
 			// Call the command in another script.  If no particular script
 			// is set up as the "master", call it in the first one found...
-			CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos] ? c[sPos] : NULL, h & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+			if (c[sPos])
+				CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+			else
+				CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			sRet = getproperty(8, YSIM_RETURN);
 		}
 	#endif
