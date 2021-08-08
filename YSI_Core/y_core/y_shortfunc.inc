@@ -238,7 +238,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		static i = 0, j = 0, ch = 0;
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
-			YSI_g_sPropVarArg[1] = '@' + ++j,
+			YSI_g_sPropVarArg[1] = '@' + ++j;
 			P:7("K@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
 			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 		}
@@ -353,7 +353,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		static i = 0, j = 0, ch = 0;
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
-			YSI_g_sPropVarArg[1] = '@' + ++j,
+			YSI_g_sPropVarArg[1] = '@' + ++j;
 			P:7("D@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
 			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 		}

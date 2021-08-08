@@ -584,7 +584,7 @@ Testing_Run_after_fail:
 			if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
 			{
 				// Call the shutdown function if there is one.
-				buffer[0] = Y_TESTING_PSHUT,
+				buffer[0] = Y_TESTING_PSHUT;
 				P:5("Testing_Next(): Calling %s", unpack(buffer));
 				R@(buffer, "i", playerid);
 			}
