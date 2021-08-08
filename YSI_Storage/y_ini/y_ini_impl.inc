@@ -1443,12 +1443,14 @@ static stock INI_ReadFile(File:fhnd, parent[FUNCTION_LENGTH], bool:handle = true
 				if (p1s != p1e)
 				{
 					// Is there a parent tag to deal with?
-					strcpy(parent, YSI_g_sCurLine[p1s], p1e - p1s + 1),
+					strcpy(parent, YSI_g_sCurLine[p1s], p1e - p1s + 1);
+					P:7("INI_ReadFile: tag has parent (%s)", parent);
 					// Do local and parent values.
 					INI_ReadFile(fhnd, parent),
 					fseek(fhnd, pos, seek_start);
 					parent[0] = '\0';
 				}
+				P:C(else { printf("INI_ReadFile: tag has no parent"); });
 				handle = true;
 				// https://github.com/pawn-lang/compiler/issues/669
 				#pragma unused handle
@@ -1740,6 +1742,7 @@ static stock INI_HandleTag(const tag[]) <
 	y_ini:y_ini_reading_ynyy, y_ini:y_ini_reading_ynyn,
 	y_ini:y_ini_reading_ynny, y_ini:y_ini_reading_ynnn>
 {
+	P:5("INI_HandleTag<y> called: %s", tag);
 	new
 		pos = -1,
 		cb[FUNCTION_LENGTH];
@@ -1747,6 +1750,7 @@ static stock INI_HandleTag(const tag[]) <
 	format(cb, sizeof (cb), YSI_g_sFormat, YSI_g_sFile, tag);
 	while ((pos = strfind(cb, " ", false, pos + 1)) != -1)
 		cb[pos] = '_';
+	P:5("INI_HandleTag<y>: Find callback %s", cb);
 	return INI_FindCallback(cb) ? -1 : 0;
 }
 
@@ -1756,6 +1760,7 @@ static stock INI_HandleTag(const tag[]) <
 	y_ini:y_ini_reading_nnyy, y_ini:y_ini_reading_nnyn,
 	y_ini:y_ini_reading_nnny, y_ini:y_ini_reading_nnnn>
 {
+	P:5("INI_HandleTag<n> called: %s", tag);
 	new
 		pos = -1,
 		cb[FUNCTION_LENGTH];
@@ -1763,6 +1768,7 @@ static stock INI_HandleTag(const tag[]) <
 	format(cb, sizeof (cb), YSI_g_sFormat, tag, YSI_g_sFile);
 	while ((pos = strfind(cb, " ", false, pos + 1)) != -1)
 		cb[pos] = '_';
+	P:5("INI_HandleTag<n>: Find callback %s", cb);
 	return INI_FindCallback(cb) ? -1 : 0;
 }
 

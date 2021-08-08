@@ -822,6 +822,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 			while (slot)
 			{
 				cs = Malloc_GetSlotSize(slot);
+				P:7("Malloc_Allocate: slot %d %d", slot, cs);
 				if (!cs)
 				{
 					return NO_ALLOC;
@@ -833,6 +834,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 				p = slot;
 				slot = Malloc_NextSlot(slot);
 			}
+			P:7("Malloc_Allocate: found: %d", slot, cs);
 			if (slot)
 			{
 				nextSlot = Malloc_NextSlot(slot);

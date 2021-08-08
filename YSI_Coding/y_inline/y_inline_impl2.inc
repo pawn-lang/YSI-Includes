@@ -1071,12 +1071,15 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 
 stock Function:GetLocalFunction(const func[], const spec[])
 {
+	P:4("GetLocalFunction called: %s, %s", func, spec);
 	if (funcidx(func) == -1)
 		return Function:0;
+	P:6("GetLocalFunction: 0");
 	new
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
 	if (!closure)
 		return Function:0;
+	P:6("GetLocalFunction: 1");
 	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_LocalHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
@@ -1209,26 +1212,30 @@ static stock Callback_InlineByName(const name[], tag)
 
 stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 {
+	P:4("Callback_Find_ 0");
 	// Remote calls must always be publics.  Indirection handles publics
 	// natively.  However, it doesn't handle it amazingly since it needs to
 	// handle it very generically.
 	if (remote)
 	{
+		P:6("Callback_Find_ 1");
 		new
 			tagname[FUNCTION_LENGTH];
 		GetTagNameFromID(tag, tagname);
 		return !!(dest = _:GetRemoteFunction(name, tagname[4]));
 	}
-	else if (funcidx(name) != -1)
+	if (funcidx(name) == -1)
 	{
-		new
-			tagname[FUNCTION_LENGTH];
-		GetTagNameFromID(tag, tagname);
-		return !!(dest = _:GetLocalFunction(name, tagname[4]));
+		printf("Callback_Find_ 2");
+		// Otherwise iterate through the in-scope inlines stack to see if any match
+		// this name.
+		return !!(dest = Callback_InlineByName(name, tag));
 	}
-	// Otherwise iterate through the in-scope inlines stack to see if any match
-	// this name.
-	return !!(dest = Callback_InlineByName(name, tag));
+	P:6("Callback_Find_ 3");
+	new
+		tagname[FUNCTION_LENGTH];
+	GetTagNameFromID(tag, tagname);
+	return !!(dest = _:GetLocalFunction(name, tagname[4]));
 }
 
 #define Callback_Find(%0,%1) Callback_Find_(%0,_:%1,.tag=tagof(%1))

@@ -243,6 +243,10 @@ static Flooding_CheckIP(playerid, ip[])
 					Iter_Clear(FloodingPlayer);
 					return ret;
 				}
+				case e_FLOOD_ACTION_NOTHING:
+				{
+					// Do nothing but shut up the compiler.
+				}
 			}
 		}
 		Iter_Clear(FloodingPlayer);

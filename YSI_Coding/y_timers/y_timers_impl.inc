@@ -89,7 +89,6 @@ public OnCodeInit()
 		idx = 0,
 		publicTableEntry = 0;
 	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@yT_>)))
-	//while ((idx = AMX_GetPublicPointerSuffix(idx, pointer, _A<@yT_>)))
 	{
 		P:6("Timer_OnYSIInit: publicTableEntry: %d", publicTableEntry);
 		#emit LREF.S.pri publicTableEntry
@@ -332,7 +331,7 @@ stock _Timer_D(const func[], interval, const action, who, results[], a[2])
 		}
 	}
 	// No global interval for per-player timers.
-	return 0;
+	return -1;
 }
 
 static stock Alloc:Timer_GetSingleSlot(len)
@@ -507,7 +506,7 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 	{
 		// Free all the slots in the linked list of allocations.
 		force = mget(Alloc:slot, 0);
-		P:6("_Timer_F: slot = %d, next = %d", slot, force);
+		P:6("_Timer_F: slot = %d, next = %d", _:slot, force);
 		free(Alloc:slot);
 	}
 	while ((_:slot = force) != 1);
