@@ -464,19 +464,20 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	// prefix here would be VERY trivial!
 	if ((sRet = _:_Command_IsPrefix(c[0]))) // Relies on "true = 1" later on!
 	{
-		if (!c[1]) return Command_OnReceived(INVALID_INPUT, p, c);
+		if (!c[1])
+			return Command_OnReceived(INVALID_INPUT, p, c);
 	}
 	else
 	{
-		if (isnull(c)) return Command_OnReceived(INVALID_INPUT, p, NULL);
+		if (isnull(c))
+			return Command_OnReceived(INVALID_INPUT, p, NULL);
 	}
 	// Check for a valid player.
 	#if !defined Y_COMMANDS_NO_IPC
-		if (!IsPlayerConnected(p)) return Command_OnReceived(NO_PLAYER, p, c);
+		if (!IsPlayerConnected(p))
+			return Command_OnReceived(NO_PLAYER, p, c);
 	#endif
 	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
-	new
-		prevID = YSI_g_sCurrentID;
 	if (PA_Get(YSI_g_sDisabledPlayers, p))
 	{
 		sRet = Command_OnReceived(DISABLED, p, c);
@@ -490,31 +491,18 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
 	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, YSI_g_sCurrentID);
 	if (YSI_g_sCurrentID == COMMAND_NOT_FOUND)
-	{
-		return
-			YSI_g_sCurrentID = prevID,
-			Command_OnReceived(UNDEFINED, p, c);
-	}
+		return Command_OnReceived(UNDEFINED, p, c);
 	#if defined Y_COMMANDS_USE_CHARS
+		// Have a prefix, but not the right one.  Calling this function directly
+		// always works for all possible command prefixes.
 		if (sRet && _Command_GetPrefix(YSI_g_sCurrentID) != c[0])
-		{
-			// Have a prefix, but not the right one.  Calling this function
-			// directly always works for all possible command prefixes.
 			return Command_OnReceived(BAD_PREFIX, p, c);
-		}
 	#endif
 	P:5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
 	// Can the player use this command?  `Command_OnReceived` sets "sErr".
-	if ((h&2) || _Command_GetPlayer(YSI_g_sCurrentID, p))
-		sRet = Command_OnReceived(OK, p, c);
-	else
-		sRet = Command_OnReceived(DENIED, p, c);
+	sRet = Command_OnReceived(((h&2) || _Command_GetPlayer(YSI_g_sCurrentID, p)) ? OK : DENIED, p, c);
 	if (sErr != COMMAND_OK)
-	{
-		return
-			YSI_g_sCurrentID = prevID,
-			sRet;
-	}
+		return sRet;
 	// Find the true version of the command (alts etc).
 	_Command_GetReal(sHash, YSI_g_sCurrentID, sCmd[4]);
 	P:5("Commands_OnPlayerCommandText: Read %d", YSI_g_sCurrentID);
@@ -555,15 +543,13 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 			// This is in another script, or multiple scripts.
 			// Call the command in another script.  If no particular script
 			// is set up as the "master", call it in the first one found...
-			if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
-			else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+			CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos] ? c[sPos] : NULL, h & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			sRet = getproperty(8, YSIM_RETURN);
 		}
 	#endif
-	if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sRet = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sRet);
-	return
-		YSI_g_sCurrentID = prevID,
-		Command_Error(p, e_COMMAND_ERRORS:sRet);
+	if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP)
+		sRet = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sRet);
+	return Command_Error(p, e_COMMAND_ERRORS:sRet);
 }
 
 /*
