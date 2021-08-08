@@ -560,6 +560,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 		{
 			if (bPassTag)
 			{
+				P:6("INI_ParseFile: call type %s", bPassFile ? ("yyyy") : ("yyyn"));
 				if (bPassFile)
 					state y_ini:y_ini_reading_yyyy;
 				else
@@ -567,6 +568,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 			}
 			else
 			{
+				P:6("INI_ParseFile: call type %s", bPassFile ? ("yyny") : ("yynn"));
 				if (bPassFile)
 					state y_ini:y_ini_reading_yyny;
 				else
@@ -577,6 +579,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 		{
 			if (bPassTag)
 			{
+				P:6("INI_ParseFile: call type %s", bPassFile ? ("ynyy") : ("ynyn"));
 				if (bPassFile)
 					state y_ini:y_ini_reading_ynyy;
 				else
@@ -584,6 +587,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 			}
 			else
 			{
+				P:6("INI_ParseFile: call type %s", bPassFile ? ("ynny") : ("ynnn"));
 				if (bPassFile)
 					state y_ini:y_ini_reading_ynny;
 				else
@@ -597,6 +601,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 		{
 			if (bPassTag)
 			{
+				P:6("INI_ParseFile: call type %s", bPassFile ? ("nyyy") : ("nyyn"));
 				if (bPassFile)
 					state y_ini:y_ini_reading_nyyy;
 				else
@@ -604,6 +609,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 			}
 			else
 			{
+				P:6("INI_ParseFile: call type %s", bPassFile ? ("nyny") : ("nynn"));
 				if (bPassFile)
 					state y_ini:y_ini_reading_nyny;
 				else
@@ -614,6 +620,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 		{
 			if (bPassTag)
 			{
+				P:6("INI_ParseFile: call type %s", bPassFile ? ("nnyy") : ("nnyn"));
 				if (bPassFile)
 					state y_ini:y_ini_reading_nnyy;
 				else
@@ -621,6 +628,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 			}
 			else
 			{
+				P:6("INI_ParseFile: call type %s", bPassFile ? ("nnny") : ("nnnn"));
 				if (bPassFile)
 					state y_ini:y_ini_reading_nnny;
 				else
@@ -971,23 +979,31 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 	if (YSI_g_sExtendedLine)
 		goto state_in_continue_line;
 	INI_SkipWhitespace(str, pos);
-	switch (str[pos++])
+	switch (str[pos])
 	{
 		case '\0': return e_INI_LINE_TYPE_DATALESS;
-		case  ';': goto state_in_comment;
-		case  '[': goto state_in_tag;
+		case  ';':
+		{
+			++pos;
+			goto state_in_comment;
+		}
+		case  '[':
+		{
+			++pos;
+			goto state_in_tag;
+		}
 		case '\\':
-			if (str[pos])
-			{
-				p0s = pos - 1,
-				end = ++pos;
-			}
-			else return e_INI_LINE_TYPE_INVALID;
+		{
+			if (str[++pos])
+				p0s = pos;
+			else
+				return e_INI_LINE_TYPE_INVALID;
+		}
 		case '=': return e_INI_LINE_TYPE_INVALID;
-		default: p0s = pos - 1;
+		default: p0s = pos;
 	}
 	// Default end point, for single-character lines.
-	end = pos;
+	end = pos + 1;
 //state_in_entry: // Default (fall-through).
 	// Get the key.
 	for ( ; ; ) switch (str[pos++])
@@ -1006,6 +1022,7 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 	}
 	p0e = end;
 state_in_continue_line:
+	P:6("INI_IdentifyLineType: In continue line, %d, %d (%.*s)", p0s, p0e, str[p0s], p0e - p0s);
 	// See what comes next.
 	INI_SkipWhitespace(str, pos);
 	p1s = end = pos;
@@ -1105,6 +1122,7 @@ state_in_continue_line:
 		default: end = pos;  // Characters, save this position.
 	}
 state_in_tag:
+	P:6("INI_IdentifyLineType: In tag: %s", str);
 	// Get the tag name.
 	INI_SkipWhitespace(str, pos);
 	p0s = pos;
@@ -1150,6 +1168,7 @@ state_in_tag:
 		default  : return e_INI_LINE_TYPE_INVALID; // Unexpected characters.
 	}
 state_in_comment:
+	P:6("INI_IdentifyLineType: In comment: %s", str);
 	INI_SkipWhitespace(str, pos);
 	if (str[pos])
 	{
@@ -1163,6 +1182,7 @@ state_in_comment:
 		return ret;
 	// Fall through to handle continuations before comments.
 state_in_continuation:
+	P:6("INI_IdentifyLineType: In continuation: %s", str);
 	// We get here if a line ended with `\\`.  We need to copy the data from
 	// this line in to allocated space.
 	if (!YSI_g_sExtendedName[0])
@@ -1207,7 +1227,7 @@ state_in_continuation:
 		str[p1e] = end,
 		// Store the new length.
 		mset(YSI_g_sExtendedLine, 0, mget(YSI_g_sExtendedLine, 0) + pos),
-		ret = e_INI_LINE_TYPE:0;
+		e_INI_LINE_TYPE:0;
 }
 
 /*
@@ -1354,6 +1374,7 @@ stock bool:INI_WriteFloat(INI:file, const name[], Float:data, accuracy = 6)
 
 static stock INI_ReadFile(File:fhnd, parent[FUNCTION_LENGTH], bool:handle = true)
 {
+	P:5("INI_ReadFile called: %d, %s, %d", _:fhnd, parent, handle);
 	new
 		bool:doneParent = false,
 		pos = 0,
@@ -1363,19 +1384,23 @@ static stock INI_ReadFile(File:fhnd, parent[FUNCTION_LENGTH], bool:handle = true
 	fseek(fhnd, 0, seek_start);
 	while ((rlen = fread(fhnd, YSI_g_sCurLine)))
 	{
+		P:7("INI_ReadFile: %d, %s", rlen, YSI_g_sCurLine);
 		pos += rlen;
 		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
 			case e_INI_LINE_TYPE_INVALID:
 			{
+				P:7("INI_ReadFile: e_INI_LINE_TYPE_INVALID");
 				P:W("Invalid line in INI file \"%s\": %s", YSI_g_sFile, YSI_g_sCurLine);
 			}
 			case e_INI_LINE_TYPE_DATALESS:
 			{
+				P:7("INI_ReadFile: e_INI_LINE_TYPE_DATALESS");
 				// Do nothing.
 			}
 			case e_INI_LINE_TYPE_TAG:
 			{
+				P:7("INI_ReadFile: e_INI_LINE_TYPE_TAG");
 				if (doneParent)
 				{
 					// This was only called to recursively deal with parents.
@@ -1425,9 +1450,12 @@ static stock INI_ReadFile(File:fhnd, parent[FUNCTION_LENGTH], bool:handle = true
 					parent[0] = '\0';
 				}
 				handle = true;
+				// https://github.com/pawn-lang/compiler/issues/669
+				#pragma unused handle
 			}
 			case e_INI_LINE_TYPE_CONT:
 			{
+				P:7("INI_ReadFile: e_INI_LINE_TYPE_CONT");
 				// Do nothing, wait for the rest of the line.
 				if (!handle)
 				{
@@ -1436,6 +1464,7 @@ static stock INI_ReadFile(File:fhnd, parent[FUNCTION_LENGTH], bool:handle = true
 			}
 			case e_INI_LINE_TYPE_ENTRY:
 			{
+				P:7("INI_ReadFile: e_INI_LINE_TYPE_ENTRY");
 				if (handle)
 				{
 					if (YSI_g_sExtendedLine)

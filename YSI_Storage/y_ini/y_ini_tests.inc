@@ -159,6 +159,37 @@ TEST__ INI_IdentifyLineType3()
 	ASSERT(p0s == 1 && p0e == 4 && p1s == 8 && p1e == 13 && p2s == p2e);
 }
 
+TEST__ INI_IdentifyLineType3b()
+{
+	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
+	// Regressions from Discord.
+	ASSERT_EQ(INI_IdentifyLineType("k=value\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(p0s, 0);
+	ASSERT_EQ(p0e, 1);
+	ASSERT_EQ(p1s, 2);
+	ASSERT_EQ(p1e, 7);
+	ASSERT_EQ(p2s, p2e);
+	ASSERT_EQ(INI_IdentifyLineType("key=1\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(p0s, 0);
+	ASSERT_EQ(p0e, 3);
+	ASSERT_EQ(p1s, 4);
+	ASSERT_EQ(p1e, 5);
+	ASSERT_EQ(p2s, p2e);
+	// Allow this as an entry of text `=`.
+	ASSERT_EQ(INI_IdentifyLineType("key==\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(p0s, 0);
+	ASSERT_EQ(p0e, 3);
+	ASSERT_EQ(p1s, 4);
+	ASSERT_EQ(p1e, 5);
+	ASSERT_EQ(p2s, p2e);
+	ASSERT_EQ(INI_IdentifyLineType("key = 1\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(p0s, 0);
+	ASSERT_EQ(p0e, 3);
+	ASSERT_EQ(p1s, 6);
+	ASSERT_EQ(p1e, 7);
+	ASSERT_EQ(p2s, p2e);
+}
+
 TEST__ INI_IdentifyLineType4()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
@@ -801,6 +832,41 @@ static stock DoINI_Int3()
 	ASSERT(!isnull(tk0) && !strcmp(tk0, "yes"));
 	ASSERT(!isnull(tk1) && !strcmp(tk1, "no"));
 	return 0;
+}
+
+
+static stock
+	gs_mFS[32],
+	gs_mName[32],
+	gs_mCreator[32],
+	gs_mMode,
+	gs_mWeather,
+	gs_mInterior;
+
+forward INI_ReadRegression_data(string:name[], string:value[]);
+
+public INI_ReadRegression_data(string:name[], string:value[])
+{
+	printf("INI_ReadRegression_data: %s = %s", name, value);
+	INI_String("mFS", gs_mFS);
+	INI_String("mName", gs_mName);
+	INI_String("mCreator", gs_mCreator);
+	INI_Int("mMode", gs_mMode);
+	INI_Int("mWeather", gs_mWeather);
+	INI_Int("mInterior", gs_mInterior);
+
+	return 0;
+}
+
+TEST__ INI_ReadRegression()
+{
+	INI_ParseFile("YSI/test_ini/test0.ini", "INI_ReadRegression_%s");
+	ASSERT_SAME(gs_mFS, "hayran");
+	ASSERT_SAME(gs_mName, "Warehouse");
+	ASSERT_SAME(gs_mCreator, "Hayran");
+	ASSERT_EQ(gs_mMode, 1);
+	ASSERT_EQ(gs_mWeather, 10);
+	ASSERT_EQ(gs_mInterior, 0);
 }
 
 static stock
