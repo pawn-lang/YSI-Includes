@@ -847,7 +847,6 @@ forward INI_ReadRegression_data(string:name[], string:value[]);
 
 public INI_ReadRegression_data(string:name[], string:value[])
 {
-	printf("INI_ReadRegression_data: %s = %s", name, value);
 	INI_String("mFS", gs_mFS);
 	INI_String("mName", gs_mName);
 	INI_String("mCreator", gs_mCreator);
