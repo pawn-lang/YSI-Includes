@@ -1226,7 +1226,6 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 	}
 	if (funcidx(name) == -1)
 	{
-		printf("Callback_Find_ 2");
 		// Otherwise iterate through the in-scope inlines stack to see if any match
 		// this name.
 		return !!(dest = Callback_InlineByName(name, tag));
