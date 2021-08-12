@@ -127,9 +127,6 @@ stock const
 
 #include "..\..\YSI_Coding\y_hooks"
 
-forward e_INI_LINE_TYPE:INI_IdentifyLineType(str[MAX_INI_LINE], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e);
-forward bool:INI_SetTag(INI:file, const tag[]);
-
 #include "y_ini_impl"
 
 #if defined YSI_TESTS
