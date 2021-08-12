@@ -1451,9 +1451,9 @@ static stock INI_ReadFile(File:fhnd, parent[FUNCTION_LENGTH], bool:handle = true
 					parent[0] = '\0';
 				}
 				P:C(else { printf("INI_ReadFile: tag has no parent"); });
-				handle = true;
 				// https://github.com/pawn-lang/compiler/issues/669
 				#pragma unused handle
+				handle = true;
 			}
 			case e_INI_LINE_TYPE_CONT:
 			{
