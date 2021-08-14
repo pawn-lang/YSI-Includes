@@ -169,6 +169,7 @@ static stock
 	bool:YSI_g_sAsked = false,
 	YSI_g_sTests = 0,
 	YSI_g_sChecks = 0,
+	YSI_g_sPlayerFails = 0,
 	YSI_g_sFails = 0;
 
 stock
@@ -578,8 +579,6 @@ Testing_Run_after_fail:
 			buffer[FUNCTION_LENGTH];
 		for ( ; ; )
 		{
-			new
-				fails = YSI_g_sFails;
 			// Get the last test (nicely fails for cellmax).
 			if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
 			{
@@ -587,6 +586,14 @@ Testing_Run_after_fail:
 				buffer[0] = Y_TESTING_PSHUT;
 				P:5("Testing_Next(): Calling %s", unpack(buffer));
 				R@(buffer, "i", playerid);
+			}
+			// Update fail counts.
+			if (YSI_g_sPlayerFails != YSI_g_sFails)
+			{
+				WriteAmxMemory(YSI_g_sCurTest, YSI_g_sFailTests),
+				WriteAmxMemory(YSI_g_sCurTest + 4, YSI_g_sFails - YSI_g_sPlayerFails),
+				YSI_g_sFailTests = YSI_g_sCurTest,
+				YSI_g_sPlayerFails = YSI_g_sFails;
 			}
 #if defined JUST_TEST
 			new next;
@@ -620,14 +627,24 @@ Testing_Next_retry:
 				YSI_g_sAsked = true;
 				// No more tests.
 				printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails), YSI_g_sFails);
-				if (!YSI_g_sFails)
+				if (YSI_g_sFails)
+				{
+					// List all the failing tests, along with the number of "ASSERT"s
+					// that didn't pass.
+					while (YSI_g_sFailTests != 0)
+					{
+						printf("    - %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
+						YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
+					}
+				}
+				else
 				{
 					TEST_REPORT(" ");
 					TEST_REPORT("  ||==========================||  ");
 					TEST_REPORT("  || ALL PLAYER TESTS PASSED! ||  ");
 					TEST_REPORT("  ||==========================||  ");
-					TEST_REPORT(" ");
 				}
+				TEST_REPORT(" ");
 				R@("OnPlayerTestsComplete", "iiii", playerid, YSI_g_sTests, YSI_g_sChecks, YSI_g_sFails);
 			}
 			// If the test needs a player but doesn't ask them anything
@@ -637,7 +654,7 @@ Testing_Next_retry:
 			{
 				break;
 			}
-			else if (fails == YSI_g_sFails)
+			else if (YSI_g_sPlayerFails == YSI_g_sFails)
 			{
 				TEST_REPORT(TEST_PASSED);
 			}
@@ -736,6 +753,7 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 			{
 				if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid)) //!Player_IsNPC(playerid))
 				{
+					YSI_g_sCurTest = YSI_g_sFailTests = 0;
 					TEST_REPORT(" ");
 					TEST_REPORT("  ||==========================||  ");
 					TEST_REPORT("  || STARTING PLAYER TESTS... ||  ");
