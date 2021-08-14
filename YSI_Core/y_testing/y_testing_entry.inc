@@ -325,42 +325,49 @@ stock _Testing_Start(const name[])
 
 #if !defined NO_PLAYER_TESTS
 	native YSI_ShowPlayerDialog(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
+	forward Testing_FakeAsk(playerid);
 
 	stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 	{
-		#pragma unused str
-		new
-			i = 0,
-			end = 0; // 12 + 4 + 4.
-		// Get the stack position after `playerid`.
-		#emit ADDR.pri         16
-		#emit STOR.S.pri       end
-		// Get the stack position after everything.
-		#emit ADDR.pri         12
-		#emit LOAD.S.alt       8
-		#emit ADD
-		#emit STOR.S.pri       i
-		while (i > end)
-		{
-			i -= 4;
-			#emit LREF.S.pri       i
+			#pragma unused str
+			new
+				i = 0,
+				end = 0; // 12 + 4 + 4.
+			// Get the stack position after `playerid`.
+			#emit ADDR.pri         16
+			#emit STOR.S.pri       end
+			// Get the stack position after everything.
+			#emit ADDR.pri         12
+			#emit LOAD.S.alt       8
+			#emit ADD
+			#emit STOR.S.pri       i
+			while (i > end)
+			{
+				i -= 4;
+				#emit LREF.S.pri       i
+				#emit PUSH.pri
+			}
+			{}
+			#emit PUSH.C           512
+			#emit PUSH.C           YSI_g_sFailMessage
+			#emit LOAD.S.pri       8
+			#emit ADD.C            4
 			#emit PUSH.pri
-		}
-		{}
-		#emit PUSH.C           512
-		#emit PUSH.C           YSI_g_sFailMessage
-		#emit LOAD.S.pri       8
-		#emit ADD.C            4
-		#emit PUSH.pri
-		#emit SYSREQ.C         format
-		// Remove the data from the stack.
-		#emit POP.alt
-		#emit LCTRL            4
-		#emit ADD
-		#emit SCTRL            4
-		//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
-		YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
-		YSI_g_sAsked = true;
+			#emit SYSREQ.C         format
+			// Remove the data from the stack.
+			#emit POP.alt
+			#emit LCTRL            4
+			#emit ADD
+			#emit SCTRL            4
+			//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
+		#if defined NO_DIALOG_ASK
+			// For early open.mp testing
+			SendClientMessage(playerid, 0xFF8010FF, YSI_g_sFailMessage);
+			YSI_SetTimerEx("Testing_FakeAsk", 3000, false, "i", playerid);
+		#else
+			YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
+		#endif
+			YSI_g_sAsked = true;
 	}
 #endif
 
@@ -626,7 +633,11 @@ Testing_Next_retry:
 			{
 				YSI_g_sAsked = true;
 				// No more tests.
-				printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails), YSI_g_sFails);
+				#if defined NO_DIALOG_ASK
+					printf("*** Test%s: %d, Check%s: %d, Fail%s: ???", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails));
+				#else
+					printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails), YSI_g_sFails);
+				#endif
 				if (YSI_g_sFails)
 				{
 					// List all the failing tests, along with the number of "ASSERT"s
@@ -639,10 +650,17 @@ Testing_Next_retry:
 				}
 				else
 				{
-					TEST_REPORT(" ");
-					TEST_REPORT("  ||==========================||  ");
-					TEST_REPORT("  || ALL PLAYER TESTS PASSED! ||  ");
-					TEST_REPORT("  ||==========================||  ");
+					#if defined NO_DIALOG_ASK
+						TEST_REPORT(" ");
+						TEST_REPORT("  ||==========================||  ");
+						TEST_REPORT("  || PLEASE NOTE FAILED TESTS ||  ");
+						TEST_REPORT("  ||==========================||  ");
+					#else
+						TEST_REPORT(" ");
+						TEST_REPORT("  ||==========================||  ");
+						TEST_REPORT("  || ALL PLAYER TESTS PASSED! ||  ");
+						TEST_REPORT("  ||==========================||  ");
+					#endif
 				}
 				TEST_REPORT(" ");
 				R@("OnPlayerTestsComplete", "iiii", playerid, YSI_g_sTests, YSI_g_sChecks, YSI_g_sFails);
@@ -661,40 +679,47 @@ Testing_Next_retry:
 		}
 	}
 	
-	public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
-	{
-		if (dialogid == Y_TESTING_DIALOG_ID)
+	#if defined NO_DIALOG_ASK
+		public Testing_FakeAsk(playerid)
 		{
-			++YSI_g_sChecks;
-			if (response)
-			{
-				// Pass.
-				TEST_REPORT(TEST_PASSED);
-			}
-			else
-			{
-				// Fail.
-				TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
-				++YSI_g_sFails;
-			}
 			Testing_Next(playerid);
-			return 1;
 		}
-		#if defined Testing_OnDialogResponse
-			return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
-		#else
-			return 1;
-		#endif
-	}
-	
-	#if defined _ALS_OnDialogResponse
-		#undef OnDialogResponse
 	#else
-		#define _ALS_OnDialogResponse
-	#endif
-	#define OnDialogResponse Testing_OnDialogResponse
-	#if defined Testing_OnDialogResponse
-		forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
+		public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+		{
+			if (dialogid == Y_TESTING_DIALOG_ID)
+			{
+				++YSI_g_sChecks;
+				if (response)
+				{
+					// Pass.
+					TEST_REPORT(TEST_PASSED);
+				}
+				else
+				{
+					// Fail.
+					TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
+					++YSI_g_sFails;
+				}
+				Testing_Next(playerid);
+				return 1;
+			}
+			#if defined Testing_OnDialogResponse
+				return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
+			#else
+				return 1;
+			#endif
+		}
+		
+		#if defined _ALS_OnDialogResponse
+			#undef OnDialogResponse
+		#else
+			#define _ALS_OnDialogResponse
+		#endif
+		#define OnDialogResponse Testing_OnDialogResponse
+		#if defined Testing_OnDialogResponse
+			forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
+		#endif
 	#endif
 #endif
 
