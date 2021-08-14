@@ -360,7 +360,7 @@ stock _Testing_Start(const name[])
 			#emit ADD
 			#emit SCTRL            4
 			//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
-		#if defined NO_DIALOG_ASK
+		#if defined YSI_NO_DIALOG_ASK
 			// For early open.mp testing
 			SendClientMessage(playerid, 0xFF8010FF, YSI_g_sFailMessage);
 			YSI_SetTimerEx("Testing_FakeAsk", 3000, false, "i", playerid);
@@ -633,7 +633,7 @@ Testing_Next_retry:
 			{
 				YSI_g_sAsked = true;
 				// No more tests.
-				#if defined NO_DIALOG_ASK
+				#if defined YSI_NO_DIALOG_ASK
 					printf("*** Test%s: %d, Check%s: %d, Fail%s: ???", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails));
 				#else
 					printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails), YSI_g_sFails);
@@ -650,7 +650,7 @@ Testing_Next_retry:
 				}
 				else
 				{
-					#if defined NO_DIALOG_ASK
+					#if defined YSI_NO_DIALOG_ASK
 						TEST_REPORT(" ");
 						TEST_REPORT("  ||==========================||  ");
 						TEST_REPORT("  || PLEASE NOTE FAILED TESTS ||  ");
@@ -679,7 +679,7 @@ Testing_Next_retry:
 		}
 	}
 	
-	#if defined NO_DIALOG_ASK
+	#if defined YSI_NO_DIALOG_ASK
 		public Testing_FakeAsk(playerid)
 		{
 			Testing_Next(playerid);
