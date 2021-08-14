@@ -236,7 +236,7 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS) \
 	for(new __TI=0;__TI!=__TE;++__TI)
 
-#if defined _samp_included
+#if defined _samp_included && !defined YSI_NO_GET_IP
 	stock
 		YSI_gPlayerIP[MAX_PLAYERS + 1] = {-1, ...};
 
