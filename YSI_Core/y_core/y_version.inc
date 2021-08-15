@@ -108,9 +108,78 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 forward bool:Server_IsWindowsHost();
 forward Server_GetJITVersion();
 
+static stock YVers_PrintHeader()
+{
+	YSI_Print(" ");
+	YSI_Print(" ");
+	YSI_Print(" ");
+	YSI_Print("         ============================================================== ");
+	YSI_Print("         |                                                            | ");
+	YSI_Print("         |                                                            | ");
+	YSI_Print("         |     YYYYYYY       YYYYYYY   SSSSSSSSSSSSSSS IIIIIIIIII     | ");
+	YSI_Print("         |     Y:::::Y       Y:::::Y SS:::::::::::::::SI::::::::I     | ");
+	YSI_Print("         |     Y:::::Y       Y:::::YS:::::SSSSSS::::::SI::::::::I     | ");
+	YSI_Print("         |     Y::::::Y     Y::::::YS:::::S     SSSSSSSII::::::II     | ");
+	YSI_Print("         |     YYY:::::Y   Y:::::YYYS:::::S              I::::I       | ");
+	YSI_Print("         |        Y:::::Y Y:::::Y   S:::::S              I::::I       | ");
+	YSI_Print("         |         Y:::::Y:::::Y     S::::SSSS           I::::I       | ");
+	YSI_Print("         |          Y:::::::::Y       SS::::::SSSSS      I::::I       | ");
+	YSI_Print("         |           Y:::::::Y          SSS::::::::SS    I::::I       | ");
+	YSI_Print("         |            Y:::::Y              SSSSSS::::S   I::::I       | ");
+	YSI_Print("         |            Y:::::Y                   S:::::S  I::::I       | ");
+	YSI_Print("         |            Y:::::Y                   S:::::S  I::::I       | ");
+	YSI_Print("         |            Y:::::Y       SSSSSSS     S:::::SII::::::II     | ");
+	YSI_Print("         |         YYYY:::::YYYY    S::::::SSSSSS:::::SI::::::::I     | ");
+	YSI_Print("         |         Y:::::::::::Y    S:::::::::::::::SS I::::::::I     | ");
+	YSI_Print("         |         YYYYYYYYYYYYY     SSSSSSSSSSSSSSS   IIIIIIIIII     | ");
+	YSI_Print("         |                                                            | ");
+	YSI_Print("         |                                                            | ");
+	YSI_Print("         |                      (c) 2021 MPL v1.1                     | ");
+	YSI_Print("         |            Alex \"Y_Less\" Cole and contributors.            | ");
+	YSI_Print("         |                                                            | ");
+	YSI_Print("         |                                                            | ");
+	YSI_Print("         ============================================================== ");
+	YSI_Print(" ");
+	YSI_Print(" ");
+	YSI_Print(" ");
+	YSI_Print(" ========================================== ");
+	YSI_Print(" |                                        | ");
+	YSI_Print(" | Server Version:                        | ");
+	YSI_PrintF(" |     %s                            | ", Server_IsWindowsHost() ? ("Windows") : ("Linux  "));
+	YSI_Print(" |                                        | ");
+	#if ((__Pawn & 0x0F) >= 0x0A)
+		YSI_PrintF(" | Compiler Version:                      | ");
+		#if __COMPILER_OS == __COMPILER_WINDOWS
+			YSI_PrintF(" |     %d.%02d.%02d - Windows                  | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
+		#else
+			YSI_PrintF(" |     %d.%02d.%02d - Linux                    | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
+		#endif
+	#else
+		YSI_Print(" | Compiler Version:                      | ");
+		YSI_Print(" |     3.2.3664 (Windows)                 | ");
+	#endif
+	YSI_Print(" |                                        | ");
+	YSI_Print(" | YSI Version:                           | ");
+	YSI_Print(" |     " YSI_VERSION "                          | ");
+	YSI_Print(" |                                        | ");
+	YSI_Print(" | JIT Version:                           | ");
+	switch (Server_GetJITVersion())
+	{
+	case 0:
+		YSI_Print(" |     <none>                             | ");
+	case 1:
+		YSI_Print(" |     2.0 or earlier                     | ");
+	case 2:
+		YSI_Print(" |     2.1 or later                       | ");
+	default:
+		YSI_Print(" |     <unknown>                          | ");
+	}
+	YSI_Print(" |                                        | ");
+	YSI_Print(" ========================================== ");
+}
+
 #if defined _YSI_NO_VERSION_CHECK
-	
-	public OnYSIInit()
+	stock YVers_StartCheck()
 	{
 		#if defined YSI_LOCK_MODE
 			new
@@ -119,13 +188,8 @@ forward Server_GetJITVersion();
 			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04;
 			YSI_gLockData[2] *= (6 * x) - 5;
 		#endif
-		YVers_OnYSIInit();
 		return 1;
 	}
-	
-	#undef OnYSIInit
-	#define OnYSIInit(%0) CHAIN_PUBLIC:YVers_OnYSIInit(%0)
-	
 #else
 /*-------------------------------------------------------------------------*//*+
  * <returns>
@@ -139,7 +203,7 @@ forward Server_GetJITVersion();
  *//*------------------------------------------------------------------------**/
 	
 	#if !defined HTTP
-		public OnYSIInit()
+		stock YVers_StartCheck()
 		{
 			#if defined YSI_LOCK_MODE
 				new
@@ -149,57 +213,7 @@ forward Server_GetJITVersion();
 				YSI_gLockData[x / 3] = x * 10;
 				YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
 			#endif
-			YSI_Print(" ");
-			YSI_Print(" ");
-			YSI_Print(" ");
-
-			YSI_Print(" ========================================== ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" |      8b        d8  ad88888ba   88      | ");
-			YSI_Print(" |       Y8,    ,8P  d8\"     \"8b  88      | ");
-			YSI_Print(" |        Y8,  ,8P   Y8,          88      | ");
-			YSI_Print(" |         \"8aa8\"    `Y8aaaaa,    88      | ");
-			YSI_Print(" |          `88'       `\"\"\"\"\"8b,  88      | ");
-			YSI_Print(" |           88              `8b  88      | ");
-			YSI_Print(" |           88      Y8a     a8P  88      | ");
-			YSI_Print(" |           88       \"Y88888P\"   88      | ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" |          By Alex \"Y_Less\" Cole         | ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" ========================================== ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" | Server Version:                        | ");
-			YSI_PrintF(" |     %s                            | ", Server_IsWindowsHost() ? ("Windows") : ("Linux  "));
-			YSI_Print(" |                                        | ");
-			#if ((__Pawn & 0x0F) >= 0x0A)
-				YSI_PrintF(" | Compiler Version:                      | ");
-				#if __COMPILER_OS == __COMPILER_WINDOWS
-					YSI_PrintF(" |     %d.%02d.%02d - Windows                  | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
-				#else
-					YSI_PrintF(" |     %d.%02d.%02d - Linux                    | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
-				#endif
-			#else
-				YSI_Print(" | Compiler Version:                      | ");
-				YSI_Print(" |     3.2.3664 (Windows)                 | ");
-			#endif
-			YSI_Print(" |                                        | ");
-			YSI_Print(" | YSI Version:                           | ");
-			YSI_Print(" |     " YSI_VERSION "                          | ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" | JIT Version:                           | ");
-			switch (Server_GetJITVersion())
-			{
-			case 0:
-				YSI_Print(" |     <none>                             | ");
-			case 1:
-				YSI_Print(" |     2.0 or earlier                     | ");
-			case 2:
-				YSI_Print(" |     2.1 or later                       | ");
-			default:
-				YSI_Print(" |     <unknown>                          | ");
-			}
-			YSI_Print(" |                                        | ");
-			YSI_Print(" ========================================== ");
+			YVers_PrintHeader();
 			YSI_Print(" |                                        | ");
 			YSI_Print(" | Unable to check the latest YSI version | ");
 			YSI_Print(" | - please watch the forums and github:  | ");
@@ -207,20 +221,15 @@ forward Server_GetJITVersion();
 			YSI_Print(" |   https://git.io/5.x                   | ");
 			YSI_Print(" |                                        | ");
 			YSI_Print(" ========================================== ");
-			YSI_Print(" ");
-			YVers_OnYSIInit();
 			return 1;
 		}
-		
-		#undef OnYSIInit
-		#define OnYSIInit(%0) CHAIN_PUBLIC:YVers_OnYSIInit(%0)
 		
 		#endinput
 	#endif
 	
 	forward YVers_Callback(index, code, data[]);
 	
-	public OnYSIInit()
+	stock YVers_StartCheck()
 	{
 		#if defined YSI_LOCK_MODE
 			YSI_gLockData[0] += 1;
@@ -235,62 +244,11 @@ forward Server_GetJITVersion();
 			YSI_gLockData[0] -= 1;
 			YSI_gLockData[1] = YSI_gLockData[0] + 7;
 		#endif
-		YSI_Print(" ");
-		YSI_Print(" ");
-		YSI_Print(" ");
-
-		YSI_Print(" ========================================== ");
-		YSI_Print(" |                                        | ");
-		YSI_Print(" |      8b        d8  ad88888ba   88      | ");
-		YSI_Print(" |       Y8,    ,8P  d8\"     \"8b  88      | ");
-		YSI_Print(" |        Y8,  ,8P   Y8,          88      | ");
-		YSI_Print(" |         \"8aa8\"    `Y8aaaaa,    88      | ");
-		YSI_Print(" |          `88'       `\"\"\"\"\"8b,  88      | ");
-		YSI_Print(" |           88              `8b  88      | ");
-		YSI_Print(" |           88      Y8a     a8P  88      | ");
-		YSI_Print(" |           88       \"Y88888P\"   88      | ");
-		YSI_Print(" |                                        | ");
-		YSI_Print(" |          By Alex \"Y_Less\" Cole         | ");
-		YSI_Print(" |                                        | ");
-		YSI_Print(" ========================================== ");
-		YSI_Print(" |                                        | ");
-		YSI_Print(" | Server Version:                        | ");
-		YSI_PrintF(" |     %s                            | ", Server_IsWindowsHost() ? ("Windows") : ("Linux  "));
-		YSI_Print(" |                                        | ");
-		#if ((__Pawn & 0x0F) >= 0x0A)
-			YSI_PrintF(" | Compiler Version:                      | ");
-			#if __COMPILER_OS == __COMPILER_WINDOWS
-				YSI_PrintF(" |     %d.%02d.%02d - Windows                  | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
-			#else
-				YSI_PrintF(" |     %d.%02d.%02d - Linux                    | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
-			#endif
-		#else
-			YSI_Print(" | Compiler Version:                      | ");
-			YSI_Print(" |     3.2.3664 (Windows)                 | ");
-		#endif
-		YSI_Print(" |                                        | ");
-		YSI_Print(" | YSI Version:                           | ");
-		YSI_Print(" |     " YSI_VERSION "                          | ");
-		YSI_Print(" |                                        | ");
-		YSI_Print(" | JIT Version:                           | ");
-		switch (Server_GetJITVersion())
-		{
-		case 0:
-			YSI_Print(" |     <none>                             | ");
-		case 1:
-			YSI_Print(" |     2.0 or earlier                     | ");
-		case 2:
-			YSI_Print(" |     2.1 or later                       | ");
-		default:
-			YSI_Print(" |     <unknown>                          | ");
-		}
-		YSI_Print(" |                                        | ");
-		YSI_Print(" ========================================== ");
+		YVers_PrintHeader();
 		//YSI_Print(" |                                      | ");
 		//YSI_Print(" |  Checking the latest YSI version..   | ");
 		//YSI_Print(" |                                        | ");
 		//YSI_Print(" ========================================== ");
-		YSI_Print(" ");
 		// Call my server to check the current public YSI version.  v is the
 		// current version and c is the version of data response which this code
 		// can parse.  Note that the response data SHOULD be backward compatible
@@ -314,12 +272,8 @@ forward Server_GetJITVersion();
 		// This remote script has now been updated to include changelog
 		// information and keeps a record of what IPs are connecting.
 		//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
-		YVers_OnYSIInit();
 		return 1;
 	}
-	
-	#undef OnYSIInit
-	#define OnYSIInit(%0) CHAIN_PUBLIC:YVers_OnYSIInit(%0)
 	
 	/*---------------------------------------------------------------------*//*+
 	 *

@@ -359,12 +359,17 @@ forward bool:DumpAMX_Write(const filename[]);
 
 static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 {
+	YVers_StartCheck();
 	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
 	{
 		// Loaded from a file.
-		#if !defined YSI_NO_CACHE_MESSAGE
+		#if defined YSI_NO_VERSION_CHECK
+			YSI_Print(" ");
+			YSI_Print(" ");
 			YSI_Print(" ");
 			YSI_Print(" ========================================== ");
+		#endif
+		#if !defined YSI_NO_CACHE_MESSAGE
 			YSI_Print(" |                                        | ");
 			YSI_Print(" |  File loaded from YSI code cache.      | ");
 			YSI_Print(" |                                        | ");
@@ -414,8 +419,12 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 		#if defined YSI_NO_OPTIMISATION_MESSAGE
 			#pragma unused jit
 		#else
-			YSI_Print(" ");
-			YSI_Print(" ========================================== ");
+			#if defined YSI_NO_VERSION_CHECK
+				YSI_Print(" ");
+				YSI_Print(" ");
+				YSI_Print(" ");
+				YSI_Print(" ========================================== ");
+			#endif
 			YSI_Print(" |                                        | ");
 			YSI_Print(" |    Generating code, this may take a    | ");
 			YSI_Print(" |           little bit of time.          | ");
@@ -434,7 +443,6 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				YSI_Print(" |                                        | ");
 			}
 			YSI_Print(" ========================================== ");
-			YSI_Print(" ");
 		#endif
 		#if defined ScriptInit_OnCodeInit
 			ScriptInit_OnCodeInit();
@@ -450,8 +458,12 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				// Clear this flag after dumping.  This is so we can tell when a mode is cached.
 				YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
 				#if !defined YSI_NO_CACHE_MESSAGE
-					YSI_Print(" ");
-					YSI_Print(" ========================================== ");
+					#if defined YSI_NO_OPTIMISATION_MESSAGE && defined YSI_NO_VERSION_CHECK
+						YSI_Print(" ");
+						YSI_Print(" ");
+						YSI_Print(" ");
+						YSI_Print(" ========================================== ");
+					#endif
 					YSI_Print(" |                                        | ");
 					YSI_Print(" |   File dumped to YSI code cache:       | ");
 					YSI_Print(" |                                        | ");
@@ -470,7 +482,6 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					YSI_Print(" |   gamemode0 ../scriptfiles/YSI_CACHE 1 | ");
 					YSI_Print(" |                                        | ");
 					YSI_Print(" ========================================== ");
-					YSI_Print(" ");
 				#endif
 			}
 			else
@@ -480,6 +491,9 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			}
 			Server_EnableLongCall();
 		#endif
+		YSI_Print(" ");
+		YSI_Print(" ");
+		YSI_Print(" ");
 	}
 	return true;
 }
