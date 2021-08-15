@@ -325,7 +325,6 @@ stock _Testing_Start(const name[])
 
 #if !defined NO_PLAYER_TESTS
 	native YSI_ShowPlayerDialog(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
-	forward Testing_FakeAsk(playerid);
 
 	stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 	{
@@ -362,8 +361,8 @@ stock _Testing_Start(const name[])
 			//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
 		#if defined YSI_NO_DIALOG_ASK
 			// For early open.mp testing
+			format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), "TEST: %s (/y or /n)", YSI_g_sFailMessage),
 			SendClientMessage(playerid, 0xFF8010FF, YSI_g_sFailMessage);
-			YSI_SetTimerEx("Testing_FakeAsk", 3000, false, "i", playerid);
 		#else
 			YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
 		#endif
@@ -680,9 +679,28 @@ Testing_Next_retry:
 	}
 	
 	#if defined YSI_NO_DIALOG_ASK
-		public Testing_FakeAsk(playerid)
+		public OnPlayerCommandText(playerid, cmdtext[])
 		{
-			Testing_Next(playerid);
+			if (!strcmp(cmdtext, "/n"))
+			{
+				// Fail.
+				++YSI_g_sChecks;
+				TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
+				++YSI_g_sFails;
+				Testing_Next(playerid);
+				return 1;
+			}
+			else if (!strcmp(cmdtext, "/y"))
+			{
+				// Pass.
+				TEST_REPORT(TEST_PASSED);
+				Testing_Next(playerid);
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 	#else
 		public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
