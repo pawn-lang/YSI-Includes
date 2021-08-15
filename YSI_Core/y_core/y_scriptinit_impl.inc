@@ -179,6 +179,52 @@ stock bool:Server_IsFilterscript()
 	return YSI_FILTERSCRIPT;
 }
 
+stock bool:Server_IsLinuxHost()
+{
+	// Taken from fixes.inc.
+	new
+		val = 0;
+	// The code at address 0 is always `HALT`.
+	#emit LCTRL                0
+	#emit MOVE.alt
+	#emit LCTRL                1
+	#emit SUB.alt
+	#emit STOR.S.pri           val
+	#emit LREF.S.alt           val
+	#emit STOR.S.alt           val
+	return val != 120;
+}
+
+stock bool:Server_IsWindowsHost()
+{
+	// Taken from fixes.inc.
+	new
+		val = 0;
+	// The code at address 0 is always `HALT`.
+	#emit LCTRL                0
+	#emit MOVE.alt
+	#emit LCTRL                1
+	#emit SUB.alt
+	#emit STOR.S.pri           val
+	#emit LREF.S.alt           val
+	#emit STOR.S.alt           val
+	return val == 120;
+}
+
+stock bool:Server_IsLinuxCompiler()
+{
+	// Use a temporary variable to avoid const-test warnings.
+	new os = __COMPILER_OS;
+	return os == __COMPILER_LINUX;
+}
+
+stock bool:Server_IsWindowsCompiler()
+{
+	// Use a temporary variable to avoid const-test warnings.
+	new os = __COMPILER_OS;
+	return os == __COMPILER_WINDOWS;
+}
+
 stock bool:Server_IsGameMode()
 {
 	return YSI_GAMEMODE;
@@ -271,6 +317,25 @@ stock Server_GetLongCallDefault()
 	#emit SCTRL         0xFE
 	#emit MOVE.pri
 	#emit RETN
+	return 0;
+}
+
+// 0 - No JIT
+// 1 - Pre 2.1
+// 2 - Post 2.1
+stock Server_GetJITVersion()
+{
+	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING)
+	{
+		#emit LCTRL     6
+		#emit MOVE.alt
+		#emit LCTRL     8
+		#emit NEQ
+		#emit CONST.alt 1
+		#emit XCHG
+		#emit SHL
+		#emit RETN
+	}
 	return 0;
 }
 

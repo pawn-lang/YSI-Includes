@@ -97,13 +97,16 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 
 #define YSI_VERSION_MAJOR               5
 #define YSI_VERSION_MINOR               05
-#define YSI_VERSION_BUILD               0301
+#define YSI_VERSION_BUILD               0400
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 
 #if defined YSI_NO_VERSION_CHECK && !defined _YSI_NO_VERSION_CHECK
 	#define _YSI_NO_VERSION_CHECK
 #endif
+
+forward bool:Server_IsWindowsHost();
+forward Server_GetJITVersion();
 
 #if defined _YSI_NO_VERSION_CHECK
 	
@@ -149,10 +152,54 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 			YSI_Print(" ");
 			YSI_Print(" ");
 			YSI_Print(" ");
+
 			YSI_Print(" ========================================== ");
 			YSI_Print(" |                                        | ");
-			YSI_Print(" |         YSI version " YSI_VERSION "          | ");
-			YSI_Print(" |         By Alex \"Y_Less\" Cole          | ");
+			YSI_Print(" |      8b        d8  ad88888ba   88      | ");
+			YSI_Print(" |       Y8,    ,8P  d8\"     \"8b  88      | ");
+			YSI_Print(" |        Y8,  ,8P   Y8,          88      | ");
+			YSI_Print(" |         \"8aa8\"    `Y8aaaaa,    88      | ");
+			YSI_Print(" |          `88'       `\"\"\"\"\"8b,  88      | ");
+			YSI_Print(" |           88              `8b  88      | ");
+			YSI_Print(" |           88      Y8a     a8P  88      | ");
+			YSI_Print(" |           88       \"Y88888P\"   88      | ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" |          By Alex \"Y_Less\" Cole         | ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" ========================================== ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" | Server Version:                        | ");
+			YSI_PrintF(" |     %s                            | ", Server_IsWindowsHost() ? ("Windows") : ("Linux  "));
+			YSI_Print(" |                                        | ");
+			#if ((__Pawn & 0x0F) >= 0x0A)
+				YSI_PrintF(" | Compiler Version:                      | ");
+				#if __COMPILER_OS == __COMPILER_WINDOWS
+					YSI_PrintF(" |     %d.%02d.%02d - Windows                  | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
+				#else
+					YSI_PrintF(" |     %d.%02d.%02d - Linux                    | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
+				#endif
+			#else
+				YSI_Print(" | Compiler Version:                      | ");
+				YSI_Print(" |     3.2.3664 (Windows)                 | ");
+			#endif
+			YSI_Print(" |                                        | ");
+			YSI_Print(" | YSI Version:                           | ");
+			YSI_Print(" |     " YSI_VERSION "                          | ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" | JIT Version:                           | ");
+			switch (Server_GetJITVersion())
+			{
+			case 0:
+				YSI_Print(" |     <none>                             | ");
+			case 1:
+				YSI_Print(" |     2.0 or earlier                     | ");
+			case 2:
+				YSI_Print(" |     2.1 or later                       | ");
+			default:
+				YSI_Print(" |     <unknown>                          | ");
+			}
+			YSI_Print(" |                                        | ");
+			YSI_Print(" ========================================== ");
 			YSI_Print(" |                                        | ");
 			YSI_Print(" | Unable to check the latest YSI version | ");
 			YSI_Print(" | - please watch the forums and github:  | ");
@@ -191,14 +238,58 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 		YSI_Print(" ");
 		YSI_Print(" ");
 		YSI_Print(" ");
+
 		YSI_Print(" ========================================== ");
 		YSI_Print(" |                                        | ");
-		YSI_Print(" |         YSI version " YSI_VERSION "          | ");
-		YSI_Print(" |         By Alex \"Y_Less\" Cole          | ");
+		YSI_Print(" |      8b        d8  ad88888ba   88      | ");
+		YSI_Print(" |       Y8,    ,8P  d8\"     \"8b  88      | ");
+		YSI_Print(" |        Y8,  ,8P   Y8,          88      | ");
+		YSI_Print(" |         \"8aa8\"    `Y8aaaaa,    88      | ");
+		YSI_Print(" |          `88'       `\"\"\"\"\"8b,  88      | ");
+		YSI_Print(" |           88              `8b  88      | ");
+		YSI_Print(" |           88      Y8a     a8P  88      | ");
+		YSI_Print(" |           88       \"Y88888P\"   88      | ");
+		YSI_Print(" |                                        | ");
+		YSI_Print(" |          By Alex \"Y_Less\" Cole         | ");
+		YSI_Print(" |                                        | ");
+		YSI_Print(" ========================================== ");
+		YSI_Print(" |                                        | ");
+		YSI_Print(" | Server Version:                        | ");
+		YSI_PrintF(" |     %s                            | ", Server_IsWindowsHost() ? ("Windows") : ("Linux  "));
+		YSI_Print(" |                                        | ");
+		#if ((__Pawn & 0x0F) >= 0x0A)
+			YSI_PrintF(" | Compiler Version:                      | ");
+			#if __COMPILER_OS == __COMPILER_WINDOWS
+				YSI_PrintF(" |     %d.%02d.%02d - Windows                  | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
+			#else
+				YSI_PrintF(" |     %d.%02d.%02d - Linux                    | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
+			#endif
+		#else
+			YSI_Print(" | Compiler Version:                      | ");
+			YSI_Print(" |     3.2.3664 (Windows)                 | ");
+		#endif
+		YSI_Print(" |                                        | ");
+		YSI_Print(" | YSI Version:                           | ");
+		YSI_Print(" |     " YSI_VERSION "                          | ");
+		YSI_Print(" |                                        | ");
+		YSI_Print(" | JIT Version:                           | ");
+		switch (Server_GetJITVersion())
+		{
+		case 0:
+			YSI_Print(" |     <none>                             | ");
+		case 1:
+			YSI_Print(" |     2.0 or earlier                     | ");
+		case 2:
+			YSI_Print(" |     2.1 or later                       | ");
+		default:
+			YSI_Print(" |     <unknown>                          | ");
+		}
+		YSI_Print(" |                                        | ");
+		YSI_Print(" ========================================== ");
 		//YSI_Print(" |                                      | ");
 		//YSI_Print(" |  Checking the latest YSI version..   | ");
-		YSI_Print(" |                                        | ");
-		YSI_Print(" ========================================== ");
+		//YSI_Print(" |                                        | ");
+		//YSI_Print(" ========================================== ");
 		YSI_Print(" ");
 		// Call my server to check the current public YSI version.  v is the
 		// current version and c is the version of data response which this code
