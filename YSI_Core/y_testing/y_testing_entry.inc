@@ -681,10 +681,7 @@ Testing_Next_retry:
 	#if defined YSI_NO_DIALOG_ASK
 		public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 		{
-			if (
-				(newkeys & KEY_NO)
-				&& !(oldkeys & KEY_NO)
-			)
+			if ((newkeys & KEY_NO) && !(oldkeys & KEY_NO))
 			{
 				// Fail.
 				++YSI_g_sChecks;
@@ -693,10 +690,7 @@ Testing_Next_retry:
 				Testing_Next(playerid);
 				return 1;
 			}
-			else if (
-				(newkeys & KEY_YES)
-				&& !(oldkeys & KEY_YES)
-			)
+			else if ((newkeys & KEY_YES) && !(oldkeys & KEY_YES))
 			{
 				// Pass.
 				TEST_REPORT(TEST_PASSED);
