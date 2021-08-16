@@ -361,7 +361,7 @@ stock _Testing_Start(const name[])
 			//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
 		#if defined YSI_NO_DIALOG_ASK
 			// For early open.mp testing
-			format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), "TEST: %s (/y or /n)", YSI_g_sFailMessage),
+			format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), "TEST: %s (~k~~CONVERSATION_YES~ / ~k~~CONVERSATION_NO~)", YSI_g_sFailMessage),
 			SendClientMessage(playerid, 0xFF8010FF, YSI_g_sFailMessage);
 		#else
 			YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
@@ -679,9 +679,12 @@ Testing_Next_retry:
 	}
 	
 	#if defined YSI_NO_DIALOG_ASK
-		public OnPlayerCommandText(playerid, cmdtext[])
+		public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 		{
-			if (!strcmp(cmdtext, "/n"))
+			if (
+				(newkeys & KEY_NO)
+				&& !(oldkeys & KEY_NO)
+			)
 			{
 				// Fail.
 				++YSI_g_sChecks;
@@ -690,7 +693,10 @@ Testing_Next_retry:
 				Testing_Next(playerid);
 				return 1;
 			}
-			else if (!strcmp(cmdtext, "/y"))
+			else if (
+				(newkeys & KEY_YES)
+				&& !(oldkeys & KEY_YES)
+			)
 			{
 				// Pass.
 				TEST_REPORT(TEST_PASSED);
