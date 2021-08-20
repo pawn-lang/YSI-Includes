@@ -113,12 +113,13 @@ forward Server_GetJITVersion();
 static stock const
 	YSI_gscHeader[] = " ========================================== ",
 	YSI_gscSpacer[] = " |                                        | ";
+	YSI_gscMiniGap[] = " ";
 
 static stock YVers_PrintHeader()
 {
-	YSI_Print(" ");
-	YSI_Print(" ");
-	YSI_Print(" ");
+	YSI_Print(YSI_gscMiniGap);
+	YSI_Print(YSI_gscMiniGap);
+	YSI_Print(YSI_gscMiniGap);
 	YSI_Print("         ============================================================== ");
 	YSI_Print("         |                                                            | ");
 	YSI_Print("         |                                                            | ");
@@ -145,17 +146,17 @@ static stock YVers_PrintHeader()
 	YSI_Print("         |                                                            | ");
 	YSI_Print("         |                                                            | ");
 	YSI_Print("         ============================================================== ");
-	YSI_Print(" ");
-	YSI_Print(" ");
-	YSI_Print(" ");
+	YSI_Print(YSI_gscMiniGap);
+	YSI_Print(YSI_gscMiniGap);
+	YSI_Print(YSI_gscMiniGap);
 	new
 		version[32];
 	YSI_Print(YSI_gscHeader);
 	YSI_Print(YSI_gscSpacer);
 	Server_GetServerString(version, version[20]),
 	//format(version, sizeof (version), "%s - %s", version, version[20]),
-	YSI_Print(" | Server Version:                        | ");
-	YSI_PrintF(" |     %.20s               | ", version);
+	YSI_Print(" | Server Version:                        | "),
+	YSI_PrintF(" |     %.20s               | ", version),
 	YSI_Print(YSI_gscSpacer);
 	Server_GetCompilerString(version, version[20]),
 	format(version, sizeof (version), "%s - %s", version, version[20]),
@@ -306,7 +307,7 @@ static stock YVers_PrintHeader()
 			if (strcmp(data[pos], YSI_VERSION, false, 9))
 			{
 				//data[pos + 9] = '\0';
-				YSI_Print(" ");
+				YSI_Print(YSI_gscMiniGap);
 				YSI_Print(YSI_gscHeader);
 				YSI_Print(YSI_gscSpacer);
 				YSI_PrintF(" |  A new version (v%.9s) of YSI is  | ", data[pos]);
@@ -336,7 +337,7 @@ static stock YVers_PrintHeader()
 				}
 				YSI_Print(YSI_gscSpacer);
 				YSI_Print(YSI_gscHeader);
-				YSI_Print(" ");
+				YSI_Print(YSI_gscMiniGap);
 			}
 		}
 	}
