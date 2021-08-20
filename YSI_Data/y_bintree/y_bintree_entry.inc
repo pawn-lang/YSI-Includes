@@ -196,7 +196,7 @@ stock Bintree_Reset(BinaryTree:tree<>, pointer = 0)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Bintree_FindValue(BinaryTree:tree<>, value, &cont = 0, &old = 0)
+stock Bintree_FindValue(const BinaryTree:tree<>, value, &cont = 0, &old = 0)
 {
 	P:3("Bintree_FindValue called: %s, %i, %i, %i", Bintree_DisplayOutput(tree), value, cont, old);
 	new
