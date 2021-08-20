@@ -106,8 +106,13 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 	#define _YSI_NO_VERSION_CHECK
 #endif
 
-forward bool:Server_IsWindowsHost();
+forward Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os));
+forward Server_GetServerString(version[], os[], vlen = sizeof (version), olen = sizeof (os));
 forward Server_GetJITVersion();
+
+static stock const
+	YSI_gscHeader[] = " ========================================== ",
+	YSI_gscSpacer[] = " |                                        | ";
 
 static stock YVers_PrintHeader()
 {
@@ -143,26 +148,23 @@ static stock YVers_PrintHeader()
 	YSI_Print(" ");
 	YSI_Print(" ");
 	YSI_Print(" ");
-	YSI_Print(" ========================================== ");
-	YSI_Print(" |                                        | ");
+	new
+		version[32];
+	YSI_Print(YSI_gscHeader);
+	YSI_Print(YSI_gscSpacer);
+	Server_GetServerString(version, version[20]),
+	//format(version, sizeof (version), "%s - %s", version, version[20]),
 	YSI_Print(" | Server Version:                        | ");
-	YSI_PrintF(" |     %s                            | ", Server_IsWindowsHost() ? ("Windows") : ("Linux  "));
-	YSI_Print(" |                                        | ");
-	#if ((__Pawn & 0x0F) >= 0x0A)
-		YSI_PrintF(" | Compiler Version:                      | ");
-		#if __COMPILER_OS == __COMPILER_WINDOWS
-			YSI_PrintF(" |     %d.%02d.%02d - Windows                  | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
-		#else
-			YSI_PrintF(" |     %d.%02d.%02d - Linux                    | ", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
-		#endif
-	#else
-		YSI_Print(" | Compiler Version:                      | ");
-		YSI_Print(" |     3.2.3664 (Windows)                 | ");
-	#endif
-	YSI_Print(" |                                        | ");
+	YSI_PrintF(" |     %.20s               | ", version);
+	YSI_Print(YSI_gscSpacer);
+	Server_GetCompilerString(version, version[20]),
+	format(version, sizeof (version), "%s - %s", version, version[20]),
+	YSI_PrintF(" | Compiler Version:                      | "),
+	YSI_PrintF(" |     %.20s               | ", version),
+	YSI_Print(YSI_gscSpacer);
 	YSI_Print(" | YSI Version:                           | ");
 	YSI_Print(" |     " YSI_VERSION "                          | ");
-	YSI_Print(" |                                        | ");
+	YSI_Print(YSI_gscSpacer);
 	YSI_Print(" | JIT Version:                           | ");
 	switch (Server_GetJITVersion())
 	{
@@ -175,8 +177,8 @@ static stock YVers_PrintHeader()
 	default:
 		YSI_Print(" |     <unknown>                          | ");
 	}
-	YSI_Print(" |                                        | ");
-	YSI_Print(" ========================================== ");
+	YSI_Print(YSI_gscSpacer);
+	YSI_Print(YSI_gscHeader);
 }
 
 #if defined _YSI_NO_VERSION_CHECK
@@ -215,13 +217,13 @@ static stock YVers_PrintHeader()
 				YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
 			#endif
 			YVers_PrintHeader();
-			YSI_Print(" |                                        | ");
+			YSI_Print(YSI_gscSpacer);
 			YSI_Print(" | Unable to check the latest YSI version | ");
 			YSI_Print(" | - please watch the forums and github:  | ");
-			YSI_Print(" |                                        | ");
+			YSI_Print(YSI_gscSpacer);
 			YSI_Print(" |   https://git.io/5.x                   | ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" ========================================== ");
+			YSI_Print(YSI_gscSpacer);
+			YSI_Print(YSI_gscHeader);
 			return 1;
 		}
 		
@@ -248,8 +250,8 @@ static stock YVers_PrintHeader()
 		YVers_PrintHeader();
 		//YSI_Print(" |                                      | ");
 		//YSI_Print(" |  Checking the latest YSI version..   | ");
-		//YSI_Print(" |                                        | ");
-		//YSI_Print(" ========================================== ");
+		//YSI_Print(YSI_gscSpacer);
+		//YSI_Print(YSI_gscHeader);
 		// Call my server to check the current public YSI version.  v is the
 		// current version and c is the version of data response which this code
 		// can parse.  Note that the response data SHOULD be backward compatible
@@ -305,15 +307,15 @@ static stock YVers_PrintHeader()
 			{
 				//data[pos + 9] = '\0';
 				YSI_Print(" ");
-				YSI_Print(" ========================================== ");
-				YSI_Print(" |                                        | ");
+				YSI_Print(YSI_gscHeader);
+				YSI_Print(YSI_gscSpacer);
 				YSI_PrintF(" |  A new version (v%.9s) of YSI is  | ", data[pos]);
 				YSI_Print(" |            available from:             | ");
-				YSI_Print(" |                                        | ");
+				YSI_Print(YSI_gscSpacer);
 				YSI_Print(" |     www.y-less.com/YSI/YSI_1.0.zip     | ");
 				if (data[0] == '2')
 				{
-					YSI_Print(" |                                        | ");
+					YSI_Print(YSI_gscSpacer);
 					YSI_Print(" | Changelog:                             | ");
 					// Print the changelog.
 					new
@@ -332,8 +334,8 @@ static stock YVers_PrintHeader()
 						last = pos + 1;
 					}
 				}
-				YSI_Print(" |                                        | ");
-				YSI_Print(" ========================================== ");
+				YSI_Print(YSI_gscSpacer);
+				YSI_Print(YSI_gscHeader);
 				YSI_Print(" ");
 			}
 		}

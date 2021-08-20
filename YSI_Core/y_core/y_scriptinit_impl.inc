@@ -214,16 +214,20 @@ stock bool:Server_IsWindowsHost()
 
 stock bool:Server_IsLinuxCompiler()
 {
-	// Use a temporary variable to avoid const-test warnings.
-	new os = __COMPILER_OS;
-	return os == __COMPILER_LINUX;
+	#if __COMPILER_OS == __COMPILER_LINUX
+		return true;
+	#else
+		return false;
+	#endif
 }
 
 stock bool:Server_IsWindowsCompiler()
 {
-	// Use a temporary variable to avoid const-test warnings.
-	new os = __COMPILER_OS;
-	return os == __COMPILER_WINDOWS;
+	#if __COMPILER_OS == __COMPILER_WINDOWS
+		return true;
+	#else
+		return false;
+	#endif
 }
 
 stock bool:Server_IsGameMode()
@@ -234,6 +238,46 @@ stock bool:Server_IsGameMode()
 stock bool:Server_IsOpenMP()
 {
 	return YSI_OPEN_MP;
+}
+
+static stock const
+	YSI_gscWindows[] = "Windows",
+	YSI_gscLinux[] = "Windows";
+
+stock Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
+{
+	#if ((__Pawn & 0x0F) >= 0x0A)
+		// Accurate version.
+		format(version, vlen, "%d.%02d.%02d", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
+	#else
+		// Estimate version - probably this one.
+		version[0] = '\0',
+		strcat(version, "3.2.3664", vlen);
+	#endif
+	#if __COMPILER_OS == __COMPILER_WINDOWS
+		os[0] = '\0',
+		strcat(os, YSI_gscWindows, olen);
+	#else
+		os[0] = '\0',
+		strcat(os, YSI_gscLinux, olen);
+	#endif
+}
+
+stock Server_GetServerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
+{
+	// Not done yet.
+	version[0] = '\0',
+	strcat(version, "<unknown>", vlen);
+	if (Server_IsWindowsHost())
+	{
+		os[0] = '\0',
+		strcat(os, YSI_gscWindows, olen);
+	}
+	else
+	{
+		os[0] = '\0',
+		strcat(os, YSI_gscLinux, olen);
+	}
 }
 
 stock bool:Server_CrashDetectExists()
