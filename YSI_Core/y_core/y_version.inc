@@ -117,55 +117,55 @@ static stock const
 
 static stock YVers_PrintHeader()
 {
-	YSI_Print(YSI_gscMiniGap);
-	YSI_Print(YSI_gscMiniGap);
-	YSI_Print(YSI_gscMiniGap);
-	YSI_Print("         ============================================================== ");
-	YSI_Print("         |                                                            | ");
-	YSI_Print("         |                                                            | ");
-	YSI_Print("         |     YYYYYYY       YYYYYYY   SSSSSSSSSSSSSSS IIIIIIIIII     | ");
-	YSI_Print("         |     Y:::::Y       Y:::::Y SS:::::::::::::::SI::::::::I     | ");
-	YSI_Print("         |     Y:::::Y       Y:::::YS:::::SSSSSS::::::SI::::::::I     | ");
-	YSI_Print("         |     Y::::::Y     Y::::::YS:::::S     SSSSSSSII::::::II     | ");
-	YSI_Print("         |     YYY:::::Y   Y:::::YYYS:::::S              I::::I       | ");
-	YSI_Print("         |        Y:::::Y Y:::::Y   S:::::S              I::::I       | ");
-	YSI_Print("         |         Y:::::Y:::::Y     S::::SSSS           I::::I       | ");
-	YSI_Print("         |          Y:::::::::Y       SS::::::SSSSS      I::::I       | ");
-	YSI_Print("         |           Y:::::::Y          SSS::::::::SS    I::::I       | ");
-	YSI_Print("         |            Y:::::Y              SSSSSS::::S   I::::I       | ");
-	YSI_Print("         |            Y:::::Y                   S:::::S  I::::I       | ");
-	YSI_Print("         |            Y:::::Y                   S:::::S  I::::I       | ");
-	YSI_Print("         |            Y:::::Y       SSSSSSS     S:::::SII::::::II     | ");
-	YSI_Print("         |         YYYY:::::YYYY    S::::::SSSSSS:::::SI::::::::I     | ");
-	YSI_Print("         |         Y:::::::::::Y    S:::::::::::::::SS I::::::::I     | ");
-	YSI_Print("         |         YYYYYYYYYYYYY     SSSSSSSSSSSSSSS   IIIIIIIIII     | ");
-	YSI_Print("         |                                                            | ");
-	YSI_Print("         |                                                            | ");
-	YSI_Print("         |                      (c) 2021 MPL v1.1                     | ");
-	YSI_Print("         |            Alex \"Y_Less\" Cole and contributors.            | ");
-	YSI_Print("         |                                                            | ");
-	YSI_Print("         |                                                            | ");
-	YSI_Print("         ============================================================== ");
-	YSI_Print(YSI_gscMiniGap);
-	YSI_Print(YSI_gscMiniGap);
+	YSI_Print(YSI_gscMiniGap),
+	YSI_Print(YSI_gscMiniGap),
+	YSI_Print(YSI_gscMiniGap),
+	YSI_Print("         ============================================================== "),
+	YSI_Print("         |                                                            | "),
+	YSI_Print("         |                                                            | "),
+	YSI_Print("         |     YYYYYYY       YYYYYYY   SSSSSSSSSSSSSSS IIIIIIIIII     | "),
+	YSI_Print("         |     Y:::::Y       Y:::::Y SS:::::::::::::::SI::::::::I     | "),
+	YSI_Print("         |     Y:::::Y       Y:::::YS:::::SSSSSS::::::SI::::::::I     | "),
+	YSI_Print("         |     Y::::::Y     Y::::::YS:::::S     SSSSSSSII::::::II     | "),
+	YSI_Print("         |     YYY:::::Y   Y:::::YYYS:::::S              I::::I       | "),
+	YSI_Print("         |        Y:::::Y Y:::::Y   S:::::S              I::::I       | "),
+	YSI_Print("         |         Y:::::Y:::::Y     S::::SSSS           I::::I       | "),
+	YSI_Print("         |          Y:::::::::Y       SS::::::SSSSS      I::::I       | "),
+	YSI_Print("         |           Y:::::::Y          SSS::::::::SS    I::::I       | "),
+	YSI_Print("         |            Y:::::Y              SSSSSS::::S   I::::I       | "),
+	YSI_Print("         |            Y:::::Y                   S:::::S  I::::I       | "),
+	YSI_Print("         |            Y:::::Y                   S:::::S  I::::I       | "),
+	YSI_Print("         |            Y:::::Y       SSSSSSS     S:::::SII::::::II     | "),
+	YSI_Print("         |         YYYY:::::YYYY    S::::::SSSSSS:::::SI::::::::I     | "),
+	YSI_Print("         |         Y:::::::::::Y    S:::::::::::::::SS I::::::::I     | "),
+	YSI_Print("         |         YYYYYYYYYYYYY     SSSSSSSSSSSSSSS   IIIIIIIIII     | "),
+	YSI_Print("         |                                                            | "),
+	YSI_Print("         |                                                            | "),
+	YSI_Print("         |                      (c) 2021 MPL v1.1                     | "),
+	YSI_Print("         |            Alex \"Y_Less\" Cole and contributors.            | "),
+	YSI_Print("         |                                                            | "),
+	YSI_Print("         |                                                            | "),
+	YSI_Print("         ============================================================== "),
+	YSI_Print(YSI_gscMiniGap),
+	YSI_Print(YSI_gscMiniGap),
 	YSI_Print(YSI_gscMiniGap);
 	new
 		version[32];
-	YSI_Print(YSI_gscHeader);
-	YSI_Print(YSI_gscSpacer);
+	YSI_Print(YSI_gscHeader),
+	YSI_Print(YSI_gscSpacer),
 	Server_GetServerString(version, version[20]),
 	//format(version, sizeof (version), "%s - %s", version, version[20]),
 	YSI_Print(" | Server Version:                        | "),
 	YSI_PrintF(" |     %.20s               | ", version),
-	YSI_Print(YSI_gscSpacer);
+	YSI_Print(YSI_gscSpacer),
 	Server_GetCompilerString(version, version[20]),
 	format(version, sizeof (version), "%s - %s", version, version[20]),
 	YSI_PrintF(" | Compiler Version:                      | "),
 	YSI_PrintF(" |     %.20s               | ", version),
-	YSI_Print(YSI_gscSpacer);
-	YSI_Print(" | YSI Version:                           | ");
-	YSI_Print(" |     " YSI_VERSION "                          | ");
-	YSI_Print(YSI_gscSpacer);
+	YSI_Print(YSI_gscSpacer),
+	YSI_Print(" | YSI Version:                           | "),
+	YSI_Print(" |     " YSI_VERSION "                          | "),
+	YSI_Print(YSI_gscSpacer),
 	YSI_Print(" | JIT Version:                           | ");
 	switch (Server_GetJITVersion())
 	{
@@ -188,8 +188,8 @@ static stock YVers_PrintHeader()
 		#if defined YSI_LOCK_MODE
 			new
 				x = 10;
-			YSI_gLockData[YSI_gLockData[2]++] += (YSI_gLockData[3] = floatround(floatpower(x, 2))) - 2;
-			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04;
+			YSI_gLockData[YSI_gLockData[2]++] += (YSI_gLockData[3] = floatround(floatpower(x, 2))) - 2,
+			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04,
 			YSI_gLockData[2] *= (6 * x) - 5;
 		#endif
 		return 1;
@@ -212,18 +212,18 @@ static stock YVers_PrintHeader()
 			#if defined YSI_LOCK_MODE
 				new
 					x = 10;
-				YSI_gLockData[0] = 'a' + 1;
-				YSI_gLockData[YSI_gLockData[0] - 0x60] = x * 11;
-				YSI_gLockData[x / 3] = x * 10;
+				YSI_gLockData[0] = 'a' + 1,
+				YSI_gLockData[YSI_gLockData[0] - 0x60] = x * 11,
+				YSI_gLockData[x / 3] = x * 10,
 				YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
 			#endif
-			YVers_PrintHeader();
-			YSI_Print(YSI_gscSpacer);
-			YSI_Print(" | Unable to check the latest YSI version | ");
-			YSI_Print(" | - please watch the forums and github:  | ");
-			YSI_Print(YSI_gscSpacer);
-			YSI_Print(" |   https://git.io/5.x                   | ");
-			YSI_Print(YSI_gscSpacer);
+			YVers_PrintHeader(),
+			YSI_Print(YSI_gscSpacer),
+			YSI_Print(" | Unable to check the latest YSI version | "),
+			YSI_Print(" | - please watch the forums and github:  | "),
+			YSI_Print(YSI_gscSpacer),
+			YSI_Print(" |   https://git.io/5.x                   | "),
+			YSI_Print(YSI_gscSpacer),
 			YSI_Print(YSI_gscHeader);
 			return 1;
 		}
@@ -241,11 +241,11 @@ static stock YVers_PrintHeader()
 			{
 				YSI_gLockData[0] = YSI_gLockData[0] * 9 + 2;
 			}
-			YSI_gLockData[0] -= 1;
-			YSI_gLockData[3] = YSI_gLockData[0];
-			YSI_gLockData[0] -= 1;
-			YSI_gLockData[2] = YSI_gLockData[0] + 11;
-			YSI_gLockData[0] -= 1;
+			YSI_gLockData[0] -= 1,
+			YSI_gLockData[3] = YSI_gLockData[0],
+			YSI_gLockData[0] -= 1,
+			YSI_gLockData[2] = YSI_gLockData[0] + 11,
+			YSI_gLockData[0] -= 1,
 			YSI_gLockData[1] = YSI_gLockData[0] + 7;
 		#endif
 		YVers_PrintHeader();
@@ -307,16 +307,16 @@ static stock YVers_PrintHeader()
 			if (strcmp(data[pos], YSI_VERSION, false, 9))
 			{
 				//data[pos + 9] = '\0';
-				YSI_Print(YSI_gscMiniGap);
-				YSI_Print(YSI_gscHeader);
-				YSI_Print(YSI_gscSpacer);
-				YSI_PrintF(" |  A new version (v%.9s) of YSI is  | ", data[pos]);
-				YSI_Print(" |            available from:             | ");
-				YSI_Print(YSI_gscSpacer);
+				YSI_Print(YSI_gscMiniGap),
+				YSI_Print(YSI_gscHeader),
+				YSI_Print(YSI_gscSpacer),
+				YSI_PrintF(" |  A new version (v%.9s) of YSI is  | ", data[pos]),
+				YSI_Print(" |            available from:             | "),
+				YSI_Print(YSI_gscSpacer),
 				YSI_Print(" |     www.y-less.com/YSI/YSI_1.0.zip     | ");
 				if (data[0] == '2')
 				{
-					YSI_Print(YSI_gscSpacer);
+					YSI_Print(YSI_gscSpacer),
 					YSI_Print(" | Changelog:                             | ");
 					// Print the changelog.
 					new
@@ -329,14 +329,14 @@ static stock YVers_PrintHeader()
 							// To break out in the middle of a loop.
 							break;
 						}
-						pos += last;
-						data[pos - 1] = '\0';
-						YSI_PrintF(" | %38s | ", data[last]);
+						pos += last,
+						data[pos - 1] = '\0',
+						YSI_PrintF(" | %38s | ", data[last]),
 						last = pos + 1;
 					}
 				}
-				YSI_Print(YSI_gscSpacer);
-				YSI_Print(YSI_gscHeader);
+				YSI_Print(YSI_gscSpacer),
+				YSI_Print(YSI_gscHeader),
 				YSI_Print(YSI_gscMiniGap);
 			}
 		}
