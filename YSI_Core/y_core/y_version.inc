@@ -112,41 +112,41 @@ forward Server_GetJITVersion();
 
 static stock const
 	YSI_gscHeader[] = " ========================================== ",
-	YSI_gscSpacer[] = " |                                        | ";
-	YSI_gscMiniGap[] = " ";
+	YSI_gscSpacer[] = " |                                        | ",
+	YSI_gscMiniGap[] = " ",
+	YSI_gscObnoxiousHeader[] = "\n" \
+		" ==============================================================\n" \
+		" |                                                            |\n" \
+		" |                                                            |\n" \
+		" |     YYYYYYY       YYYYYYY   SSSSSSSSSSSSSSS IIIIIIIIII     |\n" \
+		" |     Y:::::Y       Y:::::Y SS:::::::::::::::SI::::::::I     |\n" \
+		" |     Y:::::Y       Y:::::YS:::::SSSSSS::::::SI::::::::I     |\n" \
+		" |     Y::::::Y     Y::::::YS:::::S     SSSSSSSII::::::II     |\n" \
+		" |     YYY:::::Y   Y:::::YYYS:::::S              I::::I       |\n" \
+		" |        Y:::::Y Y:::::Y   S:::::S              I::::I       |\n" \
+		" |         Y:::::Y:::::Y     S::::SSSS           I::::I       |\n" \
+		" |          Y:::::::::Y       SS::::::SSSSS      I::::I       |\n" \
+		" |           Y:::::::Y          SSS::::::::SS    I::::I       |\n" \
+		" |            Y:::::Y              SSSSSS::::S   I::::I       |\n" \
+		" |            Y:::::Y                   S:::::S  I::::I       |\n" \
+		" |            Y:::::Y                   S:::::S  I::::I       |\n" \
+		" |            Y:::::Y       SSSSSSS     S:::::SII::::::II     |\n" \
+		" |         YYYY:::::YYYY    S::::::SSSSSS:::::SI::::::::I     |\n" \
+		" |         Y:::::::::::Y    S:::::::::::::::SS I::::::::I     |\n" \
+		" |         YYYYYYYYYYYYY     SSSSSSSSSSSSSSS   IIIIIIIIII     |\n" \
+		" |                                                            |\n" \
+		" |                                                            |\n" \
+		" |                      (c) 2021 MPL v1.1                     |\n" \
+		" |            Alex \"Y_Less\" Cole and contributors.            |\n" \
+		" |                                                            |\n" \
+		" |                                                            |\n" \
+		" ==============================================================\n";
 
 static stock YVers_PrintHeader()
 {
 	YSI_Print(YSI_gscMiniGap),
 	YSI_Print(YSI_gscMiniGap),
-	YSI_Print(YSI_gscMiniGap),
-	YSI_Print("         ============================================================== "),
-	YSI_Print("         |                                                            | "),
-	YSI_Print("         |                                                            | "),
-	YSI_Print("         |     YYYYYYY       YYYYYYY   SSSSSSSSSSSSSSS IIIIIIIIII     | "),
-	YSI_Print("         |     Y:::::Y       Y:::::Y SS:::::::::::::::SI::::::::I     | "),
-	YSI_Print("         |     Y:::::Y       Y:::::YS:::::SSSSSS::::::SI::::::::I     | "),
-	YSI_Print("         |     Y::::::Y     Y::::::YS:::::S     SSSSSSSII::::::II     | "),
-	YSI_Print("         |     YYY:::::Y   Y:::::YYYS:::::S              I::::I       | "),
-	YSI_Print("         |        Y:::::Y Y:::::Y   S:::::S              I::::I       | "),
-	YSI_Print("         |         Y:::::Y:::::Y     S::::SSSS           I::::I       | "),
-	YSI_Print("         |          Y:::::::::Y       SS::::::SSSSS      I::::I       | "),
-	YSI_Print("         |           Y:::::::Y          SSS::::::::SS    I::::I       | "),
-	YSI_Print("         |            Y:::::Y              SSSSSS::::S   I::::I       | "),
-	YSI_Print("         |            Y:::::Y                   S:::::S  I::::I       | "),
-	YSI_Print("         |            Y:::::Y                   S:::::S  I::::I       | "),
-	YSI_Print("         |            Y:::::Y       SSSSSSS     S:::::SII::::::II     | "),
-	YSI_Print("         |         YYYY:::::YYYY    S::::::SSSSSS:::::SI::::::::I     | "),
-	YSI_Print("         |         Y:::::::::::Y    S:::::::::::::::SS I::::::::I     | "),
-	YSI_Print("         |         YYYYYYYYYYYYY     SSSSSSSSSSSSSSS   IIIIIIIIII     | "),
-	YSI_Print("         |                                                            | "),
-	YSI_Print("         |                                                            | "),
-	YSI_Print("         |                      (c) 2021 MPL v1.1                     | "),
-	YSI_Print("         |            Alex \"Y_Less\" Cole and contributors.            | "),
-	YSI_Print("         |                                                            | "),
-	YSI_Print("         |                                                            | "),
-	YSI_Print("         ============================================================== "),
-	YSI_Print(YSI_gscMiniGap),
+	YSI_Print(YSI_gscObnoxiousHeader),
 	YSI_Print(YSI_gscMiniGap),
 	YSI_Print(YSI_gscMiniGap);
 	new
