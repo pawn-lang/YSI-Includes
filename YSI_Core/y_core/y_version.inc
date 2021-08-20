@@ -106,80 +106,32 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 	#define _YSI_NO_VERSION_CHECK
 #endif
 
-forward Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os));
-forward Server_GetServerString(version[], os[], vlen = sizeof (version), olen = sizeof (os));
-forward Server_GetJITVersion();
-
 static stock const
-	YSI_gscHeader[] = " ========================================== ",
-	YSI_gscSpacer[] = " |                                        | ",
-	YSI_gscMiniGap[] = " ",
-	YSI_gscObnoxiousHeader[] = "\n" \
-		"         ==============================================================\n" \
-		"         |                                                            |\n" \
-		"         |                                                            |\n" \
-		"         |     YYYYYYY       YYYYYYY   SSSSSSSSSSSSSSS IIIIIIIIII     |\n" \
-		"         |     Y:::::Y       Y:::::Y SS:::::::::::::::SI::::::::I     |\n" \
-		"         |     Y:::::Y       Y:::::YS:::::SSSSSS::::::SI::::::::I     |\n" \
-		"         |     Y::::::Y     Y::::::YS:::::S     SSSSSSSII::::::II     |\n" \
-		"         |     YYY:::::Y   Y:::::YYYS:::::S              I::::I       |\n" \
-		"         |        Y:::::Y Y:::::Y   S:::::S              I::::I       |\n" \
-		"         |         Y:::::Y:::::Y     S::::SSSS           I::::I       |\n" \
-		"         |          Y:::::::::Y       SS::::::SSSSS      I::::I       |\n" \
-		"         |           Y:::::::Y          SSS::::::::SS    I::::I       |\n" \
-		"         |            Y:::::Y              SSSSSS::::S   I::::I       |\n" \
-		"         |            Y:::::Y                   S:::::S  I::::I       |\n" \
-		"         |            Y:::::Y                   S:::::S  I::::I       |\n" \
-		"         |            Y:::::Y       SSSSSSS     S:::::SII::::::II     |\n" \
-		"         |         YYYY:::::YYYY    S::::::SSSSSS:::::SI::::::::I     |\n" \
-		"         |         Y:::::::::::Y    S:::::::::::::::SS I::::::::I     |\n" \
-		"         |         YYYYYYYYYYYYY     SSSSSSSSSSSSSSS   IIIIIIIIII     |\n" \
-		"         |                                                            |\n" \
-		"         |                                                            |\n" \
-		"         |                      (c) 2021 MPL v1.1                     |\n" \
-		"         |            Alex \"Y_Less\" Cole and contributors.            |\n" \
-		"         |                                                            |\n" \
-		"         |                                                            |\n" \
-		"         ==============================================================\n";
+	YSI_gscJITVersion[] = "JIT Version:";
 
 static stock YVers_PrintHeader()
 {
-	YSI_Print(YSI_gscMiniGap),
-	YSI_Print(YSI_gscMiniGap),
-	YSI_Print(YSI_gscObnoxiousHeader),
-	YSI_Print(YSI_gscMiniGap),
-	YSI_Print(YSI_gscMiniGap);
 	new
-		version[20], os[10];
-	YSI_Print(YSI_gscHeader),
-	YSI_Print(YSI_gscSpacer),
+		version[32], os[10];
 	Server_GetServerString(version, os),
-	//format(version, sizeof (version), "%s - %s", version, os),
-	YSI_Print(" | Server Version:                        | "),
-	YSI_PrintF(" |     %20s               | ", os), // version
-	YSI_Print(YSI_gscSpacer),
+	format(version, sizeof (version), "    %s", os),
+	Server_PrintIntroPart("Server Version:", version, ""),
 	Server_GetCompilerString(version, os),
-	format(version, sizeof (version), "%s - %s", version, os),
-	YSI_PrintF(" | Compiler Version:                      | "),
-	YSI_PrintF(" |     %20s               | ", version),
-	YSI_Print(YSI_gscSpacer),
-	YSI_Print(" | YSI Version:                           | "),
-	YSI_Print(" |     " YSI_VERSION "                          | "),
-	YSI_Print(YSI_gscSpacer),
-	YSI_Print(" | JIT Version:                           | ");
+	format(version, sizeof (version), "    %s - %s", version, os),
+	Server_PrintIntroPart("Compiler Version:", version, ""),
+	Server_PrintIntroPart("YSI Version:", "    " YSI_VERSION, "");
 	switch (Server_GetJITVersion())
 	{
 	case 0:
-		YSI_Print(" |     <none>                             | ");
+		Server_PrintIntroPart(YSI_gscJITVersion, "    <none>");
 	case 1:
-		YSI_Print(" |     2.0 or earlier                     | ");
+		Server_PrintIntroPart(YSI_gscJITVersion, "    2.0 or earlier");
 	case 2:
-		YSI_Print(" |     2.1 or later                       | ");
+		Server_PrintIntroPart(YSI_gscJITVersion, "    2.1 or later");
 	default:
-		YSI_Print(" |     <unknown>                          | ");
+		Server_PrintIntroPart(YSI_gscJITVersion, "    <unknown>");
 	}
-	YSI_Print(YSI_gscSpacer);
-	YSI_Print(YSI_gscHeader);
+	Server_FinishIntroPart();
 }
 
 #if defined _YSI_NO_VERSION_CHECK
@@ -218,13 +170,12 @@ static stock YVers_PrintHeader()
 				YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
 			#endif
 			YVers_PrintHeader(),
-			YSI_Print(YSI_gscSpacer),
-			YSI_Print(" | Unable to check the latest YSI version | "),
-			YSI_Print(" | - please watch the forums and github:  | "),
-			YSI_Print(YSI_gscSpacer),
-			YSI_Print(" |   https://git.io/5.x                   | "),
-			YSI_Print(YSI_gscSpacer),
-			YSI_Print(YSI_gscHeader);
+			Server_PrintIntroMessage(
+				"Unable to check the latest YSI version",
+				"- please watch the forums and github:",
+				"",
+				"    https://git.io/5.x"
+			);
 			return 1;
 		}
 		
@@ -307,17 +258,12 @@ static stock YVers_PrintHeader()
 			if (strcmp(data[pos], YSI_VERSION, false, 9))
 			{
 				//data[pos + 9] = '\0';
-				YSI_Print(YSI_gscMiniGap),
-				YSI_Print(YSI_gscHeader),
-				YSI_Print(YSI_gscSpacer),
-				YSI_PrintF(" |  A new version (v%.9s) of YSI is  | ", data[pos]),
-				YSI_Print(" |            available from:             | "),
-				YSI_Print(YSI_gscSpacer),
-				YSI_Print(" |     www.y-less.com/YSI/YSI_1.0.zip     | ");
+				new msg[40];
+				format(msg, sizeof (msg), "A new version (v%s) of YSI is", data[pos]),
+				Server_PrintIntroPart(msg, "available from:", "", "    www.y-less.com/YSI/YSI_1.0.zip");
 				if (data[0] == '2')
 				{
-					YSI_Print(YSI_gscSpacer),
-					YSI_Print(" | Changelog:                             | ");
+					Server_PrintIntroPart("", "Changelog:", "");
 					// Print the changelog.
 					new
 						last = pos + 13;
@@ -331,13 +277,15 @@ static stock YVers_PrintHeader()
 						}
 						pos += last,
 						data[pos - 1] = '\0',
-						YSI_PrintF(" | %38s | ", data[last]),
+						Server_PrintIntroPart(data[last]),
 						last = pos + 1;
 					}
 				}
-				YSI_Print(YSI_gscSpacer),
-				YSI_Print(YSI_gscHeader),
-				YSI_Print(YSI_gscMiniGap);
+				//YSI_Print(YSI_gscSpacer),
+				//YSI_Print(YSI_gscHeader),
+				//YSI_Print(YSI_gscMiniGap);
+				Server_FinishIntroPart(),
+				Server_FinishIntroMessage();
 			}
 		}
 	}

@@ -132,7 +132,16 @@ static
 		#endif
 
 		// Dump the final assembly of this script so we can inspect it.
-		#define DEBUG_MAYBE_DUMP(%0) DisasmWrite(%0)
+		#define DEBUG_MAYBE_DUMP(%0) \
+			do                                                                  \
+			{                                                                   \
+				Server_DisableLongCall();                                       \
+				DisasmWrite(%0);                                                \
+				Server_EnableLongCall();                                        \
+			}                                                                   \
+			while (FALSE)
+		
+		
 	#endif
 #endif
 #if !defined DEBUG_MAYBE_DUMP
@@ -241,8 +250,134 @@ stock bool:Server_IsOpenMP()
 }
 
 static stock const
+	YSI_gscHeader[] = " ========================================== ",
+	YSI_gscSpacer[] = " |                                        | ",
+	YSI_gscMiniGap[] = " ",
+	YSI_gscObnoxiousHeader[] = "\n" \
+		"         ==============================================================\n" \
+		"         |                                                            |\n" \
+		"         |                                                            |\n" \
+		"         |     YYYYYYY       YYYYYYY   SSSSSSSSSSSSSSS IIIIIIIIII     |\n" \
+		"         |     Y:::::Y       Y:::::Y SS:::::::::::::::SI::::::::I     |\n" \
+		"         |     Y:::::Y       Y:::::YS:::::SSSSSS::::::SI::::::::I     |\n" \
+		"         |     Y::::::Y     Y::::::YS:::::S     SSSSSSSII::::::II     |\n" \
+		"         |     YYY:::::Y   Y:::::YYYS:::::S              I::::I       |\n" \
+		"         |        Y:::::Y Y:::::Y   S:::::S              I::::I       |\n" \
+		"         |         Y:::::Y:::::Y     S::::SSSS           I::::I       |\n" \
+		"         |          Y:::::::::Y       SS::::::SSSSS      I::::I       |\n" \
+		"         |           Y:::::::Y          SSS::::::::SS    I::::I       |\n" \
+		"         |            Y:::::Y              SSSSSS::::S   I::::I       |\n" \
+		"         |            Y:::::Y                   S:::::S  I::::I       |\n" \
+		"         |            Y:::::Y                   S:::::S  I::::I       |\n" \
+		"         |            Y:::::Y       SSSSSSS     S:::::SII::::::II     |\n" \
+		"         |         YYYY:::::YYYY    S::::::SSSSSS:::::SI::::::::I     |\n" \
+		"         |         Y:::::::::::Y    S:::::::::::::::SS I::::::::I     |\n" \
+		"         |         YYYYYYYYYYYYY     SSSSSSSSSSSSSSS   IIIIIIIIII     |\n" \
+		"         |                                                            |\n" \
+		"         |                                                            |\n" \
+		"         |                      (c) 2021 MPL v1.1                     |\n" \
+		"         |            Alex \"Y_Less\" Cole and contributors.            |\n" \
+		"         |                                                            |\n" \
+		"         |                                                            |\n" \
+		"         ==============================================================\n";
+
+static stock
+	bool:YSI_gsObnoxiousHeader = true,
+	bool:YSI_gsFirstHeader = true,
+	bool:YSI_gsNewPart = true;
+
+native YSI_VAPrintF(const fmt[], addr) = printf;
+
+stock Server_PrintIntroMessage(...)
+{
+	if (YSI_gsObnoxiousHeader)
+	{
+		YSI_Print(YSI_gscMiniGap),
+		YSI_Print(YSI_gscMiniGap),
+		YSI_Print(YSI_gscObnoxiousHeader),
+		YSI_Print(YSI_gscMiniGap),
+		YSI_Print(YSI_gscMiniGap),
+		YSI_Print(YSI_gscHeader),
+		YSI_gsObnoxiousHeader = false,
+		YSI_gsFirstHeader = false;
+	}
+	else if (YSI_gsFirstHeader)
+	{
+		YSI_Print(YSI_gscMiniGap),
+		YSI_Print(YSI_gscHeader),
+		YSI_gsFirstHeader = false;
+	}
+	// Header.
+	YSI_Print(YSI_gscSpacer);
+	// Body.
+	for (new i = 3 * cellbytes, j = 3 * cellbytes + numargs() * cellbytes, a = 0; i != j; i += cellbytes)
+	{
+		#emit LCTRL          5
+		#emit LOAD.S.alt     i
+		#emit ADD
+		#emit LOAD.I
+		#emit STOR.S.pri     a
+		YSI_VAPrintF(" | %38s | ", a);
+	}
+	// Footer.
+	YSI_Print(YSI_gscSpacer);
+	YSI_Print(YSI_gscHeader);
+}
+
+stock Server_PrintIntroPart(...)
+{
+	if (YSI_gsObnoxiousHeader)
+	{
+		YSI_Print(YSI_gscMiniGap),
+		YSI_Print(YSI_gscMiniGap),
+		YSI_Print(YSI_gscObnoxiousHeader),
+		YSI_Print(YSI_gscMiniGap),
+		YSI_Print(YSI_gscMiniGap),
+		YSI_Print(YSI_gscHeader),
+		YSI_gsObnoxiousHeader = false,
+		YSI_gsFirstHeader = false;
+	}
+	else if (YSI_gsFirstHeader)
+	{
+		YSI_Print(YSI_gscMiniGap),
+		YSI_Print(YSI_gscHeader),
+		YSI_gsFirstHeader = false;
+	}
+	// Header.
+	if (YSI_gsNewPart)
+	{
+		YSI_gsNewPart = false;
+		YSI_Print(YSI_gscSpacer);
+	}
+	// Body.
+	for (new i = 3 * cellbytes, j = 3 * cellbytes + numargs() * cellbytes, a = 0; i != j; i += cellbytes)
+	{
+		#emit LCTRL          5
+		#emit LOAD.S.alt     i
+		#emit ADD
+		#emit LOAD.I
+		#emit STOR.S.pri     a
+		YSI_VAPrintF(" | %38s | ", a);
+	}
+}
+
+stock Server_FinishIntroPart()
+{
+	// Footer.
+	YSI_Print(YSI_gscSpacer);
+	YSI_Print(YSI_gscHeader);
+	YSI_gsNewPart = true;
+}
+
+stock Server_FinishIntroMessage()
+{
+	YSI_Print(YSI_gscMiniGap),
+	YSI_gsFirstHeader = true;
+}
+
+static stock const
 	YSI_gscWindows[] = "Windows",
-	YSI_gscLinux[] = "Windows";
+	YSI_gscLinux[] = "Linux";
 
 stock Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
 {
@@ -407,19 +542,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
 	{
 		// Loaded from a file.
-		#if defined YSI_NO_VERSION_CHECK
-			YSI_Print(" ");
-			YSI_Print(" ");
-			YSI_Print(" ");
-			YSI_Print(" ========================================== ");
-		#endif
-		#if !defined YSI_NO_CACHE_MESSAGE
-			YSI_Print(" |                                        | ");
-			YSI_Print(" |  File loaded from YSI code cache.      | ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" ========================================== ");
-			YSI_Print(" ");
-		#endif
+		Server_PrintIntroMessage("   File loaded from YSI code cache.");
 		R@("OnCachedInit", "");
 	}
 	else
@@ -463,30 +586,22 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 		#if defined YSI_NO_OPTIMISATION_MESSAGE
 			#pragma unused jit
 		#else
-			#if defined YSI_NO_VERSION_CHECK
-				YSI_Print(" ");
-				YSI_Print(" ");
-				YSI_Print(" ");
-				YSI_Print(" ========================================== ");
-			#endif
-			YSI_Print(" |                                        | ");
-			YSI_Print(" |    Generating code, this may take a    | ");
-			YSI_Print(" |           little bit of time.          | ");
-			YSI_Print(" |                                        | ");
-			YSI_Print(" |             Please wait...             | ");
-			YSI_Print(" |                                        | ");
+			Server_PrintIntroMessage(
+				"   Generating code, this may take a",
+				"          little bit of time.",
+				"",
+				"            Please wait..."
+			);
 			if (!jit)
 			{
-				YSI_Print(" ========================================== ");
-				YSI_Print(" |                                        | ");
-				YSI_Print(" | Note that this code generation works   | ");
-				YSI_Print(" | best with the JIT plugin, which you    | ");
-				YSI_Print(" | are not currently using.  Get it here: | ");
-				YSI_Print(" |                                        | ");
-				YSI_Print(" |        https://git.io/jit-plugin       | ");
-				YSI_Print(" |                                        | ");
+				Server_PrintIntroMessage(
+					"Note that this code generation works",
+					"best with the JIT plugin, which you",
+					"are not currently using.  Get it here:",
+					"",
+					"       https://git.io/jit-plugin"
+				);
 			}
-			YSI_Print(" ========================================== ");
 		#endif
 		#if defined ScriptInit_OnCodeInit
 			ScriptInit_OnCodeInit();
@@ -502,30 +617,23 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				// Clear this flag after dumping.  This is so we can tell when a mode is cached.
 				YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
 				#if !defined YSI_NO_CACHE_MESSAGE
-					#if defined YSI_NO_OPTIMISATION_MESSAGE && defined YSI_NO_VERSION_CHECK
-						YSI_Print(" ");
-						YSI_Print(" ");
-						YSI_Print(" ");
-						YSI_Print(" ========================================== ");
-					#endif
-					YSI_Print(" |                                        | ");
-					YSI_Print(" |   File dumped to YSI code cache:       | ");
-					YSI_Print(" |                                        | ");
-					YSI_Print(" |      scriptfiles/YSI_CACHE.amx         | ");
-					YSI_Print(" |                                        | ");
-					YSI_Print(" | Load this file instead to skip this    | ");
-					YSI_Print(" | code optimisation step in the future.  | ");
-					YSI_Print(" | Note that if you have multiple scripts | ");
-					YSI_Print(" | loading at once (i.e. gamemodes,       | ");
-					YSI_Print(" | filterscripts, and modules) you may    | ");
-					YSI_Print(" | need to load and cache them            | ");
-					YSI_Print(" | individually so that they don't        | ");
-					YSI_Print(" | clobber each other.  If you don't, in  | ");
-					YSI_Print(" | \"server.cfg\", the following works:     | ");
-					YSI_Print(" |                                        | ");
-					YSI_Print(" |   gamemode0 ../scriptfiles/YSI_CACHE 1 | ");
-					YSI_Print(" |                                        | ");
-					YSI_Print(" ========================================== ");
+					Server_PrintIntroMessage(
+						"    File dumped to YSI code cache:",
+						"",
+						"       scriptfiles/YSI_CACHE.amx",
+						"",
+						"Load this file instead to skip this",
+						"code optimisation step in the future.",
+						"Note that if you have multiple scripts",
+						"loading at once (i.e. gamemodes,",
+						"filterscripts, and modules) you may",
+						"need to load and cache them",
+						"individually so that they don't",
+						"clobber each other.  If you don't, in",
+						"\"server.cfg\", the following works:",
+						"",
+						"  gamemode0 ../scriptfiles/YSI_CACHE 1"
+					);
 				#endif
 			}
 			else
@@ -533,11 +641,11 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				YSI_g_sScriptInitState = tmp;
 				P:E("YSI code cache write failed");
 			}
-			Server_EnableLongCall();
 		#endif
-		YSI_Print(" ");
-		YSI_Print(" ");
-		YSI_Print(" ");
+			Server_EnableLongCall();
+			YSI_Print(" ");
+			YSI_Print(" ");
+			YSI_Print(" ");
 	}
 	return true;
 }
@@ -556,6 +664,7 @@ public OnJITCompile()
 	{
 		return 0;
 	}
+	YVers_StartCheck();
 	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 	YSI_g_sScriptInitState |= E_SCRIPTINIT_STATE_JITING;
 	if (!ScriptInit_CallOnCodeInit(true, false))

@@ -148,3 +148,16 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 
 #define __ARGS__SCM 0,0,""
 
+#if !defined TRUE
+stock const
+	bool:TRUE = true;
+#endif
+#if !defined FALSE
+stock const
+	bool:FALSE = false;
+#endif
+#if !defined NULL
+stock const
+	NULL[2] = "\1";
+#endif
+

@@ -78,19 +78,6 @@ Optional plugins:
 // account for that possibility, but I just don't know.
 #define NO_VALUE(%0) ((2*%0-1)==2*(%0-1))
 
-#if !defined TRUE
-stock const
-	bool:TRUE = true;
-#endif
-#if !defined FALSE
-stock const
-	bool:FALSE = false;
-#endif
-#if !defined NULL
-stock const
-	NULL[2] = "\1";
-#endif
-
 #define UNSIGNED(%0) ((%0) - cellmin)
 
 #define FLOAT_INFINITY                  (Float:0x7F800000)
