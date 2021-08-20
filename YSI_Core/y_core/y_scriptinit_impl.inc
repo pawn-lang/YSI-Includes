@@ -404,7 +404,6 @@ forward bool:DumpAMX_Write(const filename[]);
 
 static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 {
-	YVers_StartCheck();
 	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
 	{
 		// Loaded from a file.
@@ -651,6 +650,7 @@ public OnScriptInit(id)
 	// Dump the final assembly of this script so we can inspect it.
 	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
+		YVers_StartCheck();
 		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 		if (!ScriptInit_CallOnCodeInit(false, true))
 			return 0;
@@ -688,6 +688,7 @@ public OnFilterScriptInit()
 		// Dump the final assembly of this script so we can inspect it.
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
+			YVers_StartCheck();
 			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 			if (!ScriptInit_CallOnCodeInit(false, true))
 				return 0;
@@ -748,6 +749,7 @@ public OnGameModeInit()
 			// Dump the final assembly of this script so we can inspect it.
 			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 			{
+				YVers_StartCheck();
 				DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 				if (!ScriptInit_CallOnCodeInit(false, false))
 					return 0;

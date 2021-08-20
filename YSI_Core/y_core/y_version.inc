@@ -150,18 +150,18 @@ static stock YVers_PrintHeader()
 	YSI_Print(YSI_gscMiniGap),
 	YSI_Print(YSI_gscMiniGap);
 	new
-		version[32];
+		version[20], os[10];
 	YSI_Print(YSI_gscHeader),
 	YSI_Print(YSI_gscSpacer),
-	Server_GetServerString(version, version[20]),
-	//format(version, sizeof (version), "%s - %s", version, version[20]),
+	Server_GetServerString(version, os),
+	//format(version, sizeof (version), "%s - %s", version, os),
 	YSI_Print(" | Server Version:                        | "),
-	YSI_PrintF(" |     %.20s               | ", version),
+	YSI_PrintF(" |     %20s               | ", os), // version
 	YSI_Print(YSI_gscSpacer),
-	Server_GetCompilerString(version, version[20]),
-	format(version, sizeof (version), "%s - %s", version, version[20]),
+	Server_GetCompilerString(version, os),
+	format(version, sizeof (version), "%s - %s", version, os),
 	YSI_PrintF(" | Compiler Version:                      | "),
-	YSI_PrintF(" |     %.20s               | ", version),
+	YSI_PrintF(" |     %20s               | ", version),
 	YSI_Print(YSI_gscSpacer),
 	YSI_Print(" | YSI Version:                           | "),
 	YSI_Print(" |     " YSI_VERSION "                          | "),
