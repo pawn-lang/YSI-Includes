@@ -174,7 +174,7 @@ static stock YVers_PrintHeader()
 				"Unable to check the latest YSI version",
 				"- please watch the forums and github:",
 				"",
-				"    https://git.io/5.x"
+				"         https://git.io/5.x"
 			);
 			return 1;
 		}

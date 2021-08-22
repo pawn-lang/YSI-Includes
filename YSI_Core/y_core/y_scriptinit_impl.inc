@@ -132,20 +132,34 @@ static
 		#endif
 
 		// Dump the final assembly of this script so we can inspect it.
-		#define DEBUG_MAYBE_DUMP(%0) \
-			do                                                                  \
-			{                                                                   \
-				Server_DisableLongCall();                                       \
-				DisasmWrite(%0);                                                \
-				Server_EnableLongCall();                                        \
-			}                                                                   \
+		#define DEBUG_MAYBE_DUMP(%0,%1,%2) DEBUG_MAYBE_DUMP_%1(%0,%2)
+		#define DEBUG_MAYBE_DUMP_%0\32; DEBUG_MAYBE_DUMP_
+	
+		#define DEBUG_MAYBE_DUMP_false(%0,%2) \
+			do \
+			{ \
+				Server_PrintIntroMessage(%2, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD); \
+				Server_DisableLongCall(); \
+				DisasmWrite(%0); \
+				Server_EnableLongCall(); \
+			} \
 			while (FALSE)
-		
+
+		#define DEBUG_MAYBE_DUMP_true(%0,%2) \
+			do \
+			{ \
+				Server_PrintIntroMessage(%2, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD); \
+				Server_DisableLongCall(); \
+				DisasmWrite(%0); \
+				Server_EnableLongCall(); \
+				Server_FinishIntroMessage(); \
+			} \
+			while (FALSE)
 		
 	#endif
 #endif
 #if !defined DEBUG_MAYBE_DUMP
-	#define DEBUG_MAYBE_DUMP(%0);
+	#define DEBUG_MAYBE_DUMP(%0,%1);
 #endif
 
 #if !defined _ALS_OnFilterScriptInit
@@ -166,22 +180,22 @@ static
 
 stock bool:Server_JITExists()
 {
-	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING);
+	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING) != E_SCRIPTINIT_STATE_NONE;
 }
 
 stock bool:Server_JITComplete()
 {
-	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITED);
+	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITED) != E_SCRIPTINIT_STATE_NONE;
 }
 
 stock bool:Server_CacheLoaded()
 {
-	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD);
+	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD) != E_SCRIPTINIT_STATE_NONE;
 }
 
 stock bool:Server_CacheSaved()
 {
-	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_DUMPED);
+	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_DUMPED) != E_SCRIPTINIT_STATE_NONE;
 }
 
 stock bool:Server_IsFilterscript()
@@ -279,7 +293,11 @@ static stock const
 		"         |            Alex \"Y_Less\" Cole and contributors.            |\n" \
 		"         |                                                            |\n" \
 		"         |                                                            |\n" \
-		"         ==============================================================\n";
+		"         ==============================================================\n",
+	YSI_gscInitMsgA[] = "  Dumping \"YSI_PRE_INIT.asm\", this",
+	YSI_gscInitMsgB[] = "  Dumping \"YSI_POST_INIT.asm\", this",
+	YSI_gscInitMsgC[] = "   may take a little bit of time.",
+	YSI_gscInitMsgD[] = "           Please wait...";
 
 static stock
 	bool:YSI_gsObnoxiousHeader = true,
@@ -503,9 +521,10 @@ stock Server_GetLongCallDefault()
 // 0 - No JIT
 // 1 - Pre 2.1
 // 2 - Post 2.1
+// 3 - ???, in `OnJITCompile`
 stock Server_GetJITVersion()
 {
-	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING)
+	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITED)
 	{
 		#emit LCTRL     6
 		#emit MOVE.alt
@@ -515,6 +534,10 @@ stock Server_GetJITVersion()
 		#emit XCHG
 		#emit SHL
 		#emit RETN
+	}
+	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING)
+	{
+		return 3;
 	}
 	return 0;
 }
@@ -587,10 +610,10 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			#pragma unused jit
 		#else
 			Server_PrintIntroMessage(
-				"   Generating code, this may take a",
-				"          little bit of time.",
-				"",
-				"            Please wait..."
+				"  Generating code, this may take a",
+				"         little bit of time.",
+				YSI_gscMiniGap,
+				YSI_gscInitMsgD
 			);
 			if (!jit)
 			{
@@ -598,8 +621,8 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					"Note that this code generation works",
 					"best with the JIT plugin, which you",
 					"are not currently using.  Get it here:",
-					"",
-					"       https://git.io/jit-plugin"
+					YSI_gscMiniGap,
+					"      https://git.io/jit-plugin"
 				);
 			}
 		#endif
@@ -612,6 +635,12 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			// Set the variable to something unique for next load.  This will be written out, thus
 			// loaded in next time.
 			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
+			Server_PrintIntroMessage(
+				"  Dumping \"YSI_CACHE.amx\", this may",
+				"     take a little bit of time.",
+				YSI_gscMiniGap,
+				YSI_gscInitMsgD
+			);
 			if (DumpAMX_Write(name))
 			{
 				// Clear this flag after dumping.  This is so we can tell when a mode is cached.
@@ -619,9 +648,9 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				#if !defined YSI_NO_CACHE_MESSAGE
 					Server_PrintIntroMessage(
 						"    File dumped to YSI code cache:",
-						"",
+						YSI_gscMiniGap,
 						"       scriptfiles/YSI_CACHE.amx",
-						"",
+						YSI_gscMiniGap,
 						"Load this file instead to skip this",
 						"code optimisation step in the future.",
 						"Note that if you have multiple scripts",
@@ -631,7 +660,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 						"individually so that they don't",
 						"clobber each other.  If you don't, in",
 						"\"server.cfg\", the following works:",
-						"",
+						YSI_gscMiniGap,
 						"  gamemode0 ../scriptfiles/YSI_CACHE 1"
 					);
 				#endif
@@ -643,9 +672,6 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			}
 		#endif
 			Server_EnableLongCall();
-			YSI_Print(" ");
-			YSI_Print(" ");
-			YSI_Print(" ");
 	}
 	return true;
 }
@@ -664,8 +690,7 @@ public OnJITCompile()
 	{
 		return 0;
 	}
-	YVers_StartCheck();
-	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
+	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm", false, YSI_gscInitMsgA);
 	YSI_g_sScriptInitState |= E_SCRIPTINIT_STATE_JITING;
 	if (!ScriptInit_CallOnCodeInit(true, false))
 		return 0;
@@ -678,7 +703,7 @@ public OnJITCompile()
 	{
 		Debug_Print0("\7*** YSI Warning: JIT disabled");
 	}
-	DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+	DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm", false, YSI_gscInitMsgB);
 	return ret;
 }
 
@@ -759,11 +784,12 @@ public OnScriptInit(id)
 	// Dump the final assembly of this script so we can inspect it.
 	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
-		YVers_StartCheck();
-		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
+		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm", false, YSI_gscInitMsgA);
 		if (!ScriptInit_CallOnCodeInit(false, true))
 			return 0;
 	}
+	YVers_StartCheck();
+	Server_FinishIntroMessage();
 	#if defined ScriptInit_OnYSIInit
 		ScriptInit_OnYSIInit();
 	#endif
@@ -775,7 +801,7 @@ public OnScriptInit(id)
 	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
 		// Dump the final assembly of this script so we can inspect it.
-		DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+		DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm", true, YSI_gscInitMsgB);
 	}
 	ScriptInit_OnFilterScriptInit();
 	ScriptInit_OnGameModeInit();
@@ -797,11 +823,12 @@ public OnFilterScriptInit()
 		// Dump the final assembly of this script so we can inspect it.
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
-			YVers_StartCheck();
-			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
+			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm", false, YSI_gscInitMsgA);
 			if (!ScriptInit_CallOnCodeInit(false, true))
 				return 0;
 		}
+		YVers_StartCheck();
+		Server_FinishIntroMessage();
 		#if defined ScriptInit_OnYSIInit
 			ScriptInit_OnYSIInit();
 		#endif
@@ -813,7 +840,7 @@ public OnFilterScriptInit()
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
 			// Dump the final assembly of this script so we can inspect it.
-			DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+			DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm", true, YSI_gscInitMsgB);
 		}
 		#if defined YSI_LOCK_MODE
 			#if defined FILTERSCRIPT
@@ -858,11 +885,12 @@ public OnGameModeInit()
 			// Dump the final assembly of this script so we can inspect it.
 			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 			{
-				YVers_StartCheck();
-				DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
+				DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm", false, YSI_gscInitMsgA);
 				if (!ScriptInit_CallOnCodeInit(false, false))
 					return 0;
 			}
+			YVers_StartCheck();
+			Server_FinishIntroMessage();
 			#if defined ScriptInit_OnYSIInit
 				ScriptInit_OnYSIInit();
 			#endif
@@ -874,7 +902,7 @@ public OnGameModeInit()
 			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 			{
 				// Dump the final assembly of this script so we can inspect it.
-				DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+				DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm", true, YSI_gscInitMsgB);
 			}
 			#if defined YSI_LOCK_MODE
 				if (YSI_gLockData[
