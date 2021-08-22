@@ -285,9 +285,9 @@ static stock const
 	YSI_gscInitMsgA[] = "  Dumping \"YSI_PRE_INIT.asm\", this",
 	YSI_gscInitMsgB[] = "  Dumping \"YSI_POST_INIT.asm\", this",
 	YSI_gscInitMsgC[] = "   may take a little bit of time.",
-	YSI_gscInitMsgD[] = "           Please wait...",
-	YSI_gscDone[] = "                Done!",
-	YSI_gscFailed[] = "               Failed!";
+	YSI_gscInitMsgD[] = "            Please wait...",
+	YSI_gscDone[] =     "                Done!",
+	YSI_gscFailed[] =   "               Failed!";
 
 static stock
 	bool:YSI_gsObnoxiousHeader = true,
@@ -612,10 +612,10 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			{
 				Server_PrintIntroPart(
 					"  Generating code, this may take a",
-					"little bit of time.  Note that this",
-					"code generation works best with the",
-					"   JIT plugin, which you are not",
-					"   currently using.  Get it here:",
+					" little bit of time.  Note that this",
+					" code generation works best with the",
+					"    JIT plugin, which you are not",
+					"    currently using.  Get it here:",
 					YSI_gscMiniGap,
 					"      https://git.io/jit-plugin",
 					YSI_gscMiniGap,
@@ -635,7 +635,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			// loaded in next time.
 			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
 			Server_PrintIntroPart(
-				"  Dumping \"YSI_CACHE.amx\", this may",
+				" Dumping \"YSI_CACHE.amx\", this may",
 				"     take a little bit of time.",
 				YSI_gscMiniGap,
 				YSI_gscInitMsgD
