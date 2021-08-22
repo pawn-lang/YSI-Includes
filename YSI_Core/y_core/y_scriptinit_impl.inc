@@ -1095,6 +1095,12 @@ CHAIN_FORWARD:ScriptInit_OnYSIExit() = 1;
 // I'm not quite sure what causes it, but there seems to be a bug in the
 // compiler somewhere which messes up the "ysi_debug" automaton and the
 // "YSI_FILTERSCRIPT" variable :(.
+//
+// I eventually figured this one out:
+//
+//     https://github.com/pawn-lang/compiler/issues/666
+//
+// So this fix is probably no longer needed.
 public _ScriptInit_FixState() <_script_init_fix_state : true>
 {
 }
