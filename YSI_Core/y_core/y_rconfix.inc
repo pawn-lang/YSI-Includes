@@ -80,6 +80,12 @@ static stock const
 	YSI_gscOnClientCheckResponse[] = "FIXES_OnClientCheckResponse",
 	YSI_gscRconFixFS[] = "callbackfix.amx";
 
+// This code is always needed, even if fixes.inc exists, because y_master can
+// repeatedly load and unload it to use as a buffer filterscript.  Basically,
+// because this FS is always loaded it ensures that 16 other filterscripts can't
+// all be loaded at once.  So if 15 are loaded and we need an extra space to
+// reload one while preserving data we can unload this one, use the spare space,
+// then load this one back up again.
 y_rconfix_Load()
 {
 	// Test if the fix has already been loaded.
@@ -151,6 +157,7 @@ y_rconfix_Load()
 	if (fexist(YSI_gscRconFixFS))
 	{
 		YSI_SendRconCommand("loadfs ../scriptfiles/callbackfix");
+		state OnClientCheckResponse : OnClientCheckResponse_GM;
 	}
 	else
 	{
