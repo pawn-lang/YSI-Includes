@@ -98,9 +98,9 @@ Optional plugins:
 static stock
 	YSI_gsCalls = 0;
 
-forward @y_inlineTimerCount(Func:func<>, time, count);
+forward @y_inlineTimerCount(Func:func<>, time, count, due);
 
-public @y_inlineTimerCount(Func:func<>, time, count)
+public @y_inlineTimerCount(Func:func<>, time, count, due)
 {
 	--count;
 	@.func();
@@ -111,8 +111,8 @@ public @y_inlineTimerCount(Func:func<>, time, count)
 	}
 	else
 	{
-		// Run again, to track the count.
-		new timer = YSI_SetTimerEx("@y_inlineTimerCount", time, false, "iii", _:func, time, count);
+		// Run again, to track the count.  Reduce jitter by tracking due times.
+		new timer = YSI_SetTimerEx("@y_inlineTimerCount", time + (due - GetTickCount()), false, "iiii", _:func, time, count, due + time);
 		Indirect_SetMeta(func, timer);
 		P:7("y_inlineTimerCount calls: %d (%d), %d", func, ++YSI_gsCalls, timer);
 	}
@@ -126,12 +126,12 @@ public @y_inlineTimerRepeat(Func:func<>)
 	@.func();
 }
 
-forward @y_inlineTimerStart(Func:func<>, time);
+forward @y_inlineTimerStart(Func:func<>, time, due);
 
-public @y_inlineTimerStart(Func:func<>, time)
+public @y_inlineTimerStart(Func:func<>, time, due)
 {
 	// Initial repeating timer, to set the time offset.
-	new timer = YSI_SetTimerEx("@y_inlineTimerRepeat", time, true, "i", _:func);
+	new timer = YSI_SetTimerEx("@y_inlineTimerRepeat", time + (due - GetTickCount()), true, "i", _:func, due + time);
 	Indirect_SetMeta(func, timer);
 	// Call the function after setting the meta, incase it kills the timer.
 	@.func();
@@ -188,14 +188,14 @@ stock Timer_CreateCallback(Func:func<>, initialOrTime, timeOrCount = 0, count = 
 	{
 		// Repeat forever, but DON'T repeat here, this is just the initial offset time.
 		Indirect_Claim(func);
-		new timer = YSI_SetTimerEx("@y_inlineTimerStart", initialOrTime, false, "ii", _:func, timeOrCount);
+		new timer = YSI_SetTimerEx("@y_inlineTimerStart", initialOrTime, false, "iii", _:func, timeOrCount, GetTickCount() + initialOrTime);
 		Indirect_SetMeta(func, timer);
 	}
 	else
 	{
 		// Repeat N times.
 		Indirect_Claim(func);
-		new timer = YSI_SetTimerEx("@y_inlineTimerCount", initialOrTime, false, "iii", _:func, timeOrCount, count);
+		new timer = YSI_SetTimerEx("@y_inlineTimerCount", initialOrTime, false, "iiii", _:func, timeOrCount, count, GetTickCount() + initialOrTime);
 		Indirect_SetMeta(func, timer);
 	}
 	return _:func;

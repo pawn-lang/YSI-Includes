@@ -1646,7 +1646,8 @@ TEST__ y_inline_timer()
 }
 
 static stock
-	YSI_gsCounts[1000] = 0,
+	YSI_gsStarts[1000],
+	YSI_gsCounts[sizeof (YSI_gsStarts)],
 	YSI_gsCount = 0;
 
 TEST__ y_inline1000timers()
@@ -1656,22 +1657,28 @@ TEST__ y_inline1000timers()
 	{
 		for (new i = 0; i != sizeof (YSI_gsCounts); ++i)
 		{
-			printf("%d = %d", i, YSI_gsCounts[i]);
+			printf("Count %d = %d", i, YSI_gsCounts[i]);
+			printf("Time %d = %d", i, YSI_gsStarts[i]);
 		}
 		new str[32];
 		format(str, sizeof (str), "Count = %d", YSI_gsCount);
 		Server_PrintIntroMessage(str);
 	}
-	for (new i = 0; i != sizeof (YSI_gsCounts); ++i)
+	for (new i = 0; i != sizeof (YSI_gsStarts); ++i)
 	{
 		inline X()
 		{
 			//printf("Call %d = %d", i, callCount);
-			++YSI_gsCounts[i];
+			if (++YSI_gsCounts[i] == 50)
+			{
+				//printf("Diff %d = %d", i, GetTickCount() - YSI_gsStarts[i]);
+				YSI_gsStarts[i] = GetTickCount() - YSI_gsStarts[i];
+			}
 			++YSI_gsCount;
 		}
+		YSI_gsStarts[i] = GetTickCount();
 		Timer_CreateCallback(using inline X, 100, 50);
 	}
-	Timer_CreateCallback(using inline Total, 10000, 1);
+	Timer_CreateCallback(using inline Total, 100 * 51, 1);
 }
 
