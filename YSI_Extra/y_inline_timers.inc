@@ -95,22 +95,27 @@ Optional plugins:
 	#error Could not find y_inline
 #endif
 
+static stock
+	YSI_gsCalls = 0;
+
 forward @y_inlineTimerCount(Func:func<>, time, count);
 
 public @y_inlineTimerCount(Func:func<>, time, count)
 {
 	--count;
+	@.func();
 	if (count == 0)
 	{
 		Indirect_Release(func);
+		P:7("y_inlineTimerCount ending: %d (%d)", func, ++YSI_gsCalls);
 	}
 	else
 	{
 		// Run again, to track the count.
 		new timer = YSI_SetTimerEx("@y_inlineTimerCount", time, false, "iii", _:func, time, count);
 		Indirect_SetMeta(func, timer);
+		P:7("y_inlineTimerCount calls: %d (%d), %d", func, ++YSI_gsCalls, timer);
 	}
-	@.func();
 }
 
 forward @y_inlineTimerRepeat(Func:func<>);
