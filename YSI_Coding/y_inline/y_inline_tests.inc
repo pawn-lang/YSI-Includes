@@ -1645,3 +1645,29 @@ TEST__ y_inline_timer()
 	Timer_KillCallback(timer);
 }
 
+static stock
+	YSI_gsCount = 0;
+
+TEST__ y_inline1000timers()
+{
+	printf("y_inline1000timers");
+	inline const Total()
+	{
+		new str[32];
+		format(str, sizeof (str), "Count = %d", YSI_gsCount);
+		Server_PrintIntroMessage(str);
+	}
+	for (new i = 0; i != 1000; ++i)
+	{
+		new callCount = 0;
+		inline X()
+		{
+			//printf("Call %d = %d", i, callCount);
+			++callCount;
+			++YSI_gsCount;
+		}
+		Timer_CreateCallback(using inline X, 100, 50);
+	}
+	Timer_CreateCallback(using inline Total, 100 * 60, 1);
+}
+
