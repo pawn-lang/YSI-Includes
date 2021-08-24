@@ -157,6 +157,7 @@ y_rconfix_Load()
 	if (fexist(YSI_gscRconFixFS))
 	{
 		YSI_SendRconCommand("loadfs ../scriptfiles/callbackfix");
+		state OnClientCheckResponse : OnClientCheckResponse_GM;
 	}
 	else
 	{
