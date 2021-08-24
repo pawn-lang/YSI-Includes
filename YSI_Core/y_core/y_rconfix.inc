@@ -171,3 +171,39 @@ stock y_rconfix_Unload()
 	YSI_SendRconCommand("unloadfs ../scriptfiles/callbackfix");
 }
 
+#if defined YSI_FIX_CALLBACKS
+	forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+
+	public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
+	{
+		// Enable, then disable, the call in to the real version (if it exists).
+		state OnClientCheckResponse : OnClientCheckResponse_GM;
+		new
+			ret = FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+		state OnClientCheckResponse : OnClientCheckResponse_FS;
+		return ret;
+	}
+
+	forward FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+	public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata) <OnClientCheckResponse : OnClientCheckResponse_FS>
+	{
+		return 0;
+	}
+
+	public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata) <>
+	{
+		return 0;
+	}
+
+	static stock _FIXES_OnClientCheckResponse() <OnClientCheckResponse : OnClientCheckResponse_GM, OnClientCheckResponse : OnClientCheckResponse_FS>
+	{
+		// Define states only.
+	}
+
+	#if defined _ALS_OnClientCheckResponse
+		#error _ALS_OnClientCheckResponse defined
+	#endif
+	#define _ALS_OnClientCheckResponse
+	#define OnClientCheckResponse(%0) FIXES_OnClientCheckResponse(%0) <OnClientCheckResponse : OnClientCheckResponse_GM>
+#endif
+
