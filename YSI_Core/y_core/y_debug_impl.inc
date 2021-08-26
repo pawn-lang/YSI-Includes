@@ -748,46 +748,7 @@ static stock bool:Debug_IsStringLike(addr, len = 256)
 	return 0 < i < len;
 }
 
-/*-------------------------------------------------------------------------*//**
- * <param name="output">Storage.</param>
- * <param name="len">Maximum string length.</param>
- * <returns>
- *  Generate a random temporary filename.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-static stock bool:Debug_RandomTempFile(output[], len = sizeof (output))
-{
-	// Ensure there's space for `NULL` and at least one character.
-	new end = len - 5;
-	if (end < 1)
-	{
-		return false;
-	}
-	do
-	{
-		output[end] = '\0';
-		for (new i = 0; i != end; ++i)
-		{
-			new ch = random(62);
-			if (ch < 26)
-			{
-				output[i] = ch + 'a';
-			}
-			else if (ch < 52)
-			{
-				output[i] = ch + ('A' - 26);
-			}
-			else
-			{
-				output[i] = ch + ('0' - 52);
-			}
-		}
-		strcat(output, ".tmp", len);
-	}
-	while (fexist(output));
-	return true;
-}
+forward bool:RandomTempFile(output[], const ext[] = "tmp", len = sizeof (output));
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
@@ -919,7 +880,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 
 	// Dump the rest of the data to a file.
 	new File:fhnd;
-	if (Debug_RandomTempFile(name, 8 + 4 + 1) && (fhnd = fopen(name, io_write)))
+	if (RandomTempFile(name, ".ext", 10 + 3 + 2) && (fhnd = fopen(name, io_write)))
 	{
 		YSI_PrintF("    (full data dumped to: %s)\n", name);
 		// Dump the file.

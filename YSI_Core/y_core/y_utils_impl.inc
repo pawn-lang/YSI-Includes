@@ -2674,3 +2674,47 @@ stock PrintArg(n)
 
 #define printarg PrintArg
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="output">Storage.</param>
+ * <param name="ext">Extension.</param>
+ * <param name="len">Maximum string length.</param>
+ * <returns>
+ *  Generate a random temporary filename.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:RandomTempFile(output[], const ext[] = "tmp", len = sizeof (output))
+{
+	// Ensure there's space for `NULL` and at least one character.
+	new end = len - strlen(ext) - 2;
+	if (end < 1)
+	{
+		return false;
+	}
+	do
+	{
+		for (new i = 0; i != end; ++i)
+		{
+			new ch = random(62);
+			if (ch < 26)
+			{
+				output[i] = ch + 'a';
+			}
+			else if (ch < 52)
+			{
+				output[i] = ch + ('A' - 26);
+			}
+			else
+			{
+				output[i] = ch + ('0' - 52);
+			}
+		}
+		// `len` is passed here as a courtesy, we know there's space.
+		output[end] = '.';
+		output[end + 1] = '\0';
+		strcat(output[end], ext, len);
+	}
+	while (fexist(output));
+	return true;
+}
+
