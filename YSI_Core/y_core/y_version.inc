@@ -292,3 +292,76 @@ static stock YVers_PrintHeader()
 	
 #endif
 
+#endinput
+
+// SA:MP version determination (from includes only).
+
+
+#if !defined _samp_included
+	// No SA:MP version.
+	#endinput
+#endif
+
+#if defined StartRecordingPlayback
+	// NPC mode.
+#else
+	// Normal mode.
+	#if !defined SendPlayerMessageToPlayer
+		// 0.1
+	#endif
+	#if !defined DisableNameTagLOS
+		// 0.2
+	#endif
+	#if !defined LimitPlayerMarkerRadius
+		// 0.3a R4
+	#endif
+	#if INVALID_OBJECT_ID == 255
+		// 0.3a R7
+		// 0.3a R8
+	#endif
+	#if !defined ManualVehicleEngineAndLights
+		// 0.3b R2
+	#endif
+	#if !defined GetPlayerNetworkStats
+		// 0.3c
+		// 0.3c R2-2
+	#endif
+	#if !defined DIALOG_STYLE_PASSWORD
+		// 0.3c R4-1
+		// 0.3c R5
+	#endif
+	#if !defined GetPlayerVersion
+		// 0.3d
+		// 0.3d R2
+	#endif
+	#if !defined EnableVehicleFriendlyFire
+		// 0.3e
+		// 0.3e R2
+	#endif
+	#if !defined VectorSize
+		// 0.3x
+		// 0.3x R1-2
+		// 0.3x R2
+		// 0.3x R2 patch1
+	#endif
+	#if !defined BlockIpAddress
+		// 0.3z R1
+		// 0.3z R1-2
+	#endif
+	#if !defined GetPlayerPoolSize
+		// 0.3z R2-2
+		// 0.3z R3
+		// 0.3z R4 (added `OnTrailerUpdate`).
+	#endif
+	#if !defined AddCharModel
+		// 0.3.7 R2-1-1
+		// 0.3.7 R2-2-1
+		// 0.3.7 R3
+		// 0.3.8 RC1 (added `OnPlayerFinishedDownloading`).
+	#endif
+	//#if !defined
+		// 0.3.8 RC4-1
+		// 0.3DL
+	//#endif
+#endif
+
