@@ -776,6 +776,7 @@ forward bool:RandomTempFile(output[], const ext[] = "tmp", len = sizeof (output)
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:16
  *      
  *          str[6] = "hello"
+ *          (full data dumped to: fgdjkeGjAz.tmp)
  *      
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:17
  *      
@@ -792,12 +793,12 @@ forward bool:RandomTempFile(output[], const ext[] = "tmp", len = sizeof (output)
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:20
  *      
  *          Float:farr[7] = { 11.000, 11.000, 11.000, 12.000, 13.000, ... }
- *          (full data dumped to: f1fRyrO.tmp)
+ *          (full data dumped to: HOf6OQgcC8.tmp)
  *      
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:21
- *     
- *         MyCustomTag:mctarr[2] = { 6, 7 }
- *     
+ *      
+ *          MyCustomTag:mctarr[2] = { 6, 7 }
+ *      
  * </remarks>
  *//*------------------------------------------------------------------------**/
  
@@ -880,7 +881,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 
 	// Dump the rest of the data to a file.
 	new File:fhnd;
-	if (RandomTempFile(name, ".ext", 10 + 3 + 2) && (fhnd = fopen(name, io_write)))
+	if (RandomTempFile(name, "tmp", 10 + 3 + 2) && (fhnd = fopen(name, io_write)))
 	{
 		YSI_PrintF("    (full data dumped to: %s)\n", name);
 		// Dump the file.
