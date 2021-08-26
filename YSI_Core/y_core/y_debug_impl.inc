@@ -748,7 +748,7 @@ static stock bool:Debug_IsStringLike(addr, len = 256)
 	return 0 < i < len;
 }
 
-forward bool:RandomTempFile(output[], const ext[] = "tmp", len = sizeof (output));
+forward File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge = YSI_TEMP_FILE_AGE);
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
@@ -881,7 +881,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 
 	// Dump the rest of the data to a file.
 	new File:fhnd;
-	if (RandomTempFile(name, "tmp", 10 + 3 + 2) && (fhnd = fopen(name, io_write)))
+	if ((fhnd = ftemporary(name, "tmp", 10 + 3 + 2)))
 	{
 		YSI_PrintF("    (full data dumped to: %s)\n", name);
 		// Dump the file.

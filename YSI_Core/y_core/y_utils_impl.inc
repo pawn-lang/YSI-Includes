@@ -2675,46 +2675,63 @@ stock PrintArg(n)
 #define printarg PrintArg
 
 /*-------------------------------------------------------------------------*//**
- * <param name="output">Storage.</param>
+ * <param name="name">Storage.</param>
  * <param name="ext">Extension.</param>
  * <param name="len">Maximum string length.</param>
+ * <param name="maxAge">Maximum temporary file age.</param>
  * <returns>
- *  Generate a random temporary filename.
+ *  Generate a random temporary filename and open it.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock bool:RandomTempFile(output[], const ext[] = "tmp", len = sizeof (output))
+stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge = YSI_TEMP_FILE_AGE)
 {
 	// Ensure there's space for `NULL` and at least one character.
-	new end = len - strlen(ext) - 2;
-	if (end < 1)
+	if (len - strlen(ext) - 2 < YSI_TEMP_FILE_LENGTH)
 	{
-		return false;
+		return File:0;
 	}
 	do
 	{
-		for (new i = 0; i != end; ++i)
+		for (new i = 0; i != YSI_TEMP_FILE_LENGTH; ++i)
 		{
 			new ch = random(62);
 			if (ch < 26)
 			{
-				output[i] = ch + 'a';
+				name[i] = ch + 'a';
 			}
 			else if (ch < 52)
 			{
-				output[i] = ch + ('A' - 26);
+				name[i] = ch + ('A' - 26);
 			}
 			else
 			{
-				output[i] = ch + ('0' - 52);
+				name[i] = ch + ('0' - 52);
 			}
 		}
 		// `len` is passed here as a courtesy, we know there's space.
-		output[end] = '.';
-		output[end + 1] = '\0';
-		strcat(output[end], ext, len);
+		name[YSI_TEMP_FILE_LENGTH] = '.';
+		name[YSI_TEMP_FILE_LENGTH + 1] = '\0';
+		strcat(name[YSI_TEMP_FILE_LENGTH], ext, len);
 	}
-	while (fexist(output));
-	return true;
+	while (fexist(name));
+	// Open the file, to ensure it is created.
+	len = _:fopen(name, io_readwrite);
+	if (!len)
+	{
+		return File:0;
+	}
+	// Add the file to `.tempfiles`.
+	new File:temps = fopen(".tempfiles", io_append);
+	if (!temps)
+	{
+		fclose(File:len);
+		return File:0;
+	}
+	new line[YSI_TEMP_FILE_LENGTH + 32];
+	format(line, sizeof (line), "%d %s\n", gettime() + maxAge, name);
+	fwrite(temps, line);
+	fclose(temps);
+	return File:len;
 }
 

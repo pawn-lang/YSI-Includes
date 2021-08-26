@@ -148,6 +148,16 @@ Optional plugins:
 	#define YSI_FIX_CALLBACKS
 #endif
 
+#if !defined YSI_TEMP_FILE_LENGTH
+	// Filename size.
+	#define YSI_TEMP_FILE_LENGTH (10)
+#endif
+
+#if !defined YSI_TEMP_FILE_AGE
+	// 1 month.
+	#define YSI_TEMP_FILE_AGE (60 * 60 * 24 * 30)
+#endif
+
 // These three includes are just defines.  They declare no code at all, only
 // variables.
 #include "y_globaltags"
