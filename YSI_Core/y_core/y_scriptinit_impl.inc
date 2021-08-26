@@ -383,63 +383,6 @@ stock Server_FinishIntroMessage()
 	YSI_gsFirstHeader = true;
 }
 
-static stock const
-	YSI_gscWindows[] = "Windows",
-	YSI_gscLinux[] = "Linux";
-
-stock Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
-{
-	#if ((__Pawn & 0x0F) >= 0x0A)
-		// Accurate version.
-		format(version, vlen, "%d.%02d.%02d", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
-	#else
-		// Estimate version - probably this one.
-		version[0] = '\0',
-		strcat(version, "3.2.3664", vlen);
-	#endif
-	#if __COMPILER_OS == __COMPILER_WINDOWS
-		os[0] = '\0',
-		strcat(os, YSI_gscWindows, olen);
-	#else
-		os[0] = '\0',
-		strcat(os, YSI_gscLinux, olen);
-	#endif
-}
-
-stock Server_GetServerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
-{
-	// Not done yet.
-	version[0] = '\0',
-	strcat(version, "<unknown>", vlen);
-	if (Server_IsWindowsHost())
-	{
-		os[0] = '\0',
-		strcat(os, YSI_gscWindows, olen);
-	}
-	else
-	{
-		os[0] = '\0',
-		strcat(os, YSI_gscLinux, olen);
-	}
-}
-
-stock bool:Server_CrashDetectExists()
-{
-	// 0xFF is roughly flags, but some are mutually exclusive:
-	//
-	//   1 - Present (read only, write always 0).
-	//   2 - long_call_time checks enabled (write ignored when `server.cfg` has `long_call_time 0`).
-	//   4 - long_call_time reset to default time (write only, read always 0).
-	//   8 - long_call_time restart check from now (write only, read always 0).
-	//
-	#emit ZERO.pri
-	#emit LCTRL         0xFF
-	#emit NOT
-	#emit NOT
-	#emit RETN
-	return false;
-}
-
 stock Server_SetLongCallTime(usTime)
 {
 	// Setting this to `0` doesn't change the internal time, merely disables the check.
@@ -505,30 +448,6 @@ stock Server_GetLongCallDefault()
 	#emit SCTRL         0xFE
 	#emit MOVE.pri
 	#emit RETN
-	return 0;
-}
-
-// 0 - No JIT
-// 1 - Pre 2.1
-// 2 - Post 2.1
-// 3 - ???, in `OnJITCompile`
-stock Server_GetJITVersion()
-{
-	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITED)
-	{
-		#emit LCTRL     6
-		#emit MOVE.alt
-		#emit LCTRL     8
-		#emit NEQ
-		#emit CONST.alt 1
-		#emit XCHG
-		#emit SHL
-		#emit RETN
-	}
-	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING)
-	{
-		return 3;
-	}
 	return 0;
 }
 
