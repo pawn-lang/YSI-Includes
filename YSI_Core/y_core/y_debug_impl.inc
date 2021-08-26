@@ -716,7 +716,6 @@ stock Debug_Level(level = -1)
 #define DebugLevel Debug_Level
 
 native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, addr) = printf;
-forward bool:RandomTempFile(output[], const extension[], len = sizeof (output));
 
 /*-------------------------------------------------------------------------*//**
  * <param name="addr">A pointer to a thing that might be a string.</param>
@@ -747,6 +746,47 @@ static stock bool:Debug_IsStringLike(addr, len = 256)
 	// Zero-length strings are possible, but we don't care about those.
 	// Must have a `NULL` byte at the end.
 	return 0 < i < len;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="output">Storage.</param>
+ * <param name="len">Maximum string length.</param>
+ * <returns>
+ *  Generate a random temporary filename.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+static stock bool:Debug_RandomTempFile(output[], len = sizeof (output))
+{
+	// Ensure there's space for `NULL` and at least one character.
+	new end = len - 5;
+	if (end < 1)
+	{
+		return false;
+	}
+	do
+	{
+		output[end] = '\0';
+		for (new i = 0; i != end; ++i)
+		{
+			new ch = random(62);
+			if (ch < 26)
+			{
+				output[i] = ch + 'a';
+			}
+			else if (ch < 52)
+			{
+				output[i] = ch + ('A' - 26);
+			}
+			else
+			{
+				output[i] = ch + ('0' - 52);
+			}
+		}
+		strcat(output, ".tmp", len);
+	}
+	while (fexist(output));
+	return true;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -883,8 +923,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 
 	// Dump the rest of the data to a file.
 	new File:fhnd;
-	//name = "y_debug.";
-	if (RandomTempFile(name, ".tmp", 8 + 4 + 1) && (fhnd = fopen(name, io_write)))
+	if (Debug_RandomTempFile(name, 8 + 4 + 1) && (fhnd = fopen(name, io_write)))
 	{
 		YSI_PrintF("    (full data dumped to: %s)\n", name);
 		// Dump the file.
