@@ -718,14 +718,63 @@ stock Debug_Level(level = -1)
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Try and print a wide range of variables, with their source expression.
+ *
+ *  Examples:
+ *
+ *      new arr[] = {33, 33, 33};
+ *      new Float:farr[] = {11.0, 11.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0};
+ *      new MyCustomTag:mctarr[] = { MyCustomTag:6, MyCustomTag:7 };
+ *      new str[] = "hello";
+ *      new var1 = 2;
+ *      new Float:f = 5.5;
+ *      P:Q(str);
+ *      P:Q(var1);
+ *      P:Q(f);
+ *      P:Q(arr);
+ *      P:Q(farr, 7);
+ *      P:Q(mctarr);
+ *
+ *  If an array length cannot be determined you can pass it as a second arg.
+ *
+ *  All tags are supported, the output from the above is:
+ *
+ *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:14
+ *      
+ *          str[6] = "hello"
+ *      
+ *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:15
+ *      
+ *          var1 = 67
+ *      
+ *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:16
+ *      
+ *          Float:f = 0.000
+ *      
+ *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:17
+ *      
+ *          arr[3] = { 67, 58, 92 }
+ *      
+ *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:18
+ *      
+ *          Float:farr[7] = { 0.000, 0.000, 0.000, 0.000, 0.000, ... }
+ *      
+ *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:19
+ *      
+ *          MyCustomTag:mctarr[2] = { 67, 58 }
+ *
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, Debug_PrintQ_TAG:addr) = printf;
 forward bool:IsStringLike(addr);
 
-stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const expr[], GLOBAL_TAG_TYPES:...)
+stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const expr[], const file[], line, GLOBAL_TAG_TYPES:...)
 {
+	// Get the tag name.
+	new name[32];
+	AMX_GetTagByValue(_:tag, name);
+	printf("[P:Q] %s:%d", file, line);
+	printf(" ");
 	if (size <= Debug_PrintQ_SIZEOF:1)
 	{
 		// Normal variable.
@@ -733,37 +782,37 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 		{
 		case (tagof (Float:)):
 		{
-			printf("%s = Float:%.3f", expr, Float:getarg(3));
+			printf("    Float:%s = %.3f", expr, Float:getarg(3));
 		}
-		case (tagof (File:)):
-		{
-			printf("%s = File:%d", expr, getarg(3));
-		}
+		//case (tagof (File:)):
+		//{
+		//	printf("    File:%s = %d", expr, getarg(3));
+		//}
 		case (tagof (bool:)):
 		{
-			printf("%s = bool:%s", expr, getarg(3) ? ("true") : ("false"));
+			printf("    bool:%s = %s", expr, getarg(3) ? ("    true") : ("    false"));
 		}
 		case (tagof (_:)):
 		{
-			printf("%s = %d", expr, getarg(3));
+			printf("    %s = %d", expr, getarg(3));
 		}
 		default:
 		{
-			printf("%s = <%d>:%d", expr, _:tag, getarg(3));
+			printf("    %s:%s = %d", name, expr, _:tag, getarg(3));
 		}
 		}
 	}
 	else
 	{
-		new arr[64];
 		// Array or string.
 		if (tag == Debug_PrintQ_TAG:tagof(_:))
 		{
-			#emit LOAD.S.pri 24
+			#emit LOAD.S.pri 32
 			#emit STOR.S.pri tag
 			if (IsStringLike(_:tag))
 			{
-				Debug_PrintQ_PRINT("%s[%d] = \"%s\"", expr, size, tag);
+				Debug_PrintQ_PRINT("    %s[%d] = \"%s\"", expr, size, tag);
+				printf(" ");
 				return;
 			}
 			tag = Debug_PrintQ_TAG:tagof (_:);
@@ -773,15 +822,31 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 			switch (size)
 			{
 			case 2:
-				format(arr, sizeof (arr), "%.3f, %.3f", Float:getarg(3, 0), Float:getarg(3, 1));
+				printf("    Float:%s[%d] = { %.3f, %.3f }", expr, _:size, Float:getarg(3, 0), Float:getarg(3, 1));
 			case 3:
-				format(arr, sizeof (arr), "%.3f, %.3f, %.3f", Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2));
+				printf("    Float:%s[%d] = { %.3f, %.3f, %.3f }", expr, _:size, Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2));
 			case 4:
-				format(arr, sizeof (arr), "%.3f, %.3f, %.3f, %.3f", Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2), Float:getarg(3, 3));
+				printf("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f }", expr, _:size, Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2), Float:getarg(3, 3));
 			case 5:
-				format(arr, sizeof (arr), "%.3f, %.3f, %.3f, %.3f, %.3f", Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2), Float:getarg(3, 3), Float:getarg(3, 4));
+				printf("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f, %.3f }", expr, _:size, Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2), Float:getarg(3, 3), Float:getarg(3, 4));
 			default:
-				format(arr, sizeof (arr), "%.3f, %.3f, %.3f, %.3f, %.3f, ...", Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2), Float:getarg(3, 3), Float:getarg(3, 4));
+				printf("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f, %.3f, ... }", expr, _:size, Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2), Float:getarg(3, 3), Float:getarg(3, 4));
+			}
+		}
+		else if (tag == Debug_PrintQ_TAG:tagof (_:))
+		{
+			switch (size)
+			{
+			case 2:
+				printf("    %s[%d] = { %d, %d }", expr, _:size, getarg(3, 0), getarg(3, 1));
+			case 3:
+				printf("    %s[%d] = { %d, %d, %d }", expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2));
+			case 4:
+				printf("    %s[%d] = { %d, %d, %d, %d }", expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3));
+			case 5:
+				printf("    %s[%d] = { %d, %d, %d, %d, %d }", expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3), getarg(3, 4));
+			default:
+				printf("    %s[%d] = { %d, %d, %d, %d, %d, ... }", expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3), getarg(3, 4));
 			}
 		}
 		else
@@ -789,23 +854,23 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 			switch (size)
 			{
 			case 2:
-				format(arr, sizeof (arr), "%d, %d", getarg(3, 0), getarg(3, 1));
+				printf("    %s:%s[%d] = { %d, %d }", name, expr, _:size, getarg(3, 0), getarg(3, 1));
 			case 3:
-				format(arr, sizeof (arr), "%d, %d, %d", getarg(3, 0), getarg(3, 1), getarg(3, 2));
+				printf("    %s:%s[%d] = { %d, %d, %d }", name, expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2));
 			case 4:
-				format(arr, sizeof (arr), "%d, %d, %d, %d", getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3));
+				printf("    %s:%s[%d] = { %d, %d, %d, %d }", name, expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3));
 			case 5:
-				format(arr, sizeof (arr), "%d, %d, %d, %d, %d", getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3), getarg(3, 4));
+				printf("    %s:%s[%d] = { %d, %d, %d, %d, %d }", name, expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3), getarg(3, 4));
 			default:
-				format(arr, sizeof (arr), "%d, %d, %d, %d, %d, ...", getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3), getarg(3, 4));
+				printf("    %s:%s[%d] = { %d, %d, %d, %d, %d, ... }", name, expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3), getarg(3, 4));
 			}
 		}
-		printf("%s[%d] = { %s }", expr, _:size, arr);
 	}
+	printf(" ");
 }
 
-#define Debug_PrintQ(%0) Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tagof (%0), Debug_PrintQ_SIZEOF:sizeof (%0), #%0, (%0))
-#define Debug_PrintQ_IMPL(%0(%1,%2),%9(%9,%9),%7,%8) Debug_PrintQ_IMPL(%0(%1),%2,%7,%8)
+#define Debug_PrintQ(%0) Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tagof(%0),Debug_PrintQ_SIZEOF:sizeof(%0),(#%0),__file,__line,_:(%0))
+#define Debug_PrintQ_IMPL(%0(%1,%2),%9(%9,%9),(#%7,%9),%4,%5,_:(%8,%9)) Debug_PrintQ_IMPL(%0(%1),Debug_PrintQ_SIZEOF:%2,(#%7),%4,%5,_:(%8))
 
 #define Debug_PrintQ_TAG:tagof("%0") Debug_PrintQ_TAG:-1
 #define Debug_PrintQ_SIZEOF:sizeof(%0[%1]) Debug_PrintQ_SIZEOF:sizeof(%0[])
