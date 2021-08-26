@@ -2675,37 +2675,6 @@ stock PrintArg(n)
 #define printarg PrintArg
 
 /*-------------------------------------------------------------------------*//**
- * <param name="addr">A pointer to a thing that might be a string.</param>
- * <returns>
- *  Prints a string passed as a vararg to the calling function.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-// Checks if the data pointed to by `addr` might possibly be a string.
-stock bool:IsStringLike(addr, len = 256)
-{
-	new i = 0;
-	len *= cellbytes;
-	for (i = 0; i != len; i += cellbytes)
-	{
-		new ch = AMX_Read(addr + i);
-		if (ch == 0)
-		{
-			break;
-		}
-		if (ch < ' ' || ch > '~')
-		{
-			// Outside regular ASCII.  I know that doesn't mean it isn't a
-			// string, but again, I don't care...
-			return false;
-		}
-	}
-	// Zero-length strings are possible, but we don't care about those.
-	// Must have a `NULL` byte at the end.
-	return 0 < i < len;
-}
-
-/*-------------------------------------------------------------------------*//**
  * <param name="output">Storage.</param>
  * <param name="allAscii">All characters or just letters and numbers.</param>
  * <param name="len">Maximum string length.</param>

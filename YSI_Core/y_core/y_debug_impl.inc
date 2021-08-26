@@ -715,6 +715,40 @@ stock Debug_Level(level = -1)
 }
 #define DebugLevel Debug_Level
 
+native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, addr) = printf;
+forward bool:RandomTempFile(output[], const extension[], len = sizeof (output));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="addr">A pointer to a thing that might be a string.</param>
+ * <returns>
+ *  Prints a string passed as a vararg to the calling function.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+// Checks if the data pointed to by `addr` might possibly be a string.
+static stock bool:Debug_IsStringLike(addr, len = 256)
+{
+	new i = 0;
+	len *= cellbytes;
+	for (i = 0; i != len; i += cellbytes)
+	{
+		new ch = AMX_Read(addr + i);
+		if (ch == 0)
+		{
+			break;
+		}
+		if (ch < ' ' || ch > '~')
+		{
+			// Outside regular ASCII.  I know that doesn't mean it isn't a
+			// string, but again, I don't care...
+			return false;
+		}
+	}
+	// Zero-length strings are possible, but we don't care about those.
+	// Must have a `NULL` byte at the end.
+	return 0 < i < len;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Try and print a wide range of variables, with their source expression.
@@ -737,38 +771,35 @@ stock Debug_Level(level = -1)
  *  If an array length cannot be determined you can pass it as a second arg.
  *
  *  All tags are supported, the output from the above is:
- *
- *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:14
- *      
- *          str[6] = "hello"
- *      
- *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:15
- *      
- *          var1 = 67
  *      
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:16
  *      
- *          Float:f = 0.000
+ *          str[6] = "hello"
  *      
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:17
  *      
- *          arr[3] = { 67, 58, 92 }
+ *          var1 = 2
  *      
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:18
  *      
- *          Float:farr[7] = { 0.000, 0.000, 0.000, 0.000, 0.000, ... }
+ *          Float:f = 5.500
  *      
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:19
  *      
- *          MyCustomTag:mctarr[2] = { 67, 58 }
- *
+ *          arr[3] = { 33, 33, 33 }
+ *      
+ *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:20
+ *      
+ *          Float:farr[7] = { 11.000, 11.000, 11.000, 12.000, 13.000, ... }
+ *          (full data dumped to: f1fRyrO.tmp)
+ *      
+ *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:21
+ *     
+ *         MyCustomTag:mctarr[2] = { 6, 7 }
+ *     
  * </remarks>
  *//*------------------------------------------------------------------------**/
  
-native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, addr) = printf;
-forward bool:IsStringLike(addr, len = 256);
-forward bool:RandomTempFile(output[], const extension[], len = sizeof (output));
-
 stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const expr[], const file[], line, GLOBAL_TAG_TYPES:...)
 {
 	// Get the tag name.
@@ -797,7 +828,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 		// Reuse `line` because we no longer need it.
 		#emit LOAD.S.pri 32
 		#emit STOR.S.pri line
-		if (IsStringLike(line, _:size))
+		if (Debug_IsStringLike(line, _:size))
 			return Debug_PrintQ_PRINT("    %s[%d] = \"%s\"\n", expr, size, line);
 	}
 
