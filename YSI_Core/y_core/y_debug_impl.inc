@@ -766,7 +766,7 @@ stock Debug_Level(level = -1)
  *//*------------------------------------------------------------------------**/
  
 native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, addr) = printf;
-forward bool:IsStringLike(addr);
+forward bool:IsStringLike(addr, len = 256);
 forward bool:RandomTempFile(output[], const extension[], len = sizeof (output));
 
 stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const expr[], const file[], line, GLOBAL_TAG_TYPES:...)
@@ -797,7 +797,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 		// Reuse `line` because we no longer need it.
 		#emit LOAD.S.pri 32
 		#emit STOR.S.pri line
-		if (IsStringLike(line))
+		if (IsStringLike(line, _:size))
 			return Debug_PrintQ_PRINT("    %s[%d] = \"%s\"\n", expr, size, line);
 	}
 

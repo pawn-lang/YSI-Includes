@@ -2682,14 +2682,13 @@ stock PrintArg(n)
  *//*------------------------------------------------------------------------**/
 
 // Checks if the data pointed to by `addr` might possibly be a string.
-stock bool:IsStringLike(addr)
+stock bool:IsStringLike(addr, len = 256)
 {
-	//printf("IsStringLike");
 	new i = 0;
-	for (i = 0; i != 256 * cellbytes; i += cellbytes)
+	len *= cellbytes;
+	for (i = 0; i != len; i += cellbytes)
 	{
 		new ch = AMX_Read(addr + i);
-		//printf("ch = %x", ch);
 		if (ch == 0)
 		{
 			break;
@@ -2702,7 +2701,8 @@ stock bool:IsStringLike(addr)
 		}
 	}
 	// Zero-length strings are possible, but we don't care about those.
-	return i != 0;
+	// Must have a `NULL` byte at the end.
+	return 0 < i < len;
 }
 
 /*-------------------------------------------------------------------------*//**
