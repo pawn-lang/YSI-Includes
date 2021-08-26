@@ -765,7 +765,7 @@ stock Debug_Level(level = -1)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, Debug_PrintQ_TAG:addr) = YSI_PrintF;
+native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, Debug_PrintQ_TAG:addr) = printf;
 forward bool:IsStringLike(addr);
 
 stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const expr[], const file[], line, GLOBAL_TAG_TYPES:...)
@@ -869,9 +869,15 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 	YSI_PrintF(" ");
 }
 
-#define Debug_PrintQ(%0) Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tagof(%0),Debug_PrintQ_SIZEOF:sizeof(%0),(#%0),__file,__line,_:(%0))
+//#define Debug_PrintQ(%0) Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tagof(%0),Debug_PrintQ_SIZEOF:sizeof(%0),(#%0),__file,__line,_:(%0))
 #define Debug_PrintQ_IMPL(%0(%1,%2),%9(%9,%9),(#%7,%9),%4,%5,_:(%8,%9)) Debug_PrintQ_IMPL(%0(%1),Debug_PrintQ_SIZEOF:%2,(#%7),%4,%5,_:(%8))
 
 #define Debug_PrintQ_TAG:tagof("%0") Debug_PrintQ_TAG:-1
 #define Debug_PrintQ_SIZEOF:sizeof(%0[%1]) Debug_PrintQ_SIZEOF:sizeof(%0[])
+
+#if _DEBUG >= 1
+	#define Debug_PrintQ(%0); Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tagof(%0),Debug_PrintQ_SIZEOF:sizeof(%0),(#%0),__file,__line,_:(%0));
+#else
+	#define Debug_PrintQ(%0);
+#endif
 
