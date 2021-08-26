@@ -1020,6 +1020,31 @@ stock AMX_WriteArray(addr, const src[], len = sizeof (src))
 	}
 }
 
+stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
+{
+	new
+		idx,
+		buffer,
+		value;
+	while ((idx = AMX_GetEntry(AMX_TABLE_TAGS, idx, buffer)))
+	{
+		#emit LREF.S.pri buffer
+		#emit STOR.S.pri value
+		// Ignore the top two bits - they're flags we don't need.
+		if (value & 0x3FFFFFFF == tag & 0x3FFFFFFF)
+		{
+			// Found the tag, get the name.
+			buffer += 4;
+			#emit LREF.S.pri buffer
+			#emit STOR.S.pri buffer
+			buffer += AMX_BASE_ADDRESS;
+			AMX_ReadString(buffer, name, len);
+			strunpack(name, name, len);
+			//printf("tag %d (%s) = %d, %d", idx, name, value & 0x3FFFFFFF, _:tag & 0x3FFFFFFF);
+		}
+	}
+}
+
 //stock AMX_CodToDat(ptr)
 //{
 //	// Convert a pointer in to the code segment in to a data offset.
