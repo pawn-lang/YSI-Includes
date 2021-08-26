@@ -764,109 +764,129 @@ stock Debug_Level(level = -1)
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
-
-native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, Debug_PrintQ_TAG:addr) = printf;
+ 
+native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, addr) = printf;
 forward bool:IsStringLike(addr);
+forward bool:RandomTempFile(output[], const extension[], len = sizeof (output));
 
 stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const expr[], const file[], line, GLOBAL_TAG_TYPES:...)
 {
 	// Get the tag name.
-	new name[32];
+	new name[128];
 	AMX_GetTagByValue(_:tag, name);
-	YSI_PrintF("[P:Q] %s:%d", file, line);
-	YSI_PrintF(" ");
+	YSI_PrintF("[P:Q] %s:%d\n", file, line);
 	if (size <= Debug_PrintQ_SIZEOF:1)
 	{
 		// Normal variable.
 		switch (tag)
 		{
 		case (tagof (Float:)):
-		{
-			YSI_PrintF("    Float:%s = %.3f", expr, Float:getarg(3));
-		}
-		//case (tagof (File:)):
-		//{
-		//	YSI_PrintF("    File:%s = %d", expr, getarg(3));
-		//}
+			return YSI_PrintF("    Float:%s = %.3f\n", expr, Float:getarg(5));
 		case (tagof (bool:)):
-		{
-			YSI_PrintF("    bool:%s = %s", expr, getarg(3) ? ("    true") : ("    false"));
-		}
+			return YSI_PrintF("    bool:%s = %s\n", expr, getarg(5) ? ("    true") : ("    false"));
 		case (tagof (_:)):
-		{
-			YSI_PrintF("    %s = %d", expr, getarg(3));
-		}
+			return YSI_PrintF("    %s = %d\n", expr, getarg(5));
 		default:
-		{
-			YSI_PrintF("    %s:%s = %d", name, expr, _:tag, getarg(3));
+			return YSI_PrintF("    %s:%s = %d\n", name, expr, _:tag, getarg(5));
 		}
+	}
+
+	// Array or string.
+	if (tag == Debug_PrintQ_TAG:tagof(_:))
+	{
+		// Reuse `line` because we no longer need it.
+		#emit LOAD.S.pri 32
+		#emit STOR.S.pri line
+		if (IsStringLike(line))
+			return Debug_PrintQ_PRINT("    %s[%d] = \"%s\"\n", expr, size, line);
+	}
+
+	if (tag == Debug_PrintQ_TAG:tagof (Float:))
+	{
+		switch (size)
+		{
+		case 2:
+			return YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1));
+		case 3:
+			return YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2));
+		case 4:
+			return YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2), Float:getarg(5, 3));
+		case 5:
+			return YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2), Float:getarg(5, 3), Float:getarg(5, 4));
+		default:
+			YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f, %.3f, ... }", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2), Float:getarg(5, 3), Float:getarg(5, 4));
+		}
+	}
+	else if (tag == Debug_PrintQ_TAG:tagof (_:))
+	{
+		switch (size)
+		{
+		case 2:
+			return YSI_PrintF("    %s[%d] = { %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1));
+		case 3:
+			return YSI_PrintF("    %s[%d] = { %d, %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2));
+		case 4:
+			return YSI_PrintF("    %s[%d] = { %d, %d, %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3));
+		case 5:
+			return YSI_PrintF("    %s[%d] = { %d, %d, %d, %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
+		default:
+			YSI_PrintF("    %s[%d] = { %d, %d, %d, %d, %d, ... }", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
 		}
 	}
 	else
 	{
-		// Array or string.
-		if (tag == Debug_PrintQ_TAG:tagof(_:))
+		switch (size)
 		{
-			#emit LOAD.S.pri 32
-			#emit STOR.S.pri tag
-			if (IsStringLike(_:tag))
-			{
-				Debug_PrintQ_PRINT("    %s[%d] = \"%s\"", expr, size, tag);
-				YSI_PrintF(" ");
-				return;
-			}
-			tag = Debug_PrintQ_TAG:tagof (_:);
-		}
-		if (tag == Debug_PrintQ_TAG:tagof (Float:))
-		{
-			switch (size)
-			{
-			case 2:
-				YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f }", expr, _:size, Float:getarg(3, 0), Float:getarg(3, 1));
-			case 3:
-				YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f }", expr, _:size, Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2));
-			case 4:
-				YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f }", expr, _:size, Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2), Float:getarg(3, 3));
-			case 5:
-				YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f, %.3f }", expr, _:size, Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2), Float:getarg(3, 3), Float:getarg(3, 4));
-			default:
-				YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f, %.3f, ... }", expr, _:size, Float:getarg(3, 0), Float:getarg(3, 1), Float:getarg(3, 2), Float:getarg(3, 3), Float:getarg(3, 4));
-			}
-		}
-		else if (tag == Debug_PrintQ_TAG:tagof (_:))
-		{
-			switch (size)
-			{
-			case 2:
-				YSI_PrintF("    %s[%d] = { %d, %d }", expr, _:size, getarg(3, 0), getarg(3, 1));
-			case 3:
-				YSI_PrintF("    %s[%d] = { %d, %d, %d }", expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2));
-			case 4:
-				YSI_PrintF("    %s[%d] = { %d, %d, %d, %d }", expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3));
-			case 5:
-				YSI_PrintF("    %s[%d] = { %d, %d, %d, %d, %d }", expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3), getarg(3, 4));
-			default:
-				YSI_PrintF("    %s[%d] = { %d, %d, %d, %d, %d, ... }", expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3), getarg(3, 4));
-			}
-		}
-		else
-		{
-			switch (size)
-			{
-			case 2:
-				YSI_PrintF("    %s:%s[%d] = { %d, %d }", name, expr, _:size, getarg(3, 0), getarg(3, 1));
-			case 3:
-				YSI_PrintF("    %s:%s[%d] = { %d, %d, %d }", name, expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2));
-			case 4:
-				YSI_PrintF("    %s:%s[%d] = { %d, %d, %d, %d }", name, expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3));
-			case 5:
-				YSI_PrintF("    %s:%s[%d] = { %d, %d, %d, %d, %d }", name, expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3), getarg(3, 4));
-			default:
-				YSI_PrintF("    %s:%s[%d] = { %d, %d, %d, %d, %d, ... }", name, expr, _:size, getarg(3, 0), getarg(3, 1), getarg(3, 2), getarg(3, 3), getarg(3, 4));
-			}
+		case 2:
+			return YSI_PrintF("    %s:%s[%d] = { %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1));
+		case 3:
+			return YSI_PrintF("    %s:%s[%d] = { %d, %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2));
+		case 4:
+			return YSI_PrintF("    %s:%s[%d] = { %d, %d, %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3));
+		case 5:
+			return YSI_PrintF("    %s:%s[%d] = { %d, %d, %d, %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
+		default:
+			YSI_PrintF("    %s:%s[%d] = { %d, %d, %d, %d, %d, ... }", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
 		}
 	}
-	YSI_PrintF(" ");
+
+	// Dump the rest of the data to a file.
+	new File:fhnd;
+	//name = "y_debug.";
+	if (RandomTempFile(name, ".tmp", 8 + 4 + 1) && (fhnd = fopen(name, io_write)))
+	{
+		YSI_PrintF("    (full data dumped to: %s)\n", name);
+		// Dump the file.
+		for (line = 0; line < _:size; line += 8)
+		{
+			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, %d, %d, %d, \n"), getarg(line + 5, 0), getarg(line + 5, 1), getarg(line + 5, 2), getarg(line + 5, 3), getarg(line + 5, 4), getarg(line + 5, 5), getarg(line + 5, 6), getarg(line + 5, 7));
+			fwrite(fhnd, name);
+		}
+		line -= 8;
+		switch (_:size - line)
+		{
+		case 0:
+			return fclose(fhnd);
+		case 1:
+			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, \n") : ("%d, \n"), getarg(line + 5, 0));
+		case 2:
+			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, \n") : ("%d, %d, \n"), getarg(line + 5, 0), getarg(line + 5, 1));
+		case 3:
+			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, \n") : ("%d, %d, %d, \n"), getarg(line + 5, 0), getarg(line + 5, 1), getarg(line + 5, 2));
+		case 4:
+			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, \n"), getarg(line + 5, 0), getarg(line + 5, 1), getarg(line + 5, 2), getarg(line + 5, 3));
+		case 5:
+			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, \n"), getarg(line + 5, 0), getarg(line + 5, 1), getarg(line + 5, 2), getarg(line + 5, 3), getarg(line + 5, 4));
+		case 6:
+			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, %d, \n"), getarg(line + 5, 0), getarg(line + 5, 1), getarg(line + 5, 2), getarg(line + 5, 3), getarg(line + 5, 4), getarg(line + 5, 5));
+		case 7:
+			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, %d, %d, \n"), getarg(line + 5, 0), getarg(line + 5, 1), getarg(line + 5, 2), getarg(line + 5, 3), getarg(line + 5, 4), getarg(line + 5, 5), getarg(line + 5, 6));
+		}
+		fwrite(fhnd, name);
+		fclose(fhnd);
+	}
+
+	return 0;
 }
 
 //#define Debug_PrintQ(%0) Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tagof(%0),Debug_PrintQ_SIZEOF:sizeof(%0),(#%0),__file,__line,_:(%0))
