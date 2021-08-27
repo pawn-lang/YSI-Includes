@@ -776,7 +776,7 @@ forward File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:16
  *      
  *          str[6] = "hello"
- *          (full data dumped to: fgdjkeGjAz.tmp)
+ *          (full data dumped to: _fgdjkeGjAz.tmp)
  *      
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:17
  *      
@@ -793,12 +793,13 @@ forward File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:20
  *      
  *          Float:farr[7] = { 11.000, 11.000, 11.000, 12.000, 13.000, ... }
- *          (full data dumped to: HOf6OQgcC8.tmp)
+ *          (full data dumped to: _HOf6OQgcC8.tmp)
  *      
  *      [P:Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:21
  *      
  *          MyCustomTag:mctarr[2] = { 6, 7 }
  *      
+ * Note: Temporary files are automatically deleted after a month.
  * </remarks>
  *//*------------------------------------------------------------------------**/
  
@@ -881,7 +882,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 
 	// Dump the rest of the data to a file.
 	new File:fhnd;
-	if ((fhnd = ftemporary(name, "tmp", 10 + 3 + 2)))
+	if ((fhnd = ftemporary(name, "tmp", 10 + 3 + 3)))
 	{
 		YSI_PrintF("    (full data dumped to: %s)\n", name);
 		// Dump the file.

@@ -2687,13 +2687,13 @@ stock PrintArg(n)
 stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge = YSI_TEMP_FILE_AGE)
 {
 	// Ensure there's space for `NULL` and at least one character.
-	if (len - strlen(ext) - 2 < YSI_TEMP_FILE_LENGTH)
+	if (len - strlen(ext) - 3 < YSI_TEMP_FILE_LENGTH)
 	{
 		return File:0;
 	}
 	do
 	{
-		for (new i = 0; i != YSI_TEMP_FILE_LENGTH; ++i)
+		for (new i = 1; i <= YSI_TEMP_FILE_LENGTH; ++i)
 		{
 			new ch = random(62);
 			if (ch < 26)
@@ -2710,9 +2710,10 @@ stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge =
 			}
 		}
 		// `len` is passed here as a courtesy, we know there's space.
-		name[YSI_TEMP_FILE_LENGTH] = '.';
-		name[YSI_TEMP_FILE_LENGTH + 1] = '\0';
-		strcat(name[YSI_TEMP_FILE_LENGTH], ext, len);
+		name[0] = '_';
+		name[YSI_TEMP_FILE_LENGTH + 1] = '.';
+		name[YSI_TEMP_FILE_LENGTH + 2] = '\0';
+		strcat(name[YSI_TEMP_FILE_LENGTH + 2], ext, len);
 	}
 	while (fexist(name));
 	// Open the file, to ensure it is created.
@@ -2735,76 +2736,5 @@ stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge =
 	fwrite(temps, line);
 	fclose(temps);
 	return File:len;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <returns>
- *  Check which temporary files need deleting.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-forward ReleaseTemporaryFiles();
-
-public ReleaseTemporaryFiles()
-{
-	new
-		File:in = fopen(".tempfiles", io_read),
-		File:out = ftemp(),
-		bool:change = false,
-		line[YSI_TEMP_FILE_LENGTH + 32],
-		now = gettime(),
-		then = 0;
-	if (!in)
-	{
-		if (out)
-			fclose(out);
-		return;
-	}
-	else if (!out)
-	{
-		fclose(in);
-		return;
-	}
-	// Read the whole file, looking for expired files.
-	while (fread(in, line))
-	{
-		then = strlen(line);
-		if (then < 2)
-			continue;
-		if (line[then - 1] <= ' ')
-			line[then - 1] = '\0';
-		if (line[then - 2] <= ' ')
-			line[then - 2] = '\0';
-		then = strval(line);
-		if (then < now)
-		{
-			change = true;
-			// Release this file.
-			fremove(line[strfind(line, " ") + 1]);
-		}
-		else
-		{
-			fwrite(out, line);
-			fwrite(out, "\n");
-		}
-		//print(line[strfind(line, " ") + 1]);
-	}
-	if (change)
-	{
-		fclose(in);
-		in = fopen(".tempfiles", io_write);
-		if (!in)
-		{
-			fclose(out);
-			return;
-		}
-		fseek(out, 0, seek_start);
-		while (fread(out, line))
-		{
-			fwrite(in, line);
-		}
-	}
-	fclose(in);
-	fclose(out);
 }
 

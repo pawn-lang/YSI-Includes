@@ -794,6 +794,81 @@ public OnFilterScriptInit()
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  Check which temporary files need deleting.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+forward ScriptInit_PurgeTemporaries();
+
+public ScriptInit_PurgeTemporaries()
+{
+	new
+		File:in = fopen(".tempfiles", io_read),
+		File:out = ftemp(),
+		bool:change = false,
+		line[YSI_TEMP_FILE_LENGTH + 32],
+		now = gettime(),
+		then = 0;
+	if (!in)
+	{
+		if (out)
+			fclose(out);
+		goto ScriptInit_Purge_retry;
+	}
+	else if (!out)
+	{
+		fclose(in);
+		goto ScriptInit_Purge_retry;
+	}
+	// Read the whole file, looking for expired files.
+	while (fread(in, line))
+	{
+		then = strlen(line);
+		if (then < 2)
+			continue;
+		if (line[then - 1] <= ' ')
+			line[then - 1] = '\0';
+		if (line[then - 2] <= ' ')
+			line[then - 2] = '\0';
+		then = strval(line);
+		if (then < now)
+		{
+			change = true;
+			// Release this file.
+			fremove(line[strfind(line, " ") + 1]);
+		}
+		else
+		{
+			fwrite(out, line);
+			fwrite(out, "\n");
+		}
+		//print(line[strfind(line, " ") + 1]);
+	}
+	if (change)
+	{
+		fclose(in);
+		in = fopen(".tempfiles", io_write);
+		if (!in)
+		{
+			fclose(out);
+			goto ScriptInit_Purge_retry;
+		}
+		// Copy the data back, without now deleted lines.
+		fseek(out, 0, seek_start);
+		while (fread(out, line))
+		{
+			fwrite(in, line);
+		}
+	}
+	fclose(in);
+	fclose(out);
+	// Recheck once an hour.
+ScriptInit_Purge_retry:
+	YSI_SetTimer("ScriptInit_PurgeTemporaries", 1000 * 60 * 60, false);
+}
+
+/*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : false"/>
  * <transition keep="true" target="_ALS : _ALS_go"/>
  *//*------------------------------------------------------------------------**/
@@ -846,6 +921,7 @@ public OnGameModeInit()
 				}
 			#endif
 		}
+		ScriptInit_PurgeTemporaries();
 	}
 	if (!YSI_OPEN_MP)
 	{
