@@ -292,7 +292,8 @@ static stock const
 static stock
 	bool:YSI_gsObnoxiousHeader = true,
 	bool:YSI_gsFirstHeader = true,
-	bool:YSI_gsNewPart = true;
+	bool:YSI_gsNewPart = true,
+	YSI_gsPurgeTimer = 0;
 
 native YSI_VAPrintF(const fmt[], addr) = printf;
 
@@ -874,7 +875,7 @@ ScriptInit_Purge_clean:
 	fremove(tmp);
 	// Recheck once an hour.
 ScriptInit_Purge_retry:
-	YSI_SetTimer("ScriptInit_PurgeTemporaries", 1000 * 60 * 60, false);
+	YSI_gsPurgeTimer = YSI_SetTimer("ScriptInit_PurgeTemporaries", 1000 * 60 * 60, false);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -885,10 +886,21 @@ ScriptInit_Purge_retry:
 public OnGameModeInit()
 {
 	state _ALS : _ALS_go;
+	// Kill an existing purge if one exists in this script.
+	if (YSI_gsPurgeTimer)
+	{
+		KillTimer(YSI_gsPurgeTimer);
+		YSI_gsPurgeTimer = 0;
+	}
+	// Start a new purge if this is the first script called.
+	if (!existproperty(8, "Purge"))
+	{
+		setproperty(8, "Purge", 1);
+		ScriptInit_PurgeTemporaries();
+	}
 	if (!YSI_FILTERSCRIPT)
 	{
 		YSI_GAMEMODE = true;
-		ScriptInit_PurgeTemporaries();
 		if (!YSI_OPEN_MP)
 		{
 			state _script_init_fix_state : false;
