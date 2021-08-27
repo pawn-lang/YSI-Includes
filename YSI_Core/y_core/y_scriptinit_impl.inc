@@ -835,16 +835,14 @@ public ScriptInit_PurgeTemporaries()
 	// Read the whole file, looking for expired files.
 	while (fread(in, line))
 	{
-		then = strlen(line);
-		if (then < 2)
-			continue;
-		if (line[then - 1] <= ' ')
-			line[then - 1] = '\0';
-		if (line[then - 2] <= ' ')
-			line[then - 2] = '\0';
 		then = strval(line);
 		if (then && then < now)
 		{
+			then = strlen(line);
+			if (line[then - 1] <= ' ')
+				line[then - 1] = '\0';
+			if (line[then - 2] <= ' ')
+				line[then - 2] = '\0';
 			change = true;
 			// Release this file.
 			fremove(line[strfind(line, " ") + 1]);
@@ -852,9 +850,7 @@ public ScriptInit_PurgeTemporaries()
 		else
 		{
 			fwrite(out, line);
-			fwrite(out, "\n");
 		}
-		//print(line[strfind(line, " ") + 1]);
 	}
 	if (change)
 	{
