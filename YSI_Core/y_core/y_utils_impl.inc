@@ -2674,17 +2674,7 @@ stock PrintArg(n)
 
 #define printarg PrintArg
 
-/*-------------------------------------------------------------------------*//**
- * <param name="name">Storage.</param>
- * <param name="ext">Extension.</param>
- * <param name="len">Maximum string length.</param>
- * <param name="maxAge">Maximum temporary file age.</param>
- * <returns>
- *  Generate a random temporary filename and open it.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge = YSI_TEMP_FILE_AGE)
+stock File:ftemporary_(name[], const ext[] = "tmp", len = sizeof (name))
 {
 	// Ensure there's space for `NULL` and at least one character.
 	if (len - strlen(ext) - 3 < YSI_TEMP_FILE_LENGTH)
@@ -2717,7 +2707,23 @@ stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge =
 	}
 	while (fexist(name));
 	// Open the file, to ensure it is created.
-	len = _:fopen(name, io_readwrite);
+	return fopen(name, io_readwrite);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Storage.</param>
+ * <param name="ext">Extension.</param>
+ * <param name="len">Maximum string length.</param>
+ * <param name="maxAge">Maximum temporary file age.</param>
+ * <returns>
+ *  Generate a random temporary filename and open it.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge = YSI_TEMP_FILE_AGE)
+{
+	// Open the file, to ensure it is created.
+	len = _:ftemporary_(name, ext, len);
 	if (!len)
 	{
 		return File:0;

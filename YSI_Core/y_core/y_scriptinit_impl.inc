@@ -801,6 +801,8 @@ public OnFilterScriptInit()
 
 forward ScriptInit_PurgeTemporaries();
 
+forward File:ftemporary_(name[], const ext[] = "tmp", len = sizeof (name));
+
 public ScriptInit_PurgeTemporaries()
 {
 	if (!fexist(YSI_TEMP_FILE_NAME))
@@ -816,15 +818,16 @@ public ScriptInit_PurgeTemporaries()
 	}
 	new
 		File:in = fopen(YSI_TEMP_FILE_NAME, io_read),
-		File:out = ftemp(),
 		bool:change = false,
+		tmp[YSI_TEMP_FILE_LENGTH + 32],
+		File:out = ftemporary_(tmp, "ysi"),
 		line[YSI_TEMP_FILE_LENGTH + 32],
 		now = gettime(),
 		then = 0;
 	if (!in)
 	{
 		if (out)
-			fclose(out);
+			goto ScriptInit_Purge_clean;
 		goto ScriptInit_Purge_retry;
 	}
 	else if (!out)
@@ -857,10 +860,7 @@ public ScriptInit_PurgeTemporaries()
 		fclose(in);
 		in = fopen(YSI_TEMP_FILE_NAME, io_write);
 		if (!in)
-		{
-			fclose(out);
-			goto ScriptInit_Purge_retry;
-		}
+			goto ScriptInit_Purge_clean;
 		// Copy the data back, without now deleted lines.
 		fseek(out, 0, seek_start);
 		while (fread(out, line))
@@ -869,7 +869,9 @@ public ScriptInit_PurgeTemporaries()
 		}
 	}
 	fclose(in);
+ScriptInit_Purge_clean:
 	fclose(out);
+	fremove(tmp);
 	// Recheck once an hour.
 ScriptInit_Purge_retry:
 	YSI_SetTimer("ScriptInit_PurgeTemporaries", 1000 * 60 * 60, false);
