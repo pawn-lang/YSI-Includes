@@ -812,7 +812,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 	if (size <= Debug_PrintQ_SIZEOF:1)
 	{
 		// Normal variable.
-		switch (tag)
+		switch (_:tag)
 		{
 		case (tagof (Float:)):
 			return YSI_PrintF("    Float:%s = %.3f\n", expr, Float:getarg(5));
@@ -828,7 +828,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 	// Array or string.
 	if (tag == Debug_PrintQ_TAG:tagof (Float:))
 	{
-		switch (size)
+		switch (_:size)
 		{
 		case 2:
 			return YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1));
@@ -849,7 +849,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 		#emit STOR.S.pri line
 		if (Debug_IsStringLike(line, _:size))
 			Debug_PrintQ_PRINT("    %s[%d] = \"%s\"", expr, size, line);
-		else switch (size)
+		else switch (_:size)
 		{
 		case 2:
 			return YSI_PrintF("    %s[%d] = { %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1));
@@ -865,7 +865,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 	}
 	else
 	{
-		switch (size)
+		switch (_:size)
 		{
 		case 2:
 			return YSI_PrintF("    %s:%s[%d] = { %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1));
