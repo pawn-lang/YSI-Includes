@@ -2722,16 +2722,89 @@ stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge =
 		return File:0;
 	}
 	// Add the file to `.tempfiles`.
-	new File:temps = fopen(".tempfiles", io_append);
+	new
+		File:temps = fopen(".tempfiles", io_append);
 	if (!temps)
 	{
 		fclose(File:len);
 		return File:0;
 	}
-	new line[YSI_TEMP_FILE_LENGTH + 32];
+	new
+		line[YSI_TEMP_FILE_LENGTH + 32];
 	format(line, sizeof (line), "%d %s\n", gettime() + maxAge, name);
 	fwrite(temps, line);
 	fclose(temps);
 	return File:len;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  Check which temporary files need deleting.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+forward ReleaseTemporaryFiles();
+
+public ReleaseTemporaryFiles()
+{
+	new
+		File:in = fopen(".tempfiles", io_read),
+		File:out = ftemp(),
+		bool:change = false,
+		line[YSI_TEMP_FILE_LENGTH + 32],
+		now = gettime(),
+		then = 0;
+	if (!in)
+	{
+		if (out)
+			fclose(out);
+		return;
+	}
+	else if (!out)
+	{
+		fclose(in);
+		return;
+	}
+	// Read the whole file, looking for expired files.
+	while (fread(in, line))
+	{
+		then = strlen(line);
+		if (then < 2)
+			continue;
+		if (line[then - 1] <= ' ')
+			line[then - 1] = '\0';
+		if (line[then - 2] <= ' ')
+			line[then - 2] = '\0';
+		then = strval(line);
+		if (then < now)
+		{
+			change = true;
+			// Release this file.
+			fremove(line[strfind(line, " ") + 1]);
+		}
+		else
+		{
+			fwrite(out, line);
+			fwrite(out, "\n");
+		}
+		//print(line[strfind(line, " ") + 1]);
+	}
+	if (change)
+	{
+		fclose(in);
+		in = fopen(".tempfiles", io_write);
+		if (!in)
+		{
+			fclose(out);
+			return;
+		}
+		fseek(out, 0, seek_start);
+		while (fread(out, line))
+		{
+			fwrite(in, line);
+		}
+	}
+	fclose(in);
+	fclose(out);
 }
 
