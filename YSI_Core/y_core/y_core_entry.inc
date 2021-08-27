@@ -158,6 +158,9 @@ Optional plugins:
 	#define YSI_TEMP_FILE_AGE (60 * 60 * 24 * 30)
 #endif
 
+stock const
+	YSI_TEMP_FILE_NAME[] = ".tempfiles";
+
 // These three includes are just defines.  They declare no code at all, only
 // variables.
 #include "y_globaltags"

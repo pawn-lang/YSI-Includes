@@ -2724,7 +2724,7 @@ stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge =
 	}
 	// Add the file to `.tempfiles`.
 	new
-		File:temps = fopen(".tempfiles", io_append);
+		File:temps = fopen(YSI_TEMP_FILE_NAME, io_append);
 	if (!temps)
 	{
 		fclose(File:len);
