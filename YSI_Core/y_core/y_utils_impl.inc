@@ -2751,3 +2751,70 @@ stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge =
 		File:len;
 }
 
+#if defined _ALS_ftemp
+	stock File:ftemp_()
+	{
+		return ftemp();
+	}
+	#undef ftemp
+#else
+	native File:ftemp_() = ftemp;
+	#define _ALS_ftemp
+#endif
+
+// Redefine this code so we can use `ftemp` with extra parameters, or not.
+#define ftemp( ftemporary(
+#define ftemporary() ftemp_()
+#define _ALS_ftemporary
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Float:FloatAbs(Float:number);
+ * </summary>
+ * <param name="number">The number to get the absolute value of.</param>
+ * <returns>
+ *  The absolute value of a number.
+ * </returns>
+ * <remarks>
+ *  Get the absolute value of a number.  Easy in IEEE754, just remove the MSB.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Float:FloatAbs(Float:value));
+#define FloatAbs(%0) ((%0) & (Float:0x7FFFFFFF))
+#define _ALS_FloatAbs
+
+#if __COMPILER___EMIT_U
+	#define Abs(%0) \
+		__emit(                         \
+			LOAD.U.pri  %0             ,\
+			PUSH.pri                   ,\
+			CONST.alt   30             ,\
+			SSHR                       ,\
+			CONST.alt   1              ,\
+			OR                         ,\
+			POP.alt                    ,\
+			SMUL                        \
+		)
+	#endinput
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Abs(number);
+ * </summary>
+ * <param name="number">The number to get the absolute value of.</param>
+ * <returns>
+ *  The absolute value of a number.
+ * </returns>
+ * <remarks>
+ *  Get the absolute value of a number.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Abs(number)
+{
+	// 31 also works.
+	return (number >> 30 | 1) * number;
+}
+

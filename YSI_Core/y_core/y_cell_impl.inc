@@ -772,6 +772,29 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 	return Cell_ExpandLeftPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_Abs(GLOBAL_TAG_TYPES:x, m)
+ * </summary>
+ * <param name="number">The number to get the absolute value of.</param>
+ * <param name="tag">The tag of the number, in case its <c>Float</c>.</param>
+ * <returns>
+ *  The absolute value of a number.
+ * </returns>
+ * <remarks>
+ *  Get the absolute value of a number.  Floats just remove MSB.  For ints,
+ *  multiply the whole number by the MSB shifted OR 1 (1 or -1).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
+{
+	if (tag == tagof (Float:))
+		return number & 0x7FFFFFFF;
+	else
+		return (number >> 30 | 1) * number;
+}
+
 #if __COMPILER___EMIT_U
 	#define Cell_GetLowestComponent(%0) \
 		__emit(                         \
