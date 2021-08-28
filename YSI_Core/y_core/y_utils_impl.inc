@@ -95,6 +95,8 @@ Optional plugins:
 #define FLOAT_PI                        (Float:0x40490FDB) // pi
 #define FLOAT_ROOT_2                    (Float:0x3FB504F3) // sqrt(2)
 
+#define IS_NAN(%0) (_:((Float:0x7FFFFFFF) & (%0)) > (0x7F800000))
+
 //#pragma unused TRUE, FALSE, NULL
 
 #define __TY|||%0||| (1000000)
@@ -349,8 +351,7 @@ P:D(bool:UCMP(value, upper));
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
 
 /*-------------------------------------------------------------------------*//**
- * <param name="value">The unsigned number to compare.</param>
- * <param name="upper">The upper limit.</param>
+ * <param name="value">The IEEE754 floating point number (<c>Float:</c>) to check.</param>
  * <returns>
  *  An IEEE754 floating-point number is defined as Not-A-Number when all the exponent bits are set,
  *  and the mantissa is non-zero.  The sign bit is ignored, so we first remove that and test the
@@ -360,7 +361,7 @@ P:D(bool:UCMP(value, upper));
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:IsNaN(Float:value));
-#define IsNaN(%0) ((_:(%0) & 0x7FFFFFFF) > 0x7F800000)
+#define IsNaN(%0) IS_NAN(%0)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">The player to check.</param>
@@ -2377,7 +2378,9 @@ stock SkipWhitespace(const str[], pos)
  * <param name="start">Start of the substring.</param>
  * <param name="end">End of the substring.</param>
  * <remarks>
- *  Modifies "start" and "end" to be tight on text in "str".
+ *  Modifies "start" and "end" to be tight on text in "str".  <c>Strip</c>
+ *  removes the characters from the end, so needs a modifiable string, this just
+ *  tells you where the ends are.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2715,9 +2718,10 @@ stock File:ftemporary_(name[], const ext[] = "tmp", len = sizeof (name))
  * <param name="ext">Extension.</param>
  * <param name="len">Maximum string length.</param>
  * <param name="maxAge">Maximum temporary file age.</param>
- * <returns>
- *  Generate a random temporary filename and open it.
- * </returns>
+ * <remarks>
+ *  Generate a random temporary filename and open it.  Also redefines
+ *  <c>ftemp</c> to call this function instead if called with extra parameters.
+ * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge = YSI_TEMP_FILE_AGE)
