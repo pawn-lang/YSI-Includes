@@ -1,13 +1,3 @@
-#### UCMP
->* **Parameters:**
->	* `value`: value_INFO
->	* `upper`: upper_INFO
->* **Returns:**
->	* An unsigned comparison between the two values.
->* **Remarks:**
->	-
- 
-***
 # Constants
 
 * `Float:FLOAT_INFINITY`: IEEE754 Infinity
