@@ -108,7 +108,8 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 
 static stock const
 	YSI_gscWindows[] = "Windows",
-	YSI_gscLinux[] = "Linux";
+	YSI_gscLinux[] = "Linux",
+	YSI_gscCrashdetect[] = "Crashdetect:";
 
 // 0 - No JIT
 // 1 - Pre 2.1
@@ -438,14 +439,41 @@ static stock YVers_PrintHeader()
 		version[32], os[10];
 	Script_GetIncludesString(version, os),
 	format(version, sizeof (version), "    %s - %s", version, os),
-	Server_PrintIntroPart("Server Version:", version, ""),
+	Server_PrintIntroPart("Server:", version, ""),
 	Script_GetCompilerString(version, os),
 	format(version, sizeof (version), "    %s - %s", version, os),
-	Server_PrintIntroPart("Compiler Version:", version, ""),
-	Server_PrintIntroPart("YSI Version:", "    " YSI_VERSION, ""),
+	Server_PrintIntroPart("Compiler:", version, ""),
+	Server_PrintIntroPart("YSI:", "    " YSI_VERSION, ""),
 	Server_GetJITString(version),
 	format(version, sizeof (version), "    %s", version),
-	Server_PrintIntroPart("JIT Version:", version);
+	Server_PrintIntroPart("JIT:", version, "");
+	if (!Server_CrashDetectExists())
+	{
+		Server_PrintIntroPart(YSI_gscCrashdetect, "    <none>");
+	}
+	else if (!Server_HasLongCallControl())// && Server_IsLinuxHost())
+	{
+		Server_PrintIntroPart(
+			YSI_gscCrashdetect,
+			"    <warning>",
+			"",
+			"Crashdetect has been found, but no",
+			"long-call controls have been",
+			"detected.  This could be because you",
+			"are on an old version, have disabled",
+			"long-call detection, or are on the",
+			"bugged Linux version.  If you see a",
+			"console warning about slow execution",
+			"during startup, ignore it - this",
+			"message cannot be disabled on Linux",
+			"in some releases due to a coding",
+			"oversight."
+		);
+	}
+	else
+	{
+		Server_PrintIntroPart(YSI_gscCrashdetect, "    <found>");
+	}
 	Server_FinishIntroPart();
 }
 

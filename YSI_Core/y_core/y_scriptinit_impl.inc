@@ -476,6 +476,27 @@ stock Server_GetLongCallTime()
 	return 0;
 }
 
+stock bool:Server_HasLongCallControl()
+{
+	// This code detects if the `0xFE` long call control register works.  If it
+	// doesn't this could be an old version of crashdetect, one with
+	// `long_call_time 0` in `server.cfg`, or a bugged Linux version.  See
+	//
+	//   https://github.com/Zeex/samp-plugin-crashdetect/commit/4146ae379ebad8a0a4eb38a7e0af3bcfe7a89bd5
+	//
+	// Unfortunately there's no way to distinguish these three cases (I tried).
+	// Even attempting to enable things won't work for any of those cases.
+	if (Server_IsLongCallEnabled())
+		return true;
+	Server_EnableLongCall();
+	if (Server_IsLongCallEnabled())
+	{
+		Server_DisableLongCall();
+		return true;
+	}
+	return false;
+}
+
 // `GetCrashDetectDefaultLongCallTime` is too long.
 stock Server_GetLongCallDefault()
 {
