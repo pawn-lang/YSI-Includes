@@ -91,7 +91,7 @@ Optional plugins:
 #define _@MAKE_YCM<%0...%1> MAKE_YCM<_@%0...%1>
 #define @@MAKE_YCM<%0...%1> MAKE_YCM<@@%0...%1>
 
-#define @_yM%0\32; @_yM
+#define @yM_%0\32; @yM_
 
 //#define Master_State(%0); {  }
 
@@ -338,26 +338,26 @@ Optional plugins:
 #define YSIM_UG_NUL_VOD YSIM_UG_END
 #define YSIM_UG_NUL_TAG YSIM_UG_END_TAG
 
-#define YSIM_DF_END(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)        %8$@@%9(%2);@@%9(%2)return L@(%9(%7)%0);@_yM%9()
-#define YSIM_DF_END_STR(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2);@@%9(%2)return T@(%9(%7)%0);@_yM%9()
-#define YSIM_DF_END_VOD(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2);@@%9(%2){%9(%7);return L@(0%0);}@_yM%9()
-#define YSIM_DF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0) %8$@@%9(%2);@@%9(%2)return L@(%9(%7)%0);@_yM%9()
-#define YSIM_DF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$@@%9();@@%9()return L@(%9()%0);@_yM%9()
-#define YSIM_DF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9();@@%9()return T@(%9()%0);@_yM%9()
-#define YSIM_DF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9();@@%9(){%9();return L@(0%0);}@_yM%9()
-#define YSIM_DF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$@@%9();@@%9()return L@(%9()%0);@_yM%9()
+#define YSIM_DF_END(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)        %8$@@%9(%2);@@%9(%2)return L@(%9(%7)%0);@yM_%9()
+#define YSIM_DF_END_STR(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2);@@%9(%2)return T@(%9(%7)%0);@yM_%9()
+#define YSIM_DF_END_VOD(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2);@@%9(%2){%9(%7);return L@(0%0);}@yM_%9()
+#define YSIM_DF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0) %8$@@%9(%2);@@%9(%2)return L@(%9(%7)%0);@yM_%9()
+#define YSIM_DF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$@@%9();@@%9()return L@(%9()%0);@yM_%9()
+#define YSIM_DF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9();@@%9()return T@(%9()%0);@yM_%9()
+#define YSIM_DF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9();@@%9(){%9();return L@(0%0);}@yM_%9()
+#define YSIM_DF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$@@%9();@@%9()return L@(%9()%0);@yM_%9()
 
-#define YSIM_DG_END(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)       %8$%4%9(%1)<>return F@(),D@(#@@%9,%3,%5);@_yM%9()return _MASTER;%9(%1)<_YCM:y>
-#define YSIM_DG_END_STR(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>return F@(),K@(#@@%9,%3,%5);@_yM%9()return _MASTER;%9(%1)<_YCM:y>
-#define YSIM_DG_END_VOD(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>F@(),D@(#@@%9,%3,%5);@_yM%9()return _MASTER;%9(%1)<_YCM:y>
-#define YSIM_DG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$%4%9()<>return F@(),D@(#@@%9,%3);@_yM%9()return _MASTER;%9()<_YCM:y>
-#define YSIM_DG_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>return F@(),K@(#@@%9,%3);@_yM%9()return _MASTER;%9()<_YCM:y>
-#define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>F@(),D@(#@@%9,%3);@_yM%9()return _MASTER;%9()<_YCM:y>
-#define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$%4%5%9()<>return F@(),%5D@(#@@%9,%3);@_yM%9()return _MASTER;%5%9()<_YCM:y>
+#define YSIM_DG_END(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)       %8$%4%9(%1)<>return F@(),D@(#@@%9,%3,%5);@yM_%9()return _MASTER;%9(%1)<_YCM:y>
+#define YSIM_DG_END_STR(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>return F@(),K@(#@@%9,%3,%5);@yM_%9()return _MASTER;%9(%1)<_YCM:y>
+#define YSIM_DG_END_VOD(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>F@(),D@(#@@%9,%3,%5);@yM_%9()return _MASTER;%9(%1)<_YCM:y>
+#define YSIM_DG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$%4%9()<>return F@(),D@(#@@%9,%3);@yM_%9()return _MASTER;%9()<_YCM:y>
+#define YSIM_DG_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>return F@(),K@(#@@%9,%3);@yM_%9()return _MASTER;%9()<_YCM:y>
+#define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>F@(),D@(#@@%9,%3);@yM_%9()return _MASTER;%9()<_YCM:y>
+#define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$%4%5%9()<>return F@(),%5D@(#@@%9,%3);@yM_%9()return _MASTER;%5%9()<_YCM:y>
 
 // This just had too many replacement parts!  I had to split it in two.
 #define YSIM_DG_END_TAG(%5,%9)%8$                           %8$YSIM_DG_END_TWO(%5,%9)
-#define YSIM_DG_END_TWO(%5,%9)%4(%1)%3(,%7)(,%8)(,%2)(%0)   %4%5%9(%1)<>return F@(),%5D@(#@@%9,%3,%8);@_yM%9()return _MASTER;%5%9(%1)<_YCM:y>
+#define YSIM_DG_END_TWO(%5,%9)%4(%1)%3(,%7)(,%8)(,%2)(%0)   %4%5%9(%1)<>return F@(),%5D@(#@@%9,%3,%8);@yM_%9()return _MASTER;%5%9(%1)<_YCM:y>
 
 // These pieces of code give undefined errors if you try and use `global` with
 // `YSIM_IS_STUB`.
@@ -945,11 +945,11 @@ static stock _Master_Unname(const name[])
 
 stock _Master_UnnameAll(master)
 {
-	// Loop over all `@_yM` functions and hide those with an ID of `master`.
+	// Loop over all `@yM_` functions and hide those with an ID of `master`.
 	new
 		idx = 0,
 		buffer[FUNCTION_LENGTH];
-	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@_yM>)))
+	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@yM_>)))
 	{
 		// Call the function and test the return value.
 		if (CallLocalFunction(buffer, "") == master)
@@ -963,11 +963,11 @@ stock _Master_UnnameAll(master)
 
 stock _Master_RenameAll(master)
 {
-	// Loop over all `@_yM` functions and reveal those with an ID of `master`.
+	// Loop over all `@yM_` functions and reveal those with an ID of `master`.
 	new
 		idx = 0,
 		buffer[FUNCTION_LENGTH];
-	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@_yM>)))
+	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@yM_>)))
 	{
 		// Call the function and test the return value.
 		if (CallLocalFunction(buffer, "") == master)
