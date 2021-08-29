@@ -313,11 +313,11 @@ Optional plugins:
 // `forward` is required here to avoid a redefinition error.
 #define YSIM_MF_END(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)        %8$@@%9(%2)return L@(%9(%7)%0);forward @@%9(%2)
 #define YSIM_MF_END_STR(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2)return T@(%9(%7)%0);forward @@%9(%2)
-#define YSIM_MF_END_VOD(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2)return %9(%7),L@(0%0);forward @@%9(%2)
+#define YSIM_MF_END_VOD(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2){%9(%7);return L@(0%0);}forward @@%9(%2)
 #define YSIM_MF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0) %8$@@%9(%2)return L@(%9(%7)%0);forward @@%9(%2)
 #define YSIM_MF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$@@%9()return L@(%9());forward @@%9()
 #define YSIM_MF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9()return T@(%9());forward @@%9()
-#define YSIM_MF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9()return %9(),L@(0);forward @@%9()
+#define YSIM_MF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9(){%9();return L@(0);}forward @@%9()
 #define YSIM_MF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$@@%9()return L@(%9());forward @@%9()
 
 #define YSIM_UF_END(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$%4%9(%1)return F@(),D@(#@@%9,%3%7);_@%9(%1)
@@ -349,11 +349,11 @@ Optional plugins:
 
 #define YSIM_DG_END(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)       %8$%4%9(%1)<>return F@(),D@(#@@%9,%3,%5);@@%9(%2)return L@(%9(%7)%0);%9(%1)<_YCM:y>
 #define YSIM_DG_END_STR(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>return F@(),K@(#@@%9,%3,%5);@@%9(%2)return T@(%9(%7)%0);%9(%1)<_YCM:y>
-#define YSIM_DG_END_VOD(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>F@(),D@(#@@%9,%3,%5);@@%9(%2)return %9(%7),L@(0%0);%9(%1)<_YCM:y>
+#define YSIM_DG_END_VOD(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>F@(),D@(#@@%9,%3,%5);@@%9(%2){%9(%7);return L@(0%0);}%9(%1)<_YCM:y>
 #define YSIM_DG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$%4%9()<>return F@(),D@(#@@%9,%3);@@%9()return L@(%9()%0);%9()<_YCM:y>
 #define YSIM_DG_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>return F@(),K@(#@@%9,%3);@@%9()return T@(%9()%0);%9()<_YCM:y>
-#define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>F@(),D@(#@@%9,%3);@@%9()return %9(),L@(0%0);%9()<_YCM:y>
-#define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$%4%5%9()<>return F@(),%5D@(#@@%9,%3);return @@%9()L@(%9()%0);%5%9()<_YCM:y>
+#define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>F@(),D@(#@@%9,%3);@@%9(){%9();return L@(0%0);}%9()<_YCM:y>
+#define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$%4%5%9()<>return F@(),%5D@(#@@%9,%3);@@%9()return L@(%9()%0);%5%9()<_YCM:y>
 
 // This just had too many replacement parts!  I had to split it in two.
 #define YSIM_DG_END_TAG(%5,%9)%8$                           %8$YSIM_DG_END_TWO(%5,%9)
