@@ -171,25 +171,46 @@ stock bool:Server_JITExists()
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING) != E_SCRIPTINIT_STATE_NONE;
 }
 
+#pragma deprecated Use `Script_JITComplete`.
 stock bool:Server_JITComplete()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITED) != E_SCRIPTINIT_STATE_NONE;
 }
 
+stock bool:Script_JITComplete()
+{
+	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITED) != E_SCRIPTINIT_STATE_NONE;
+}
+
+#pragma deprecated Use `Script_CacheLoaded`.
 stock bool:Server_CacheLoaded()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD) != E_SCRIPTINIT_STATE_NONE;
 }
 
+stock bool:Script_CacheLoaded()
+{
+	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD) != E_SCRIPTINIT_STATE_NONE;
+}
+
+#pragma deprecated Use `Script_CacheSaved`.
 stock bool:Server_CacheSaved()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_DUMPED) != E_SCRIPTINIT_STATE_NONE;
 }
 
+stock bool:Script_CacheSaved()
+{
+	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_DUMPED) != E_SCRIPTINIT_STATE_NONE;
+}
+
+#pragma deprecated Use `Script_IsFilterscript`.
 stock bool:Server_IsFilterscript()
 {
 	return YSI_FILTERSCRIPT;
 }
+
+#define Script_IsFilterscript() (YSI_FILTERSCRIPT)
 
 stock bool:Server_IsLinuxHost()
 {
@@ -223,6 +244,7 @@ stock bool:Server_IsWindowsHost()
 	return val == 120;
 }
 
+#pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
 {
 	#if __COMPILER_OS == __COMPILER_LINUX
@@ -232,6 +254,16 @@ stock bool:Server_IsLinuxCompiler()
 	#endif
 }
 
+stock bool:Script_IsLinuxCompiler()
+{
+	#if __COMPILER_OS == __COMPILER_LINUX
+		return true;
+	#else
+		return false;
+	#endif
+}
+
+#pragma deprecated Use `Script_IsWindowsCompiler`.
 stock bool:Server_IsWindowsCompiler()
 {
 	#if __COMPILER_OS == __COMPILER_WINDOWS
@@ -241,10 +273,22 @@ stock bool:Server_IsWindowsCompiler()
 	#endif
 }
 
+stock bool:Script_IsWindowsCompiler()
+{
+	#if __COMPILER_OS == __COMPILER_WINDOWS
+		return true;
+	#else
+		return false;
+	#endif
+}
+
+#pragma deprecated Use `Script_IsGameMode`.
 stock bool:Server_IsGameMode()
 {
 	return YSI_GAMEMODE;
 }
+
+#define Script_IsGameMode() (YSI_GAMEMODE)
 
 stock bool:Server_IsOpenMP()
 {
@@ -432,19 +476,52 @@ stock Server_GetLongCallTime()
 	return 0;
 }
 
+// Detect: https://github.com/Zeex/samp-plugin-crashdetect/commit/4146ae379ebad8a0a4eb38a7e0af3bcfe7a89bd5
+static stock bool:Server_CrashdetectBugged()
+{
+	new test;
+	#emit ZERO.pri
+	#emit LCTRL         0xFF
+	#emit SHR.C.pri     1
+	#emit STOR.S.pri    test
+	if (test)
+	{
+		// If we can detect that long call detection is enabled the code can't
+		// be bugged.
+		return false;
+	}
+	{}
+	// Otherwise, enable it and test again.
+	#emit CONST.pri     2
+	#emit SCTRL         0xFF
+	#emit ZERO.pri
+	#emit LCTRL         0xFF
+	#emit SHR.C.pri     1
+	#emit STOR.S.pri    test
+	if (test)
+	{
+		// If we can set long call detection the code can't be bugged.  We need
+		// to disable it again though, since it was initially disabled.
+		#emit CONST.pri     0
+		#emit SCTRL         0xFE
+		return false;
+	}
+	return true;
+}
+
 // `GetCrashDetectDefaultLongCallTime` is too long.
 stock Server_GetLongCallDefault()
 {
-	// store the current value
+	// Store the current value.
 	#emit ZERO.pri
 	#emit LCTRL         0xFE
 	#emit MOVE.alt
-	// reset to and read the default
+	// Reset to and read the default.
 	#emit CONST.pri     4
 	#emit SCTRL         0xFF
 	#emit ZERO.pri
 	#emit LCTRL         0xFE
-	// put the current value back
+	// Put the current value back.
 	#emit XCHG
 	#emit SCTRL         0xFE
 	#emit MOVE.pri

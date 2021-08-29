@@ -116,7 +116,7 @@ static stock const
 // 3 - ???, in `OnJITCompile`
 stock Server_GetJITVersion()
 {
-	if (Server_JITComplete())
+	if (Script_JITComplete())
 	{
 		#emit LCTRL     6
 		#emit MOVE.alt
@@ -150,6 +150,7 @@ stock Server_GetJITString(version[], vlen = sizeof (version))
 	}
 }
 
+#pragma deprecated Use `Script_GetCompilerVersion`.
 stock Server_GetCompilerVersion()
 {
 	#if ((__Pawn & 0x0F) >= 0x0A)
@@ -161,7 +162,18 @@ stock Server_GetCompilerVersion()
 	#endif
 }
 
-stock Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
+stock Script_GetCompilerVersion()
+{
+	#if ((__Pawn & 0x0F) >= 0x0A)
+		// Accurate version.
+		return (__Pawn << 16) | __PawnBuild;
+	#else
+		// Estimate version - probably this one.
+		return 0x03023664;
+	#endif
+}
+
+stock Script_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
 {
 	#if ((__Pawn & 0x0F) >= 0x0A)
 		// Accurate version.
@@ -178,6 +190,12 @@ stock Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = 
 		os[0] = '\0',
 		strcat(os, YSI_gscLinux, olen);
 	#endif
+}
+
+#pragma deprecated Use `Script_GetCompilerString`.
+stock Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
+{
+	Script_GetCompilerString(version, os, vlen, olen);
 }
 
 /*
@@ -228,7 +246,7 @@ open.mp releases can use `A` as the first digit.
 
 */
 
-stock Server_GetServerVersion()
+stock Script_GetIncludesVersion()
 {
 	// SA:MP version determination (from includes only).
 	#if !defined _samp_included
@@ -300,7 +318,13 @@ stock Server_GetServerVersion()
 	#endif
 }
 
-stock Server_GetServerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
+#pragma deprecated Use `Script_GetIncludesVersion`.
+stock Server_GetServerVersion()
+{
+	return Script_GetIncludesVersion();
+}
+
+stock Script_GetIncludesString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
 {
 	// Not done yet.
 	version[0] = '\0';
@@ -384,6 +408,13 @@ stock Server_GetServerString(version[], os[], vlen = sizeof (version), olen = si
 	}
 }
 
+
+#pragma deprecated Use `Script_GetIncludesString`.
+stock Server_GetServerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
+{
+	return Script_GetIncludesString(version, os, vlen, olen);
+}
+
 stock bool:Server_CrashDetectExists()
 {
 	// 0xFF is roughly flags, but some are mutually exclusive:
@@ -405,10 +436,10 @@ static stock YVers_PrintHeader()
 {
 	new
 		version[32], os[10];
-	Server_GetServerString(version, os),
+	Script_GetIncludesString(version, os),
 	format(version, sizeof (version), "    %s - %s", version, os),
 	Server_PrintIntroPart("Server Version:", version, ""),
-	Server_GetCompilerString(version, os),
+	Script_GetCompilerString(version, os),
 	format(version, sizeof (version), "    %s - %s", version, os),
 	Server_PrintIntroPart("Compiler Version:", version, ""),
 	Server_PrintIntroPart("YSI Version:", "    " YSI_VERSION, ""),

@@ -169,7 +169,7 @@ public OnPlayerConnect(playerid)
 
 public OnYSIInit()
 {
-	if (Server_IsGameMode())
+	if (Script_IsGameMode())
 	{
 		y_rconfix_Load();
 	}
