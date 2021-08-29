@@ -476,39 +476,6 @@ stock Server_GetLongCallTime()
 	return 0;
 }
 
-// Detect: https://github.com/Zeex/samp-plugin-crashdetect/commit/4146ae379ebad8a0a4eb38a7e0af3bcfe7a89bd5
-static stock bool:Server_CrashdetectBugged()
-{
-	new test;
-	#emit ZERO.pri
-	#emit LCTRL         0xFF
-	#emit SHR.C.pri     1
-	#emit STOR.S.pri    test
-	if (test)
-	{
-		// If we can detect that long call detection is enabled the code can't
-		// be bugged.
-		return false;
-	}
-	{}
-	// Otherwise, enable it and test again.
-	#emit CONST.pri     2
-	#emit SCTRL         0xFF
-	#emit ZERO.pri
-	#emit LCTRL         0xFF
-	#emit SHR.C.pri     1
-	#emit STOR.S.pri    test
-	if (test)
-	{
-		// If we can set long call detection the code can't be bugged.  We need
-		// to disable it again though, since it was initially disabled.
-		#emit CONST.pri     0
-		#emit SCTRL         0xFE
-		return false;
-	}
-	return true;
-}
-
 // `GetCrashDetectDefaultLongCallTime` is too long.
 stock Server_GetLongCallDefault()
 {
