@@ -510,7 +510,7 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 		P:6("_Timer_F: slot = %d, next = %d", _:slot, force);
 		free(Alloc:slot);
 	}
-	while ((_:slot = force) != 1);
+	while ((_:slot = force) != -1);
 	return 1;
 }
 
