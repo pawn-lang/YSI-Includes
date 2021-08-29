@@ -867,7 +867,7 @@ static stock _Master_Rename(const name[])
 		// anyway.
 		entry += 4;
 		#emit LREF.S.pri entry
-		#emit LOAD.alt   
+		#emit LOAD.alt   AMX_BASE_ADDRESS
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
