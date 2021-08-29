@@ -1470,12 +1470,12 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+forward Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...);
+
 #if YSIM_HAS_MASTER
+	forward @@Area_AddPoly(Float:points[], size, count);
+
 	#if _YSIM_IS_SERVER
-		forward Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...);
-		
-		forward @@Area_AddPoly(Float:points[], size, count);
-		
 		stock Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...)
 		{
 			new
@@ -1529,8 +1529,6 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 			return getproperty(8, YSIM_RETURN);
 		}
 		
-		forward @@Area_AddPoly(Float:points[], size, count);
-		
 		stock Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...) <_YCM : m>
 		{
 			#pragma unused x1, y1, x2, y2, x3, y3
@@ -1567,6 +1565,7 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 				
 				forward @_yMArea_AddPoly(Float:points[], size, count);
 				public @_yMArea_AddPoly(Float:points[], size, count) { return _MASTER; }
+	
 				public @@Area_AddPoly(Float:points[], size, count)
 			#endif
 		#endif
