@@ -967,12 +967,13 @@ GLOBAL__ Command_GetCurrent()
  *
  * native Command_GetPlayerCommandCount(playerid);
  *
+ * Has an internal name and an external name, because macros.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Command_GetPlayerCommandCount(playerid);
+FOREIGN__ YCMD_GetPlayerCommandCount(playerid);
 
-GLOBAL__ Command_GetPlayerCommandCount(playerid)
+GLOBAL__ YCMD_GetPlayerCommandCount(playerid)
 {
 	P:2("Command_GetPlayerCommandCount called: %i", playerid);
 	new
@@ -988,6 +989,8 @@ GLOBAL__ Command_GetPlayerCommandCount(playerid)
 	}
 	return count;
 }
+
+#define Command_GetPlayerCommandCount YCMD_GetPlayerCommandCount
 
 /*
 
