@@ -451,23 +451,20 @@ static stock YVers_PrintHeader()
 	{
 		Server_PrintIntroPart(YSI_gscCrashdetect, "    <none>");
 	}
-	else if (!Server_HasLongCallControl())// && Server_IsLinuxHost())
+	else if (!Server_HasLongCallControl() && Server_IsLinuxHost())
 	{
 		Server_PrintIntroPart(
 			YSI_gscCrashdetect,
 			"    <warning>",
 			"",
-			"Crashdetect has been found, but no",
-			"long-call controls have been",
-			"detected.  This could be because you",
-			"are on an old version, have disabled",
-			"long-call detection, or are on the",
-			"bugged Linux version.  If you see a",
-			"console warning about slow execution",
-			"during startup, ignore it - this",
-			"message cannot be disabled on Linux",
-			"in some releases due to a coding",
-			"oversight."
+			"  Crashdetect has been found, but no",
+			"     long-call controls have been",
+			"   detected.  If you see a console",
+			" warning about slow execution during",
+			"   startup (only), ignore it - this",
+			" message cannot be disabled on Linux",
+			"   in some releases due to a coding",
+			"              oversight."
 		);
 	}
 	else
