@@ -462,8 +462,7 @@ static stock YVers_PrintHeader()
 			" warning about slow execution during",
 			"   startup (only), ignore it - this",
 			" message cannot be disabled on Linux",
-			"   in some releases due to a coding",
-			"              oversight."
+			"    in some releases due to a bug."
 		);
 	}
 	else
