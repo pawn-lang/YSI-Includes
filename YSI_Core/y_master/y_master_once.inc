@@ -338,26 +338,26 @@ Optional plugins:
 #define YSIM_UG_NUL_VOD YSIM_UG_END
 #define YSIM_UG_NUL_TAG YSIM_UG_END_TAG
 
-#define YSIM_DF_END(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)        %8$@@%9(%2);@_yM%9();@_yM%9()return _MASTER
-#define YSIM_DF_END_STR(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2);@_yM%9();@_yM%9()return _MASTER
-#define YSIM_DF_END_VOD(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2);@_yM%9();@_yM%9()return _MASTER
-#define YSIM_DF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0) %8$@@%9(%2);@_yM%9();@_yM%9()return _MASTER
-#define YSIM_DF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$@@%9();@_yM%9();@_yM%9()return _MASTER
-#define YSIM_DF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9();@_yM%9();@_yM%9()return _MASTER
-#define YSIM_DF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9();@_yM%9();@_yM%9()return _MASTER
-#define YSIM_DF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$@@%9();@_yM%9();@_yM%9()return _MASTER
+#define YSIM_DF_END(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)        %8$@@%9(%2);@@%9(%2)return L@(%9(%7)%0);@_yM%9()
+#define YSIM_DF_END_STR(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2);@@%9(%2)return T@(%9(%7)%0);@_yM%9()
+#define YSIM_DF_END_VOD(%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0)    %8$@@%9(%2);@@%9(%2){%9(%7);return L@(0%0);}@_yM%9()
+#define YSIM_DF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(%2)(,%2)(%0) %8$@@%9(%2);@@%9(%2)return L@(%9(%7)%0);@_yM%9()
+#define YSIM_DF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$@@%9();@@%9()return L@(%9()%0);@_yM%9()
+#define YSIM_DF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9();@@%9()return T@(%9()%0);@_yM%9()
+#define YSIM_DF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$@@%9();@@%9(){%9();return L@(0%0);}@_yM%9()
+#define YSIM_DF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$@@%9();@@%9()return L@(%9()%0);@_yM%9()
 
-#define YSIM_DG_END(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)       %8$%4%9(%1)<>return F@(),D@(#@@%9,%3,%5);@@%9(%2)return L@(%9(%7)%0);%9(%1)<_YCM:y>
-#define YSIM_DG_END_STR(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>return F@(),K@(#@@%9,%3,%5);@@%9(%2)return T@(%9(%7)%0);%9(%1)<_YCM:y>
-#define YSIM_DG_END_VOD(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>F@(),D@(#@@%9,%3,%5);@@%9(%2){%9(%7);return L@(0%0);}%9(%1)<_YCM:y>
-#define YSIM_DG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$%4%9()<>return F@(),D@(#@@%9,%3);@@%9()return L@(%9()%0);%9()<_YCM:y>
-#define YSIM_DG_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>return F@(),K@(#@@%9,%3);@@%9()return T@(%9()%0);%9()<_YCM:y>
-#define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>F@(),D@(#@@%9,%3);@@%9(){%9();return L@(0%0);}%9()<_YCM:y>
-#define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$%4%5%9()<>return F@(),%5D@(#@@%9,%3);@@%9()return L@(%9()%0);%5%9()<_YCM:y>
+#define YSIM_DG_END(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)       %8$%4%9(%1)<>return F@(),D@(#@@%9,%3,%5);@_yM%9()return _MASTER;%9(%1)<_YCM:y>
+#define YSIM_DG_END_STR(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>return F@(),K@(#@@%9,%3,%5);@_yM%9()return _MASTER;%9(%1)<_YCM:y>
+#define YSIM_DG_END_VOD(%9)%8$%4(%1)%3(,%7)(,%5)(,%2)(%0)   %8$%4%9(%1)<>F@(),D@(#@@%9,%3,%5);@_yM%9()return _MASTER;%9(%1)<_YCM:y>
+#define YSIM_DG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)          %8$%4%9()<>return F@(),D@(#@@%9,%3);@_yM%9()return _MASTER;%9()<_YCM:y>
+#define YSIM_DG_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>return F@(),K@(#@@%9,%3);@_yM%9()return _MASTER;%9()<_YCM:y>
+#define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)      %8$%4%9()<>F@(),D@(#@@%9,%3);@_yM%9()return _MASTER;%9()<_YCM:y>
+#define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%2)(%0)   %8$%4%5%9()<>return F@(),%5D@(#@@%9,%3);@_yM%9()return _MASTER;%5%9()<_YCM:y>
 
 // This just had too many replacement parts!  I had to split it in two.
 #define YSIM_DG_END_TAG(%5,%9)%8$                           %8$YSIM_DG_END_TWO(%5,%9)
-#define YSIM_DG_END_TWO(%5,%9)%4(%1)%3(,%7)(,%8)(,%2)(%0)   %4%5%9(%1)<>return F@(),%5D@(#@@%9,%3,%8);@@%9(%2)return L@(%9(%7)%0);%5%9(%1)<_YCM:y>
+#define YSIM_DG_END_TWO(%5,%9)%4(%1)%3(,%7)(,%8)(,%2)(%0)   %4%5%9(%1)<>return F@(),%5D@(#@@%9,%3,%8);@_yM%9()return _MASTER;%5%9(%1)<_YCM:y>
 
 // These pieces of code give undefined errors if you try and use `global` with
 // `YSIM_IS_STUB`.
