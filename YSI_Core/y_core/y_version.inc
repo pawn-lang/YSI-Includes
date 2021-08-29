@@ -438,24 +438,23 @@ static stock YVers_PrintHeader()
 	new
 		version[32], os[10];
 	Script_GetIncludesString(version, os),
-	format(version, sizeof (version), "    %s - %s", version, os),
-	Server_PrintIntroPart("Server:", version, ""),
+	format(version, sizeof (version), "Server:      %s - %s", version, os),
+	Server_PrintIntroPart(version),
 	Script_GetCompilerString(version, os),
-	format(version, sizeof (version), "    %s - %s", version, os),
-	Server_PrintIntroPart("Compiler:", version, ""),
-	Server_PrintIntroPart("YSI:", "    " YSI_VERSION, ""),
+	format(version, sizeof (version), "Compiler:    %s - %s", version, os),
+	Server_PrintIntroPart(version),
+	Server_PrintIntroPart("YSI:         " YSI_VERSION),
 	Server_GetJITString(version),
-	format(version, sizeof (version), "    %s", version),
-	Server_PrintIntroPart("JIT:", version, "");
+	format(version, sizeof (version), "JIT:         %s", version),
+	Server_PrintIntroPart(version);
 	if (!Server_CrashDetectExists())
 	{
-		Server_PrintIntroPart(YSI_gscCrashdetect, "    <none>");
+		Server_PrintIntroPart("Crashdetect: <none>");
 	}
 	else if (!Server_HasLongCallControl() && Server_IsLinuxHost())
 	{
 		Server_PrintIntroPart(
-			YSI_gscCrashdetect,
-			"    <warning>",
+			"Crashdetect: <warning>",
 			"",
 			"  Crashdetect has been found, but no",
 			"     long-call controls have been",
@@ -469,7 +468,7 @@ static stock YVers_PrintHeader()
 	}
 	else
 	{
-		Server_PrintIntroPart(YSI_gscCrashdetect, "    <found>");
+		Server_PrintIntroPart("Crashdetect: <found>");
 	}
 	Server_FinishIntroPart();
 }
