@@ -375,7 +375,7 @@ forward _YCM();
  * <transition keep="true" target="_YCM : n" />
  *//*----------------------------------------------------------------**/
 
-static stock Master_GetCurrentMaster()
+static stock Master_GetCurrentMaster(installState)
 {
 	// THIS CODE IS COPIED IN y_classes (mostly).
 	#if _YSIM_IS_SERVER
@@ -385,47 +385,64 @@ static stock Master_GetCurrentMaster()
 		// See if this script should be master.
 		switch (_Master_Get(#_YCM, false))
 	#endif
-	{
-		case e_YSIM_GET_TYPE_NO_CONTEST:
 		{
-			// Nothing changed, or we took it without force.
-			P:2("Master_GetCurrentMaster: Got master " #_YCM);
-			state _YCM:y;
-			_YCM@ = _E_YCM@y;
+			case e_YSIM_GET_TYPE_NO_CONTEST:
+			{
+				// Nothing changed, or we took it without force.
+				P:2("Master_GetCurrentMaster: Got master " #_YCM);
+				state _YCM:y;
+				_YCM@ = _E_YCM@y;
+				// Already installed = 1 + 1, does nothing.
+				// Not installed = 0 + 1, installs.
+				++installState;
+			}
+			case e_YSIM_GET_TYPE_STOLE:
+			{
+				P:2("Master_GetCurrentMaster: Stole master " #_YCM);
+				// Something changed, tell other scripts.  Set the state here to `:u` not `:y` so that
+				// the only call to a `:y` function does relinquishing.  We don't want to be set as
+				// master here then instantly relinquish everything.
+				state _YCM:u;
+				_YCM@ = _E_YCM@u;
+				// Determine the next unique name.
+				CallRemoteFunction(#_YCM, "");
+				// Servers always get all data, so it doesn't matter that
+				// for now this is state "u".
+				++installState;
+			}
+			case e_YSIM_GET_TYPE_NOT_GOT:
+			{
+				P:2("Master_GetCurrentMaster: Not master " #_YCM);
+				state _YCM:n;
+				_YCM@ = _E_YCM@n;
+				// Already installed = 1 - 1, uninstalls.
+				// Not installed = 0 - 1, does nothing.
+				--installState;
+			}
+			default:
+			{
+				P:E("Master_GetCurrentMaster: Unknown return " #_YCM);
+				state _YCM:n;
+				_YCM@ = _E_YCM@n;
+				--installState;
+			}
 		}
-		case e_YSIM_GET_TYPE_STOLE:
+		// We are now in charge of `_MASTER`.  Rename relevant functions.
+		if (installState == 1)
 		{
-			P:2("Master_GetCurrentMaster: Stole master " #_YCM);
-			// Something changed, tell other scripts.  Set the state here to `:u` not `:y` so that
-			// the only call to a `:y` function does relinquishing.  We don't want to be set as
-			// master here then instantly relinquish everything.
-			state _YCM:u;
-			_YCM@ = _E_YCM@u;
-			// Determine the next unique name.
-			CallRemoteFunction(#_YCM, "");
-			// Servers always get all data, so it doesn't matter that
-			// for now this is state "u".
+			_Master_RenameAll(_MASTER);
 		}
-		case e_YSIM_GET_TYPE_NOT_GOT:
+		else if (installState == 0)
 		{
-			P:2("Master_GetCurrentMaster: Not master " #_YCM);
-			state _YCM:n;
-			_YCM@ = _E_YCM@n;
+			_Master_UnnameAll(_MASTER);
 		}
-		default:
-		{
-			P:E("Master_GetCurrentMaster: Unknown return " #_YCM);
-			state _YCM:n;
-			_YCM@ = _E_YCM@n;
-		}
-	}
 }
 
 public OnMasterSystemInit(id)
 {
 	P:1(#_YCM "_OGM");
 	deleteproperty(8, YSIM_VERMAX);
-	Master_GetCurrentMaster();
+	Master_GetCurrentMaster(1);
 	#if defined _ALS_OnMasterSystemInit
 		#undef OnMasterSystemInit
 	#else
@@ -811,6 +828,7 @@ public _YCM() <_YCM:y>
 		state _YCM:n;
 		_YCM@ = _E_YCM@n;
 		_Master_Relinquish(#_YCM);
+		_Master_UnnameAll(_MASTER);
 	}
 	if (getproperty(9, #_YCM))
 	{
@@ -834,7 +852,7 @@ public _YCM() <_YCM:n>
 	{
 		// This has been called remotely from a script which owns the
 		// library masterhood (that's the only way this can ever be called).
-		Master_GetCurrentMaster();
+		Master_GetCurrentMaster(0);
 	}
 }
 
