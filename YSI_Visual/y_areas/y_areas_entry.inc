@@ -1474,7 +1474,7 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 	#if _YSIM_IS_SERVER
 		forward Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...);
 		
-		forward Area_AddPoly@(Float:points[], size, count);
+		forward @@Area_AddPoly(Float:points[], size, count);
 		
 		stock Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...)
 		{
@@ -1496,10 +1496,10 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 			{
 				points[i] = Float:getarg(i);
 			}
-			return Area_AddPoly@(points, sizeof (points), args);
+			return @@Area_AddPoly(points, sizeof (points), args);
 		}
 		
-		public Area_AddPoly@(Float:points[], size, count)
+		public @@Area_AddPoly(Float:points[], size, count)
 	#else
 		stock Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...) <>
 		{
@@ -1524,12 +1524,12 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 			new
 				p = getproperty(8, YSIM_CALLER);
 			setproperty(8, YSIM_CALLER, Master_ID());
-			CallRemoteFunction("Area_AddPoly@", "aii", points, sizeof (points), args);
+			CallRemoteFunction("@@Area_AddPoly", "aii", points, sizeof (points), args);
 			setproperty(8, YSIM_CALLER, p);
 			return getproperty(8, YSIM_RETURN);
 		}
 		
-		forward Area_AddPoly@(Float:points[], size, count);
+		forward @@Area_AddPoly(Float:points[], size, count);
 		
 		stock Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...) <_YCM : m>
 		{
@@ -1542,11 +1542,6 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 			#if _YSIM_IS_STUB
 				#error _YSIM_IS_STUB set in y_areas.
 			#else
-				public Area_AddPoly@(Float:points[], size, count) <>
-				{
-					return 0;
-				}
-				
 				stock Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...) <_YCM : y>
 				{
 					new
@@ -1567,10 +1562,12 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 					{
 						points[i] = Float:getarg(i);
 					}
-					return Area_AddPoly@(points, sizeof (points), args);
+					return @@Area_AddPoly(points, sizeof (points), args);
 				}
 				
-				public Area_AddPoly@(Float:points[], size, count) <_YCM : y>
+				forward @_yMArea_AddPoly(Float:points[], size, count);
+				public @_yMArea_AddPoly(Float:points[], size, count) { return _MASTER; }
+				public @@Area_AddPoly(Float:points[], size, count)
 			#endif
 		#endif
 	#endif
