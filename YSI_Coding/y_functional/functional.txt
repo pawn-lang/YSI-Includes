@@ -90,26 +90,25 @@ Using "return" instead of a variable is acceptable, not much else is though.
 
 Functions (look them up somewhere):
 
-Map - See above.
-Map_ - Doesn't save the results, useful for just printing all the values.
-IdxMap - Like map, but with an extra "index" parameter first in the inline.
-IdxMap_ - To IdxMap what Map_ is to Map.
-ZipWith - Combine two arrays using a function.
-ZipWith_ - Don't store the results (Map_ with 2 function parameters).
-ZipWith3 - ZipWith could be called "ZipWith2".
-ZipWith3_ - 3 parameter Map_.
-FoldL - Left fold.
-FoldL1 - Left fold with no default value.
-FoldR - Right fold.
-Foldr1 - Right fold with no default value.
-ScanL - Left fold, saving interim results.
-ScanR - Right fold, saving interim results.
-And - Returns true if every array item is true.
-Or - Returns true if any array item is true.
-All - Returns true if every array item passes a single parameter test.
-Any - Returns true if any array item passes a single parameter test.
-Reverse - Reverse the items in an array.
-Elem - Returns true if "n" is in an array.
-NotElem - ...
-
+* `Map({ _0 /* value */ }, in, out)`:  See above.
+* `Map_({ _0 /* value */ }, in)`:  Doesn't save the results, useful for just printing all the values (sometimes called `ForEach`).
+* `IdxMap({ _0 /* index */, _1 /* value */ }, in, out)`:  Like map, but with an extra `index` parameter first in the inline.
+* `IdxMap_({ _0 /* index */, _1 /* value */ }, in)`:  To `IdxMap` what `Map_` is to `Map`.
+* `ZipWith({ _0 /* value0 */, _1 /* value1 */ }, in0, in1, out)`:  Combine two arrays using a function.
+* `ZipWith_({ _0 /* value0 */, _1 /* value1 */ }, in0, in1)`:  Don't store the results (Map_ with 2 function parameters).
+* `ZipWith3({ _0 /* value0 */, _1 /* value1 */, _2 /* value2 */ }, in0, in1, in2, out)`:  ZipWith could be called `ZipWith2`.
+* `ZipWith3_({ _0 /* value0 */, _1 /* value1 */, _2 /* value2 */ }, in0, in1, in2)`:  3 parameter `Map_`.
+* `FoldL`:  Left fold.
+* `FoldL1`:  Left fold with no default value (`1` indicates that the input MUST have at least one value).
+* `FoldR`:  Right fold.
+* `Foldr1`:  Right fold with no default value (`1` indicates that the input MUST have at least one value).
+* `ScanL`:  Left fold, saving interim results.
+* `ScanR`:  Right fold, saving interim results.
+* `And`:  Returns true if every array item is true.
+* `Or`:  Returns true if any array item is true.
+* `All`:  Returns true if every array item passes a single parameter test.
+* `Any`:  Returns true if any array item passes a single parameter test.
+* `Reverse`:  Reverse the items in an array.
+* `Elem`:  Returns true if `n` is in an array.
+* `NotElem`:  Returns true if `n` is not in an array.
 
