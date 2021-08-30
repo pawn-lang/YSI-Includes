@@ -15,7 +15,7 @@ main()
 	// `Map` does the same thing to every element in an array.
 	// `{...}` here is a lambda function, `_0` is an implicit argument, a single
 	// value within the array.
-	Map({_0 + 1}, array);
+	Map({_0 + 1}, array, array);
 
 	// This is equivalent to:
 	//
