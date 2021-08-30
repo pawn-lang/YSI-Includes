@@ -186,6 +186,7 @@ public OnCodeInit()
 	// strings etc, so save some space at the bottom of the heap for them to use.  This just leaks
 	// memory from the allocation system, and allows it to be safely clobbered by those calls.
 	Malloc_Allocate(YSI_DEFAULT_MALLOC);
+	CGen_AddCodeSpace(AsmGetCodeSize(ctx));
 	P:6("Malloc_OnCodeInit done");
 	return 1;
 }
