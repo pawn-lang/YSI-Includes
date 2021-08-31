@@ -1318,11 +1318,13 @@ GLOBAL__ Group:Iter_Func@GroupChild(start, Group:parent)
  *  macro ("GROUP_CHAIN") one of these four functions are selected and called.
  *  Adding more is fairly trivial too, the parameters are just:
  *
- *  #emit PUSH.S     <16 + n * 4>
- *  #emit PUSH.S     ...
- *  #emit PUSH.S     20
- *  #emit PUSH.S     16
- *  #emit PUSH.C     <n * 4>
+ *  <code>
+ *      #emit PUSH.S     &lt;16 + n * 4&gt;   <br />
+ *      #emit PUSH.S     ...                  <br />
+ *      #emit PUSH.S     20                   <br />
+ *      #emit PUSH.S     16                   <br />
+ *      #emit PUSH.C     &lt;n * 4&gt;
+ *  </code>
  *
  * This code is now, of course, SERIOUSLY outdated - function pointers have
  * advanced way beyond this (see indirection.inc), but this code works, and

@@ -1635,7 +1635,7 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], const parameters[], coun
  *  variables won't work correctly:
  *
  *  <c>
- *      inline Func(&a, &b)
+ *      inline Func(&amp;a, &amp;b)
  *      {
  *  	    ++a; 
  *  	    printf("%d", b); 

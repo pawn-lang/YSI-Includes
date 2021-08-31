@@ -1967,7 +1967,7 @@ stock CIEMultiply(Float:r, Float:g, Float:b, &Float:x, &Float:y, &Float:z)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  SRGBToCIE(colour, &Float:x, &Float:y, &Float:z);
+ *  SRGBToCIE(colour, &amp;Float:x, &amp;Float:y, &amp;Float:z);
  * </summary>
  * <param name="colour">The sRGB colour to convert.</param>
  * <param name="x">The x return value.</param>
@@ -2004,7 +2004,7 @@ stock SRGBToCIE(colour, &Float:x, &Float:y, &Float:z)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  SRGBToCIE(colour, &Float:x, &Float:y, &Float:z);
+ *  SRGBToCIE(colour, &amp;Float:x, &amp;Float:y, &amp;Float:z);
  * </summary>
  * <param name="a">The alpha to add on.</param>
  * <param name="x">The x return value.</param>
