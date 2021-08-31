@@ -8,12 +8,12 @@
  *  different to <c>#</c> in other ways - quotes are converted to <c>`</c>,
  *  concatenation is not allowed, and te output is enclosed in <c>"</c>s:
  *
- *            Input        |   Output
- *     --------------------------------
- *      #A "B"             | "AB"
- *      STRINGISE__(A)"B"  | <invalid>
- *      STRINGISE__(A "B") | "A`B`"
- *                         |
+ * <table>
+ *   <tr><th>Input</th><th>Output</th></tr>
+ *   <tr><td><c>#A "B"</c></td><td><c>"AB"</c></td></tr>
+ *   <tr><td><c>STRINGISE__(A)"B"</c></td><td><c>&lt;invalid&gt;</c></td></tr>
+ *   <tr><td><c>STRINGISE__(A "B")</c></td><td><c>"A`B`"</c></td></tr>
+ * </table>
  *
  * <section>
  *  Version
