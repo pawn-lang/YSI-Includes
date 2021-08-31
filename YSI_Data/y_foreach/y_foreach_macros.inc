@@ -969,7 +969,8 @@ P:D(Iterator:Iterator(name));
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Suppress warnings when `_:` is used (correctly) instead of `_no_itertag:`.
+ *  Suppress warnings when <c>_:</c> is used (correctly) instead of
+ *  <c>_no_itertag:</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 stock operator*(_no_itertag:a, b)
@@ -980,7 +981,8 @@ stock operator*(_no_itertag:a, b)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Suppress warnings when `_:` is used (correctly) instead of `_no_itertag:`.
+ *  Suppress warnings when <c>_:</c> is used (correctly) instead of
+ *  <c>_no_itertag:</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 stock operator=(_no_itertag:a)
@@ -990,7 +992,8 @@ stock operator=(_no_itertag:a)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Suppress warnings when `_:` is used (correctly) instead of `_no_itertag:`.
+ *  Suppress warnings when <c>_:</c> is used (correctly) instead of
+ *  <c>_no_itertag:</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 stock _no_itertag:operator=(a)

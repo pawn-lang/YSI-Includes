@@ -82,9 +82,9 @@ Optional plugins:
 // For example:
 //   
 //  /**  
-//   * <param name="playerid">An example named macro parameter (`%0`).</param>
+//   * <param name="playerid">An example named macro parameter (<c>%0</c>).</param>
 //   * <remarks>
-//   *  This is a function-like macro.  By default, compiling with `-r` does
+//   *  This is a function-like macro.  By default, compiling with <c>-r</c> does
 //   *  not put macros in the XML, which is a shame if we are using a macro to
 //   *  fake a function, because then a function will be apparently missing
 //   *  from the documentation.  Instead, we make a function, THEN make the

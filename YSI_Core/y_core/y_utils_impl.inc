@@ -355,8 +355,8 @@ P:D(bool:UCMP(value, upper));
  * <returns>
  *  An IEEE754 floating-point number is defined as Not-A-Number when all the exponent bits are set,
  *  and the mantissa is non-zero.  The sign bit is ignored, so we first remove that and test the
- *  result is `> 0x7F800000`.  Because any signed number bigger than that must have all the MSBs
- *  set, plus at least one more.
+ *  result is <c>&gt; 0x7F800000</c>.  Because any signed number bigger than that must have all the
+ *  MSBs set, plus at least one more.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -924,7 +924,7 @@ stock returnstringarg(idx)
  *  Formatted string.
  * </returns>
  * <remarks>
- *  Just wraps `format` and returns a string instead.
+ *  Just wraps <c>format</c> and returns a string instead.
  *
  *  Has extra code to ensure that it works correct on the old compiler.
  * </remarks>

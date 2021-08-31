@@ -1206,7 +1206,7 @@ static stock Callback_InlineByName(const name[], tag)
  * <param name="remote">Is this function called on one or all scripts?</param>
  * <param name="tag">The tag of the return value for type reasons.</param>
  * <remarks>
- *  Replacement for `Callback_Get`.  Just returns a pointer, and no longer
+ *  Replacement for <c>Callback_Get</c>.  Just returns a pointer, and no longer
  *  relies on strict control of where is called from.
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -1574,8 +1574,8 @@ static stock Callback_LocalHandler_(...)
  * <param name="parameters">Information on the fake parameter types.</param>
  * <param name="count">How many parameters there are.</param>
  * <remarks>
- *  Generates the code which copies the parameters from `Callback_Call` in to
- *  the local stack.  All those parameters are passed by reference, since the
+ *  Generates the code which copies the parameters from <c>Callback_Call</c> in
+ *  to the local stack.  All those parameters are passed by reference, since the
  *  function is a varargs function.  Since an inline function's "input"
  *  parameters are just regular variables on the stack, they all need resolving,
  *  which is what this code does.  Regular variables are dereferenced, and

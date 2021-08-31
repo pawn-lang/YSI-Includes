@@ -579,8 +579,8 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
  *   Enables or disables using commands for this player.  Enabling commands does
  *   not enable ALL commands, just allows them to use the ones for which they
  *   have otherwise set permissions.  Disabling prevents them from using ANY
- *   commands at all (though this can be overridden by returning `COMMAND_OK` in
- *   `OnPlayerCommandReceived`).
+ *   commands at all (though this can be overridden by returning
+ *   <c>COMMAND_OK</c> in <c>OnPlayerCommandReceived</c>).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
