@@ -348,7 +348,7 @@ stock Bintree_SortHalf(BinaryTree:output<>, data[][E_BINTREE_INPUT], index, uppe
  * <remarks>
  *  -
  *
- * native Bintree_Add(BinaryTree:tree<>, pointer, value, offset, maxsize = sizeof (data));
+ * native Bintree_Add(BinaryTree:tree&lt;&gt;, pointer, value, offset, maxsize = sizeof (data));
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -391,7 +391,7 @@ stock Bintree_Add(BinaryTree:data<>, pointer, value, offset, maxsize = sizeof (d
  * <remarks>
  *  The left branch is usually larger due to the division
  *  method used so we start there.  Even though right is
- *  >= and left is only < in even sized arrays the greater
+ *  &gt;= and left is only &lt; in even sized arrays the greater
  *  chunk (unless there's only 2 items) goes left.
  *
  *  Called itteratively to ensure branches are maintained.
