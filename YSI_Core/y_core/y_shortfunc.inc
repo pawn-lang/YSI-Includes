@@ -500,11 +500,11 @@ static stock _0;
 /**
 	This variable only exists to hide other variables.  It end a massive comment
 	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with `_`.  This is a very common pattern used throughout
-	YSI (and most of programming).  Unfortunately these weirdly named internal
-	variables appear in the generated documentation always.  This is the best
-	way to hide them.  You still see one variable (<c>_0</c>), but that one has
-	a legitimate use that can be documented and is fine to be seen.
+	those that start with <c>_</c>.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal variables appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one variable (<c>_0</c>), but that
+	one has a legitimate use that can be documented and is fine to be seen.
 
 	-->
 */
@@ -525,11 +525,11 @@ static stock _1;
 /**
 	This variable only exists to hide other variables.  It end a massive comment
 	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with `_`.  This is a very common pattern used throughout
-	YSI (and most of programming).  Unfortunately these weirdly named internal
-	variables appear in the generated documentation always.  This is the best
-	way to hide them.  You still see one variable (<c>_1</c>), but that one has
-	a legitimate use that can be documented and is fine to be seen.
+	those that start with <c>_</c>.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal variables appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one variable (<c>_1</c>), but that
+	one has a legitimate use that can be documented and is fine to be seen.
 
 	-->
 */
@@ -550,11 +550,11 @@ static stock _2;
 /**
 	This variable only exists to hide other variables.  It end a massive comment
 	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with `_`.  This is a very common pattern used throughout
-	YSI (and most of programming).  Unfortunately these weirdly named internal
-	variables appear in the generated documentation always.  This is the best
-	way to hide them.  You still see one variable (<c>_2</c>), but that one has
-	a legitimate use that can be documented and is fine to be seen.
+	those that start with <c>_</c>.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal variables appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one variable (<c>_2</c>), but that
+	one has a legitimate use that can be documented and is fine to be seen.
 
 	-->
 */
@@ -575,11 +575,11 @@ static stock _3;
 /**
 	This variable only exists to hide other variables.  It end a massive comment
 	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with `_`.  This is a very common pattern used throughout
-	YSI (and most of programming).  Unfortunately these weirdly named internal
-	variables appear in the generated documentation always.  This is the best
-	way to hide them.  You still see one variable (<c>_3</c>), but that one has
-	a legitimate use that can be documented and is fine to be seen.
+	those that start with <c>_</c>.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal variables appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one variable (<c>_3</c>), but that
+	one has a legitimate use that can be documented and is fine to be seen.
 
 	-->
 */
@@ -600,11 +600,11 @@ static stock _4;
 /**
 	This variable only exists to hide other variables.  It end a massive comment
 	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with `_`.  This is a very common pattern used throughout
-	YSI (and most of programming).  Unfortunately these weirdly named internal
-	variables appear in the generated documentation always.  This is the best
-	way to hide them.  You still see one variable (<c>_4</c>), but that one has
-	a legitimate use that can be documented and is fine to be seen.
+	those that start with <c>_</c>.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal variables appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one variable (<c>_4</c>), but that
+	one has a legitimate use that can be documented and is fine to be seen.
 
 	-->
 */
@@ -625,11 +625,11 @@ static stock _5;
 /**
 	This variable only exists to hide other variables.  It end a massive comment
 	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with `_`.  This is a very common pattern used throughout
-	YSI (and most of programming).  Unfortunately these weirdly named internal
-	variables appear in the generated documentation always.  This is the best
-	way to hide them.  You still see one variable (<c>_5</c>), but that one has
-	a legitimate use that can be documented and is fine to be seen.
+	those that start with <c>_</c>.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal variables appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one variable (<c>_5</c>), but that
+	one has a legitimate use that can be documented and is fine to be seen.
 
 	-->
 */
@@ -650,11 +650,11 @@ static stock _6;
 /**
 	This variable only exists to hide other variables.  It end a massive comment
 	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with `_`.  This is a very common pattern used throughout
-	YSI (and most of programming).  Unfortunately these weirdly named internal
-	variables appear in the generated documentation always.  This is the best
-	way to hide them.  You still see one variable (<c>_6</c>), but that one has
-	a legitimate use that can be documented and is fine to be seen.
+	those that start with <c>_</c>.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal variables appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one variable (<c>_6</c>), but that
+	one has a legitimate use that can be documented and is fine to be seen.
 
 	-->
 */
@@ -675,11 +675,11 @@ static stock _7;
 /**
 	This variable only exists to hide other variables.  It end a massive comment
 	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with `_`.  This is a very common pattern used throughout
-	YSI (and most of programming).  Unfortunately these weirdly named internal
-	variables appear in the generated documentation always.  This is the best
-	way to hide them.  You still see one variable (<c>_7</c>), but that one has
-	a legitimate use that can be documented and is fine to be seen.
+	those that start with <c>_</c>.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal variables appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one variable (<c>_7</c>), but that
+	one has a legitimate use that can be documented and is fine to be seen.
 
 	-->
 */
@@ -700,11 +700,11 @@ static stock _8;
 /**
 	This variable only exists to hide other variables.  It end a massive comment
 	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with `_`.  This is a very common pattern used throughout
-	YSI (and most of programming).  Unfortunately these weirdly named internal
-	variables appear in the generated documentation always.  This is the best
-	way to hide them.  You still see one variable (<c>_8</c>), but that one has
-	a legitimate use that can be documented and is fine to be seen.
+	those that start with <c>_</c>.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal variables appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one variable (<c>_8</c>), but that
+	one has a legitimate use that can be documented and is fine to be seen.
 
 	-->
 */
