@@ -163,6 +163,26 @@ stock const
 	NULL[2] = "\1";
 #endif
 
+/**
+	This variable only exists to hide other variables.  It starts a massive
+	comment block in the pawndoc XML output that hides all YSI internal
+	variables - that is, those that start with <c>YSI_g<c>.
+
+	<!--
+*/
+
+static stock YSI_g;
+
+/**
+	This variable only exists to hide other variables.  It ends a massive
+	comment block in the pawndoc XML output that hides all YSI internal
+	variables - that is, those that start with <c>YSI_g<c>.
+
+	-->
+*/
+
+static stock YSI_gzzzzzzzzzzzzzzzzzzzzzzzzzz;
+
 #if defined FIXES_PAWNDOC
 	// The fixes.inc pawndoc cleverness is already defined, we don't need to
 	// duplicate it here.  We have to use `#endinput` to avoid the comments
