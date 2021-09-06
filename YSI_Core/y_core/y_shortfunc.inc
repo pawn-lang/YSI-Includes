@@ -480,6 +480,9 @@ stock G@(GLOBAL_TAG_TYPES:...)
 	fixes.inc function of the same name as this variable is in a different
 	scope, and so fixes.inc also needed to use a different name for its hiding
 	variable since all its variables are in the same scope.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started earlier
+	and ended here.
 
 	-->
 */
@@ -493,6 +496,9 @@ static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ;
 	<!--
 
 	Hide future declarations with <c>_0</c> prefix.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started here
+	and ended by a later variable.
 */
 
 static stock _0;
@@ -505,6 +511,9 @@ static stock _0;
 	internal variables appear in the generated documentation always.  This is
 	the best way to hide them.  You still see one variable (<c>_0</c>), but that
 	one has a legitimate use that can be documented and is fine to be seen.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started earlier
+	and ended here.
 
 	-->
 */
@@ -518,6 +527,9 @@ static stock _0zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 	<!--
 
 	Hide future declarations with <c>_1</c> prefix.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started here
+	and ended by a later variable.
 */
 
 static stock _1;
@@ -530,6 +542,9 @@ static stock _1;
 	internal variables appear in the generated documentation always.  This is
 	the best way to hide them.  You still see one variable (<c>_1</c>), but that
 	one has a legitimate use that can be documented and is fine to be seen.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started earlier
+	and ended here.
 
 	-->
 */
@@ -543,6 +558,9 @@ static stock _1zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 	<!--
 
 	Hide future declarations with <c>_2</c> prefix.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started here
+	and ended by a later variable.
 */
 
 static stock _2;
@@ -555,6 +573,9 @@ static stock _2;
 	internal variables appear in the generated documentation always.  This is
 	the best way to hide them.  You still see one variable (<c>_2</c>), but that
 	one has a legitimate use that can be documented and is fine to be seen.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started earlier
+	and ended here.
 
 	-->
 */
@@ -568,6 +589,9 @@ static stock _2zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 	<!--
 
 	Hide future declarations with <c>_3</c> prefix.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started here
+	and ended by a later variable.
 */
 
 static stock _3;
@@ -580,6 +604,9 @@ static stock _3;
 	internal variables appear in the generated documentation always.  This is
 	the best way to hide them.  You still see one variable (<c>_3</c>), but that
 	one has a legitimate use that can be documented and is fine to be seen.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started earlier
+	and ended here.
 
 	-->
 */
@@ -593,6 +620,9 @@ static stock _3zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 	<!--
 
 	Hide future declarations with <c>_4</c> prefix.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started here
+	and ended by a later variable.
 */
 
 static stock _4;
@@ -605,6 +635,9 @@ static stock _4;
 	internal variables appear in the generated documentation always.  This is
 	the best way to hide them.  You still see one variable (<c>_4</c>), but that
 	one has a legitimate use that can be documented and is fine to be seen.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started earlier
+	and ended here.
 
 	-->
 */
@@ -618,6 +651,9 @@ static stock _4zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 	<!--
 
 	Hide future declarations with <c>_5</c> prefix.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started here
+	and ended by a later variable.
 */
 
 static stock _5;
@@ -630,6 +666,9 @@ static stock _5;
 	internal variables appear in the generated documentation always.  This is
 	the best way to hide them.  You still see one variable (<c>_5</c>), but that
 	one has a legitimate use that can be documented and is fine to be seen.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started earlier
+	and ended here.
 
 	-->
 */
@@ -643,6 +682,9 @@ static stock _5zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 	<!--
 
 	Hide future declarations with <c>_6</c> prefix.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started here
+	and ended by a later variable.
 */
 
 static stock _6;
@@ -655,6 +697,9 @@ static stock _6;
 	internal variables appear in the generated documentation always.  This is
 	the best way to hide them.  You still see one variable (<c>_6</c>), but that
 	one has a legitimate use that can be documented and is fine to be seen.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started earlier
+	and ended here.
 
 	-->
 */
@@ -668,6 +713,9 @@ static stock _6zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 	<!--
 
 	Hide future declarations with <c>_7</c> prefix.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started here
+	and ended by a later variable.
 */
 
 static stock _7;
@@ -680,6 +728,9 @@ static stock _7;
 	internal variables appear in the generated documentation always.  This is
 	the best way to hide them.  You still see one variable (<c>_7</c>), but that
 	one has a legitimate use that can be documented and is fine to be seen.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started earlier
+	and ended here.
 
 	-->
 */
@@ -693,6 +744,9 @@ static stock _7zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 	<!--
 
 	Hide future declarations with <c>_8</c> prefix.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started here
+	and ended by a later variable.
 */
 
 static stock _8;
@@ -705,6 +759,9 @@ static stock _8;
 	internal variables appear in the generated documentation always.  This is
 	the best way to hide them.  You still see one variable (<c>_8</c>), but that
 	one has a legitimate use that can be documented and is fine to be seen.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started earlier
+	and ended here.
 
 	-->
 */
@@ -718,6 +775,9 @@ static stock _8zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 	<!--
 
 	Hide future declarations with <c>_9</c> prefix.
+	<p />
+	Note that the actual hiding itself is done by an XML comment started here
+	and ended by a later variable.
 */
 
 static stock _9;
