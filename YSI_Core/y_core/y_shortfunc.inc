@@ -462,3 +462,37 @@ stock G@(GLOBAL_TAG_TYPES:...)
 // This is for getting excess parameters on non-strings.  Now safely recursive.
 #define _:%0,) _:%0)
 
+/**
+	This function only exists to hide other functions.  It starts a massive
+	comment block in the pawndoc XML output that hides all internal functions -
+	that is, those that start with `_`.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal functions appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one function (this one), but at
+	least the documentation for this one function can explain why it exists.
+
+	<!--
+*/
+
+static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ() {}
+
+/**
+	This function only exists to hide other functions.  It end a massive comment
+	block in the pawndoc XML output that hides all internal functions - that is,
+	those that start with `_`.  This is a very common pattern used throughout
+	YSI (and most of programming).  Unfortunately these weirdly named internal
+	functions appear in the generated documentation always.  This is the best
+	way to hide them.  You still see one function (<c>_@0</c>), but at least the
+	documentation for that one function can explain why it exists.
+
+	This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and ends the internal
+	functions block.  This is the last possible name alphabetically before the
+	first character is no longer <c>_</c>.  There's also a
+	<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> that ends the variables block.  They
+	can have the same name because they are not declared in the same scope.
+
+	-->
+*/
+
+static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
+
