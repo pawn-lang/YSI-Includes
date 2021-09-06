@@ -164,12 +164,15 @@ stock const
 #endif
 
 /**
-	This variable only exists to hide other variables.  It starts a massive
-	comment block in the pawndoc XML output that hides all YSI internal
-	variables - that is, those that start with <c>YSI_g<c>.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It starts a massive
+		comment block in the pawndoc XML output that hides all YSI internal
+		variables - that is, those that start with <c>YSI_g<c>.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	<!--
 */
@@ -177,9 +180,12 @@ stock const
 static stock YSI_g;
 
 /**
-	This variable only exists to hide other variables.  It ends a massive
-	comment block in the pawndoc XML output that hides all YSI internal
-	variables - that is, those that start with <c>YSI_g<c>.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It ends a massive
+		comment block in the pawndoc XML output that hides all YSI internal
+		variables - that is, those that start with <c>YSI_g<c>.
+	</remarks>
 
 	-->
 */
@@ -194,23 +200,28 @@ static stock YSI_gzzzzzzzzzzzzzzzzzzzzzzzzzz;
 #endif
 
 /**
-	This function only exists to hide other functions.  It starts a massive
-	comment block in the pawndoc XML output that hides all internal functions -
-	that is, those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal functions appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one function (this one), but at
-	least the documentation for this one function can explain why it exists.
-	<p />
-	This is <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c> and starts the internal
-	functions block.  This is the last possible name before the first character
-	is <c>_</c> when the functions are sorted lexicographically
-	(alphabetically).  There's also <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY</c> that
-	starts the variables block; they could have the same name if they were not
-	declared in the same scope, but they might not always be separately defined.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<hidden />
+	<remarks>
+		This function only exists to hide other functions.  It starts a massive
+		comment block in the pawndoc XML output that hides all internal
+		functions - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal functions appear in the
+		generated documentation always.  This is the best way to hide them.  You
+		still see one function (this one), but at least the documentation for
+		this one function can explain why it exists.
+		<p />
+		This is <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c> and starts the internal
+		functions block.  This is the last possible name before the first
+		character is <c>_</c> when the functions are sorted lexicographically
+		(alphabetically).  There's also <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY</c>
+		that starts the variables block; they could have the same name if they
+		were not declared in the same scope, but they might not always be
+		separately defined.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	<!--
 */
@@ -218,24 +229,28 @@ static stock YSI_gzzzzzzzzzzzzzzzzzzzzzzzzzz;
 static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ() {}
 
 /**
-	This function only exists to hide other functions.  It end a massive comment
-	block in the pawndoc XML output that hides all internal functions - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal functions appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one function
-	(<c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c>), but at least the documentation for
-	that can explain why it exists.
-	<p />
-	This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and ends the internal
-	functions block.  This is the last possible name before the first character
-	is no longer <c>_</c> when the functions are sorted lexicographically
-	(alphabetically).  There's also <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> that
-	ends the variables block; they could have the same name if they were not
-	declared in the same scope, but they might not always be separately defined.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This function only exists to hide other functions.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		functions - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal functions appear in the
+		generated documentation always.  This is the best way to hide them.  You
+		still see one function (<c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c>), but at
+		least the documentation for that can explain why it exists.
+		<p />
+		This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and ends the internal
+		functions block.  This is the last possible name before the first
+		character is no longer <c>_</c> when the functions are sorted
+		lexicographically (alphabetically).  There's also
+		<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> that ends the variables block;
+		they could have the same name if they were not declared in the same
+		scope, but they might not always be separately defined.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
@@ -243,30 +258,38 @@ static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ() {}
 static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
 
 /**
-	The first parameter in a <emph>y_functional</emph> lambda function.  This is
-	implicitly declared.
+	<summary>
+		The first parameter in a <emph>y_functional</emph> lambda function.
+		This is implicitly declared.
+	</summary>
 
 	<!--
 
-	Hide future declarations with <c>_0</c> prefix.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<remarks>
+		Hide future declarations with <c>_0</c> prefix.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 */
 
 static stock _0;
 
 /**
-	This variable only exists to hide other variables.  It end a massive comment
-	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal variables appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one variable (<c>_0</c>), but that
-	one has a legitimate use that can be documented and is fine to be seen.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.  You
+		still see one variable (<c>_0</c>), but that one has a legitimate use
+		that can be documented and is fine to be seen.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
@@ -274,30 +297,38 @@ static stock _0;
 static stock _0zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 /**
-	The second parameter in a <emph>y_functional</emph> lambda function.  This
-	is implicitly declared.
+	<summary>
+		The second parameter in a <emph>y_functional</emph> lambda function.
+		This is implicitly declared.
+	</summary>
 
 	<!--
 
-	Hide future declarations with <c>_1</c> prefix.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<remarks>
+		Hide future declarations with <c>_1</c> prefix.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 */
 
 static stock _1;
 
 /**
-	This variable only exists to hide other variables.  It end a massive comment
-	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal variables appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one variable (<c>_1</c>), but that
-	one has a legitimate use that can be documented and is fine to be seen.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.
+		You still see one variable (<c>_1</c>), but that one has a legitimate
+		use that can be documented and is fine to be seen.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
@@ -305,30 +336,38 @@ static stock _1;
 static stock _1zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 /**
-	The third parameter in a <emph>y_functional</emph> lambda function.  This is
-	implicitly declared.
+	<summary>
+		The third parameter in a <emph>y_functional</emph> lambda function.
+		This is implicitly declared.
+	</summary>
 
 	<!--
 
-	Hide future declarations with <c>_2</c> prefix.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<remarks>
+		Hide future declarations with <c>_2</c> prefix.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 */
 
 static stock _2;
 
 /**
-	This variable only exists to hide other variables.  It end a massive comment
-	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal variables appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one variable (<c>_2</c>), but that
-	one has a legitimate use that can be documented and is fine to be seen.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.
+		You still see one variable (<c>_2</c>), but that one has a legitimate
+		use that can be documented and is fine to be seen.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
@@ -336,30 +375,38 @@ static stock _2;
 static stock _2zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 /**
-	The fourth parameter in a <emph>y_functional</emph> lambda function.  This
-	is implicitly declared.
+	<summary>
+		The fourth parameter in a <emph>y_functional</emph> lambda function.
+		This is implicitly declared.
+	</summary>
 
 	<!--
 
-	Hide future declarations with <c>_3</c> prefix.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<remarks>
+		Hide future declarations with <c>_3</c> prefix.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 */
 
 static stock _3;
 
 /**
-	This variable only exists to hide other variables.  It end a massive comment
-	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal variables appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one variable (<c>_3</c>), but that
-	one has a legitimate use that can be documented and is fine to be seen.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.
+		You still see one variable (<c>_3</c>), but that one has a legitimate
+		use that can be documented and is fine to be seen.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
@@ -367,30 +414,38 @@ static stock _3;
 static stock _3zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 /**
-	The fifth parameter in a <emph>y_functional</emph> lambda function.  This is
-	implicitly declared.
+	<summary>
+		The fifth parameter in a <emph>y_functional</emph> lambda function.
+		This is implicitly declared.
+	</summary>
 
 	<!--
 
-	Hide future declarations with <c>_4</c> prefix.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<remarks>
+		Hide future declarations with <c>_4</c> prefix.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 */
 
 static stock _4;
 
 /**
-	This variable only exists to hide other variables.  It end a massive comment
-	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal variables appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one variable (<c>_4</c>), but that
-	one has a legitimate use that can be documented and is fine to be seen.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.
+		You still see one variable (<c>_4</c>), but that one has a legitimate
+		use that can be documented and is fine to be seen.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
@@ -398,30 +453,38 @@ static stock _4;
 static stock _4zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 /**
-	The sixth parameter in a <emph>y_functional</emph> lambda function.  This is
-	implicitly declared.
+	<summary>
+		The sixth parameter in a <emph>y_functional</emph> lambda function.
+		This is implicitly declared.
+	</summary>
 
 	<!--
 
-	Hide future declarations with <c>_5</c> prefix.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<remarks>
+		Hide future declarations with <c>_5</c> prefix.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 */
 
 static stock _5;
 
 /**
-	This variable only exists to hide other variables.  It end a massive comment
-	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal variables appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one variable (<c>_5</c>), but that
-	one has a legitimate use that can be documented and is fine to be seen.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.
+		You still see one variable (<c>_5</c>), but that one has a legitimate
+		use that can be documented and is fine to be seen.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
@@ -429,30 +492,38 @@ static stock _5;
 static stock _5zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 /**
-	The seventh parameter in a <emph>y_functional</emph> lambda function.  This
-	is implicitly declared.
+	<summary>
+		The seventh parameter in a <emph>y_functional</emph> lambda function.
+		This is implicitly declared.
+	</summary>
 
 	<!--
 
-	Hide future declarations with <c>_6</c> prefix.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<remarks>
+		Hide future declarations with <c>_6</c> prefix.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 */
 
 static stock _6;
 
 /**
-	This variable only exists to hide other variables.  It end a massive comment
-	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal variables appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one variable (<c>_6</c>), but that
-	one has a legitimate use that can be documented and is fine to be seen.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.
+		You still see one variable (<c>_6</c>), but that one has a legitimate
+		use that can be documented and is fine to be seen.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
@@ -460,30 +531,38 @@ static stock _6;
 static stock _6zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 /**
-	The eighth parameter in a <emph>y_functional</emph> lambda function.  This
-	is implicitly declared.
+	<summary>
+		The eighth parameter in a <emph>y_functional</emph> lambda function.
+		This is implicitly declared.
+	</summary>
 
 	<!--
 
-	Hide future declarations with <c>_7</c> prefix.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<remarks>
+		Hide future declarations with <c>_7</c> prefix.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 */
 
 static stock _7;
 
 /**
-	This variable only exists to hide other variables.  It end a massive comment
-	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal variables appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one variable (<c>_7</c>), but that
-	one has a legitimate use that can be documented and is fine to be seen.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.
+		You still see one variable (<c>_7</c>), but that one has a legitimate
+		use that can be documented and is fine to be seen.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
@@ -491,30 +570,38 @@ static stock _7;
 static stock _7zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 /**
-	The ninth parameter in a <emph>y_functional</emph> lambda function.  This is
-	implicitly declared.
+	<summary>
+		The ninth parameter in a <emph>y_functional</emph> lambda function.
+		This is implicitly declared.
+	</summary>
 
 	<!--
 
-	Hide future declarations with <c>_8</c> prefix.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<remarks>
+		Hide future declarations with <c>_8</c> prefix.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 */
 
 static stock _8;
 
 /**
-	This variable only exists to hide other variables.  It end a massive comment
-	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal variables appear in the generated documentation always.  This is
-	the best way to hide them.  You still see one variable (<c>_8</c>), but that
-	one has a legitimate use that can be documented and is fine to be seen.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.
+		You still see one variable (<c>_8</c>), but that one has a legitimate
+		use that can be documented and is fine to be seen.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
@@ -522,39 +609,46 @@ static stock _8;
 static stock _8zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 /**
-	The tenth parameter in a <emph>y_functional</emph> lambda function.  This is
-	implicitly declared.
+	<summary>
+		The tenth parameter in a <emph>y_functional</emph> lambda function.
+		This is implicitly declared.
+	</summary>
 
 	<!--
 
-	Hide future declarations with <c>_9</c> prefix.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started here
-	and ended by a later variable.
+	<remarks>
+		Hide future declarations with <c>_9</c> prefix.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 */
 
 static stock _9;
 
 /**
-	This variable only exists to hide other variables.  It end a massive comment
-	block in the pawndoc XML output that hides all internal variables - that is,
-	those that start with <c>_</c>.  This is a very common pattern used
-	throughout YSI (and most of programming).  Unfortunately these weirdly named
-	internal variables appear in the generated documentation always.  This is
-	the best way to hide them.  You still see some internal variables (<c>_0</c>
-	- <c>_9</c>), but those have a legitimate reason to be documented
-	externally.
-	<p />
-	This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> and ends the internal
-	variables block.  This is the last possible name before the first character
-	is no longer <c>_</c>, except for one, when the functions are sorted
-	lexicographically (alphabetically).  There's also
-	<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> that ends the functions block; they
-	could have the same name if they were not declared in the same scope, but
-	they might not always be separately defined.
-	<p />
-	Note that the actual hiding itself is done by an XML comment started earlier
-	and ended here.
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout YSI (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.  You
+		still see some internal variables (<c>_0</c> - <c>_9</c>), but those
+		have a legitimate reason to be documented externally.
+		<p />
+		This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> and ends the internal
+		variables block.  This is the last possible name before the first
+		character is no longer <c>_</c>, except for one, when the functions are
+		sorted lexicographically (alphabetically).  There's also
+		<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> that ends the functions block;
+		they could have the same name if they were not declared in the same
+		scope, but they might not always be separately defined.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
 
 	-->
 */
