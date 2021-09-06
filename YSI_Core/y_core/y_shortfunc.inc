@@ -472,9 +472,9 @@ stock G@(GLOBAL_TAG_TYPES:...)
 /**
 	<hidden />
 	<remarks>
-		This variable only exists to re-show other variables.  It end a tiny
+		This variable only exists to re-show other variables.  It ends a tiny
 		comment in the output XML started by fixes.inc with the immediately
-		preceeding (which should be called
+		preceeding variable (which should be called
 		<c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY</c>) so that we can document several
 		seemingly "internal" variables that are actually for end-user use
 		(<c>_0</c> - <c>_9</c>).  We then re-start the block comment to have it
