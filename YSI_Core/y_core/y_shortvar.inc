@@ -200,8 +200,11 @@ static stock YSI_gzzzzzzzzzzzzzzzzzzzzzzzzzz;
 	least the documentation for this one function can explain why it exists.
 
 	This is <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c> and starts the internal
-	functions block.  This is the first possible name alphabetically before the
-	first character is <c>_</c>.
+	functions block.  This is the last possible name before the first character
+	is <c>_</c> when the functions are sorted lexicographically
+	(alphabetically).  There's also <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY</c> that
+	starts the variables block; they could have the same name if they were not
+	declared in the same scope, but they might not always be separately defined.
 
 	<!--
 */
@@ -219,11 +222,11 @@ static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ() {}
 	that can explain why it exists.
 
 	This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and ends the internal
-	functions block.  This is the last possible name alphabetically before the
-	first character is no longer <c>_</c>.  There's also a
-	<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> that ends the variables block.  They
-	could have the same name if they were not declared in the same scope, but
-	they might not always be separately defined.
+	functions block.  This is the last possible name before the first character
+	is no longer <c>_</c> when the functions are sorted lexicographically
+	(alphabetically).  There's also <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> that
+	ends the variables block; they could have the same name if they were not
+	declared in the same scope, but they might not always be separately defined.
 
 	-->
 */
@@ -477,9 +480,10 @@ static stock _9;
 	externally.
 
 	This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> and ends the internal
-	variables block.  This is the last possible name alphabetically before the
-	first character is no longer <c>_</c>, except for one.  There's also a
-	<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> that ends the functions block.  They
+	variables block.  This is the last possible name before the first character
+	is no longer <c>_</c>, except for one, when the functions are sorted
+	lexicographically (alphabetically).  There's also
+	<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> that ends the functions block; they
 	could have the same name if they were not declared in the same scope, but
 	they might not always be separately defined.
 
