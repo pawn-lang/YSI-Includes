@@ -163,6 +163,53 @@ stock const
 	NULL[2] = "\1";
 #endif
 
+#if defined FIXES_PAWNDOC
+	// The fixes.inc pawndoc cleverness is already defined, we don't need to
+	// duplicate it here.  We have to use `#endinput` to avoid the comments
+	// appearing in the output anyway.
+	#endinput
+#endif
+
+/**
+	This function only exists to hide other functions.  It starts a massive
+	comment block in the pawndoc XML output that hides all internal functions -
+	that is, those that start with `_`.  This is a very common pattern used
+	throughout YSI (and most of programming).  Unfortunately these weirdly named
+	internal functions appear in the generated documentation always.  This is
+	the best way to hide them.  You still see one function (this one), but at
+	least the documentation for this one function can explain why it exists.
+
+	This is <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c> and starts the internal
+	functions block.  This is the first possible name alphabetically before the
+	first character is <c>_</c>.
+
+	<!--
+*/
+
+static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ() {}
+
+/**
+	This function only exists to hide other functions.  It end a massive comment
+	block in the pawndoc XML output that hides all internal functions - that is,
+	those that start with `_`.  This is a very common pattern used throughout
+	YSI (and most of programming).  Unfortunately these weirdly named internal
+	functions appear in the generated documentation always.  This is the best
+	way to hide them.  You still see one function
+	(<c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c>), but at least the documentation for
+	that can explain why it exists.
+
+	This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and ends the internal
+	functions block.  This is the last possible name alphabetically before the
+	first character is no longer <c>_</c>.  There's also a
+	<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> that ends the variables block.  They
+	could have the same name if they were not declared in the same scope, but
+	they might not always be separately defined.
+
+	-->
+*/
+
+static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
+
 /**
 	The first parameter in a <emph>y_functional</emph> lambda function.  This is
 	implicitly declared.
@@ -405,17 +452,18 @@ static stock _9;
 	those that start with `_`.  This is a very common pattern used throughout
 	YSI (and most of programming).  Unfortunately these weirdly named internal
 	variables appear in the generated documentation always.  This is the best
-	way to hide them.  You still see one variable (<c>_9</c>), but that one has
-	a legitimate use that can be documented and is fine to be seen.
+	way to hide them.  You still see some internal variables (<c>_0</c> -
+	<c>_9</c>), but those have a legitimate reason to be documented externally.
 
-	This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and ends the internal
+	This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> and ends the internal
 	variables block.  This is the last possible name alphabetically before the
-	first character is no longer <c>_</c>.  There's also a
+	first character is no longer <c>_</c>, except for one.  There's also a
 	<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> that ends the functions block.  They
-	can have the same name because they are not declared in the same scope.
+	could have the same name if they were not declared in the same scope, but
+	they might not always be separately defined.
 
 	-->
 */
 
-static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
+static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy;
 
