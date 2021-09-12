@@ -198,3 +198,6 @@ enum E_GROUP_SET
 	ALLOW = 1,
 }
 
+// An internal rewrite to avoid excessively long names.
+#define YCMD_SetPlayer Command_SetPlayer
+
