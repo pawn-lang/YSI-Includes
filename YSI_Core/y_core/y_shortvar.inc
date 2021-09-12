@@ -94,8 +94,10 @@ Optional plugins:
 
 // Public variable.  `-1` initially in case there is no master system.  So we respond to everything.
 #define Master_ID() (@_)
-public
-	@_ = -1;
+#if !defined FIXES_ID
+	public
+		@_ = -1;
+#endif
 
 new
 	Q@[YSI_MAX_STRING];
