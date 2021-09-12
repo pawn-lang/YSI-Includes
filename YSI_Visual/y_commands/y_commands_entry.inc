@@ -100,7 +100,6 @@ Optional plugins:
 // The one external function that we need to rename
 #define YCMD_SetPlayer Command_SetPlayer
 #include "..\..\YSI_Players\y_groups\y_groups__include"
-#undef YCMD_SetPlayer
 
 // Redefine the new names back to the old names.
 #define Command_InitialiseFromGroups YCMD_InitialiseFromGroups
