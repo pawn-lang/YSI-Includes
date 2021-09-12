@@ -458,7 +458,9 @@ public OnYSIInit()
 	CallRemoteFunction("Master_Reassert", "");
 	new
 		masters = getproperty(8, YSIM_MASTER);
-	@_ = Cell_GetLowestEmpty(masters);
+	#if !defined FIXES_ID
+		@_ = Cell_GetLowestEmpty(masters);
+	#endif
 	setproperty(8, YSIM_MASTER, masters | Master_ID());
 	C:1(if (!Master_ID()) P:E("MasterID not assigned"););
 	#if !defined YSI_NO_MASTER
@@ -727,8 +729,6 @@ forward OnMasterSystemClose(id);
 	 *  Destructor.
 	 * </remarks>
 	 *//*------------------------------------------------------------------------**/
-
-	forward OnRconCommand(cmd[]);
 
 	public OnRconCommand(cmd[])
 	{
