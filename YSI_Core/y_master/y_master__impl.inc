@@ -819,6 +819,7 @@ public _YCM() <_YCM:y>
 		CallRemoteFunction(#MAKE_YCM<YSIM_VERSION...>, "");
 		setproperty(9, #_YCM, 0);
 		// Called locally to begin the hand off process.
+		_Master_UnnameAll(_MASTER);
 		CallRemoteFunction(#_YCM, "");
 	}
 	else
