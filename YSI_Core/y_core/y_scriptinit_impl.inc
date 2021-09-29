@@ -343,6 +343,7 @@ native YSI_VAPrintF(const fmt[], addr) = printf;
 
 stock Server_PrintIntroMessage(...)
 {
+#if !defined YSI_NO_OBNOXIOUS_HEADER
 	if (YSI_gsObnoxiousHeader)
 	{
 		YSI_Print(YSI_gscMiniGap),
@@ -354,7 +355,9 @@ stock Server_PrintIntroMessage(...)
 		YSI_gsObnoxiousHeader = false,
 		YSI_gsFirstHeader = false;
 	}
-	else if (YSI_gsFirstHeader)
+	else
+#endif
+	if (YSI_gsFirstHeader)
 	{
 		YSI_Print(YSI_gscMiniGap),
 		YSI_Print(YSI_gscHeader),
@@ -379,6 +382,7 @@ stock Server_PrintIntroMessage(...)
 
 stock Server_PrintIntroPart(...)
 {
+#if !defined YSI_NO_OBNOXIOUS_HEADER
 	if (YSI_gsObnoxiousHeader)
 	{
 		YSI_Print(YSI_gscMiniGap),
@@ -390,7 +394,9 @@ stock Server_PrintIntroPart(...)
 		YSI_gsObnoxiousHeader = false,
 		YSI_gsFirstHeader = false;
 	}
-	else if (YSI_gsFirstHeader)
+	else
+#endif
+	if (YSI_gsFirstHeader)
 	{
 		YSI_Print(YSI_gscMiniGap),
 		YSI_Print(YSI_gscHeader),
