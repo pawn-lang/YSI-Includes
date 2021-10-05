@@ -121,7 +121,15 @@ Optional plugins:
 #define __COMPILER_SECOND_PASS __COMPILER_2ND_PASS
 
 // This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
-// or `__COMPILER_WINDOWS` depending on where the code is being built.
+// or `__COMPILER_WINDOWS` depending on where the code is being built.  It does
+// this in a very simple manner - by trying to include a file by the wrong name,
+// by which I mean ignoring case.  The file is saved as `y_determine_os.inc`,
+// but is included as `Y_dEtErMiNe_Os`.  On a case-insensitive OS (Windows) this
+// still works because the files are considered to be the same, but on Unix it
+// fails because they aren't.  Thus it uses `#tryinclude` to not error on Unix,
+// sets Unix as the default OS, and changes the OS in the include file if the
+// inclusion worked.  Note that only one letter difference was really needed -
+// the excessive changes in case weren't required, but were fun.
 #define __COMPILER_UNIX (0)
 #define __COMPILER_WINDOWS (1)
 #define __COMPILER_OS __COMPILER_UNIX
