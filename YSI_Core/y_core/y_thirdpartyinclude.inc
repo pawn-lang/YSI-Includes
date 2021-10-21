@@ -355,7 +355,7 @@ Optional plugins:
 #tryinclude <indirection>
 #if !defined _INC_indirection
 	#error Could not include "https://github.com/Y-Less/indirection" - ensure its files are in "include\indirection\"
-#elseif !defined Indirect_Init
+#elseif !defined Indirect_Init || defined TAGOF@
 	#error Please update "https://github.com/Y-Less/indirection" to the latest version.
 #endif
 

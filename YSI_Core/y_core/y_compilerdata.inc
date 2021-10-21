@@ -429,8 +429,13 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	
 	// It is sufficient simply for a variable to exist anywhere with the tag.
 	#define __COMPILER_TAG_DATA(%0,%1) static stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
+
+	// Fix `tagof (Tag:)`.
 	#define __TAGOF__%0\32; __TAGOF__
-	
+	#define __TAGOF:tagof%9PP_LEFT_BRACKET<>%0:%1)__NO_TAGOF$)) tagof%9PP_LEFT_BRACKET<>__TAGOF__%0)))
+	#define tagof(%0) ((_:__TAGOF:tagof PP_LEFT_BRACKET<>%0)__NO_TAGOF$))
+	#define __NO_TAGOF$
+
 	#include "y_funcinc"
 	
 	/*---------------------------------------------------------------------*//*+
@@ -526,10 +531,16 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
 #define FUNCTION_LENGTH (__COMPILER_sNAMEMAX + 1)
 
+#if defined _INC_indirection
+	stock File:operator=(__CompilerDefault:a) return a, File:(0);
+	stock Float:operator=(__CompilerDefault:a) return a, Float:(0);
+#else
+	__COMPILER_TAG_DATA(Float, 0);
+	__COMPILER_TAG_DATA(File, 0);
+#endif
+
 __COMPILER_TAG_DATA(_, 0);
 __COMPILER_TAG_DATA(bool, 0);
-__COMPILER_TAG_DATA(Float, 0);
-__COMPILER_TAG_DATA(File, 0);
 __COMPILER_TAG_DATA(DB, 0);
 __COMPILER_TAG_DATA(DBResult, 0);
 __COMPILER_TAG_DATA(Text, 65535);

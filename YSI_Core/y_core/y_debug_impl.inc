@@ -802,7 +802,7 @@ forward File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge
  * Note: Temporary files are automatically deleted after a month.
  * </remarks>
  *//*------------------------------------------------------------------------**/
- 
+
 stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const expr[], const file[], line, GLOBAL_TAG_TYPES:...)
 {
 	// Get the tag name.
@@ -812,19 +812,20 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 	if (size <= Debug_PrintQ_SIZEOF:1)
 	{
 		// Normal variable.
-		switch (_:tag)
-		{
-		case (tagof (Float:)):
+		// The switch doesn't work on the old compiler.
+		//switch (_:tag)
+		//{
+		if (_:tag == tagof (Float:))
 			return YSI_PrintF("    Float:%s = %.3f\n", expr, Float:getarg(5));
-		case (tagof (bool:)):
+		if (_:tag == tagof (bool:))
 			return YSI_PrintF("    bool:%s = %s\n", expr, getarg(5) ? ("    true") : ("    false"));
-		case (tagof (_:)):
+		if (_:tag == tagof (_:))
 			return YSI_PrintF("    %s = %d\n", expr, getarg(5));
-		default:
-			return YSI_PrintF("    %s:%s = %d\n", name, expr, _:tag, getarg(5));
-		}
+		//default:
+		return YSI_PrintF("    %s:%s = %d\n", name, expr, _:tag, getarg(5));
+		//}
 	}
-
+	
 	// Array or string.
 	if (tag == Debug_PrintQ_TAG:tagof (Float:))
 	{
@@ -879,16 +880,19 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 			YSI_PrintF("    %s:%s[%d] = { %d, %d, %d, %d, %d, ... }", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
 		}
 	}
-
+    
 	// Dump the rest of the data to a file.
 	new File:fhnd;
 	if ((fhnd = ftemporary(name, "tmp", 10 + 3 + 3)))
 	{
 		YSI_PrintF("    (full data dumped to: %s)\n", name);
+		// The old compiler didn't like this in a ternary, but honestly moving
+		// it out of the loop is better anyway.
+		tag = Debug_PrintQ_TAG:(tag == Debug_PrintQ_TAG:tagof (Float:));
 		// Dump the file.
 		for (line = 8; line <= _:size; line += 8)
 		{
-			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, %d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)), getarg(5, line - (8 - 3)), getarg(5, line - (8 - 4)), getarg(5, line - (8 - 5)), getarg(5, line - (8 - 6)), getarg(5, line - (8 - 7)));
+			format(name, sizeof (name), tag ? ("%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, %d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)), getarg(5, line - (8 - 3)), getarg(5, line - (8 - 4)), getarg(5, line - (8 - 5)), getarg(5, line - (8 - 6)), getarg(5, line - (8 - 7)));
 			fwrite(fhnd, name);
 		}
 		switch (line - _:size)
@@ -896,19 +900,19 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 		case 8:
 			return fclose(fhnd);
 		case 7:
-			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, \n") : ("%d, \n"), getarg(5, line - (8 - 0)));
+			format(name, sizeof (name), tag ? ("%.3f, \n") : ("%d, \n"), getarg(5, line - (8 - 0)));
 		case 6:
-			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, \n") : ("%d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)));
+			format(name, sizeof (name), tag ? ("%.3f, %.3f, \n") : ("%d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)));
 		case 5:
-			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, \n") : ("%d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)));
+			format(name, sizeof (name), tag ? ("%.3f, %.3f, %.3f, \n") : ("%d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)));
 		case 4:
-			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)), getarg(5, line - (8 - 3)));
+			format(name, sizeof (name), tag ? ("%.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)), getarg(5, line - (8 - 3)));
 		case 3:
-			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)), getarg(5, line - (8 - 3)), getarg(5, line - (8 - 4)));
+			format(name, sizeof (name), tag ? ("%.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)), getarg(5, line - (8 - 3)), getarg(5, line - (8 - 4)));
 		case 2:
-			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)), getarg(5, line - (8 - 3)), getarg(5, line - (8 - 4)), getarg(5, line - (8 - 5)));
+			format(name, sizeof (name), tag ? ("%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)), getarg(5, line - (8 - 3)), getarg(5, line - (8 - 4)), getarg(5, line - (8 - 5)));
 		case 1:
-			format(name, sizeof (name), (tag == Debug_PrintQ_TAG:tagof (Float:)) ? ("%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)), getarg(5, line - (8 - 3)), getarg(5, line - (8 - 4)), getarg(5, line - (8 - 5)), getarg(5, line - (8 - 6)));
+			format(name, sizeof (name), tag ? ("%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, \n") : ("%d, %d, %d, %d, %d, %d, %d, \n"), getarg(5, line - (8 - 0)), getarg(5, line - (8 - 1)), getarg(5, line - (8 - 2)), getarg(5, line - (8 - 3)), getarg(5, line - (8 - 4)), getarg(5, line - (8 - 5)), getarg(5, line - (8 - 6)));
 		}
 		fwrite(fhnd, name);
 		fclose(fhnd);

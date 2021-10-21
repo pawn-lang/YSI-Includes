@@ -299,32 +299,37 @@ static stock const
 	YSI_gscHeader[] = " ========================================== ",
 	YSI_gscSpacer[] = " |                                        | ",
 	YSI_gscMiniGap[] = " ",
-	YSI_gscObnoxiousHeader[] = "\n" \
+	YSI_gscObnoxiousHeader0[] = "\n" \
 		"         ==============================================================\n" \
 		"         |                                                            |\n" \
 		"         |                                                            |\n" \
 		"         |     YYYYYYY       YYYYYYY   SSSSSSSSSSSSSSS IIIIIIIIII     |\n" \
-		"         |     Y:::::Y       Y:::::Y SS:::::::::::::::SI::::::::I     |\n" \
+		"         |     Y:::::Y       Y:::::Y SS:::::::::::::::SI::::::::I     |",
+	YSI_gscObnoxiousHeader1[] = \
 		"         |     Y:::::Y       Y:::::YS:::::SSSSSS::::::SI::::::::I     |\n" \
 		"         |     Y::::::Y     Y::::::YS:::::S     SSSSSSSII::::::II     |\n" \
 		"         |     YYY:::::Y   Y:::::YYYS:::::S              I::::I       |\n" \
 		"         |        Y:::::Y Y:::::Y   S:::::S              I::::I       |\n" \
-		"         |         Y:::::Y:::::Y     S::::SSSS           I::::I       |\n" \
+		"         |         Y:::::Y:::::Y     S::::SSSS           I::::I       |",
+	YSI_gscObnoxiousHeader2[] = \
 		"         |          Y:::::::::Y       SS::::::SSSSS      I::::I       |\n" \
 		"         |           Y:::::::Y          SSS::::::::SS    I::::I       |\n" \
 		"         |            Y:::::Y              SSSSSS::::S   I::::I       |\n" \
 		"         |            Y:::::Y                   S:::::S  I::::I       |\n" \
-		"         |            Y:::::Y                   S:::::S  I::::I       |\n" \
+		"         |            Y:::::Y                   S:::::S  I::::I       |",
+	YSI_gscObnoxiousHeader3[] = \
 		"         |            Y:::::Y       SSSSSSS     S:::::SII::::::II     |\n" \
 		"         |         YYYY:::::YYYY    S::::::SSSSSS:::::SI::::::::I     |\n" \
 		"         |         Y:::::::::::Y    S:::::::::::::::SS I::::::::I     |\n" \
 		"         |         YYYYYYYYYYYYY     SSSSSSSSSSSSSSS   IIIIIIIIII     |\n" \
-		"         |                                                            |\n" \
+		"         |                                                            |",
+	YSI_gscObnoxiousHeader4[] = \
 		"         |                                                            |\n" \
 		"         |                      (c) 2021 MPL v1.1                     |\n" \
 		"         |            Alex \"Y_Less\" Cole and contributors.            |\n" \
 		"         |                                                            |\n" \
-		"         |                                                            |\n" \
+		"         |                                                            |",
+	YSI_gscObnoxiousHeader5[] = \
 		"         ==============================================================\n",
 	YSI_gscInitMsgA[] = "  Dumping \"YSI_PRE_INIT.asm\", this",
 	YSI_gscInitMsgB[] = "  Dumping \"YSI_POST_INIT.asm\", this",
@@ -348,7 +353,12 @@ stock Server_PrintIntroMessage(...)
 	{
 		YSI_Print(YSI_gscMiniGap),
 		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscObnoxiousHeader),
+		YSI_Print(YSI_gscObnoxiousHeader0),
+		YSI_Print(YSI_gscObnoxiousHeader1),
+		YSI_Print(YSI_gscObnoxiousHeader2),
+		YSI_Print(YSI_gscObnoxiousHeader3),
+		YSI_Print(YSI_gscObnoxiousHeader4),
+		YSI_Print(YSI_gscObnoxiousHeader5),
 		YSI_Print(YSI_gscMiniGap),
 		YSI_Print(YSI_gscMiniGap),
 		YSI_Print(YSI_gscHeader),
@@ -387,7 +397,12 @@ stock Server_PrintIntroPart(...)
 	{
 		YSI_Print(YSI_gscMiniGap),
 		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscObnoxiousHeader),
+		YSI_Print(YSI_gscObnoxiousHeader0),
+		YSI_Print(YSI_gscObnoxiousHeader1),
+		YSI_Print(YSI_gscObnoxiousHeader2),
+		YSI_Print(YSI_gscObnoxiousHeader3),
+		YSI_Print(YSI_gscObnoxiousHeader4),
+		YSI_Print(YSI_gscObnoxiousHeader5),
 		YSI_Print(YSI_gscMiniGap),
 		YSI_Print(YSI_gscMiniGap),
 		YSI_Print(YSI_gscHeader),

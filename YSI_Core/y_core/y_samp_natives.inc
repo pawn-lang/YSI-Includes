@@ -88,5 +88,8 @@ native YSI_SendRconCommand(const str[]) = SendRconCommand;
 native YSI_SendClientCheck(playerid, type, memoryAddress, memoryOffset, byteCount) = SendClientCheck;
 native YSI_SHA256Hash_BAD_DONT_USE(const password[], const salt[], output[], size = sizeof (output)) = SHA256_PassHash;
 
+// The original has `value`.
+native YSI_FGetChar(File:handle, bool:utf8 = true) = fgetchar;
+
 #define YSI_JOIN(%0,%1,%2) %0And%1And%2
 
