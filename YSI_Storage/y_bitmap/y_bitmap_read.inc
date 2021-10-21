@@ -71,123 +71,131 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-static stock MKLE32(dest[], num, &idx = 0)
+static stock GTLE32(const src[], &idx = 0)
 {
-	dest[idx++] = num & 0xFF,
-	dest[idx++] = num >>> 8 & 0xFF,
-	dest[idx++] = num >>> 16 & 0xFF,
-	dest[idx++] = num >>> 24 & 0xFF;
+	return src[idx++]
+		| (src[idx++] << 8)
+		| (src[idx++] << 16)
+		| (src[idx++] << 24);
 }
 
-static stock MK24(dest[], num, &idx = 0)
+static stock GT24(const src[], &idx = 0)
 {
-	dest[idx++] = num >>>  8 & 0xFF,
-	dest[idx++] = num >>> 16 & 0xFF,
-	dest[idx++] = num >>> 24 & 0xFF;
+	return 0xFF
+		| (src[idx++] << 8)
+		| (src[idx++] << 16)
+		| (src[idx++] << 24);
 }
 
-static stock Bitmap_PadRow(dest[], &idx)
+static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 {
-	while (idx & 0x03)
-	{
-		dest[idx++] = 0;
-	}
-}
-
-static stock Bitmap_WriteHeader(Bitmap:ctx, File:bmp)
-{
-	MKLE32(_YSI_g_sInfoHeader[4], Bitmap_Width(ctx));
-	MKLE32(_YSI_g_sInfoHeader[8], Bitmap_Height(ctx));
-	// Pad to a 4 byte boundary with 3 bytes per pixel.
-	MKLE32(_YSI_g_sFileHeader[2], ceildiv(Bitmap_Width(ctx) * 3, 4) * 4 * Bitmap_Height(ctx) + sizeof (_YSI_g_sFileHeader) + sizeof (_YSI_g_sInfoHeader));
-	MKLE32(_YSI_g_sFileHeader[10], sizeof (_YSI_g_sFileHeader) + sizeof (_YSI_g_sInfoHeader));
+	// Load in the header.
 	for (new j = 0; j != sizeof (_YSI_g_sFileHeader); ++j)
 	{
-		fputchar(bmp, _YSI_g_sFileHeader[j], false);
+		_YSI_g_sFileHeader[j] = fgetchar(bmp, 0, false);
 	}
 	for (new j = 0; j != sizeof (_YSI_g_sInfoHeader); ++j)
 	{
-		fputchar(bmp, _YSI_g_sInfoHeader[j], false);
+		_YSI_g_sInfoHeader[j] = fgetchar(bmp, 0, false);
 	}
+	
+	x = GTLE32(_YSI_g_sInfoHeader[4]);
+	y = GTLE32(_YSI_g_sInfoHeader[8]);
+
+	if (GTLE32(_YSI_g_sFileHeader[2]) != ceildiv(x * 3, 4) * 4 * y + sizeof (_YSI_g_sFileHeader) + sizeof (_YSI_g_sInfoHeader))
+	{
+		// File is the wrong size.
+		return false;
+	}
+
+	// Can only read 24-bit bitmaps of a set format.
+	return _YSI_g_sInfoHeader[0] == 40 && _YSI_g_sInfoHeader[14] == 24;
 }
 
-static stock Bitmap_WriteBlock(File:bmp, const buf[], len)
+static stock Bitmap_ReadBlock(File:bmp, buf[], len)
 {
 	for (new i = 0; i != len; ++i)
 	{
-		fputchar(bmp, buf[i], false);
+		buf[i] = fgetchar(bmp, 0, false);
 	}
 }
 
-static stock Bitmap_WriteBody(Bitmap:ctx, File:bmp)
+static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 {
 	// Write 4 pixels in to 3 blocks.
 	static
-		sWriteBlock[12];
+		sReadBlock[12];
 	new
 		width = Bitmap_Width(ctx),
 		w2 = width & ~0x3,
 		height = Bitmap_Height(ctx);
-	//width &= 0x3;
-	//for (new y = height; y-- > 0; )
 	for (new y = height; y-- != 0; )
 	{
 		// Go through the array backwards (bottom to top).
 		new
 			x = 0;
-		//printf(": %d = %d", Bitmap_IndexCtx(ctx, 10, y), Bitmap_ReadCtx(ctx, 10, y));
-		//printf(": %d = %d", Bitmap_IndexInt(ctx, 10, y), Bitmap_ReadInt(ctx, 10, y));
 		for ( ; x != w2; x += 4)
 		{
 			new
 				i = 0;
-			MK24(sWriteBlock, Bitmap_ReadInt(ctx, x, width, y), i);
-			MK24(sWriteBlock, Bitmap_ReadInt(ctx, x + 1, width, y), i);
-			MK24(sWriteBlock, Bitmap_ReadInt(ctx, x + 2, width, y), i);
-			MK24(sWriteBlock, Bitmap_ReadInt(ctx, x + 3, width, y), i);
-			Bitmap_WriteBlock(bmp, sWriteBlock, 12);
+			Bitmap_ReadBlock(bmp, sReadBlock, 12);
+			Bitmap_WriteInt(ctx, x    , width, y, GT24(sReadBlock, i));
+			Bitmap_WriteInt(ctx, x + 1, width, y, GT24(sReadBlock, i));
+			Bitmap_WriteInt(ctx, x + 2, width, y, GT24(sReadBlock, i));
+			Bitmap_WriteInt(ctx, x + 3, width, y, GT24(sReadBlock, i));
 		}
 		switch (width & 0x03)
 		{
 			case 1:
 			{
 				// Write 1, pad 1.
-				MK24(sWriteBlock[0], Bitmap_ReadInt(ctx, x, width, y));
-				sWriteBlock[3] = 0;
-				Bitmap_WriteBlock(bmp, sWriteBlock, 4);
+				Bitmap_ReadBlock(bmp, sReadBlock, 4);
+				sReadBlock[3] = 0;
+				Bitmap_WriteInt(ctx, x, width, y, GT24(sReadBlock[0]));
 			}
 			case 2:
 			{
 				// Write 2, pad 2.
-				MK24(sWriteBlock[0], Bitmap_ReadInt(ctx, x, width, y));
-				MK24(sWriteBlock[3], Bitmap_ReadInt(ctx, x + 1, width, y));
-				sWriteBlock[6] = 0;
-				sWriteBlock[7] = 0;
-				Bitmap_WriteBlock(bmp, sWriteBlock, 8);
+				Bitmap_ReadBlock(bmp, sReadBlock, 8);
+				sReadBlock[6] = 0;
+				sReadBlock[7] = 0;
+				Bitmap_WriteInt(ctx, x    , width, y, GT24(sReadBlock[0]));
+				Bitmap_WriteInt(ctx, x + 1, width, y, GT24(sReadBlock[3]));
 			}
 			case 3:
 			{
 				// Write 3, pad 3.
-				MK24(sWriteBlock[0], Bitmap_ReadInt(ctx, x, width, y));
-				MK24(sWriteBlock[3], Bitmap_ReadInt(ctx, x + 1, width, y));
-				MK24(sWriteBlock[6], Bitmap_ReadInt(ctx, x + 2, width, y));
-				sWriteBlock[9] = 0;
-				sWriteBlock[10] = 0;
-				sWriteBlock[11] = 0;
-				Bitmap_WriteBlock(bmp, sWriteBlock, 12);
+				Bitmap_ReadBlock(bmp, sReadBlock, 12);
+				sReadBlock[9] = 0;
+				sReadBlock[10] = 0;
+				sReadBlock[11] = 0;
+				GT24(sReadBlock[0], Bitmap_ReadInt(ctx, x    , width, y));
+				GT24(sReadBlock[3], Bitmap_ReadInt(ctx, x + 1, width, y));
+				GT24(sReadBlock[6], Bitmap_ReadInt(ctx, x + 2, width, y));
 			}
 		}
 	}
 }
 
-stock bool:Bitmap_Write(Bitmap:ctx, const file[])
+stock bool:Bitmap_Read(&Bitmap:ctx, const file[])
 {
-	if (fexist(file)) fremove(file);
+	if (!fexist(file))
+	{
+		return false;
+	}
 	new
-		File:bmp = fopen(file, io_write);
-	if (!bmp) return false;
-	Bitmap_WriteHeader(ctx, bmp);
-	Bitmap_WriteBody(ctx, bmp);
+		File:bmp = fopen(file, io_read);
+	if (!bmp)
+	{
+		return false;
+	}
+	new x, y;
+	if (!Bitmap_ReadHeader(bmp, x, y))
+	{
+		return false;
+	}
+	ctx = Bitmap_Create(x, y);
+	Bitmap_ReadBody(ctx, bmp);
 	fclose(bmp);
 	return true;
 }

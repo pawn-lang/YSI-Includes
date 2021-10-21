@@ -586,3 +586,14 @@ TEST__ y_bitmap_Alpha1()
 	Bitmap_Destroy(ctx);
 }
 
+TEST__ y_bitmap_read()
+{
+	new Bitmap:ctx;
+	if (Bitmap_Read(ctx, "y_bitmap_open.mp-input.bmp"))
+	{
+		Bitmap_DrawRectangle(ctx, 10, 315, 610, 325, 0xFF000080);
+		Bitmap_Write(ctx, "y_bitmap_open.mp-output.bmp");
+		Bitmap_Destroy(ctx);
+	}
+}
+

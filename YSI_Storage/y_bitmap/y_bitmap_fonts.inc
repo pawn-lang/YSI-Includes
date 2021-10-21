@@ -247,3 +247,4 @@ stock Bitmap_AddSimpleString(Bitmap:ctx, colour, str[], &x, &y)
 		Bitmap_AddSimpleLetter(ctx, colour, ch, x, y);
 	}
 }
+

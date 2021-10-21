@@ -310,3 +310,4 @@ public _BMP_PAT@STRIPED(const posX, const posY, const offsetX, const offsetY, co
 		YSI_gBitmapAlphaY = stripes;
 	}
 }
+

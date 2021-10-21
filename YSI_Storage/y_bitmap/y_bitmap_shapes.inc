@@ -337,3 +337,4 @@ stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, const 
 		}
 	}
 }
+

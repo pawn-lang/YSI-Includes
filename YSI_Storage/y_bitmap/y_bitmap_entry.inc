@@ -86,6 +86,31 @@ Optional plugins:
 	#error y_bitmap does not (well) work with YSI_MALLOC_SECURE.
 #endif
 
+// Used by both `read` and write`.
+stock
+	_YSI_g_sFileHeader[] =
+	{
+		'B', 'M',   // bfType      (Just "BM" for Windows BMP).
+		1, 1, 1, 1, // bfSize      (File size in bytes).
+		0, 0,       // bfReserved1 (Unused).
+		0, 0,       // bfReserved2 (Unused).
+		2, 2, 2, 2  // bfOffBits   (Offset to the start of the data).
+	},
+	_YSI_g_sInfoHeader[] =
+	{
+		40, 0, 0, 0,  // biSize          (This header's size).
+		4,  4, 4, 4,  // biWidth         (Image width).
+		5,  5, 5, 5,  // biHeight        (Image height).
+		1,  0,        // biPlanes        (1 "plane").
+		24, 0,        // biBitCount      (24-bit image).
+		0,  0, 0, 0,  // biCompression   (Unused).
+		0,  0, 0, 0,  // biSizeImage     (Unused).
+		0,  0, 0, 0,  // biXPelsPerMeter (Unused).
+		0,  0, 0, 0,  // biYPelsPerMeter (Unused).
+		0,  0, 0, 0,  // biClrUsed       (Unused).
+		0,  0, 0, 0   // biClrImportant  (Unused).
+	};
+
 #include "y_bitmap_impl"
 #include "y_bitmap_fonts"
 #include "y_bitmap_blending"
@@ -93,8 +118,14 @@ Optional plugins:
 #include "y_bitmap_patterns"
 #include "y_bitmap_shapes"
 
+#include "y_bitmap_read"
 #include "y_bitmap_write"
+
+// Hide the variables.
+#define _YSI_g_sFileHeader
+#define _YSI_g_sInfoHeader
 
 #if defined YSI_TESTS
 	#include "y_bitmap_tests"
 #endif
+

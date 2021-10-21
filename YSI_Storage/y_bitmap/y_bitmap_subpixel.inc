@@ -123,22 +123,3 @@ stock Bitmap_StraightLine(Bitmap:ctx, sX, sY, eX, eY, Float:lineWidth, colour, c
 	
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
