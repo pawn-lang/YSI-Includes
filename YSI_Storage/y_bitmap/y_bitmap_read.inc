@@ -127,33 +127,23 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 {
 	// Write 4 pixels in to 3 blocks.
 	static
-		sReadBlock[300];
+		sReadBlock[3];
 	new
-		width = Bitmap_Width(ctx);
+		width = Bitmap_Width(ctx),
+		w2 = width & ~0x3;
 	for (new y = Bitmap_Height(ctx); y--; )
 	{
 		// Go through the array backwards (bottom to top).
 		new
-			w2 = (width & ~0x3) * 3 / cellbytes,
 			x = 0;
-		while (w2)
+		for ( ; x != w2; x += 4)
 		{
-			//printf("i before: %d, %d", i, w2);
-			new read = fblockread(bmp, sReadBlock, min(sizeof (sReadBlock), w2));
-			w2 -= read;
-			//printf("i after: %d, %d", i, w2);
-			for (new i = 0; i != read; i += 3, x += 4)
-			{
-				//printf("i = %d, read = %d", i, read);
-				//Bitmap_ReadBlock(bmp, sReadBlock, 12);
-				//fblockread(bmp, sReadBlock, 3);
-				Bitmap_WriteInt(ctx, x    , width, y, 0xFF | (sReadBlock[i] << 8)),
-				Bitmap_WriteInt(ctx, x + 1, width, y, 0xFF | (sReadBlock[i + 1] << 16) | (sReadBlock[i] >>> 16)),
-				Bitmap_WriteInt(ctx, x + 2, width, y, 0xFF | (sReadBlock[i + 2] << 24) | (sReadBlock[i + 1] >>> 8)),
-				Bitmap_WriteInt(ctx, x + 3, width, y, 0xFF | sReadBlock[i + 2]);
-			}
+			fblockread(bmp, sReadBlock, 3),
+			Bitmap_WriteInt(ctx, x    , width, y, 0xFF | (sReadBlock[0] << 8)),
+			Bitmap_WriteInt(ctx, x + 1, width, y, 0xFF | (sReadBlock[1] << 16) | (sReadBlock[0] >>> 16)),
+			Bitmap_WriteInt(ctx, x + 2, width, y, 0xFF | (sReadBlock[2] << 24) | (sReadBlock[1] >>> 8)),
+			Bitmap_WriteInt(ctx, x + 3, width, y, 0xFF | sReadBlock[2]);
 		}
-		//return;
 		switch (width & 0x03)
 		{
 			case 1:
