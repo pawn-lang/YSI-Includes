@@ -127,24 +127,47 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 {
 	// Write 4 pixels in to 3 blocks.
 	static
-		sReadBlock[3];
+		sReadBlock[16 * 3 / cellbytes];
 	new
 		width = Bitmap_Width(ctx),
-		w2 = width & ~0x3;
+		w2 = width & ~(16 - 1),
+		w3 = width & ~(4 - 1);
 	for (new y = Bitmap_Height(ctx); y--; )
 	{
 		// Go through the array backwards (bottom to top).
 		new
 			x = 0;
-		for ( ; x != w2; x += 4)
+		for ( ; x != w2; x += 16)
 		{
-			fblockread(bmp, sReadBlock, 3),
-			Bitmap_WriteInt(ctx, x    , width, y, 0xFF | (sReadBlock[0] << 8)),
-			Bitmap_WriteInt(ctx, x + 1, width, y, 0xFF | (sReadBlock[1] << 16) | (sReadBlock[0] >>> 16)),
-			Bitmap_WriteInt(ctx, x + 2, width, y, 0xFF | (sReadBlock[2] << 24) | (sReadBlock[1] >>> 8)),
-			Bitmap_WriteInt(ctx, x + 3, width, y, 0xFF | sReadBlock[2]);
+			new offset = _:ctx + y * width + x;
+			fblockread(bmp, sReadBlock),
+			YSI_gMallocMemory[offset     ] = 0xFF | (sReadBlock[0] << 8),
+			YSI_gMallocMemory[offset +  1] = 0xFF | (sReadBlock[1] << 16) | (sReadBlock[0] >>> 16),
+			YSI_gMallocMemory[offset +  2] = 0xFF | (sReadBlock[2] << 24) | (sReadBlock[1] >>> 8),
+			YSI_gMallocMemory[offset +  3] = 0xFF |  sReadBlock[2],
+			YSI_gMallocMemory[offset +  4] = 0xFF | (sReadBlock[3] << 8),
+			YSI_gMallocMemory[offset +  5] = 0xFF | (sReadBlock[4] << 16) | (sReadBlock[3] >>> 16),
+			YSI_gMallocMemory[offset +  6] = 0xFF | (sReadBlock[5] << 24) | (sReadBlock[4] >>> 8),
+			YSI_gMallocMemory[offset +  7] = 0xFF |  sReadBlock[5],
+			YSI_gMallocMemory[offset +  8] = 0xFF | (sReadBlock[6] << 8),
+			YSI_gMallocMemory[offset +  9] = 0xFF | (sReadBlock[7] << 16) | (sReadBlock[6] >>> 16),
+			YSI_gMallocMemory[offset + 10] = 0xFF | (sReadBlock[8] << 24) | (sReadBlock[7] >>> 8),
+			YSI_gMallocMemory[offset + 11] = 0xFF |  sReadBlock[8],
+			YSI_gMallocMemory[offset + 12] = 0xFF | (sReadBlock[9] << 8),
+			YSI_gMallocMemory[offset + 13] = 0xFF | (sReadBlock[10] << 16) | (sReadBlock[9] >>> 16),
+			YSI_gMallocMemory[offset + 14] = 0xFF | (sReadBlock[11] << 24) | (sReadBlock[10] >>> 8),
+			YSI_gMallocMemory[offset + 15] = 0xFF |  sReadBlock[11];
 		}
-		switch (width & 0x03)
+		for ( ; x != w3; x += 4)
+		{
+			new offset = _:ctx + y * width + x;
+			fblockread(bmp, sReadBlock, 3),
+			YSI_gMallocMemory[offset     ] = 0xFF | (sReadBlock[0] << 8),
+			YSI_gMallocMemory[offset +  1] = 0xFF | (sReadBlock[1] << 16) | (sReadBlock[0] >>> 16),
+			YSI_gMallocMemory[offset +  2] = 0xFF | (sReadBlock[2] << 24) | (sReadBlock[1] >>> 8),
+			YSI_gMallocMemory[offset +  3] = 0xFF | sReadBlock[2];
+		}
+		switch (width & (4 - 1))
 		{
 			case 1:
 			{
