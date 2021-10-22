@@ -71,53 +71,67 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-static stock GTLE32(const src[], &idx = 0)
-{
-	return src[idx++]
-		| (src[idx++] << 8)
-		| (src[idx++] << 16)
-		| (src[idx++] << 24);
-}
+//static stock GTLE32(const src[])
+//{
+//	return src[0]
+//		| (src[1] << 8)
+//		| (src[2] << 16)
+//		| (src[3] << 24);
+//}
 
-static stock GT24(const src[], &idx = 0)
+static stock GT24(const src[])
 {
 	return 0xFF
-		| (src[idx++] << 8)
-		| (src[idx++] << 16)
-		| (src[idx++] << 24);
+		| (src[0] << 8)
+		| (src[1] << 16)
+		| (src[2] << 24);
 }
+
+static stock
+	YSI_g_sBlock[13];
 
 static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 {
-	// Load in the header.
-	for (new j = 0; j != sizeof (_YSI_g_sFileHeader); ++j)
+	if (fgetchar(bmp, 0, false) != 'B' || fgetchar(bmp, 0, false) != 'M')
 	{
-		_YSI_g_sFileHeader[j] = fgetchar(bmp, 0, false);
+		return false;
 	}
-	for (new j = 0; j != sizeof (_YSI_g_sInfoHeader); ++j)
-	{
-		_YSI_g_sInfoHeader[j] = fgetchar(bmp, 0, false);
-	}
-	
-	x = GTLE32(_YSI_g_sInfoHeader[4]);
-	y = GTLE32(_YSI_g_sInfoHeader[8]);
 
-	if (GTLE32(_YSI_g_sFileHeader[2]) != ceildiv(x * 3, 4) * 4 * y + sizeof (_YSI_g_sFileHeader) + sizeof (_YSI_g_sInfoHeader))
+	// Load in the header.
+	fblockread(bmp, YSI_g_sBlock);
+	//new size = YSI_g_sBlock[0];
+	P:5("Bitmap_ReadHeader: %08x %08x %08x", YSI_g_sBlock[0], YSI_g_sBlock[1], YSI_g_sBlock[2]);
+
+	//fblockread(bmp, YSI_g_sBlock, 10);
+	P:5("Bitmap_ReadHeader: %08x %08x %08x %08x %08x %08x %08x %08x %08x %08x", YSI_g_sBlock[3], YSI_g_sBlock[4], YSI_g_sBlock[5], YSI_g_sBlock[6], YSI_g_sBlock[7], YSI_g_sBlock[8], YSI_g_sBlock[9], YSI_g_sBlock[10], YSI_g_sBlock[11], YSI_g_sBlock[12]);
+
+	// 'BM', 40 byte header, 1 plane, 24 bits, no compression.
+	if (YSI_g_sBlock[3] != 40 || YSI_g_sBlock[6] != 0x00180001 || YSI_g_sBlock[7] != 0)
+	{
+		return false;
+	}
+
+	x = YSI_g_sBlock[4];
+	y = YSI_g_sBlock[5];
+
+	P:5("Bitmap_ReadHeader: %d, %d, %d, %d", x, y, YSI_g_sBlock[0], ceildiv(x * 3, 4) * 4 * y + sizeof (_YSI_g_sFileHeader) + sizeof (_YSI_g_sInfoHeader));
+
+	if (YSI_g_sBlock[0] != ceildiv(x * 3, 4) * 4 * y + sizeof (_YSI_g_sFileHeader) + sizeof (_YSI_g_sInfoHeader))
 	{
 		// File is the wrong size.
 		return false;
 	}
 
-	// Can only read 24-bit bitmaps of a set format.
-	return _YSI_g_sInfoHeader[0] == 40 && _YSI_g_sInfoHeader[14] == 24;
+	return true;
 }
 
-static stock Bitmap_ReadBlock(File:bmp, buf[], len)
+static stock Bitmap_ReadBlock(File:bmp, buf[], len = sizeof (buf))
 {
 	for (new i = 0; i != len; ++i)
 	{
 		buf[i] = fgetchar(bmp, 0, false);
 	}
+	//fblockread(bmp, buf, len);
 }
 
 static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
@@ -136,13 +150,11 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			x = 0;
 		for ( ; x != w2; x += 4)
 		{
-			new
-				i = 0;
 			Bitmap_ReadBlock(bmp, sReadBlock, 12);
-			Bitmap_WriteInt(ctx, x    , width, y, GT24(sReadBlock, i));
-			Bitmap_WriteInt(ctx, x + 1, width, y, GT24(sReadBlock, i));
-			Bitmap_WriteInt(ctx, x + 2, width, y, GT24(sReadBlock, i));
-			Bitmap_WriteInt(ctx, x + 3, width, y, GT24(sReadBlock, i));
+			Bitmap_WriteInt(ctx, x    , width, y, GT24(sReadBlock[0]));
+			Bitmap_WriteInt(ctx, x + 1, width, y, GT24(sReadBlock[3]));
+			Bitmap_WriteInt(ctx, x + 2, width, y, GT24(sReadBlock[6]));
+			Bitmap_WriteInt(ctx, x + 3, width, y, GT24(sReadBlock[9]));
 		}
 		switch (width & 0x03)
 		{
@@ -169,9 +181,9 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				sReadBlock[9] = 0;
 				sReadBlock[10] = 0;
 				sReadBlock[11] = 0;
-				GT24(sReadBlock[0], Bitmap_ReadInt(ctx, x    , width, y));
-				GT24(sReadBlock[3], Bitmap_ReadInt(ctx, x + 1, width, y));
-				GT24(sReadBlock[6], Bitmap_ReadInt(ctx, x + 2, width, y));
+				Bitmap_WriteInt(ctx, x    , width, y, GT24(sReadBlock[0]));
+				Bitmap_WriteInt(ctx, x + 1, width, y, GT24(sReadBlock[3]));
+				Bitmap_WriteInt(ctx, x + 2, width, y, GT24(sReadBlock[6]));
 			}
 		}
 	}
