@@ -117,7 +117,7 @@ Optional plugins:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __TU(t, iters)
+stock BeautifyProfilingTime(t, iters)
 {
 	// Number of times run.  Accounts for the string and optional count.
 	new
@@ -187,7 +187,7 @@ stock __TU(t, iters)
  *//*------------------------------------------------------------------------**/
 
 // "Write To File", not another "WTF" meaning...
-stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings))
+stock DumpProfilingTime(const name[], const timings[], iters, size = sizeof (timings))
 {
 	new File:fhnd = File:0;
 	if (fexist(name))
@@ -215,14 +215,11 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 }
 
 #if !defined PROFILINGS_FILE
-	#define y_profile_WTF(%0),
+	#define DumpProfilingTime(%0),
 #endif
 
 #define RUN_TIMING(%0) \
-	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TE=_:__TX:__TY|||%0|||,__TS=printf("Timing \"%s\"...",%0);__TC; \
-		y_profile_WTF(PROFILINGS_FILE(%0),__TA,__TE), \
-		printf("\t  Mean = %s\n\t  Mode = %s\n\tMedian = %s\n\t Range = %s", \
-			__TU(Mean(__TA),__TE),__TU(Mode(__TA),__TE),__TU(Median(__TA),__TE),__TU(Range(__TA),__TE))) \
+	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TE=_:__TX:__TY|||%0|||,__TS=__PA(%0);__TC;__PB(%0,__TA,__TE)) \
 	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS) \
 	for(new __TI=0;__TI!=__TE;++__TI)
 
@@ -2407,8 +2404,6 @@ stock Trim(const str[], &start, &end)
  *  pre-sorted arrays (which the callers are likely to be).
  * </remarks>
  *//*------------------------------------------------------------------------**/
-
-//#define ftell(%0) fseek((%0), 0, seek_current)
 
 static stock Utils_PreSort(arr[], num = sizeof (arr))
 {

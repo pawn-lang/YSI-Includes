@@ -161,12 +161,24 @@ CHAIN_HOOK(Profiling)
 	#define ProfileClose:%1() PROFILE_CLOSE__ %1()
 #endif
 
-#define @yP_%0\32; @yP_
 #define @y_P%0\32; @y_P
-#define @P_y%0\32; @P_y
-#define yP_@%0\32; yP_@
+#define @yP_%0\32; @yP_
+#define @Py_%0\32; @Py_
 #define y_P@%0\32; y_P@
+#define yP_@%0\32; yP_@
+#define Py_@%0\32; Py_@
+
+#define @P_y%0\32; @P_y
+#define @_Py%0\32; @_Py
+#define @_yP%0\32; @_yP
 #define P_y@%0\32; P_y@
+#define _Py@%0\32; _Py@
+#define _yP@%0\32; _yP@
+
+#define y@P_%0\32; y@P_
+#define y@_P%0\32; y@_P
+#define P@_y%0\32; P@_y
+#define P@y_%0\32; P@y_
 
 // These all need to come AFTER the types are defined in case the have profilings.
 #include "y_utils"
@@ -287,4 +299,26 @@ stock Profiling_RunAll()
 		SendRconCommand("exit");
 	#endif
 }
+
+stock __PA(const name[])
+{
+	return printf("Timing \"%s\"...", name);
+}
+
+stock __PB(const name[], results[], iters, size = sizeof (results))
+{
+	#if defined PROFILINGS_FILE
+		DumpProfilingTime(PROFILINGS_FILE(name), results, iters);
+	#else
+		#pragma unused name
+	#endif
+		printf("\t  Mean = %s\n\t  Mode = %s\n\tMedian = %s\n\t Range = %s",
+			BeautifyProfilingTime(Mean(results, size), iters),
+			BeautifyProfilingTime(Mode(results, size), iters),
+			BeautifyProfilingTime(Median(results, size), iters),
+			BeautifyProfilingTime(Range(results, size), iters)
+		);
+}
+
+#define __PA(%0,%9);__TC;__PB(%0,%9,%1,%2) __PA(%0);__TC;__PB(%0,%1,%2)
 
