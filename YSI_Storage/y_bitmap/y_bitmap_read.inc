@@ -125,22 +125,315 @@ static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 
 static stock Bitmap_StoreBlock(dest[], const src[])
 {
-	dest[ 0] = (src[0] << 8) | 0xFF,
-	dest[ 1] = (src[1] << 16) | (src[0] >>> 16) | 0xFF,
-	dest[ 2] = (src[2] << 24) | (src[1] >>> 8) | 0xFF,
-	dest[ 3] =  src[2] | 0xFF,
-	dest[ 4] = (src[3] << 8) | 0xFF,
-	dest[ 5] = (src[4] << 16) | (src[3] >>> 16) | 0xFF,
-	dest[ 6] = (src[5] << 24) | (src[4] >>> 8) | 0xFF,
-	dest[ 7] =  src[5] | 0xFF,
-	dest[ 8] = (src[6] << 8) | 0xFF,
-	dest[ 9] = (src[7] << 16) | (src[6] >>> 16) | 0xFF,
-	dest[10] = (src[8] << 24) | (src[7] >>> 8) | 0xFF,
-	dest[11] =  src[8] | 0xFF,
-	dest[12] = (src[9] << 8) | 0xFF,
-	dest[13] = (src[10] << 16) | (src[9] >>> 16) | 0xFF,
-	dest[14] = (src[11] << 24) | (src[10] >>> 8) | 0xFF,
-	dest[15] =  src[11] | 0xFF;
+	// dest[0] = ((cur = src[0]) << 8) | 0xFF;
+	// Load the first value.
+	#emit LREF.S.pri           src
+	#emit PUSH.pri
+
+	// Make colour 1.
+	#emit SHL.C.pri            8
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// dest[1] = (cur >>> 16) | ((cur = src[1]) << 16) | 0xFF;
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            1
+	#emit LIDX
+	#emit POP.alt
+	#emit PUSH.pri
+
+	// Make colour 2.
+	#emit SHR.C.alt            16
+	#emit SHL.C.pri            16
+	#emit OR
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// dest[2] = (cur >>> 8) | ((cur = src[2]) << 24) | 0xFF;
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            2
+	#emit LIDX
+	#emit POP.alt
+	#emit PUSH.pri
+
+	// Make colour 3.
+	#emit SHR.C.alt            8
+	#emit SHL.C.pri            24
+	#emit OR
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// dest[3] = cur | 0xFF;
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit POP.pri
+
+	// Make colour 4.
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            3
+	#emit LIDX
+	#emit PUSH.pri
+
+	// Make colour 1.
+	#emit SHL.C.pri            8
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            4
+	#emit LIDX
+	#emit POP.alt
+	#emit PUSH.pri
+
+	// Make colour 2.
+	#emit SHR.C.alt            16
+	#emit SHL.C.pri            16
+	#emit OR
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            5
+	#emit LIDX
+	#emit POP.alt
+	#emit PUSH.pri
+
+	// Make colour 3.
+	#emit SHR.C.alt            8
+	#emit SHL.C.pri            24
+	#emit OR
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit POP.pri
+
+	// Make colour 4.
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            6
+	#emit LIDX
+	#emit PUSH.pri
+
+	// Make colour 1.
+	#emit SHL.C.pri            8
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            7
+	#emit LIDX
+	#emit POP.alt
+	#emit PUSH.pri
+
+	// Make colour 2.
+	#emit SHR.C.alt            16
+	#emit SHL.C.pri            16
+	#emit OR
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            8
+	#emit LIDX
+	#emit POP.alt
+	#emit PUSH.pri
+
+	// Make colour 3.
+	#emit SHR.C.alt            8
+	#emit SHL.C.pri            24
+	#emit OR
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit POP.pri
+
+	// Make colour 4.
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            9
+	#emit LIDX
+	#emit PUSH.pri
+
+	// Make colour 1.
+	#emit SHL.C.pri            8
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            10
+	#emit LIDX
+	#emit POP.alt
+	#emit PUSH.pri
+
+	// Make colour 2.
+	#emit SHR.C.alt            16
+	#emit SHL.C.pri            16
+	#emit OR
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            11
+	#emit LIDX
+	#emit POP.alt
+	#emit PUSH.pri
+
+	// Make colour 3.
+	#emit SHR.C.alt            8
+	#emit SHL.C.pri            24
+	#emit OR
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	// Pre-increment the destination.
+	#emit LOAD.S.alt           dest
+	#emit CONST.pri            4
+	#emit ADD
+	#emit STOR.S.pri           dest
+
+	// Load the next value.
+	#emit POP.pri
+
+	// Make colour 4.
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SREF.S.pri           dest
+
+	//new cur;
+	//dest[ 0] = ((cur = src[0]) << 8) | 0xFF,
+	//dest[ 1] = (cur >>> 16) | ((cur = src[1]) << 16) | 0xFF,
+	//dest[ 2] = (cur >>> 8) | ((cur = src[2]) << 24) | 0xFF,
+	//dest[ 3] = cur | 0xFF,
+	//dest[ 4] = ((cur = src[3]) << 8) | 0xFF,
+	//dest[ 5] = (cur >>> 16) | ((cur = src[4]) << 16) | 0xFF,
+	//dest[ 6] = (cur >>> 8) | ((cur = src[5]) << 24) | 0xFF,
+	//dest[ 7] = cur | 0xFF,
+	//dest[ 8] = ((cur = src[6]) << 8) | 0xFF,
+	//dest[ 9] = (cur >>> 16) | ((cur = src[7]) << 16) | 0xFF,
+	//dest[10] = (cur >>> 8) | ((cur = src[8]) << 24) | 0xFF,
+	//dest[11] = cur | 0xFF,
+	//dest[12] = ((cur = src[9]) << 8) | 0xFF,
+	//dest[13] = (cur >>> 16) | ((cur = src[10]) << 16) | 0xFF,
+	//dest[14] = (cur >>> 8) | ((cur = src[11]) << 24) | 0xFF,
+	//dest[15] = cur | 0xFF;
 }
 
 static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
