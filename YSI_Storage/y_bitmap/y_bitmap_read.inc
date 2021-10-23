@@ -445,14 +445,21 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 	// Allocate the memory for the main input.  We don't need to use `CEILDIV`
 	// here because the BMP file format body is always an exact multiple of 4.
 	new
+		y = Bitmap_Height(ctx),
 		width = Bitmap_Width(ctx) * cellbytes,
+		dst = _:ctx * cellbytes + y * width;
+	#emit CONST.pri            YSI_gMallocMemory
+	#emit LOAD.S.alt           dst
+	#emit ADD
+	#emit STOR.S.pri           dst
+	new
 		w2 = width & ~(16 * cellbytes - 1),
 		w3 = width & ~(4 * cellbytes - 1),
 		x = 0;
 	// Write 4 pixels in to 3 blocks.
 	static
 		sReadBlock[16 * 3 / cellbytes];
-	for (new y = Bitmap_Height(ctx), dst = ref(YSI_gMallocMemory) + _:ctx * cellbytes + y * width; y--; x = 0)
+	for (; y--; x = 0)
 	{
 		dst -= width;
 		// Go through the array backwards (bottom to top).
