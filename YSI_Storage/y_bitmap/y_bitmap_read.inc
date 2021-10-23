@@ -445,18 +445,19 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp, size)
 	// Allocate the memory for the main input.  We don't need to use `CEILDIV`
 	// here because the BMP file format body is always an exact multiple of 4.
 	new
-		Alloc:input = malloc(size / 4),
-		y = Bitmap_Height(ctx),
-		width = Bitmap_Width(ctx) * cellbytes,
-		dst = _:ctx * cellbytes + y * width;
-	#emit CONST.pri            YSI_gMallocMemory
-	#emit LOAD.S.alt           dst
-	#emit ADD
-	#emit LOAD.S.alt           width
-	#emit SUB
-	#emit STOR.S.pri           dst
+		Alloc:input = malloc(size / 4);
 	if (input)
 	{
+		new
+			y = Bitmap_Height(ctx),
+			width = Bitmap_Width(ctx) * cellbytes,
+			dst = _:ctx * cellbytes + y * width;
+		#emit CONST.pri            YSI_gMallocMemory
+		#emit LOAD.S.alt           dst
+		#emit ADD
+		#emit LOAD.S.alt           width
+		#emit SUB
+		#emit STOR.S.pri           dst
 		new
 			src = _:input;
 		fblockread(bmp, YSI_gMallocMemory[_:input], size);
@@ -505,46 +506,45 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp, size)
 	{
 		// Write 4 pixels in to 3 blocks.
 		static
-			sReadBlock[16 * 3 / cellbytes];
-		P:W("Could not allocate space to load bitmap, using fallback code");
-		for (new w2 = dst + (width & ~(16 * cellbytes - 1)), w3 = dst + (width & ~(4 * cellbytes - 1)); y--; dst -= width * 2, w2 -= width, w3 -= width)
+			sReadBlock[3];
+		new
+			width = Bitmap_Width(ctx),
+			w2 = width & ~0x3;
+		for (new y = Bitmap_Height(ctx); y--; )
 		{
 			// Go through the array backwards (bottom to top).
-			for ( ; dst != w2; dst += 16 * cellbytes)
+			new
+				x = 0;
+			for ( ; x != w2; x += 4)
 			{
-				fblockread(bmp, sReadBlock, 16 * 3 / cellbytes),
-				Bitmap_StoreBlock64(dst, sReadBlock);
+				fblockread(bmp, sReadBlock, 3),
+				Bitmap_WriteInt(ctx, x    , width, y, 0xFF | (sReadBlock[0] << 8)),
+				Bitmap_WriteInt(ctx, x + 1, width, y, 0xFF | (sReadBlock[1] << 16) | (sReadBlock[0] >>> 16)),
+				Bitmap_WriteInt(ctx, x + 2, width, y, 0xFF | (sReadBlock[2] << 24) | (sReadBlock[1] >>> 8)),
+				Bitmap_WriteInt(ctx, x + 3, width, y, 0xFF | sReadBlock[2]);
 			}
-			for ( ; dst != w3; dst += 4 * cellbytes)
+			switch (width & 0x03)
 			{
-				fblockread(bmp, sReadBlock, 4 * 3 / cellbytes),
-				Bitmap_StoreBlock16(dst, sReadBlock);
-			}
-			switch (width & (4 * cellbytes - 1))
-			{
-				case 1 * cellbytes:
+				case 1:
 				{
 					// Read 1.
-					fblockread(bmp, sReadBlock, 1),
-					AMX_Write(dst, (sReadBlock[0] << 8) | 0xFF),
-					dst += 1 * cellbytes;
+					fblockread(bmp, sReadBlock, 1);
+					Bitmap_WriteInt(ctx, x    , width, y, 0xFF | (sReadBlock[0] << 8));
 				}
-				case 2 * cellbytes:
+				case 2:
 				{
 					// Read 2.
-					fblockread(bmp, sReadBlock, 2),
-					AMX_Write(dst                , (sReadBlock[0]  <<  8) | 0xFF),
-					AMX_Write(dst + 1 * cellbytes, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF),
-					dst += 2 * cellbytes;
+					fblockread(bmp, sReadBlock, 2);
+					Bitmap_WriteInt(ctx, x    , width, y, 0xFF | (sReadBlock[0] << 8));
+					Bitmap_WriteInt(ctx, x + 1, width, y, 0xFF | (sReadBlock[1] << 16) | (sReadBlock[0] >>> 16));
 				}
-				case 3 * cellbytes:
+				case 3:
 				{
 					// Write 3, pad 3.
-					fblockread(bmp, sReadBlock, 3),
-					AMX_Write(dst                , (sReadBlock[0]  <<  8) | 0xFF),
-					AMX_Write(dst + 1 * cellbytes, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF),
-					AMX_Write(dst + 2 * cellbytes, (sReadBlock[1] >>>  8) | (sReadBlock[2] << 24) | 0xFF),
-					dst += 3 * cellbytes;
+					fblockread(bmp, sReadBlock, 3);
+					Bitmap_WriteInt(ctx, x    , width, y, 0xFF | (sReadBlock[0] << 8));
+					Bitmap_WriteInt(ctx, x + 1, width, y, 0xFF | (sReadBlock[1] << 16) | (sReadBlock[0] >>> 16));
+					Bitmap_WriteInt(ctx, x + 2, width, y, 0xFF | (sReadBlock[2] << 24) | (sReadBlock[1] >>> 8));
 				}
 			}
 		}
