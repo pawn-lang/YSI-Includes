@@ -451,6 +451,8 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 	#emit CONST.pri            YSI_gMallocMemory
 	#emit LOAD.S.alt           dst
 	#emit ADD
+	#emit LOAD.S.alt           width
+	#emit SUB
 	#emit STOR.S.pri           dst
 	new
 		w2 = width & ~(16 * cellbytes - 1),
@@ -459,9 +461,8 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 	// Write 4 pixels in to 3 blocks.
 	static
 		sReadBlock[16 * 3 / cellbytes];
-	for (; y--; x = 0)
+	for (; y--; x = 0, dst -= width)
 	{
-		dst -= width;
 		// Go through the array backwards (bottom to top).
 		for ( ; x != w2; x += 16 * cellbytes)
 		{
