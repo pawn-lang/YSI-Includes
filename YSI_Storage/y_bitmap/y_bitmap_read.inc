@@ -125,7 +125,7 @@ static stock Bitmap_ReadHeader(File:bmp, &x, &y)
 	return size;
 }
 
-static stock Bitmap_StoreBlock64(dest[], const src[])
+static stock Bitmap_StoreBlock64(dest, const src[])
 {
 	// dest[0] = (cur = src[2]) | 0xFF;
 	// Load the next value.
@@ -368,7 +368,7 @@ static stock Bitmap_StoreBlock64(dest[], const src[])
 	#emit STACK                64
 }
 
-static stock Bitmap_StoreBlock16(dest[], const src[])
+static stock Bitmap_StoreBlock16(dest, const src[])
 {
 	// dest[0] = (cur = src[2]) | 0xFF;
 	// Load the next value.
@@ -445,53 +445,49 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp, size)
 	// Allocate the memory for the main input.  We don't need to use `CEILDIV`
 	// here because the BMP file format body is always an exact multiple of 4.
 	new
-		Alloc:input = malloc(size / 4);
+		Alloc:input = malloc(size / 4),
+		width = Bitmap_Width(ctx) * cellbytes,
+		w2 = width & ~(16 * cellbytes - 1),
+		w3 = width & ~(4 * cellbytes - 1),
+		x = 0;
 	if (input)
 	{
-		fblockread(bmp, YSI_gMallocMemory[_:input], size);
 		new
-			width = Bitmap_Width(ctx),
-			w2 = width & ~(16 - 1),
-			w3 = width & ~(4 - 1),
-			x = 0,
-			src = _:input,
-			dst;
-		for (new y = Bitmap_Height(ctx); y--; x = 0)
+			src = _:input;
+		fblockread(bmp, YSI_gMallocMemory[_:input], size);
+		for (new y = Bitmap_Height(ctx), dst = ref(YSI_gMallocMemory) + _:ctx * cellbytes + y * width; y--; x = 0)
 		{
-			dst = _:ctx + y * width;
+			dst -= width;
 			// Go through the array backwards (bottom to top).
-			for ( ; x != w2; x += 16, src += 12)
+			for ( ; x != w2; x += 16 * cellbytes, src += 12)
 			{
-				Bitmap_StoreBlock64(YSI_gMallocMemory[dst + x], YSI_gMallocMemory[src]);
+				Bitmap_StoreBlock64(dst + x, YSI_gMallocMemory[src]);
 			}
-			for ( ; x != w3; x += 4, src += 3)
+			for ( ; x != w3; x += 4 * cellbytes, src += 3)
 			{
-				Bitmap_StoreBlock16(YSI_gMallocMemory[dst + x], YSI_gMallocMemory[src]);
+				Bitmap_StoreBlock16(dst + x, YSI_gMallocMemory[src]);
 			}
-			switch (width & (4 - 1))
+			switch (width & (4 * cellbytes - 1))
 			{
-				case 1:
+				case 1 * cellbytes:
 				{
 					// Read 1, skip 1.
-					YSI_gMallocMemory[dst + x] = (YSI_gMallocMemory[src] << 8) | 0xFF,
-					x += 1,
+					AMX_Write(dst + x, (YSI_gMallocMemory[src] << 8) | 0xFF),
 					src += 1;
 				}
-				case 2:
+				case 2 * cellbytes:
 				{
 					// Read 2, skip 2.
-					YSI_gMallocMemory[dst + x    ] = (YSI_gMallocMemory[src]  <<  8) | 0xFF,
-					YSI_gMallocMemory[dst + x + 1] = (YSI_gMallocMemory[src] >>> 16) | (YSI_gMallocMemory[src + 1] << 16) | 0xFF,
-					x += 2,
+					AMX_Write(dst + x    , (YSI_gMallocMemory[src]  <<  8) | 0xFF),
+					AMX_Write(dst + x + 1, (YSI_gMallocMemory[src] >>> 16) | (YSI_gMallocMemory[src + 1] << 16) | 0xFF),
 					src += 2;
 				}
-				case 3:
+				case 3 * cellbytes:
 				{
 					// Read 3, skip 3.
-					YSI_gMallocMemory[dst + x    ] = (YSI_gMallocMemory[src]  <<  8) | 0xFF,
-					YSI_gMallocMemory[dst + x + 1] = (YSI_gMallocMemory[src] >>> 16) | (YSI_gMallocMemory[src + 1] << 16) | 0xFF,
-					YSI_gMallocMemory[dst + x + 2] = (YSI_gMallocMemory[src + 1] >>>  8) | (YSI_gMallocMemory[src + 2] << 24) | 0xFF,
-					x += 3,
+					AMX_Write(dst + x    , (YSI_gMallocMemory[src]  <<  8) | 0xFF),
+					AMX_Write(dst + x + 1, (YSI_gMallocMemory[src] >>> 16) | (YSI_gMallocMemory[src + 1] << 16) | 0xFF),
+					AMX_Write(dst + x + 2, (YSI_gMallocMemory[src + 1] >>>  8) | (YSI_gMallocMemory[src + 2] << 24) | 0xFF),
 					src += 3;
 				}
 			}
@@ -504,49 +500,42 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp, size)
 		static
 			sReadBlock[16 * 3 / cellbytes];
 		P:W("Could not allocate space to load bitmap, using fallback code");
-		new
-			width = Bitmap_Width(ctx),
-			w2 = width & ~(16 - 1),
-			w3 = width & ~(4 - 1),
-			x = 0,
-			src,
-			dst;
-		for (new y = Bitmap_Height(ctx); y--; x = 0)
+		for (new y = Bitmap_Height(ctx), dst = ref(YSI_gMallocMemory) + _:ctx * cellbytes + y * width; y--; x = 0)
 		{
-			dst = _:ctx + y * width;
+			dst -= width;
 			// Go through the array backwards (bottom to top).
-			for ( ; x != w2; x += 16)
+			for ( ; x != w2; x += 16 * cellbytes)
 			{
 				fblockread(bmp, sReadBlock, 16 * 3 / cellbytes),
-				Bitmap_StoreBlock64(YSI_gMallocMemory[dst + x], sReadBlock);
+				Bitmap_StoreBlock64(dst + x, sReadBlock);
 			}
-			for ( ; x != w3; x += 4)
+			for ( ; x != w3; x += 4 * cellbytes)
 			{
 				fblockread(bmp, sReadBlock, 4 * 3 / cellbytes),
-				Bitmap_StoreBlock16(YSI_gMallocMemory[dst + x], sReadBlock);
+				Bitmap_StoreBlock16(dst + x, sReadBlock);
 			}
-			switch (width & (4 - 1))
+			switch (width & (4 * cellbytes - 1))
 			{
-				case 1:
+				case 1 * cellbytes:
 				{
 					// Read 1.
 					fblockread(bmp, sReadBlock, 1),
-					YSI_gMallocMemory[_:ctx + y * width + x] = (sReadBlock[0] << 8) | 0xFF;
+					AMX_Write(dst + x, (sReadBlock[0] << 8) | 0xFF);
 				}
-				case 2:
+				case 2 * cellbytes:
 				{
 					// Read 2.
 					fblockread(bmp, sReadBlock, 2),
-					YSI_gMallocMemory[dst + x    ] = ((src = sReadBlock[0]) << 8) | 0xFF,
-					YSI_gMallocMemory[dst + x + 1] = (src >>> 16) | (sReadBlock[1] << 16) | 0xFF;
+					AMX_Write(dst + x    , (sReadBlock[0]  <<  8) | 0xFF),
+					AMX_Write(dst + x + 1, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF);
 				}
-				case 3:
+				case 3 * cellbytes:
 				{
 					// Write 3, pad 3.
 					fblockread(bmp, sReadBlock, 3),
-					YSI_gMallocMemory[dst + x    ] = ((src = sReadBlock[0]) << 8) | 0xFF,
-					YSI_gMallocMemory[dst + x + 1] = (src >>> 16) | ((src = sReadBlock[1]) << 16) | 0xFF,
-					YSI_gMallocMemory[dst + x + 2] = (src >>> 8) | (sReadBlock[2] << 24) | 0xFF;
+					AMX_Write(dst + x    , (sReadBlock[0]  <<  8) | 0xFF),
+					AMX_Write(dst + x + 1, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF),
+					AMX_Write(dst + x + 2, (sReadBlock[1] >>>  8) | (sReadBlock[2] << 24) | 0xFF);
 				}
 			}
 		}
