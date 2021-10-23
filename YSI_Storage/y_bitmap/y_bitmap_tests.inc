@@ -596,6 +596,6 @@ TEST__ y_bitmap_read()
 		Bitmap_Write(ctx, "y_bitmap_open.mp-output.bmp");
 		Bitmap_Destroy(ctx);
 	}
-	ASSERT(fexist("y_bitmap_open.mp-output.bmp"));
+	ASSERT(!!fexist("y_bitmap_open.mp-output.bmp"));
 }
 
