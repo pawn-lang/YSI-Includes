@@ -123,7 +123,7 @@ static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 	return true;
 }
 
-static stock Bitmap_StoreBlock(dest[], const src[])
+static stock Bitmap_StoreBlock64(dest[], const src[])
 {
 	// dest[0] = (cur = src[2]) | 0xFF;
 	// Load the next value.
@@ -364,24 +364,78 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 
 	// Remove them.
 	#emit STACK                64
+}
 
-	//new cur;
-	//dest[ 0] = (cur = src[2]) | 0xFF;
-	//dest[ 1] = (cur << 24) | ((cur = src[1]) >>>  8) | 0xFF;
-	//dest[ 2] = (cur << 16) | ((cur = src[0]) >>> 16) | 0xFF;
-	//dest[ 3] = (cur <<  8) | 0xFF;
-	//dest[ 4] = ((cur = src[3]) << 8) | 0xFF,
-	//dest[ 5] = (cur >>> 16) | ((cur = src[4]) << 16) | 0xFF,
-	//dest[ 6] = (cur >>> 8) | ((cur = src[5]) << 24) | 0xFF,
-	//dest[ 7] = cur | 0xFF,
-	//dest[ 8] = ((cur = src[6]) << 8) | 0xFF,
-	//dest[ 9] = (cur >>> 16) | ((cur = src[7]) << 16) | 0xFF,
-	//dest[10] = (cur >>> 8) | ((cur = src[8]) << 24) | 0xFF,
-	//dest[11] = cur | 0xFF,
-	//dest[12] = ((cur = src[9]) << 8) | 0xFF,
-	//dest[13] = (cur >>> 16) | ((cur = src[10]) << 16) | 0xFF,
-	//dest[14] = (cur >>> 8) | ((cur = src[11]) << 24) | 0xFF,
-	//dest[15] = cur | 0xFF;
+static stock Bitmap_StoreBlock16(dest[], const src[])
+{
+	// dest[0] = (cur = src[2]) | 0xFF;
+	// Load the next value.
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            2
+	#emit LIDX
+	#emit PUSH.pri
+
+	// Make colour 1.
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SWAP.pri
+
+	// dest[1] = (cur << 24) | ((cur = src[1]) >>>  8) | 0xFF;
+	// Load the next value.
+	#emit PUSH.pri
+	#emit LOAD.S.alt           src
+	#emit CONST.pri            1
+	#emit LIDX
+	#emit POP.alt
+	#emit PUSH.pri
+
+	// Make colour 2.
+	#emit SHL.C.alt            24
+	#emit SHR.C.pri            8
+	#emit OR
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SWAP.pri
+
+	// dest[2] = (cur << 16) | ((cur = src[0]) >>> 16) | 0xFF;
+	// Load the next value.
+	//#emit PUSH.pri
+	//#emit LOAD.S.alt           src
+	//#emit CONST.pri            3
+	//#emit LIDX
+	//#emit POP.alt
+	//#emit PUSH.pri
+	#emit LREF.S.alt           src
+	#emit PUSH.alt
+
+	// Make colour 3.
+	#emit SHL.C.pri            16
+	#emit SHR.C.alt            16
+	#emit OR
+	#emit CONST.alt            0xFF
+	#emit OR
+	#emit SWAP.pri
+
+	// dest[3] = (cur <<  8) | 0xFF;
+	// Load the next value.
+	//#emit PUSH.pri
+	//#emit POP.pri
+
+	// Make colour 4.
+	#emit SHL.C.pri            8
+	//#emit CONST.alt            0xFF
+	#emit OR
+	#emit PUSH.pri
+
+	// We now have all the colours pushed on to the stack.
+
+	// Copy them to `dest` in one go.
+	#emit LCTRL                4
+	#emit LOAD.S.alt           dest
+	#emit MOVS                 16
+
+	// Remove them.
+	#emit STACK                16
 }
 
 static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
@@ -392,48 +446,45 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 	new
 		width = Bitmap_Width(ctx),
 		w2 = width & ~(16 - 1),
-		w3 = width & ~(4 - 1);
-	for (new y = Bitmap_Height(ctx); y--; )
+		w3 = width & ~(4 - 1),
+		x = 0,
+		src,
+		dst;
+	for (new y = Bitmap_Height(ctx); y--; x = 0)
 	{
 		// Go through the array backwards (bottom to top).
-		new
-			x = 0;
 		for ( ; x != w2; x += 16)
 		{
-			fblockread(bmp, sReadBlock),
-			Bitmap_StoreBlock(YSI_gMallocMemory[_:ctx + y * width + x], sReadBlock);
+			fblockread(bmp, sReadBlock, 16 * 3 / cellbytes),
+			Bitmap_StoreBlock64(YSI_gMallocMemory[_:ctx + y * width + x], sReadBlock);
 		}
 		for ( ; x != w3; x += 4)
 		{
-			new offset = _:ctx + y * width + x;
-			fblockread(bmp, sReadBlock, 3),
-			YSI_gMallocMemory[offset     ] = 0xFF | (sReadBlock[0] << 8),
-			YSI_gMallocMemory[offset +  1] = 0xFF | (sReadBlock[1] << 16) | (sReadBlock[0] >>> 16),
-			YSI_gMallocMemory[offset +  2] = 0xFF | (sReadBlock[2] << 24) | (sReadBlock[1] >>> 8),
-			YSI_gMallocMemory[offset +  3] = 0xFF | sReadBlock[2];
+			fblockread(bmp, sReadBlock, 4 * 3 / cellbytes),
+			Bitmap_StoreBlock16(YSI_gMallocMemory[_:ctx + y * width + x], sReadBlock);
 		}
 		switch (width & (4 - 1))
 		{
 			case 1:
 			{
 				// Read 1.
-				fblockread(bmp, sReadBlock, 1);
-				Bitmap_WriteInt(ctx, x    , width, y, 0xFF | (sReadBlock[0] << 8));
+				fblockread(bmp, sReadBlock, 1),
+				YSI_gMallocMemory[_:ctx + y * width + x] = (sReadBlock[0] << 8) | 0xFF;
 			}
 			case 2:
 			{
 				// Read 2.
-				fblockread(bmp, sReadBlock, 2);
-				Bitmap_WriteInt(ctx, x    , width, y, 0xFF | (sReadBlock[0] << 8));
-				Bitmap_WriteInt(ctx, x + 1, width, y, 0xFF | (sReadBlock[1] << 16) | (sReadBlock[0] >>> 16));
+				fblockread(bmp, sReadBlock, 2),
+				YSI_gMallocMemory[(dst = _:ctx + y * width + x)] = ((src = sReadBlock[0]) << 8) | 0xFF,
+				YSI_gMallocMemory[dst +  1] = (src >>> 16) | (sReadBlock[1] << 16) | 0xFF;
 			}
 			case 3:
 			{
 				// Write 3, pad 3.
-				fblockread(bmp, sReadBlock, 3);
-				Bitmap_WriteInt(ctx, x    , width, y, 0xFF | (sReadBlock[0] << 8));
-				Bitmap_WriteInt(ctx, x + 1, width, y, 0xFF | (sReadBlock[1] << 16) | (sReadBlock[0] >>> 16));
-				Bitmap_WriteInt(ctx, x + 2, width, y, 0xFF | (sReadBlock[2] << 24) | (sReadBlock[1] >>> 8));
+				fblockread(bmp, sReadBlock, 3),
+				YSI_gMallocMemory[(dst = _:ctx + y * width + x)] = ((src = sReadBlock[0]) << 8) | 0xFF,
+				YSI_gMallocMemory[dst +  1] = (src >>> 16) | ((src = sReadBlock[1]) << 16) | 0xFF,
+				YSI_gMallocMemory[dst +  2] = (src >>> 8) | (sReadBlock[2] << 24) | 0xFF;
 			}
 		}
 	}
