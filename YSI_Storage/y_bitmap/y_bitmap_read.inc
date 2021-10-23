@@ -153,7 +153,7 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 	for (new w2 = dest + (width & ~(16 * cellbytes - 1)), w3 = dest + (width & ~(4 * cellbytes - 1)); y--; dest -= width * 2, w2 -= width, w3 -= width)
 	{
 		// Go through the array backwards (bottom to top).
-		for ( ; dest != w2; dest += 16 * cellbytes)
+		for ( ; dest != w2; )
 		{
 			YSI_FBlockRead(bmp, p0, 16 * 3 / cellbytes);
 			{
@@ -303,12 +303,15 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit LCTRL                4
 				#emit LOAD.S.alt           dest
 				#emit MOVS                 64
+				#emit CONST.pri            64
+				#emit ADD
+				#emit STOR.S.pri           dest
 
 				// Remove them.
 				#emit STACK                64
 			}
 		}
-		for ( ; dest != w3; dest += 4 * cellbytes)
+		for ( ; dest != w3; )
 		{
 			YSI_FBlockRead(bmp, p0, 4 * 3 / cellbytes);
 			{
@@ -317,7 +320,11 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit LOAD.alt             p2
 				#emit CONST.pri            0xFF
 				#emit OR
-				#emit PUSH.pri
+				#emit SREF.S.pri           dest
+
+				#emit LOAD.S.pri           dest
+				#emit ADD.C                4
+				#emit STOR.S.pri           dest
 
 				// dest[1] = (cur << 24) | ((cur = src[1]) >>>  8) | 0xFF;
 				// Make colour 2.
@@ -327,7 +334,11 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit OR
 				#emit CONST.alt            0xFF
 				#emit OR
-				#emit PUSH.pri
+				#emit SREF.S.pri           dest
+
+				#emit LOAD.S.pri           dest
+				#emit ADD.C                4
+				#emit STOR.S.pri           dest
 
 				// dest[2] = (cur << 16) | ((cur = src[0]) >>> 16) | 0xFF;
 				// Make colour 3.
@@ -338,24 +349,22 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit OR
 				#emit CONST.alt            0xFF
 				#emit OR
-				#emit PUSH.pri
+				#emit SREF.S.pri           dest
+
+				#emit LOAD.S.pri           dest
+				#emit ADD.C                4
+				#emit STOR.S.pri           dest
 
 				// dest[3] = (cur <<  8) | 0xFF;
 				// Make colour 4.
 				#emit LOAD.pri             p0
 				#emit SHL.C.pri            8
 				#emit OR
-				#emit PUSH.pri
+				#emit SREF.S.pri           dest
 
-				// We now have all the colours pushed on to the stack.
-
-				// Copy them to `dest` in one go.
-				#emit LCTRL                4
-				#emit LOAD.S.alt           dest
-				#emit MOVS                 16
-
-				// Remove them.
-				#emit STACK                16	
+				#emit LOAD.S.pri           dest
+				#emit ADD.C                4
+				#emit STOR.S.pri           dest
 			}
 		}
 		switch (width & (4 * cellbytes - 1))
@@ -363,26 +372,96 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			case 1 * cellbytes:
 			{
 				// Read 1.
-				YSI_FBlockRead(bmp, p0, 1),
-				AMX_Write(dest, (p0 << 8) | 0xFF),
-				dest += 1 * cellbytes;
+				YSI_FBlockRead(bmp, p0, 1);
+				{
+					// dest[0] = (cur = src[2]) | 0xFF;
+					// Make colour 1.
+					#emit LOAD.alt             p2
+					#emit CONST.pri            0xFF
+					#emit OR
+					#emit SREF.S.pri           dest
+
+					#emit LOAD.S.pri           dest
+					#emit ADD.C                4
+					#emit STOR.S.pri           dest
+				}
 			}
 			case 2 * cellbytes:
 			{
 				// Read 2.
-				YSI_FBlockRead(bmp, p0, 2),
-				AMX_Write(dest                , (p0  <<  8) | 0xFF),
-				AMX_Write(dest + 1 * cellbytes, (p0 >>> 16) | (p1 << 16) | 0xFF),
-				dest += 2 * cellbytes;
+				YSI_FBlockRead(bmp, p0, 2);
+				{
+					// dest[0] = (cur = src[2]) | 0xFF;
+					// Make colour 1.
+					#emit LOAD.alt             p2
+					#emit CONST.pri            0xFF
+					#emit OR
+					#emit SREF.S.pri           dest
+
+					#emit LOAD.S.pri           dest
+					#emit ADD.C                4
+					#emit STOR.S.pri           dest
+
+					// dest[1] = (cur << 24) | ((cur = src[1]) >>>  8) | 0xFF;
+					// Make colour 2.
+					#emit SHL.C.alt            24
+					#emit LOAD.pri             p1
+					#emit SHR.C.pri            8
+					#emit OR
+					#emit CONST.alt            0xFF
+					#emit OR
+					#emit SREF.S.pri           dest
+
+					#emit LOAD.S.pri           dest
+					#emit ADD.C                4
+					#emit STOR.S.pri           dest
+				}
 			}
 			case 3 * cellbytes:
 			{
 				// Write 3, pad 3.
-				YSI_FBlockRead(bmp, p0, 3),
-				AMX_Write(dest                , (p0  <<  8) | 0xFF),
-				AMX_Write(dest + 1 * cellbytes, (p0 >>> 16) | (p1 << 16) | 0xFF),
-				AMX_Write(dest + 2 * cellbytes, (p1 >>>  8) | (p2 << 24) | 0xFF),
-				dest += 3 * cellbytes;
+				YSI_FBlockRead(bmp, p0, 3);
+				{
+					// dest[0] = (cur = src[2]) | 0xFF;
+					// Make colour 1.
+					#emit LOAD.alt             p2
+					#emit CONST.pri            0xFF
+					#emit OR
+					#emit SREF.S.pri           dest
+
+					#emit LOAD.S.pri           dest
+					#emit ADD.C                4
+					#emit STOR.S.pri           dest
+
+					// dest[1] = (cur << 24) | ((cur = src[1]) >>>  8) | 0xFF;
+					// Make colour 2.
+					#emit SHL.C.alt            24
+					#emit LOAD.pri             p1
+					#emit SHR.C.pri            8
+					#emit OR
+					#emit CONST.alt            0xFF
+					#emit OR
+					#emit SREF.S.pri           dest
+
+					#emit LOAD.S.pri           dest
+					#emit ADD.C                4
+					#emit STOR.S.pri           dest
+
+					// dest[2] = (cur << 16) | ((cur = src[0]) >>> 16) | 0xFF;
+					// Make colour 3.
+					#emit LOAD.alt             p1
+					#emit SHL.C.alt            16
+					#emit LOAD.pri             p0
+					#emit SHR.C.pri            16
+					#emit OR
+					#emit CONST.alt            0xFF
+					#emit OR
+					#emit SREF.S.pri           dest
+
+					#emit LOAD.S.pri           dest
+					#emit ADD.C                4
+					#emit STOR.S.pri           dest
+				}
 			}
 		}
 	}
