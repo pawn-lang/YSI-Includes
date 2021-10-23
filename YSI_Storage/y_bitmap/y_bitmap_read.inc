@@ -454,41 +454,43 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp, size)
 			w2 = width & ~(16 - 1),
 			w3 = width & ~(4 - 1),
 			x = 0,
-			src = _:input;
+			src = _:input,
+			dst;
 		for (new y = Bitmap_Height(ctx); y--; x = 0)
 		{
+			dst = _:ctx + y * width;
 			// Go through the array backwards (bottom to top).
 			for ( ; x != w2; x += 16, src += 12)
 			{
-				Bitmap_StoreBlock64(YSI_gMallocMemory[_:ctx + y * width + x], YSI_gMallocMemory[src]);
+				Bitmap_StoreBlock64(YSI_gMallocMemory[dst + x], YSI_gMallocMemory[src]);
 			}
 			for ( ; x != w3; x += 4, src += 3)
 			{
-				Bitmap_StoreBlock16(YSI_gMallocMemory[_:ctx + y * width + x], YSI_gMallocMemory[src]);
+				Bitmap_StoreBlock16(YSI_gMallocMemory[dst + x], YSI_gMallocMemory[src]);
 			}
 			switch (width & (4 - 1))
 			{
 				case 1:
 				{
 					// Read 1, skip 1.
-					YSI_gMallocMemory[_:ctx + y * width + x] = (YSI_gMallocMemory[src] << 8) | 0xFF,
+					YSI_gMallocMemory[dst + x] = (YSI_gMallocMemory[src] << 8) | 0xFF,
 					x += 1,
 					src += 1;
 				}
 				case 2:
 				{
 					// Read 2, skip 2.
-					YSI_gMallocMemory[_:ctx + y * width + x    ] = (YSI_gMallocMemory[src]  <<  8) | 0xFF,
-					YSI_gMallocMemory[_:ctx + y * width + x + 1] = (YSI_gMallocMemory[src] >>> 16) | (YSI_gMallocMemory[src + 1] << 16) | 0xFF,
+					YSI_gMallocMemory[dst + x    ] = (YSI_gMallocMemory[src]  <<  8) | 0xFF,
+					YSI_gMallocMemory[dst + x + 1] = (YSI_gMallocMemory[src] >>> 16) | (YSI_gMallocMemory[src + 1] << 16) | 0xFF,
 					x += 2,
 					src += 2;
 				}
 				case 3:
 				{
 					// Read 3, skip 3.
-					YSI_gMallocMemory[_:ctx + y * width + x    ] = (YSI_gMallocMemory[src]  <<  8) | 0xFF,
-					YSI_gMallocMemory[_:ctx + y * width + x + 1] = (YSI_gMallocMemory[src] >>> 16) | (YSI_gMallocMemory[src + 1] << 16) | 0xFF,
-					YSI_gMallocMemory[_:ctx + y * width + x + 2] = (YSI_gMallocMemory[src + 1] >>>  8) | (YSI_gMallocMemory[src + 2] << 24) | 0xFF,
+					YSI_gMallocMemory[dst + x    ] = (YSI_gMallocMemory[src]  <<  8) | 0xFF,
+					YSI_gMallocMemory[dst + x + 1] = (YSI_gMallocMemory[src] >>> 16) | (YSI_gMallocMemory[src + 1] << 16) | 0xFF,
+					YSI_gMallocMemory[dst + x + 2] = (YSI_gMallocMemory[src + 1] >>>  8) | (YSI_gMallocMemory[src + 2] << 24) | 0xFF,
 					x += 3,
 					src += 3;
 				}
@@ -511,16 +513,17 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp, size)
 			dst;
 		for (new y = Bitmap_Height(ctx); y--; x = 0)
 		{
+			dst = _:ctx + y * width;
 			// Go through the array backwards (bottom to top).
 			for ( ; x != w2; x += 16)
 			{
 				fblockread(bmp, sReadBlock, 16 * 3 / cellbytes),
-				Bitmap_StoreBlock64(YSI_gMallocMemory[_:ctx + y * width + x], sReadBlock);
+				Bitmap_StoreBlock64(YSI_gMallocMemory[dst + x], sReadBlock);
 			}
 			for ( ; x != w3; x += 4)
 			{
 				fblockread(bmp, sReadBlock, 4 * 3 / cellbytes),
-				Bitmap_StoreBlock16(YSI_gMallocMemory[_:ctx + y * width + x], sReadBlock);
+				Bitmap_StoreBlock16(YSI_gMallocMemory[dst + x], sReadBlock);
 			}
 			switch (width & (4 - 1))
 			{
@@ -534,16 +537,16 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp, size)
 				{
 					// Read 2.
 					fblockread(bmp, sReadBlock, 2),
-					YSI_gMallocMemory[(dst = _:ctx + y * width + x)] = ((src = sReadBlock[0]) << 8) | 0xFF,
-					YSI_gMallocMemory[dst +  1] = (src >>> 16) | (sReadBlock[1] << 16) | 0xFF;
+					YSI_gMallocMemory[dst + x    ] = ((src = sReadBlock[0]) << 8) | 0xFF,
+					YSI_gMallocMemory[dst + x + 1] = (src >>> 16) | (sReadBlock[1] << 16) | 0xFF;
 				}
 				case 3:
 				{
 					// Write 3, pad 3.
 					fblockread(bmp, sReadBlock, 3),
-					YSI_gMallocMemory[(dst = _:ctx + y * width + x)] = ((src = sReadBlock[0]) << 8) | 0xFF,
-					YSI_gMallocMemory[dst +  1] = (src >>> 16) | ((src = sReadBlock[1]) << 16) | 0xFF,
-					YSI_gMallocMemory[dst +  2] = (src >>> 8) | (sReadBlock[2] << 24) | 0xFF;
+					YSI_gMallocMemory[dst + x    ] = ((src = sReadBlock[0]) << 8) | 0xFF,
+					YSI_gMallocMemory[dst + x + 1] = (src >>> 16) | ((src = sReadBlock[1]) << 16) | 0xFF,
+					YSI_gMallocMemory[dst + x + 2] = (src >>> 8) | (sReadBlock[2] << 24) | 0xFF;
 				}
 			}
 		}
