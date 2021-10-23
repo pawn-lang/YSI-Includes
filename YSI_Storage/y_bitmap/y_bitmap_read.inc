@@ -358,25 +358,18 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	// We now have all the colours pushed on to the stack.
 
 	// Copy them to `dest` in one go.
-	#emit PUSH.C               16
-	#emit PUSH.C               64
-	#emit PUSH.C               0
 	#emit ADDR.pri             0xFFFFFFC0
-	#emit PUSH.pri
-	#emit PUSH.S               dest
-	#emit PUSH.C               20
-	#emit SYSREQ.C             memcpy
+	#emit LOAD.S.alt           dest
+	#emit MOVS                 64
 
 	// Remove them.
-	#emit STACK                88 // 64 + 20 + 4
+	#emit STACK                64
 
 	//new cur;
 	//dest[ 0] = (cur = src[2]) | 0xFF;
 	//dest[ 1] = (cur << 24) | ((cur = src[1]) >>>  8) | 0xFF;
 	//dest[ 2] = (cur << 16) | ((cur = src[0]) >>> 16) | 0xFF;
 	//dest[ 3] = (cur <<  8) | 0xFF;
-
-
 	//dest[ 4] = ((cur = src[3]) << 8) | 0xFF,
 	//dest[ 5] = (cur >>> 16) | ((cur = src[4]) << 16) | 0xFF,
 	//dest[ 6] = (cur >>> 8) | ((cur = src[5]) << 24) | 0xFF,
