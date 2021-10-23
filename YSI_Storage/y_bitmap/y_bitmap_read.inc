@@ -90,11 +90,11 @@ static stock GT24(const src[])
 static stock
 	YSI_g_sBlock[13];
 
-static stock Bitmap_ReadHeader(File:bmp, &x, &y)
+static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 {
 	if (fgetchar(bmp, 0, false) != 'B' || fgetchar(bmp, 0, false) != 'M')
 	{
-		return 0;
+		return false;
 	}
 
 	// Load in the header.
@@ -106,7 +106,7 @@ static stock Bitmap_ReadHeader(File:bmp, &x, &y)
 	// 'BM', 40 byte header, 1 plane, 24 bits, no compression.
 	if (YSI_g_sBlock[3] != 40 || YSI_g_sBlock[6] != 0x00180001 || YSI_g_sBlock[7] != 0)
 	{
-		return 0;
+		return false;
 	}
 
 	x = YSI_g_sBlock[4];
@@ -119,10 +119,10 @@ static stock Bitmap_ReadHeader(File:bmp, &x, &y)
 	if (size != ceildiv(x * 3, 4) * 4 * y)
 	{
 		// File is the wrong size.
-		return 0;
+		return false;
 	}
 
-	return size;
+	return true;
 }
 
 static stock Bitmap_StoreBlock64(dest, const src[])
@@ -440,12 +440,11 @@ static stock Bitmap_StoreBlock16(dest, const src[])
 	#emit STACK                16
 }
 
-static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp, size)
+static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 {
 	// Allocate the memory for the main input.  We don't need to use `CEILDIV`
 	// here because the BMP file format body is always an exact multiple of 4.
 	new
-		Alloc:input = malloc(size / 4),
 		y = Bitmap_Height(ctx),
 		width = Bitmap_Width(ctx) * cellbytes,
 		dst = _:ctx * cellbytes + y * width;
@@ -455,97 +454,48 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp, size)
 	#emit LOAD.S.alt           width
 	#emit SUB
 	#emit STOR.S.pri           dst
-	if (input)
+	
+	// Write 4 pixels in to 3 blocks.
+	static
+		sReadBlock[16 * 3 / cellbytes];
+	for (new w2 = dst + (width & ~(16 * cellbytes - 1)), w3 = dst + (width & ~(4 * cellbytes - 1)); y--; dst -= width * 2, w2 -= width, w3 -= width)
 	{
-		new
-			src = _:input;
-		fblockread(bmp, YSI_gMallocMemory[_:input], size);
-		for (new w2 = dst + (width & ~(16 * cellbytes - 1)), w3 = dst + (width & ~(4 * cellbytes - 1)); y--; dst -= width * 2, w2 -= width, w3 -= width)
+		// Go through the array backwards (bottom to top).
+		for ( ; dst != w2; dst += 16 * cellbytes)
 		{
-			// Go through the array backwards (bottom to top).
-			for ( ; dst != w2; dst += 16 * cellbytes, src += 12)
-			{
-				Bitmap_StoreBlock64(dst, YSI_gMallocMemory[src]);
-			}
-			for ( ; dst != w3; dst += 4 * cellbytes, src += 3)
-			{
-				Bitmap_StoreBlock16(dst, YSI_gMallocMemory[src]);
-			}
-			switch (width & (4 * cellbytes - 1))
-			{
-				case 1 * cellbytes:
-				{
-					// Read 1, skip 1.
-					AMX_Write(dst, (YSI_gMallocMemory[src] << 8) | 0xFF),
-					dst += 1 * cellbytes,
-					src += 1;
-				}
-				case 2 * cellbytes:
-				{
-					// Read 2, skip 2.
-					AMX_Write(dst    , (YSI_gMallocMemory[src]  <<  8) | 0xFF),
-					AMX_Write(dst + 1, (YSI_gMallocMemory[src] >>> 16) | (YSI_gMallocMemory[src + 1] << 16) | 0xFF),
-					dst += 2 * cellbytes,
-					src += 2;
-				}
-				case 3 * cellbytes:
-				{
-					// Read 3, skip 3.
-					AMX_Write(dst    , (YSI_gMallocMemory[src]  <<  8) | 0xFF),
-					AMX_Write(dst + 1, (YSI_gMallocMemory[src] >>> 16) | (YSI_gMallocMemory[src + 1] << 16) | 0xFF),
-					AMX_Write(dst + 2, (YSI_gMallocMemory[src + 1] >>>  8) | (YSI_gMallocMemory[src + 2] << 24) | 0xFF),
-					dst += 3 * cellbytes,
-					src += 3;
-				}
-			}
+			fblockread(bmp, sReadBlock, 16 * 3 / cellbytes),
+			Bitmap_StoreBlock64(dst, sReadBlock);
 		}
-		free(input);
-	}
-	else
-	{
-		// Write 4 pixels in to 3 blocks.
-		static
-			sReadBlock[16 * 3 / cellbytes];
-		P:W("Could not allocate space to load bitmap, using fallback code");
-		for (new w2 = dst + (width & ~(16 * cellbytes - 1)), w3 = dst + (width & ~(4 * cellbytes - 1)); y--; dst -= width * 2, w2 -= width, w3 -= width)
+		for ( ; dst != w3; dst += 4 * cellbytes)
 		{
-			// Go through the array backwards (bottom to top).
-			for ( ; dst != w2; dst += 16 * cellbytes)
+			fblockread(bmp, sReadBlock, 4 * 3 / cellbytes),
+			Bitmap_StoreBlock16(dst, sReadBlock);
+		}
+		switch (width & (4 * cellbytes - 1))
+		{
+			case 1 * cellbytes:
 			{
-				fblockread(bmp, sReadBlock, 16 * 3 / cellbytes),
-				Bitmap_StoreBlock64(dst, sReadBlock);
+				// Read 1.
+				fblockread(bmp, sReadBlock, 1),
+				AMX_Write(dst, (sReadBlock[0] << 8) | 0xFF),
+				dst += 1 * cellbytes;
 			}
-			for ( ; dst != w3; dst += 4 * cellbytes)
+			case 2 * cellbytes:
 			{
-				fblockread(bmp, sReadBlock, 4 * 3 / cellbytes),
-				Bitmap_StoreBlock16(dst, sReadBlock);
+				// Read 2.
+				fblockread(bmp, sReadBlock, 2),
+				AMX_Write(dst                , (sReadBlock[0]  <<  8) | 0xFF),
+				AMX_Write(dst + 1 * cellbytes, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF),
+				dst += 2 * cellbytes;
 			}
-			switch (width & (4 * cellbytes - 1))
+			case 3 * cellbytes:
 			{
-				case 1 * cellbytes:
-				{
-					// Read 1.
-					fblockread(bmp, sReadBlock, 1),
-					AMX_Write(dst, (sReadBlock[0] << 8) | 0xFF),
-					dst += 1 * cellbytes;
-				}
-				case 2 * cellbytes:
-				{
-					// Read 2.
-					fblockread(bmp, sReadBlock, 2),
-					AMX_Write(dst                , (sReadBlock[0]  <<  8) | 0xFF),
-					AMX_Write(dst + 1 * cellbytes, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF),
-					dst += 2 * cellbytes;
-				}
-				case 3 * cellbytes:
-				{
-					// Write 3, pad 3.
-					fblockread(bmp, sReadBlock, 3),
-					AMX_Write(dst                , (sReadBlock[0]  <<  8) | 0xFF),
-					AMX_Write(dst + 1 * cellbytes, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF),
-					AMX_Write(dst + 2 * cellbytes, (sReadBlock[1] >>>  8) | (sReadBlock[2] << 24) | 0xFF),
-					dst += 3 * cellbytes;
-				}
+				// Write 3, pad 3.
+				fblockread(bmp, sReadBlock, 3),
+				AMX_Write(dst                , (sReadBlock[0]  <<  8) | 0xFF),
+				AMX_Write(dst + 1 * cellbytes, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF),
+				AMX_Write(dst + 2 * cellbytes, (sReadBlock[1] >>>  8) | (sReadBlock[2] << 24) | 0xFF),
+				dst += 3 * cellbytes;
 			}
 		}
 	}
@@ -563,13 +513,13 @@ stock bool:Bitmap_Read(&Bitmap:ctx, const file[])
 	{
 		return false;
 	}
-	new x, y, size = Bitmap_ReadHeader(bmp, x, y);
-	if (!size)
+	new x, y;
+	if (!Bitmap_ReadHeader(bmp, x, y))
 	{
 		return false;
 	}
 	ctx = Bitmap_Create(x, y);
-	Bitmap_ReadBody(ctx, bmp, size);
+	Bitmap_ReadBody(ctx, bmp);
 	fclose(bmp);
 	return true;
 }
