@@ -320,7 +320,11 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit LOAD.alt             p2
 				#emit CONST.pri            0xFF
 				#emit OR
-				#emit PUSH.pri
+				#emit SREF.S.pri           dest
+
+				#emit LOAD.S.pri           dest
+				#emit ADD.C                4
+				#emit STOR.S.pri           dest
 
 				// dest[1] = (cur << 24) | ((cur = src[1]) >>>  8) | 0xFF;
 				// Make colour 2.
@@ -330,7 +334,11 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit OR
 				#emit CONST.alt            0xFF
 				#emit OR
-				#emit PUSH.pri
+				#emit SREF.S.pri           dest
+
+				#emit LOAD.S.pri           dest
+				#emit ADD.C                4
+				#emit STOR.S.pri           dest
 
 				// dest[2] = (cur << 16) | ((cur = src[0]) >>> 16) | 0xFF;
 				// Make colour 3.
@@ -341,27 +349,22 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit OR
 				#emit CONST.alt            0xFF
 				#emit OR
-				#emit PUSH.pri
+				#emit SREF.S.pri           dest
+
+				#emit LOAD.S.pri           dest
+				#emit ADD.C                4
+				#emit STOR.S.pri           dest
 
 				// dest[3] = (cur <<  8) | 0xFF;
 				// Make colour 4.
 				#emit LOAD.pri             p0
 				#emit SHL.C.pri            8
 				#emit OR
-				#emit PUSH.pri
+				#emit SREF.S.pri           dest
 
-				// We now have all the colours pushed on to the stack.
-
-				// Copy them to `dest` in one go.
-				#emit LCTRL                4
-				#emit LOAD.S.alt           dest
-				#emit MOVS                 16
-				#emit CONST.pri            16
-				#emit ADD
+				#emit LOAD.S.pri           dest
+				#emit ADD.C                4
 				#emit STOR.S.pri           dest
-
-				// Remove them.
-				#emit STACK                16	
 			}
 		}
 		switch (width & (4 * cellbytes - 1))
