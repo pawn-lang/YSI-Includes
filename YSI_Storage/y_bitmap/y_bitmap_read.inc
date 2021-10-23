@@ -358,7 +358,7 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	// We now have all the colours pushed on to the stack.
 
 	// Copy them to `dest` in one go.
-	#emit ADDR.pri             0xFFFFFFC0
+	#emit LCTRL                4
 	#emit LOAD.S.alt           dest
 	#emit MOVS                 64
 
