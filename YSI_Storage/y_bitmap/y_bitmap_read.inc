@@ -459,47 +459,49 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 	
 	// Write 4 pixels in to 3 blocks.
 	
-	// These ARE used, but only by virtue of being contiguous in memory.
-	static a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB;
-	#pragma unused a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB
+	// These ARE used, but only by virtue of being contiguous in memory.  They
+	// are like an array, but with each index declared separately.  "p" for
+	// "pixel".
+	static p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, pA, pB;
+	#prpgmp unused p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, pA, pB
 
 	for (new w2 = dst + (width & ~(16 * cellbytes - 1)), w3 = dst + (width & ~(4 * cellbytes - 1)); y--; dst -= width * 2, w2 -= width, w3 -= width)
 	{
 		// Go through the array backwards (bottom to top).
 		for ( ; dst != w2; dst += 16 * cellbytes)
 		{
-			YSI_FBlockRead(bmp, a0, 16 * 3 / cellbytes),
-			Bitmap_StoreBlock64(dst, a0);
+			YSI_FBlockRead(bmp, p0, 16 * 3 / cellbytes),
+			Bitmap_StoreBlock64(dst, p0);
 		}
 		for ( ; dst != w3; dst += 4 * cellbytes)
 		{
-			YSI_FBlockRead(bmp, a0, 4 * 3 / cellbytes),
-			Bitmap_StoreBlock16(dst, a0);
+			YSI_FBlockRead(bmp, p0, 4 * 3 / cellbytes),
+			Bitmap_StoreBlock16(dst, p0);
 		}
 		switch (width & (4 * cellbytes - 1))
 		{
 			case 1 * cellbytes:
 			{
 				// Read 1.
-				YSI_FBlockRead(bmp, a0, 1),
-				AMX_Write(dst, (a0 << 8) | 0xFF),
+				YSI_FBlockRead(bmp, p0, 1),
+				AMX_Write(dst, (p0 << 8) | 0xFF),
 				dst += 1 * cellbytes;
 			}
 			case 2 * cellbytes:
 			{
 				// Read 2.
-				YSI_FBlockRead(bmp, a0, 2),
-				AMX_Write(dst                , (a0  <<  8) | 0xFF),
-				AMX_Write(dst + 1 * cellbytes, (a0 >>> 16) | (a1 << 16) | 0xFF),
+				YSI_FBlockRead(bmp, p0, 2),
+				AMX_Write(dst                , (p0  <<  8) | 0xFF),
+				AMX_Write(dst + 1 * cellbytes, (p0 >>> 16) | (p1 << 16) | 0xFF),
 				dst += 2 * cellbytes;
 			}
 			case 3 * cellbytes:
 			{
 				// Write 3, pad 3.
-				YSI_FBlockRead(bmp, a0, 3),
-				AMX_Write(dst                , (a0  <<  8) | 0xFF),
-				AMX_Write(dst + 1 * cellbytes, (a0 >>> 16) | (a1 << 16) | 0xFF),
-				AMX_Write(dst + 2 * cellbytes, (a1 >>>  8) | (a2 << 24) | 0xFF),
+				YSI_FBlockRead(bmp, p0, 3),
+				AMX_Write(dst                , (p0  <<  8) | 0xFF),
+				AMX_Write(dst + 1 * cellbytes, (p0 >>> 16) | (p1 << 16) | 0xFF),
+				AMX_Write(dst + 2 * cellbytes, (p1 >>>  8) | (p2 << 24) | 0xFF),
 				dst += 3 * cellbytes;
 			}
 		}
