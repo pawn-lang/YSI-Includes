@@ -454,25 +454,22 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 	#emit LOAD.S.alt           width
 	#emit SUB
 	#emit STOR.S.pri           dst
-	new
-		w2 = width & ~(16 * cellbytes - 1),
-		w3 = width & ~(4 * cellbytes - 1),
-		x = 0;
+	
 	// Write 4 pixels in to 3 blocks.
 	static
 		sReadBlock[16 * 3 / cellbytes];
-	for (; y--; x = 0, dst -= width)
+	for (new w2 = dst + (width & ~(16 * cellbytes - 1)), w3 = dst + (width & ~(4 * cellbytes - 1)); y--; dst -= width * 2, w2 -= width, w3 -= width)
 	{
 		// Go through the array backwards (bottom to top).
-		for ( ; x != w2; x += 16 * cellbytes)
+		for ( ; dst != w2; dst += 16 * cellbytes)
 		{
 			fblockread(bmp, sReadBlock, 16 * 3 / cellbytes),
-			Bitmap_StoreBlock64(dst + x, sReadBlock);
+			Bitmap_StoreBlock64(dst, sReadBlock);
 		}
-		for ( ; x != w3; x += 4 * cellbytes)
+		for ( ; dst != w3; dst += 4 * cellbytes)
 		{
 			fblockread(bmp, sReadBlock, 4 * 3 / cellbytes),
-			Bitmap_StoreBlock16(dst + x, sReadBlock);
+			Bitmap_StoreBlock16(dst, sReadBlock);
 		}
 		switch (width & (4 * cellbytes - 1))
 		{
@@ -480,22 +477,25 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			{
 				// Read 1.
 				fblockread(bmp, sReadBlock, 1),
-				AMX_Write(dst + x, (sReadBlock[0] << 8) | 0xFF);
+				AMX_Write(dst, (sReadBlock[0] << 8) | 0xFF),
+				dst += 1 * cellbytes;
 			}
 			case 2 * cellbytes:
 			{
 				// Read 2.
 				fblockread(bmp, sReadBlock, 2),
-				AMX_Write(dst + x    , (sReadBlock[0]  <<  8) | 0xFF),
-				AMX_Write(dst + x + 1, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF);
+				AMX_Write(dst                , (sReadBlock[0]  <<  8) | 0xFF),
+				AMX_Write(dst + 1 * cellbytes, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF),
+				dst += 2 * cellbytes;
 			}
 			case 3 * cellbytes:
 			{
 				// Write 3, pad 3.
 				fblockread(bmp, sReadBlock, 3),
-				AMX_Write(dst + x    , (sReadBlock[0]  <<  8) | 0xFF),
-				AMX_Write(dst + x + 1, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF),
-				AMX_Write(dst + x + 2, (sReadBlock[1] >>>  8) | (sReadBlock[2] << 24) | 0xFF);
+				AMX_Write(dst                , (sReadBlock[0]  <<  8) | 0xFF),
+				AMX_Write(dst + 1 * cellbytes, (sReadBlock[0] >>> 16) | (sReadBlock[1] << 16) | 0xFF),
+				AMX_Write(dst + 2 * cellbytes, (sReadBlock[1] >>>  8) | (sReadBlock[2] << 24) | 0xFF),
+				dst += 3 * cellbytes;
 			}
 		}
 	}
