@@ -134,16 +134,12 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit SHL.C.pri            8
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
+	#emit SWAP.pri
 
 	// dest[1] = (cur >>> 16) | ((cur = src[1]) << 16) | 0xFF;
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
 
 	// Load the next value.
+	#emit PUSH.pri
 	#emit LOAD.S.alt           src
 	#emit CONST.pri            1
 	#emit LIDX
@@ -156,16 +152,12 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit OR
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
+	#emit SWAP.pri
 
 	// dest[2] = (cur >>> 8) | ((cur = src[2]) << 24) | 0xFF;
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
 
 	// Load the next value.
+	#emit PUSH.pri
 	#emit LOAD.S.alt           src
 	#emit CONST.pri            2
 	#emit LIDX
@@ -178,28 +170,18 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit OR
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
+	#emit SWAP.pri
 
 	// dest[3] = cur | 0xFF;
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
 
 	// Load the next value.
-	#emit POP.pri
+	//#emit PUSH.pri
+	//#emit POP.pri
 
 	// Make colour 4.
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit PUSH.pri
 
 	// Load the next value.
 	#emit LOAD.S.alt           src
@@ -211,15 +193,10 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit SHL.C.pri            8
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit SWAP.pri
 
 	// Load the next value.
+	#emit PUSH.pri
 	#emit LOAD.S.alt           src
 	#emit CONST.pri            4
 	#emit LIDX
@@ -232,15 +209,10 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit OR
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit SWAP.pri
 
 	// Load the next value.
+	#emit PUSH.pri
 	#emit LOAD.S.alt           src
 	#emit CONST.pri            5
 	#emit LIDX
@@ -253,27 +225,16 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit OR
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit SWAP.pri
 
 	// Load the next value.
-	#emit POP.pri
+	//#emit PUSH.pri
+	//#emit POP.pri
 
 	// Make colour 4.
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit PUSH.pri
 
 	// Load the next value.
 	#emit LOAD.S.alt           src
@@ -285,15 +246,10 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit SHL.C.pri            8
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit SWAP.pri
 
 	// Load the next value.
+	#emit PUSH.pri
 	#emit LOAD.S.alt           src
 	#emit CONST.pri            7
 	#emit LIDX
@@ -306,15 +262,10 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit OR
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit SWAP.pri
 
 	// Load the next value.
+	#emit PUSH.pri
 	#emit LOAD.S.alt           src
 	#emit CONST.pri            8
 	#emit LIDX
@@ -327,27 +278,16 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit OR
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit SWAP.pri
 
 	// Load the next value.
-	#emit POP.pri
+	//#emit PUSH.pri
+	//#emit POP.pri
 
 	// Make colour 4.
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit PUSH.pri
 
 	// Load the next value.
 	#emit LOAD.S.alt           src
@@ -359,15 +299,10 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit SHL.C.pri            8
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit SWAP.pri
 
 	// Load the next value.
+	#emit PUSH.pri
 	#emit LOAD.S.alt           src
 	#emit CONST.pri            10
 	#emit LIDX
@@ -380,15 +315,10 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit OR
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit SWAP.pri
 
 	// Load the next value.
+	#emit PUSH.pri
 	#emit LOAD.S.alt           src
 	#emit CONST.pri            11
 	#emit LIDX
@@ -401,21 +331,31 @@ static stock Bitmap_StoreBlock(dest[], const src[])
 	#emit OR
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
-
-	// Pre-increment the destination.
-	#emit LOAD.S.alt           dest
-	#emit CONST.pri            4
-	#emit ADD
-	#emit STOR.S.pri           dest
+	#emit SWAP.pri
 
 	// Load the next value.
-	#emit POP.pri
+	//#emit PUSH.pri
+	//#emit POP.pri
 
 	// Make colour 4.
 	#emit CONST.alt            0xFF
 	#emit OR
-	#emit SREF.S.pri           dest
+	#emit PUSH.pri
+
+	// We now have all the colours pushed on to the stack.
+
+	// Copy them to `dest` in one go.
+	#emit PUSH.C               16
+	#emit PUSH.C               64
+	#emit PUSH.C               0
+	#emit ADDR.pri             0xFFFFFFC0
+	#emit PUSH.pri
+	#emit PUSH.S               dest
+	#emit PUSH.C               20
+	#emit SYSREQ.C             memcpy
+
+	// Remove them.
+	#emit STACK                88 // 64 + 20 + 4
 
 	//new cur;
 	//dest[ 0] = ((cur = src[0]) << 8) | 0xFF,
