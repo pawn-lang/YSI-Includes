@@ -141,8 +141,6 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		w2 = dest + (width & ~(BITMAP_TO_32(16) - 1)),
 		w3 = dest + (width & ~(BITMAP_TO_32(4) - 1));
 
-	#emit STACK                0xFFFFFFC0 // -64
-
 	while (y--)
 	{
 		// After loading the data we offset the `src` by -1 so we can load the
@@ -168,110 +166,110 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			#emit ADD.C                45
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFE0 // -32
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                42
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFDC // -36
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                39
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFD8 // -32
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                36
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFD4 // -32
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                33
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFD0 // -32
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                30
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFCC // -32
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                27
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFC8 // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                24
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFC4 // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                21
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFC0 // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                18
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFBC // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                15
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFB8 // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                12
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFB4 // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                9
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFB0 // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                6
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFAC // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                3
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFA8 // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LREF.S.pri           ctx
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFA4 // -
+			#emit PUSH.pri
 
 			// We now have all the colours pushed on to the stack.
 		
@@ -282,7 +280,10 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			#emit CONST.pri            64
 			#emit ADD
 			#emit STOR.S.pri           dest
-
+		
+			// Remove them.
+			#emit STACK                64
+		
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                48
 			#emit STOR.S.pri           ctx
@@ -296,29 +297,29 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			#emit ADD.C                9
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFB0 // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                6
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFAC // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                3
 			#emit LOAD.I
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFA8 // -
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LREF.S.pri           ctx
 			#emit OR
-			#emit STOR.S.pri           0xFFFFFFA4 // -
+			#emit PUSH.pri
 
 			// We now have all the colours pushed on to the stack.
-		
+
 			// Copy them to `dest` in one go.
 			#emit LCTRL                4
 			#emit LOAD.S.alt           dest
@@ -326,6 +327,9 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			#emit CONST.pri            16
 			#emit ADD
 			#emit STOR.S.pri           dest
+
+			// Remove them.
+			#emit STACK                16
 
 			#emit LOAD.S.pri           ctx
 			#emit ADD.C                12
@@ -424,9 +428,6 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		#emit STOR.S.pri           dest
 	}
 	{}
-
-	// Remove them.
-	#emit STACK                64
 
 	return bool:free(input);
 }
