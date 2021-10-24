@@ -138,6 +138,12 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 
 	for (new w2 = dest + (width & ~(BITMAP_TO_32(16) - 1)), w3 = dest + (width & ~(BITMAP_TO_32(4) - 1)); y--; )
 	{
+		// After loading the data we offset the `src` by -1 so we can load the
+		// first 3 bytes as the MSB (making the one byte before the array the
+		// LSB, which we ignore).  This is always safe because `malloc`
+		// allocated arrays are preceeded by their size (in hidden data) so
+		// there can be no OOB access reading one byte before the start of the
+		// data of interest.
 		#emit CONST.pri            YSI_gMallocMemory
 		#emit LOAD.S.pri           input
 		#emit SHL.C.pri            2
