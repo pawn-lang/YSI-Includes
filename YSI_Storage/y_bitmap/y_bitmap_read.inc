@@ -1,19 +1,19 @@
 /*
 Legal:
 	Version: MPL 1.1
-	
-	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 the "License"; you may not use this file except in compliance with 
-	the License. You may obtain a copy of the License at 
+
+	The contents of this file are subject to the Mozilla Public License Version
+	1.1 the "License"; you may not use this file except in compliance with
+	the License. You may obtain a copy of the License at
 	http://www.mozilla.org/MPL/
-	
+
 	Software distributed under the License is distributed on an "AS IS" basis,
 	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 	for the specific language governing rights and limitations under the
 	License.
-	
+
 	The Original Code is the YSI framework.
-	
+
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
@@ -95,7 +95,7 @@ static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 
 	x = YSI_g_sBlock[4],
 	y = YSI_g_sBlock[5];
-	
+
 	P:5("Bitmap_ReadHeader: %d, %d, %d, %d", x, y, YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader), ceildiv(x * 3, 4) * 4 * y);
 
 	if (YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader) != ceildiv(x * 3, 4) * 4 * y)
@@ -136,9 +136,9 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 	#emit LOAD.S.alt           width
 	#emit SUB
 	#emit STOR.S.pri           dest
-	
+
 	new
-		w2 = dest + (width & ~(BITMAP_TO_32(16) - 1)),
+		w2 = dest + (width & ~(BITMAP_TO_32(32) - 1)),
 		w3 = dest + (width & ~(BITMAP_TO_32(4) - 1));
 
 	while (y--)
@@ -160,6 +160,118 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		while (dest != w2)
 		{
 			#emit CONST.alt            0xFF
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                93
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                90
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                87
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                84
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                81
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                78
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                75
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                72
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                69
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                66
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                63
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                60
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                57
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                54
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                51
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                48
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
 
 			// Load the next value.
 			#emit LOAD.S.pri           ctx
@@ -272,20 +384,20 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			#emit PUSH.pri
 
 			// We now have all the colours pushed on to the stack.
-		
+
 			// Copy them to `dest` in one go.
 			#emit LCTRL                4
 			#emit LOAD.S.alt           dest
-			#emit MOVS                 64
-			#emit CONST.pri            64
+			#emit MOVS                 128
+			#emit CONST.pri            128
 			#emit ADD
 			#emit STOR.S.pri           dest
-		
+
 			// Remove them.
-			#emit STACK                64
-		
+			#emit STACK                128
+
 			#emit LOAD.S.pri           ctx
-			#emit ADD.C                48
+			#emit ADD.C                96
 			#emit STOR.S.pri           ctx
 		}
 		while (dest != w3)
@@ -345,7 +457,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit LREF.S.pri           ctx
 				#emit OR
 				#emit SREF.S.pri           dest
-		
+
 				#emit LOAD.S.pri           dest
 				#emit ADD.C                4
 				#emit STOR.S.pri           dest
@@ -358,7 +470,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit LREF.S.pri           ctx
 				#emit OR
 				#emit SREF.S.pri           dest
-		
+
 				#emit LOAD.S.pri           dest
 				#emit ADD.C                4
 				#emit STOR.S.pri           dest
@@ -369,7 +481,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit LOAD.I
 				#emit OR
 				#emit SREF.S.pri           dest
-		
+
 				#emit LOAD.S.pri           dest
 				#emit ADD.C                4
 				#emit STOR.S.pri           dest
@@ -382,7 +494,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit LREF.S.pri           ctx
 				#emit OR
 				#emit SREF.S.pri           dest
-		
+
 				#emit LOAD.S.pri           dest
 				#emit ADD.C                4
 				#emit STOR.S.pri           dest
@@ -404,7 +516,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit LOAD.I
 				#emit OR
 				#emit SREF.S.pri           dest
-		
+
 				#emit LOAD.S.pri           dest
 				#emit ADD.C                4
 				#emit STOR.S.pri           dest
