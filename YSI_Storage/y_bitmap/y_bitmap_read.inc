@@ -90,39 +90,38 @@ static stock GT24(const src[])
 static stock
 	YSI_g_sBlock[13];
 
-static stock Bitmap_ReadHeader(File:bmp, &x, &y)
+static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 {
+	// Read the first two characters manually.  This offsets all the remaining
+	// reads, which is good because everything else is 4-byte aligned now.
 	if (fgetchar(bmp, 0, false) != 'B' || fgetchar(bmp, 0, false) != 'M')
 	{
-		return 0;
+		return false;
 	}
 
 	// Load in the header.
 	fblockread(bmp, YSI_g_sBlock);
-	//new size = YSI_g_sBlock[0];
 	P:5("Bitmap_ReadHeader: %08x %08x %08x", YSI_g_sBlock[0], YSI_g_sBlock[1], YSI_g_sBlock[2]);
 	P:5("Bitmap_ReadHeader: %08x %08x %08x %08x %08x %08x %08x %08x %08x %08x", YSI_g_sBlock[3], YSI_g_sBlock[4], YSI_g_sBlock[5], YSI_g_sBlock[6], YSI_g_sBlock[7], YSI_g_sBlock[8], YSI_g_sBlock[9], YSI_g_sBlock[10], YSI_g_sBlock[11], YSI_g_sBlock[12]);
 
 	// 'BM', 40 byte header, 1 plane, 24 bits, no compression.
 	if (YSI_g_sBlock[3] != 40 || YSI_g_sBlock[6] != 0x00180001 || YSI_g_sBlock[7] != 0)
 	{
-		return 0;
+		return false;
 	}
 
-	x = YSI_g_sBlock[4];
+	x = YSI_g_sBlock[4],
 	y = YSI_g_sBlock[5];
 	
-	new size = YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader);
+	P:5("Bitmap_ReadHeader: %d, %d, %d, %d", x, y, YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader), ceildiv(x * 3, 4) * 4 * y);
 
-	P:5("Bitmap_ReadHeader: %d, %d, %d, %d", x, y, size, ceildiv(x * 3, 4) * 4 * y);
-
-	if (size != ceildiv(x * 3, 4) * 4 * y)
+	if (YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader) != ceildiv(x * 3, 4) * 4 * y)
 	{
 		// File is the wrong size.
-		return 0;
+		return false;
 	}
 
-	return size;
+	return true;
 }
 
 native Bitmap_FBlockReadAddr(File:file, addr, size) = fblockread;
@@ -131,7 +130,7 @@ native Bitmap_FBlockReadRef(File:file, &ref, size) = fblockread;
 #define BITMAP_TO_32(%0) ((%0) * cellbytes)
 #define BITMAP_TO_24(%0) ((%0) * 3) // * 3 / BITMAP_TO_32(4), cancels.
 
-static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp, size)
+static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 {
 	new
 		y = Bitmap_Height(ctx),
@@ -482,13 +481,13 @@ stock bool:Bitmap_Read(&Bitmap:ctx, const file[])
 	{
 		return false;
 	}
-	new x, y, size = Bitmap_ReadHeader(bmp, x, y);
-	if (!size)
+	new x, y;
+	if (!Bitmap_ReadHeader(bmp, x, y))
 	{
 		return false;
 	}
 	ctx = Bitmap_Create(x, y);
-	Bitmap_ReadBody(ctx, bmp, size);
+	Bitmap_ReadBody(ctx, bmp);
 	fclose(bmp);
 	return true;
 }
