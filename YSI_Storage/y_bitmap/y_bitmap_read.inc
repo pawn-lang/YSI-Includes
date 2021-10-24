@@ -143,223 +143,123 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		#emit SHL.C.pri            2
 		#emit ADD
 		#emit STOR.S.pri           ctx
-		Bitmap_FBlockReadAddr(bmp, _:ctx, size);
+		Bitmap_FBlockReadAddr(bmp, _:ctx--, size);
 
 		// Go through the array backwards (bottom to top).
 		while (dest != w2)
 		{
-			// dest[0] = (cur = ctx[2]) | 0xFF;
-			// Load the next value.
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            11
-			#emit LIDX
-			#emit PUSH.pri
-		
-			// Make colour 1.
 			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-		
-			// dest[1] = (cur << 24) | ((cur = ctx[1]) >>>  8) | 0xFF;
+
 			// Load the next value.
-			#emit PUSH.pri
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            10
-			#emit LIDX
-			#emit POP.alt
-			#emit PUSH.pri
-		
-			// Make colour 2.
-			#emit SHL.C.alt            24
-			#emit SHR.C.pri            8
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                45
+			#emit LOAD.I
 			#emit OR
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-		
-			// dest[2] = (cur << 16) | ((cur = ctx[0]) >>> 16) | 0xFF;
+			#emit PUSH.pri
+
 			// Load the next value.
-			#emit PUSH.pri
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            9
-			#emit LIDX
-			#emit POP.alt
-			#emit PUSH.pri
-		
-			// Make colour 3.
-			#emit SHL.C.alt            16
-			#emit SHR.C.pri            16
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                42
+			#emit LOAD.I
 			#emit OR
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-		
-			// dest[3] = (cur <<  8) | 0xFF;
+			#emit PUSH.pri
+
 			// Load the next value.
-		
-			// Make colour 4.
-			#emit SHL.C.pri            8
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                39
+			#emit LOAD.I
 			#emit OR
 			#emit PUSH.pri
-		
-			// dest[0] = (cur = ctx[2]) | 0xFF;
+
 			// Load the next value.
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            8
-			#emit LIDX
-			#emit PUSH.pri
-		
-			// Make colour 1.
-			#emit CONST.alt            0xFF
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                36
+			#emit LOAD.I
 			#emit OR
-			#emit SWAP.pri
-		
-			// dest[1] = (cur << 24) | ((cur = ctx[1]) >>>  8) | 0xFF;
+			#emit PUSH.pri
+
 			// Load the next value.
-			#emit PUSH.pri
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            7
-			#emit LIDX
-			#emit POP.alt
-			#emit PUSH.pri
-		
-			// Make colour 2.
-			#emit SHL.C.alt            24
-			#emit SHR.C.pri            8
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                33
+			#emit LOAD.I
 			#emit OR
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-		
-			// dest[2] = (cur << 16) | ((cur = ctx[0]) >>> 16) | 0xFF;
+			#emit PUSH.pri
+
 			// Load the next value.
-			#emit PUSH.pri
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            6
-			#emit LIDX
-			#emit POP.alt
-			#emit PUSH.pri
-		
-			// Make colour 3.
-			#emit SHL.C.alt            16
-			#emit SHR.C.pri            16
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                30
+			#emit LOAD.I
 			#emit OR
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-		
-			// dest[3] = (cur <<  8) | 0xFF;
+			#emit PUSH.pri
+
 			// Load the next value.
-		
-			// Make colour 4.
-			#emit SHL.C.pri            8
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                27
+			#emit LOAD.I
 			#emit OR
 			#emit PUSH.pri
-		
-			// dest[0] = (cur = ctx[2]) | 0xFF;
+
 			// Load the next value.
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            5
-			#emit LIDX
-			#emit PUSH.pri
-		
-			// Make colour 1.
-			#emit CONST.alt            0xFF
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                24
+			#emit LOAD.I
 			#emit OR
-			#emit SWAP.pri
-		
-			// dest[1] = (cur << 24) | ((cur = ctx[1]) >>>  8) | 0xFF;
+			#emit PUSH.pri
+
 			// Load the next value.
-			#emit PUSH.pri
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            4
-			#emit LIDX
-			#emit POP.alt
-			#emit PUSH.pri
-		
-			// Make colour 2.
-			#emit SHL.C.alt            24
-			#emit SHR.C.pri            8
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                21
+			#emit LOAD.I
 			#emit OR
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-		
-			// dest[2] = (cur << 16) | ((cur = ctx[0]) >>> 16) | 0xFF;
+			#emit PUSH.pri
+
 			// Load the next value.
-			#emit PUSH.pri
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            3
-			#emit LIDX
-			#emit POP.alt
-			#emit PUSH.pri
-		
-			// Make colour 3.
-			#emit SHL.C.alt            16
-			#emit SHR.C.pri            16
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                18
+			#emit LOAD.I
 			#emit OR
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-		
-			// dest[3] = (cur <<  8) | 0xFF;
+			#emit PUSH.pri
+
 			// Load the next value.
-		
-			// Make colour 4.
-			#emit SHL.C.pri            8
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                15
+			#emit LOAD.I
 			#emit OR
 			#emit PUSH.pri
-		
-			// dest[0] = (cur = ctx[2]) | 0xFF;
+
 			// Load the next value.
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            2
-			#emit LIDX
-			#emit PUSH.pri
-		
-			// Make colour 1.
-			#emit CONST.alt            0xFF
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                12
+			#emit LOAD.I
 			#emit OR
-			#emit SWAP.pri
-		
-			// dest[1] = (cur << 24) | ((cur = ctx[1]) >>>  8) | 0xFF;
+			#emit PUSH.pri
+
 			// Load the next value.
-			#emit PUSH.pri
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            1
-			#emit LIDX
-			#emit POP.alt
-			#emit PUSH.pri
-		
-			// Make colour 2.
-			#emit SHL.C.alt            24
-			#emit SHR.C.pri            8
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                9
+			#emit LOAD.I
 			#emit OR
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-		
-			// dest[2] = (cur << 16) | ((cur = ctx[0]) >>> 16) | 0xFF;
+			#emit PUSH.pri
+
 			// Load the next value.
-			#emit LREF.S.alt           ctx
-			#emit PUSH.alt
-		
-			// Make colour 3.
-			#emit SHL.C.pri            16
-			#emit SHR.C.alt            16
-			#emit OR
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-		
-			// dest[3] = (cur <<  8) | 0xFF;
-			// Load the next value.
-		
-			// Make colour 4.
-			#emit SHL.C.pri            8
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                6
+			#emit LOAD.I
 			#emit OR
 			#emit PUSH.pri
-		
+
+			// Load the next value.
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                3
+			#emit LOAD.I
+			#emit OR
+			#emit PUSH.pri
+
+			// Load the next value.
+			#emit LREF.S.pri           ctx
+			#emit OR
+			#emit PUSH.pri
+
 			// We now have all the colours pushed on to the stack.
 		
 			// Copy them to `dest` in one go.
@@ -379,53 +279,31 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		}
 		while (dest != w3)
 		{
-			// dest[3] = (cur = ctx[2]) | 0xFF;
+			#emit CONST.alt            0xFF
+
 			// Load the next value.
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            2
-			#emit LIDX
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                9
+			#emit LOAD.I
+			#emit OR
 			#emit PUSH.pri
 
-			// Make colour 1.
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-
-			// dest[2] = (cur << 24) | ((cur = ctx[1]) >>>  8) | 0xFF;
 			// Load the next value.
-			#emit PUSH.pri
-			#emit LOAD.S.alt           ctx
-			#emit CONST.pri            1
-			#emit LIDX
-			#emit POP.alt
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                6
+			#emit LOAD.I
+			#emit OR
 			#emit PUSH.pri
 
-			// Make colour 2.
-			#emit SHL.C.alt            24
-			#emit SHR.C.pri            8
-			#emit OR
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
-
-			// dest[1] = (cur << 16) | ((cur = ctx[0]) >>> 16) | 0xFF;
 			// Load the next value.
-			#emit LREF.S.alt           ctx
-			#emit PUSH.alt
-
-			// Make colour 3.
-			#emit SHL.C.pri            16
-			#emit SHR.C.alt            16
+			#emit LOAD.S.pri           ctx
+			#emit ADD.C                3
+			#emit LOAD.I
 			#emit OR
-			#emit CONST.alt            0xFF
-			#emit OR
-			#emit SWAP.pri
+			#emit PUSH.pri
 
-			// dest[0] = (cur <<  8) | 0xFF;
 			// Load the next value.
-
-			// Make colour 4.
-			#emit SHL.C.pri            8
+			#emit LREF.S.pri           ctx
 			#emit OR
 			#emit PUSH.pri
 
@@ -450,11 +328,10 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		{
 			case 1 * cellbytes:
 			{
-				// dest[0] = (ctx[0] << 8) | 0xFF;
-				// Make colour 1.
-				#emit LREF.S.pri           ctx
-				#emit SHL.C.pri            8
 				#emit CONST.alt            0xFF
+
+				// Load the next value.
+				#emit LREF.S.pri           ctx
 				#emit OR
 				#emit SREF.S.pri           dest
 		
@@ -464,29 +341,21 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			}
 			case 2 * cellbytes:
 			{
-				// dest[0] = (ctx[0] << 8) | 0xFF;
-				// Make colour 1.
-				#emit LREF.S.pri           ctx
-				#emit PUSH.pri
-				#emit SHL.C.pri            8
 				#emit CONST.alt            0xFF
+
+				// Load the next value.
+				#emit LREF.S.pri           ctx
 				#emit OR
 				#emit SREF.S.pri           dest
 		
 				#emit LOAD.S.pri           dest
 				#emit ADD.C                4
 				#emit STOR.S.pri           dest
-		
-				// dest[1] = (ctx[0] >>> 16) | (ctx[1] << 16) | 0xFF;
-				// Make colour 2.
-				#emit LOAD.S.alt           ctx
-				#emit CONST.pri            1
-				#emit LIDX
-				#emit POP.alt
-				#emit SHL.C.pri            16
-				#emit SHR.C.alt            16
-				#emit OR
-				#emit CONST.alt            0xFF
+
+				// Load the next value.
+				#emit LOAD.S.pri           ctx
+				#emit ADD.C                3
+				#emit LOAD.I
 				#emit OR
 				#emit SREF.S.pri           dest
 		
@@ -496,47 +365,32 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			}
 			case 3 * cellbytes:
 			{
-				// dest[0] = (ctx[0] << 8) | 0xFF;
-				// Make colour 1.
+				#emit CONST.alt            0xFF
+
+				// Load the next value.
 				#emit LREF.S.pri           ctx
-				#emit PUSH.pri
-				#emit SHL.C.pri            8
-				#emit CONST.alt            0xFF
 				#emit OR
 				#emit SREF.S.pri           dest
 		
 				#emit LOAD.S.pri           dest
 				#emit ADD.C                4
 				#emit STOR.S.pri           dest
-		
-				// dest[1] = (ctx[0] >>> 16) | (ctx[1] << 16) | 0xFF;
-				// Make colour 2.
-				#emit LOAD.S.alt           ctx
-				#emit CONST.pri            1
-				#emit LIDX
-				#emit POP.alt
-				#emit PUSH.pri
-				#emit SHL.C.pri            16
-				#emit SHR.C.alt            16
-				#emit OR
-				#emit CONST.alt            0xFF
+
+				// Load the next value.
+				#emit LOAD.S.pri           ctx
+				#emit ADD.C                3
+				#emit LOAD.I
 				#emit OR
 				#emit SREF.S.pri           dest
 		
 				#emit LOAD.S.pri           dest
 				#emit ADD.C                4
 				#emit STOR.S.pri           dest
-		
-				// dest[2] = (ctx[1] >>> 8) | (ctx[2] << 24) | 0xFF;
-				// Make colour 3.
-				#emit LOAD.S.alt           ctx
-				#emit CONST.pri            2
-				#emit LIDX
-				#emit POP.alt
-				#emit SHL.C.pri            24
-				#emit SHR.C.alt            8
-				#emit OR
-				#emit CONST.alt            0xFF
+
+				// Load the next value.
+				#emit LOAD.S.pri           ctx
+				#emit ADD.C                6
+				#emit LOAD.I
 				#emit OR
 				#emit SREF.S.pri           dest
 		
