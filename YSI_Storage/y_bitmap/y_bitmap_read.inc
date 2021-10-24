@@ -136,6 +136,8 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		y = Bitmap_Height(ctx),
 		width = Bitmap_Width(ctx) * cellbytes,
 		dest = _:ctx * cellbytes + y * width;
+	
+	// Initialise the dest so we can just use it as a pointer.
 	#emit CONST.pri            YSI_gMallocMemory
 	#emit LOAD.S.alt           dest
 	#emit ADD
@@ -151,7 +153,7 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 	static p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, pA, pB;
 	#pragma unused p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, pA, pB
 	
-	for (new w2 = dest + (width & ~(BITMAP_TO_32(16) - 1)), w3 = dest + (width & ~(BITMAP_TO_32(4) - 1)); y--; dest -= width * 2, w2 -= width, w3 -= width)
+	for (new w2 = dest + (width & ~(BITMAP_TO_32(16) - 1)), w3 = dest + (width & ~(BITMAP_TO_32(4) - 1)); y--; )
 	{
 		// Go through the array backwards (bottom to top).
 		while (dest != w2)
@@ -460,6 +462,22 @@ static stock Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 				#emit STOR.S.pri           dest
 			}
 		}
+		{}
+
+		#emit LOAD.S.alt           width
+
+		#emit LOAD.S.pri           w2
+		#emit SUB
+		#emit STOR.S.pri           w2
+
+		#emit LOAD.S.pri           w3
+		#emit SUB
+		#emit STOR.S.pri           w3
+
+		#emit LOAD.S.pri           dest
+		#emit SUB
+		#emit SUB
+		#emit STOR.S.pri           dest
 	}
 }
 
