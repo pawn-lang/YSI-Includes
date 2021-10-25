@@ -126,7 +126,6 @@ public _@_y_cgen_@_0()
 	//   bytes_per_call = 630
 	//   bytes_per_line = bytes_per_call * 16
 	//   bytes_per_line = 10080 (~10KiB)
-	//   N = 16.25
 	//   
 	#if CGEN_MEMORY >= 10000
 		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
@@ -155,7 +154,34 @@ public _@_y_cgen_@_0()
 	#if CGEN_MEMORY >= 90000
 		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
 	#endif
-	#if CGEN_MEMORY >= 100000
+	#if CGEN_MEMORY >= 110000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 120000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 130000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 140000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 150000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 160000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 170000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 180000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 190000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 200000
 		#error Too much codespace requested, please edit YSI_Coding\y_cgen\y_cgen
 	#endif
 }
@@ -232,11 +258,8 @@ public CGen_OOM(ctx[AsmContext])
 	}
 	case ASM_ERROR_SPACE:
 	{
-		static excess = 0;
-		// This is just an estimate of how much more space is required, assuming that each opcode
-		// has (on average) half a parameter.
-		excess += 6;
-		P:F("Out of code generation (CGen) space.  The current value of `CGEN_MEMORY` is `%d`, please recompile with a higher value (approximately %d).", CGEN_MEMORY, CGEN_MEMORY + excess);
+		// Just jump straight to the next CGEN step in the error.
+		P:F("Out of code generation (CGen) space.  The current value of `CGEN_MEMORY` is `%d`, please recompile with a higher value (approximately %d).", CGEN_MEMORY, ((CGEN_MEMORY / 10000) + 1) * CGEN_MEMORY);
 		P:I("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
 	}
 	case ASM_ERROR_LABEL_OVERFLOW:
