@@ -687,11 +687,13 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 	@emit ADDR.pri     8
 	@emit PUSH.pri
 
+	// Load the bitmap of parameter types.
 	@emit LOAD.pri     ref(YSI_g_sNPSStack)
 	@emit ADD.C        16
 	@emit LOAD.I
 	@emit MOVE.alt
 
+	// Loop over it and dereference regular numbers.
 	@emit Hooks_Continue_loop:
 
 	@emit POP.pri
@@ -726,9 +728,8 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 	@emit POP.pri
 	@emit SCTRL        5
 
-	// Jump to the function.
+	// Jump to the function that calls the original native.
 	@emit MOVE.pri
-	@emit LCTRL        8
 	@emit SCTRL        6
 
 	@emit Hooks_Continue_native:
@@ -738,8 +739,8 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 	@emit STOR.alt     ref(YSI_g_sTempRet)
 	@emit POP.alt
 
+	// Jump to the next function in the chain.
 	@emit NEG
-	@emit LCTRL        8
 	@emit SCTRL        6
 
 	//// Missed this one apparently...
