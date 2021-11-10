@@ -123,10 +123,6 @@ Optional plugins:
 		new ptr;
 		if (AMX_GetPublicPointer(0, ptr, callback))
 		{
-			// Convert, for JIT.
-			#emit LOAD.S.pri   ptr
-			#emit LCTRL        8
-			#emit STOR.S.pri   ptr
 			_YSI_BCryptCheck(input, hash, "YSI_BCryptCheckDone", "ii", extra, ptr);
 		}
 	}
@@ -138,10 +134,6 @@ Optional plugins:
 		++hashid;
 		if (AMX_GetPublicPointer(0, ptr, callback))
 		{
-			// Convert, for JIT.
-			#emit LOAD.S.pri   ptr
-			#emit LCTRL        8
-			#emit STOR.S.pri   ptr
 			_YSI_BCryptHash(input, cost, "YSI_BCryptHashDone", "iii", extra, ptr, hashid);
 			return hashid;
 		}
