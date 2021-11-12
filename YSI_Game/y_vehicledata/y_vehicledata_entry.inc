@@ -227,6 +227,19 @@ Optional plugins:
 #define Model_Name(%0) (VIM_Name(Model_ToVIM(%0)))
 #define VIM_Name(%0) (YSI_gVehicleNames[(%0)])
 
+native y_vehicledata_StrUnpack(dest[], const src[], size = sizeof (dest)) = strunpack;
+// When using the `GetName` functions with an optional length the call becomes:
+// `y_vehicledata_StrUnpack(dest, size, src)`, which is the wrong order for
+// `strunpack`.  This correctly rearranges the parameters.
+#define y_vehicledata_StrUnpack(%0,%1,%2) strunpack(%0,%2,%1)
+
+// Vehicle_GetName(vehicleid, dest[], size = sizeof (dest));
+#define Vehicle_GetName(%0,%1) y_vehicledata_StrUnpack(%1,VIM_Name(Vehicle_GetVIM(%0)))
+// Model_GetName(modelid, dest[], size = sizeof (dest));
+#define Model_GetName(%0,%1) y_vehicledata_StrUnpack(%1,VIM_Name(Model_ToVIM(%0)))
+// VIM_GetName(VIM:vim, dest[], size = sizeof (dest));
+#define VIM_GetName(%0,%1) y_vehicledata_StrUnpack(%1,YSI_gVehicleNames[(%0)])
+
 #define Vehicle_TopSpeed(%0) (VIM_TopSpeed(Vehicle_GetVIM(%0)))
 #define Model_TopSpeed(%0) (VIM_TopSpeed(Model_ToVIM(%0)))
 #define VIM_TopSpeed(%0) (YSI_gVehicleTopSpeed[(%0)])
