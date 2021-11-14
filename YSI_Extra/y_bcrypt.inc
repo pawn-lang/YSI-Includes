@@ -81,9 +81,20 @@ Optional plugins:
 	forward YSI_BCryptCheckDone(extra, ptr);
 	forward YSI_BCryptHashDone(extra, ptr, hashid);
 
+	// Fix the missing native.
+	native BCrypt_GetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
+
+	// Plus keep the original version for backwards-compatibility.
+	native YSI_BCryptGetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
+	native _YSI_BCryptCheck(const password[], const hash[], const callback_name[], const callback_format[], ...) = bcrypt_check;
+	native _YSI_BCryptHash(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_hash;
+	native bool:_YSI_BCryptIsEqual(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_is_equal;
+
 	public YSI_BCryptCheckDone(extra, ptr)
 	{
-		// Call the original function.
+		// Call the original function.  I think the old compiler messes up if we
+		// use the renamed version here.  Maybe.  Not sure why this doesn't use
+		// `_YSI_BCryptIsEqual`...
 		new success = bcrypt_is_equal();
 		#emit PUSH.S       success
 		#emit PUSH.S       extra
@@ -112,11 +123,6 @@ Optional plugins:
 		#emit LOAD.S.pri   ptr
 		#emit SCTRL        6
 	}
-
-	native YSI_BCryptGetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
-	native _YSI_BCryptCheck(const password[], const hash[], const callback_name[], const callback_format[], ...) = bcrypt_check;
-	native _YSI_BCryptHash(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_hash;
-	native bool:_YSI_BCryptIsEqual(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_is_equal;
 
 	stock BCrypt_Check(extra, const callback[], const input[], const hash[])
 	{
