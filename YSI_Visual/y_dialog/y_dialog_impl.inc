@@ -148,6 +148,10 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
+// Fix `tagof` on the old compiler.
+__COMPILER_TAG_DATA(F@_@iis, 0);
+__COMPILER_TAG_DATA(F@_@iiiis, 0);
+
 HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	// Apparently there's a hack to alter this.
