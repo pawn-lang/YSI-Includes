@@ -815,11 +815,11 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 		// The switch doesn't work on the old compiler.
 		//switch (_:tag)
 		//{
-		if (_:tag == tagof (Float:))
+		if (_:tag == _:tagof (Float:))
 			return YSI_PrintF("    Float:%s = %.3f\n", expr, Float:getarg(5));
-		if (_:tag == tagof (bool:))
+		if (_:tag == _:tagof (bool:))
 			return YSI_PrintF("    bool:%s = %s\n", expr, getarg(5) ? ("    true") : ("    false"));
-		if (_:tag == tagof (_:))
+		if (_:tag == _:tagof (_:))
 			return YSI_PrintF("    %s = %d\n", expr, getarg(5));
 		//default:
 		return YSI_PrintF("    %s:%s = %d\n", name, expr, _:tag, getarg(5));

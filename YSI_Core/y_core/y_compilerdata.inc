@@ -430,11 +430,30 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	// It is sufficient simply for a variable to exist anywhere with the tag.
 	#define __COMPILER_TAG_DATA(%0,%1) static stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
 
-	// Fix `tagof (Tag:)`.
-	#define __TAGOF__%0\32; __TAGOF__
-	#define __TAGOF:tagof%9PP_LEFT_BRACKET<>%0:%1)__NO_TAGOF$)) tagof%9PP_LEFT_BRACKET<>__TAGOF__%0)))
-	#define tagof(%0) ((_:__TAGOF:tagof PP_LEFT_BRACKET<>%0)__NO_TAGOF$))
-	#define __NO_TAGOF$
+	// Fix `tagof (Float:)` and `tagof (Float:x)` on the old compiler, without
+	// breaking any default arguments in (I think) any case.  This was very
+	// tricky, as adding any tags to `arg = tagof (param)` breaks the compiler's
+	// semantics and always returns the same tag.  So we have to detect
+	// `tagof (Tag:)` without detecting `tagof (var), Tag:a`, which the old code
+	// broke on.  This is normally easy, but we also have to do it without
+	// adding any tags before `tagof` in the base case.  So we always match `:`,
+	// then revert if there's a bracket between the `tagof` and the `:`.
+	#if !defined TAGOF
+		#define __TAGOF__%0\32; __TAGOF__
+		#define tagof(%0:%1) __NO_TAGOF:__IS_TAGOF:tagof PP_LEFT_BRACKET<>%0:$%1)
+		#define __NO_TAGOF:__IS_TAGOF:tagof%9<>%0)%2:$%1) tagof%9<>%0)%2:%1)
+		#define __IS_TAGOF:tagof%9<>%0:$%1) tagof%9<>__TAGOF__%0)
+
+		stock bool:operator==(_:a, __NO_TAGOF:b)
+		{
+			return a == _:b;
+		}
+
+		stock bool:operator!=(_:a, __NO_TAGOF:b)
+		{
+			return a != _:b;
+		}
+	#endif
 
 	#include "y_funcinc"
 	

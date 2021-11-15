@@ -789,10 +789,7 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 
 stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 {
-	if (tag == tagof (Float:))
-		return number & 0x7FFFFFFF;
-	else
-		return (number >> 30 | 1) * number;
+	return (tag == _:tagof (Float:)) ? (number & 0x7FFFFFFF) : ((number >> 30 | 1) * number);
 }
 
 #if __COMPILER___EMIT_U

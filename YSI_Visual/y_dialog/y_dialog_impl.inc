@@ -169,7 +169,7 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			// we don't free the memory for the callback prematurely.
 			broadcastfunc Dialog_Set(playerid, -1);
 			// Call the callback.
-			if (Indirect_GetMeta(callback) == tagof (F@_@iiiis:))
+			if (Indirect_GetMeta(callback) == _:tagof (F@_@iiiis:))
 			{
 				Indirect_Call(_:callback, tagof (F@_@iiiis:), playerid, YSI_DIALOG_ID, response, listitem, isnull(inputtext) ? NULL : inputtext);
 			}
