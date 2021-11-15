@@ -141,10 +141,14 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	// then we need all scripts to know that this is no longer the case.  If
 	// this script is not in charge of the current dialog then do not broadcast
 	// the reset, just do it locally.
+	YSI_g_sPlayerDialog[playerid] = -1;
 	if (YSI_g_sPlayerMaster[playerid])
-		Dialog_Hide(playerid);
-	else
-		YSI_g_sPlayerDialog[playerid] = -1;
+	{
+		Indirect_Release(YSI_g_sPlayerCallback[playerid]),
+		YSI_g_sPlayerCallback[playerid] = Func:0<iiiis>,
+		YSI_g_sPlayerMaster[playerid] = false;
+		Dialog_ShowPlayerNative(playerid, -1, 0, NULL, NULL, NULL, NULL);
+	}
 	return 1;
 }
 
