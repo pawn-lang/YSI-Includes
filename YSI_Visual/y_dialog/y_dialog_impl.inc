@@ -76,9 +76,11 @@ Optional plugins:
 #define YSI_DIALOG_ID_1 _A<@_yD>
 #define YSI_DIALOG_ID_2 _A<_@yD>
 
+#define NO_CALLBACK (Func:0<iiiis>)
+#define INVALID_CALLBACK (Func:-1<iiiis>)
+
 static stock
 	YSI_g_sPlayerDialog[MAX_PLAYERS] = {-1, ...},
-	bool:YSI_g_sPlayerMaster[MAX_PLAYERS] = {false, ...},
 	Func:YSI_g_sPlayerCallback[MAX_PLAYERS]<iiiis>;
 
 stock Dialog_Get(playerid)
@@ -91,11 +93,13 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 	// If they could already see a dialog shown by this script, get rid of the
 	// data from that one.
 	YSI_g_sPlayerDialog[playerid] = dialogid;
-	if (YSI_g_sPlayerMaster[playerid])
+	if (YSI_g_sPlayerCallback[playerid])
 	{
-		Indirect_Release(YSI_g_sPlayerCallback[playerid]),
-		YSI_g_sPlayerCallback[playerid] = Func:0<iiiis>,
-		YSI_g_sPlayerMaster[playerid] = false;
+		if (YSI_g_sPlayerCallback[playerid] != INVALID_CALLBACK)
+		{
+			Indirect_Release(YSI_g_sPlayerCallback[playerid]),
+			YSI_g_sPlayerCallback[playerid] = NO_CALLBACK,
+		}
 	}
 }
 
@@ -103,7 +107,6 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 stock Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "", tag = tagof (callback))
 {
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID_1);
-	YSI_g_sPlayerMaster[playerid] = true;
 	Indirect_Claim(callback);
 	Indirect_SetMeta(callback, tag);
 	// Works tag-safely because the compile-time tag check uses `<iiiis>`.
@@ -126,7 +129,7 @@ stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, const 
 stock Dialog_Show(playerid, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID_2);
-	YSI_g_sPlayerMaster[playerid] = true;
+	YSI_g_sPlayerCallback[playerid] = INVALID_CALLBACK;
 	return Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_2, style, title, caption, button1, button2);
 }
 
@@ -145,11 +148,13 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	// this script is not in charge of the current dialog then do not broadcast
 	// the reset, just do it locally.
 	YSI_g_sPlayerDialog[playerid] = -1;
-	if (YSI_g_sPlayerMaster[playerid])
+	if (YSI_g_sPlayerCallback[playerid])
 	{
-		Indirect_Release(YSI_g_sPlayerCallback[playerid]),
-		YSI_g_sPlayerCallback[playerid] = Func:0<iiiis>,
-		YSI_g_sPlayerMaster[playerid] = false;
+		if (YSI_g_sPlayerCallback[playerid] != INVALID_CALLBACK)
+		{
+			Indirect_Release(YSI_g_sPlayerCallback[playerid]),
+			YSI_g_sPlayerCallback[playerid] = NO_CALLBACK,
+		}
 		Dialog_ShowPlayerNative(playerid, -1, 0, NULL, NULL, NULL, NULL);
 	}
 	return 1;
@@ -166,11 +171,12 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	P:1("Dialog_OnDialogResponse called: %d %d %d %d %s", playerid, dialogid, response, listitem, inputtext);
 	if (dialogid == YSI_DIALOG_ID_1)
 	{
-		if (YSI_g_sPlayerMaster[playerid])
+		// Can't be `INVALID_CALLBACK`, because `dialogid == YSI_DIALOG_ID_1.
+		if (YSI_g_sPlayerCallback[playerid])
 		{
 			new
 				Func:callback<iiiis> = YSI_g_sPlayerCallback[playerid];
-			YSI_g_sPlayerCallback[playerid] = Func:0<iiiis>;
+			YSI_g_sPlayerCallback[playerid] = NO_CALLBACK;
 			// Totally blank the stored dialog information, after making a local
 			// copy of it for the sake of calling the callback.  This is so that
 			// we don't free the memory for the callback prematurely.
@@ -199,7 +205,7 @@ stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], con
 	if (dialog == YSI_DIALOG_ID_1 || dialog == YSI_DIALOG_ID_2)
 		return 0;
 	broadcastfunc Dialog_Set(playerid, dialog);
-	YSI_g_sPlayerMaster[playerid] = true;
+	YSI_g_sPlayerCallback[playerid] = true;
 	return Dialog_ShowPlayerNative(playerid, dialog, style, title, caption, button1, button2);
 }
 
