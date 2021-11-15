@@ -71,7 +71,10 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#define YSI_DIALOG_ID _A<_yD@>
+// TODO: Two dialog IDs - one for `Dialog_ShowCallback`, one for `Dialog_Show`.
+// NEVER re-use `_A<_yD@>`
+#define YSI_DIALOG_ID_1 _A<@_yD>
+#define YSI_DIALOG_ID_2 _A<_@yD>
 
 static stock
 	YSI_g_sPlayerDialog[MAX_PLAYERS] = {-1, ...},
@@ -99,13 +102,13 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 // Func:callback<iiiis> | Func:callback<iis>
 stock Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "", tag = tagof (callback))
 {
-	new
-		ret = Dialog_Show(playerid, style, title, caption, button1, button2);
+	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID_1);
+	YSI_g_sPlayerMaster[playerid] = true;
 	Indirect_Claim(callback);
 	Indirect_SetMeta(callback, tag);
 	// Works tag-safely because the compile-time tag check uses `<iiiis>`.
 	YSI_g_sPlayerCallback[playerid] = callback;
-	return ret;
+	return Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_1, style, title, caption, button1, button2);
 }
 
 #pragma deprecated Use Dialog_ShowCallback
@@ -122,9 +125,9 @@ stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, const 
 
 stock Dialog_Show(playerid, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
-	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID);
+	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID_2);
 	YSI_g_sPlayerMaster[playerid] = true;
-	return Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID, style, title, caption, button1, button2);
+	return Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_2, style, title, caption, button1, button2);
 }
 
 stock Dialog_Hide(playerid)
@@ -161,7 +164,7 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	// Apparently there's a hack to alter this.
 	dialogid = YSI_g_sPlayerDialog[playerid];
 	P:1("Dialog_OnDialogResponse called: %d %d %d %d %s", playerid, dialogid, response, listitem, inputtext);
-	if (dialogid == YSI_DIALOG_ID)
+	if (dialogid == YSI_DIALOG_ID_1)
 	{
 		if (YSI_g_sPlayerMaster[playerid])
 		{
@@ -175,7 +178,7 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			// Call the callback.
 			if (Indirect_GetMeta(callback) == _:tagof (F@_@iiiis:))
 			{
-				Indirect_Call(_:callback, tagof (F@_@iiiis:), playerid, YSI_DIALOG_ID, response, listitem, isnull(inputtext) ? NULL : inputtext);
+				Indirect_Call(_:callback, tagof (F@_@iiiis:), playerid, YSI_DIALOG_ID_1, response, listitem, isnull(inputtext) ? NULL : inputtext);
 			}
 			else
 			{
@@ -183,18 +186,17 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			}
 			// Free the data.
 			Indirect_Release(callback);
-			return Y_HOOKS_BREAK_RETURN_1;
+			return ~1;
 		}
-		return Y_HOOKS_BREAK_RETURN_0;
+		return ~0;
 	}
-	else
-		return Y_HOOKS_CONTINUE_RETURN_0;
+	return 0;
 }
 
 stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], const string:caption[], const string:button1[], const string:button2[])
 {
 	// Fail.
-	if (dialog == YSI_DIALOG_ID)
+	if (dialog == YSI_DIALOG_ID_1 || dialog == YSI_DIALOG_ID_2)
 		return 0;
 	broadcastfunc Dialog_Set(playerid, dialog);
 	YSI_g_sPlayerMaster[playerid] = true;
