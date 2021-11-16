@@ -331,6 +331,7 @@ static stock const
 	YSI_PostInitFile[] = "YSI/debug/post-init.%d.asm";
 
 static stock
+	YSI_gsStartTime,
 	bool:YSI_gsObnoxiousHeader = true,
 	bool:YSI_gsFirstHeader = true,
 	bool:YSI_gsNewPart = true,
@@ -341,7 +342,7 @@ native YSI_VAPrintF(const fmt[], addr) = printf;
 static stock ScriptInit_Dump(const filename[], const message[])
 {
 	new file[48];
-	format(file, sizeof (file), filename, gettime());
+	format(file, sizeof (file), filename, YSI_gsStartTime);
 	Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD);
 	Server_DisableLongCall();
 	DisasmWrite(file);
@@ -703,6 +704,7 @@ public OnJITCompile()
 	{
 		return 0;
 	}
+	YSI_gsStartTime = gettime();
 	DEBUG_MAYBE_DUMP(YSI_PreInitFile, YSI_gscInitMsgA);
 	YSI_g_sScriptInitState |= E_SCRIPTINIT_STATE_JITING;
 	if (!ScriptInit_CallOnCodeInit(true, false))
@@ -798,6 +800,7 @@ public OnScriptInit(id)
 	// Dump the final assembly of this script so we can inspect it.
 	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
+		YSI_gsStartTime = gettime();
 		DEBUG_MAYBE_DUMP(YSI_PreInitFile, YSI_gscInitMsgA);
 		if (!ScriptInit_CallOnCodeInit(false, true))
 			return 0;
@@ -838,6 +841,7 @@ public OnFilterScriptInit()
 		// Dump the final assembly of this script so we can inspect it.
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
+			YSI_gsStartTime = gettime();
 			DEBUG_MAYBE_DUMP(YSI_PreInitFile, YSI_gscInitMsgA);
 			if (!ScriptInit_CallOnCodeInit(false, true))
 				return 0;
@@ -970,6 +974,10 @@ public OnGameModeInit()
 {
 	state _ALS : _ALS_go;
 	// Kill an existing purge if one exists in this script.
+	if (!YSI_FILTERSCRIPT && !YSI_OPEN_MP && !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+	{
+		YSI_gsStartTime = gettime();
+	}
 	if (YSI_gsPurgeTimer)
 	{
 		KillTimer(YSI_gsPurgeTimer);
