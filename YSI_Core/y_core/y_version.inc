@@ -444,6 +444,8 @@ static stock YVers_PrintHeader()
 	format(version, sizeof (version), "Compiler:    %s - %s", version, os),
 	Server_PrintIntroPart(version),
 	Server_PrintIntroPart("YSI:         " YSI_VERSION),
+	format(version, sizeof (version), "Started:     %d", Server_GetStartTime()),
+	Server_PrintIntroPart(version),
 	Server_GetJITString(version),
 	format(version, sizeof (version), "JIT:         %s", version),
 	Server_PrintIntroPart(version);

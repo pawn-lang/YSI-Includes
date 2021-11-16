@@ -502,6 +502,11 @@ stock Server_GetLongCallTime()
 	return 0;
 }
 
+stock Server_GetStartTime()
+{
+	return YSI_gsStartTime;
+}
+
 stock bool:Server_HasLongCallControl()
 {
 	// This code detects if the `0xFE` long call control register works.  If it
