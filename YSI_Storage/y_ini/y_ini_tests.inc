@@ -132,7 +132,7 @@ TEST__ INI_IdentifyLineType2()
 	result = INI_IDENTIFY_LINE_TYPE("\\;\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
 	result = INI_IDENTIFY_LINE_TYPE("key =  ", p0s, p0e, p1s, p1e, p2s, p2e);
-	ASSERT_EQ(result, e_INI_LINE_TYPE_ENTRY); // Now allowed again!
+	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT); // Now allowed again!
 	result = INI_IDENTIFY_LINE_TYPE(" = value", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
 	result = INI_IDENTIFY_LINE_TYPE("thing", p0s, p0e, p1s, p1e, p2s, p2e);
@@ -145,9 +145,9 @@ TEST__ INI_IdentifyLineType3()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Entry lines.
-	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key = value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key = value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == p2e);
-	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key=value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key=value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 4 && p1e == 9 && p2s == p2e);
 	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key = value ; comment", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == 14 && p2e == 21);
@@ -157,13 +157,13 @@ TEST__ INI_IdentifyLineType3()
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 7 && p1e == 12 && p2s == 17 && p2e == 25);
 	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key = value\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == p2e);
-	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key	=value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key	=value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 5 && p1e == 10 && p2s == p2e);
-	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("   key=	value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("   key=	value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 3 && p0e == 6 && p1s == 8 && p1e == 13 && p2s == p2e);
-	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("   key=	value    ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("   key=	value    ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 3 && p0e == 6 && p1s == 8 && p1e == 13 && p2s == p2e);
-	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("	key   =value  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("	key   =value  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 1 && p0e == 4 && p1s == 8 && p1e == 13 && p2s == p2e);
 }
 

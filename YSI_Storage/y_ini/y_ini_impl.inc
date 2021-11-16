@@ -1023,7 +1023,7 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 	}
 	p0e = end;
 state_in_continue_line:
-	P:6("INI_IdentifyLineType: In continue line, %d, %d (%.*s)", p0s, p0e, str[p0s], p0e - p0s);
+	P:6("INI_IdentifyLineType: In continue line, %d, %d (%.*s)", p0s, p0e, p0e - p0s, str[p0s]);
 	// See what comes next.
 	INI_SkipWhitespace(str, pos);
 	p1s = end = pos;
@@ -1044,7 +1044,7 @@ state_in_continue_line:
 			// is an implicit continuation - it isn't actually one, the line
 			// just spans multiple reads.
 			p1e = end,
-			ret  = e_INI_LINE_TYPE_CONT;
+			ret = e_INI_LINE_TYPE_CONT;
 			goto state_in_continuation;
 		}
 		case  ';':
@@ -1228,7 +1228,7 @@ state_in_continuation:
 		str[p1e] = end,
 		// Store the new length.
 		mset(YSI_g_sExtendedLine, 0, mget(YSI_g_sExtendedLine, 0) + pos),
-		e_INI_LINE_TYPE:0;
+		e_INI_LINE_TYPE_CONT;
 }
 
 /*
