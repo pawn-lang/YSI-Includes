@@ -1652,14 +1652,14 @@ static stock
 
 TEST__ y_inline1000timers()
 {
-	printf("y_inline1000timers");
+	//printf("y_inline1000timers");
 	inline const Total()
 	{
-		for (new i = 0; i != sizeof (YSI_gsCounts); ++i)
-		{
-			printf("Count %d = %d", i, YSI_gsCounts[i]);
-			printf("Time %d = %d", i, YSI_gsStarts[i]);
-		}
+		//for (new i = 0; i != sizeof (YSI_gsCounts); ++i)
+		//{
+		//	printf("Count %d = %d", i, YSI_gsCounts[i]);
+		//	printf("Time %d = %d", i, YSI_gsStarts[i]);
+		//}
 		new str[32];
 		format(str, sizeof (str), "Count = %d", YSI_gsCount);
 		Server_PrintIntroMessage(str);
