@@ -76,24 +76,31 @@ Optional plugins:
 	#pragma warning disable 239
 #endif
 
+
+static INI_IDENTIFY_LINE_TYPE(str[MAX_INI_LINE], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
+{
+	INI_ResetLineReader();
+	return INI_IdentifyLineType(str, p0s, p0e, p1s, p1e, p2s, p2e);
+}
+
 TEST__ INI_IdentifyLineType1()
 {
 	// Comment lines and blank lines may as well be treated as the same thing,
 	// except when rewriting the file.
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Comment lines.
-	ASSERT_EQ(INI_IdentifyLineType("; Hello", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
-	ASSERT_EQ(INI_IdentifyLineType("   ; There", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
-	ASSERT_EQ(INI_IdentifyLineType("	; Hi", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
-	ASSERT_EQ(INI_IdentifyLineType(";", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
-	ASSERT_EQ(INI_IdentifyLineType(";\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
-	ASSERT_NE(INI_IdentifyLineType("\\;\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
-	ASSERT_NE(INI_IdentifyLineType("hi ; there", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("; Hello", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("   ; There", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("	; Hi", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE(";", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE(";\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_NE(INI_IDENTIFY_LINE_TYPE("\\;\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_NE(INI_IDENTIFY_LINE_TYPE("hi ; there", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
 	// Blank lines.
-	ASSERT_EQ(INI_IdentifyLineType("", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
-	ASSERT_EQ(INI_IdentifyLineType("    ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
-	ASSERT_EQ(INI_IdentifyLineType("	\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
-	ASSERT_EQ(INI_IdentifyLineType("\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("    ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("	\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
 }
 
 TEST__ INI_IdentifyLineType2()
@@ -102,35 +109,35 @@ TEST__ INI_IdentifyLineType2()
 	// Invalid lines.
 	new
 		e_INI_LINE_TYPE:result;
-	result = INI_IdentifyLineType("[badtag", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("[badtag", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("   [tag", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("   [tag", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("   [   ]", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("   [   ]", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("[tag;end]", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("[tag;end]", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("[tag\\;end]", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("[tag\\;end]", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_NE(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType(" [tag\\]", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE(" [tag\\]", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType(" [tag\\\\]", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE(" [tag\\\\]", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_NE(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("key", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("key", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("key\\=", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("key\\=", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("key\\\\\\=value", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("key\\\\\\=value", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("\\;\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("\\;\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("key =  ", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("key =  ", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_ENTRY); // Now allowed again!
-	result = INI_IdentifyLineType(" = value", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE(" = value", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("thing", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("thing", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
-	result = INI_IdentifyLineType("thing ; comment", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("thing ; comment", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
 }
 
@@ -138,25 +145,25 @@ TEST__ INI_IdentifyLineType3()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Entry lines.
-	ASSERT_EQ(INI_IdentifyLineType("key = value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key = value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("key=value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key=value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 4 && p1e == 9 && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("key = value ; comment", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key = value ; comment", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == 14 && p2e == 21);
-	ASSERT_EQ(INI_IdentifyLineType("key = value ;   comment\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key = value ;   comment\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == 16 && p2e == 23);
-	ASSERT_EQ(INI_IdentifyLineType("key =  value   ; com ment  \r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key =  value   ; com ment  \r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 7 && p1e == 12 && p2s == 17 && p2e == 25);
-	ASSERT_EQ(INI_IdentifyLineType("key = value\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key = value\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("key	=value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key	=value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 5 && p1e == 10 && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("   key=	value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("   key=	value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 3 && p0e == 6 && p1s == 8 && p1e == 13 && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("   key=	value    ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("   key=	value    ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 3 && p0e == 6 && p1s == 8 && p1e == 13 && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("	key   =value  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("	key   =value  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 1 && p0e == 4 && p1s == 8 && p1e == 13 && p2s == p2e);
 }
 
@@ -164,26 +171,26 @@ TEST__ INI_IdentifyLineType3b()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Regressions from Discord.
-	ASSERT_EQ(INI_IdentifyLineType("k=value\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("k=value\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT_EQ(p0s, 0);
 	ASSERT_EQ(p0e, 1);
 	ASSERT_EQ(p1s, 2);
 	ASSERT_EQ(p1e, 7);
 	ASSERT_EQ(p2s, p2e);
-	ASSERT_EQ(INI_IdentifyLineType("key=1\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key=1\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT_EQ(p0s, 0);
 	ASSERT_EQ(p0e, 3);
 	ASSERT_EQ(p1s, 4);
 	ASSERT_EQ(p1e, 5);
 	ASSERT_EQ(p2s, p2e);
 	// Allow this as an entry of text `=`.
-	ASSERT_EQ(INI_IdentifyLineType("key==\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key==\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT_EQ(p0s, 0);
 	ASSERT_EQ(p0e, 3);
 	ASSERT_EQ(p1s, 4);
 	ASSERT_EQ(p1e, 5);
 	ASSERT_EQ(p2s, p2e);
-	ASSERT_EQ(INI_IdentifyLineType("key = 1\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("key = 1\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT_EQ(p0s, 0);
 	ASSERT_EQ(p0e, 3);
 	ASSERT_EQ(p1s, 6);
@@ -195,21 +202,21 @@ TEST__ INI_IdentifyLineType4()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Tag lines.
-	ASSERT_EQ(INI_IdentifyLineType("[hello]", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello]", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType(" [hello] ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE(" [hello] ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 2 && p0e == 7 && p1s == p1e && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType(" [ hello] ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE(" [ hello] ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 3 && p0e == 8 && p1s == p1e && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType(" [hello ] ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE(" [hello ] ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 2 && p0e == 7 && p1s == p1e && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("[ hello] ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[ hello] ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 2 && p0e == 7 && p1s == p1e && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("[hello ]", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello ]", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("[hello   ]", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello   ]", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("[   hello ]", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[   hello ]", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 4 && p0e == 9 && p1s == p1e && p2s == p2e);
 }
 
@@ -217,30 +224,30 @@ TEST__ INI_IdentifyLineType5()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Inheritance.
-	ASSERT_EQ(INI_IdentifyLineType("[hello] : ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello] : ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("[hello] : first", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello] : first", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == 10 && p1e == 15 && p2s == p2e);
-	// ASSERT_EQ(INI_IdentifyLineType("[hello] : first, second", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	// ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello] : first, second", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	// ASSERT(p0s == 1 && p0e == 6 && p1s == 10 && p1e == 23 && p2s == p2e);
-	// ASSERT_EQ(INI_IdentifyLineType("[hello]   : first, second     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	// ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello]   : first, second     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	// ASSERT(p0s == 1 && p0e == 6 && p1s == 12 && p1e == 25 && p2s == p2e);
-	// ASSERT_EQ(INI_IdentifyLineType("[hello] :    first, second   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	// ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello] :    first, second   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	// ASSERT(p0s == 1 && p0e == 6 && p1s == 13 && p1e == 26 && p2s == p2e);
 	// These used to work, now they don't.
-	ASSERT_EQ(INI_IdentifyLineType("[hello] : first, second", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello] : first, second", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
 	// ASSERT(p0s == 1 && p0e == 6 && p1s == 10 && p1e == 23 && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("[hello]   : first, second     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello]   : first, second     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
 	// ASSERT(p0s == 1 && p0e == 6 && p1s == 12 && p1e == 25 && p2s == p2e);
-	ASSERT_EQ(INI_IdentifyLineType("[hello] :    first, second   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello] :    first, second   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
 	// ASSERT(p0s == 1 && p0e == 6 && p1s == 13 && p1e == 26 && p2s == p2e);
 	// Commented out.
-	ASSERT_EQ(INI_IdentifyLineType("[hello] ;: ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello] ;: ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == 9 && p2e == 10);
-	ASSERT_EQ(INI_IdentifyLineType("[hello] ; : first, second ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("[hello] ; : first, second ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == 10 && p2e == 25);
 	// Both.
-	ASSERT_EQ(INI_IdentifyLineType(" [ hello ]  :  inheritance  ;  : first, second ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE(" [ hello ]  :  inheritance  ;  : first, second ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 3 && p0e == 8 && p1s == 15 && p1e == 26 && p2s == 31 && p2e == 46);
 }
 
@@ -251,44 +258,44 @@ TEST__ INI_IdentifyLineType6a()
 	// Continuation.
 	new
 		e_INI_LINE_TYPE:result;
-	result = INI_IdentifyLineType("hi = there\\ ", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("hi = there\\ ", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	result = INI_IdentifyLineType("hi = there\\\r", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("hi = there\\\r", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	result = INI_IdentifyLineType("hi = there\\\n", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("hi = there\\\n", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	result = INI_IdentifyLineType("hi = there\\ \n", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("hi = there\\ \n", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
 	ASSERT(p0s == 0 && p1e == 10);
-	ASSERT_EQ(INI_IdentifyLineType("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p1e == 12);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT_EQ(INI_IdentifyLineType("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 8 && p1e == 8);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT_EQ(INI_IdentifyLineType("hi =    \\;  Hello  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi =    \\;  Hello  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 8 && p1e == 17);
-	ASSERT_EQ(INI_IdentifyLineType("hi =    \\ ; Hello  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi =    \\ ; Hello  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 8 && p1e == 8);
 	ASSERT(p2s == 10 && p2e == 17);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT_EQ(INI_IdentifyLineType("hello there ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
-	ASSERT_EQ(INI_IdentifyLineType("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
-	ASSERT_EQ(INI_IdentifyLineType("hi = hello\\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hello there ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi = hello\\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 5 && p1e == 10);
-	ASSERT_EQ(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 0);
 	ASSERT(p1s == 0 && p1e == 10);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT_EQ(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 5 && p1e == 10);
 }
@@ -300,48 +307,48 @@ TEST__ INI_IdentifyLineType6b()
 	// Continuation.
 	new
 		e_INI_LINE_TYPE:result;
-	result = INI_IdentifyLineType("hi = there\\ ", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("hi = there\\ ", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	result = INI_IdentifyLineType("hi = there\\\r", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("hi = there\\\r", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	result = INI_IdentifyLineType("hi = there\\\n", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("hi = there\\\n", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	result = INI_IdentifyLineType("hi = there\\ \n", p0s, p0e, p1s, p1e, p2s, p2e);
+	result = INI_IDENTIFY_LINE_TYPE("hi = there\\ \n", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
 	ASSERT(p0s == 0 && p1e == 10);
-	ASSERT_EQ(INI_IdentifyLineType("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p1e == 12);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT_EQ(INI_IdentifyLineType("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 8 && p1e == 8);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT_EQ(INI_IdentifyLineType("hi =    \\;  Hello  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi =    \\;  Hello  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 2);
 #if defined Y_INI_NO_ESCAPES
 	ASSERT(p1s == 8 && p1e == 17);
 #else
 	ASSERT(p1s == 8 && p1e == 16);
 #endif
-	ASSERT_EQ(INI_IdentifyLineType("hi =    \\ ; Hello  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi =    \\ ; Hello  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 8 && p1e == 8);
 	ASSERT(p2s == 10 && p2e == 17);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT_EQ(INI_IdentifyLineType("hello there ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
-	ASSERT_EQ(INI_IdentifyLineType("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
-	ASSERT_EQ(INI_IdentifyLineType("hi = hello\\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hello there ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi = hello\\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 5 && p1e == 10);
-	ASSERT_EQ(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 0);
 	ASSERT(p1s == 0 && p1e == 10);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT_EQ(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 5 && p1e == 10);
 }
@@ -349,9 +356,9 @@ TEST__ INI_IdentifyLineType6b()
 TEST__ INI_Continuation()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
-	INI_IdentifyLineType("hi = hello \\\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
-	INI_IdentifyLineType("world = the \\ ; Ignore me", p0s, p0e, p1s, p1e, p2s, p2e);
-	INI_IdentifyLineType("\\ whole string     ", p0s, p0e, p1s, p1e, p2s, p2e);
+	INI_IDENTIFY_LINE_TYPE("hi = hello \\\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
+	INI_IDENTIFY_LINE_TYPE("world = the \\ ; Ignore me", p0s, p0e, p1s, p1e, p2s, p2e);
+	INI_IDENTIFY_LINE_TYPE("\\ whole string     ", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT_SAME(mget(YSI_g_sExtendedLine, 1), "hello world = the \\ whole string");
 	// Cleanup.
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
