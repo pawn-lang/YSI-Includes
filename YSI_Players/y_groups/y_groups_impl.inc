@@ -721,6 +721,14 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 					}
 				}
 			}
+		#if _YSIM_IS_CLOUD
+			else
+			{
+				P:4("_Group_SetPlayer called - not master");
+			}
+		#endif
+	#else
+		P:4("_Group_SetPlayer called - no master");
 	#endif
 	#pragma tabsize 4
 	GROUP_CHAIN?<YSI_g_sNextUpdFunc>(p, YSI_gGroupPlayers[p], g);
@@ -746,6 +754,7 @@ FOREIGN__ Group:_Group_SetBalancedInternal(p,const Group:gs[],c);
 GLOBAL__ Group:_Group_SetBalancedInternal(p,const Group:gs[],c)
 {
 	// Find which of the listed groups has the least players in.
+	P:4("_Group_SetBalancedInternal called: %d, %d", p, c);
 	new
 		count = cellmax,
 		Group:id = INVALID_GROUP;
@@ -759,8 +768,10 @@ GLOBAL__ Group:_Group_SetBalancedInternal(p,const Group:gs[],c)
 			new
 				g2 = _:GROUP_TEMP_FIX(Group:gi),
 				cc = Iter_Count(GroupPlayers[g2]);
+			P:7("_Group_SetBalancedInternal: Group %d Count = %d", _:g2, cc);
 			if (_Group_HasPlayer(g2, p))
 			{
+				P:7("_Group_SetBalancedInternal: Has player");
 				// The player is already in this group - just return.
 				return Group:gi;
 			}
@@ -847,8 +858,8 @@ GLOBAL__ bool:Group_GetPlayer(Group:g,p)
 	P:2("bool:Group_GetPlayer called: %i, %i", _:g, p);
 	if (_Group_IsValid(g) && VALID_PLAYERID(p))
 	{
-		GROUP_FIX(g);
-		return Bit_Get(YSI_gGroupPlayers[p], _:g);
+		//GROUP_FIX(g);
+		return Bit_Get(YSI_gGroupPlayers[_:GROUP_TEMP_FIX(g)], _:g);
 		//Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
 	}
 	return false;

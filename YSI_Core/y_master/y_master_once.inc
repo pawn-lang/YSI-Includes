@@ -454,11 +454,25 @@ public OnYSIInit()
 		y_rconfix_Load();
 	#endif
 	// Properties get lost between script changes so we need to force a rebuild.
+	#if defined FIXES_ID
+		new
+			old = @_;
+		if (old == -1)
+		{
+			P:E("fixes.inc and y_master conflict in initialisation order.");
+		}
+	#endif
 	@_ = 0;
 	CallRemoteFunction("Master_Reassert", "");
 	new
 		masters = getproperty(8, YSIM_MASTER);
-	#if !defined FIXES_ID
+	#if defined FIXES_ID
+		if (masters & old)
+		{
+			P:E("fixes.inc and y_master conflict in master ID.  Was one script compiled without fixes.inc?");
+		}
+		@_ = old;
+	#else
 		@_ = Cell_GetLowestEmpty(masters);
 	#endif
 	setproperty(8, YSIM_MASTER, masters | Master_ID());
