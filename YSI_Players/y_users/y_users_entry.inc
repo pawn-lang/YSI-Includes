@@ -147,7 +147,7 @@ const
 	#if defined YSI_TESTS
 		// Create a separate path for any test data so that we don't ruin any
 		// live user data.
-		#define USER_FILE_PATH                  "YSI/test_users/"
+		#define USER_FILE_PATH                  "YSI/tests/y_users/"
 		#define USER_FILE_LENGTH                15
 	#else
 		#define USER_FILE_PATH                  "YSI/users/"
