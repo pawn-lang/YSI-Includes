@@ -132,17 +132,7 @@ static
 		#endif
 
 		// Dump the final assembly of this script so we can inspect it.
-		#define DEBUG_MAYBE_DUMP(%0,%2) \
-			do \
-			{ \
-				Server_PrintIntroPart(%2, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD); \
-				Server_DisableLongCall(); \
-				DisasmWrite(%0); \
-				Server_EnableLongCall(); \
-				Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone); \
-				Server_FinishIntroPart(); \
-			} \
-			while (FALSE)
+		#define DEBUG_MAYBE_DUMP(%0,%2); ScriptInit_Dump(%0,%2);
 
 	#endif
 #endif
@@ -337,8 +327,8 @@ static stock const
 	YSI_gscInitMsgD[] = "            Please wait...",
 	YSI_gscDone[] =     "                Done!",
 	YSI_gscFailed[] =   "               Failed!",
-	YSI_PreInitFile[] = "YSI/debug/pre-init.asm",
-	YSI_PostInitFile[] = "YSI/debug/post-init.asm";
+	YSI_PreInitFile[] = "YSI/debug/pre-init.%d.asm",
+	YSI_PostInitFile[] = "YSI/debug/post-init.%d.asm";
 
 static stock
 	bool:YSI_gsObnoxiousHeader = true,
@@ -347,6 +337,18 @@ static stock
 	YSI_gsPurgeTimer = 0;
 
 native YSI_VAPrintF(const fmt[], addr) = printf;
+
+static stock ScriptInit_Dump(const filename[], const message[])
+{
+	new file[48];
+	format(file, sizeof (file), filename, gettime());
+	Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD);
+	Server_DisableLongCall();
+	DisasmWrite(file);
+	Server_EnableLongCall();
+	Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
+	Server_FinishIntroPart();
+}
 
 stock Server_PrintIntroMessage(...)
 {
