@@ -159,7 +159,7 @@ Optional plugins:
 #endif
 
 stock const
-	YSI_TEMP_FILE_NAME[] = ".tempfiles";
+	YSI_TEMP_FILE_NAME[] = "YSI/temp/.files";
 
 // These three includes are just defines.  They declare no code at all, only
 // variables.

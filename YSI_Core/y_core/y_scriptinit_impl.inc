@@ -338,6 +338,7 @@ static stock
 	YSI_gsPurgeTimer = 0;
 
 native YSI_VAPrintF(const fmt[], addr) = printf;
+forward bool:fautocleanup(const name[], maxAge);
 
 static stock ScriptInit_Dump(const filename[], const message[])
 {
@@ -349,6 +350,8 @@ static stock ScriptInit_Dump(const filename[], const message[])
 	Server_EnableLongCall();
 	Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
 	Server_FinishIntroPart();
+	// 1 week.
+	fautocleanup(file, 60 * 60 * 24 * 7);
 }
 
 stock Server_PrintIntroMessage(...)
@@ -912,9 +915,9 @@ public ScriptInit_PurgeTemporaries()
 	new
 		File:in = fopen(YSI_TEMP_FILE_NAME, io_read),
 		bool:change = false,
-		tmp[YSI_TEMP_FILE_LENGTH + 32],
+		tmp[YSI_TEMP_FILE_LENGTH + 64],
 		File:out = ftemporary_(tmp, "ysi"),
-		line[YSI_TEMP_FILE_LENGTH + 32],
+		line[YSI_TEMP_FILE_LENGTH + 64],
 		now = gettime(),
 		then = 0;
 	if (!in)
