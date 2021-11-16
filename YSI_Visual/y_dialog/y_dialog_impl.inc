@@ -204,7 +204,7 @@ stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], con
 	// Fail.
 	if (dialog == YSI_DIALOG_ID_1 || dialog == YSI_DIALOG_ID_2)
 	{
-		P:E("Trying to show a dialog with YSI reserved ID %d", dialog)
+		P:E("Trying to show a dialog with YSI reserved ID %d", dialog);
 		return 0;
 	}
 	broadcastfunc Dialog_Set(playerid, dialog);
