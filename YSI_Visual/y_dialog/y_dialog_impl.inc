@@ -101,6 +101,12 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 	YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_NONE;
 }
 
+#if defined _ALS_ShowPlayerDialog
+	#define Dialog_ShowPlayerNative ShowPlayerDialog
+#else
+	native Dialog_ShowPlayerNative(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
+#endif
+
 // Func:callback<iiiis> | Func:callback<iis>
 stock Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "", tag = tagof (callback))
 {
@@ -117,12 +123,6 @@ stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, const 
 {
 	return Dialog_ShowCallback(playerid, F@_@iiiis:callback[E_CALLBACK_DATA:0], style, title, caption, button1, button2);
 }
-
-#if defined _ALS_ShowPlayerDialog
-	#define Dialog_ShowPlayerNative ShowPlayerDialog
-#else
-	native Dialog_ShowPlayerNative(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
-#endif
 
 stock Dialog_Show(playerid, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
