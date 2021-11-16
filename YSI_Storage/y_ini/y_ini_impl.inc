@@ -1914,6 +1914,12 @@ static stock INI_HandleEnd() <>
 		Callback_Restore(YSI_g_sCB_ss),
 		YSI_g_sCB_ss = Func:0<ss>;
 	}
+	if (YSI_g_sExtendedLine)
+	{
+		free(YSI_g_sExtendedLine),
+		YSI_g_sExtendedLine = NO_ALLOC,
+		YSI_g_sExtendedName[0] = '\0';
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
