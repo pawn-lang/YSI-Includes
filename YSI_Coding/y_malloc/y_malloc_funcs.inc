@@ -434,7 +434,7 @@ P:D(Malloc_NextSlot(slot));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Malloc_GetS(target[], length, Alloc:array, const index, const bool:pack = false)
+stock Malloc_GetS(target[], length = sizeof (target), Alloc:array, const index, const bool:pack = false)
 {
 	P:3("Malloc_GetS: array = %d, index = %d.", _:array, index);
 	if (0 <= index < Malloc_GetSlotSize(_:array))

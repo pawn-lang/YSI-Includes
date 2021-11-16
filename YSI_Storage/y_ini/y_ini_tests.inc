@@ -357,9 +357,12 @@ TEST__ INI_IdentifyLineType6b()
 TEST__ INI_Continuation()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
-	INI_IDENTIFY_LINE_TYPE("hi = hello \\\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
-	INI_IDENTIFY_LINE_TYPE("world = the \\ ; Ignore me", p0s, p0e, p1s, p1e, p2s, p2e);
-	INI_IDENTIFY_LINE_TYPE("\\ whole string     ", p0s, p0e, p1s, p1e, p2s, p2e);
+	INI_IdentifyLineType("hi = hello \\\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
+	INI_IdentifyLineType("world = the \\ ; Ignore me", p0s, p0e, p1s, p1e, p2s, p2e);
+	INI_IdentifyLineType("\\ whole string     ", p0s, p0e, p1s, p1e, p2s, p2e);
+	//new str[256];
+	//mgets(str, _, YSI_g_sExtendedLine, 1);
+	//printf(str);
 	ASSERT_SAME(mget(YSI_g_sExtendedLine, 1), "hello world = the \\ whole string");
 	// Cleanup.
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
