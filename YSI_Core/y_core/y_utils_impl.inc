@@ -2672,21 +2672,27 @@ stock PrintArg(n)
 
 #define printarg PrintArg
 
-stock File:ftemporary_(name[], const ext[] = "tmp", len = sizeof (name))
+stock File:ftemporary_(ret[] = "", const ext[] = "tmp", const path[] = "", len = sizeof (ret))
 {
 	// Ensure there's space for `NULL` and at least one character.
 	new
-		path = strlen(YSI_TEMP_FILE_DIR);
-	if (len - strlen(ext) - path - 3 < YSI_TEMP_FILE_LENGTH)
-	{
-		return File:0;
-	}
+		name[32],
+		pathLen = strlen(path),
+		i = pathLen;
+	//if (len - strlen(ext) - pathLen - 3 < YSI_TEMP_FILE_LENGTH)
+	//{
+	//	return File:0;
+	//}
+	// These parts of the filename never change, so only do them once.
+	strcat(name, path),
+	name[pathLen] = '_',
+	name[pathLen + YSI_TEMP_FILE_LENGTH + 1] = '.',
+	strcat(name[pathLen + YSI_TEMP_FILE_LENGTH + 2], ext);
+	// Generate a random filename, with an equal distribution of letters and
+	// numbers.
 	do
 	{
-		name[0] = '\0',
-		strcat(name, YSI_TEMP_FILE_DIR, len),
-		name[path] = '_';
-		for (new i = path; i++ < YSI_TEMP_FILE_LENGTH + path; )
+		while (i++ < YSI_TEMP_FILE_LENGTH + pathLen)
 		{
 			new ch = random(62);
 			if (ch < 26)
@@ -2702,14 +2708,18 @@ stock File:ftemporary_(name[], const ext[] = "tmp", len = sizeof (name))
 				name[i] = ch + ('0' - 52);
 			}
 		}
-		// `len` is passed here as a courtesy, we know there's space.
-		name[path + YSI_TEMP_FILE_LENGTH + 1] = '.',
-		name[path + YSI_TEMP_FILE_LENGTH + 2] = '\0',
-		strcat(name[path + YSI_TEMP_FILE_LENGTH + 2], ext, len);
 	}
 	while (fexist(name));
 	// Open the file, to ensure it is created.
-	return fopen(name, io_readwrite);
+	if ((i = _:fopen(name, io_readwrite)))
+	{
+		// Copy the filename to the return var (if there's space).
+		return
+			ret[0] = '\0',
+			strcat(ret, name, len),
+			File:i;
+	}
+	return File:0;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2755,10 +2765,10 @@ stock bool:fautocleanup(const name[], maxAge)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge = YSI_TEMP_FILE_AGE)
+stock File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAge = YSI_TEMP_FILE_AGE)
 {
 	// Open the file, to ensure it is created.
-	len = _:ftemporary_(name, ext, len);
+	len = _:ftemporary_(name, ext, YSI_TEMP_FILE_DIR, len);
 	if (!len)
 	{
 		return File:0;

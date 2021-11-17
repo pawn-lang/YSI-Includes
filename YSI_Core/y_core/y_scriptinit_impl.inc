@@ -933,7 +933,7 @@ public ScriptInit_PurgeTemporaries()
 	new
 		File:in = fopen(YSI_TEMP_FILE_NAME, io_read),
 		bool:change = false,
-		tmp[YSI_TEMP_FILE_LENGTH + 64],
+		tmp[32],
 		File:out = ftemporary_(tmp, "ysi"),
 		line[YSI_TEMP_FILE_LENGTH + 64],
 		now = gettime(),
