@@ -2808,18 +2808,21 @@ static stock const
 
 static stock
 	YSI_gsDefaultDirs[E_YSI_DIR][YSI_DIR_LENGTH] = {
+#if _DEBUG
 		"/debug/",
-		"/fixes/",
-		"/temp/",
+#endif
+#if defined YSI_TESTS
 		"/tests/",
-		"/text/",
-		"/users/",
-		"/YDBG/"
+		"/YDBG/",
+#endif
+		//"/text/",
+		//"/users/",
+		"/fixes/",
+		"/temp/"
 	};
 
 /*-------------------------------------------------------------------------*//**
  * <param name="dir">The ID of the directory.</param>
- * <param name="output">Where to store the string.</param>
  * <returns>
  *  A directory.
  * </returns>
@@ -2828,9 +2831,9 @@ static stock
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:GetYSIScriptfilesDir(E_YSI_DIR:dir, output[YSI_DIR_LENGTH])
+stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 {
-	strcpy(output, YSI_gsDefaultDirs[dir]);
+	return YSI_gsDefaultDirs[dir];
 }
 
 /*-------------------------------------------------------------------------*//**

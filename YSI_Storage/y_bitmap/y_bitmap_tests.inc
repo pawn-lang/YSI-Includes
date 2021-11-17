@@ -73,9 +73,12 @@ Optional plugins:
 
 static stock MakeYBitmapTestPath(const file[])
 {
-	new ret[48] = "YSI/tests/y_bitmap/";
-	strcat(ret, file);
-	return ret;
+	new ret[48];
+	return
+		strcat(ret, GetYSIScriptfilesDir(E_YSI_DIR_TESTS)),
+		strcat(ret, "y_bitmap/"),
+		strcat(ret, file),
+		ret;
 }
 
 TEST__ y_bitmap_Fade1()

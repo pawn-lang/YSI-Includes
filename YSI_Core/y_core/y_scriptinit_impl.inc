@@ -342,7 +342,7 @@ forward bool:fautocleanup(const name[], maxAge);
 static stock ScriptInit_Dump(const filename[], const message[])
 {
 	new file[48];
-	GetYSIScriptfilesDir(E_YSI_DIR_DEBUG, file),
+	file = GetYSIScriptfilesDir(E_YSI_DIR_DEBUG),
 	format(file, sizeof (file), "%s%s.%d.asm", file, filename, YSI_gsStartTime),
 	Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD),
 	Server_DisableLongCall();

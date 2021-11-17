@@ -163,19 +163,27 @@ stock const
 
 #define YSI_DIR_LENGTH (12)
 
+#if !defined _DEBUG
+	#define _DEBUG 0
+#endif
+
 enum E_YSI_DIR
 {
+#if _DEBUG
 	E_YSI_DIR_DEBUG,
-	E_YSI_DIR_FIXES,
-	E_YSI_DIR_TEMP,
+#endif
+#if defined YSI_TESTS
 	E_YSI_DIR_TESTS,
-	E_YSI_DIR_TEXT,
-	E_YSI_DIR_USERS,
 	E_YSI_DIR_YDBG,
+#endif
+	//E_YSI_DIR_TEXT,
+	//E_YSI_DIR_USERS,
+	E_YSI_DIR_FIXES,
+	E_YSI_DIR_TEMP
 }
 
 forward bool:DumpAMX_Write(const filename[]);
-forward bool:GetYSIScriptfilesDir(E_YSI_DIR:dir, output[YSI_DIR_LENGTH]);
+forward GetYSIScriptfilesDir(E_YSI_DIR:dir);
 forward bool:DisasmWrite(const filename[]);
 
 // These three includes are just defines.  They declare no code at all, only

@@ -71,10 +71,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 *//*-------------------------------------------------------------------------**/
 
-#if !defined _DEBUG
-	#define _DEBUG 0
-#endif
-
 #if _DEBUG
 	#define TODO_MESSAGE:%0,%1; %0[]=#%1;
 	#define TODO(%0); new TODO_MESSAGE:TODO@%0;

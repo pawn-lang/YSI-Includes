@@ -78,9 +78,12 @@ Optional plugins:
 
 static stock MakeYINITestPath(const file[])
 {
-	new ret[48] = "YSI/tests/y_ini/";
-	strcat(ret, file);
-	return ret;
+	new ret[48];
+	return
+		strcat(ret, GetYSIScriptfilesDir(E_YSI_DIR_TESTS)),
+		strcat(ret, "y_ini/"),
+		strcat(ret, file),
+		ret;
 }
 
 static INI_IDENTIFY_LINE_TYPE(str[MAX_INI_LINE], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
