@@ -2760,13 +2760,9 @@ stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge =
 	{
 		return File:0;
 	}
-	if (fautocleanup(name, maxAge))
-	{
-		return File:len;
-	}
 	return
-		fclose(File:len),
-		File:0;
+		fautocleanup(name, maxAge),
+		File:len;
 }
 
 #if defined _ALS_ftemp
