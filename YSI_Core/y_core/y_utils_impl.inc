@@ -107,6 +107,8 @@ Optional plugins:
 	#define TIMING_ITERATIONS (10)
 #endif
 
+#define ALS_MRET_(%0) forward PP_MRET();public PP_MRET(%0)(0,0,"")(NT_US)
+
 /*-------------------------------------------------------------------------*//**
  * <param name="t">The time in ms.</param>
  * <param name="iters">The number of iterations completed in this time.</param>
