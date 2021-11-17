@@ -77,6 +77,10 @@ Optional plugins:
 #define _INC_y_rconfix
 
 #if !_YSI_SAFE_STARTUP
+	#if defined YSI_FIX_CALLBACKS
+		forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+	#endinput
+
 	#endinput
 #endif
 
