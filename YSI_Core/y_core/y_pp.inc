@@ -248,5 +248,5 @@ main()
 #if defined PP_main
 	forward PP_main();
 #endif
-#define main( __DISABLE__ public PP_main(
+#define main( ALS_main_:PP_main(
 

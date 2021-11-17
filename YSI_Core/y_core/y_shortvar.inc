@@ -147,8 +147,7 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 		O@(tmp, 0, false);
 	}
 #endif
-
-#define __ARGS__SCM 0,0,""
+#define DONT_USE(%9);}%9(){} }
 
 #if !defined TRUE
 stock const

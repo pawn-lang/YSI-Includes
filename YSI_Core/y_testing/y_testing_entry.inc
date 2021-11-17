@@ -768,8 +768,8 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 			#endif
 		#else
 			// Hook main in gamemodes.
-			#undef __DISABLE__
-			#define __DISABLE__
+			#undef ALS_MAIN_RET_
+			#define ALS_MAIN_RET_(%0)
 			main()
 			{
 				#if defined Testing_main
@@ -787,6 +787,9 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 			#if defined Testing_main
 				forward Testing_main();
 			#endif
+			#undef ALS_MAIN_RET_
+			#define ALS_MAIN_RET_ ALS_MRET_
+			#define main( ALS_main_:Testing_main(
 		#endif
 
 		#if !defined NO_PLAYER_TESTS		

@@ -165,6 +165,7 @@ enum ALS
 // ALS Callback.
 #define _ALS_C_INT<%0,%2>(%3) ALS_MAKE<..._On%0>(ALS_RS_%3);
 #define ALS_C_INT<%0,%2>(%3) return _ALS_C_INT<%0,%2>(%3)
+#define ALS_DC_(%0) S%0
 // ALS Forward.
 #define ALS_F_INT<%0,%8>(%1) forward ALS_MAKE<..._On%0>(ALS_KS_%1);//ALS_F_INT1<%0,%8>(%1)ALS_F_INT2<%0,%8>(%1)
 //#define ALS_F_INT1<%0,%8>(%1) public ALS_MAKE<..._On%0>(ALS_KS_%1)<_ALS_:unhooked>{return ALS_R_%0;}
@@ -414,6 +415,8 @@ enum ALS
 #define ALS_RS_%0\32; ALS_RS_
 
 #define ALS_DO:%9<%0> ALS_DO_%0<%9>
+#define ALS_MAIN_RET_ ALS_MRET_
+#define ALS_main_:%0( ALS_MAIN_RET_(ALS_DC_(C)M) public %0(
 
 #define ALS_CALL<%0> ALS_DO:ALS_C_INT<%0>
 #define ALS_GET<%0> ALS_DO:_ALS_C_INT<%0>

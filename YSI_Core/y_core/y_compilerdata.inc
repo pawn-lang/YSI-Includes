@@ -258,6 +258,8 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #endif
 #define DEFAULT__ __COMPILER_DEFAULT
 
+#define ALS_MRET_(%0) @ALS_MRET_%0();@ALS_MRET_%0(){%0(0,0,"");}DONT_USE_%0(){}
+
 #if __COMPILER_MODIFIED
 	#if __COMPILER_PRAGMA
 		#define __COMPILER_NAKED() __pragma("naked")
