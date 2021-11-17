@@ -148,27 +148,26 @@ Optional plugins:
 	#define YSI_FIX_CALLBACKS
 #endif
 
-#if defined ENABLE_YSI_UNSAFE_STARTUP && defined @_I_KNOW_WHAT_IM_DOING_AND_KNOW && defined @_THAT_USING && defined @___ENABLE_YSI_UNSAFE_STARTUP__ && defined @_MAY_RESULT_IN_STARTUP_CRASHES && defined @_AND_OTHER_BROKEN_CODE && defined @_HEREBY_PROMISE_I_WONT_RELEASE && defined @_ANY_CODE_WITH_IT_ENABLED && defined @_WILL_SUPPORT_ALL_RESULTING && defined @_ERRORS_AND_CRASHES_FOR_Y_LESS && defined @_SIGNED
+#if defined ENABLE_YSI_UNSAFE_STARTUP && defined @_I_KNOW_WHAT_IM_DOING_AND_KNOW && defined @_THAT_USING && defined @___ENABLE_YSI_UNSAFE_STARTUP__ && defined @_MAY_RESULT_IN_STARTUP_CRASHES && defined @_AND_OTHER_BROKEN_CODE && defined @_HEREBY_PROMISE_I_WONT_RELEASE && defined @_ANY_CODE_WITH_IT_ENABLED && defined @_I_WILL_SUPPORT_ALL_RESULTING && defined @_ERRORS_AND_CRASHES_FOR_Y_LESS && defined @_SIGNED
 	#if 1 @_THAT_USING: != 1
-		#error
+		#error ENABLE_YSI_UNSAFE_STARTUP contract incomplete.  Please complete it!
 	#endif
 	#if 1 @_AND_OTHER_BROKEN_CODE.__I != 1
-		#error
+		#error ENABLE_YSI_UNSAFE_STARTUP contract incomplete.  Please complete it!
 	#endif
-	#if 1 @_ANY_CODE_WITH_IT_ENABLED,_OR_I != 1
-		#error
+	#if 1 @_ANY_CODE_WITH_IT_ENABLED,_OR != 1
+		#error ENABLE_YSI_UNSAFE_STARTUP contract incomplete.  Please complete it!
 	#endif
 	
 	#define _YSI_SAFE_STARTUP 0
 	stock const
-		YSI_gUnsafeStartupContract[] = #@_SIGNED;
+		YSI_gcUnsafeStartupContract[] = #@_SIGNED;
 
 	#if sizeof (YSI_gUnsafeStartupContract) == 1
 		#error ENABLE_YSI_UNSAFE_STARTUP contract unsigned.  Please sign it!
 	#endif
-	
-#elseif defined ENABLE_YSI_UNSAFE_STARTUP || defined @_I_KNOW_WHAT_IM_DOING_AND_KNOW || defined @_THAT_USING || defined @___ENABLE_YSI_UNSAFE_STARTUP__ || defined @_MAY_RESULT_IN_STARTUP_CRASHES || defined @_AND_OTHER_BROKEN_CODE || defined @_HEREBY_PROMISE_I_WONT_RELEASE || defined @_ANY_CODE_WITH_IT_ENABLED || defined @_WILL_SUPPORT_ALL_RESULTING || defined @_ERRORS_AND_CRASHES_FOR_Y_LESS || defined @_SIGNED
-	#error ENABLE_YSI_UNSAFE_STARTUP contract incomplete.  Please sign it!
+#elseif defined ENABLE_YSI_UNSAFE_STARTUP || defined @_I_KNOW_WHAT_IM_DOING_AND_KNOW || defined @_THAT_USING || defined @___ENABLE_YSI_UNSAFE_STARTUP__ || defined @_MAY_RESULT_IN_STARTUP_CRASHES || defined @_AND_OTHER_BROKEN_CODE || defined @_HEREBY_PROMISE_I_WONT_RELEASE || defined @_ANY_CODE_WITH_IT_ENABLED || defined @_I_WILL_SUPPORT_ALL_RESULTING || defined @_ERRORS_AND_CRASHES_FOR_Y_LESS || defined @_SIGNED
+	#error ENABLE_YSI_UNSAFE_STARTUP contract incomplete.  Please complete it!
 #elseif defined _YSI_UNSAFE_STARTUP
 	#error _YSI_UNSAFE_STARTUP defined.
 #else
