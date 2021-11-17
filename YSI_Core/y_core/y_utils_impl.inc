@@ -2817,8 +2817,7 @@ enum E_YSI_DIR
 #define YSI_DIR_LENGTH (12)
 
 static stock const
-	YSI_gscYSI[] = "YSI",
-	YSI_gscGitkeep[] = ".gitkeep";
+	YSI_gscYSI[] = "YSI";
 
 static stock
 	YSI_gsDefaultDirs[E_YSI_DIR][YSI_DIR_LENGTH] = {
@@ -2838,49 +2837,73 @@ static stock
  *  A directory.
  * </returns>
  * <remarks>
- *  Get a YSI scriptfiles directory, or a fallback.  Checks for `.gitkeep` in
- * each folder, then each folder without `YSI/` prefix, then just returns
- * nothing.
+ *  Get a YSI scriptfiles directory, or a fallback.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock bool:GetYSIScriptfilesDir(E_YSI_DIR:dir, output[YSI_DIR_LENGTH])
 {
-	if (YSI_gsDefaultDirs[dir][0] == '/')
-	{
-		new
-			test[YSI_DIR_LENGTH + sizeof (YSI_gscGitkeep)],
-			File:file;
-		strcat(test, YSI_gscYSI),
-		strcat(test, YSI_gsDefaultDirs[dir]),
-		strcat(test, YSI_gscGitkeep);
-		if ((file = fopen(test, io_write)))
-		{
-			// Found `YSI/dir/`.
-			return
-				strcpy(output, YSI_gscYSI),
-				strcat(output, YSI_gsDefaultDirs[dir]),
-				strcpy(YSI_gsDefaultDirs[dir], output),
-				fclose(file),
-				true;
-		}
-		if ((file = fopen(test[4], io_write)))
-		{
-			// Found `dir/`.
-			return
-				strcpy(output, YSI_gsDefaultDirs[dir][1]),
-				strcpy(YSI_gsDefaultDirs[dir], output),
-				fclose(file),
-				false;
-		}
-		// Found nothing.
-		return
-			YSI_gsDefaultDirs[dir][0] = '\0',
-			output[0] = '\0',
-			false;
-	}
 	strcpy(output, YSI_gsDefaultDirs[dir]);
-	return true;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Check if all the YSI scriptfiles directories exist.  Checks for `.gitkeep`
+ *  in each folder, then each folder without `YSI/` prefix, then just nothing.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock ResolveYSIScriptfileDirs()
+{
+	new
+		bool:first = true,
+		path[38] = "    scriptfiles/",
+		test[YSI_DIR_LENGTH + 8],
+		File:file;
+	for (new E_YSI_DIR:dir = E_YSI_DIR:0; dir != E_YSI_DIR; ++dir)
+	{
+		if (YSI_gsDefaultDirs[dir][0] == '/')
+		{
+			test[0] = '\0',
+			path[16] = '\0',
+			strcat(path, YSI_gscYSI),
+			strcat(path, YSI_gsDefaultDirs[dir]),
+			strcat(test, YSI_gscYSI),
+			strcat(test, YSI_gsDefaultDirs[dir]),
+			strcat(test, ".gitkeep");
+			if ((file = fopen(test, io_write)))
+			{
+				// Found `YSI/dir/`.
+				strcpy(YSI_gsDefaultDirs[dir], path[16]),
+				fclose(file);
+			}
+			else
+			{
+				if (first)
+				{
+					Server_PrintIntroPart(" Missing YSI scriptfiles directories: ", ""),
+					first = false;
+				}
+				Server_PrintIntroPart(path);
+				if ((file = fopen(test[4], io_write)))
+				{
+					// Found `dir/`.
+					strcpy(YSI_gsDefaultDirs[dir], path[20]),
+					fclose(file);
+				}
+				else
+				{
+					// Found nothing.
+					YSI_gsDefaultDirs[dir][0] = '\0';
+				}
+			}
+		}
+	}
+	if (!first)
+	{
+		Server_PrintIntroPart("");
+		Server_FinishIntroPart();
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
