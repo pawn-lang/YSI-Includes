@@ -174,7 +174,6 @@ public OnPlayerConnect(playerid)
 		{
 			y_rconfix_Load();
 		}
-		#endif
 		#if defined Android_OnYSIInit
 			Android_OnYSIInit();
 		#endif
