@@ -2850,7 +2850,7 @@ stock ResolveYSIScriptfileDirs()
 {
 	new
 		bool:first = true,
-		path[38] = "    scriptfiles/",
+		path[38] = "    scriptfiles/", // The `16`s below are this length.
 		test[YSI_DIR_LENGTH + 8],
 		File:file;
 	for (new E_YSI_DIR:dir = E_YSI_DIR:0; dir != E_YSI_DIR; ++dir)
