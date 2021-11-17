@@ -2857,12 +2857,10 @@ stock ResolveYSIScriptfileDirs()
 	{
 		if (YSI_gsDefaultDirs[dir][0] == '/')
 		{
-			test[0] = '\0',
 			path[16] = '\0',
 			strcat(path, YSI_gscYSI),
 			strcat(path, YSI_gsDefaultDirs[dir]),
-			strcat(test, YSI_gscYSI),
-			strcat(test, YSI_gsDefaultDirs[dir]),
+			strcpy(test, path[16]),
 			strcat(test, ".gitkeep");
 			if ((file = fopen(test, io_write)))
 			{
