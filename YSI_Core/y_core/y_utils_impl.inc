@@ -2672,27 +2672,29 @@ stock PrintArg(n)
 
 #define printarg PrintArg
 
-stock File:ftemporary_(ret[] = "", const ext[] = "tmp", const path[] = "", len = sizeof (ret))
+stock File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = sizeof (name))
 {
-	// Ensure there's space for `NULL` and at least one character.
 	new
-		name[32],
-		pathLen = strlen(path),
-		i = pathLen;
-	//if (len - strlen(ext) - pathLen - 3 < YSI_TEMP_FILE_LENGTH)
-	//{
-	//	return File:0;
-	//}
+		pathLen = strlen(path);
+	// Ensure there's space for the path (`pathLen`); the filename
+	// (`YSI_TEMP_FILE_LENGTH`); the extension (`strlen(ext)`); and `'_'`,
+	// `'.'`, and `'\0'` (`3`).
+	// Ensure there's space for `NULL`, `_`, and at least one character.
+	if (len - strlen(ext) - pathLen < YSI_TEMP_FILE_LENGTH + 3)
+	{
+		return File:0;
+	}
 	// These parts of the filename never change, so only do them once.
 	strcat(name, path),
 	name[pathLen] = '_',
 	name[pathLen + YSI_TEMP_FILE_LENGTH + 1] = '.',
-	strcat(name[pathLen + YSI_TEMP_FILE_LENGTH + 2], ext);
+	strcat(name[pathLen + YSI_TEMP_FILE_LENGTH + 2], ext, len);
 	// Generate a random filename, with an equal distribution of letters and
 	// numbers.
 	do
 	{
-		while (i++ < YSI_TEMP_FILE_LENGTH + pathLen)
+		// The post-increment here skips the `_` filename prefix.
+		for (new i = pathLen; i++ < YSI_TEMP_FILE_LENGTH + pathLen; )
 		{
 			new ch = random(62);
 			if (ch < 26)
@@ -2711,15 +2713,7 @@ stock File:ftemporary_(ret[] = "", const ext[] = "tmp", const path[] = "", len =
 	}
 	while (fexist(name));
 	// Open the file, to ensure it is created.
-	if ((i = _:fopen(name, io_readwrite)))
-	{
-		// Copy the filename to the return var (if there's space).
-		return
-			ret[0] = '\0',
-			strcat(ret, name, len),
-			File:i;
-	}
-	return File:0;
+	return fopen(name, io_readwrite);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2768,14 +2762,18 @@ stock bool:fautocleanup(const name[], maxAge)
 stock File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAge = YSI_TEMP_FILE_AGE)
 {
 	// Open the file, to ensure it is created.
-	len = _:ftemporary_(name, ext, YSI_TEMP_FILE_DIR, len);
-	if (!len)
+	new
+		name[64],
+		File:file = ftemporary_(name, ext, YSI_TEMP_FILE_DIR);
+	if (!file)
 	{
 		return File:0;
 	}
 	return
+		ret[0] = '\0',
+		strcat(ret, name, len),
 		fautocleanup(name, maxAge),
-		File:len;
+		file;
 }
 
 #if defined _ALS_ftemp
