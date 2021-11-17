@@ -133,7 +133,6 @@ static
 
 		// Dump the final assembly of this script so we can inspect it.
 		#define DEBUG_MAYBE_DUMP(%0,%2); ScriptInit_Dump(%0,%2);
-
 	#endif
 #endif
 #if !defined DEBUG_MAYBE_DUMP
@@ -565,8 +564,6 @@ stock Server_GetLongCallDefault()
 	#endif
 #endif
 
-forward bool:DumpAMX_Write(const filename[]);
-
 #if !defined _ALS_OnCachedInit
 	forward OnCachedInit();
 #endif
@@ -581,23 +578,6 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 	}
 	else
 	{
-		new
-			tmp;
-		// Determine where to store temp files.
-		if ((tmp = _:fopen("YSI/temp/.gitkeep", io_write)))
-		{
-			YSI_TEMP_FILE_DIR = "YSI/temp/",
-			fclose(File:tmp);
-		}
-		else if ((tmp = _:fopen("temp/.gitkeep", io_write)))
-		{
-			YSI_TEMP_FILE_DIR = "temp/",
-			fclose(File:tmp);
-		}
-		else
-		{
-			YSI_TEMP_FILE_DIR = "";
-		}
 		#if defined YSI_NO_MODE_CACHE
 			#pragma unused fs
 		#else
@@ -667,7 +647,8 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
 			Server_FinishIntroPart();
 		#if !defined YSI_NO_MODE_CACHE
-			tmp = _:(YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED));
+			E_SCRIPTINIT_STATE
+				tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
 			// Set the variable to something unique for next load.  This will be written out, thus
 			// loaded in next time.
 			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
@@ -682,7 +663,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
 				Server_FinishIntroPart();
 				// Clear this flag after dumping.  This is so we can tell when a mode is cached.
-				YSI_g_sScriptInitState = (E_SCRIPTINIT_STATE:tmp) | E_SCRIPTINIT_STATE_DUMPED;
+				YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
 				#if !defined YSI_NO_CACHE_MESSAGE
 					Server_PrintIntroMessage(
 						"    File dumped to YSI code cache:",
@@ -707,7 +688,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			{
 				Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscFailed);
 				Server_FinishIntroPart();
-				YSI_g_sScriptInitState = E_SCRIPTINIT_STATE:tmp;
+				YSI_g_sScriptInitState = tmp;
 				P:E("YSI code cache write failed");
 			}
 		#endif
@@ -731,6 +712,7 @@ public OnJITCompile()
 		return 0;
 	}
 	YSI_gsStartTime = gettime();
+	ResolveYSIScriptfileDirs();
 	DEBUG_MAYBE_DUMP(YSI_PreInitFile, YSI_gscInitMsgA);
 	YSI_g_sScriptInitState |= E_SCRIPTINIT_STATE_JITING;
 	if (!ScriptInit_CallOnCodeInit(true, false))
@@ -827,6 +809,7 @@ public OnScriptInit(id)
 	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
 		YSI_gsStartTime = gettime();
+		ResolveYSIScriptfileDirs();
 		DEBUG_MAYBE_DUMP(YSI_PreInitFile, YSI_gscInitMsgA);
 		if (!ScriptInit_CallOnCodeInit(false, true))
 			return 0;
@@ -868,6 +851,7 @@ public OnFilterScriptInit()
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
 			YSI_gsStartTime = gettime();
+			ResolveYSIScriptfileDirs();
 			DEBUG_MAYBE_DUMP(YSI_PreInitFile, YSI_gscInitMsgA);
 			if (!ScriptInit_CallOnCodeInit(false, true))
 				return 0;
@@ -1003,6 +987,7 @@ public OnGameModeInit()
 	if (!YSI_FILTERSCRIPT && !YSI_OPEN_MP && !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
 		YSI_gsStartTime = gettime();
+		ResolveYSIScriptfileDirs();
 	}
 	if (YSI_gsPurgeTimer)
 	{

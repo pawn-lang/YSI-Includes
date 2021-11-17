@@ -2767,7 +2767,7 @@ stock File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAg
 		// Might not have enough space to store the filename.
 		new
 			name[32],
-			File:file = ftemporary_(name, ext, YSI_TEMP_FILE_DIR);
+			File:file = ftemporary_(name, ext, GetYSIScriptfilesDir(E_YSI_DIR_TEMP));
 		if (file)
 		{
 			return
@@ -2777,7 +2777,7 @@ stock File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAg
 				file;
 		}
 	}
-	else if ((len = _:ftemporary_(ret, ext, YSI_TEMP_FILE_DIR, len)))
+	else if ((len = _:ftemporary_(ret, ext, GetYSIScriptfilesDir(E_YSI_DIR_TEMP), len)))
 	{
 		// Shortcut when the destination is big enough.
 		return
@@ -2814,8 +2814,6 @@ enum E_YSI_DIR
 	E_YSI_DIR_YDBG,
 }
 
-#define YSI_DIR_LENGTH (12)
-
 static stock const
 	YSI_gscYSI[] = "YSI";
 
@@ -2827,7 +2825,7 @@ static stock
 		"/tests/",
 		"/text/",
 		"/users/",
-		"/YDBG/",
+		"/YDBG/"
 	};
 
 /*-------------------------------------------------------------------------*//**

@@ -161,8 +161,11 @@ Optional plugins:
 stock const
 	YSI_TEMP_FILE_NAME[] = ".tempfiles";
 
-stock
-	YSI_TEMP_FILE_DIR[10];
+#define YSI_DIR_LENGTH (12)
+
+forward bool:DumpAMX_Write(const filename[]);
+forward bool:GetYSIScriptfilesDir(E_YSI_DIR:dir, output[YSI_DIR_LENGTH]);
+forward bool:DisasmWrite(const filename[]);
 
 // These three includes are just defines.  They declare no code at all, only
 // variables.
