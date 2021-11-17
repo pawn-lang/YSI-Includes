@@ -2803,6 +2803,83 @@ stock File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAg
 #define ftemporary() ftemp_()
 #define _ALS_ftemporary
 
+enum E_YSI_DIR
+{
+	E_YSI_DIR_DEBUG,
+	E_YSI_DIR_FIXES,
+	E_YSI_DIR_TEMP,
+	E_YSI_DIR_TESTS,
+	E_YSI_DIR_TEXT,
+	E_YSI_DIR_USERS,
+	E_YSI_DIR_YDBG,
+}
+
+#define YSI_DIR_LENGTH (12)
+
+static stock const
+	YSI_gscDefaultDirs[E_YSI_DIR][YSI_DIR_LENGTH] = {
+		"YSI/debug/",
+		"YSI/fixes/",
+		"YSI/temp/",
+		"YSI/tests/",
+		"YSI/text/",
+		"YSI/users/",
+		"YSI/YDBG/",
+	},
+	YSI_gscGitkeep[] = ".gitkeep";
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="dir">The ID of the directory.</param>
+ * <param name="output">Where to store the string.</param>
+ * <returns>
+ *  A directory.
+ * </returns>
+ * <remarks>
+ *  Get a YSI scriptfiles directory, or a fallback.  Checks for `.gitkeep` in
+ * each folder, then each folder without `YSI/` prefix, then just returns
+ * nothing.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:GetYSIScriptfilesDir(E_YSI_DIR:dir, output[YSI_DIR_LENGTH])
+{
+	static
+		resolved_[E_YSI_DIR] = { -1, ... };
+	if (resolved_[dir] < 0)
+	{
+		new
+			test[YSI_DIR_LENGTH + sizeof (YSI_gscGitkeep)],
+			File:file;
+		strcat(test, YSI_gscDefaultDirs[dir]),
+		strcat(test, YSI_gscGitkeep);
+		if ((file = fopen(test, io_write)))
+		{
+			// Found `YSI/dir/`.
+			return
+				resolved_[dir] = 0,
+				strcpy(output, YSI_gscDefaultDirs[dir]),
+				fclose(file),
+				true;
+		}
+		if ((file = fopen(test[4], io_write)))
+		{
+			// Found `dir/`.
+			return
+				resolved_[dir] = 4,
+				strcpy(output, YSI_gscDefaultDirs[dir][4]),
+				fclose(file),
+				false;
+		}
+		// Found nothing.
+		return
+			resolved_[dir] = strlen(YSI_gscDefaultDirs[dir]),
+			output[0] = '\0',
+			false;
+	}
+	strcpy(output, YSI_gscDefaultDirs[dir][resolved_[dir]]);
+	return true;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  Float:FloatAbs(Float:number);
