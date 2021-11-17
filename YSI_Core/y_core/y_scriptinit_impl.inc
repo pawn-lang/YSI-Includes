@@ -922,7 +922,7 @@ public OnFilterScriptInit()
 
 forward ScriptInit_PurgeTemporaries();
 
-forward File:ftemporary_(name[], const ext[] = "tmp", len = sizeof (name));
+forward File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = sizeof (name));
 
 public ScriptInit_PurgeTemporaries()
 {

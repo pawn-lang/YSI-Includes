@@ -748,7 +748,7 @@ static stock bool:Debug_IsStringLike(addr, len = 256)
 	return 0 < i < len;
 }
 
-forward File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge = YSI_TEMP_FILE_AGE);
+forward File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAge = YSI_TEMP_FILE_AGE);
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>

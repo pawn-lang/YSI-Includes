@@ -2685,7 +2685,7 @@ stock File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = siz
 		return File:0;
 	}
 	// These parts of the filename never change, so only do them once.
-	strcat(name, path),
+	strcat(name, path, len),
 	name[pathLen] = '_',
 	name[pathLen + YSI_TEMP_FILE_LENGTH + 1] = '.',
 	strcat(name[pathLen + YSI_TEMP_FILE_LENGTH + 2], ext, len);
@@ -2735,7 +2735,7 @@ stock bool:fautocleanup(const name[], maxAge)
 		return false;
 	}
 	new
-		line[YSI_TEMP_FILE_LENGTH + 64];
+		line[YSI_TEMP_FILE_LENGTH + 32];
 	// First write to this file.
 	if (initial)
 	{
@@ -2762,18 +2762,29 @@ stock bool:fautocleanup(const name[], maxAge)
 stock File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAge = YSI_TEMP_FILE_AGE)
 {
 	// Open the file, to ensure it is created.
-	new
-		name[64],
-		File:file = ftemporary_(name, ext, YSI_TEMP_FILE_DIR);
-	if (!file)
+	if (len < 32)
 	{
-		return File:0;
+		// Might not have enough space to store the filename.
+		new
+			name[32],
+			File:file = ftemporary_(name, ext, YSI_TEMP_FILE_DIR);
+		if (file)
+		{
+			return
+				ret[0] = '\0',
+				strcat(ret, name, len),
+				fautocleanup(name, maxAge),
+				file;
+		}
 	}
-	return
-		ret[0] = '\0',
-		strcat(ret, name, len),
-		fautocleanup(name, maxAge),
-		file;
+	else if ((len = _:ftemporary_(ret, ext, YSI_TEMP_FILE_DIR, len)))
+	{
+		// Shortcut when the destination is big enough.
+		return
+			fautocleanup(ret, maxAge),
+			File:len;
+	}
+	return File:0;
 }
 
 #if defined _ALS_ftemp
