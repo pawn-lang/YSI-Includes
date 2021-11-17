@@ -249,5 +249,4 @@ main()
 	forward PP_main();
 #endif
 #define main( __DISABLE__ public PP_main(
-#define __DISABLE__ __DISABLE_ALL__
 
