@@ -163,7 +163,7 @@ Optional plugins:
 	stock const
 		YSI_gcUnsafeStartupContract[] = #@_SIGNED;
 
-	#if sizeof (YSI_gUnsafeStartupContract) == 1
+	#if sizeof (YSI_gcUnsafeStartupContract) == 1
 		#error ENABLE_YSI_UNSAFE_STARTUP contract unsigned.  Please sign it!
 	#endif
 #elseif defined ENABLE_YSI_UNSAFE_STARTUP || defined @_I_KNOW_WHAT_IM_DOING_AND_KNOW || defined @_THAT_USING || defined @___ENABLE_YSI_UNSAFE_STARTUP__ || defined @_MAY_RESULT_IN_STARTUP_CRASHES || defined @_AND_OTHER_BROKEN_CODE || defined @_HEREBY_PROMISE_I_WONT_RELEASE || defined @_ANY_CODE_WITH_IT_ENABLED || defined @_I_WILL_SUPPORT_ALL_RESULTING || defined @_ERRORS_AND_CRASHES_FOR_Y_LESS || defined @_SIGNED

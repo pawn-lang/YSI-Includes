@@ -326,8 +326,8 @@ static stock const
 	YSI_gscInitMsgD[] = "            Please wait...",
 	YSI_gscDone[] =     "                Done!",
 	YSI_gscFailed[] =   "               Failed!",
-	YSI_PreInitFile[] = "pre-init",
-	YSI_PostInitFile[] = "post-init";
+	YSI_gscPreInitFile[] = "pre-init",
+	YSI_gscPostInitFile[] = "post-init";
 
 static stock
 	YSI_gsStartTime,
@@ -341,108 +341,111 @@ forward bool:fautocleanup(const name[], maxAge);
 
 static stock ScriptInit_Dump(const filename[], const message[])
 {
-	new file[48];
-	file = GetYSIScriptfilesDir(E_YSI_DIR_DEBUG),
-	format(file, sizeof (file), "%s%s.%d.asm", file, filename, YSI_gsStartTime),
-	Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD),
-	Server_DisableLongCall();
-	if (DisasmWrite(file))
-	{
-		// 1 week.
-		fautocleanup(file, 60 * 60 * 24 * 7);
-	}
-	Server_EnableLongCall(),
-	Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone),
-	Server_FinishIntroPart();
+		new file[48];
+		format(file, sizeof (file), "%s%s.%d.asm", GetYSIScriptfilesDir(E_YSI_DIR_DEBUG), filename, YSI_gsStartTime);
+	#if _YSI_SAFE_STARTUP
+		Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD),
+		Server_DisableLongCall();
+	#endif
+		if (DisasmWrite(file))
+		{
+			// 1 week.
+			fautocleanup(file, 60 * 60 * 24 * 7);
+		}
+	#if _YSI_SAFE_STARTUP
+		Server_EnableLongCall(),
+		Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone),
+		Server_FinishIntroPart();
+	#endif
 }
 
 stock Server_PrintIntroMessage(...)
 {
-#if !defined YSI_NO_OBNOXIOUS_HEADER
-	if (YSI_gsObnoxiousHeader)
-	{
-		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscObnoxiousHeader0),
-		YSI_Print(YSI_gscObnoxiousHeader1),
-		YSI_Print(YSI_gscObnoxiousHeader2),
-		YSI_Print(YSI_gscObnoxiousHeader3),
-		YSI_Print(YSI_gscObnoxiousHeader4),
-		YSI_Print(YSI_gscObnoxiousHeader5),
-		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscHeader),
-		YSI_gsObnoxiousHeader = false,
-		YSI_gsFirstHeader = false;
-	}
-	else
-#endif
-	if (YSI_gsFirstHeader)
-	{
-		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscHeader),
-		YSI_gsFirstHeader = false;
-	}
-	// Header.
-	YSI_Print(YSI_gscSpacer);
-	// Body.
-	for (new i = 3 * cellbytes, j = 3 * cellbytes + numargs() * cellbytes, a = 0; i != j; i += cellbytes)
-	{
-		#emit LCTRL          5
-		#emit LOAD.S.alt     i
-		#emit ADD
-		#emit LOAD.I
-		#emit STOR.S.pri     a
-		YSI_VAPrintF(" | %38s | ", a);
-	}
-	// Footer.
-	YSI_Print(YSI_gscSpacer);
-	YSI_Print(YSI_gscHeader);
+	#if _YSI_SAFE_STARTUP
+		if (YSI_gsObnoxiousHeader)
+		{
+			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_gscObnoxiousHeader0),
+			YSI_Print(YSI_gscObnoxiousHeader1),
+			YSI_Print(YSI_gscObnoxiousHeader2),
+			YSI_Print(YSI_gscObnoxiousHeader3),
+			YSI_Print(YSI_gscObnoxiousHeader4),
+			YSI_Print(YSI_gscObnoxiousHeader5),
+			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_gscHeader),
+			YSI_gsObnoxiousHeader = false,
+			YSI_gsFirstHeader = false;
+		}
+		else
+	#endif
+		if (YSI_gsFirstHeader)
+		{
+			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_gscHeader),
+			YSI_gsFirstHeader = false;
+		}
+		// Header.
+		YSI_Print(YSI_gscSpacer);
+		// Body.
+		for (new i = 3 * cellbytes, j = 3 * cellbytes + numargs() * cellbytes, a = 0; i != j; i += cellbytes)
+		{
+			#emit LCTRL          5
+			#emit LOAD.S.alt     i
+			#emit ADD
+			#emit LOAD.I
+			#emit STOR.S.pri     a
+			YSI_VAPrintF(" | %38s | ", a);
+		}
+		// Footer.
+		YSI_Print(YSI_gscSpacer);
+		YSI_Print(YSI_gscHeader);
 }
 
 stock Server_PrintIntroPart(...)
 {
-#if !defined YSI_NO_OBNOXIOUS_HEADER
-	if (YSI_gsObnoxiousHeader)
-	{
-		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscObnoxiousHeader0),
-		YSI_Print(YSI_gscObnoxiousHeader1),
-		YSI_Print(YSI_gscObnoxiousHeader2),
-		YSI_Print(YSI_gscObnoxiousHeader3),
-		YSI_Print(YSI_gscObnoxiousHeader4),
-		YSI_Print(YSI_gscObnoxiousHeader5),
-		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscHeader),
-		YSI_gsObnoxiousHeader = false,
-		YSI_gsFirstHeader = false;
-	}
-	else
-#endif
-	if (YSI_gsFirstHeader)
-	{
-		YSI_Print(YSI_gscMiniGap),
-		YSI_Print(YSI_gscHeader),
-		YSI_gsFirstHeader = false;
-	}
-	// Header.
-	if (YSI_gsNewPart)
-	{
-		YSI_gsNewPart = false;
-		YSI_Print(YSI_gscSpacer);
-	}
-	// Body.
-	for (new i = 3 * cellbytes, j = 3 * cellbytes + numargs() * cellbytes, a = 0; i != j; i += cellbytes)
-	{
-		#emit LCTRL          5
-		#emit LOAD.S.alt     i
-		#emit ADD
-		#emit LOAD.I
-		#emit STOR.S.pri     a
-		YSI_VAPrintF(" | %38s | ", a);
-	}
+	#if _YSI_SAFE_STARTUP
+		if (YSI_gsObnoxiousHeader)
+		{
+			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_gscObnoxiousHeader0),
+			YSI_Print(YSI_gscObnoxiousHeader1),
+			YSI_Print(YSI_gscObnoxiousHeader2),
+			YSI_Print(YSI_gscObnoxiousHeader3),
+			YSI_Print(YSI_gscObnoxiousHeader4),
+			YSI_Print(YSI_gscObnoxiousHeader5),
+			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_gscHeader),
+			YSI_gsObnoxiousHeader = false,
+			YSI_gsFirstHeader = false;
+		}
+		else
+	#endif
+		if (YSI_gsFirstHeader)
+		{
+			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_gscHeader),
+			YSI_gsFirstHeader = false;
+		}
+		// Header.
+		if (YSI_gsNewPart)
+		{
+			YSI_gsNewPart = false;
+			YSI_Print(YSI_gscSpacer);
+		}
+		// Body.
+		for (new i = 3 * cellbytes, j = 3 * cellbytes + numargs() * cellbytes, a = 0; i != j; i += cellbytes)
+		{
+			#emit LCTRL          5
+			#emit LOAD.S.alt     i
+			#emit ADD
+			#emit LOAD.I
+			#emit STOR.S.pri     a
+			YSI_VAPrintF(" | %38s | ", a);
+		}
 }
 
 stock Server_FinishIntroPart()
@@ -571,11 +574,16 @@ stock Server_GetLongCallDefault()
 
 static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 {
+	#if !_YSI_SAFE_STARTUP
+		printf("Unsafe YSI signed by: %s", YSI_gcUnsafeStartupContract);
+	#endif
 	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
 	{
 		// Loaded from a file.
-		Server_PrintIntroMessage("   File loaded from YSI code cache.");
-		R@("OnCachedInit", "");
+		#if _YSI_SAFE_STARTUP
+			Server_PrintIntroMessage("   File loaded from YSI code cache.");
+		#endif
+			R@("OnCachedInit", "");
 	}
 	else
 	{
@@ -615,9 +623,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			#endif
 		#endif
 			Server_DisableLongCall();
-		#if defined YSI_NO_OPTIMISATION_MESSAGE
-			#pragma unused jit
-		#else
+		#if _YSI_SAFE_STARTUP
 			if (jit)
 			{
 				Server_PrintIntroPart(
@@ -641,31 +647,40 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					YSI_gscInitMsgD
 				);
 			}
+		#else
+			#pragma unused jit
 		#endif
 		#if defined ScriptInit_OnCodeInit
 			ScriptInit_OnCodeInit();
 		#endif
+		#if _YSI_SAFE_STARTUP
 			Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
 			Server_FinishIntroPart();
+		#endif
 		#if !defined YSI_NO_MODE_CACHE
 			E_SCRIPTINIT_STATE
 				tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
-			// Set the variable to something unique for next load.  This will be written out, thus
-			// loaded in next time.
+			// Set the variable to something unique for next load.  This will be
+			// written out, thus loaded in next time.
 			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
-			Server_PrintIntroPart(
-				" Dumping \"YSI_CACHE.amx\", this may",
-				"     take a little bit of time.",
-				YSI_gscMiniGap,
-				YSI_gscInitMsgD
-			);
+			#if _YSI_SAFE_STARTUP
+				Server_PrintIntroPart(
+					" Dumping \"YSI_CACHE.amx\", this may",
+					"     take a little bit of time.",
+					YSI_gscMiniGap,
+					YSI_gscInitMsgD
+				);
+			#endif
 			if (DumpAMX_Write(name))
 			{
-				Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
-				Server_FinishIntroPart();
-				// Clear this flag after dumping.  This is so we can tell when a mode is cached.
-				YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
-				#if !defined YSI_NO_CACHE_MESSAGE
+				#if _YSI_SAFE_STARTUP
+					Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
+					Server_FinishIntroPart();
+				#endif
+					// Clear this flag after dumping.  This is so we can tell
+					// when a mode is cached.
+					YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
+				#if _YSI_SAFE_STARTUP
 					Server_PrintIntroMessage(
 						"    File dumped to YSI code cache:",
 						YSI_gscMiniGap,
@@ -687,10 +702,12 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			}
 			else
 			{
-				Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscFailed);
-				Server_FinishIntroPart();
-				YSI_g_sScriptInitState = tmp;
-				P:E("YSI code cache write failed");
+				#if _YSI_SAFE_STARTUP
+					Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscFailed);
+					Server_FinishIntroPart();
+				#endif
+					YSI_g_sScriptInitState = tmp;
+					P:E("YSI code cache write failed");
 			}
 		#endif
 			Server_EnableLongCall();
@@ -713,8 +730,10 @@ public OnJITCompile()
 		return 0;
 	}
 	YSI_gsStartTime = gettime();
-	ResolveYSIScriptfileDirs();
-	DEBUG_MAYBE_DUMP(YSI_PreInitFile, YSI_gscInitMsgA);
+	#if _YSI_SAFE_STARTUP
+		ResolveYSIScriptfileDirs();
+	#endif
+	DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
 	YSI_g_sScriptInitState |= E_SCRIPTINIT_STATE_JITING;
 	if (!ScriptInit_CallOnCodeInit(true, false))
 		return 0;
@@ -727,7 +746,7 @@ public OnJITCompile()
 	{
 		Debug_Print0("\7*** YSI Warning: JIT disabled");
 	}
-	DEBUG_MAYBE_DUMP(YSI_PostInitFile, YSI_gscInitMsgB);
+	DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
 	Server_FinishIntroMessage();
 	return ret;
 }
@@ -810,8 +829,10 @@ public OnScriptInit(id)
 	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
 		YSI_gsStartTime = gettime();
-		ResolveYSIScriptfileDirs();
-		DEBUG_MAYBE_DUMP(YSI_PreInitFile, YSI_gscInitMsgA);
+		#if _YSI_SAFE_STARTUP
+			ResolveYSIScriptfileDirs();
+		#endif
+		DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
 		if (!ScriptInit_CallOnCodeInit(false, true))
 			return 0;
 	}
@@ -828,7 +849,7 @@ public OnScriptInit(id)
 	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
 		// Dump the final assembly of this script so we can inspect it.
-		DEBUG_MAYBE_DUMP(YSI_PostInitFile, YSI_gscInitMsgB);
+		DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
 	}
 	Server_FinishIntroMessage();
 	ScriptInit_OnFilterScriptInit();
@@ -852,8 +873,10 @@ public OnFilterScriptInit()
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
 			YSI_gsStartTime = gettime();
-			ResolveYSIScriptfileDirs();
-			DEBUG_MAYBE_DUMP(YSI_PreInitFile, YSI_gscInitMsgA);
+			#if _YSI_SAFE_STARTUP
+				ResolveYSIScriptfileDirs();
+			#endif
+			DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
 			if (!ScriptInit_CallOnCodeInit(false, true))
 				return 0;
 		}
@@ -870,7 +893,7 @@ public OnFilterScriptInit()
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
 			// Dump the final assembly of this script so we can inspect it.
-			DEBUG_MAYBE_DUMP(YSI_PostInitFile, YSI_gscInitMsgB);
+			DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
 		}
 		Server_FinishIntroMessage();
 		#if defined YSI_LOCK_MODE
@@ -988,7 +1011,9 @@ public OnGameModeInit()
 	if (!YSI_FILTERSCRIPT && !YSI_OPEN_MP && !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
 		YSI_gsStartTime = gettime();
-		ResolveYSIScriptfileDirs();
+		#if _YSI_SAFE_STARTUP
+			ResolveYSIScriptfileDirs();
+		#endif
 	}
 	if (YSI_gsPurgeTimer)
 	{
@@ -1010,7 +1035,7 @@ public OnGameModeInit()
 			// Dump the final assembly of this script so we can inspect it.
 			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 			{
-				DEBUG_MAYBE_DUMP(YSI_PreInitFile, YSI_gscInitMsgA);
+				DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
 				if (!ScriptInit_CallOnCodeInit(false, false))
 					return 0;
 			}
@@ -1027,7 +1052,7 @@ public OnGameModeInit()
 			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 			{
 				// Dump the final assembly of this script so we can inspect it.
-				DEBUG_MAYBE_DUMP(YSI_PostInitFile, YSI_gscInitMsgB);
+				DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
 			}
 			Server_FinishIntroMessage();
 			#if defined YSI_LOCK_MODE

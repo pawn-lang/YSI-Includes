@@ -76,6 +76,10 @@ Optional plugins:
 #endif
 #define _INC_y_rconfix
 
+#if !_YSI_SAFE_STARTUP
+	#endinput
+#endif
+
 static stock const
 	YSI_gscOnClientCheckResponse[] = "FIXES_OnClientCheckResponse",
 	YSI_gscRconFixFS[] = "callbackfix.amx";

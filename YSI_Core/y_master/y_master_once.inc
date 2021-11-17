@@ -451,7 +451,9 @@ public OnYSIInit()
 		// This will fix `OnRconCommand` for the gamemode, so we can use the `module` commands.  It
 		// also takes up a filterscript slot, a fact we can abuse to get swap space while reloading
 		// modules (thus, even if you have the maximum modules loaded, you can still reload one).
-		y_rconfix_Load();
+		#if _YSI_SAFE_STARTUP
+			y_rconfix_Load();
+		#endif
 	#endif
 	// Properties get lost between script changes so we need to force a rebuild.
 	#if defined FIXES_ID
@@ -665,8 +667,11 @@ forward OnMasterSystemClose(id);
 		{
 			P:W("Module \"%s\" not loaded.", module);
 		}
-		// Free up a temporary filterscript slot for the swapping.  Handilly, we have one safe.
-		y_rconfix_Unload();
+		#if _YSI_SAFE_STARTUP
+			// Free up a temporary filterscript slot for the swapping.  Handily,
+			// we have one spare.
+			y_rconfix_Unload();
+		#endif
 		// We can't just use the default `reloads` command, because that will clear memory before
 		// the reload, thus we'll loose data.  Instead, we use a hack to load the FS twice at once!
 		// We just alternate which is loaded and unloaded statelessly - detect which method
@@ -684,7 +689,9 @@ forward OnMasterSystemClose(id);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
 				P:F("Could not reload module \"%s\"", module);
-				y_rconfix_Load();
+				#if _YSI_SAFE_STARTUP
+					y_rconfix_Load();
+				#endif
 				return false;
 			}
 			else

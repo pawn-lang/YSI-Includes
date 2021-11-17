@@ -433,71 +433,59 @@ stock bool:Server_CrashDetectExists()
 	return false;
 }
 
-static stock YVers_PrintHeader()
-{
-	new
-		version[32], os[10];
-	Script_GetIncludesString(version, os),
-	format(version, sizeof (version), "Server:      %s - %s", version, os),
-	Server_PrintIntroPart(version),
-	Script_GetCompilerString(version, os),
-	format(version, sizeof (version), "Compiler:    %s - %s", version, os),
-	Server_PrintIntroPart(version),
-	Server_PrintIntroPart("YSI:         " YSI_VERSION),
-	format(version, sizeof (version), "Started:     %d", Server_GetStartTime()),
-	Server_PrintIntroPart(version),
-	Server_GetJITString(version),
-	format(version, sizeof (version), "JIT:         %s", version),
-	Server_PrintIntroPart(version);
-	if (!Server_CrashDetectExists())
+#if _YSI_SAFE_STARTUP
+	static stock YVers_PrintHeader()
 	{
-		Server_PrintIntroPart("Crashdetect: <none>");
+		new
+			version[32], os[10];
+		Script_GetIncludesString(version, os),
+		format(version, sizeof (version), "Server:      %s - %s", version, os),
+		Server_PrintIntroPart(version),
+		Script_GetCompilerString(version, os),
+		format(version, sizeof (version), "Compiler:    %s - %s", version, os),
+		Server_PrintIntroPart(version),
+		Server_PrintIntroPart("YSI:         " YSI_VERSION),
+		format(version, sizeof (version), "Started:     %d", Server_GetStartTime()),
+		Server_PrintIntroPart(version),
+		Server_GetJITString(version),
+		format(version, sizeof (version), "JIT:         %s", version),
+		Server_PrintIntroPart(version);
+		if (!Server_CrashDetectExists())
+		{
+			Server_PrintIntroPart("Crashdetect: <none>");
+		}
+		else if (!Server_HasLongCallControl() && Server_IsLinuxHost())
+		{
+			Server_PrintIntroPart(
+				"Crashdetect: <warning>",
+				"",
+				"  Crashdetect has been found, but no",
+				"     long-call controls have been",
+				"   detected.  If you see a console",
+				" warning about slow execution during",
+				"   startup (only), ignore it - this",
+				" message cannot be disabled on Linux",
+				"    in some releases due to a bug."
+			);
+		}
+		else
+		{
+			Server_PrintIntroPart("Crashdetect: <found>");
+		}
+		Server_FinishIntroPart();
 	}
-	else if (!Server_HasLongCallControl() && Server_IsLinuxHost())
-	{
-		Server_PrintIntroPart(
-			"Crashdetect: <warning>",
-			"",
-			"  Crashdetect has been found, but no",
-			"     long-call controls have been",
-			"   detected.  If you see a console",
-			" warning about slow execution during",
-			"   startup (only), ignore it - this",
-			" message cannot be disabled on Linux",
-			"    in some releases due to a bug."
-		);
-	}
-	else
-	{
-		Server_PrintIntroPart("Crashdetect: <found>");
-	}
-	Server_FinishIntroPart();
-}
 
-#if defined _YSI_NO_VERSION_CHECK
-	stock YVers_StartCheck()
-	{
-		#if defined YSI_LOCK_MODE
-			new
-				x = 10;
-			YSI_gLockData[YSI_gLockData[2]++] += (YSI_gLockData[3] = floatround(floatpower(x, 2))) - 2,
-			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04,
-			YSI_gLockData[2] *= (6 * x) - 5;
-		#endif
-		return 1;
-	}
-#else
-/*-------------------------------------------------------------------------*//*+
- * <returns>
- *  OnYSIInit
- * </returns>
- * <remarks>
- *      Constructor.  Checks to see if there is a new version available.  This
- *      code can not use ANY of the rest of YSI as it needs to be included by
- *      everything first.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-	
+	/*---------------------------------------------------------------------*//*+
+	 * <returns>
+	 *  OnYSIInit
+	 * </returns>
+	 * <remarks>
+	 *      Constructor.  Checks to see if there is a new version available.
+	 *      This code can not use ANY of the rest of YSI as it needs to be
+	 *      included by everything first.
+	 * </remarks>
+	 *//*--------------------------------------------------------------------**/
+		
 	#if !defined HTTP
 		stock YVers_StartCheck()
 		{
@@ -509,13 +497,15 @@ static stock YVers_PrintHeader()
 				YSI_gLockData[x / 3] = x * 10,
 				YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
 			#endif
-			YVers_PrintHeader(),
-			Server_PrintIntroMessage(
-				"Unable to check the latest YSI version",
-				"- please watch the forums and github:",
-				"",
-				"         https://git.io/5.x"
-			);
+				YVers_PrintHeader();
+			#if _YSI_SAFE_STARTUP
+				Server_PrintIntroMessage(
+					"Unable to check the latest YSI version",
+					"- please watch the forums and github:",
+					"",
+					"         https://git.io/5.x"
+				);
+			#endif
 			return 1;
 		}
 		
@@ -629,6 +619,17 @@ static stock YVers_PrintHeader()
 			}
 		}
 	}
-	
+#else
+	stock YVers_StartCheck()
+	{
+		#if defined YSI_LOCK_MODE
+			new
+				x = 10;
+			YSI_gLockData[YSI_gLockData[2]++] += (YSI_gLockData[3] = floatround(floatpower(x, 2))) - 2,
+			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04,
+			YSI_gLockData[2] *= (6 * x) - 5;
+		#endif
+		return 1;
+	}
 #endif
 
