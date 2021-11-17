@@ -2675,15 +2675,18 @@ stock PrintArg(n)
 stock File:ftemporary_(name[], const ext[] = "tmp", len = sizeof (name))
 {
 	// Ensure there's space for `NULL` and at least one character.
-	if (len - strlen(ext) - 13 < YSI_TEMP_FILE_LENGTH)
+	new
+		path = strlen(YSI_TEMP_FILE_DIR);
+	if (len - strlen(ext) - path - 3 < YSI_TEMP_FILE_LENGTH)
 	{
 		return File:0;
 	}
 	do
 	{
-		name[0] = '\0';
-		strcat(name, "YSI/temp/_", 11);
-		for (new i = 10; i < YSI_TEMP_FILE_LENGTH + 10; ++i)
+		name[0] = '\0',
+		strcat(name, YSI_TEMP_FILE_DIR, len),
+		name[path] = '_';
+		for (new i = path; i++ < YSI_TEMP_FILE_LENGTH + path; )
 		{
 			new ch = random(62);
 			if (ch < 26)
@@ -2700,9 +2703,9 @@ stock File:ftemporary_(name[], const ext[] = "tmp", len = sizeof (name))
 			}
 		}
 		// `len` is passed here as a courtesy, we know there's space.
-		name[YSI_TEMP_FILE_LENGTH + 10] = '.';
-		name[YSI_TEMP_FILE_LENGTH + 11] = '\0';
-		strcat(name[YSI_TEMP_FILE_LENGTH + 11], ext, len);
+		name[path + YSI_TEMP_FILE_LENGTH + 1] = '.',
+		name[path + YSI_TEMP_FILE_LENGTH + 2] = '\0',
+		strcat(name[path + YSI_TEMP_FILE_LENGTH + 2], ext, len);
 	}
 	while (fexist(name));
 	// Open the file, to ensure it is created.

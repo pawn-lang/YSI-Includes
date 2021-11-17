@@ -161,6 +161,9 @@ Optional plugins:
 stock const
 	YSI_TEMP_FILE_NAME[] = ".tempfiles";
 
+stock
+	YSI_TEMP_FILE_DIR[10];
+
 // These three includes are just defines.  They declare no code at all, only
 // variables.
 #include "y_globaltags"

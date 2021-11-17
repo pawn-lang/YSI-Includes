@@ -581,6 +581,23 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 	}
 	else
 	{
+		new
+			tmp;
+		// Determine where to store temp files.
+		if ((tmp = _:fopen("YSI/temp/.gitkeep", io_write)))
+		{
+			YSI_TEMP_FILE_DIR = "YSI/temp/",
+			fclose(File:tmp);
+		}
+		else if ((tmp = _:fopen("temp/.gitkeep", io_write)))
+		{
+			YSI_TEMP_FILE_DIR = "temp/",
+			fclose(File:tmp);
+		}
+		else
+		{
+			YSI_TEMP_FILE_DIR = "";
+		}
 		#if defined YSI_NO_MODE_CACHE
 			#pragma unused fs
 		#else
@@ -650,8 +667,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
 			Server_FinishIntroPart();
 		#if !defined YSI_NO_MODE_CACHE
-			new
-				E_SCRIPTINIT_STATE:tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
+			tmp = _:(YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED));
 			// Set the variable to something unique for next load.  This will be written out, thus
 			// loaded in next time.
 			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
@@ -666,7 +682,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
 				Server_FinishIntroPart();
 				// Clear this flag after dumping.  This is so we can tell when a mode is cached.
-				YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
+				YSI_g_sScriptInitState = (E_SCRIPTINIT_STATE:tmp) | E_SCRIPTINIT_STATE_DUMPED;
 				#if !defined YSI_NO_CACHE_MESSAGE
 					Server_PrintIntroMessage(
 						"    File dumped to YSI code cache:",
@@ -691,7 +707,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			{
 				Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscFailed);
 				Server_FinishIntroPart();
-				YSI_g_sScriptInitState = tmp;
+				YSI_g_sScriptInitState = E_SCRIPTINIT_STATE:tmp;
 				P:E("YSI code cache write failed");
 			}
 		#endif
