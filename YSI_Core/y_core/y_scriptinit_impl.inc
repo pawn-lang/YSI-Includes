@@ -346,12 +346,14 @@ static stock ScriptInit_Dump(const filename[], const message[])
 	format(file, sizeof (file), filename, YSI_gsStartTime);
 	Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD);
 	Server_DisableLongCall();
-	DisasmWrite(file);
+	if (DisasmWrite(file))
+	{
+		// 1 week.
+		fautocleanup(file, 60 * 60 * 24 * 7);
+	}
 	Server_EnableLongCall();
 	Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
 	Server_FinishIntroPart();
-	// 1 week.
-	fautocleanup(file, 60 * 60 * 24 * 7);
 }
 
 stock Server_PrintIntroMessage(...)
