@@ -2817,6 +2817,7 @@ enum E_YSI_DIR
 #define YSI_DIR_LENGTH (12)
 
 static stock const
+	YSI_gscYSI[] = "YSI",
 	YSI_gscGitkeep[] = ".gitkeep";
 
 static stock
@@ -2850,17 +2851,16 @@ stock bool:GetYSIScriptfilesDir(E_YSI_DIR:dir, output[YSI_DIR_LENGTH])
 		new
 			test[YSI_DIR_LENGTH + sizeof (YSI_gscGitkeep)],
 			File:file;
-		strcat(test, "YSI"),
-		strcat(test, YSI_gscDefaultDirs[dir]),
+		strcat(test, YSI_gscYSI),
+		strcat(test, YSI_gsDefaultDirs[dir]),
 		strcat(test, YSI_gscGitkeep);
 		if ((file = fopen(test, io_write)))
 		{
 			// Found `YSI/dir/`.
 			return
-				output[0] = '\0',
-				strcat(output, "YSI"),
-				strcat(output, YSI_gscDefaultDirs[dir]),
-				strcpy(YSI_gscDefaultDirs[dir], output),
+				strcpy(output, YSI_gscYSI),
+				strcat(output, YSI_gsDefaultDirs[dir]),
+				strcpy(YSI_gsDefaultDirs[dir], output),
 				fclose(file),
 				true;
 		}
@@ -2868,19 +2868,18 @@ stock bool:GetYSIScriptfilesDir(E_YSI_DIR:dir, output[YSI_DIR_LENGTH])
 		{
 			// Found `dir/`.
 			return
-				output[0] = '\0',
-				strcat(output, YSI_gscDefaultDirs[dir][1]),
-				strcpy(YSI_gscDefaultDirs[dir], output),
+				strcpy(output, YSI_gsDefaultDirs[dir][1]),
+				strcpy(YSI_gsDefaultDirs[dir], output),
 				fclose(file),
 				false;
 		}
 		// Found nothing.
 		return
-			YSI_gscDefaultDirs[dir][0] = '\0',
+			YSI_gsDefaultDirs[dir][0] = '\0',
 			output[0] = '\0',
 			false;
 	}
-	strcpy(output, YSI_gscDefaultDirs[dir]);
+	strcpy(output, YSI_gsDefaultDirs[dir]);
 	return true;
 }
 
