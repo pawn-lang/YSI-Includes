@@ -424,7 +424,7 @@ TEST__ INI_Parse0()
 	if (IsWindows())
 	{
 		YSI_g_sINI_Parse0 = 0;
-		INI_ParseFile("YSI\\test_ini\\test1.ini", "TestINI_Parse0_%s", .bFileFirst = true);
+		INI_ParseFile("YSI\\tests\\y_ini\\test1.ini", "TestINI_Parse0_%s", .bFileFirst = true);
 		ASSERT_EQ(YSI_g_sINI_Parse0, 10);
 	}
 //	YSI_g_sINI_Parse0 = 0;
