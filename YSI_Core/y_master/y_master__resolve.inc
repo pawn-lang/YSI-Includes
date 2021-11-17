@@ -229,7 +229,11 @@ Optional plugins:
 
 // Default to cloud.
 #if YSIM_HAS_MASTER && !_YSIM_IS_CLIENT && !_YSIM_IS_SERVER && !_YSIM_IS_STUB
-	#define _YSIM_IS_CLOUD 1
+	#if _YSI_SAFE_STARTUP
+		#define _YSIM_IS_CLOUD 1
+	#else
+		#error Select SERVER/CLIENT/STUB for y_master with `ENABLE_YSI_UNSAFE_STARTUP`.
+	#endif
 #else
 	#define _YSIM_IS_CLOUD 0
 #endif
