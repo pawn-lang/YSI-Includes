@@ -2850,22 +2850,22 @@ stock ResolveYSIScriptfileDirs()
 {
 	new
 		bool:first = true,
-		path[38] = "    scriptfiles/", // The `16`s below are this length.
+		path[38] = "     /scriptfiles/", // The `18`s below are this length.
 		test[YSI_DIR_LENGTH + 8],
 		File:file;
 	for (new E_YSI_DIR:dir = E_YSI_DIR:0; dir != E_YSI_DIR; ++dir)
 	{
 		if (YSI_gsDefaultDirs[dir][0] == '/')
 		{
-			path[16] = '\0',
+			path[18] = '\0',
 			strcat(path, YSI_gscYSI),
 			strcat(path, YSI_gsDefaultDirs[dir]),
-			strcpy(test, path[16]),
+			strcpy(test, path[18]),
 			strcat(test, ".gitkeep");
 			if ((file = fopen(test, io_write)))
 			{
 				// Found `YSI/dir/`.
-				strcpy(YSI_gsDefaultDirs[dir], path[16]),
+				strcpy(YSI_gsDefaultDirs[dir], path[18]),
 				fclose(file);
 			}
 			else
@@ -2879,7 +2879,7 @@ stock ResolveYSIScriptfileDirs()
 				if ((file = fopen(test[4], io_write)))
 				{
 					// Found `dir/`.
-					strcpy(YSI_gsDefaultDirs[dir], path[20]),
+					strcpy(YSI_gsDefaultDirs[dir], path[18 + 4]),
 					fclose(file);
 				}
 				else
@@ -2892,7 +2892,6 @@ stock ResolveYSIScriptfileDirs()
 	}
 	if (!first)
 	{
-		Server_PrintIntroPart("");
 		Server_FinishIntroPart();
 	}
 }
