@@ -232,6 +232,8 @@ Optional plugins:
 #define PP_RIGHT_ANGLE_BRACKET<> >
 #define PP_NULL<>
 
+#define PP_MRET(%0)(%1)(%3) PP_MRET(){%0(%1);}DO%3E_%0(){}
+
 main()
 {
 	#if defined PP_main
