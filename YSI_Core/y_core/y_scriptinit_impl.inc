@@ -326,8 +326,8 @@ static stock const
 	YSI_gscInitMsgD[] = "            Please wait...",
 	YSI_gscDone[] =     "                Done!",
 	YSI_gscFailed[] =   "               Failed!",
-	YSI_PreInitFile[] = "YSI/debug/pre-init.%d.asm",
-	YSI_PostInitFile[] = "YSI/debug/post-init.%d.asm";
+	YSI_PreInitFile[] = "pre-init",
+	YSI_PostInitFile[] = "post-init";
 
 static stock
 	YSI_gsStartTime,
@@ -342,16 +342,17 @@ forward bool:fautocleanup(const name[], maxAge);
 static stock ScriptInit_Dump(const filename[], const message[])
 {
 	new file[48];
-	format(file, sizeof (file), filename, YSI_gsStartTime);
-	Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD);
+	GetYSIScriptfilesDir(E_YSI_DIR_DEBUG, file),
+	format(file, sizeof (file), "%s%s.%d.asm", file, filename, YSI_gsStartTime),
+	Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD),
 	Server_DisableLongCall();
 	if (DisasmWrite(file))
 	{
 		// 1 week.
 		fautocleanup(file, 60 * 60 * 24 * 7);
 	}
-	Server_EnableLongCall();
-	Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
+	Server_EnableLongCall(),
+	Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone),
 	Server_FinishIntroPart();
 }
 

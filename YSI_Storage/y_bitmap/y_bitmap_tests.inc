@@ -71,6 +71,13 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+static stock MakeYBitmapTestPath(const file[])
+{
+	new ret[48] = "YSI/tests/y_bitmap/";
+	strcat(ret, file);
+	return ret;
+}
+
 TEST__ y_bitmap_Fade1()
 {
 	new
@@ -83,7 +90,7 @@ TEST__ y_bitmap_Fade1()
 			Bitmap_WritePixel(ctx, x, y, Y_RED | (x * y / 256));
 		}
 	}
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Fade1.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Fade1.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -100,7 +107,7 @@ TEST__ y_bitmap_Fade2()
 			Bitmap_WritePixel(ctx, x, y, Y_GREEN | x);
 		}
 	}
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Fade2.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Fade2.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -110,7 +117,7 @@ TEST__ y_bitmap_Rect1()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0xFF);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Rect1.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Rect1.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -121,7 +128,7 @@ TEST__ y_bitmap_Rect2()
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 128, 192, Y_YELLOW | 0x80);
 	Bitmap_DrawRectangle(ctx, 128, 64, 192, 192, Y_ALICEBLUE | 0x80);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Rect2.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Rect2.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -132,7 +139,7 @@ TEST__ y_bitmap_Rect3()
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 148, 192, Y_YELLOW | 0x80);
 	Bitmap_DrawRectangle(ctx, 108, 64, 192, 192, Y_ALICEBLUE | 0x80);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Rect3.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Rect3.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -150,7 +157,7 @@ TEST__ y_bitmap_FadeRect1()
 		}
 	}
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0x40);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/FadeRect1.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("FadeRect1.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -177,7 +184,7 @@ TEST__ y_bitmap_Diagonal1()
 				Bitmap_WritePixel(ctx, x, y, X11_BLUE);
 		}
 	}
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Diagonal1.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Diagonal1.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -194,7 +201,7 @@ TEST__ y_bitmap_Diagonal2()
 			Bitmap_WritePixel(ctx, x, y, Y_GREEN | (YSI_gBitmapAlpha[y % YSI_gBitmapAlphaY]{x % YSI_gBitmapAlphaX}));
 		}
 	}
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Diagonal2.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Diagonal2.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -211,7 +218,7 @@ TEST__ y_bitmap_Diagonal3()
 			Bitmap_WritePixel(ctx, x, y, Y_GREEN | (YSI_gBitmapAlpha[y % YSI_gBitmapAlphaY]{x % YSI_gBitmapAlphaX}));
 		}
 	}
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Diagonal3.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Diagonal3.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -228,7 +235,7 @@ TEST__ y_bitmap_Diagonal4()
 			Bitmap_WritePixel(ctx, x, y, Y_GREEN | (YSI_gBitmapAlpha[y % YSI_gBitmapAlphaY]{x % YSI_gBitmapAlphaX}));
 		}
 	}
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Diagonal4.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Diagonal4.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -245,7 +252,7 @@ TEST__ y_bitmap_Diagonal5()
 			Bitmap_WritePixel(ctx, x, y, Y_GREEN | (YSI_gBitmapAlpha[y % YSI_gBitmapAlphaY]{x % YSI_gBitmapAlphaX}));
 		}
 	}
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Diagonal5.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Diagonal5.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -262,7 +269,7 @@ TEST__ y_bitmap_Diagonal6()
 			Bitmap_WritePixel(ctx, x, y, Y_GREEN | (YSI_gBitmapAlpha[y % YSI_gBitmapAlphaY]{x % YSI_gBitmapAlphaX}));
 		}
 	}
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Diagonal6.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Diagonal6.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -280,7 +287,7 @@ TEST__ y_bitmap_Pattern1()
 		}
 	}
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0x40, .fillPattern = PATTERN(SOLID));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Pattern1.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Pattern1.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -298,7 +305,7 @@ TEST__ y_bitmap_Pattern2()
 		}
 	}
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0x40, .fillPattern = PATTERN(DIAGONAL));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Pattern2.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Pattern2.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -316,7 +323,7 @@ TEST__ y_bitmap_Pattern3()
 		}
 	}
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0x40, .fillPattern = PATTERN(DIAGONAL, STRIPE1 = 16));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Pattern3.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Pattern3.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -334,7 +341,7 @@ TEST__ y_bitmap_Pattern4()
 		}
 	}
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0x40, .fillPattern = PATTERN(DIAGONAL, STRIPE2 = 16));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Pattern4.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Pattern4.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -352,7 +359,7 @@ TEST__ y_bitmap_Pattern5()
 		}
 	}
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0x40, .fillPattern = PATTERN(DIAGONAL, STRIPE1 = 16, STRIPE2 = 8));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Pattern5.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Pattern5.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -370,7 +377,7 @@ TEST__ y_bitmap_Pattern6()
 		}
 	}
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0x40, .fillPattern = PATTERN(DIAGONAL, STRIPE1 = 16, STRIPE2 = 8, RIGHT));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Pattern6.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Pattern6.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -388,7 +395,7 @@ TEST__ y_bitmap_Pattern7()
 		}
 	}
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0x40, .fillPattern = PATTERN(STRIPED));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Pattern7.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Pattern7.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -406,7 +413,7 @@ TEST__ y_bitmap_Pattern8()
 		}
 	}
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0x40, .fillPattern = PATTERN(STRIPED, HORIZONTAL));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Pattern8.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Pattern8.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -416,7 +423,7 @@ TEST__ y_bitmap_Border1()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Border1.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Border1.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -426,7 +433,7 @@ TEST__ y_bitmap_Border2()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE, .linePattern = PATTERN(SOLID, BORDER = 16));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Border2.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Border2.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -436,7 +443,7 @@ TEST__ y_bitmap_Border3()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE, .linePattern = PATTERN(DIAGONAL, BORDER = 32));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Border3.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Border3.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -446,7 +453,7 @@ TEST__ y_bitmap_Border4()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE, .linePattern = PATTERN(DOTTED));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Border4.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Border4.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -456,7 +463,7 @@ TEST__ y_bitmap_Border5()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE, .linePattern = PATTERN(DOTTED, STRIPE1 = 16, STRIPE2 = 4));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Border5.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Border5.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -466,7 +473,7 @@ TEST__ y_bitmap_Border6()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE, .linePattern = PATTERN(DOTTED, STRIPE1 = 1, STRIPE2 = 8));
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Border6.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Border6.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -476,7 +483,7 @@ TEST__ y_bitmap_Large1()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(512, 512);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_LAVENDER | 0xFF);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Large1.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Large1.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -486,7 +493,7 @@ TEST__ y_bitmap_Large2()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(512, 512);
 	Bitmap_DrawRectangle(ctx, 0, 0, 256, 256, Y_LAVENDER | 0xFF);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Large2.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Large2.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -496,7 +503,7 @@ TEST__ y_bitmap_Large3()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(512, 512);
 	Bitmap_DrawRectangle(ctx, 64, 64, 512, 512, Y_LAVENDER | 0xFF);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Large3.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Large3.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -506,7 +513,7 @@ TEST__ y_bitmap_Large4()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(512, 512);
 	Bitmap_DrawRectangle(ctx, 64, 64, 70, 500, Y_LAVENDER | 0xFF);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Large4.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Large4.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -516,7 +523,7 @@ TEST__ y_bitmap_Large5()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(512, 512);
 	Bitmap_DrawRectangle(ctx, 64, 64, 500, 70, Y_LAVENDER | 0xFF);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Large5.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Large5.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -526,7 +533,7 @@ TEST__ y_bitmap_VLarge1()
 		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(1024, 1024);
 	Bitmap_DrawRectangle(ctx, 256, 256, 768, 768, Y_MINTCREAM | 0xFF);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/VLarge1.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("VLarge1.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -569,7 +576,7 @@ TEST__ y_bitmap_Interpolations()
 	BlendThree(ctx, 120, 0x00FFFFFF, 0xFF00FFFF);
 	BlendThree(ctx, 180, 0xFFFF00FF, 0x0000FFFF);
 	BlendThree(ctx, 240, 0xFFFFFFFF, 0x000000FF);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Interpolations.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Interpolations.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
@@ -582,20 +589,20 @@ TEST__ y_bitmap_Alpha1()
 	BlendThree(ctx, 120, 0xFF0000FF, 0x00FF0080);
 	BlendThree(ctx, 180, 0xFF000055, 0x00FF00AA);
 	BlendThree(ctx, 240, 0xFF0000AA, 0x00FF0055);
-	Bitmap_Write(ctx, "YSI/tests/y_bitmap/Alpha1.bmp");
+	Bitmap_Write(ctx, MakeYBitmapTestPath("Alpha1.bmp"));
 	Bitmap_Destroy(ctx);
 }
 
 TEST__ y_bitmap_read()
 {
 	new Bitmap:ctx;
-	fremove("YSI/tests/y_bitmap/ReadOutput1.bmp");
-	if (Bitmap_Read(ctx, "YSI/tests/y_bitmap/ReadInput1.bmp"))
+	fremove(MakeYBitmapTestPath("ReadOutput1.bmp"));
+	if (Bitmap_Read(ctx, MakeYBitmapTestPath("ReadInput1.bmp")))
 	{
 		Bitmap_DrawRectangle(ctx, 10, 315, 610, 325, 0xFF000080);
-		Bitmap_Write(ctx, "YSI/tests/y_bitmap/ReadOutput1.bmp");
+		Bitmap_Write(ctx, MakeYBitmapTestPath("ReadOutput1.bmp"));
 		Bitmap_Destroy(ctx);
 	}
-	ASSERT(!!fexist("YSI/tests/y_bitmap/ReadOutput1.bmp"));
+	ASSERT(!!fexist(MakeYBitmapTestPath("ReadOutput1.bmp")));
 }
 

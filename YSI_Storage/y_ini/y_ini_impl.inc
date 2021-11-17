@@ -1383,27 +1383,6 @@ stock bool:INI_WriteFloat(INI:file, const name[], Float:data, accuracy = 6)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#if defined YSI_TESTS
-	INI_ResetLineReader()
-	{
-		if (YSI_g_sExtendedLine)
-		{
-			free(YSI_g_sExtendedLine);
-			YSI_g_sExtendedLine = NO_ALLOC;
-		}
-	}
-#endif
-
-/*-------------------------------------------------------------------------*//**
- * <param name="file">File to write to.</param>
- * <param name="name">Data name.</param>
- * <param name="data">Float data.</param>
- * <param name="accuracy">number of decimal places to write.</param>
- * <remarks>
- *  Wrapper for INI_AddToBuffer for floats.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
 static stock INI_ReadFile(File:fhnd, parent[FUNCTION_LENGTH], bool:handle = true)
 {
 	P:5("INI_ReadFile called: %d, %s, %d", _:fhnd, parent, handle);

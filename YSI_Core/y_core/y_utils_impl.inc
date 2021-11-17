@@ -2803,17 +2803,6 @@ stock File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAg
 #define ftemporary() ftemp_()
 #define _ALS_ftemporary
 
-enum E_YSI_DIR
-{
-	E_YSI_DIR_DEBUG,
-	E_YSI_DIR_FIXES,
-	E_YSI_DIR_TEMP,
-	E_YSI_DIR_TESTS,
-	E_YSI_DIR_TEXT,
-	E_YSI_DIR_USERS,
-	E_YSI_DIR_YDBG,
-}
-
 static stock const
 	YSI_gscYSI[] = "YSI";
 

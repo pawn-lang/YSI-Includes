@@ -163,6 +163,17 @@ stock const
 
 #define YSI_DIR_LENGTH (12)
 
+enum E_YSI_DIR
+{
+	E_YSI_DIR_DEBUG,
+	E_YSI_DIR_FIXES,
+	E_YSI_DIR_TEMP,
+	E_YSI_DIR_TESTS,
+	E_YSI_DIR_TEXT,
+	E_YSI_DIR_USERS,
+	E_YSI_DIR_YDBG,
+}
+
 forward bool:DumpAMX_Write(const filename[]);
 forward bool:GetYSIScriptfilesDir(E_YSI_DIR:dir, output[YSI_DIR_LENGTH]);
 forward bool:DisasmWrite(const filename[]);
