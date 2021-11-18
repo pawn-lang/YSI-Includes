@@ -251,16 +251,22 @@ stock Hooks_MakeShortName(name[64])
 		name = "OnScriptInit@A";
 		len = 14;
 	}
+#if _YSI_SAFE_STARTUP || defined FILTERSCRIPT
 	else if (!strcmp(name, "OnFilterScriptInit"))
 	{
+		// Only needs renaming in filterscripts.
 		name = "OnScriptInit@B";
 		len = 14;
 	}
+#endif
+#if _YSI_SAFE_STARTUP || !defined FILTERSCRIPT
 	else if (!strcmp(name, "OnGameModeInit"))
 	{
+		// Only needs renaming in gamemodes.
 		name = "OnScriptInit@C";
 		len = 14;
 	}
+#endif
 	return len;
 }
 
