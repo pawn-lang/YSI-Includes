@@ -319,6 +319,6 @@ TEST__ y_malloc_Deferred()
 	{
 		mset(alloc, i, i * 2);
 	}
-	SetTimerEx("y_malloc_Deferred", 10, false, "i", _:alloc);
+	YSI_SetTimerEx("y_malloc_Deferred", 10, false, "i", _:alloc);
 }
 

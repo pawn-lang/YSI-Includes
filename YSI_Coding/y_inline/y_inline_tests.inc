@@ -270,6 +270,7 @@ public y_inline7a()
 	inline func7a()
 	{
 	}
+	#pragma unused func7a
 }
 
 TEST__ y_inline7b()

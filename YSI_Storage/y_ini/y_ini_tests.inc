@@ -86,7 +86,7 @@ static stock MakeYINITestPath(const file[])
 		ret;
 }
 
-static INI_IDENTIFY_LINE_TYPE(str[MAX_INI_LINE], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
+static e_INI_LINE_TYPE:INI_IDENTIFY_LINE_TYPE(str[MAX_INI_LINE], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
 {
 	YSI_g_sExtendedName[0] = '\0';
 	if (YSI_g_sExtendedLine)

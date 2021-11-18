@@ -948,6 +948,7 @@ TEST__ y_iter_Starting()
 	ASSERT(!Iter_Contains(Test1_y_iter, j));
 	j = Iter_Alloc(Test1_y_iter);
 	ASSERT(Iter_Contains(Test1_y_iter, j));
+	#pragma unused i
 }
 
 TEST__ y_iter_Iter_Contains1()
