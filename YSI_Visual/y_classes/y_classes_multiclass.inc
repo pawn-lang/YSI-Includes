@@ -181,7 +181,7 @@ P:D(Class_Skin(classid));
 HOOK__ OnYSIInit()
 {
 	#if !_YSIM_IS_CLIENT
-		if (!YSI_FILTERSCRIPT)
+		if (!Script_IsFilterscript())
 		{
 			// This code placement is not generic.
 			new

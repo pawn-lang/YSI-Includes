@@ -172,54 +172,27 @@ P:D(Text_FindEntry(set, name, hash));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-public OnGameModeInit()
+public OnScriptInit()
 {
-	P:1("TextInt_OnGameModeInit called");
-	#if defined TextInt_OnGameModeInit
-		TextInt_OnGameModeInit();
-	#endif
-	if (!YSI_FILTERSCRIPT)
-	{
-		//Text_SpecialInit();
-		Text_LoadAll();
-		_Styles_SpecialInit();
-	}
-	P:1("TextInt_OnGameModeInit ended");
-	return 1;
-}
-
-#if defined _ALS_OnGameModeInit
-	#undef OnGameModeInit
-#else
-	#define _ALS_OnGameModeInit
-#endif
-#define OnGameModeInit TextInt_OnGameModeInit
-#if defined TextInt_OnGameModeInit
-	forward TextInt_OnGameModeInit();
-#endif
-
-public OnFilterScriptInit()
-{
-	P:1("TextInt_OnFilterScriptInit called");
-	// DO ALL (MOST) OTHER INITS FIRST.  ENSURE WE COME LATER.
-	#if defined TextInt_OnFilterScriptInit
-		TextInt_OnFilterScriptInit();
+	P:1("TextInt_OnScriptInit called");
+	#if defined TextInt_OnScriptInit
+		TextInt_OnScriptInit();
 	#endif
 	//Text_SpecialInit();
 	Text_LoadAll();
 	_Styles_SpecialInit();
-	P:1("TextInt_OnFilterScriptInit ended");
+	P:1("TextInt_OnScriptInit ended");
 	return 1;
 }
 
-#if defined _ALS_OnFilterScriptInit
-	#undef OnFilterScriptInit
+#if defined _ALS_OnScriptInit
+	#undef OnScriptInit
 #else
-	#define _ALS_OnFilterScriptInit
+	#define _ALS_OnScriptInit
 #endif
-#define OnFilterScriptInit TextInt_OnFilterScriptInit
-#if defined TextInt_OnFilterScriptInit
-	forward TextInt_OnFilterScriptInit();
+#define OnScriptInit TextInt_OnScriptInit
+#if defined TextInt_OnScriptInit
+	forward TextInt_OnScriptInit();
 #endif
 
 /*-------------------------------------------------------------------------*//**

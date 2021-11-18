@@ -632,7 +632,7 @@ public OnCodeInit()
 	new
 		s = 0;
 	// Test the ADDRESS of the variable, not the value.
-	#emit CONST.pri YSI_FILTERSCRIPT
+	#emit CONST.pri @_
 	#emit STOR.S.pri s
 	if (s)
 	{
@@ -643,7 +643,7 @@ public OnCodeInit()
 			return 1;
 		#endif
 	}
-	P:F("YSI_FILTERSCRIPT == 0");
+	P:F("@_ == 0");
 	while (s != 10000000) ++s;
 	#emit CONST.pri 0
 	#emit SCTRL     6

@@ -286,65 +286,25 @@ HOOK__ OnYSIInit()
 	}*/
 }
 
-public OnGameModeInit()
+public OnScriptInit()
 {
-	if (YSI_FILTERSCRIPT)
-	{
-		//if (YSI_g_sCallbacks & 16)
-		//{
-			//Users_OnGameModeInit();
-			#if defined Users_OnGameModeInit
-				Users_OnGameModeInit();
-			#endif
-		//}
-	}
-	else
-	{
-		#if defined Users_OnGameModeInit
-			Users_OnGameModeInit();
-		#endif
-		//Users_OnGameModeInit();
-		Users_DoUpgrade0();
-		Users_DoUpgrade1();
-	}
-	return 1;
-}
-
-#if defined _ALS_OnGameModeInit
-	#undef OnGameModeInit
-#else
-	#define _ALS_OnGameModeInit
-#endif
-#if defined Users_OnGameModeInit
-	forward Users_OnGameModeInit();
-#endif
-#define OnGameModeInit(%0) Users_OnGameModeInit(%0)
-
-public OnFilterScriptInit()
-{
-	//if (funcidx("Users_OnGameModeInit") != -1)
-	//{
-	//	YSI_g_sCallbacks |= 16;
-	//}
-	// DO ALL (MOST) OTHER INITS FIRST.  ENSURE WE COME LATER.
-	//Users_OnFilterScriptInit();
-	#if defined Users_OnFilterScriptInit
-		Users_OnFilterScriptInit();
+	#if defined Users_OnScriptInit
+		Users_OnScriptInit();
 	#endif
 	Users_DoUpgrade0();
 	Users_DoUpgrade1();
 	return 1;
 }
 
-#if defined _ALS_OnFilterScriptInit
-	#undef OnFilterScriptInit
+#if defined _ALS_OnScriptInit
+	#undef OnScriptInit
 #else
-	#define _ALS_OnFilterScriptInit
+	#define _ALS_OnScriptInit
 #endif
-#if defined Users_OnFilterScriptInit
-	forward Users_OnFilterScriptInit();
+#if defined Users_OnScriptInit
+	forward Users_OnScriptInit();
 #endif
-#define OnFilterScriptInit(%0) Users_OnFilterScriptInit(%0)
+#define OnScriptInit(%0) Users_OnScriptInit(%0)
 
 HOOK__ OnPlayerConnect(playerid)
 {

@@ -96,12 +96,12 @@ CHAIN_HOOK(ScriptInit)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(ScriptInit)
 
-#if _YSI_SAFE_STARTUP
-	stock
-		bool:YSI_FILTERSCRIPT = false,
+stock
+	#if _YSI_SAFE_STARTUP
 		bool:YSI_GAMEMODE = false,
-		bool:YSI_OPEN_MP = false;
-#endif
+		bool:YSI_OPEN_MP = false,
+	#endif
+		bool:YSI_FILTERSCRIPT = false;
 
 enum E_SCRIPTINIT_STATE (<<= 1)
 {
@@ -1072,7 +1072,7 @@ ScriptInit_Purge_retry:
 				ScriptInit_PurgeTemporaries();
 			}
 		#if _YSI_SAFE_STARTUP
-			if (!YSI_FILTERSCRIPT)
+			if (!Script_IsFilterscript())
 		#endif
 			{
 		#if _YSI_SAFE_STARTUP

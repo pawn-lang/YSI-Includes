@@ -212,6 +212,13 @@ forward bool:DumpAMX_Write(const filename[]);
 forward GetYSIScriptfilesDir(E_YSI_DIR:dir);
 forward bool:DisasmWrite(const filename[]);
 
+// Public variable.  `-1` initially in case there is no master system.  So we respond to everything.
+#define Master_ID() (@_)
+#if !defined FIXES_ID
+	public
+		@_ = -1;
+#endif
+
 // These three includes are just defines.  They declare no code at all, only
 // variables.
 #include "y_globaltags"

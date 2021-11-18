@@ -523,7 +523,7 @@ public OnScriptExit()
 		}
 		// This is the main gamemode.  All "modules" are firmly attached to this, and should be
 		// unloaded with it.  First mark them as unavailable for handoff, then shut them down.
-		if (!YSI_FILTERSCRIPT)
+		if (!Script_IsFilterscript())
 		{
 			// First call - disable all modules.
 			CallRemoteFunction("Master_OnCloseModules", "");
@@ -550,7 +550,7 @@ public OnScriptExit()
 	CallRemoteFunction("OnMasterSystemClose", "i", Master_ID());
 	#if !defined YSI_NO_MASTER
 		YSI_gModuleShutdown = true;
-		if (!YSI_FILTERSCRIPT)
+		if (!Script_IsFilterscript())
 		{
 			// Second call - pass off module data.
 			setproperty(8, "", YSIM_STRING + 2, "");
@@ -754,7 +754,7 @@ forward OnMasterSystemClose(id);
 	public OnRconCommand(cmd[])
 	{
 		P:1("MasterOnce_OnRconCommand called");
-		if (!YSI_FILTERSCRIPT)
+		if (!Script_IsFilterscript())
 		{
 			if (!strcmp(cmd, "loadmodule ", true, 11))
 			{

@@ -156,7 +156,7 @@ public OnPlayerDisconnect(playerid, reason)
 
 public OnPlayerConnect(playerid)
 {
-	if (!YSI_FILTERSCRIPT)
+	if (!Script_IsFilterscript())
 	{
 		YSI_SendClientCheck(playerid, 0x48, 0, 0, 2);
 		YSI_g_sTimers[playerid] = YSI_SetTimerEx("OnAndroidTimer", 10000, true, "i", playerid);

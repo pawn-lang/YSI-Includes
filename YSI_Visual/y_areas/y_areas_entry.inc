@@ -391,23 +391,7 @@ MASTER_HOOK__ OnYSIInit()
 	return 1;
 }
 
-#if !defined FILTERSCRIPT
-	HOOK__ OnGameModeInit()
-	{
-		if (!YSI_FILTERSCRIPT)
-		{
-			new
-				buffer = 0;
-			YSI_g_sHasCallbacks = 0;
-			YSI_g_sHasCallbacks |= funcidx("OnPlayerEnterArea") == -1 ? 0 : 1;
-			YSI_g_sHasCallbacks |= funcidx("OnPlayerLeaveArea") == -1 ? 0 : 2;
-			YSI_g_sHasCallbacks |= AMX_GetPublicEntry(0, buffer, "@yH_PlayerEnterArea") ? 4 : 0;
-			YSI_g_sHasCallbacks |= AMX_GetPublicEntry(0, buffer, "@yH_PlayerLeaveArea") ? 8 : 0;
-		}
-	}
-#endif
-
-HOOK__ OnFilterScriptInit()
+HOOK__ OnScriptInit()
 {
 	new
 		buffer = 0;
@@ -417,6 +401,7 @@ HOOK__ OnFilterScriptInit()
 	YSI_g_sHasCallbacks |= AMX_GetPublicEntry(0, buffer, "@yH_PlayerEnterArea") ? 4 : 0;
 	YSI_g_sHasCallbacks |= AMX_GetPublicEntry(0, buffer, "@yH_PlayerLeaveArea") ? 8 : 0;
 }
+
 
 /*-------------------------------------------------------------------------*//**
  * <returns>

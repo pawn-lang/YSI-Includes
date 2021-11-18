@@ -306,55 +306,15 @@ HOOK__ OnYSIInit()
 	}
 }
 
-public OnGameModeInit()
+public OnScriptInit()
 {
-	if (YSI_FILTERSCRIPT)
-	{
-		#if defined Users_OnGameModeInit
-			Users_OnGameModeInit();
-		#endif
-	}
-	else
-	{
-		#if defined Users_OnGameModeInit
-			Users_OnGameModeInit();
-		#endif
-		Users_DoUpgrade0();
-		Users_DoUpgrade1();
-	}
-	return 1;
-}
-
-#if defined _ALS_OnGameModeInit
-	#undef OnGameModeInit
-#else
-	#define _ALS_OnGameModeInit
-#endif
-#if defined Users_OnGameModeInit
-	forward Users_OnGameModeInit();
-#endif
-#define OnGameModeInit(%0) Users_OnGameModeInit(%0)
-
-public OnFilterScriptInit()
-{
-	// DO ALL (MOST) OTHER INITS FIRST.  ENSURE WE COME LATER.
-	#if defined Users_OnFilterScriptInit
-		Users_OnFilterScriptInit();
+	#if defined Users_OnScriptInit
+		Users_OnScriptInit();
 	#endif
 	Users_DoUpgrade0();
 	Users_DoUpgrade1();
 	return 1;
 }
-
-#if defined _ALS_OnFilterScriptInit
-	#undef OnFilterScriptInit
-#else
-	#define _ALS_OnFilterScriptInit
-#endif
-#if defined Users_OnFilterScriptInit
-	forward Users_OnFilterScriptInit();
-#endif
-#define OnFilterScriptInit(%0) Users_OnFilterScriptInit(%0)
 
 HOOK__ OnPlayerConnect(playerid)
 {
