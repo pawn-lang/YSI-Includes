@@ -96,10 +96,12 @@ CHAIN_HOOK(ScriptInit)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(ScriptInit)
 
-stock
-	bool:YSI_FILTERSCRIPT = false,
-	bool:YSI_GAMEMODE = false,
-	bool:YSI_OPEN_MP = false;
+#if _YSI_SAFE_STARTUP
+	stock
+		bool:YSI_FILTERSCRIPT = false,
+		bool:YSI_GAMEMODE = false,
+		bool:YSI_OPEN_MP = false;
+#endif
 
 enum E_SCRIPTINIT_STATE (<<= 1)
 {
@@ -775,7 +777,9 @@ public OnJITCompile()
 		Debug_Print0("\7*** YSI Warning: JIT disabled");
 	}
 	DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
-	Server_FinishIntroMessage();
+	#if _YSI_SAFE_STARTUP
+		Server_FinishIntroMessage();
+	#endif
 	return ret;
 }
 
@@ -858,9 +862,7 @@ public OnJITCompile()
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
 			YSI_gsStartTime = gettime();
-			#if _YSI_SAFE_STARTUP
-				ResolveYSIScriptfileDirs();
-			#endif
+			ResolveYSIScriptfileDirs();
 			DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
 			if (!ScriptInit_CallOnCodeInit(false, true))
 				return 0;
@@ -895,64 +897,68 @@ public OnJITCompile()
 #if _YSI_SAFE_STARTUP || defined FILTERSCRIPT
 	public OnFilterScriptInit()
 	{
-		state _ALS : _ALS_go;
-#if _YSI_SAFE_STARTUP
-		YSI_FILTERSCRIPT = true;
-		if (!YSI_OPEN_MP)
-#endif
-		{
-			state _script_init_fix_state : true;
-			// Dump the final assembly of this script so we can inspect it.
-			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+			state _ALS : _ALS_go;
+		#if _YSI_SAFE_STARTUP
+			YSI_FILTERSCRIPT = true;
+			if (!YSI_OPEN_MP)
+		#endif
 			{
-				YSI_gsStartTime = gettime();
-				#if _YSI_SAFE_STARTUP
-					ResolveYSIScriptfileDirs();
-				#endif
-				DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
-				if (!ScriptInit_CallOnCodeInit(false, true))
-					return 0;
-			}
-			YVers_StartCheck();
-			Server_FinishIntroMessage();
-			#if defined ScriptInit_OnYSIInit
-				ScriptInit_OnYSIInit();
-			#endif
-			ScriptInit_PreInitFuncs_();
-			#if defined ScriptInit_OnScriptInit
-				ScriptInit_OnScriptInit();
-			#endif
-			ScriptInit_PostInitFuncs_();
-			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
-			{
+				state _script_init_fix_state : true;
 				// Dump the final assembly of this script so we can inspect it.
-				DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
-			}
-			Server_FinishIntroMessage();
-			#if defined YSI_LOCK_MODE
-				#if defined FILTERSCRIPT
-					if (strlen(YSI_gLockData[5]) !=
-						floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
-						floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
-						floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) + 1 +
-						floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil))
-					{
-						y_lock 6;
-					}
-				#else
-					new
-						str[16];
-					format(str, sizeof (str), "%c%c%c%c%c%c%c%c%c%c%c", '%', 'd', '.', '%', 'd', '.', '%', 'd', '.', '%', 'd');
-					format(str, sizeof (str), str, _LOCK_IP_0, _LOCK_IP_1, _LOCK_IP_2, _LOCK_IP_3);
-					if (strlen(YSI_gLockData[5]) != strlen(str))
-					{
-						y_lock 7;
-					}
+				if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+				{
+					YSI_gsStartTime = gettime();
+					#if _YSI_SAFE_STARTUP
+						ResolveYSIScriptfileDirs();
+					#endif
+					DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
+					if (!ScriptInit_CallOnCodeInit(false, true))
+						return 0;
+				}
+				YVers_StartCheck();
+				#if _YSI_SAFE_STARTUP
+					Server_FinishIntroMessage();
 				#endif
-			#endif
-			ScriptInit_OnFilterScriptInit();
-		}
-		return 1;
+				#if defined ScriptInit_OnYSIInit
+					ScriptInit_OnYSIInit();
+				#endif
+				ScriptInit_PreInitFuncs_();
+				#if defined ScriptInit_OnScriptInit
+					ScriptInit_OnScriptInit();
+				#endif
+				ScriptInit_PostInitFuncs_();
+				if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+				{
+					// Dump the final assembly of this script so we can inspect it.
+					DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
+				}
+				#if _YSI_SAFE_STARTUP
+					Server_FinishIntroMessage();
+				#endif
+				#if defined YSI_LOCK_MODE
+					#if defined FILTERSCRIPT
+						if (strlen(YSI_gLockData[5]) !=
+							floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
+							floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
+							floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) + 1 +
+							floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil))
+						{
+							y_lock 6;
+						}
+					#else
+						new
+							str[16];
+						format(str, sizeof (str), "%c%c%c%c%c%c%c%c%c%c%c", '%', 'd', '.', '%', 'd', '.', '%', 'd', '.', '%', 'd');
+						format(str, sizeof (str), str, _LOCK_IP_0, _LOCK_IP_1, _LOCK_IP_2, _LOCK_IP_3);
+						if (strlen(YSI_gLockData[5]) != strlen(str))
+						{
+							y_lock 7;
+						}
+					#endif
+				#endif
+				ScriptInit_OnFilterScriptInit();
+			}
+			return 1;
 	}
 #endif
 
@@ -1041,87 +1047,91 @@ ScriptInit_Purge_retry:
 #if _YSI_SAFE_STARTUP || !defined FILTERSCRIPT
 	public OnGameModeInit()
 	{
-		state _ALS : _ALS_go;
-		// Kill an existing purge if one exists in this script.
-#if _YSI_SAFE_STARTUP
-		if (!YSI_FILTERSCRIPT && !YSI_OPEN_MP && !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
-#else
-		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
-#endif
-		{
-			YSI_gsStartTime = gettime();
-			#if _YSI_SAFE_STARTUP
-				ResolveYSIScriptfileDirs();
-			#endif
-		}
-		if (YSI_gsPurgeTimer)
-		{
-			KillTimer(YSI_gsPurgeTimer);
-			YSI_gsPurgeTimer = 0;
-		}
-		// Start a new purge if this is the first script called.
-		if (!existproperty(8, "Purge"))
-		{
-			setproperty(8, "Purge", 1);
-			ScriptInit_PurgeTemporaries();
-		}
-#if _YSI_SAFE_STARTUP
-		if (!YSI_FILTERSCRIPT)
-#endif
-		{
-#if _YSI_SAFE_STARTUP
-			YSI_GAMEMODE = true;
-			if (!YSI_OPEN_MP)
-#endif
+			state _ALS : _ALS_go;
+			// Kill an existing purge if one exists in this script.
+		#if _YSI_SAFE_STARTUP
+			if (!YSI_FILTERSCRIPT && !YSI_OPEN_MP && !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+		#else
+			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+		#endif
 			{
-				state _script_init_fix_state : false;
-				// Dump the final assembly of this script so we can inspect it.
-				if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
-				{
-					DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
-					if (!ScriptInit_CallOnCodeInit(false, false))
-						return 0;
-				}
-				YVers_StartCheck();
-				Server_FinishIntroMessage();
-				#if defined ScriptInit_OnYSIInit
-					ScriptInit_OnYSIInit();
-				#endif
-				ScriptInit_PreInitFuncs_();
-				#if defined ScriptInit_OnScriptInit
-					ScriptInit_OnScriptInit();
-				#endif
-				ScriptInit_PostInitFuncs_();
-				if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
-				{
-					// Dump the final assembly of this script so we can inspect it.
-					DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
-				}
-				Server_FinishIntroMessage();
-				#if defined YSI_LOCK_MODE
-					if (YSI_gLockData[
-						floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
-						floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
-						floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) +
-						floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil)] == '\0'
-					 || YSI_gLockData[
-						floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
-						floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
-						floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) + 1 +
-						floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil) + 1] == '\0')
-					{
-						y_lock 8;
-					}
+				YSI_gsStartTime = gettime();
+				#if _YSI_SAFE_STARTUP
+					ResolveYSIScriptfileDirs();
 				#endif
 			}
-		}
-#if _YSI_SAFE_STARTUP
-		if (!YSI_OPEN_MP)
-#endif
-		{
-			ScriptInit_OnGameModeInit();
-		}
-		return 1;
+			if (YSI_gsPurgeTimer)
+			{
+				KillTimer(YSI_gsPurgeTimer);
+				YSI_gsPurgeTimer = 0;
+			}
+			// Start a new purge if this is the first script called.
+			if (!existproperty(8, "Purge"))
+			{
+				setproperty(8, "Purge", 1);
+				ScriptInit_PurgeTemporaries();
+			}
+		#if _YSI_SAFE_STARTUP
+			if (!YSI_FILTERSCRIPT)
+		#endif
+			{
+		#if _YSI_SAFE_STARTUP
+				YSI_GAMEMODE = true;
+				if (!YSI_OPEN_MP)
+		#endif
+				{
+					state _script_init_fix_state : false;
+					// Dump the final assembly of this script so we can inspect it.
+					if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+					{
+						DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
+						if (!ScriptInit_CallOnCodeInit(false, false))
+							return 0;
+					}
+					YVers_StartCheck();
+					#if _YSI_SAFE_STARTUP
+						Server_FinishIntroMessage();
+					#endif
+					#if defined ScriptInit_OnYSIInit
+						ScriptInit_OnYSIInit();
+					#endif
+					ScriptInit_PreInitFuncs_();
+					#if defined ScriptInit_OnScriptInit
+						ScriptInit_OnScriptInit();
+					#endif
+					ScriptInit_PostInitFuncs_();
+					if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+					{
+						// Dump the final assembly of this script so we can inspect it.
+						DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
+					}
+					#if _YSI_SAFE_STARTUP
+						Server_FinishIntroMessage();
+					#endif
+					#if defined YSI_LOCK_MODE
+						if (YSI_gLockData[
+							floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
+							floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
+							floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) +
+							floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil)] == '\0'
+						 || YSI_gLockData[
+							floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
+							floatround(floatlog(_LOCK_LEN_1 + 1), floatround_ceil) + 1 +
+							floatround(floatlog(_LOCK_LEN_2 + 1), floatround_ceil) + 1 +
+							floatround(floatlog(_LOCK_LEN_3 + 1), floatround_ceil) + 1] == '\0')
+						{
+							y_lock 8;
+						}
+					#endif
+				}
+			}
+		#if _YSI_SAFE_STARTUP
+			if (!YSI_OPEN_MP)
+		#endif
+			{
+				ScriptInit_OnGameModeInit();
+			}
+			return 1;
 	}
 #endif
 
