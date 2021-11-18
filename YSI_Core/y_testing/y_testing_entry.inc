@@ -500,7 +500,7 @@ Testing_Run_before_fail:
 		{
 #if defined INCLUDE_TESTS || defined RUN_TESTS
 			++YSI_g_sFails;
-			printf("Test did not complete (possible crash).\n");
+			print("Test did not complete (possible crash).\n");
 #endif
 		}
 		if (YSI_g_sFails != fails)
@@ -646,6 +646,7 @@ Testing_Next_retry:
 						printf("    - %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
 						YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
 					}
+					print(" ");
 				}
 				else
 				{
@@ -659,7 +660,6 @@ Testing_Next_retry:
 						#endif
 					#endif
 				}
-				TEST_REPORT(" ");
 				R@("OnPlayerTestsComplete", "iiii", playerid, YSI_g_sTests, YSI_g_sChecks, YSI_g_sFails);
 			}
 			// If the test needs a player but doesn't ask them anything
@@ -866,7 +866,7 @@ stock Testing_RunAll()
 #endif
 	Testing_Run(tests, checks, fails, _, true);
 #if !defined JUST_TEST && defined YSI_TESTS
-	if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
+	if (YSI_g_sTestResult != 9) print("*** Test system verification failed!");
 	else
 #endif
 	{
@@ -880,6 +880,7 @@ stock Testing_RunAll()
 				printf("    - %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
 				YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
 			}
+			print(" ");
 		}
 		else
 		{
@@ -888,7 +889,6 @@ stock Testing_RunAll()
 			Server_FinishIntroMessage();
 #endif
 		}
-		TEST_REPORT(" ");
 	}
 	endTime = tickcount();
 	printf("*** Time: %dms", endTime - startTime);
