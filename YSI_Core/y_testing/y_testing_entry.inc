@@ -563,11 +563,9 @@ Testing_Run_after_fail:
 	{
 		if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid)) //!Player_IsNPC(playerid))
 		{
-			TEST_REPORT(" ");
-			TEST_REPORT("  ||==========================||  ");
-			TEST_REPORT("  || STARTING PLAYER TESTS... ||  ");
-			TEST_REPORT("  ||==========================||  ");
-			TEST_REPORT(" ");
+#if !defined LIGHT_TEST_REPORT
+			Server_PrintIntroMessage("       STARTING PLAYER TESTS...");
+#endif
 			YSI_g_sTests = 0;
 			YSI_g_sChecks = 0;
 			YSI_g_sFails = 0;
@@ -650,16 +648,12 @@ Testing_Next_retry:
 				}
 				else
 				{
-					#if defined YSI_NO_DIALOG_ASK
-						TEST_REPORT(" ");
-						TEST_REPORT("  ||==========================||  ");
-						TEST_REPORT("  || PLEASE NOTE FAILED TESTS ||  ");
-						TEST_REPORT("  ||==========================||  ");
-					#else
-						TEST_REPORT(" ");
-						TEST_REPORT("  ||==========================||  ");
-						TEST_REPORT("  || ALL PLAYER TESTS PASSED! ||  ");
-						TEST_REPORT("  ||==========================||  ");
+					#if !defined LIGHT_TEST_REPORT
+						#if defined YSI_NO_DIALOG_ASK
+							Server_PrintIntroMessage("       PLEASE NOTE FAILED TESTS.");
+						#else
+							Server_PrintIntroMessage("       ALL PLAYER TESTS PASSED!");
+						#endif
 					#endif
 				}
 				TEST_REPORT(" ");
@@ -798,11 +792,9 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 				if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid)) //!Player_IsNPC(playerid))
 				{
 					YSI_g_sCurTest = YSI_g_sFailTests = 0;
-					TEST_REPORT(" ");
-					TEST_REPORT("  ||==========================||  ");
-					TEST_REPORT("  || STARTING PLAYER TESTS... ||  ");
-					TEST_REPORT("  ||==========================||  ");
-					TEST_REPORT(" ");
+					#if !defined LIGHT_TEST_REPORT
+						Server_PrintIntroMessage("       STARTING PLAYER TESTS...");
+					#endif
 					YSI_g_sTests = 0;
 					YSI_g_sChecks = 0;
 					YSI_g_sFails = 0;
@@ -864,11 +856,9 @@ stock Testing_RunAll()
 	// The timing will be inaccurate since it will include many prints, but it
 	// isn't that important to be accurate.
 	startTime = tickcount();
-	TEST_REPORT(" ");
-	TEST_REPORT("  ||===================||  ");
-	TEST_REPORT("  || STARTING TESTS... ||  ");
-	TEST_REPORT("  ||===================||  ");
-	TEST_REPORT(" ");
+#if !defined LIGHT_TEST_REPORT
+	Server_PrintIntroMessage("           STARTING TESTS...");
+#endif
 	Testing_Run(tests, checks, fails, _, true);
 #if !defined JUST_TEST && defined YSI_TESTS
 	if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
@@ -888,10 +878,9 @@ stock Testing_RunAll()
 		}
 		else
 		{
-			TEST_REPORT(" ");
-			TEST_REPORT("  ||===================||  ");
-			TEST_REPORT("  || ALL TESTS PASSED! ||  ");
-			TEST_REPORT("  ||===================||  ");
+#if !defined LIGHT_TEST_REPORT
+			Server_PrintIntroMessage("           ALL TESTS PASSED!");
+#endif
 		}
 		TEST_REPORT(" ");
 	}
