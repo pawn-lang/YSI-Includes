@@ -564,7 +564,8 @@ Testing_Run_after_fail:
 		if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid)) //!Player_IsNPC(playerid))
 		{
 #if !defined LIGHT_TEST_REPORT
-			Server_PrintIntroMessage("       STARTING PLAYER TESTS...");
+			Server_PrintIntroMessage("       STARTING PLAYER TESTS..."),
+			Server_FinishIntroMessage();
 #endif
 			YSI_g_sTests = 0;
 			YSI_g_sChecks = 0;
@@ -650,9 +651,11 @@ Testing_Next_retry:
 				{
 					#if !defined LIGHT_TEST_REPORT
 						#if defined YSI_NO_DIALOG_ASK
-							Server_PrintIntroMessage("       PLEASE NOTE FAILED TESTS.");
+							Server_PrintIntroMessage("       PLEASE NOTE FAILED TESTS."),
+							Server_FinishIntroMessage();
 						#else
-							Server_PrintIntroMessage("       ALL PLAYER TESTS PASSED!");
+							Server_PrintIntroMessage("       ALL PLAYER TESTS PASSED!"),
+							Server_FinishIntroMessage();
 						#endif
 					#endif
 				}
@@ -793,7 +796,8 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 				{
 					YSI_g_sCurTest = YSI_g_sFailTests = 0;
 					#if !defined LIGHT_TEST_REPORT
-						Server_PrintIntroMessage("       STARTING PLAYER TESTS...");
+						Server_PrintIntroMessage("       STARTING PLAYER TESTS..."),
+						Server_FinishIntroMessage();
 					#endif
 					YSI_g_sTests = 0;
 					YSI_g_sChecks = 0;
@@ -857,7 +861,8 @@ stock Testing_RunAll()
 	// isn't that important to be accurate.
 	startTime = tickcount();
 #if !defined LIGHT_TEST_REPORT
-	Server_PrintIntroMessage("           STARTING TESTS...");
+	Server_PrintIntroMessage("           STARTING TESTS..."),
+	Server_FinishIntroMessage();
 #endif
 	Testing_Run(tests, checks, fails, _, true);
 #if !defined JUST_TEST && defined YSI_TESTS
@@ -879,7 +884,8 @@ stock Testing_RunAll()
 		else
 		{
 #if !defined LIGHT_TEST_REPORT
-			Server_PrintIntroMessage("           ALL TESTS PASSED!");
+			Server_PrintIntroMessage("           ALL TESTS PASSED!"),
+			Server_FinishIntroMessage();
 #endif
 		}
 		TEST_REPORT(" ");
