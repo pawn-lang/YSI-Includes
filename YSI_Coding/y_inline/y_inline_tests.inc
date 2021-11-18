@@ -280,6 +280,7 @@ TEST__ y_inline7b()
 	inline func7b()
 	{
 	}
+	#pragma unused func7b
 	ASSERT_EQ(y_inline_Get(using func7a, cc), false);
 	ASSERT(y_inline_Get(using func7b, cc));
 	Callback_Release(cc);
