@@ -949,7 +949,14 @@ HOOK__ y_hooks_Crash@4()
 
 TEST__ y_hooks_Crash()
 {
-	CallLocalFunction("y_hooks_Crash", "");
-	Testing_SurpressOneFail();
+	if (Server_CrashDetectExists())
+	{
+		CallLocalFunction("y_hooks_Crash", "");
+		Testing_SurpressOneFail();
+	}
+	else
+	{
+		ASSERT(Server_CrashDetectExists());
+	}
 }
 
