@@ -50,6 +50,7 @@ public y_va_PublicTestFunction(vara, varb)
 	}
 	// Just use them so they can't be optimised out.
 	vara = clamp(varb, varc, vard);
+	#pragma unused vara
 }
 
 forward y_va_PublicRecurseFunction(const func[], vara);
