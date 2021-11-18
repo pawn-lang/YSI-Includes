@@ -79,7 +79,7 @@ Optional plugins:
 #if !_YSI_SAFE_STARTUP
 	#if defined YSI_FIX_CALLBACKS
 		forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
-	#endinput
+	#endif
 
 	#endinput
 #endif
