@@ -244,7 +244,7 @@ stock Hooks_MakeShortName(name[64])
 			strins(name, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT], pos);
 		}
 	}
-	// Hard-code initialisation hooks, because they don't work to well in the
+	// Hard-code initialisation hooks, because they don't work too well in the
 	// middle of the initialisation itself.
 	if (!strcmp(name, "OnScriptInit"))
 	{
