@@ -244,6 +244,23 @@ stock Hooks_MakeShortName(name[64])
 			strins(name, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT], pos);
 		}
 	}
+	// Hard-code initialisation hooks, because they don't work to well in the
+	// middle of the initialisation itself.
+	if (!strcmp(name, "OnScriptInit"))
+	{
+		name = "OnScriptInit@A";
+		len = 14;
+	}
+	else if (!strcmp(name, "OnFilterScriptInit"))
+	{
+		name = "OnScriptInit@B";
+		len = 14;
+	}
+	else if (!strcmp(name, "OnGameModeInit"))
+	{
+		name = "OnScriptInit@C";
+		len = 14;
+	}
 	return len;
 }
 

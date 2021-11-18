@@ -873,9 +873,7 @@ public OnJITCompile()
 			ScriptInit_OnYSIInit();
 		#endif
 		ScriptInit_PreInitFuncs_();
-		#if defined ScriptInit_OnScriptInit
-			ScriptInit_OnScriptInit();
-		#endif
+		CallLocalFunction("OnScriptInit@A", "");
 		ScriptInit_PostInitFuncs_();
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
@@ -883,8 +881,8 @@ public OnJITCompile()
 			DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
 		}
 		Server_FinishIntroMessage();
-		ScriptInit_OnFilterScriptInit();
-		ScriptInit_OnGameModeInit();
+		CallLocalFunction("OnScriptInit@B", "");
+		CallLocalFunction("OnScriptInit@C", "");
 		return 1;
 	}
 #endif
@@ -923,9 +921,7 @@ public OnJITCompile()
 					ScriptInit_OnYSIInit();
 				#endif
 				ScriptInit_PreInitFuncs_();
-				#if defined ScriptInit_OnScriptInit
-					ScriptInit_OnScriptInit();
-				#endif
+				CallLocalFunction("OnScriptInit@A", "");
 				ScriptInit_PostInitFuncs_();
 				if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 				{
@@ -956,7 +952,7 @@ public OnJITCompile()
 						}
 					#endif
 				#endif
-				ScriptInit_OnFilterScriptInit();
+				CallLocalFunction("OnScriptInit@B", "");
 			}
 			return 1;
 	}
@@ -1096,9 +1092,7 @@ ScriptInit_Purge_retry:
 						ScriptInit_OnYSIInit();
 					#endif
 					ScriptInit_PreInitFuncs_();
-					#if defined ScriptInit_OnScriptInit
-						ScriptInit_OnScriptInit();
-					#endif
+					CallLocalFunction("OnScriptInit@A", "");
 					ScriptInit_PostInitFuncs_();
 					if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 					{
@@ -1129,7 +1123,7 @@ ScriptInit_Purge_retry:
 			if (!YSI_OPEN_MP)
 		#endif
 			{
-				ScriptInit_OnGameModeInit();
+				CallLocalFunction("OnScriptInit@C", "");
 			}
 			return 1;
 	}
@@ -1211,15 +1205,16 @@ ScriptInit_Purge_retry:
 
 */
 
-//#undef OnCodeInit
 #define OnCodeInit ScriptInit_OnCodeInit
 #if defined ScriptInit_OnCodeInit
 	forward ScriptInit_OnCodeInit();
 #endif
 
-CHAIN_FORWARD:ScriptInit_OnScriptInit() = 1;
 #define _ALS_OnScriptInit
-#define OnScriptInit(%0) CHAIN_PUBLIC:ScriptInit_OnScriptInit(%0)
+#define OnScriptInit(%0) OnScriptInit@A(%0)
+#if defined OnScriptInit@A
+	forward OnScriptInit@A();
+#endif
 
 CHAIN_FORWARD:ScriptInit_OnJITCompile() = 1;
 #if defined _ALS_OnJITCompile
@@ -1230,23 +1225,27 @@ CHAIN_FORWARD:ScriptInit_OnJITCompile() = 1;
 #define OnJITCompile(%0) CHAIN_PUBLIC:ScriptInit_OnJITCompile(%0)
 
 #if _YSI_SAFE_STARTUP || defined FILTERSCRIPT
-	CHAIN_FORWARD:ScriptInit_OnFilterScriptInit() = 1;
 	#if defined _ALS_OnFilterScriptInit
 		#undef OnFilterScriptInit
 	#else
 		#define _ALS_OnFilterScriptInit
 	#endif
-	#define OnFilterScriptInit(%0) CHAIN_PUBLIC:ScriptInit_OnFilterScriptInit(%0)
+	#define OnFilterScriptInit( OnScriptInit@B(
+	#if defined OnScriptInit@B
+		forward OnScriptInit@B();
+	#endif
 #endif
 
 #if _YSI_SAFE_STARTUP || !defined FILTERSCRIPT
-	CHAIN_FORWARD:ScriptInit_OnGameModeInit() = 1;
 	#if defined _ALS_OnGameModeInit
 		#undef OnGameModeInit
 	#else
 		#define _ALS_OnGameModeInit
 	#endif
-	#define OnGameModeInit(%0) CHAIN_PUBLIC:ScriptInit_OnGameModeInit(%0)
+	#define OnGameModeInit( OnScriptInit@C(
+	#if defined OnScriptInit@C
+		forward OnScriptInit@C();
+	#endif
 #endif
 
 #if _YSI_SAFE_STARTUP || defined FILTERSCRIPT

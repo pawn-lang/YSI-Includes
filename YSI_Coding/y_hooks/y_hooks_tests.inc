@@ -131,16 +131,17 @@ TEST__ y_hooksOrdering()
 }
 
 static
-	bool:y_hooks_OnYSIInit_called = false;
+	bool:y_hooks_OnScriptInit_called = false;
 
-HOOK__ OnYSIInit()
+HOOK__ OnScriptInit()
 {
-	y_hooks_OnYSIInit_called = true;
+	printf("hi");
+	y_hooks_OnScriptInit_called = true;
 }
 
-TEST__ OnYSIInit()
+TEST__ OnScriptInit()
 {
-	ASSERT(y_hooks_OnYSIInit_called);
+	ASSERT(y_hooks_OnScriptInit_called);
 }
 
 static

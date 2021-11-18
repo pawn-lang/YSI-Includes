@@ -1037,10 +1037,12 @@ stock Utils_ChaosMod(playerid)
 	}
 }
 
-public OnChaosTimer(oid, playerid)
-{
-	Utils_ChaosMod(playerid);
-}
+#if _YSI_SAFE_STARTUP
+	public OnChaosTimer(oid, playerid)
+	{
+		Utils_ChaosMod(playerid);
+	}
+#endif
 
 #if !defined _inc_sscanf || 1
 	/*---------------------------------------------------------------------*//**
