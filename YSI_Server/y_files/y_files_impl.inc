@@ -73,46 +73,164 @@ Optional plugins:
 
 static stock const
 	YSI_gscBatCmd[] = !".dmc\0exe",  // "cmd.exe" byteswapped.
-	YSI_gscBatOperation[] = !"nepo"; // "open" byteswapped.
+	YSI_gscBatOperation[] = !"nepo", // "open" byteswapped.
+	YSI_gscBasePath[] = "/C scriptfiles\\YSI\\scripts\\",
+	YSI_gscArg1[] = "set arg1=scriptfiles\\%~1\r\nset arg1=%arg1:..=%\r\nset arg1=%arg1:\\\\=\\%\r\n",
+	YSI_gscArg2[] = "set arg2=scriptfiles\\%~2\r\nset arg2=%arg2:..=%\r\nset arg2=%arg2:\\\\=\\%\r\n",
+	YSI_gscMKDir[] = "YSI\\scripts\\mkdir.bat",
+	YSI_gscCopy[] = "YSI\\scripts\\copy.bat",
+	YSI_gscMove[] = "YSI\\scripts\\move.bat",
+	YSI_gscDone[] = "type nul > scriptfiles\\YSI\\.donescript\r\n";
 
-static stock bool:Files_WriteMKDirBat()
+static stock
+	YSI_gscBatParameters[128];
+
+static stock bool:Files_CallBat()
 {
-	new File:f = fopen("YSI\\scripts\\mkdir.bat", io_write);
-	if (f)
+	static const
+		dname[] = "YSI\\.donescript",
+	// Convert the normal string to a C string.
+	for (new i = 0; (YSI_gscBatParameters{i ^ 3} = YSI_gscBatParameters[i]); i++)
 	{
-		fwrite(f, "set dir=scriptfiles\\%~1\r\nset dir=%dir:..=%\r\nset dir=%dir:\\\\=\\%\r\nmkdir \"%dir%\"\r\n");
-		fclose(f);
+	}
+	fremove(dname);
+	if (ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, YSI_gscBatParameters, SW_HIDE) > 32)
+	{
+		while (!fexist(dname))
+		{
+			// Poll for the script to finish.
+		}
 		return true;
 	}
 	return false;
 }
 
-bool:CallMKDirBat(const string:folder[])
+static stock bool:Files_InitYSIFolder()
 {
-	new
-		cmd[] = !".dmc\0exe", // "cmd.exe" byteswapped.
-		operation[] = !"nepo", // "open" byteswapped.
-		//cmd[] = !"cmd.exe",
-		//operation[] = !"open",
-		parameters[128];
-	format(parameters, sizeof (parameters), "/C scriptfiles\\mkdir.bat \"%s\"", folder);
-	//strpack(parameters, parameters);
-
-	//ToCharString(cmd);
-	//ToCharString(operation);
-	ToCharString(parameters);
-
-	return ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, parameters, SW_HIDE) > 32;
+	static const
+		iname[] = "YSI\\.initscript",
+		fname[] = "_initysi.bat";
+	if (fexist(iname))
+	{
+		return true;
+	}
+	if (!fexist(fname))
+	{
+		new File:f = fopen(fname, io_write);
+		if (!f)
+		{
+			return false;
+		}
+		fwrite(f, "cd scriptfiles\r\nmkdir YSI\r\ncd YSI\r\nmkdir debug\r\nmkdir fixes\r\nmkdir scripts\r\nmkdir temp\r\nmkdir tests\r\nmkdir text\r\nmkdir users\r\nmkdir YDBG\r\ntype nul > .initscript\r\n"),
+		fclose(f);
+	}
+	// "/C scriptfiles\\_initysi.bat" byteswapped.
+	new bool:ret = ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, !"s C/pirclift_\\setini.isy\0tab", SW_HIDE) > 32;
+	while (!fexist(iname))
+	{
+		// Poll for the script to finish.
+	}
+	//fremove(fname);
+	return ret;
 }
 
 static stock bool:Files_WriteMKDirBat()
 {
-	new File:f = fopen("YSI\\scripts\\mkdir.bat", io_write);
+	if (fexist(YSI_gscMKDir))
+	{
+		return true;
+	}
+	new File:f = fopen(YSI_gscMKDir, io_write);
 	if (f)
 	{
-		fwrite(f, "set dir=scriptfiles\\%~1\r\nset dir=%dir:..=%\r\nset dir=%dir:\\\\=\\%\r\nmkdir \"%dir%\"\r\n");
-		fclose(f);
-		return true;
+		return
+			fwrite(f, YSI_gscArg1),
+			fwrite(f, "mkdir \"%arg1%\"\r\n"),
+			fwrite(f, YSI_gscDone),
+			fclose(f),
+			true;
 	}
 	return false;
 }
+
+static stock bool:Files_CallMKDirBat(const string:folder[])
+{
+	return
+		format(YSI_gscBatParameters, sizeof (YSI_gscBatParameters), "%smkdir.bat \"%s\"", YSI_gscBasePath, folder),
+		Files_CallBat();
+}
+
+static stock bool:Files_WriteCopyBat()
+{
+	if (fexist(YSI_gscCopy))
+	{
+		return true;
+	}
+	new File:f = fopen(YSI_gscCopy, io_write);
+	if (f)
+	{
+		return
+			fwrite(f, YSI_gscArg1),
+			fwrite(f, YSI_gscArg2),
+			fwrite(f, "copy \"%arg1%\" \"%arg2%\"\r\n"),
+			fwrite(f, YSI_gscDone),
+			fclose(f),
+			true;
+	}
+	return false;
+}
+
+static stock bool:Files_CallCopyBat(const string:src[], const string:dst[])
+{
+	return
+		format(YSI_gscBatParameters, sizeof (YSI_gscBatParameters), "%scopy.bat \"%s\" \"%s\"", YSI_gscBasePath, src, dst),
+		Files_CallBat();
+}
+
+static stock bool:Files_WriteMoveBat()
+{
+	if (fexist(YSI_gscMove))
+	{
+		return true;
+	}
+	new File:f = fopen(YSI_gscMove, io_write);
+	if (f)
+	{
+		return
+			fwrite(f, YSI_gscArg1),
+			fwrite(f, YSI_gscArg2),
+			fwrite(f, "move \"%arg1%\" \"%arg2%\"\r\n"),
+			fwrite(f, YSI_gscDone),
+			fclose(f),
+			true;
+	}
+	return false;
+}
+
+static stock bool:Files_CallMoveBat(const string:src[], const string:dst[])
+{
+	return
+		format(YSI_gscBatParameters, sizeof (YSI_gscBatParameters), "%smove.bat \"%s\" \"%s\"", YSI_gscBasePath, src, dst),
+		Files_CallBat();
+}
+
+public OnCodeInit()
+{
+	if (Server_IsWindowsHost())
+	{
+		Files_InitYSIFolder(),
+		Files_WriteMKDirBat(),
+		Files_WriteCopyBat(),
+		Files_WriteMoveBat();
+	}
+	#if defined Files_OnCodeInit
+		return Files_OnCodeInit();
+	#endif
+}
+
+#undef OnCodeInit
+#define OnCodeInit Files_OnCodeInit
+#if defined Files_OnCodeInit
+	forward Files_OnCodeInit();
+#endif
+
