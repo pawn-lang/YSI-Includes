@@ -240,3 +240,33 @@ public OnCodeInit()
 	forward Files_OnCodeInit();
 #endif
 
+stock bool:Files_CopySync(const string:src[], const string:dst[])
+{
+	return Files_CallCopyBat(src, dst, true);
+}
+
+stock bool:Files_MoveSync(const string:src[], const string:dst[])
+{
+	return Files_CallMoveBat(src, dst, true);
+}
+
+stock bool:Files_CreateDirSync(const string:dir[])
+{
+	return Files_CallMKDirBat(dir, true);
+}
+
+stock bool:Files_CopyAsync(const string:src[], const string:dst[])
+{
+	return Files_CallCopyBat(src, dst, false);
+}
+
+stock bool:Files_MoveAsync(const string:src[], const string:dst[])
+{
+	return Files_CallMoveBat(src, dst, false);
+}
+
+stock bool:Files_CreateDirAsync(const string:dir[])
+{
+	return Files_CallMKDirBat(dir, false);
+}
+
