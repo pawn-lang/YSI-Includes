@@ -73,14 +73,7 @@ Optional plugins:
 
 static stock const
 	YSI_gscBatCmd[] = !".dmc\0exe",  // "cmd.exe" byteswapped.
-	YSI_gscBatOperation[] = !"nepo", // "open" byteswapped.
-	//YSI_gscBasePath[] = "/C \"",
-	YSI_gscArg1[] = "set arg1=scriptfiles\\%~1\r\nset arg1=%arg1:..=%\r\nset arg1=%arg1:\\\\=\\%\r\n",
-	YSI_gscArg2[] = "set arg2=scriptfiles\\%~2\r\nset arg2=%arg2:..=%\r\nset arg2=%arg2:\\\\=\\%\r\n",
-	YSI_gscMKDir[] = "YSI\\scripts\\mkdir.bat",
-	YSI_gscCopy[] = "YSI\\scripts\\copy.bat",
-	YSI_gscMove[] = "YSI\\scripts\\move.bat",
-	YSI_gscDone[] = "type nul > scriptfiles\\YSI\\.donescript\r\n";
+	YSI_gscBatOperation[] = !"nepo"; // "open" byteswapped.
 
 static stock
 	YSI_gsAddress,
@@ -189,7 +182,7 @@ static stock bool:Files_InitYSIFolder()
 		{
 			return false;
 		}
-		fwrite(f, "cd scriptfiles\r\nmkdir YSI\r\ncd YSI\r\nmkdir debug\r\nmkdir fixes\r\nmkdir scripts\r\nmkdir temp\r\nmkdir tests\r\nmkdir text\r\nmkdir users\r\nmkdir YDBG\r\ntype nul > .initscript\r\n"),
+		fwrite(f, "cd scriptfiles\r\nmkdir YSI\r\ncd YSI\r\nmkdir debug\r\nmkdir fixes\r\nmkdir temp\r\nmkdir tests\r\nmkdir text\r\nmkdir users\r\nmkdir YDBG\r\ntype nul > .initscript\r\n"),
 		fclose(f);
 	}
 	// "/C scriptfiles\\_initysi.bat" byteswapped.
@@ -202,25 +195,6 @@ static stock bool:Files_InitYSIFolder()
 	return ret;
 }
 
-static stock bool:Files_WriteMKDirBat()
-{
-	if (fexist(YSI_gscMKDir))
-	{
-		return true;
-	}
-	new File:f = fopen(YSI_gscMKDir, io_write);
-	if (f)
-	{
-		return
-			fwrite(f, YSI_gscArg1),
-			fwrite(f, "mkdir \"%arg1%\"\r\n"),
-			fwrite(f, YSI_gscDone),
-			fclose(f),
-			true;
-	}
-	return false;
-}
-
 static stock bool:Files_CreateDirAsync(const string:folder[])
 {
 	return
@@ -228,51 +202,11 @@ static stock bool:Files_CreateDirAsync(const string:folder[])
 		Files_CallBat();
 }
 
-static stock bool:Files_WriteCopyBat()
-{
-	if (fexist(YSI_gscCopy))
-	{
-		return true;
-	}
-	new File:f = fopen(YSI_gscCopy, io_write);
-	if (f)
-	{
-		return
-			fwrite(f, YSI_gscArg1),
-			fwrite(f, YSI_gscArg2),
-			fwrite(f, "copy \"%arg1%\" \"%arg2%\"\r\n"),
-			fwrite(f, YSI_gscDone),
-			fclose(f),
-			true;
-	}
-	return false;
-}
-
 stock bool:Files_CopyAsync(const string:src[], const string:dst[])
 {
 	return
 		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"copy scriptfiles\\%s scriptfiles\\%s\"", src, dst),
 		Files_CallBat();
-}
-
-static stock bool:Files_WriteMoveBat()
-{
-	if (fexist(YSI_gscMove))
-	{
-		return true;
-	}
-	new File:f = fopen(YSI_gscMove, io_write);
-	if (f)
-	{
-		return
-			fwrite(f, YSI_gscArg1),
-			fwrite(f, YSI_gscArg2),
-			fwrite(f, "move \"%arg1%\" \"%arg2%\"\r\n"),
-			fwrite(f, YSI_gscDone),
-			fclose(f),
-			true;
-	}
-	return false;
 }
 
 stock bool:Files_MoveAsync(const string:src[], const string:dst[])
@@ -300,10 +234,7 @@ public OnCodeInit()
 		AsmEmitPadding(ctx);
 
 		// Create the scripts.
-		Files_InitYSIFolder(),
-		Files_WriteMKDirBat(),
-		Files_WriteCopyBat(),
-		Files_WriteMoveBat();
+		Files_InitYSIFolder();
 	}
 	#if defined Files_OnCodeInit
 		return Files_OnCodeInit();
@@ -354,19 +285,4 @@ stock bool:Files_CreateDirSync(const string:dir[])
 	}
 	return false;
 }
-
-//stock bool:Files_CopyAsync(const string:src[], const string:dst[])
-//{
-//	return Files_CallCopyBat(src, dst);
-//}
-//
-//stock bool:Files_MoveAsync(const string:src[], const string:dst[])
-//{
-//	return Files_CallMoveBat(src, dst);
-//}
-//
-//stock bool:Files_CreateDirAsync(const string:dir[])
-//{
-//	return Files_CallMKDirBat(dir);
-//}
 
