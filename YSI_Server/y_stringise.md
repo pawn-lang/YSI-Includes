@@ -17,11 +17,11 @@ For general YSI information, see the following links:
 
 ## Documentation
 
-* [Quick Start](y_flooding/quick-start.md) - One very simple example of getting started with this library.
-* [Features](y_flooding/features.md) - More features and examples.
-* [FAQs](y_flooding/faqs.md) - Frequently Asked Questions, including errors and solutions.
-* [API](y_flooding/api.md) - Full list of all functions and their meaning.
-* [Internal](y_flooding/internal.md) - Internal developer documentation for the system.
+* [Quick Start](y_stringise/quick-start.md) - One very simple example of getting started with this library.
+* [Features](y_stringise/features.md) - More features and examples.
+* [FAQs](y_stringise/faqs.md) - Frequently Asked Questions, including errors and solutions.
+* [API](y_stringise/api.md) - Full list of all functions and their meaning.
+* [Internal](y_stringise/internal.md) - Internal developer documentation for the system.
 
 ## External Links
 
