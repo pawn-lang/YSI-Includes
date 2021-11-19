@@ -95,7 +95,7 @@ static stock
 //
 
 #define CALL@Files_ShellExecute Files_ShellExecute(YSI_EMPTY, YSI_EMPTY, YSI_EMPTY, 0)
-#define CALL@Files_CallBat Files_CallBat(false)
+#define CALL@Files_CallBat Files_CallBat()
 
 static stock Files_ShellExecute(const Operation[], const File[], const Parameters[], ShowCmd)
 {
@@ -158,10 +158,8 @@ static stock Files_ShellExecute(const Operation[], const File[], const Parameter
 	return AsmGetCodeSize(ctx);
 }
 
-static stock bool:Files_CallBat(bool:safe)
+static stock bool:Files_CallBat()
 {
-	static const
-		dname[] = "YSI\\.donescript";
 	// Convert the normal string to a C string.
 	for (new i = 0, j = 0, ch; i != sizeof (YSI_gsBatParameters) / 4; ++i, j += 4)
 	{
@@ -172,22 +170,7 @@ static stock bool:Files_CallBat(bool:safe)
 			break;
 		}
 	}
-	if (safe)
-	{
-		fremove(dname);
-	}
-	if (Files_ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, YSI_gsBatParameters, SW_HIDE) > 32)
-	{
-		if (safe)
-		{
-			while (!fexist(dname))
-			{
-				// Poll for the script to finish.
-			}
-		}
-		return true;
-	}
-	return false;
+	return Files_ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, YSI_gsBatParameters, SW_HIDE) > 32;
 }
 
 static stock bool:Files_InitYSIFolder()
@@ -238,11 +221,11 @@ static stock bool:Files_WriteMKDirBat()
 	return false;
 }
 
-static stock bool:Files_CallMKDirBat(const string:folder[], bool:safe)
+static stock bool:Files_CreateDirAsync(const string:folder[])
 {
 	return
 		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "%smkdir.bat \"%s\"", YSI_gscBasePath, folder),
-		Files_CallBat(safe);
+		Files_CallBat();
 }
 
 static stock bool:Files_WriteCopyBat()
@@ -265,11 +248,11 @@ static stock bool:Files_WriteCopyBat()
 	return false;
 }
 
-static stock bool:Files_CallCopyBat(const string:src[], const string:dst[], bool:safe)
+stock bool:Files_CopyAsync(const string:src[], const string:dst[])
 {
 	return
 		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "%scopy.bat \"%s\" \"%s\"", YSI_gscBasePath, src, dst),
-		Files_CallBat(safe);
+		Files_CallBat();
 }
 
 static stock bool:Files_WriteMoveBat()
@@ -292,11 +275,11 @@ static stock bool:Files_WriteMoveBat()
 	return false;
 }
 
-static stock bool:Files_CallMoveBat(const string:src[], const string:dst[], bool:safe)
+stock bool:Files_MoveAsync(const string:src[], const string:dst[])
 {
 	return
 		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "%smove.bat \"%s\" \"%s\"", YSI_gscBasePath, src, dst),
-		Files_CallBat(safe);
+		Files_CallBat();
 }
 
 public OnCodeInit()
@@ -335,31 +318,55 @@ public OnCodeInit()
 
 stock bool:Files_CopySync(const string:src[], const string:dst[])
 {
-	return Files_CallCopyBat(src, dst, true);
+	fremove(dst);
+	if (Files_CopyAsync(src, dst))
+	{
+		while (!fexist(dst))
+		{
+		}
+		return true;
+	}
+	return false;
 }
 
 stock bool:Files_MoveSync(const string:src[], const string:dst[])
 {
-	return Files_CallMoveBat(src, dst, true);
+	fremove(dst);
+	if (Files_MoveAsync(src, dst))
+	{
+		while (!fexist(dst))
+		{
+		}
+		return true;
+	}
+	return false;
 }
 
 stock bool:Files_CreateDirSync(const string:dir[])
 {
-	return Files_CallMKDirBat(dir, true);
+	fremove(".donescript");
+	if (Files_CreateDirAsync(dir))
+	{
+		while (!fexist(".donescript"))
+		{
+		}
+		return true;
+	}
+	return false;
 }
 
-stock bool:Files_CopyAsync(const string:src[], const string:dst[])
-{
-	return Files_CallCopyBat(src, dst, false);
-}
-
-stock bool:Files_MoveAsync(const string:src[], const string:dst[])
-{
-	return Files_CallMoveBat(src, dst, false);
-}
-
-stock bool:Files_CreateDirAsync(const string:dir[])
-{
-	return Files_CallMKDirBat(dir, false);
-}
+//stock bool:Files_CopyAsync(const string:src[], const string:dst[])
+//{
+//	return Files_CallCopyBat(src, dst);
+//}
+//
+//stock bool:Files_MoveAsync(const string:src[], const string:dst[])
+//{
+//	return Files_CallMoveBat(src, dst);
+//}
+//
+//stock bool:Files_CreateDirAsync(const string:dir[])
+//{
+//	return Files_CallMKDirBat(dir);
+//}
 
