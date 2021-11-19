@@ -88,7 +88,7 @@ static stock
 static stock bool:Files_CallBat(bool:safe)
 {
 	static const
-		dname[] = "YSI\\.donescript",
+		dname[] = "YSI\\.donescript";
 	// Convert the normal string to a C string.
 	for (new i = 0; (YSI_gscBatParameters{i ^ 3} = YSI_gscBatParameters[i]); i++)
 	{
