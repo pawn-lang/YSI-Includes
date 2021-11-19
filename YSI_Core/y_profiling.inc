@@ -279,18 +279,16 @@ stock Profiling_RunAll()
 	// The timing will be inaccurate since it will include many prints, but it
 	// isn't that important to be accurate.
 	startTime = GetTickCount();
-	PROFILE_REPORT(" ");
-	PROFILE_REPORT("  ||========================||  ");
-	PROFILE_REPORT("  || STARTING PROFILINGS... ||  ");
-	PROFILE_REPORT("  ||========================||  ");
-	PROFILE_REPORT(" ");
+	#if !defined LIGHT_PROFILE_REPORT
+		Server_PrintIntroMessage("        STARTING PROFILINGS..."),
+		Server_FinishIntroMessage();
+	#endif
 	Profiling_Run(profilings);
 	printf("*** Profilings: %d", profilings);
-	PROFILE_REPORT(" ");
-	PROFILE_REPORT("  ||======================||  ");
-	PROFILE_REPORT("  || PROFILINGS COMPLETE! ||  ");
-	PROFILE_REPORT("  ||======================||  ");
-	PROFILE_REPORT(" ");
+	#if !defined LIGHT_PROFILE_REPORT
+		Server_PrintIntroMessage("         PROFILINGS COMPLETE!"),
+		Server_FinishIntroMessage();
+	#endif
 	endTime = GetTickCount();
 	printf("*** Time: %dms", endTime - startTime);
 	PROFILE_REPORT(" ");
