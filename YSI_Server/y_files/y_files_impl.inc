@@ -83,21 +83,100 @@ static stock const
 	YSI_gscDone[] = "type nul > scriptfiles\\YSI\\.donescript\r\n";
 
 static stock
-	YSI_gscBatParameters[128];
+	YSI_gsAddress,
+	YSI_gsBatParameters[128];
+
+// We basically just copy `ShellExecute.inc` here for several reasons:
+//
+//   1) The default include paths mess up slightly (thanks compiler).
+//   2) It's a good PoC, but runs all lookups/generations every call.
+//   3) `dynamic_call.inc` uses runtime rewrites, which don't work with JIT.
+//   4) We can generate way more specialised code with `@emit`.
+//
+
+#define CALL@Files_ShellExecute Files_ShellExecute(YSI_EMPTY, YSI_EMPTY, YSI_EMPTY, 0)
+#define CALL@Files_CallBat Files_CallBat(false)
+
+static stock Files_ShellExecute(const Operation[], const File[], const Parameters[], ShowCmd)
+{
+	#pragma unused Operation, File, Parameters, ShowCmd
+	// This function is entirely replaced, by itself...
+
+	#define __asm(%0,%1,%2,%3) (((0x%3) << 24) | ((0x%2) << 16) | (0x%1 << 8) | (0x%0))
+	
+	static const asm[] = {
+		__asm(90,90,90,90),
+		__asm(90,90,90,90),
+		__asm(90,90,90,90),
+		__asm(90,90,90,90),
+		__asm(55,8B,EC,8B),
+		__asm(45,0C,8B,48),
+		__asm(18,51,8B,55),
+		__asm(0C,8B,42,14),
+		__asm(50,8B,4D,0C),
+		__asm(8B,51,10,52),
+		__asm(8B,45,0C,8B),
+		__asm(48,0C,51,8B),
+		__asm(55,0C,8B,42),
+		__asm(08,50,8B,4D),
+		__asm(0C,8B,51,04),
+		__asm(52,FF,15,00),
+		__asm(00,00,00,5D),
+		__asm(C3,CC,CC,CC)
+	};
+
+	new
+		ctx[AsmContext];
+	WriteAmxMemory(ref(asm) + 63, refabs(YSI_gsAddress));
+	AsmInitPtr(ctx, YSI_gsBatParameters[0] + AMX_HEADER_COD, YSI_gsBatParameters[1] - YSI_gsBatParameters[0]);
+	// Get the offset for absolute DAT addresses.
+	#emit LCTRL        1
+	#emit LOAD.S.alt   ShowCmd
+	#emit ADD
+	#emit STOR.S.pri   ShowCmd
+	// Push the parameters.
+	@emit PROC
+	@emit PUSH.S       24
+	@emit PUSH.C       0
+	@emit LOAD.S.pri   20
+	@emit ADD.C        ShowCmd
+	@emit PUSH.pri
+	@emit LOAD.S.pri   16
+	@emit ADD.C        ShowCmd
+	@emit PUSH.pri
+	@emit LOAD.S.pri   12
+	@emit ADD.C        ShowCmd
+	@emit PUSH.pri
+	@emit PUSH.C       0
+	@emit PUSH.C       24
+	// Call the 16-byte-aligned code.
+	@emit SYSREQ.D     (((refabs(asm) + 15) >>> 4) << 4)
+	@emit STACK        28
+	@emit RETN
+
+	// TODO: Pad with `NOP` without clobbering our own code.
+	return AsmGetCodeSize(ctx);
+}
 
 static stock bool:Files_CallBat(bool:safe)
 {
 	static const
 		dname[] = "YSI\\.donescript";
 	// Convert the normal string to a C string.
-	for (new i = 0; (YSI_gscBatParameters{i ^ 3} = YSI_gscBatParameters[i]); i++)
+	for (new i = 0, j = 0, ch; i != sizeof (YSI_gsBatParameters) / 4; ++i, j += 4)
 	{
+		YSI_gsBatParameters[i] = ch = YSI_gsBatParameters[j] | (YSI_gsBatParameters[j + 1] << 8) | (YSI_gsBatParameters[j + 2] << 16) | (YSI_gsBatParameters[j + 3] << 24);
+		if (Cell_HasZeroByte(ch))
+		{
+			// Found the NULL end;
+			break;
+		}
 	}
 	if (safe)
 	{
 		fremove(dname);
 	}
-	if (ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, YSI_gscBatParameters, SW_HIDE) > 32)
+	if (Files_ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, YSI_gsBatParameters, SW_HIDE) > 32)
 	{
 		if (safe)
 		{
@@ -131,7 +210,7 @@ static stock bool:Files_InitYSIFolder()
 		fclose(f);
 	}
 	// "/C scriptfiles\\_initysi.bat" byteswapped.
-	new bool:ret = ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, !"s C/pirclift_\\setini.isy\0tab", SW_HIDE) > 32;
+	new bool:ret = Files_ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, !"s C/pirclift_\\setini.isy\0tab", SW_HIDE) > 32;
 	while (!fexist(iname))
 	{
 		// Poll for the script to finish.
@@ -162,7 +241,7 @@ static stock bool:Files_WriteMKDirBat()
 static stock bool:Files_CallMKDirBat(const string:folder[], bool:safe)
 {
 	return
-		format(YSI_gscBatParameters, sizeof (YSI_gscBatParameters), "%smkdir.bat \"%s\"", YSI_gscBasePath, folder),
+		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "%smkdir.bat \"%s\"", YSI_gscBasePath, folder),
 		Files_CallBat(safe);
 }
 
@@ -189,7 +268,7 @@ static stock bool:Files_WriteCopyBat()
 static stock bool:Files_CallCopyBat(const string:src[], const string:dst[], bool:safe)
 {
 	return
-		format(YSI_gscBatParameters, sizeof (YSI_gscBatParameters), "%scopy.bat \"%s\" \"%s\"", YSI_gscBasePath, src, dst),
+		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "%scopy.bat \"%s\" \"%s\"", YSI_gscBasePath, src, dst),
 		Files_CallBat(safe);
 }
 
@@ -216,7 +295,7 @@ static stock bool:Files_WriteMoveBat()
 static stock bool:Files_CallMoveBat(const string:src[], const string:dst[], bool:safe)
 {
 	return
-		format(YSI_gscBatParameters, sizeof (YSI_gscBatParameters), "%smove.bat \"%s\" \"%s\"", YSI_gscBasePath, src, dst),
+		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "%smove.bat \"%s\" \"%s\"", YSI_gscBasePath, src, dst),
 		Files_CallBat(safe);
 }
 
@@ -224,6 +303,20 @@ public OnCodeInit()
 {
 	if (Server_IsWindowsHost())
 	{
+		// Initialise the assembly.
+
+		// Don't intialise these in `Files_ShellExecute` (they get partially
+		// clobbered).
+		YSI_gsAddress = GetImportAddress("ShellExecuteA");
+		YSI_gsBatParameters[0] = _:addressof (Files_ShellExecute);
+		YSI_gsBatParameters[1] = _:addressof (Files_CallBat);
+		new
+			size = Files_ShellExecute(YSI_EMPTY, YSI_EMPTY, YSI_EMPTY, GetAmxBaseAddress()),
+			ctx[AsmContext];
+		AsmInitPtr(ctx, YSI_gsBatParameters[0] + size + AMX_HEADER_COD, YSI_gsBatParameters[1] - YSI_gsBatParameters[0] - size);
+		AsmEmitPadding(ctx);
+
+		// Create the scripts.
 		Files_InitYSIFolder(),
 		Files_WriteMKDirBat(),
 		Files_WriteCopyBat(),
