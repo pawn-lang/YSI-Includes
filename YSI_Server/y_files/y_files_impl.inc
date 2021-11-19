@@ -195,21 +195,21 @@ static stock bool:Files_InitYSIFolder()
 	return ret;
 }
 
-static stock bool:Files_CreateDirAsync(const string:folder[])
+static stock bool:Files_CallMKDirBat(const string:folder[])
 {
 	return
 		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"mkdir scriptfiles\\%s\" \"type nul > scriptfiles\.donescript\"", folder),
 		Files_CallBat();
 }
 
-stock bool:Files_CopyAsync(const string:src[], const string:dst[])
+static stock bool:Files_CallCopyBat(const string:src[], const string:dst[])
 {
 	return
 		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"copy scriptfiles\\%s scriptfiles\\%s\"", src, dst),
 		Files_CallBat();
 }
 
-stock bool:Files_MoveAsync(const string:src[], const string:dst[])
+static stock bool:Files_CallMoveBat(const string:src[], const string:dst[])
 {
 	return
 		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"move scriptfiles\\%s scriptfiles\\%s\"", src, dst),
@@ -250,7 +250,7 @@ public OnCodeInit()
 stock bool:Files_CopySync(const string:src[], const string:dst[])
 {
 	fremove(dst);
-	if (Files_CopyAsync(src, dst))
+	if (Files_CallCopyBat(src, dst))
 	{
 		while (!fexist(dst))
 		{
@@ -263,7 +263,7 @@ stock bool:Files_CopySync(const string:src[], const string:dst[])
 stock bool:Files_MoveSync(const string:src[], const string:dst[])
 {
 	fremove(dst);
-	if (Files_MoveAsync(src, dst))
+	if (Files_CallMoveBat(src, dst))
 	{
 		while (!fexist(dst))
 		{
@@ -276,7 +276,7 @@ stock bool:Files_MoveSync(const string:src[], const string:dst[])
 stock bool:Files_CreateDirSync(const string:dir[])
 {
 	fremove(".donescript");
-	if (Files_CreateDirAsync(dir))
+	if (Files_CallMKDirBat(dir))
 	{
 		while (!fexist(".donescript"))
 		{
@@ -284,5 +284,23 @@ stock bool:Files_CreateDirSync(const string:dir[])
 		return true;
 	}
 	return false;
+}
+
+#pragma deprecated Use `Files_CopySync`, the async code doesn't save time.
+stock bool:Files_CopyAsync(const string:src[], const string:dst[])
+{
+	return Files_CallCopyBat(src, dst);
+}
+
+#pragma deprecated Use `Files_MoveAsync`, the async code doesn't save time.
+stock bool:Files_MoveAsync(const string:src[], const string:dst[])
+{
+	return Files_CallMoveBat(src, dst);
+}
+
+#pragma deprecated Use `Files_CreateDirAsync`, the async code doesn't save time.
+stock bool:Files_CreateDirAsync(const string:dir[])
+{
+	return Files_CallMKDirBat(dir);
 }
 
