@@ -192,9 +192,9 @@ HOOK__ OnYSIInit()
 			{
 				P:E("y_classes assumptions failed.  Do you have \"AddPlayerClass\" in your modes?");
 			}
-			//printf("==========================");
+			//print("==========================");
 			P:4("Class_OnYSIInit: classes = %d %d %d", classLeft, classMiddle, classRight);
-			//printf("==========================");
+			//print("==========================");
 			#if !defined YSI_NO_MASTER
 				switch (_Master_Get(#_YCM, true))
 				{

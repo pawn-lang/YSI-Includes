@@ -223,7 +223,7 @@ HOOK__ OnYSIInit()
 static stock Text_LoadAll()
 {
 	P:4("Text_LoadAll called");
-	//printf("Text_LoadAll: n");
+	//print("Text_LoadAll: n");
 	if (Langs_GetLanguageCount() == Language:0)
 	{
 		P:E("No languages found - Did you add \"Langs_AddLanguage\" to the script init (NOT \"main\")?");

@@ -108,7 +108,7 @@ TEST__ y_inline0b()
 	new Func:cc<>;
 	inline const func()
 	{
-		//printf("1");
+		//print("1");
 		@return 42;
 	}
 	y_inline_GetX(using inline func, cc);
@@ -120,7 +120,7 @@ TEST__ y_inline0c()
 	new Func:cc<>;
 	inline const func()
 	{
-		//printf("1");
+		//print("1");
 		@return 42;
 	}
 	y_inline_GetX(using inline func, cc);
@@ -132,7 +132,7 @@ TEST__ y_inline0d()
 	new Func:cc<>;
 	inline const func()
 	{
-		//printf("1");
+		//print("1");
 		@return 42;
 	}
 	y_inline_GetX(using inline func, cc);
@@ -147,7 +147,7 @@ TEST__ y_inline0e()
 	new Func:cc<>;
 	inline func()
 	{
-		//printf("1");
+		//print("1");
 		@return 42;
 	}
 	y_inline_GetX(using inline func, cc);
@@ -162,7 +162,7 @@ TEST__ y_inline0f()
 	new Func:cc<>;
 	inline func()
 	{
-		//printf("1");
+		//print("1");
 		@return 42;
 	}
 	y_inline_GetX(using inline func, cc);
@@ -1654,7 +1654,7 @@ static stock
 
 TEST__ y_inline1000timers()
 {
-	//printf("y_inline1000timers");
+	//print("y_inline1000timers");
 	inline const Total()
 	{
 		//for (new i = 0; i != sizeof (YSI_gsCounts); ++i)

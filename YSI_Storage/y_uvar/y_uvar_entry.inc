@@ -189,7 +189,7 @@ public OnUserData[y_uvar](playerid, name[], value[])
 	else
 	{
 		// Get the position in the array of this data.
-		//printf("call pos 0");
+		//print("call pos 0");
 		name[pos] = '\0';
 		pos = strval(name[pos + 1]) * ((MAX_INI_ENTRY_TEXT - 1) / 16 * 3);
 		if (strcmp(name[2], YSI_g_sLastName, false))

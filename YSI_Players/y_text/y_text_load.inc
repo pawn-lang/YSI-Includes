@@ -1121,7 +1121,7 @@ static stock Format_GetSpecifier(input[], &iIn)
 				++iIn;
 				if (ret & e_COMPRESS_FORMAT_DATA_LIST)
 				{
-					printf("*** Internal Warning: Ignoring string list format specifier.");
+					print("*** Internal Warning: Ignoring string list format specifier.");
 					ret &= e_COMPRESS_FORMAT_DATA_LIST;
 				}
 				return ret | e_COMPRESS_FORMAT_DATA_STRING | (e_COMPRESS_FORMAT_DATA:((width & 0xFFF) | ((prec & 0xFFF) << 12)));

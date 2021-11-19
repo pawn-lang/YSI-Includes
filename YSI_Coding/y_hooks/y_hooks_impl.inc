@@ -1435,9 +1435,9 @@ public OnRuntimeError(code, &bool:suppress)
 		{
 			if (++i == 1)
 			{
-				printf("[debug]");
-				printf("[debug] Parameter count corrections:");
-				printf("[debug]");
+				print("[debug]");
+				print("[debug] Parameter count corrections:");
+				print("[debug]");
 			}
 			// Not 8, because `cur` is `- 8`.
 			printf("[debug] The %s mangled argments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", ValstrWithOrdinal(i), AMX_Read(cur + 16) / 4);
@@ -1449,7 +1449,7 @@ public OnRuntimeError(code, &bool:suppress)
 		}
 		if (YSI_g_sActiveHooks)
 		{
-			printf("[debug]");
+			print("[debug]");
 			// Blank the active hooks value.  If this is the only public, this
 			// will reset it after the public is foribly ended.  If it isn't, it
 			// will be reset to a correct value when the next still active hook

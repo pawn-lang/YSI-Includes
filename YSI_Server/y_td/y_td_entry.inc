@@ -2020,11 +2020,11 @@ public TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision)
 		// Loop through all linked TDs and show them to all players.
 		TDL_START(td)
 		{
-			//printf("TDL_Start");
+			//print("TDL_Start");
 			// Hide this TD for everyone.
 			new
 				Text:old = YSI_g_sTDDisplay[td][E_TD_DISPLAY_REAL];
-			//printf("Destroyed");
+			//print("Destroyed");
 			// Render the new version.
 			real = TD_RenderInternal(YSI_g_sTDDisplay[td][E_TD_DISPLAY_TEXT], sFrom, YSI_g_sTDDisplay[td][E_TD_DISPLAY_X] + x, YSI_g_sTDDisplay[td][E_TD_DISPLAY_Y] + y);
 			printf("New real: %d %f %f", _:real, YSI_g_sTDDisplay[td][E_TD_DISPLAY_X] + x, YSI_g_sTDDisplay[td][E_TD_DISPLAY_Y] + y);
@@ -2033,10 +2033,10 @@ public TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision)
 			mask = Bit_Mask(_:td);
 			FOREACH__ (new playerid : Player)
 			{
-				//printf("player %d");
+				//print("player %d");
 				if (YSI_g_sPlayerDraws[playerid][index] & mask)
 				{
-					//printf("yes");
+					//print("yes");
 					TextDrawShowForPlayer(playerid, real);
 				}
 			}

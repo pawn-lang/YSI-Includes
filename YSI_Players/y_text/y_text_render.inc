@@ -1626,10 +1626,10 @@ Format_Render_start:
 				}
 				else if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] == e_STYLE_TYPE_DIALOG)
 				{
-					//printf("NL 1");
+					//print("NL 1");
 					// This works even for GTs which are always 0 by this point.
 					Y_RENDER_ADD(scDialogLineString)
-					//printf("NL 2");
+					//print("NL 2");
 				}
 				else
 				{
@@ -1657,9 +1657,9 @@ Format_Render_start:
 				else if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] == e_STYLE_TYPE_DIALOG)
 				{
 					// This works even for GTs which are always 0 by this point.
-					//printf("NL 3");
+					//print("NL 3");
 					Y_RENDER_ADD(scDialogLineString)
-					//printf("NL 4");
+					//print("NL 4");
 				}
 				else
 				{

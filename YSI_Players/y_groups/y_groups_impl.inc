@@ -459,7 +459,7 @@ GLOBAL__ void:_Group_TryRemove()
 		MASTER_REMOVE<i>
 		MASTER_EMPTY<i>
 		{
-			//printf("removing i");
+			//print("removing i");
 			broadcastfunc _Group_Destroy(i, Iter_TrueArray(GroupPlayers[i]), Iter_TrueSize(GroupPlayers[]));
 			YSI_gGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 			YSI_gGroupData[i][E_GROUP_DATA_HASH] = 0;
@@ -528,12 +528,12 @@ HOOK__ OnPlayerConnect@9(playerid)
 			if (_YCM@y)
 		#endif
 			{
-				//printf("0");
+				//print("0");
 				P:6("Group_OnPlayerConnect: Master %d", playerid);
 				// Is master.  ALWAYS reset all players - if they start screwing
 				// around with loading orders then that's their own fault!
 				broadcastfunc _Group_FakePlayer(playerid, YSI_g_sDefaultGroups, bits<_MAX_GROUPS_G>);
-				//printf("1");
+				//print("1");
 			}
 		#if _YSIM_IS_CLOUD
 			else
@@ -938,7 +938,7 @@ GLOBAL__ string:Group_GetName(Group:g)
 		ret[YSI_MAX_STRING];
 	if (_Group_IsValid(g))
 	{
-		//printf("Is Valid");
+		//print("Is Valid");
 		//return Bit_Get(YSI_gGroupPlayers[g], p);
 		//Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
 		strunpack(ret, YSI_gGroupData[_:GROUP_TEMP_FIX(g)][E_GROUP_DATA_NAME], YSI_MAX_STRING);
