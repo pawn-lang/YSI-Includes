@@ -182,16 +182,16 @@ static stock bool:Files_InitYSIFolder()
 		{
 			return false;
 		}
-		fwrite(f, "cd scriptfiles\r\nmkdir YSI\r\ncd YSI\r\nmkdir debug\r\nmkdir fixes\r\nmkdir temp\r\nmkdir tests\r\nmkdir text\r\nmkdir users\r\nmkdir YDBG\r\ntype nul > .initscript\r\n"),
+		fwrite(f, "cd scriptfiles\r\nmklink /J DANGEROUS_SERVER_ROOT ..\r\nmkdir YSI\r\ncd YSI\r\nmkdir debug\r\nmkdir fixes\r\nmkdir temp\r\nmkdir tests\r\nmkdir text\r\nmkdir users\r\nmkdir YDBG\r\ntype nul > .initscript\r\n"),
 		fclose(f);
 	}
 	// "/C scriptfiles\\_initysi.bat" byteswapped.
-	new bool:ret = Files_ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, !"s C/pirclift_\\setini.isy\0tab", SW_HIDE) > 32;
+	new bool:ret = Files_ShellExecute(/*!"anur\0\0\0s"*/YSI_gscBatOperation, YSI_gscBatCmd, !"s C/pirclift_\\setini.isy\0tab", SW_HIDE) > 32;
 	while (!fexist(iname))
 	{
 		// Poll for the script to finish.
 	}
-	//fremove(fname);
+	fremove(fname);
 	return ret;
 }
 
