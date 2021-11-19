@@ -624,7 +624,7 @@ static stock Text_GetStandard(search[], nh, Language:l)
 				if (pointer != -1)
 				{
 					//P:5("Text_GetStandard: %08x%08x%08x%08x%08x", YSI_g_sTextStrings[pointer][0], YSI_g_sTextStrings[pointer][1], YSI_g_sTextStrings[pointer][2], YSI_g_sTextStrings[pointer][3], YSI_g_sTextStrings[pointer][4]);
-					//setproperty(9, "", YSIM_STRING, YSI_g_sTextStrings[pointer]);
+					//setproperty(9, YSI_EMPTY, YSIM_STRING, YSI_g_sTextStrings[pointer]);
 					setproperty(8, YSIM_TXTFND, Master_ID());
 					// I reckon this is the only time these functions have ever
 					// been used together directly...
@@ -648,7 +648,7 @@ static stock Text_GetStandard(search[], nh, Language:l)
 	}
 	//static const
 	//	fail[MAX_INI_ENTRY_TEXT] = "\1";
-	//setproperty(9, "", YSIM_STRING, "\1");
+	//setproperty(9, YSI_EMPTY, YSIM_STRING, "\1");
 	//return fail;
 }
 
@@ -701,7 +701,7 @@ static stock Text_GetText(search[], name[], Language:l)
 			//if (ret[0] != '\1')
 			if (getproperty(8, YSIM_TXTFND) != -1)
 			{
-				//getproperty(9, "", YSIM_STRING, ret);
+				//getproperty(9, YSI_EMPTY, YSIM_STRING, ret);
 				//strunpack(ret, ret)
 				//GetPVarString(index, "YSI_g_sString", ret, MAX_INI_ENTRY_TEXT);
 				state y_text_get_text:n;

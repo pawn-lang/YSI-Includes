@@ -1604,7 +1604,7 @@ static stock Property_GenerateAmmuMenu(playerid, ammu, stage, page)
 		{
 			end--;
 			AddMenuItem(menu, 0, "Back...");
-			AddMenuItem(menu, 1, " ");
+			AddMenuItem(menu, 1, YSI_SPACE);
 		}
 		while (slot < end && (weapon = Property_GetWeapon(ammu, next, start)))
 		{
@@ -1621,7 +1621,7 @@ static stock Property_GenerateAmmuMenu(playerid, ammu, stage, page)
 		if (end != 12 && Property_GetWeapon(ammu, 0, start))
 		{
 			AddMenuItem(menu, 0, "Next...");
-			AddMenuItem(menu, 1, " ");
+			AddMenuItem(menu, 1, YSI_SPACE);
 		}
 	}
 	YSI_g_sShopMenu[playerid][E_PROP_AMMU_MENU] = menu;

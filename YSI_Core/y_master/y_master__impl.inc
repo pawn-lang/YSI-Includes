@@ -405,7 +405,7 @@ static stock Master_GetCurrentMaster(installState)
 				state _YCM:u;
 				_YCM@ = _E_YCM@u;
 				// Determine the next unique name.
-				CallRemoteFunction(#_YCM, "");
+				CallRemoteFunction(#_YCM, YSI_EMPTY);
 				// Servers always get all data, so it doesn't matter that
 				// for now this is state "u".
 				++installState;
@@ -816,11 +816,11 @@ public _YCM() <_YCM:y>
 		_YCM@ = _E_YCM@p;
 		// Ending normally, relinquish control peacefully to the highest version.
 		setproperty(8, YSIM_VERMAX, 0);
-		CallRemoteFunction(#MAKE_YCM<YSIM_VERSION...>, "");
+		CallRemoteFunction(#MAKE_YCM<YSIM_VERSION...>, YSI_EMPTY);
 		setproperty(9, #_YCM, 0);
 		// Called locally to begin the hand off process.
 		_Master_UnnameAll(_MASTER);
-		CallRemoteFunction(#_YCM, "");
+		CallRemoteFunction(#_YCM, YSI_EMPTY);
 	}
 	else
 	{
@@ -834,8 +834,8 @@ public _YCM() <_YCM:y>
 	if (getproperty(9, #_YCM))
 	{
 		// This is where we need to to the handoff.
-		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
-		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...Group>, "");
+		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, YSI_EMPTY);
+		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...Group>, YSI_EMPTY);
 	}
 }
 
@@ -880,17 +880,17 @@ public _YCM() <_YCM:w>
 	
 	// Ending normally, relinquish control peacefully to the highest version.
 	setproperty(8, YSIM_VERMAX, 0);
-	CallRemoteFunction(#MAKE_YCM<YSIM_VERSION...>, "");
+	CallRemoteFunction(#MAKE_YCM<YSIM_VERSION...>, YSI_EMPTY);
 	setproperty(9, #_YCM, 0);
 	// Called locally to begin the hand off process.
-	CallRemoteFunction(#_YCM, "");
+	CallRemoteFunction(#_YCM, YSI_EMPTY);
 
 	// Now try pass everything off.
 	if (getproperty(9, #_YCM))
 	{
 		// This is where we need to to the handoff.
-		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
-		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...Group>, "");
+		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, YSI_EMPTY);
+		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...Group>, YSI_EMPTY);
 	}
 }
 

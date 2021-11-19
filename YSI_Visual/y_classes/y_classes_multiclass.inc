@@ -211,7 +211,7 @@ HOOK__ OnYSIInit()
 						state _YCM:u;
 						_YCM@ = _E_YCM@u;
 						// Determine the next unique name.
-						CallRemoteFunction(#_YCM, "");
+						CallRemoteFunction(#_YCM, YSI_EMPTY);
 						// There is a note in y_master about this being safe
 						// because servers always get the data.  This is the server
 						// code, but may be in use by cloud systems.  This, however,

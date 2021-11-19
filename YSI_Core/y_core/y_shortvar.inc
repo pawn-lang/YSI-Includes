@@ -157,6 +157,10 @@ stock const
 	NULL[2] = "\1";
 #endif
 
+stock const
+	YSI_SPACE[] = " ",
+	YSI_EMPTY[] = "";
+
 /**
 	<hidden />
 	<remarks>

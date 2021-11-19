@@ -29,8 +29,8 @@ static stock Master_TestAll(base)
 	else
 	{
 		ASSERT_EQ(ret, 0);
-		ASSERT_SAME(M_Func4(), "");
-		ASSERT_SAME(M_Func5("AA %d AA"), "");
+		ASSERT_SAME(M_Func4(), YSI_EMPTY);
+		ASSERT_SAME(M_Func5("AA %d AA"), YSI_EMPTY);
 		ASSERT_EQ(M_Func6(), 0);
 	}
 }
@@ -45,8 +45,8 @@ TEST__ Master_ModulesPhase0a()
 	ret = 0;
 	M_Func3(ret, 11);
 	ASSERT_EQ(ret, 0);
-	ASSERT_SAME(M_Func4(), "");
-	ASSERT_SAME(M_Func5("AA %d AA"), "");
+	ASSERT_SAME(M_Func4(), YSI_EMPTY);
+	ASSERT_SAME(M_Func5("AA %d AA"), YSI_EMPTY);
 	ASSERT_EQ(M_Func6(), 0);
 }
 

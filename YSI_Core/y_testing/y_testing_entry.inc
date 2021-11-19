@@ -437,7 +437,7 @@ stock bool:_Testing_End()
 		printf("%s Heap allocation leak - was: %d, now: %d", TEST_FAILED, YSI_g_sCurHeap, space);
 #endif
 	}
-	TEST_REPORT(" ");
+	TEST_REPORT(YSI_SPACE);
 	return false;
 }
 
@@ -482,18 +482,18 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 				if (buffer{i} != buffer2{i})
 					goto Testing_Run_before_fail;
 			}
-			R@(buffer2, "");
+			R@(buffer2, YSI_EMPTY);
 Testing_Run_before_fail:
 		}
 		// Call the setup function if there is one.
 		buffer[0] = Y_TESTING_INIT,
-		R@(buffer, ""),
+		R@(buffer, YSI_EMPTY),
 		// Call the test.
 		buffer[0] = Y_TESTING_TEST,
 		fails = YSI_g_sFails;
 		P:5("Testing_Run(): Calling %s", unpack(buffer[1]));
 		YSI_g_sInTest = true,
-		R@(buffer, ""),
+		R@(buffer, YSI_EMPTY),
 		YSI_g_sInTest = false;
 		++YSI_g_sTests;
 		if (!YSI_gTestComplete)
@@ -513,11 +513,11 @@ Testing_Run_before_fail:
 		else
 		{
 			TEST_REPORT(TEST_PASSED);
-			TEST_REPORT(" ");
+			TEST_REPORT(YSI_SPACE);
 		}
 #endif
 		buffer[0] = Y_TESTING_SHUT,
-		R@(buffer, "");
+		R@(buffer, YSI_EMPTY);
 
 		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_AFTER)))
 		{
@@ -526,7 +526,7 @@ Testing_Run_before_fail:
 				if (buffer{i} != buffer2{i})
 					goto Testing_Run_after_fail;
 			}
-			R@(buffer2, "");
+			R@(buffer2, YSI_EMPTY);
 Testing_Run_after_fail:
 		}
 	}
@@ -646,7 +646,7 @@ Testing_Next_retry:
 						printf("    - %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
 						YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
 					}
-					print(" ");
+					print(YSI_SPACE);
 				}
 				else
 				{
@@ -880,7 +880,7 @@ stock Testing_RunAll()
 				printf("    - %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
 				YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
 			}
-			print(" ");
+			print(YSI_SPACE);
 		}
 		else
 		{
@@ -892,7 +892,7 @@ stock Testing_RunAll()
 	}
 	endTime = tickcount();
 	printf("*** Time: %dms", endTime - startTime);
-	TEST_REPORT(" ");
+	TEST_REPORT(YSI_SPACE);
 	//state ysi_debug : on;
 	R@("OnTestsComplete", "iii", tests, checks, fails);
 	#if defined TEST_AUTO_EXIT

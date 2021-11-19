@@ -1214,7 +1214,7 @@ static stock Player_GetNewID()
 	if (fHnd)
 	{
 		fread(fHnd, num);
-		num[strfind(num, " ")] = '\0';
+		num[strfind(num, YSI_SPACE)] = '\0';
 		uid = strval(num) + 1;
 		valstr(num, uid);
 		fseek(fHnd, 0, seek_start);

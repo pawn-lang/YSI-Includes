@@ -317,7 +317,6 @@ stock bool:Server_IsOpenMP()
 static stock const
 	YSI_gscHeader[] = " ========================================== ",
 	YSI_gscSpacer[] = " |                                        | ",
-	YSI_gscMiniGap[] = " ",
 	YSI_gscObnoxiousHeader0[] = "\n" \
 		"         ==============================================================\n" \
 		"         |                                                            |\n" \
@@ -374,7 +373,7 @@ static stock ScriptInit_Dump(const filename[], const message[])
 		new file[48];
 		format(file, sizeof (file), "%s%s.%d.asm", GetYSIScriptfilesDir(E_YSI_DIR_DEBUG), filename, YSI_gsStartTime);
 	#if _YSI_SAFE_STARTUP
-		Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_gscMiniGap, YSI_gscInitMsgD),
+		Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_SPACE, YSI_gscInitMsgD),
 		Server_DisableLongCall();
 	#endif
 		if (DisasmWrite(file))
@@ -384,7 +383,7 @@ static stock ScriptInit_Dump(const filename[], const message[])
 		}
 	#if _YSI_SAFE_STARTUP
 		Server_EnableLongCall(),
-		Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone),
+		Server_PrintIntroPart(YSI_SPACE, YSI_gscDone),
 		Server_FinishIntroPart();
 	#endif
 }
@@ -394,16 +393,16 @@ stock Server_PrintIntroMessage(...)
 	#if _YSI_SAFE_STARTUP
 		if (YSI_gsObnoxiousHeader)
 		{
-			YSI_Print(YSI_gscMiniGap),
-			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_SPACE),
+			YSI_Print(YSI_SPACE),
 			YSI_Print(YSI_gscObnoxiousHeader0),
 			YSI_Print(YSI_gscObnoxiousHeader1),
 			YSI_Print(YSI_gscObnoxiousHeader2),
 			YSI_Print(YSI_gscObnoxiousHeader3),
 			YSI_Print(YSI_gscObnoxiousHeader4),
 			YSI_Print(YSI_gscObnoxiousHeader5),
-			YSI_Print(YSI_gscMiniGap),
-			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_SPACE),
+			YSI_Print(YSI_SPACE),
 			YSI_Print(YSI_gscHeader),
 			YSI_gsObnoxiousHeader = false,
 			YSI_gsFirstHeader = false;
@@ -412,7 +411,7 @@ stock Server_PrintIntroMessage(...)
 	#endif
 		if (YSI_gsFirstHeader)
 		{
-			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_SPACE),
 			YSI_Print(YSI_gscHeader),
 			YSI_gsFirstHeader = false;
 		}
@@ -438,16 +437,16 @@ stock Server_PrintIntroPart(...)
 	#if _YSI_SAFE_STARTUP
 		if (YSI_gsObnoxiousHeader)
 		{
-			YSI_Print(YSI_gscMiniGap),
-			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_SPACE),
+			YSI_Print(YSI_SPACE),
 			YSI_Print(YSI_gscObnoxiousHeader0),
 			YSI_Print(YSI_gscObnoxiousHeader1),
 			YSI_Print(YSI_gscObnoxiousHeader2),
 			YSI_Print(YSI_gscObnoxiousHeader3),
 			YSI_Print(YSI_gscObnoxiousHeader4),
 			YSI_Print(YSI_gscObnoxiousHeader5),
-			YSI_Print(YSI_gscMiniGap),
-			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_SPACE),
+			YSI_Print(YSI_SPACE),
 			YSI_Print(YSI_gscHeader),
 			YSI_gsObnoxiousHeader = false,
 			YSI_gsFirstHeader = false;
@@ -456,7 +455,7 @@ stock Server_PrintIntroPart(...)
 	#endif
 		if (YSI_gsFirstHeader)
 		{
-			YSI_Print(YSI_gscMiniGap),
+			YSI_Print(YSI_SPACE),
 			YSI_Print(YSI_gscHeader),
 			YSI_gsFirstHeader = false;
 		}
@@ -488,7 +487,7 @@ stock Server_FinishIntroPart()
 
 stock Server_FinishIntroMessage()
 {
-	YSI_Print(YSI_gscMiniGap),
+	YSI_Print(YSI_SPACE),
 	YSI_gsFirstHeader = true;
 }
 
@@ -613,7 +612,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 		#if _YSI_SAFE_STARTUP
 			Server_PrintIntroMessage("   File loaded from YSI code cache.");
 		#endif
-			R@("OnCachedInit", "");
+			R@("OnCachedInit", YSI_EMPTY);
 	}
 	else
 	{
@@ -659,7 +658,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				Server_PrintIntroPart(
 					"  Generating code, this may take a",
 					"         little bit of time.",
-					YSI_gscMiniGap,
+					YSI_SPACE,
 					YSI_gscInitMsgD
 				);
 			}
@@ -671,9 +670,9 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					" code generation works best with the",
 					"    JIT plugin, which you are not",
 					"    currently using.  Get it here:",
-					YSI_gscMiniGap,
+					YSI_SPACE,
 					"      https://git.io/jit-plugin",
-					YSI_gscMiniGap,
+					YSI_SPACE,
 					YSI_gscInitMsgD
 				);
 			}
@@ -684,7 +683,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			ScriptInit_OnCodeInit();
 		#endif
 		#if _YSI_SAFE_STARTUP
-			Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
+			Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
 			Server_FinishIntroPart();
 		#endif
 		#if !defined YSI_NO_MODE_CACHE
@@ -697,14 +696,14 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				Server_PrintIntroPart(
 					" Dumping \"YSI_CACHE.amx\", this may",
 					"     take a little bit of time.",
-					YSI_gscMiniGap,
+					YSI_SPACE,
 					YSI_gscInitMsgD
 				);
 			#endif
 			if (DumpAMX_Write(name))
 			{
 				#if _YSI_SAFE_STARTUP
-					Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscDone);
+					Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
 					Server_FinishIntroPart();
 				#endif
 					// Clear this flag after dumping.  This is so we can tell
@@ -713,9 +712,9 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				#if _YSI_SAFE_STARTUP
 					Server_PrintIntroMessage(
 						"    File dumped to YSI code cache:",
-						YSI_gscMiniGap,
+						YSI_SPACE,
 						"       scriptfiles/YSI_CACHE.amx",
-						YSI_gscMiniGap,
+						YSI_SPACE,
 						"Load this file instead to skip this",
 						"code optimisation step in the future.",
 						"Note that if you have multiple scripts",
@@ -725,7 +724,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 						"individually so that they don't",
 						"clobber each other.  If you don't, in",
 						"\"server.cfg\", the following works:",
-						YSI_gscMiniGap,
+						YSI_SPACE,
 						"  gamemode0 ../scriptfiles/YSI_CACHE 1"
 					);
 				#endif
@@ -733,7 +732,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			else
 			{
 				#if _YSI_SAFE_STARTUP
-					Server_PrintIntroPart(YSI_gscMiniGap, YSI_gscFailed);
+					Server_PrintIntroPart(YSI_SPACE, YSI_gscFailed);
 					Server_FinishIntroPart();
 				#endif
 					YSI_g_sScriptInitState = tmp;
@@ -873,7 +872,7 @@ public OnJITCompile()
 			ScriptInit_OnYSIInit();
 		#endif
 		ScriptInit_PreInitFuncs_();
-		CallLocalFunction("OnScriptInit@A", "");
+		CallLocalFunction("OnScriptInit@A", YSI_EMPTY);
 		ScriptInit_PostInitFuncs_();
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
@@ -881,8 +880,8 @@ public OnJITCompile()
 			DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
 		}
 		Server_FinishIntroMessage();
-		CallLocalFunction("OnScriptInit@B", "");
-		CallLocalFunction("OnScriptInit@C", "");
+		CallLocalFunction("OnScriptInit@B", YSI_EMPTY);
+		CallLocalFunction("OnScriptInit@C", YSI_EMPTY);
 		return 1;
 	}
 #endif
@@ -921,7 +920,7 @@ public OnJITCompile()
 					ScriptInit_OnYSIInit();
 				#endif
 				ScriptInit_PreInitFuncs_();
-				CallLocalFunction("OnScriptInit@A", "");
+				CallLocalFunction("OnScriptInit@A", YSI_EMPTY);
 				ScriptInit_PostInitFuncs_();
 				if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 				{
@@ -952,7 +951,7 @@ public OnJITCompile()
 						}
 					#endif
 				#endif
-				CallLocalFunction("OnScriptInit@B", "");
+				CallLocalFunction("OnScriptInit@B", YSI_EMPTY);
 			}
 			return 1;
 	}
@@ -1006,7 +1005,7 @@ public ScriptInit_PurgeTemporaries()
 				line[then - 2] = '\0';
 			change = true;
 			// Release this file.
-			fremove(line[strfind(line, " ") + 1]);
+			fremove(line[strfind(line, YSI_SPACE) + 1]);
 		}
 		else
 		{
@@ -1092,7 +1091,7 @@ ScriptInit_Purge_retry:
 						ScriptInit_OnYSIInit();
 					#endif
 					ScriptInit_PreInitFuncs_();
-					CallLocalFunction("OnScriptInit@A", "");
+					CallLocalFunction("OnScriptInit@A", YSI_EMPTY);
 					ScriptInit_PostInitFuncs_();
 					if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 					{
@@ -1123,7 +1122,7 @@ ScriptInit_Purge_retry:
 			if (!YSI_OPEN_MP)
 		#endif
 			{
-				CallLocalFunction("OnScriptInit@C", "");
+				CallLocalFunction("OnScriptInit@C", YSI_EMPTY);
 			}
 			return 1;
 	}

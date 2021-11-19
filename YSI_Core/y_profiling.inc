@@ -217,17 +217,17 @@ stock bool:Profiling_Run(&profilings)
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_PROFILING_PROFILE_SEARCH)))
 	{
 		buffer[0] = Y_PROFILING_INIT,
-		CallLocalFunction(buffer, ""),
+		CallLocalFunction(buffer, YSI_EMPTY),
 		// Call the test.
 		buffer[0] = Y_PROFILING_PROFILE;
 		P:5("Profiling_Run(): Calling %s", unpack(buffer[1]));
 		YSI_g_sInProfile = true,
-		CallLocalFunction(buffer, ""),
+		CallLocalFunction(buffer, YSI_EMPTY),
 		YSI_g_sInProfile = false,
 		buffer[0] = Y_PROFILING_CLOSE,
-		CallLocalFunction(buffer, ""),
+		CallLocalFunction(buffer, YSI_EMPTY),
 		++profilings;
-		PROFILE_REPORT(" ");
+		PROFILE_REPORT(YSI_SPACE);
 	}
 #else
 	#pragma unused profilings
@@ -291,7 +291,7 @@ stock Profiling_RunAll()
 	#endif
 	endTime = GetTickCount();
 	printf("*** Time: %dms", endTime - startTime);
-	PROFILE_REPORT(" ");
+	PROFILE_REPORT(YSI_SPACE);
 	CallLocalFunction("OnProfilingsComplete", "i", profilings);
 	#if defined PROFILE_AUTO_EXIT
 		SendRconCommand("exit");

@@ -401,7 +401,7 @@ static stock Alloc:INI_GetKey(Alloc:cur, const key[], &Alloc:prev)
 _Y_INI_STATIC stock bool:INI_AddToBuffer(INI:file, const key[], const value[], semis = 0)
 {
 	P:4("INI_AddToBuffer called: %i, \"%s\", \"%s\"", _:file, key, value);
-	if (strfind(key, " ") != -1)
+	if (strfind(key, YSI_SPACE) != -1)
 	{
 		P:E("INI key \"%s\" must not contain spaces", key);
 		return false;
@@ -645,10 +645,10 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 		YSI_g_sTag[0] = '\1';
 		YSI_g_sTag[1] = '\0';
 		if (bFileFirst)
-			format(cb, sizeof (cb), YSI_g_sFormat, YSI_g_sFile, "");
+			format(cb, sizeof (cb), YSI_g_sFormat, YSI_g_sFile, YSI_EMPTY);
 		else
-			format(cb, sizeof (cb), YSI_g_sFormat, "", YSI_g_sFile);
-		while ((pos = strfind(cb, " ", false, pos + 1)) != -1)
+			format(cb, sizeof (cb), YSI_g_sFormat, YSI_EMPTY, YSI_g_sFile);
+		while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
 			cb[pos] = '_';
 		start = INI_FindCallback(cb);
 	}
@@ -844,7 +844,7 @@ stock INI:INI_Open(const filename[])
 	}
 	return
 		// Reset tags.
-		INI_SetTag_(i, ""),
+		INI_SetTag_(i, YSI_EMPTY),
 		strcpy(YSI_g_sINIWriteFile[i], filename, YSI_MAX_STRING),
 		i;
 }
@@ -869,7 +869,7 @@ stock INI_Close(INI:file)
 stock bool:INI_SetTag(INI:file, const tag[])
 {
 	P:3("INI_SetTag called: %i, \"%s\"", _:file, tag);
-	if (strfind(tag, " ") != -1)
+	if (strfind(tag, YSI_SPACE) != -1)
 	{
 		P:E("INI tag \"%s\" must not contain spaces", tag);
 		if (INI_IsValid(file))
@@ -914,7 +914,7 @@ stock bool:INI_DeleteTag(INI:file, const tag[])
 stock bool:INI_RemoveEntry(INI:file, const name[])
 {
 	P:3("INI_RemoveEntry called: %i, \"%s\"", _:file, name);
-	return INI_AddToBuffer(file, name, "");
+	return INI_AddToBuffer(file, name, YSI_EMPTY);
 }
 
 /*
@@ -1759,7 +1759,7 @@ static stock INI_HandleTag(const tag[]) <
 		cb[FUNCTION_LENGTH];
 	strcpy(YSI_g_sTag, tag),
 	format(cb, sizeof (cb), YSI_g_sFormat, YSI_g_sFile, tag);
-	while ((pos = strfind(cb, " ", false, pos + 1)) != -1)
+	while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
 		cb[pos] = '_';
 	P:5("INI_HandleTag<y>: Find callback %s", cb);
 	return INI_FindCallback(cb) ? -1 : 0;
@@ -1777,7 +1777,7 @@ static stock INI_HandleTag(const tag[]) <
 		cb[FUNCTION_LENGTH];
 	strcpy(YSI_g_sTag, tag),
 	format(cb, sizeof (cb), YSI_g_sFormat, tag, YSI_g_sFile);
-	while ((pos = strfind(cb, " ", false, pos + 1)) != -1)
+	while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
 		cb[pos] = '_';
 	P:5("INI_HandleTag<n>: Find callback %s", cb);
 	return INI_FindCallback(cb) ? -1 : 0;
@@ -1920,7 +1920,7 @@ static stock INI_Flush_(INI:file)
 	}
 	state y_ini:y_ini_writing_fast;
 	// Parse the file, writing as we go.
-	YSI_g_sCurrentTag = INI_GetTag(YSI_g_sINITagBuffer[YSI_g_sCurrentINI], "");
+	YSI_g_sCurrentTag = INI_GetTag(YSI_g_sINITagBuffer[YSI_g_sCurrentINI], YSI_EMPTY);
 	if (YSI_g_sCurrentTag)
 	{
 		// You can't delete the no-tag tag.

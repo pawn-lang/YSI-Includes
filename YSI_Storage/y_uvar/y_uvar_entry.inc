@@ -137,8 +137,8 @@ forward _y_uvar_include_@();
 
 public _y_uvar_include_@()
 {
-	memset("", 0, 0);
-	Player_WriteArray("", "", 0);
+	memset(YSI_EMPTY, 0, 0);
+	Player_WriteArray(YSI_EMPTY, YSI_EMPTY, 0);
 }
 
 static stock Uvar_FindData(const name[], data[])
@@ -177,7 +177,7 @@ public OnUserData[y_uvar](playerid, name[], value[])
 		if (strcmp(name, YSI_g_sLastName))
 		{
 			// Find the data.
-			Uvar_FindData(name, "");
+			Uvar_FindData(name, YSI_EMPTY);
 		}
 		if (YSI_g_sLastAddr == -1)
 		{
@@ -195,7 +195,7 @@ public OnUserData[y_uvar](playerid, name[], value[])
 		if (strcmp(name[2], YSI_g_sLastName, false))
 		{
 			// Find the data.
-			Uvar_FindData(name[2], "");
+			Uvar_FindData(name[2], YSI_EMPTY);
 		}
 		if (YSI_g_sLastAddr == -1)
 		{
@@ -294,7 +294,7 @@ stock N@(volatile const vardata[], playerCount, dataSize, &pointer)
 	// location at which the data is stored.
 	#emit LOAD.S.pri vardata
 	#emit STOR.S.pri sAddr
-	printf("", YSI_g_sFirstUVarData);
+	printf(YSI_EMPTY, YSI_g_sFirstUVarData);
 	#emit LOAD.pri   YSI_g_sFirstUVarData
 	#emit SREF.S.pri sAddr
 	YSI_g_sFirstUVarData = sAddr;
