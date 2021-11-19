@@ -74,7 +74,7 @@ Optional plugins:
 static stock const
 	YSI_gscBatCmd[] = !".dmc\0exe",  // "cmd.exe" byteswapped.
 	YSI_gscBatOperation[] = !"nepo", // "open" byteswapped.
-	YSI_gscBasePath[] = "/C scriptfiles\\YSI\\scripts\\",
+	//YSI_gscBasePath[] = "/C \"",
 	YSI_gscArg1[] = "set arg1=scriptfiles\\%~1\r\nset arg1=%arg1:..=%\r\nset arg1=%arg1:\\\\=\\%\r\n",
 	YSI_gscArg2[] = "set arg2=scriptfiles\\%~2\r\nset arg2=%arg2:..=%\r\nset arg2=%arg2:\\\\=\\%\r\n",
 	YSI_gscMKDir[] = "YSI\\scripts\\mkdir.bat",
@@ -224,7 +224,7 @@ static stock bool:Files_WriteMKDirBat()
 static stock bool:Files_CreateDirAsync(const string:folder[])
 {
 	return
-		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "%smkdir.bat \"%s\"", YSI_gscBasePath, folder),
+		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"mkdir scriptfiles\\%s\" \"type nul > scriptfiles\.donescript\"", folder),
 		Files_CallBat();
 }
 
@@ -251,7 +251,7 @@ static stock bool:Files_WriteCopyBat()
 stock bool:Files_CopyAsync(const string:src[], const string:dst[])
 {
 	return
-		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "%scopy.bat \"%s\" \"%s\"", YSI_gscBasePath, src, dst),
+		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"copy scriptfiles\\%s scriptfiles\\%s\"", src, dst),
 		Files_CallBat();
 }
 
@@ -278,7 +278,7 @@ static stock bool:Files_WriteMoveBat()
 stock bool:Files_MoveAsync(const string:src[], const string:dst[])
 {
 	return
-		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "%smove.bat \"%s\" \"%s\"", YSI_gscBasePath, src, dst),
+		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"move scriptfiles\\%s scriptfiles\\%s\"", src, dst),
 		Files_CallBat();
 }
 
