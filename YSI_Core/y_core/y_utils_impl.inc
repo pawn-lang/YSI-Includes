@@ -468,63 +468,55 @@ P:D(floordiv(numerator, denominator));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:isnull(str[]));
-#if defined isnull
-	#undef isnull
-#endif
-#if __COMPILER_1ST_PASS
-	#define isnull __MACRO__isnull
-#else
-	#define isnull(%0) ((%0[(%0[0])=='\1'])=='\0')
-#endif
-#define _ALS_isnull
+P:D(bool:IsNull(str[]));
+#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
+
+#pragma deprecated Use `IsNull` (i.e. use proper capitalisation).
+stock bool:isnull(const str[])
+{
+	return IsNull(str);
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:isodd(value));
-#if defined isodd
-	#undef isodd
-#endif
-#if __COMPILER_1ST_PASS
-	#define isodd __MACRO__isodd
-#else
-	#define isodd(%1) ((%1)&1)
-#endif
-#define _ALS_isodd
+P:D(bool:IsOdd(str[]));
+#define IsOdd(%0) ((%0)&1)
+
+#pragma deprecated Use `IsOdd` (i.e. use proper capitalisation).
+stock bool:isodd(const str[])
+{
+	return IsOdd(str);
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:iseven(value));
-#if defined iseven
-	#undef iseven
-#endif
-#if __COMPILER_1ST_PASS
-	#define iseven __MACRO__iseven
-#else
-	#define iseven(%1) (!isodd(%1))
-#endif
-#define _ALS_iseven
+P:D(bool:IsEven(str[]));
+#define IsEven(%0) (!IsOdd(%0))
 
-#if __COMPILER_1ST_PASS && !defined strcpy
-	static stock strcpy_undefined__() {}
+#pragma deprecated Use `IsEven` (i.e. use proper capitalisation).
+stock bool:iseven(const str[])
+{
+	return IsEven(str);
+}
 
-	/*---------------------------------------------------------------------*//**
-	 * <param name="dest">Destination string.</param>
-	 * <param name="src">Source string.</param>
-	 * <param name="len">(Implicit) maximum length of the destination.</param>
-	 *//*--------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="dest">Destination string.</param>
+ * <param name="src">Source string.</param>
+ * <param name="len">(Implicit) maximum length of the destination.</param>
+ *//*------------------------------------------------------------------------**/
 
-	P:D(strcpy(dest[], const src[], len = sizeof (dest)));
-#endif
+P:D(StrCpy(str[]));
+#define StrCpy(%0) strcat((%0[0] = '\0', %0), %1)
 
-#if defined strcpy_undefined__
-	#define strcpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
-	#define _ALS_strcpy
-#endif
+#pragma deprecated Use `StrCpy` (i.e. use proper capitalisation).
+stock strcpy(dest[], const src[], len = sizeof (dest))
+{
+	return StrCpy(dest, src, len);
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to convert.</param>
@@ -555,7 +547,7 @@ stock StrToUpper(str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="minmax">Lower bound, or upper bound when only parameter.</param>
+ * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
  * <remarks>
  *  Generate a random float between the given numbers (min &lt;= n &lt; max).
@@ -563,18 +555,22 @@ stock StrToUpper(str[], len = sizeof (str))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Random(min, max = cellmin)
+stock RandomMinMax(min, max)
 {
-	if (max == cellmin)
-	{
-		if (min < 0)
-			return -random(-min);
-		return random(min);
-	}
-	if (max < min)
-		return random(min - max) + max;
+	assert(min < max);
 	return random(max - min) + min;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="max">Upper bound.</param>
+ * <remarks>
+ *  Generate a random float between the given numbers (min &lt;= n &lt; max).
+ *  Default minimum is 0 (changes the parameter order).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+native Random(max) = random;
+#define Random(%0,%1) RandomMinMax(%0,%1)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="minmax">Lower bound, or upper bound when only parameter.</param>
@@ -625,6 +621,14 @@ stock StripNL(str[])
 	while (i-- && str[i] <= ' ') str[i] = '\0';
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">The string to remove whitespace from the end of.</param>
+ * <remarks>
+ *  Updated from old versions, should be more efficient
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(StripR(str[]));
 #define StripR StripNL
 
 /*-------------------------------------------------------------------------*//**
@@ -665,13 +669,18 @@ stock Strip(str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock endofline(const line[], pos)
+stock bool:EndOfLine(const line[], pos)
 {
-	P:7("endofline called: \"%s\", %i", line, pos);
-	if (NOT_IN_RANGE(pos, 0, strlen(line))) return 0;
-	//if (pos < 0 || pos > strlen(line)) return 0;
-	while (line[pos]) if (line[pos++] > ' ') return 0;
-	return 1;
+	P:7("EndOfLine called: \"%s\", %i", line, pos);
+	if (NOT_IN_RANGE(pos, 0, strlen(line))) return false;
+	while (IS_IN_RANGE(line[pos], '\0' + 1, ' ' + 1)) ++pos;
+	return !line[pos];
+}
+
+#pragma deprecated Use `EndOfLine` (i.e. use proper capitalisation).
+stock bool:endofline(const line[], pos)
+{
+	return EndOfLine(line, pos);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -683,16 +692,18 @@ stock endofline(const line[], pos)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock chrfind(needle, const haystack[], start = 0)
+stock ChrFind(needle, const haystack[], start = 0)
 {
-	P:7("chrfind called: %c, \"%s\", %i", needle, haystack, start);
-	if (start < 0)
-	{
-		start = 0;
-	}
-	else if (start > strlen(haystack)) return -1;
-	while (haystack[start]) if (haystack[start++] == needle) return start - 1;
-	return -1;
+	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
+	new search[2];
+	search[0] = needle;
+	return strfind(haystack, search, start);
+}
+
+#pragma deprecated Use `ChrFind` (i.e. use proper capitalisation).
+stock bool:chrfind(needle, const haystack[], start = 0)
+{
+	return ChrFind(needle, haystack, start);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -703,20 +714,15 @@ stock chrfind(needle, const haystack[], start = 0)
  *  Fail - -1, Success - pos
  * </returns>
  * <remarks>
- *  Like <symbolref name="chrfind" />, but with no upper-bounds check on
- *  <paramref name="start" />.
+ *  Like <symbolref name="ChrFind" />, but with no upper-bounds check on
+ *  <paramref name="start" />.  Now it has them anyway...
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock chrfindp(needle, const haystack[], start = 0)
+#pragma deprecated Use `ChrFind` (i.e. use proper capitalisation, and bounds checks).
+stock bool:chrfindp(needle, const haystack[], start = 0)
 {
-	P:7("chrfind called: %c, \"%s\", %i", needle, haystack, start);
-	if (start < 0)
-	{
-		start = 0;
-	}
-	while (haystack{start}) if (haystack{start++} == needle) return start - 1;
-	return -1;
+	return ChrFind(needle, haystack, start);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -774,7 +780,7 @@ stock BernsteinHash(const string[] /* 12 */)
 	return h;
 }
 
-#pragma deprecated Use the new name `BernsteinHash()`.
+#pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
 stock bernstein(const string[] /* 12 */)
 {
 	new h = 5381, i = 0, j = 0;
@@ -813,9 +819,9 @@ stock JenkinsHash(const string[] /* 12 */)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock ishex(const str[])
+stock bool:IsHex(const str[])
 {
-	P:7("ishex called: \"%s\"", str);
+	P:3("ishex called: \"%s\"", str);
 	new
 		i = 0,
 		cur = 0;
@@ -829,6 +835,12 @@ stock ishex(const str[])
 	return !cur; // Valid if this is the end of the string.
 }
 
+#pragma deprecated Use `IsHex` (i.e. use proper capitalisation).
+stock bool:ishex(const str[])
+{
+	return IsHex(str);
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to unpack</param>
  * <returns>
@@ -839,9 +851,24 @@ stock ishex(const str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+stock Unpack(const str[])
+{
+	P:3("Unpack called: \"%s\"", str);
+	new
+		ret[YSI_MAX_STRING] = {0};
+	if (strlen(str) <= YSI_MAX_STRING)
+	{
+		strunpack(ret, str);
+	}
+	return ret;
+}
+
+#pragma deprecated Use `Unpack` (i.e. use proper capitalisation).
 stock unpack(const str[])
 {
-	P:7("unpack called: \"%s\"", str);
+	// Doesn't call the original, instead inlines the code because it returns a
+	// string, and the compiler doesn't like nested string returning functions.
+	P:3("unpack called: \"%s\"", str);
 	new
 		ret[YSI_MAX_STRING] = {0};
 	if (strlen(str) <= YSI_MAX_STRING)
@@ -862,13 +889,13 @@ stock unpack(const str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#define getstring        returnstringarg
+#define getstring        ReturnStringArg
 #define GetString        getstring
 #define getstringarg     va_getstring
 #define GetStringArg     va_getstring
-#define ReturnStringArg  returnstringarg
+#define returnstringarg  ReturnStringArg
 
-stock returnstringarg(idx)
+stock ReturnStringArg(idx)
 {
 	static
 		scSize = YSI_MAX_STRING;
@@ -978,13 +1005,19 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock isnumeric(const str[])
+stock bool:IsNumeric(const str[])
 {
-	P:4("isnumeric called: \"%s\"", str);
+	P:4("IsNumeric called: \"%s\"", str);
 	new
 		i = -1;
 	while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
 	return !str[i];
+}
+
+#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
+stock bool:isnumeric(const str[])
+{
+	return IsNumeric(str);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1044,123 +1077,140 @@ stock Utils_ChaosMod(playerid)
 	}
 #endif
 
-#if !defined _inc_sscanf || 1
-	/*---------------------------------------------------------------------*//**
-	 *
-	 * <param name="string">String to convert to a number.</param>
-	 * <returns>
-	 *  value of the passed hex string.
-	 * </returns>
-	 * <remarks>
-	 *  Now stops on invalid characters.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-	
-	stock hexstr(const string[])
+
+/*-------------------------------------------------------------------------*//**
+ *
+ * <param name="string">String to convert to a number.</param>
+ * <returns>
+ *  value of the passed hex string.
+ * </returns>
+ * <remarks>
+ *  Now stops on invalid characters.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock HexStr(const string[])
+{
+	new
+		ret = 0,
+		val = 0,
+		i = 0;
+	if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
+	for ( ; ; )
 	{
-		new
-			ret = 0,
-			val = 0,
-			i = 0;
-		if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
-		for ( ; ; )
+		switch ((val = string[i++]))
 		{
-			switch ((val = string[i++]))
+			case '0' .. '9':
 			{
-				case '0' .. '9':
-				{
-					val -= '0';
-				}
-				case 'a' .. 'f':
-				{
-					val -= 'a' - 10;
-				}
-				case 'A' .. 'F':
-				{
-					val -= 'A' - 10;
-				}
-				default: break;
+				val -= '0';
 			}
-			ret = ret << 4 | val;
+			case 'a' .. 'f':
+			{
+				val -= 'a' - 10;
+			}
+			case 'A' .. 'F':
+			{
+				val -= 'A' - 10;
+			}
+			default: break;
 		}
-		return ret;
+		ret = ret << 4 | val;
 	}
-	
-	/*---------------------------------------------------------------------*//**
-	 *
-	 * <param name="string">String to try convert to a boolean.</param>
-	 * <returns>
-	 *  bool: passed boolean.
-	 * </returns>
-	 * <remarks>
-	 *  This can take a number of ways of representing booleans - 0, false and
-	 *  nothing there.  Anything not one of those things (false is not case
-	 *  sensitive) is assumed true.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-	
-	stock bool:boolstr(const string[])
+	return ret;
+}
+
+#pragma deprecated Use `HexStr` (i.e. use proper capitalisation).
+stock hexstr(const string[])
+{
+	return HexStr(string);
+}
+
+/*-------------------------------------------------------------------------*//**
+ *
+ * <param name="string">String to try convert to a boolean.</param>
+ * <returns>
+ *  bool: passed boolean.
+ * </returns>
+ * <remarks>
+ *  This can take a number of ways of representing booleans - 0, false and
+ *  nothing there.  Anything not one of those things (false is not case
+ *  sensitive) is assumed true.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:BoolStr(const string[])
+{
+	// Hooray for De Morgan's rules!
+	return string[0] && string[0] != '0' && strcmp(string, "false", true);
+}
+
+#pragma deprecated Use `BoolStr` (i.e. use proper capitalisation).
+stock bool:boolstr(const string[])
+{
+	return BoolStr(string);
+}
+
+/*-------------------------------------------------------------------------*//**
+ *
+ * <param name="string">String to try convert to a boolean.</param>
+ * <returns>
+ *  bool: passed boolean.
+ * </returns>
+ * <remarks>
+ *  This takes a value in 0110101 (boolean) format and returns it as a
+ *  regular value.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock BinStr(const string[])
+{
+	new
+		pos = 0;
+	switch (string[0])
 	{
-		// Hooray for De Morgan's rules!
-		return string[0] && string[0] != '0' && strcmp(string, "false", true);
+		case '0':
+		{
+			if (string[1] | 0x20 == 'b')
+			{
+				pos = 2;
+			}
+		}
+		case '1':
+		{
+		}
+		default:
+		{
+			return 0;
+		}
 	}
-	
-	/*---------------------------------------------------------------------*//**
-	 *
-	 * <param name="string">String to try convert to a boolean.</param>
-	 * <returns>
-	 *  bool: passed boolean.
-	 * </returns>
-	 * <remarks>
-	 *  This takes a value in 0110101 (boolean) format and returns it as a
-	 *  regular value.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-	
-	stock binstr(const string[])
+	new
+		value = 0;
+	for ( ; ; )
 	{
-		new
-			pos = 0;
-		switch (string[0])
+		switch (string[pos++])
 		{
 			case '0':
 			{
-				if (string[1] | 0x20 == 'b')
-				{
-					pos = 2;
-				}
+				value <<= 1;
 			}
 			case '1':
 			{
+				value = (value << 1) | 1;
 			}
 			default:
 			{
-				return 0;
+				break;
 			}
 		}
-		new
-			value = 0;
-		for ( ; ; )
-		{
-			switch (string[pos++])
-			{
-				case '0':
-				{
-					value <<= 1;
-				}
-				case '1':
-				{
-					value = (value << 1) | 1;
-				}
-				default:
-				{
-					break;
-				}
-			}
-		}
-		return value;
 	}
-#endif
+	return value;
+}
+
+#pragma deprecated Use `BinStr` (i.e. use proper capitalisation).
+stock binstr(const string[])
+{
+	return BinStr(string);
+}
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
@@ -1549,7 +1599,7 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  rawMemcpy
+ *  RawMemcpy
  * </summary>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
@@ -1561,8 +1611,14 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-native rawMemcpy_(dest, src, index, numbytes, maxlength) = memcpy;
-#define rawMemcpy(%0,%1,%2) rawMemcpy_((%0),(%1),0,(%2),(cellmax>>>2))
+native RawMemcpy_(dest, src, index, numbytes, maxlength) = memcpy;
+#define RawMemcpy(%0,%1,%2) RawMemcpy_((%0),(%1),0,(%2),(cellmax>>>2))
+
+#pragma deprecated Use `RawMemcpy` (i.e. use proper capitalisation).
+stock rawMemcpy(dest, src, numbytes)
+{
+	return RawMemcpy(dest, src, numbytes);
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="arr">Array or address to set to a value.</param>
@@ -1584,6 +1640,17 @@ native rawMemcpy_(dest, src, index, numbytes, maxlength) = memcpy;
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+stock MemSet(arr[], val = 0, size = sizeof (arr))
+{
+	new
+		addr = 0;
+	#emit LOAD.S.pri arr
+	#emit STOR.S.pri addr
+	// Convert the size from cells to bytes.
+	return RawMemSet(addr, val, size * cellbytes);
+}
+
+#pragma deprecated Use `MemSet` (i.e. use proper capitalisation).
 stock memset(arr[], val = 0, size = sizeof (arr))
 {
 	new
@@ -1591,7 +1658,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	#emit LOAD.S.pri arr
 	#emit STOR.S.pri addr
 	// Convert the size from cells to bytes.
-	return rawMemset(addr, val, size * cellbytes);
+	return RawMemSet(addr, val, size * cellbytes);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1608,13 +1675,13 @@ stock memset(arr[], val = 0, size = sizeof (arr))
  *  "memset" takes an array, the size of the array, and a value to fill it with
  *  and sets the whole array to that value.
  *
- *  "rawmemset" is similar, but takes an AMX data segment address instead and
+ *  "RawMemSet" is similar, but takes an AMX data segment address instead and
  *  the size is in bytes, not cells.  However, the size must still be a multiple
  *  of 4.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
+stock RawMemSet(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 {
 	if (iSize < cellbytes)
 		return 0;
@@ -1718,6 +1785,12 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 //		// JIT not started/non-existant.  We can use code rewriting.
 //		return 1;
 //	}
+}
+
+#pragma deprecated Use `RawMemSet` (i.e. use proper capitalisation).
+stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
+{
+	return RawMemSet(iAddress, iValue, iSize);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2539,7 +2612,7 @@ stock Range(const arr[], num = sizeof (arr))
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock memcmp(arr1[], arr2[], count)
+stock MemCmp(arr1[], arr2[], count)
 {
 	for (new diff = 0, i = 0; i != count; ++i)
 	{
@@ -2548,6 +2621,12 @@ stock memcmp(arr1[], arr2[], count)
 			return diff;
 	}
 	return 0;
+}
+
+#pragma deprecated Use `MemCmp` (i.e. use proper capitalisation).
+stock memcmp(arr1[], arr2[], count)
+{
+	return MemCmp(arr1, arr2, count);
 }
 
 #define MAX_LEVENSHTEIN_STRING (32)

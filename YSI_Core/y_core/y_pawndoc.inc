@@ -82,6 +82,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#define Debug_PrintD _FIXES_FUNC_PAWNDOC
+
 #if defined FIXES_PAWNDOC
 	// The fixes.inc pawndoc cleverness is already defined, we don't need to
 	// duplicate it here, just clear some spaces in the XML hidden output to
