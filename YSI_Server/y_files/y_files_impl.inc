@@ -249,39 +249,85 @@ public OnCodeInit()
 
 stock bool:Files_CopySync(const string:src[], const string:dst[])
 {
-	fremove(dst);
-	if (Files_CallCopyBat(src, dst))
+	// Handy simple check that the source is in `scriptfiles`.
+	new File:i = fopen(src, io_read);
+	if (!i)
 	{
+		return false;
+	}
+	if (Server_IsWindowsHost() && flength(i) > YSI_LARGE_FILE_SIZE && Files_CallCopyBat(src, dst))
+	{
+		// Use batch file copying.
+		fclose(i);
 		while (!fexist(dst))
 		{
 		}
 		return true;
 	}
-	return false;
+	// Use fallback copying.
+	new File:o = fopen(dst, io_write);
+	if (!o)
+	{
+		fclose(i);
+		return false;
+	}
+	for (new count; (count = fblockread(i, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH)); fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count))
+	{
+	}
+	fclose(i);
+	fclose(o);
+	return true;
 }
 
 stock bool:Files_MoveSync(const string:src[], const string:dst[])
 {
-	fremove(dst);
-	if (Files_CallMoveBat(src, dst))
+	// Handy simple check that the source is in `scriptfiles`.
+	new File:i = fopen(src, io_read);
+	if (!i)
 	{
+		return false;
+	}
+	if (Server_IsWindowsHost() && flength(i) > YSI_LARGE_FILE_SIZE && Files_CallMoveBat(src, dst))
+	{
+		// Use batch file moving.
+		fclose(i);
 		while (!fexist(dst))
 		{
 		}
 		return true;
 	}
-	return false;
+	// Use fallback moving.
+	new File:o = fopen(dst, io_write);
+	if (!o)
+	{
+		fclose(i);
+		return false;
+	}
+	for (new count; (count = fblockread(i, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH)); fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count))
+	{
+	}
+	fclose(i);
+	fclose(o);
+	fremove(src);
+	return true;
 }
 
 stock bool:Files_CreateDirSync(const string:dir[])
 {
-	fremove(".donescript");
-	if (Files_CallMKDirBat(dir))
+	if (Server_IsWindowsHost())
 	{
-		while (!fexist(".donescript"))
+		fremove(".donescript");
+		if (Files_CallMKDirBat(dir))
 		{
+			while (!fexist(".donescript"))
+			{
+			}
+			return true;
 		}
-		return true;
+	}
+	else
+	{
+		P:E("Files_MoveAsync unsupported on Linux hosts");
 	}
 	return false;
 }
@@ -289,18 +335,33 @@ stock bool:Files_CreateDirSync(const string:dir[])
 #pragma deprecated Use `Files_CopySync`, the async code doesn't save time.
 stock bool:Files_CopyAsync(const string:src[], const string:dst[])
 {
-	return Files_CallCopyBat(src, dst);
+	if (Server_IsWindowsHost())
+	{
+		return Files_CallCopyBat(src, dst);
+	}
+	P:E("Files_CopyAsync unsupported on Linux hosts");
+	return false;
 }
 
-#pragma deprecated Use `Files_MoveAsync`, the async code doesn't save time.
+#pragma deprecated Use `Files_MoveSync`, the async code doesn't save time.
 stock bool:Files_MoveAsync(const string:src[], const string:dst[])
 {
-	return Files_CallMoveBat(src, dst);
+	if (Server_IsWindowsHost())
+	{
+		return Files_CallMoveBat(src, dst);
+	}
+	P:E("Files_MoveAsync unsupported on Linux hosts");
+	return false;
 }
 
-#pragma deprecated Use `Files_CreateDirAsync`, the async code doesn't save time.
+#pragma deprecated Use `Files_CreateDirSync`, the async code doesn't save time.
 stock bool:Files_CreateDirAsync(const string:dir[])
 {
-	return Files_CallMKDirBat(dir);
+	if (Server_IsWindowsHost())
+	{
+		return Files_CallMKDirBat(dir);
+	}
+	P:E("Files_CreateDirAsync unsupported on Linux hosts");
+	return false;
 }
 
