@@ -1346,22 +1346,11 @@ static stock Users_DoUpgrade0()
 							}
 						}
 					}
-					fseek(g);
-					fclose(f);
-					fremove(filename);
-					f = fopen(filename, io_write);
-					if (!f)
+					fseek(g, 0, seek_start),
+					if (!Files_DoCopy(g, filename))
 					{
-						fclose(g);
 						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
-						continue;
 					}
-					while (fread(g, line))
-					{
-						fwrite(f, line);
-					}
-					fclose(f);
-					fclose(g);
 				}
 				f = fopen(USER_FILE_PATH "index.YSI", io_append);
 				if (f)
@@ -1471,21 +1460,10 @@ static stock Users_DoUpgrade1()
 						}
 					}
 					fseek(g);
-					fclose(f);
-					fremove(filename);
-					f = fopen(filename, io_write);
-					if (!f)
+					if (!Files_DoCopy(g, filename))
 					{
-						fclose(g);
 						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
-						continue;
 					}
-					while (fread(g, line))
-					{
-						fwrite(f, line);
-					}
-					fclose(f);
-					fclose(g);
 				}
 				f = fopen(USER_FILE_PATH "index.YSI", io_append);
 				if (f)

@@ -2985,6 +2985,33 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="i">Pointer to the file to copy.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Fast file copy routine.  Surprisingly widely used in YSI, in places where
+ *  temp files were used and <c>fseek</c>ed to the start.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_DoCopy(File:i, const string:dst[])
+{
+	new File:o = fopen(dst, io_write);
+	if (!o)
+	{
+		return
+			fclose(i),
+			false;
+	}
+	for (new count; (count = fblockread(i, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH)); fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count))
+	{
+	}
+	return
+		fclose(i),
+		fclose(o),
+		true;
+}
+
+/*-------------------------------------------------------------------------*//**
  * <summary>
  *  Float:FloatAbs(Float:number);
  * </summary>

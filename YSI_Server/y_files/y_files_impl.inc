@@ -296,21 +296,6 @@ static stock bool:Files_CallMoveBat(const string:src[], const string:dst[])
 		Files_CallBat();
 }
 
-static stock bool:Files_DoCopy(File:i, const string:dst[])
-{
-	new File:o = fopen(dst, io_write);
-	if (!o)
-	{
-		fclose(i);
-		return false;
-	}
-	for (new count; (count = fblockread(i, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH)); fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count))
-	{
-	}
-	fclose(i);
-	fclose(o);
-}
-
 /*-------------------------------------------------------------------------*//**
  * <param name="src">The name of the input file.</param>
  * <param name="dst">The name of the output file.</param>

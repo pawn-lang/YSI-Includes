@@ -1956,21 +1956,8 @@ static stock INI_Flush_(INI:file)
 		new parent[FUNCTION_LENGTH] = "";
 		INI_ReadFile(fhnd, parent);
 	}
-	// Now write it back out.
-	fseek(YSI_g_sCurrentFile, 0, seek_start);
-	fclose(fhnd);
-	fhnd = fopen(YSI_g_sINIWriteFile[file], io_write);
-	if (!fhnd)
-	{
-		fclose(YSI_g_sCurrentFile);
-		return;
-	}
-	while (fread(YSI_g_sCurrentFile, YSI_g_sCurLine))
-	{
-		fwrite(fhnd, YSI_g_sCurLine);
-	}
-	fclose(YSI_g_sCurrentFile);
-	fclose(fhnd);
+	fseek(YSI_g_sCurrentFile, 0, seek_start),
+	Files_DoCopy(YSI_g_sCurrentFile, YSI_g_sINIWriteFile[file]);
 }
 
 static stock INI_FlushWithRestore(INI:file)

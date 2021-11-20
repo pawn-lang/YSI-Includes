@@ -759,56 +759,51 @@ stock XML_WriteItem(const filename[], XMLEntry:item, bool:bIncludeXML = true, bo
 		if (fexist(filename))
 		{
 			new
-				File:fHnd = fopen(filename, io_read),
-				File:__ftemp = ftemp();//fopen("_temp_ysi_user_file_.ysi", io_write);
-			if (fHnd && __ftemp)
+				File:fHnd = fopen(filename, io_read);
+			if (!fHnd)
 			{
-				new
-					str[YSI_MAX_STRING];
-				while (fread(fHnd, str))
+				return 0;
+			}
+			new
+				File:ftmp = ftemp();
+			if (!ftmp)
+			{
+				fclose(fhnd);
+				return 0;
+			}
+			new
+				str[YSI_MAX_STRING];
+			while (fread(fHnd, str))
+			{
+				fwrite(ftmp, str);
+				if (!data)
 				{
-					fwrite(__ftemp, str);
-					if (!data)
+					new
+						i = 0,
+						ch = 0;
+					while ((ch = str[i++]) && ch <= ' ') {}
+					if (ch == '<')
 					{
-						new
-							i = 0,
-							ch = 0;
-						while ((ch = str[i++]) && ch <= ' ') {}
-						if (ch == '<')
-						{
-							if (bFavourShort) XML_WriteItemDataShort(_:item, __ftemp, 2);
-							else XML_WriteItemData(_:item, __ftemp, 2);
-							data = 1;
-						}
+						if (bFavourShort) XML_WriteItemDataShort(_:item, ftmp, 2);
+						else XML_WriteItemData(_:item, ftmp, 2);
+						data = 1;
 					}
 				}
-				fclose(fHnd);
-				//fclose(__ftemp);
+			}
+			fclose(fHnd);
+			if (data)
+			{
+				fseek(ftmp);
+				if (Files_DoCopy(ftmp, filename))
+				{
+					YSI_g_sXMLWritePointer = _:item;
+					return 1;
+				}
+			}
+			else
+			{
 				fremove(filename);
-				if (data)
-				{
-					fHnd = fopen(filename, io_write);
-					fseek(__ftemp);
-					//__ftemp = fopen("_temp_ysi_user_file_.ysi", io_read);
-					if (fHnd)// && __ftemp)
-					{
-						while (fread(__ftemp, str)) fwrite(fHnd, str);
-						fclose(fHnd);
-						fclose(__ftemp);
-						//fremove("_temp_ysi_user_file_.ysi");
-						YSI_g_sXMLWritePointer = _:item;
-						return 1;
-					}
-				}
-			}
-			if (fHnd)
-			{
-				fclose(fHnd);
-			}
-			if (__ftemp)
-			{
-				fclose(__ftemp);
-				//fremove("_temp_ysi_user_file_.ysi");
+				fclose(ftmp);
 			}
 		}
 		if (!data)
@@ -975,95 +970,86 @@ stock XML_ReplaceItem(const file[], const tag[], const name[], replacement)
 	if (fexist(file))
 	{
 		new
-			File:fHnd = fopen(file, io_read),
-			File:__ftemp = ftemp();//fopen("_temp_ysi_user_file_.ysi", io_write);
-		if (fHnd && __ftemp)
+			File:fHnd = fopen(file, io_read);
+		if (!fHnd)
+		{
+			return 0;
+		}
+		new
+			File:ftmp = ftemp();
+		if (!ftmp)
+		{
+			fclose(fHnd);
+			return 0;
+		}
+		new
+			tagCount = 0,
+			line[YSI_MAX_STRING],
+			inTag = 0,
+			atStart = 0;
+		while (fread(fHnd, line))
 		{
 			new
-				tagCount = 0,
-				line[YSI_MAX_STRING],
-				inTag = 0,
-				atStart = 0;
-			while (fread(fHnd, line))
+				pos = 0,
+				ch = 0;
+			while ((ch = line[pos]) && ch <= ' ') ++pos;
+			while (ch)
 			{
-				new
-					pos = 0,
-					ch = 0;
-				while ((ch = line[pos]) && ch <= ' ') ++pos;
-				while (ch)
+				if (ch <= ' ') ++pos;
+				else if (ch == '<')
 				{
-					if (ch <= ' ') ++pos;
-					else if (ch == '<')
+					if (line[++pos] == '/')
 					{
-						if (line[++pos] == '/')
-						{
-							++pos;
-							tagCount--;
-							if (inTag && tagCount <= atStart) inTag = 3;
-						}
-						else
-						{
-							tagCount++;
-							if (!inTag)
-							{
-								if (!strcmp(XML_GetName(line, pos), tag)) inTag = 1;
-							}
-							else while ((ch = line[pos]) && XML_IsChar(ch)) ++pos;
-						}
-					}
-					else if (ch == '>')
-					{
-						if (inTag == 1) inTag = 0;
 						++pos;
-					}
-					else if (inTag == 1)
-					{
-						if (!strcmp(XML_GetName(line, pos), "name"))
-						{
-							if (!(strcmp(XML_GetParameter(line, pos), name)))
-							{
-								inTag = 2;
-								atStart = tagCount - 1;
-								if (replacement != -1)
-								{
-									if (replacement >= YSI_g_sXMLWritePointer) replacement = -1;
-									else XML_WriteItemData(replacement, __ftemp, (tagCount - 1) * 2);
-								}
-							}
-						}
-						else XML_GetParameter(line, pos);
+						tagCount--;
+						if (inTag && tagCount <= atStart) inTag = 3;
 					}
 					else
-						++pos;
-					ch = line[pos];
+					{
+						tagCount++;
+						if (!inTag)
+						{
+							if (!strcmp(XML_GetName(line, pos), tag)) inTag = 1;
+						}
+						else while ((ch = line[pos]) && XML_IsChar(ch)) ++pos;
+					}
 				}
-				if (!inTag) fwrite(__ftemp, line);
-				if (inTag == 3) inTag = 0;
+				else if (ch == '>')
+				{
+					if (inTag == 1) inTag = 0;
+					++pos;
+				}
+				else if (inTag == 1)
+				{
+					if (!strcmp(XML_GetName(line, pos), "name"))
+					{
+						if (!(strcmp(XML_GetParameter(line, pos), name)))
+						{
+							inTag = 2;
+							atStart = tagCount - 1;
+							if (replacement != -1)
+							{
+								if (replacement >= YSI_g_sXMLWritePointer) replacement = -1;
+								else XML_WriteItemData(replacement, ftmp, (tagCount - 1) * 2);
+							}
+						}
+					}
+					else XML_GetParameter(line, pos);
+				}
+				else
+					++pos;
+				ch = line[pos];
 			}
-			fclose(fHnd);
-			//fclose(__ftemp);
-			fremove(file);
-			fHnd = fopen(file, io_write);
-			//__ftemp = fopen("_temp_ysi_user_file_.ysi", io_read);
-			fseek(__ftemp);
-			if (fHnd && __ftemp)
-			{
-				while (fread(__ftemp, line)) fwrite(fHnd, line);
-				fclose(fHnd);
-				fclose(__ftemp);
-				//fremove("_temp_ysi_user_file_.ysi");
-				if (replacement != -1) YSI_g_sXMLWritePointer = replacement;
-				return 1;
-			}
+			if (!inTag) fwrite(ftmp, line);
+			if (inTag == 3) inTag = 0;
 		}
-		if (fHnd)
+		fclose(fHnd);
+		fseek(ftmp);
+		if (Files_DoCopy(ftmp, file))
 		{
-			fclose(fHnd);
-		}
-		if (__ftemp)
-		{
-			fclose(__ftemp);
 			//fremove("_temp_ysi_user_file_.ysi");
+			if (replacement != -1) YSI_g_sXMLWritePointer = replacement;
+			return 1;
 		}
 		return 0;
 	}
