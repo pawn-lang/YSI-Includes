@@ -945,7 +945,7 @@ TEST__ INI_WriteComments()
 		fread(f, str);
 		StripNL(str);
 		ASSERT_SAME(str, "value=5");
-		fread(f, str);
+		ASSERT(!!fread(f, str));
 		StripNL(str);
 		ASSERT_SAME(str, "");
 		fclose(f);
@@ -974,6 +974,16 @@ TEST__ INI_WriteComments()
 		ASSERT_SAME(str, "");
 		fclose(f);
 	}
+}
+
+TEST_INIT__ INI_WriteComments()
+{
+	new INI:i = INI_Open(MakeYINITestPath("test10.ini"));
+	INI_SetTag(i, "tag_with_parent");
+	INI_WriteInt(i, "value", 5);
+	INI_WriteString(i, "value_three", "Some;semi;colons");
+	INI_WriteString(i, "value_four", "Some_semi_colons");
+	INI_Close(i);
 }
 
 TEST_CLOSE__ INI_WriteComments()
