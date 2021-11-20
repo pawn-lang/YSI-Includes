@@ -250,6 +250,11 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #define DEFAULT__ __COMPILER_DEFAULT
 
 #if __COMPILER_MODIFIED
+	#if defined YSI_TESTS
+		#define Y_COMPILERDATA_WARNING 0
+		#include "y_compilerdata_warning"
+	#endif
+
 	#if __COMPILER_PRAGMA
 		#define __COMPILER_NAKED() __pragma("naked")
 	#else
@@ -393,6 +398,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		#endif
 	#endif
 	#if !defined __COMPILER_sNAMEMAX
+		#define Y_COMPILERDATA_WARNING 1
 		#include "y_compilerdata_warning"
 		#define __COMPILER_sNAMEMAX (31)
 	#endif
