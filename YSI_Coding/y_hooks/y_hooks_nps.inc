@@ -258,7 +258,7 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 	else
 	{
 		// Shift all the greater values up.
-		rawMemcpy(heap + mid * 8 + 8, heap + mid * 8, (count - mid) * 8);
+		RawMemCpy(heap + mid * 8 + 8, heap + mid * 8, (count - mid) * 8);
 		AMX_Write(heap + mid * 8, value);
 		AMX_Write(heap + mid * 8 + 4, ptr);
 	}
@@ -278,11 +278,11 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find,
 		// Move the arrays up in memory.
 		if (nativeCount)
 		{
-			rawMemcpy(heap + allocated * 16 + 32 * 16, heap + allocated * 16, nativeCount * 8);
+			RawMemCpy(heap + allocated * 16 + 32 * 16, heap + allocated * 16, nativeCount * 8);
 		}
 		if (stockCount)
 		{
-			rawMemcpy(heap + allocated * 8 + 32 * 8, heap + allocated * 8, stockCount * 8);
+			RawMemCpy(heap + allocated * 8 + 32 * 8, heap + allocated * 8, stockCount * 8);
 		}
 		allocated += 32;
 	}

@@ -220,7 +220,7 @@ stock bool:Profiling_Run(&profilings)
 		CallLocalFunction(buffer, YSI_EMPTY),
 		// Call the test.
 		buffer[0] = Y_PROFILING_PROFILE;
-		P:5("Profiling_Run(): Calling %s", unpack(buffer[1]));
+		P:5("Profiling_Run(): Calling %s", Unpack(buffer[1]));
 		YSI_g_sInProfile = true,
 		CallLocalFunction(buffer, YSI_EMPTY),
 		YSI_g_sInProfile = false,

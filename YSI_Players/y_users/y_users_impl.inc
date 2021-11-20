@@ -75,13 +75,13 @@ forward User_OnSecondRegistration(playerid, bool:success);
 static stock User_ResetPlayer(playerid)
 {
 	// Removes the password from memory.
-	memset(YSI_g_sUserPassword[playerid], 0, Y_USERS_HASH_LENGTH);
+	MemSet(YSI_g_sUserPassword[playerid], 0, Y_USERS_HASH_LENGTH);
 }
 
 static stock User_SecureVariableMemory(string:string[])
 {
 	// Removes the password from memory.
-	memset(string, 0, strlen(string));
+	MemSet(string, 0, strlen(string));
 }
 
 static stock User_SecureCallbackMemory()
@@ -94,7 +94,7 @@ static stock User_SecureCallbackMemory()
 
 	// Unfortunately `YSI_DEFAULT_MALLOC` can't be used directly in `FILL`,
 	// because compiler reasons...
-	rawMemset(AMX_HEADER_HEA, 0, YSI_DEFAULT_MALLOC * cellbytes);
+	RawMemSet(AMX_HEADER_HEA, 0, YSI_DEFAULT_MALLOC * cellbytes);
 }
 
 /*-------------------------------------------------------------------------*//**

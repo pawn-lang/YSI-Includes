@@ -491,7 +491,7 @@ Testing_Run_before_fail:
 		// Call the test.
 		buffer[0] = Y_TESTING_TEST,
 		fails = YSI_g_sFails;
-		P:5("Testing_Run(): Calling %s", unpack(buffer[1]));
+		P:5("Testing_Run(): Calling %s", Unpack(buffer[1]));
 		YSI_g_sInTest = true,
 		R@(buffer, YSI_EMPTY),
 		YSI_g_sInTest = false;
@@ -590,7 +590,7 @@ Testing_Run_after_fail:
 			{
 				// Call the shutdown function if there is one.
 				buffer[0] = Y_TESTING_PSHUT;
-				P:5("Testing_Next(): Calling %s", unpack(buffer));
+				P:5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 			}
 			// Update fail counts.
@@ -620,11 +620,11 @@ Testing_Next_retry:
 				YSI_g_sAsked = false;
 				// Call the setup function if there is one.
 				buffer[0] = Y_TESTING_PINIT;
-				P:5("Testing_Next(): Calling %s", unpack(buffer));
+				P:5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 				// Call the test.
 				buffer[0] = Y_TESTING_PTEST;
-				P:5("Testing_Next(): Calling %s", unpack(buffer));
+				P:5("Testing_Next(): Calling %s", Unpack(buffer));
 				YSI_g_sInTest = true;
 				R@(buffer, "i", playerid);
 			}

@@ -137,7 +137,7 @@ forward _y_uvar_include_@();
 
 public _y_uvar_include_@()
 {
-	memset(YSI_EMPTY, 0, 0);
+	MemSet(YSI_EMPTY, 0, 0);
 	Player_WriteArray(YSI_EMPTY, YSI_EMPTY, 0);
 }
 
@@ -494,8 +494,8 @@ HOOK__ OnPlayerConnect(playerid)
 			#emit ADD.C      36
 			#emit LCTRL      8
 			#emit PUSH.pri
-			// Call "memset" directly.
-			#emit CONST.pri  memset
+			// Call "MemSet" directly.
+			#emit CONST.pri  MemSet
 			#emit SCTRL      6
 			// DO NOT CHANGE THE CODE ABOVE HERE!!!
 		}

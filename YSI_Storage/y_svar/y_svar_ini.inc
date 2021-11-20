@@ -119,7 +119,7 @@ forward _y_svar_include_@();
 
 public _y_svar_include_@()
 {
-	//memset(YSI_EMPTY, 0, 0, 0);
+	//MemSet(YSI_EMPTY, 0, 0, 0);
 	INI_WriteArray(INI_NO_FILE, YSI_EMPTY, YSI_EMPTY, 0);
 }
 

@@ -426,7 +426,7 @@ GLOBAL__ Player_TryLogin(playerid, string:password[])
 			if (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS][0] && !strcmp(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], hash, false, MAX_PASSWORD_LENGTH))
 			{
 				// Wipe the password from memory.
-				memset(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
+				MemSet(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
 				// Extract the uid and call in to the login code.
 				Langs_SetPlayerLanguage(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_LANG]);
 				broadcastfunc Player_DoLogin(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID]);
@@ -904,7 +904,7 @@ GLOBAL__ Player_ChangePassword(playerid, string:password[])
 	// Save it.
 	Player_RewritePreload(playerid);
 	// Wipe it.
-	memset(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
+	MemSet(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
 	return 1;
 }
 

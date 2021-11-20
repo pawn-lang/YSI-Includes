@@ -1189,7 +1189,7 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(ret));
 				new
 					ResolvedAlloc:ra = Malloc_Resolve(closure);
-				rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
+				RawMemCpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
 				AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm - ptr, args);
 				return Indirect_Ptr(ra);
 			}
@@ -1978,7 +1978,7 @@ stock Inline_UI_(const &header)
 	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(header));
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
-	rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
+	RawMemCpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
 	AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm, args);
 	return Indirect_Ptr(ra);
 }
@@ -2029,7 +2029,7 @@ stock Callback_Restore_(...)
 	new
 		ret = GetFrameReturn(frm),
 		pfr = GetFramePreviousFrame(frm);
-	rawMemcpy(ptr, closure + _:E_INLINE_CALL_PARAMS * cellbytes, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes)),
+	RawMemCpy(ptr, closure + _:E_INLINE_CALL_PARAMS * cellbytes, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes)),
 	SetFrameReturn(frm, ret),
 	SetFramePreviousFrame(frm, pfr);
 	return 0;

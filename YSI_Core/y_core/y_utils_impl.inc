@@ -1599,7 +1599,7 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  RawMemcpy
+ *  RawMemCpy
  * </summary>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
@@ -1611,13 +1611,13 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-native RawMemcpy_(dest, src, index, numbytes, maxlength) = memcpy;
-#define RawMemcpy(%0,%1,%2) RawMemcpy_((%0),(%1),0,(%2),(cellmax>>>2))
+native RawMemCpy_(dest, src, index, numbytes, maxlength) = memcpy;
+#define RawMemCpy(%0,%1,%2) RawMemCpy_((%0),(%1),0,(%2),(cellmax>>>2))
 
-#pragma deprecated Use `RawMemcpy` (i.e. use proper capitalisation).
+#pragma deprecated Use `RawMemCpy` (i.e. use proper capitalisation).
 stock rawMemcpy(dest, src, numbytes)
 {
-	return RawMemcpy(dest, src, numbytes);
+	return RawMemCpy(dest, src, numbytes);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1631,7 +1631,7 @@ stock rawMemcpy(dest, src, numbytes)
  *
  *  Modified to use binary flags instead of a loop.
  *
- *  "memset" takes an array, the size of the array, and a value to fill it with
+ *  "MemSet" takes an array, the size of the array, and a value to fill it with
  *  and sets the whole array to that value.
  *
  *  "rawmemset" is similar, but takes an AMX data segment address instead and
@@ -1672,7 +1672,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
  *
  *  Modified to use binary flags instead of a loop.
  *
- *  "memset" takes an array, the size of the array, and a value to fill it with
+ *  "MemSet" takes an array, the size of the array, and a value to fill it with
  *  and sets the whole array to that value.
  *
  *  "RawMemSet" is similar, but takes an AMX data segment address instead and

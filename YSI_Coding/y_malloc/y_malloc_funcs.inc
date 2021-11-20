@@ -841,7 +841,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 				nextSlot = Malloc_NextSlot(slot);
 				if (clear)
 				{
-					memset(Malloc_GetData(Alloc:slot, 0), 0, size);
+					MemSet(Malloc_GetData(Alloc:slot, 0), 0, size);
 				}
 				if (cs == size)
 				{

@@ -25,16 +25,16 @@
  *  <symbol name="chrfindp">Like <symbolref name="chrfind" />, but without the upper-bounds check.</symbol>
  *  <symbol name="bernstein">Generate the Bernstein hash of the given string.</symbol>
  *  <symbol name="ishex">Is the given string hexadecimal?</symbol>
- *  <symbol name="unpack">Version of <symbolref name="strunpack" /> that returns the result.</symbol>
+ *  <symbol name="Unpack">Version of <symbolref name="strunpack" /> that returns the result.</symbol>
  *  <symbol name="returnstringarg">Get the string passed as a variable argument from the given index.</symbol>
  *  <symbol name="va_return">Like <symbolref name="sprintf" />, formats a string and returns the result.</symbol>
  *  <symbol name="isnumeric">Is the given string a number?</symbol>
  *  <symbol name="hexstr">Return the value of the given hexadecimal string.</symbol>
  *  <symbol name="boolstr">Return the value of the given boolean string.</symbol>
  *  <symbol name="binstr">Return the value of the given binary string.</symbol>
- *  <symbol name="rawMemcpy">Copy memory between two address, instead of two arrays.</symbol>
- *  <symbol name="memset">Set all of an array to a value.</symbol>
- *  <symbol name="rawMemset">Set all of a given memory region to a value.</symbol>
+ *  <symbol name="RawMemCpy">Copy memory between two address, instead of two arrays.</symbol>
+ *  <symbol name="MemSet">Set all of an array to a value.</symbol>
+ *  <symbol name="RawMemSet">Set all of a given memory region to a value.</symbol>
  *  <symbol name="ReturnPlayerName">Return a player's name.</symbol>
  *  <symbol name="ftouch">Ensures that a file exists, but nothing more.</symbol>
  *  <symbol name="InterpolateColour">Get the colour (in 3D RGB space) between two other colours.</symbol>
