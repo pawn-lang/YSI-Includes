@@ -90,6 +90,30 @@ static stock
 #define CALL@Files_ShellExecute Files_ShellExecute(YSI_EMPTY, YSI_EMPTY, YSI_EMPTY, 0)
 #define CALL@Files_CallBat Files_CallBat()
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="Operation"><c>lpOperation<c> string.</param>
+ * <param name="File"><c>lpFile<c> string.</param>
+ * <param name="Parameters"><c>lpParameters<c> string.</param>
+ * <param name="ShowCmd"><c>nShowCmd<c> int.</param>
+ * <remarks>
+ *  See: http://msdn.microsoft.com/en-us/library/windows/desktop/bb762153%28v=vs.85%29.aspx
+ *  <br />
+ *  We basically just copy Zeex's `ShellExecute.inc` implementation here for
+ *  several reasons:
+ *  <ol>
+ *    <li>The default include paths mess up slightly (thanks compiler).</li>
+ *    <li>It's a good PoC, but runs all lookups/generations every call.</li>
+ *    <li><c>dynamic_call.inc</c> uses runtime rewrites, which don't work with JIT.</li>
+ *    <li>We can generate way more specialised code with <c>@emit<c>.</li>
+ *  </ol>
+ *  In short, this is inlined and way faster and more robust.  The first time
+ *  this function is called (from <c>OnCodeInit</c>) it doesn't actually invoke
+ *  the syscall.  Instead, the function rewrites itself to insert
+ *  <c>SYSREQ.D</c> and resolve all addresses once ahead of time.  This makes
+ *  subsequent calls faster, and (more importantly) makes the code JITable.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock Files_ShellExecute(const Operation[], const File[], const Parameters[], ShowCmd)
 {
 	#pragma unused Operation, File, Parameters, ShowCmd
@@ -151,6 +175,15 @@ static stock Files_ShellExecute(const Operation[], const File[], const Parameter
 	return AsmGetCodeSize(ctx);
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Encode a parameters string as a C string (packed and cell reversed), then
+ *  call <c>ShellExecute("open", "cmd.exe", params, SW_HIDE)</c> to run batch
+ *  script code in the background.  This call is async, so the sync methods all
+ *  have some sort of polling for completion.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock bool:Files_CallBat()
 {
 	// Convert the normal string to a C string.
@@ -165,6 +198,14 @@ static stock bool:Files_CallBat()
 	}
 	return Files_ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, YSI_gsBatParameters, SW_HIDE) > 32;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Initialise the <c>scriptfiles\YSI</c> directory if it doesn't exist, and set
+ *  up the standard <c>DANGEROUS_SERVER_ROOT</c> link to allow access to server
+ *  root files from scripts.  Only works on Windows.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock bool:Files_InitYSIFolder()
 {
@@ -195,6 +236,13 @@ static stock bool:Files_InitYSIFolder()
 	return ret;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="dir">The name of the directory to create.</param>
+ * <remarks>
+ *  Invoke the native mkdir routines on Windows.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock bool:Files_CallMKDirBat(const string:folder[])
 {
 	return
@@ -202,19 +250,44 @@ static stock bool:Files_CallMKDirBat(const string:folder[])
 		Files_CallBat();
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Invoke the native copy routines on Windows.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock bool:Files_CallCopyBat(const string:src[], const string:dst[])
 {
 	return
+		fremove(dst),
 		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"copy scriptfiles\\%s scriptfiles\\%s\"", src, dst),
 		Files_CallBat();
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Invoke the native move routines on Windows.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock bool:Files_CallMoveBat(const string:src[], const string:dst[])
 {
 	return
+		fremove(dst),
 		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"move scriptfiles\\%s scriptfiles\\%s\"", src, dst),
 		Files_CallBat();
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Invoke the generation of the <c>ShellExecute</c> code and set up the
+ *  <c>YSI</c> folder.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public OnCodeInit()
 {
@@ -247,6 +320,16 @@ public OnCodeInit()
 	forward Files_OnCodeInit();
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Copies a file from <c>src</c> to <c>dst</c>.  Returns after the copying has
+ *  finished.  On Windows this might use <c>ShellExecute</c> to invoke native
+ *  file copy operations (depending on file size).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:Files_CopySync(const string:src[], const string:dst[])
 {
 	// Handy simple check that the source is in `scriptfiles`.
@@ -278,6 +361,16 @@ stock bool:Files_CopySync(const string:src[], const string:dst[])
 	fclose(o);
 	return true;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Moves (renames) a file from <c>src</c> to <c>dst</c>.  Returns after the
+ *  moving has finished.  On Windows this might use <c>ShellExecute</c> to
+ *  invoke native file move operations (depending on file size).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Files_MoveSync(const string:src[], const string:dst[])
 {
@@ -312,6 +405,14 @@ stock bool:Files_MoveSync(const string:src[], const string:dst[])
 	return true;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="dir">The name of the directory to create.</param>
+ * <remarks>
+ *  Uses <c>ShellExecute</c> on Windows only to invoke a directory creation
+ *  script, without using a plugin.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:Files_CreateDirSync(const string:dir[])
 {
 	if (Server_IsWindowsHost())
@@ -332,6 +433,16 @@ stock bool:Files_CreateDirSync(const string:dir[])
 	return false;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Copies a file from <c>src</c> to <c>dst</c>.  May return before the copying
+ *  has finished.  Only works on Windows as it uses <c>ShellExecute</c> to
+ *  invoke native file copy operations.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `Files_CopySync`, the async code doesn't save time.
 stock bool:Files_CopyAsync(const string:src[], const string:dst[])
 {
@@ -343,6 +454,16 @@ stock bool:Files_CopyAsync(const string:src[], const string:dst[])
 	return false;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Moves (renames) a file from <c>src</c> to <c>dst</c>.  May return before the
+ *  moving has finished.  Only works on Windows as it uses <c>ShellExecute</c>
+ *  to invoke native file move operations.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `Files_MoveSync`, the async code doesn't save time.
 stock bool:Files_MoveAsync(const string:src[], const string:dst[])
 {
@@ -353,6 +474,15 @@ stock bool:Files_MoveAsync(const string:src[], const string:dst[])
 	P:E("Files_MoveAsync unsupported on Linux hosts");
 	return false;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="dir">The name of the directory to create.</param>
+ * <remarks>
+ *  Uses <c>ShellExecute</c> on Windows only to invoke a directory creation
+ *  script, without using a plugin.  May return before the creation has
+ *  finished.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Files_CreateDirSync`, the async code doesn't save time.
 stock bool:Files_CreateDirAsync(const string:dir[])
