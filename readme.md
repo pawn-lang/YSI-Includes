@@ -86,6 +86,7 @@ Libraries for managing players.
 Libraries for controlling the server.
 
 * [y_colours](YSI_Server/y_colours.md) (AKA y_colors)
+* [y_files](YSI_Server/y_files.md)
 * [y_flooding](YSI_Server/y_flooding.md)
 * [y_lock](YSI_Server/y_lock.md)
 * [y_punycode](YSI_Server/y_punycode.md)
