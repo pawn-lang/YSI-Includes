@@ -1957,6 +1957,7 @@ static stock INI_Flush_(INI:file)
 		INI_ReadFile(fhnd, parent);
 	}
 	fseek(YSI_g_sCurrentFile, 0, seek_start),
+	fclose(fhnd),
 	Files_DoCopy(YSI_g_sCurrentFile, YSI_g_sINIWriteFile[file]);
 }
 

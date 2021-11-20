@@ -1347,6 +1347,7 @@ static stock Users_DoUpgrade0()
 						}
 					}
 					fseek(g, 0, seek_start),
+					fclose(f);
 					if (!Files_DoCopy(g, filename))
 					{
 						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
@@ -1459,7 +1460,8 @@ static stock Users_DoUpgrade1()
 							fwrite(g, line);
 						}
 					}
-					fseek(g);
+					fseek(g),
+					fclose(f);
 					if (!Files_DoCopy(g, filename))
 					{
 						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
