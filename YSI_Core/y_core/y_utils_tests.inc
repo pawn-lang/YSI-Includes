@@ -26,13 +26,13 @@ TEST_COMPILE__ y_utils()
 	#assert floordiv(10, 3) == 3
 	#assert floordiv(9, 3) == 3
 	#assert floordiv(8, 3) == 2
-	#assert isodd(3)
-	#assert !isodd(8)
-	#assert iseven(8)
-	#assert !iseven(3)
+	#assert IsOdd(3)
+	#assert !IsOdd(8)
+	#assert IsEven(8)
+	#assert !IsEven(3)
 #endif
 	new str[32];
-	ASSERT(isnull(str));
+	ASSERT(IsNull(str));
 	StrToLower(str);
 	StrToUpper(str);
 	Random(0);
@@ -41,20 +41,21 @@ TEST_COMPILE__ y_utils()
 	StripR(str);
 	StripL(str);
 	Strip(str);
-	endofline(str, 0);
-	chrfind(' ', str);
+	EndOfLine(str, 0);
+	ChrFind(' ', str);
+	// Gives a deprecation warning.  That's fine (for tests).
 	chrfindp(' ', str);
 	IPToInt(str);
 	// Gives a deprecation warning.  That's fine (for tests).
 	bernstein(str);
-	ishex(str);
-	unpack(str);
+	IsHex(str);
+	Unpack(str);
 	#if defined _samp_included
 		ASSERT_ZE(GetIP(0));
 	#endif
-	returnstringarg(0);
+	ReturnStringArg(0);
 	va_return(str);
-	isnumeric(str);
+	IsNumeric(str);
 }
 
 static stock

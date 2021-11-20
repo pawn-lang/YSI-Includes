@@ -955,7 +955,7 @@ static stock y_inline_TestFunc_8(const string:svar0[])
 {
 	new
 		svar0b[20];
-	strcpy(svar0b, svar0);
+	StrCpy(svar0b, svar0);
 	inline TestCallback1()
 	{
 		YSI_g_sInlineTestVar2 = strval(svar0b);
@@ -982,7 +982,7 @@ static stock y_inline_TestFunc_10(const string:svar0[])
 {
 	new
 		svar0b[20];
-	strcpy(svar0b, svar0);
+	StrCpy(svar0b, svar0);
 	inline TestCallback1(string:svar1[])
 	{
 		YSI_g_sInlineTestVar2 = strval(svar0b) * strval(svar1);

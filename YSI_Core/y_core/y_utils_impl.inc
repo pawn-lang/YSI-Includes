@@ -463,12 +463,12 @@ P:D(floordiv(numerator, denominator));
  *  this is valid:
  *
  *  <code>
- *    new str[32]; isnull(str[5]);
+ *    new str[32]; IsNull(str[5]);
  *  </code>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsNull(str[]));
+P:D(bool:IsNull(const str[]));
 #define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
 
 #pragma deprecated Use `IsNull` (i.e. use proper capitalisation).
@@ -481,7 +481,7 @@ stock bool:isnull(const str[])
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsOdd(str[]));
+P:D(bool:IsOdd(const str[]));
 #define IsOdd(%0) ((%0)&1)
 
 #pragma deprecated Use `IsOdd` (i.e. use proper capitalisation).
@@ -494,7 +494,7 @@ stock bool:isodd(const str[])
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsEven(str[]));
+P:D(bool:IsEven(const str[]));
 #define IsEven(%0) (!IsOdd(%0))
 
 #pragma deprecated Use `IsEven` (i.e. use proper capitalisation).
@@ -509,8 +509,8 @@ stock bool:iseven(const str[])
  * <param name="len">(Implicit) maximum length of the destination.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(StrCpy(str[]));
-#define StrCpy(%0) strcat((%0[0] = '\0', %0), %1)
+P:D(StrCpy(dest[], const src[], len = sizeof (dest)));
+#define StrCpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
 
 #pragma deprecated Use `StrCpy` (i.e. use proper capitalisation).
 stock strcpy(dest[], const src[], len = sizeof (dest))
@@ -697,11 +697,11 @@ stock ChrFind(needle, const haystack[], start = 0)
 	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
 	new search[2];
 	search[0] = needle;
-	return strfind(haystack, search, start);
+	return strfind(haystack, search, false, start);
 }
 
 #pragma deprecated Use `ChrFind` (i.e. use proper capitalisation).
-stock bool:chrfind(needle, const haystack[], start = 0)
+stock chrfind(needle, const haystack[], start = 0)
 {
 	return ChrFind(needle, haystack, start);
 }
@@ -720,7 +720,7 @@ stock bool:chrfind(needle, const haystack[], start = 0)
  *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `ChrFind` (i.e. use proper capitalisation, and bounds checks).
-stock bool:chrfindp(needle, const haystack[], start = 0)
+stock chrfindp(needle, const haystack[], start = 0)
 {
 	return ChrFind(needle, haystack, start);
 }
@@ -922,7 +922,7 @@ stock ReturnStringArg(idx)
 	#emit PUSH.pri
 	// Load the address of the secret destination.
 	#emit LOAD.S.alt 16
-	// Blank the first cell so "strcat" behaves like "strcpy".
+	// Blank the first cell so "strcat" behaves like "StrCpy".
 	#emit CONST.pri  0
 	// Store the loaded number 0 to the loaded address.
 	#emit STOR.I
@@ -2947,12 +2947,12 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 				path[18] = '\0',
 				strcat(path, "YSI"),
 				strcat(path, YSI_gsDefaultDirs[dir]),
-				strcpy(test, path[18]),
+				StrCpy(test, path[18]),
 				strcat(test, ".gitkeep");
 				if ((file = fopen(test, io_write)))
 				{
 					// Found `YSI/dir/`.
-					strcpy(YSI_gsDefaultDirs[dir], path[18]),
+					StrCpy(YSI_gsDefaultDirs[dir], path[18]),
 					fclose(file);
 				}
 				else
@@ -2966,7 +2966,7 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 					if ((file = fopen(test[4], io_write)))
 					{
 						// Found `dir/`.
-						strcpy(YSI_gsDefaultDirs[dir], path[18 + 4]),
+						StrCpy(YSI_gsDefaultDirs[dir], path[18 + 4]),
 						fclose(file);
 					}
 					else

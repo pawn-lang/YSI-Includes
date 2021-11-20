@@ -701,7 +701,7 @@ static stock Player_HashPass(pass[], target[])
 	#elseif defined PP_MD5 && defined MD5_Hash
 		new
 			You_REALLY_shouldnt_use_MD5;
-		strcpy(target, MD5_Hash(pass, strlen(pass)));
+		StrCpy(target, MD5_Hash(pass, strlen(pass)));
 	#elseif defined PP_SHA1
 		#error SHA1 unsupported.
 	#elseif defined PP_YSI

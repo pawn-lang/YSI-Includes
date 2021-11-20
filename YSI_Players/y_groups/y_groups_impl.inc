@@ -904,7 +904,7 @@ GLOBAL__ void:Group_SetName(Group:g,const string:n[])
 	if (_Group_IsValid(g))
 	{
 		GROUP_FIX(g);
-		if (isnull(n))
+		if (IsNull(n))
 		{
 			YSI_gGroupData[_:g][E_GROUP_DATA_NAME][0] = 0;
 			YSI_gGroupData[_:g][E_GROUP_DATA_HASH] = 0;
@@ -1147,7 +1147,7 @@ GLOBAL__ Group:_Group_Create(const string:name[])
 	P:2("Group_Create called in %d", Master_ID());
 	new
 		i = 0;
-	if (!isnull(name))
+	if (!IsNull(name))
 	{
 		// Get a group of the same name if it already exists.
 		i = _:Group_GetID(name);
@@ -1163,7 +1163,7 @@ GLOBAL__ Group:_Group_Create(const string:name[])
 		++i;
 	}
 	if (i == _MAX_GROUPS) return INVALID_GROUP;
-	if (isnull(name))
+	if (IsNull(name))
 	{
 		YSI_gGroupData[i][E_GROUP_DATA_NAME][0] = 0;
 		YSI_gGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS_TEMP | e_GROUP_FLAGS_ACTIVE;

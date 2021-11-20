@@ -210,9 +210,9 @@ P:D(INI_Bin(const name[],&variable));
 
 P:D(INI_String(const name[],variable[]));
 #define INI_String(%1,%2) \
-	if (!strcmp((%1), name, true)) return _:INI_CHECK_LEN:strcpy(%2, value)
+	if (!strcmp((%1), name, true)) return _:INI_CHECK_LEN:StrCpy(%2, value)
 
-#define INI_CHECK_LEN:strcpy(%0,%1,%2) strcpy(%0,%2,%1)
+#define INI_CHECK_LEN:StrCpy(%0,%1,%2) StrCpy(%0,%2,%1)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Name of the INI key.</param>
@@ -317,7 +317,7 @@ static stock INI_WriteTag(File:file, const tag[], format[])
 P:D(INI_GetCallback(callback,format,tag,input,callbackFormat,remote));
 #define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
 	( \
-		strcpy((%2), (%3)), \
+		StrCpy((%2), (%3)), \
 		Inline_Reset((%0)), \
 		format(YSI_g_sCurLine, sizeof (YSI_g_sCurLine), (%1), (%2)), \
 		Callback_Get(callback_tag:YSI_g_sCurLine, (%0), (%4), (%5)) \
@@ -541,7 +541,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 		File:fhnd = fopen(fname, io_read);
 	if (!fhnd)
 		return false;
-	strcpy(YSI_g_sFormat, remoteFormat);
+	StrCpy(YSI_g_sFormat, remoteFormat);
 	new
 		start = strlen(fname);
 	{
@@ -551,7 +551,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 			end = start;
 		while (fname[end] && fname[end] != '.')
 			++end;
-		strcpy(YSI_g_sFile, fname[start], end - start + 1);
+		StrCpy(YSI_g_sFile, fname[start], end - start + 1);
 	}
 	YSI_g_sRemote = !bLocal;
 	YSI_g_sExtra = extra;
@@ -845,7 +845,7 @@ stock INI:INI_Open(const filename[])
 	return
 		// Reset tags.
 		INI_SetTag_(i, YSI_EMPTY),
-		strcpy(YSI_g_sINIWriteFile[i], filename, YSI_MAX_STRING),
+		StrCpy(YSI_g_sINIWriteFile[i], filename, YSI_MAX_STRING),
 		i;
 }
 
@@ -1189,7 +1189,7 @@ state_in_continuation:
 	if (!YSI_g_sExtendedName[0])
 	{
 		// Haven't yet stored the name of this line.  Do so.
-		strcpy(YSI_g_sExtendedName, str[p0s], p0e - p0s + 1);
+		StrCpy(YSI_g_sExtendedName, str[p0s], p0e - p0s + 1);
 	}
 	// Get the length of this new part.
 	pos = p1e - p1s;
@@ -1444,8 +1444,8 @@ static stock INI_ReadFile(File:fhnd, parent[FUNCTION_LENGTH], bool:handle = true
 					case 1:
 					{
 						// Only deal with local values.
-						strcpy(YSI_g_sTag, YSI_g_sCurLine[p0s], p0e - p0s + 1),
-						strcpy(YSI_g_sFormat, YSI_g_sCurLine[p1s], p1e - p1s + 1),
+						StrCpy(YSI_g_sTag, YSI_g_sCurLine[p0s], p0e - p0s + 1),
+						StrCpy(YSI_g_sFormat, YSI_g_sCurLine[p1s], p1e - p1s + 1),
 						handle = true;
 						goto INI_ReadFile_cont;
 					}
@@ -1454,7 +1454,7 @@ static stock INI_ReadFile(File:fhnd, parent[FUNCTION_LENGTH], bool:handle = true
 				if (p1s != p1e)
 				{
 					// Is there a parent tag to deal with?
-					strcpy(parent, YSI_g_sCurLine[p1s], p1e - p1s + 1);
+					StrCpy(parent, YSI_g_sCurLine[p1s], p1e - p1s + 1);
 					P:7("INI_ReadFile: tag has parent (%s)", parent);
 					// Do local and parent values.
 					INI_ReadFile(fhnd, parent),
@@ -1757,7 +1757,7 @@ static stock INI_HandleTag(const tag[]) <
 	new
 		pos = -1,
 		cb[FUNCTION_LENGTH];
-	strcpy(YSI_g_sTag, tag),
+	StrCpy(YSI_g_sTag, tag),
 	format(cb, sizeof (cb), YSI_g_sFormat, YSI_g_sFile, tag);
 	while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
 		cb[pos] = '_';
@@ -1775,7 +1775,7 @@ static stock INI_HandleTag(const tag[]) <
 	new
 		pos = -1,
 		cb[FUNCTION_LENGTH];
-	strcpy(YSI_g_sTag, tag),
+	StrCpy(YSI_g_sTag, tag),
 	format(cb, sizeof (cb), YSI_g_sFormat, tag, YSI_g_sFile);
 	while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
 		cb[pos] = '_';

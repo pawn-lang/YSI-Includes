@@ -54,10 +54,10 @@
  *  <symbol name="NOT_IN_RANGE">Check if a number is outside a range.</symbol>
  *  <symbol name="ceildiv">Divide two numbers and round up.</symbol>
  *  <symbol name="floordiv">Divide two numbers and round down.</symbol>
- *  <symbol name="isnull">Checks if a string is NULL (<c>\1\0</c> or <c>\0</c>).</symbol>
- *  <symbol name="isodd">Checks if a number is odd.</symbol>
- *  <symbol name="iseven">Checks if a number is even.</symbol>
- *  <symbol name="strcpy">Copy one string to another.</symbol>
+ *  <symbol name="IsNull">Checks if a string is NULL (<c>\1\0</c> or <c>\0</c>).</symbol>
+ *  <symbol name="IsOdd">Checks if a number is odd.</symbol>
+ *  <symbol name="IsEven">Checks if a number is even.</symbol>
+ *  <symbol name="StrCpy">Copy one string to another.</symbol>
  *  <symbol name="GetIP">Return the encoded (32-bit) version of a player's IP.</symbol>
  *  <synonym name="getstring" for="returnstringarg"> (there are a lot)</synonym>
  *  <synonym name="GetString" for="returnstringarg"> (there are a lot)</synonym>

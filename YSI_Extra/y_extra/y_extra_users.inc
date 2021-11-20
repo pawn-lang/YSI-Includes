@@ -111,7 +111,7 @@ stock Extra_DoLogin(playerid, string:pw[])
 		Extra_DoRegister(playerid, NULL);
 		return 1;
 	}
-	if (!isnull(pw))
+	if (!IsNull(pw))
 	{
 		Player_TryLogin(playerid, pw);
 		return 1;
@@ -172,7 +172,7 @@ stock Extra_DoRegister(playerid, string:pw[])
 		Extra_DoLogin(playerid, NULL);
 		return 1;
 	}
-	if (isnull(pw))
+	if (IsNull(pw))
 	{
 		// Enter password.
 		inline Response1(pid1, dialogid1, response1, listitem1, string:text1[])
@@ -188,7 +188,7 @@ stock Extra_DoRegister(playerid, string:pw[])
 					}
 					case 1:
 					{
-						if (isnull(text1)) Text_Send(playerid, $YSI_LOGIN_ENTER);
+						if (IsNull(text1)) Text_Send(playerid, $YSI_LOGIN_ENTER);
 						else Text_Send(playerid, $YSI_LOGIN_LENGTH);
 					}
 					case 2 .. 5:
@@ -212,7 +212,7 @@ stock Extra_DoRegister(playerid, string:pw[])
 		// Store the password localy in the function and get confirmation.
 		new
 			pass[32];
-		strcpy(pass, pw);
+		StrCpy(pass, pw);
 		inline Response2(pid2, dialogid2, response2, listitem2, string:text2[])
 		{
 			#pragma unused listitem2, dialogid2, pid2
@@ -226,7 +226,7 @@ stock Extra_DoRegister(playerid, string:pw[])
 					}
 					case 1:
 					{
-						if (isnull(text2)) Text_Send(playerid, $YSI_LOGIN_ENTER);
+						if (IsNull(text2)) Text_Send(playerid, $YSI_LOGIN_ENTER);
 						else Text_Send(playerid, $YSI_LOGIN_LENGTH);
 					}
 					case 2 .. 5:

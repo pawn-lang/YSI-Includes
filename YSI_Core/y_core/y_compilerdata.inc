@@ -477,7 +477,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		#emit MOVE.alt            // Make a copy of the pointer.
 		#emit ZERO.pri            // `pri = 0`.
 		#emit STOR.I              // Set the first cell of the target to NULL.
-		#emit PUSH.C       12     // Push the parameters for `strcpy`.
+		#emit PUSH.C       12     // Push the parameters for `StrCpy`.
 		#emit SYSREQ.C     strcat // Call `strcat`.
 		#emit LOAD.S.pri   0      // Reload the previous frame pointer.
 		#emit SCTRL        4      // Wipe out the stack.

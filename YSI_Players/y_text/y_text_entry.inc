@@ -121,7 +121,7 @@ Optional plugins:
 	{
 		YSI_gTextTestPlayer[YSI_gTextTest] = playerid,
 		YSI_gTextTestStyle[YSI_gTextTest] = color,
-		strcpy(YSI_gTextTestOutput[YSI_gTextTest], message),
+		StrCpy(YSI_gTextTestOutput[YSI_gTextTest], message),
 		++YSI_gTextTest;
 	}
 	#define SendClientMessage TxT_SendClientMessage
@@ -130,7 +130,7 @@ Optional plugins:
 	{
 		YSI_gTextTestPlayer[YSI_gTextTest] = playerid,
 		YSI_gTextTestStyle[YSI_gTextTest] = senderid,
-		strcpy(YSI_gTextTestOutput[YSI_gTextTest], message),
+		StrCpy(YSI_gTextTestOutput[YSI_gTextTest], message),
 		++YSI_gTextTest;
 	}
 	#define SendPlayerMessageToPlayer TxT_SendPlayerMessageToPlayer
@@ -140,7 +140,7 @@ Optional plugins:
 		YSI_gTextTestPlayer[YSI_gTextTest] = playerid,
 		YSI_gTextTestStyle[YSI_gTextTest] = style,
 		YSI_gTextTestTime[YSI_gTextTest] = time,
-		strcpy(YSI_gTextTestOutput[YSI_gTextTest], string),
+		StrCpy(YSI_gTextTestOutput[YSI_gTextTest], string),
 		++YSI_gTextTest;
 	}
 	#define GameTextForPlayer TxT_GameTextForPlayer
@@ -251,7 +251,7 @@ static stock
 stock Text_FormatEx(output[], len, const format[], GLOBAL_TAG_TYPES:...)
 {
 	// "Format_Standardise" modifies "input" repeatedly.
-	strcpy(YSI_g_sFormat, format);
+	StrCpy(YSI_g_sFormat, format);
 	Format_Standardise(YSI_g_sFormat, YSI_g_sTemp);
 	Format_Render(INVALID_PLAYER_ID, NO_LANGUAGE, output, len - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sTemp, ___(3));
 }
@@ -259,7 +259,7 @@ stock Text_FormatEx(output[], len, const format[], GLOBAL_TAG_TYPES:...)
 stock Text_PrintFEx(const format[], GLOBAL_TAG_TYPES:...)
 {
 	// "Format_Standardise" modifies "input" repeatedly.
-	strcpy(YSI_g_sFormat, format);
+	StrCpy(YSI_g_sFormat, format);
 	Format_Standardise(YSI_g_sFormat, YSI_g_sTemp);
 	Format_Render(INVALID_PLAYER_ID, NO_LANGUAGE, YSI_g_sFormat, sizeof (YSI_g_sFormat) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sTemp, ___(1));
 	print(sFormat);

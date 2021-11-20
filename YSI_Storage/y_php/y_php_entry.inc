@@ -112,7 +112,7 @@ forward _PHP_Ignore(index, response, data[]);
 
 stock PHP_SendString(string:name[], string:value[], bool:priority = false)
 {
-	if (isnull(value))
+	if (IsNull(value))
 	{
 		return _PHP_Send(name, NULL, priority, e_PHP_SEND_TYPE_STRING);
 	}

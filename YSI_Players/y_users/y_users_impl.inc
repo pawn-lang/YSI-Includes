@@ -262,7 +262,7 @@ stock User_ConfirmPassword(playerid, string:password[])
 		// Do nothing.
 		User_Error(playerid, e_USER_ERROR_STATE);
 	}
-	else if (isnull(YSI_g_sUserPassword[playerid]))
+	else if (IsNull(YSI_g_sUserPassword[playerid]))
 	{
 		// Is P2, but no existing password to compare against.
 		User_Error(playerid, e_USER_ERROR_UNKNOWN);

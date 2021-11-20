@@ -387,7 +387,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 		P:C(new oc = count;);
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
 		P:C(if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[count] + 4) + AMX_BASE_ADDRESS, buffer); P:5("Hooks_GetPreHooks: found = %s", unpack(buffer)); });
-		strcpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
+		StrCpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
 		strcat(lfunc, "_");
 	}
 	while (++idx <= precount);
@@ -1169,8 +1169,8 @@ stock _Hooks_AddReplacement(const longName[], const shortName[])
 		P:E("Insufficient space in the replacements table.");
 		return;
 	}
-	strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 16),
-	strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LONG] , longName , 16),
+	StrCpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 16),
+	StrCpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LONG] , longName , 16),
 	YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MIN] = strlen(shortName),
 	YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MAX] = strlen(longName),
 	YSI_g_sReplacementsLongOrder[YSI_g_sReplacePtr] = YSI_g_sReplacePtr,

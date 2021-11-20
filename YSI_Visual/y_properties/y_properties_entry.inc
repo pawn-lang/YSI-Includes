@@ -496,7 +496,7 @@ stock CreateProperty(name[], Float:x, Float:y, Float:z, price, reward, interval 
 	YSI_g_sProperties[i][E_PROP_DATA_NAME][MAX_PROP_NAME - 1] = interval & 0xFFFFF;
 	YSI_g_sProperties[i][E_PROP_DATA_DATA_1] = (interval & 0xFFFFF) | ((price & 0x00000FFF) << 20);
 	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = (reward & 0x3FFFF) | ((price & 0x03FFF000) << 6);
-	if (!isnull(name)) strcpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME - 1);
+	if (!IsNull(name)) StrCpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME - 1);
 	else YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = '\0';
 	#if defined _YSI_VISUAL_PICKUPS
 		if (pickup)
@@ -532,7 +532,7 @@ stock CreateBank(Float:x, Float:y, Float:z, name[] = "")
 		cp = CreateCheckpoint(x, y, z, 3.0);
 	if (cp == NO_CHECKPOINT) return NO_PROPERTY;
 	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_BANK | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp;
-	if (!isnull(name)) strcpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME);
+	if (!IsNull(name)) StrCpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME);
 	else YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = '\0';
 	YSI_g_sCheckpointPointers[cp] = i;
 	return i;
@@ -823,7 +823,7 @@ stock CreateTeleport(Float:sx, Float:sy, Float:sz, Float:tx, Float:ty, Float:tz,
 	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = _:tx;
 	YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0] = Bit:ty;
 	YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][1] = Bit:tz;
-	if (!isnull(name)) strcpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME);
+	if (!IsNull(name)) StrCpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME);
 	else YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = '\0';
 	YSI_g_sCheckpointPointers[cp] = i;
 	return i;
@@ -854,7 +854,7 @@ stock CreateForbiddenArea(area, kick = 0, health = 1000, invert = 0, name[] = ""
 	if (i == MAX_PROPERTIES) return NO_PROPERTY;
 	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_RSRC | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:area | Property_SetOption(1, kick) | Property_SetOption(2, invert);
 	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = health;
-	if (!isnull(name)) strcpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME);
+	if (!IsNull(name)) StrCpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME);
 	else YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = '\0';
 	YSI_g_sAreaPointers[area] = i;
 	return i;

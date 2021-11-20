@@ -106,7 +106,7 @@ YCMD:help(playerid, params[], help)
     }
     else
     {
-        if (isnull(params))
+        if (IsNull(params))
         {
             Text_Send(playerid, $YSI_HELP);
         }

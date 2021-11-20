@@ -554,7 +554,7 @@ forward TestINI_Parse5_test1(tag[], key[], value[]);
 public TestINI_Parse5_test1(tag[], key[], value[])
 {
 	printf("%s, %s, %s", tag, key, value);
-	if (isnull(tag)) ++YSI_g_sINI_Parse0;
+	if (IsNull(tag)) ++YSI_g_sINI_Parse0;
 }
 
 TEST__ INI_Parse5()
@@ -709,7 +709,7 @@ TEST__ INI_ParseInline()
 //	inline Inline2(string:tag[], string:key[], string:value[])
 //	{
 //		#pragma unused key, value
-//		if (isnull(tag)) ++num;
+//		if (IsNull(tag)) ++num;
 //	}
 //	num = 0;
 //	INI_ParseFile(MakeYINITestPath("test1.ini"), "Inline2", .bFilter = true, .filter = "other", .bPassTag = true);
@@ -726,7 +726,7 @@ TEST__ INI_ParseInline()
 	{
 		#pragma unused key, value
 		ret = extra;
-		if (!isnull(tag) && !strcmp(tag, "tag2")) ++num;
+		if (!IsNull(tag) && !strcmp(tag, "tag2")) ++num;
 	}
 	ret = 0;
 	num = 0;
@@ -851,12 +851,12 @@ static stock DoINI_Int3()
 	ASSERT_EQ(k3, 47);
 	ASSERT_EQ(k4, 46);
 	// Second.
-	ASSERT(!isnull(sk0) && !strcmp(sk0, "hello"));
+	ASSERT(!IsNull(sk0) && !strcmp(sk0, "hello"));
 	ASSERT_EQ(sk1, 5.5);
 	ASSERT(!sk2);
 	// Third.
-	ASSERT(!isnull(tk0) && !strcmp(tk0, "yes"));
-	ASSERT(!isnull(tk1) && !strcmp(tk1, "no"));
+	ASSERT(!IsNull(tk0) && !strcmp(tk0, "yes"));
+	ASSERT(!IsNull(tk1) && !strcmp(tk1, "no"));
 	return 0;
 }
 
@@ -946,7 +946,7 @@ forward INI_Inher0_tag0(string:tag[], string:name[], string:value[]);
 
 public INI_Inher0_tag0(string:tag[], string:name[], string:value[])
 {
-	ASSERT(!isnull(tag) && !strcmp(tag, "tag0"));
+	ASSERT(!IsNull(tag) && !strcmp(tag, "tag0"));
 	INI_Int("key0", gs_K0);
 	INI_Int("key1", gs_K1);
 	INI_Int("key2", gs_K2);
@@ -977,7 +977,7 @@ forward INI_Inher1_tag1(string:tag[], string:name[], string:value[]);
 
 public INI_Inher1_tag1(string:tag[], string:name[], string:value[])
 {
-	ASSERT(!isnull(tag) && !strcmp(tag, "tag1"));
+	ASSERT(!IsNull(tag) && !strcmp(tag, "tag1"));
 	INI_Int("key0", gs_K0);
 	INI_Int("key1", gs_K1);
 	INI_Int("key2", gs_K2);
@@ -1008,7 +1008,7 @@ forward INI_Inher2_tag2(string:tag[], string:name[], string:value[]);
 
 public INI_Inher2_tag2(string:tag[], string:name[], string:value[])
 {
-	ASSERT(!isnull(tag) && !strcmp(tag, "tag2"));
+	ASSERT(!IsNull(tag) && !strcmp(tag, "tag2"));
 	INI_Int("key0", gs_K0);
 	INI_Int("key1", gs_K1);
 	INI_Int("key2", gs_K2);

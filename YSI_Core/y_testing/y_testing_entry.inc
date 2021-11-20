@@ -312,7 +312,7 @@ stock _Testing_Start(const name[])
 	YSI_g_sCurHeap = heapspace();
 	P:3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
-	strcpy(YSI_gCurTestName, name[2]);
+	StrCpy(YSI_gCurTestName, name[2]);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -953,7 +953,7 @@ TEST__ y_testing_1()
 	ASSERT_EQ(FALSE, false);
 	ASSERT_EQ(TRUE, true);
 	ASSERT_NE(true, false);
-	ASSERT(isnull(NULL));
+	ASSERT(IsNull(NULL));
 	ASSERT_TRUE(true);
 	ASSERT_TRUE(!false);
 	ASSERT_FALSE(false);

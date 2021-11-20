@@ -154,7 +154,7 @@ static stock Uvar_FindData(const name[], data[])
 		#emit STOR.S.pri data
 		if (!strcmp(data[4], name))
 		{
-			strcpy(YSI_g_sLastName, name);
+			StrCpy(YSI_g_sLastName, name);
 			YSI_g_sLastSize = data[3];
 			YSI_g_sLastPlayers = data[2];
 			YSI_g_sLastAddr = data[1];

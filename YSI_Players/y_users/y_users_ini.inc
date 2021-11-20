@@ -676,7 +676,7 @@ static stock Player_HashPass(pass[], target[])
 	#elseif defined PP_MD5 && defined MD5_Hash
 		new
 			You_REALLY_shouldnt_use_MD5;
-		strcpy(target, MD5_Hash(pass, strlen(pass)));
+		StrCpy(target, MD5_Hash(pass, strlen(pass)));
 	#elseif defined PP_SHA1
 		#error SHA1 unsupported.
 	#elseif defined PP_YSI
@@ -1278,7 +1278,7 @@ static stock Users_DoUpgrade0()
 					line[INDEX_DATA_LINE_LENGTH],
 					//Language:def = Langs_GetLanguageAt(0),
 					code[3];
-				strcpy(code, Langs_GetCode(Langs_GetLanguageAt(0)));
+				StrCpy(code, Langs_GetCode(Langs_GetLanguageAt(0)));
 				for (new i = -2; i != 26; ++i)
 				{
 					if (i == -2)
@@ -1407,7 +1407,7 @@ static stock Users_DoUpgrade1()
 					line[INDEX_DATA_LINE_LENGTH],
 					//Language:def = Langs_GetLanguageAt(0),
 					code[3];
-				strcpy(code, Langs_GetCode(Langs_GetLanguageAt(0)));
+				StrCpy(code, Langs_GetCode(Langs_GetLanguageAt(0)));
 				for (new i = -2; i != 26; ++i)
 				{
 					if (i == -2)
@@ -1445,7 +1445,7 @@ static stock Users_DoUpgrade1()
 						if (ch > 3)
 						{
 							// Get the current hash.
-							strcpy(hash, line[MAX_INDEX_LENGTH + 1 + MAX_PLAYER_NAME + 1], MAX_PASSWORD_LENGTH + 1);
+							StrCpy(hash, line[MAX_INDEX_LENGTH + 1 + MAX_PLAYER_NAME + 1], MAX_PASSWORD_LENGTH + 1);
 							//hash[MAX_PASSWORD_LENGTH] = '\0';
 							// Append their ID (not QUITE their join time, but
 							// best we can do retrospectively).

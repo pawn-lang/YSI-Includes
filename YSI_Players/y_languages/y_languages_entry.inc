@@ -192,7 +192,7 @@ GLOBAL__ Language:_Langs_AddLanguage(const string:code[], const string:name[])
 	{
 		strins(YSI_g_sLanguageCodes, ins, _:add * 3);
 		P:5("Langs_AddLanguage: Codes = %s", YSI_g_sLanguageCodes);
-		strcpy(YSI_g_sLanguages[add], name, MAX_LANGUAGE_NAME);
+		StrCpy(YSI_g_sLanguages[add], name, MAX_LANGUAGE_NAME);
 		P:5("Langs_AddLanguage: New = %s (%d, %d)", YSI_g_sLanguages[add], _:add, Language_IsValid(add));
 		++YSI_g_sLanguageCount;
 		return add;
@@ -249,7 +249,7 @@ GLOBAL__ void:Langs_RemoveLanguage(Language:l)
 	{
 		// Interestingly, this library is one of the few times I have used
 		// native string functions rather than hand-rolled ones (except for
-		// strcat used in strcpy).  It just so happens that they map well here.
+		// strcat used in StrCpy).  It just so happens that they map well here.
 		strdel(YSI_g_sLanguageCodes, _:l * 3, _:l * 3 + 3);
 		YSI_g_sLanguages[l][0] = '\0';
 		//return 1;
@@ -325,7 +325,7 @@ GLOBAL__ string:Langs_GetName(Language:l)
 		ret[YSI_MAX_STRING];
 	if (Language_IsValid(l))
 	{
-		strcpy(ret, YSI_g_sLanguages[l]);
+		StrCpy(ret, YSI_g_sLanguages[l]);
 	}
 	return ret;
 }
@@ -342,7 +342,7 @@ GLOBAL__ string:Langs_GetCode(Language:l)
 		ret[YSI_MAX_STRING];
 	if (Language_IsValid(l))
 	{
-		strcpy(ret, YSI_g_sLanguageCodes[_:l * 3], 3);
+		StrCpy(ret, YSI_g_sLanguageCodes[_:l * 3], 3);
 	}
 	return ret;
 }

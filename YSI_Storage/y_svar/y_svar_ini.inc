@@ -136,7 +136,7 @@ static stock Svar_FindData(const name[], const data[])
 		#emit STOR.S.pri data
 		if (!strcmp(data[3], name))
 		{
-			strcpy(YSI_g_sLastName, name);
+			StrCpy(YSI_g_sLastName, name);
 			YSI_g_sLastSize = data[2];
 			YSI_g_sLastAddr = data[1];
 			//printf("found %s, %d, %d, %d", YSI_g_sLastName, YSI_g_sLastSize, YSI_g_sLastPlayers, YSI_g_sLastAddr);

@@ -470,7 +470,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	}
 	else
 	{
-		if (isnull(c))
+		if (IsNull(c))
 			return Command_OnReceived(INVALID_INPUT, p, NULL);
 	}
 	// Check for a valid player.

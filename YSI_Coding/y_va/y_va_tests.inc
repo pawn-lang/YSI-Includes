@@ -160,7 +160,7 @@ TEST__ y_va_format()
 
 static stock y_va_return(dest[], size, const fmat[], va_args<>)
 {
-	strcpy(dest, va_return(fmat, va_start<3>), size);
+	StrCpy(dest, va_return(fmat, va_start<3>), size);
 }
 
 TEST__ y_va_return()

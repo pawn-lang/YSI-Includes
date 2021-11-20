@@ -1475,7 +1475,7 @@ stock Text:TD_Display(const text[], Style:id, Float:x = (Float:TEXT_DRAW_NAN), F
 	YSI_g_sTDDisplay[YSI_g_sUnused][E_TD_DISPLAY_REAL] = textDraw;
 	YSI_g_sTDDisplay[YSI_g_sUnused][E_TD_DISPLAY_LINKED] = YSI_g_sUnused;
 	// I don't know wether or not to use strpack here.
-	//strcpy(YSI_g_sTDDisplay[YSI_g_sUnused][E_TD_DISPLAY_TEXT], text, MAX_TEXT_DRAW_LINE);
+	//StrCpy(YSI_g_sTDDisplay[YSI_g_sUnused][E_TD_DISPLAY_TEXT], text, MAX_TEXT_DRAW_LINE);
 	strpack(YSI_g_sTDDisplay[YSI_g_sUnused][E_TD_DISPLAY_TEXT], text, MAX_TEXT_DRAW_LINE char);
 	textDraw = Text:YSI_g_sUnused;
 	YSI_g_sUnused = YSI_g_sTDDisplay[YSI_g_sUnused][E_TD_DISPLAY_NEXT];
@@ -1535,7 +1535,7 @@ stock TD_SetString(Text:td, const text[])
 	P:3("TD_SetString called: %i, \"%s\"", _:td, text);
 	if (_TD_TextValid(td))
 	{
-		//strcpy(YSI_g_sTDDisplay[td][E_TD_DISPLAY_TEXT], text, MAX_TEXT_DRAW_LINE);
+		//StrCpy(YSI_g_sTDDisplay[td][E_TD_DISPLAY_TEXT], text, MAX_TEXT_DRAW_LINE);
 		strpack(YSI_g_sTDDisplay[td][E_TD_DISPLAY_TEXT], text, MAX_TEXT_DRAW_LINE char);
 		new
 			Text:real = YSI_g_sTDDisplay[td][E_TD_DISPLAY_REAL];

@@ -149,7 +149,7 @@ stock _Text_SetDialogMode()
 
 stock Format_SetListSeparator(const string:lst[])
 {
-	strcpy(YSI_g_sListSep, lst);
+	StrCpy(YSI_g_sListSep, lst);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1273,7 +1273,7 @@ Format_Render_start:
 							// (need to find a way to return a single name for a
 							// player which gets to the specified command).
 							#if defined _inc_y_commands
-								strcpy(ts, Command_GetDisplay(arg, pid));
+								StrCpy(ts, Command_GetDisplay(arg, pid));
 								if (ts[0])
 								{
 									format(ts, sizeof (ts), scSpecifier, width, prec, ts);
@@ -1452,7 +1452,7 @@ Format_Render_start:
 									{
 										getproperty(8, "", YSIM_STRING, Q@);
 										strunpack(Q@, Q@);
-										if (isnull(Q@))
+										if (IsNull(Q@))
 										{
 											++curArg;
 											// Fix the stack.

@@ -681,7 +681,7 @@ stock va_getstring(dest[], arg, len = sizeof (dest))
 	#emit PUSH.pri
 	// Load the address of the destination.
 	#emit LOAD.S.alt dest
-	// Blank the first cell so "strcat" behaves like "strcpy".
+	// Blank the first cell so "strcat" behaves like "StrCpy".
 	#emit ZERO.pri
 	// Store the loaded number 0 to the loaded address.
 	#emit STOR.I

@@ -184,11 +184,11 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			// Call the callback.
 			if (Indirect_GetMeta(callback) == _:tagof (F@_@iiiis:))
 			{
-				Indirect_Call(_:callback, tagof (F@_@iiiis:), playerid, YSI_DIALOG_ID_1, response, listitem, isnull(inputtext) ? NULL : inputtext);
+				Indirect_Call(_:callback, tagof (F@_@iiiis:), playerid, YSI_DIALOG_ID_1, response, listitem, IsNull(inputtext) ? NULL : inputtext);
 			}
 			else
 			{
-				Indirect_Call(_:callback, tagof (F@_@iis:), response, listitem, isnull(inputtext) ? NULL : inputtext);
+				Indirect_Call(_:callback, tagof (F@_@iis:), response, listitem, IsNull(inputtext) ? NULL : inputtext);
 			}
 			// Free the data.
 			Indirect_Release(callback);

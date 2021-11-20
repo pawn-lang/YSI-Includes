@@ -270,7 +270,7 @@ static stock Text_AddLocal(const buffer[])
 	{
 		YSI_g_sTextSets[slot][E_TEXT_SETS_HASH] = BernsteinHash(buffer);
 		YSI_g_sTextSets[slot][E_TEXT_SETS_LOAD] = true;
-		strcpy(YSI_g_sTextSets[slot][E_TEXT_SETS_NAME], buffer, 28);
+		StrCpy(YSI_g_sTextSets[slot][E_TEXT_SETS_NAME], buffer, 28);
 	}
 }
 
@@ -292,7 +292,7 @@ static stock bool:Text_InsertString(target[][], const str[], slot, number)
 		if (!Jagged_UnsafeResizeOne(target, slot, newlen + 1))
 			return false;
 		P:5("Text_InsertString: A %d (%d)", newlen, YSI_g_sUnusedSlot);
-		strcpy(target[slot], str, newlen + 1);
+		StrCpy(target[slot], str, newlen + 1);
 		return true;
 	}
 	// Prepend "\05;\number;" to the string, for later compression.
@@ -770,11 +770,11 @@ static stock Text_AddEntry(set, name[], value[], hash)
 	//strpack(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
 	//Text_UpdateSlotSize(Format_Standardise(value, YSI_g_sTextStrings[slot], YSI_g_sRemaining));
 	//strpack(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
-	//strcpy(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
+	//StrCpy(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
 	// Save the identifier.
 	P:5("Text_AddEntry: slot = %d %d,%d,%d,%d,%d", slot, YSI_g_sTextStrings[slot][0], YSI_g_sTextStrings[slot][1], YSI_g_sTextStrings[slot][2], YSI_g_sTextStrings[slot][3], YSI_g_sTextStrings[slot][4]);
 	strpack(YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
-	//strcpy(YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
+	//StrCpy(YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
 	YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_HASH] = hash;
 	YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_POINTERS][langIndex] = slot;
 	// Set the default style.
@@ -1121,22 +1121,22 @@ stock _Text_DialogBox(@PlayerSet:players, style, Func:callback<iiiis>, csearch[]
 			switch (csearch[0])
 			{
 				case '\1': P:E("Text_Send called with NULL");
-				case '\2': strcpy(YSI_g_sCaptionText[lang], cident, sizeof (YSI_g_sCaptionText[]));
+				case '\2': StrCpy(YSI_g_sCaptionText[lang], cident, sizeof (YSI_g_sCaptionText[]));
 				default:
 				{
 					Text_GetText(csearch, cident, lang);
-					strcpy(YSI_g_sCaptionText[lang], YSI_g_sReturnText, sizeof (YSI_g_sCaptionText[]));
+					StrCpy(YSI_g_sCaptionText[lang], YSI_g_sReturnText, sizeof (YSI_g_sCaptionText[]));
 				}
 			}
 			// Get the text for button 1 in this language.
 			switch (b1search[0])
 			{
 				case '\1': P:E("Text_Send called with NULL");
-				case '\2': strcpy(YSI_g_sButton1Text[lang], b1ident, sizeof (YSI_g_sButton1Text[]));
+				case '\2': StrCpy(YSI_g_sButton1Text[lang], b1ident, sizeof (YSI_g_sButton1Text[]));
 				default:
 				{
 					Text_GetText(b1search, b1ident, lang);
-					strcpy(YSI_g_sButton1Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton1Text[]));
+					StrCpy(YSI_g_sButton1Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton1Text[]));
 				}
 			}
 			// Get the text for button 1 in this language.
@@ -1145,11 +1145,11 @@ stock _Text_DialogBox(@PlayerSet:players, style, Func:callback<iiiis>, csearch[]
 				switch (b2search[0])
 				{
 					case '\1': P:E("Text_Send called with NULL");
-					case '\2': strcpy(YSI_g_sButton2Text[lang], b2ident, sizeof (YSI_g_sButton2Text[]));
+					case '\2': StrCpy(YSI_g_sButton2Text[lang], b2ident, sizeof (YSI_g_sButton2Text[]));
 					default:
 					{
 						Text_GetText(b2search, b2ident, lang);
-						strcpy(YSI_g_sButton2Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton2Text[]));
+						StrCpy(YSI_g_sButton2Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton2Text[]));
 					}
 				}
 			}

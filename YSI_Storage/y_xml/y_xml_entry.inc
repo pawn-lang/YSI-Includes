@@ -379,9 +379,9 @@ stock XML_Push(const name[], const text[], depth)
 	if (YSI_g_sCurBuffer < XML_BUFFER_SIZE && YSI_g_sCurBuffer >= 0)
 	{
 		P:7("XML_Push: first");
-		strcpy(YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_NAME], name, MAX_XML_ENTRY_NAME);
+		StrCpy(YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_NAME], name, MAX_XML_ENTRY_NAME);
 		P:7("XML_Push: second");
-		strcpy(YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_VALUE], text, MAX_XML_ENTRY_TEXT);
+		StrCpy(YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_VALUE], text, MAX_XML_ENTRY_TEXT);
 		P:7("XML_Push: third");
 		YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_LEVEL] = depth;
 		P:7("XML_Push: fourth");
@@ -588,9 +588,9 @@ stock XML_GetKeyValue(key[], value[])
 			return 0;
 		}
 		P:5("XML_GetKeyValue: first");
-		strcpy(key, YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_NAME], MAX_XML_ENTRY_NAME);
+		StrCpy(key, YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_NAME], MAX_XML_ENTRY_NAME);
 		P:5("XML_GetKeyValue: second");
-		strcpy(value, YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_VALUE], MAX_XML_ENTRY_TEXT);
+		StrCpy(value, YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_VALUE], MAX_XML_ENTRY_TEXT);
 		P:3("XML_GetKeyValue ending: \"%s\", \"%s\"", key, value);
 		return 1;
 	}
@@ -625,7 +625,7 @@ stock XML_GetParentValue(const key[], value[])
 			if (!strcmp(key, YSI_g_sParameters[i][E_XML_PARA_NAME]))
 			{
 				P:7("XML_GetParentValue: third");
-				strcpy(value, YSI_g_sParameters[i][E_XML_PARA_VALUE], MAX_XML_ENTRY_TEXT);
+				StrCpy(value, YSI_g_sParameters[i][E_XML_PARA_VALUE], MAX_XML_ENTRY_TEXT);
 				return 1;
 			}
 		}
@@ -652,8 +652,8 @@ stock XML_AddHandler(XML:rule, const trigger[], const function[])
 	new
 		handle = 0;
 	if (!XML_IsValid(rule) || (handle = YSI_g_sCurHandler[rule]) >= MAX_XML_HANDLERS && handle >= 0) return 0;
-	strcpy(YSI_g_sHandlers[rule][handle][E_XML_HANDLER_TRIGGER], trigger, MAX_XML_ENTRY_NAME);
-	strcpy(YSI_g_sHandlers[rule][handle][E_XML_HANDLER_FUNCTION], function, MAX_XML_FUNCTION);
+	StrCpy(YSI_g_sHandlers[rule][handle][E_XML_HANDLER_TRIGGER], trigger, MAX_XML_ENTRY_NAME);
+	StrCpy(YSI_g_sHandlers[rule][handle][E_XML_HANDLER_FUNCTION], function, MAX_XML_FUNCTION);
 	YSI_g_sCurHandler[rule]++;
 	return 1;
 }
@@ -676,8 +676,8 @@ stock XML_RemoveHandler(XML:rule, const trigger[])
 					last = --YSI_g_sCurHandler[rule];
 				if (last)
 				{
-					strcpy(YSI_g_sHandlers[rule][i][E_XML_HANDLER_TRIGGER], YSI_g_sHandlers[rule][last][E_XML_HANDLER_TRIGGER], MAX_XML_ENTRY_NAME);
-					strcpy(YSI_g_sHandlers[rule][i][E_XML_HANDLER_FUNCTION], YSI_g_sHandlers[rule][last][E_XML_HANDLER_FUNCTION], MAX_XML_FUNCTION);
+					StrCpy(YSI_g_sHandlers[rule][i][E_XML_HANDLER_TRIGGER], YSI_g_sHandlers[rule][last][E_XML_HANDLER_TRIGGER], MAX_XML_ENTRY_NAME);
+					StrCpy(YSI_g_sHandlers[rule][i][E_XML_HANDLER_FUNCTION], YSI_g_sHandlers[rule][last][E_XML_HANDLER_FUNCTION], MAX_XML_FUNCTION);
 				}
 				return 1;
 			}
@@ -698,8 +698,8 @@ stock XMLEntry:XML_AddParameter(XMLEntry:parent, const tag[], const value[] = ""
 	P:3("XMLEntry:XML_AddParameter called: %i, \"%s\", \"%s\"", _:parent, tag, value);
 	if (_:parent < YSI_g_sXMLWritePointer < XML_WRITE_BUFFER_SIZE)
 	{
-		strcpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_TAG], tag, MAX_XML_ENTRY_NAME);
-		strcpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_VALUE], value, MAX_XML_ENTRY_TEXT);
+		StrCpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_TAG], tag, MAX_XML_ENTRY_NAME);
+		StrCpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_VALUE], value, MAX_XML_ENTRY_TEXT);
 		YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_CHILDREN] = -1;
 		YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_SIBLINGS] = YSI_g_sXMLWriteBuffer[_:parent][E_XML_WRITE_CHILDREN];
 		YSI_g_sXMLWriteBuffer[_:parent][E_XML_WRITE_CHILDREN] = YSI_g_sXMLWritePointer;
@@ -729,8 +729,8 @@ stock XMLEntry:XML_AddItem(const tag[], const name[] = "", XMLEntry:parent = XML
 	}
 	if (YSI_g_sXMLWritePointer < XML_WRITE_BUFFER_SIZE)
 	{
-		strcpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_TAG], tag, MAX_XML_ENTRY_NAME);
-		strcpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_VALUE], name, MAX_XML_ENTRY_TEXT);
+		StrCpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_TAG], tag, MAX_XML_ENTRY_NAME);
+		StrCpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_VALUE], name, MAX_XML_ENTRY_TEXT);
 		YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_CHILDREN] = -1;
 		YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_SIBLINGS] = -1;
 		return XMLEntry:YSI_g_sXMLWritePointer++;

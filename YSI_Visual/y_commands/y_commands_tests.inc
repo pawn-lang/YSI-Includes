@@ -395,7 +395,7 @@ YCMD:y_commands_reprocess(playerid, params[], help)
 {
 	//printf("%d %x %d", playerid, params[0], help);
 	YSI_gsPlayerid = playerid;
-	strcpy(YSI_gsParams, params);
+	StrCpy(YSI_gsParams, params);
 	YSI_gsHelp = help;
 	return 1;
 }
