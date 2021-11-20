@@ -77,17 +77,36 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
 
-#tryinclude "..\..\amx\windows\import_table"
-#tryinclude <amx_assembly\windows\import_table>
-#tryinclude "..\..\amx_assembly\windows\import_table"
-#tryinclude "..\..\..\amx_assembly\windows\import_table"
-#tryinclude "windows\import_table"
-#tryinclude <windows\import_table>
-#if !defined IMPORT_TABLE_INC
-	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
+#if defined YSI_NO_WINDOWS_FILES
+	// Aliases.
+	#define Files_CopySync Files_Copy
+	#define Files_MoveSync Files_Move
+#else
+	#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
+
+	#tryinclude "..\..\amx\windows\import_table"
+	#tryinclude <amx_assembly\windows\import_table>
+	#tryinclude "..\..\amx_assembly\windows\import_table"
+	#tryinclude "..\..\..\amx_assembly\windows\import_table"
+	#tryinclude "windows\import_table"
+	#tryinclude <windows\import_table>
+	#if !defined IMPORT_TABLE_INC
+		#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
+	#endif
 #endif
+
+// Declare the functions that might not exist.
+#pragma deprecated Use `Files_RemoveDirSync`, the async code doesn't save time.
+forward bool:Files_RemoveDirAsync(const string:dir[]);
+#pragma deprecated Use `Files_CreateDirSync`, the async code doesn't save time.
+forward bool:Files_CreateDirAsync(const string:dir[]);
+#pragma deprecated Use `Files_MoveSync`, the async code doesn't save time.
+forward bool:Files_MoveAsync(const string:src[], const string:dst[]);
+#pragma deprecated Use `Files_CopySync`, the async code doesn't save time.
+forward bool:Files_CopyAsync(const string:src[], const string:dst[]);
+forward bool:Files_RemoveDirSync(const string:dir[]);
+forward bool:Files_CreateDirSync(const string:dir[]);
 
 #if !defined YSI_LARGE_FILE_SIZE
 	#define YSI_LARGE_FILE_SIZE (1024 * 1024) // 1Mb

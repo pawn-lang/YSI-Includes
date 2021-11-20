@@ -296,6 +296,59 @@ static stock bool:Files_CallMoveBat(const string:src[], const string:dst[])
 		Files_CallBat();
 }
 
+static stock bool:Files_DoCopy(File:i, const string:dst[])
+{
+	new File:o = fopen(dst, io_write);
+	if (!o)
+	{
+		fclose(i);
+		return false;
+	}
+	for (new count; (count = fblockread(i, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH)); fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count))
+	{
+	}
+	fclose(i);
+	fclose(o);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Copies a file from <c>src</c> to <c>dst</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_Copy(const string:src[], const string:dst[])
+{
+	new File:i = fopen(src, io_read);
+	return i && Files_DoCopy(i, dst);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Moves a file from <c>src</c> to <c>dst</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_Move(const string:src[], const string:dst[])
+{
+	new File:i = fopen(src, io_read);
+	if (i && Files_DoCopy(i, dst))
+	{
+		return
+			fremove(src),
+			true;
+	}
+	return false;
+}
+
+#if defined YSI_NO_WINDOWS_FILES
+	#endinput
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Invoke the generation of the <c>ShellExecute</c> code and set up the
@@ -362,18 +415,7 @@ stock bool:Files_CopySync(const string:src[], const string:dst[])
 		return true;
 	}
 	// Use fallback copying.
-	new File:o = fopen(dst, io_write);
-	if (!o)
-	{
-		fclose(i);
-		return false;
-	}
-	for (new count; (count = fblockread(i, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH)); fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count))
-	{
-	}
-	fclose(i);
-	fclose(o);
-	return true;
+	return Files_DoCopy(i, dst);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -404,19 +446,13 @@ stock bool:Files_MoveSync(const string:src[], const string:dst[])
 		return true;
 	}
 	// Use fallback moving.
-	new File:o = fopen(dst, io_write);
-	if (!o)
+	if (Files_DoCopy(i, dst))
 	{
-		fclose(i);
-		return false;
+		return
+			fremove(src),
+			true;
 	}
-	for (new count; (count = fblockread(i, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH)); fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count))
-	{
-	}
-	fclose(i);
-	fclose(o);
-	fremove(src);
-	return true;
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
