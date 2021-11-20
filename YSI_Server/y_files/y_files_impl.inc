@@ -196,7 +196,7 @@ static stock bool:Files_CallBat()
 			break;
 		}
 	}
-	return Files_ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, YSI_gsBatParameters, SW_HIDE) > 32;
+	return Files_ShellExecute(YSI_gscBatOperation, YSI_gscBatCmd, YSI_gsBatParameters, 0) > 32;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -227,7 +227,7 @@ static stock bool:Files_InitYSIFolder()
 		fclose(f);
 	}
 	// "/C scriptfiles\\_initysi.bat" byteswapped.
-	new bool:ret = Files_ShellExecute(/*!"anur\0\0\0s"*/YSI_gscBatOperation, YSI_gscBatCmd, !"s C/pirclift_\\setini.isy\0tab", SW_HIDE) > 32;
+	new bool:ret = Files_ShellExecute(/*!"anur\0\0\0s"*/YSI_gscBatOperation, YSI_gscBatCmd, !"s C/pirclift_\\setini.isy\0tab", 0) > 32;
 	while (!fexist(iname))
 	{
 		// Poll for the script to finish.
