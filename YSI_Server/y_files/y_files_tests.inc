@@ -27,6 +27,32 @@ static stock y_files_Write1000000(File:f)
 	}
 }
 
+// Run first.
+TEST__ y_files_Directories()
+{
+	new bool:dir = Files_CreateDirSync("YSI\\tests\\y_files\\created-dir");
+	ASSERT(dir);
+	ASSERT(!!fexist("YSI\\tests\\y_files\\created-dir"));
+	if (dir)
+	{
+		new File:f;
+		//while (!(f = fopen("YSI\\tests\\y_files\\created-dir\\.touch", io_write))) {}
+		if ((f = fopen("YSI\\tests\\y_files\\created-dir\\.touch", io_write)))
+		{
+			ASSERT(!!fexist("YSI\\tests\\y_files\\created-dir\\.touch"));
+			fclose(f);
+			fremove("YSI\\tests\\y_files\\created-dir\\.touch");
+			ASSERT(!fexist("YSI\\tests\\y_files\\created-dir\\.touch"));
+		}
+		else
+		{
+			ASSERT(false, "fopen");
+		}
+		fremove("YSI\\tests\\y_files\\created-dir");
+	}
+	ASSERT(!fexist("YSI\\tests\\y_files\\created-dir"));
+}
+
 TEST__ y_files_SmallCopy()
 {
 	// Make sure this triggers the small copy code.

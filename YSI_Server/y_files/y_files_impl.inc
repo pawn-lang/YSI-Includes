@@ -246,7 +246,7 @@ static stock bool:Files_InitYSIFolder()
 static stock bool:Files_CallMKDirBat(const string:folder[])
 {
 	return
-		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"mkdir scriptfiles\\%s\" \"type nul > scriptfiles\.donescript\"", folder),
+		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"mkdir scriptfiles\\%s\"", folder),
 		Files_CallBat();
 }
 
@@ -415,12 +415,15 @@ stock bool:Files_MoveSync(const string:src[], const string:dst[])
 
 stock bool:Files_CreateDirSync(const string:dir[])
 {
-	if (Server_IsWindowsHost())
+	if (fexist(dir))
 	{
-		fremove(".donescript");
+		return true;
+	}
+	else if (Server_IsWindowsHost())
+	{
 		if (Files_CallMKDirBat(dir))
 		{
-			while (!fexist(".donescript"))
+			while (!fexist(dir))
 			{
 			}
 			return true;
@@ -428,7 +431,7 @@ stock bool:Files_CreateDirSync(const string:dir[])
 	}
 	else
 	{
-		P:E("Files_MoveAsync unsupported on Linux hosts");
+		P:E("Files_CreateDirSync unsupported on Linux hosts");
 	}
 	return false;
 }
