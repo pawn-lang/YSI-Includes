@@ -1,4 +1,4 @@
-/*
+	/*
 Legal:
 	Version: MPL 1.1
 	
@@ -858,9 +858,7 @@ GLOBAL__ bool:Group_GetPlayer(Group:g,p)
 	P:2("bool:Group_GetPlayer called: %i, %i", _:g, p);
 	if (_Group_IsValid(g) && VALID_PLAYERID(p))
 	{
-		//GROUP_FIX(g);
-		return Bit_Get(YSI_gGroupPlayers[_:GROUP_TEMP_FIX(g)], _:g);
-		//Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
+		return Bit_Get(YSI_gGroupPlayers[p], _:GROUP_TEMP_FIX(g));
 	}
 	return false;
 }
