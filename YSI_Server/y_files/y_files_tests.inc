@@ -48,7 +48,7 @@ TEST__ y_files_Directories()
 		{
 			ASSERT(false, "fopen");
 		}
-		fremove("YSI\\tests\\y_files\\created-dir");
+		ASSERT(Files_RemoveDirSync("YSI\\tests\\y_files\\created-dir"));
 	}
 	ASSERT(!fexist("YSI\\tests\\y_files\\created-dir"));
 }

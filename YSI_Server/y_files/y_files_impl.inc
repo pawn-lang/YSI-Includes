@@ -251,6 +251,20 @@ static stock bool:Files_CallMKDirBat(const string:folder[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="dir">The name of the directory to delete.</param>
+ * <remarks>
+ *  Invoke the native rmdir routines on Windows.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock bool:Files_CallRMDirBat(const string:folder[])
+{
+	return
+		format(YSI_gsBatParameters, sizeof (YSI_gsBatParameters), "/C \"rmdir /S /Q scriptfiles\\%s\"", folder),
+		Files_CallBat();
+}
+
+/*-------------------------------------------------------------------------*//**
  * <param name="src">The name of the input file.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
@@ -437,6 +451,37 @@ stock bool:Files_CreateDirSync(const string:dir[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="dir">The name of the directory to delete.</param>
+ * <remarks>
+ *  Uses <c>ShellExecute</c> on Windows only to invoke a directory deletion
+ *  script, without using a plugin.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_RemoveDirSync(const string:dir[])
+{
+	if (!fexist(dir))
+	{
+		return true;
+	}
+	else if (Server_IsWindowsHost())
+	{
+		if (Files_CallRMDirBat(dir))
+		{
+			while (fexist(dir))
+			{
+			}
+			return true;
+		}
+	}
+	else
+	{
+		P:E("Files_RemoveDirSync unsupported on Linux hosts");
+	}
+	return false;
+}
+
+/*-------------------------------------------------------------------------*//**
  * <param name="src">The name of the input file.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
@@ -495,6 +540,27 @@ stock bool:Files_CreateDirAsync(const string:dir[])
 		return Files_CallMKDirBat(dir);
 	}
 	P:E("Files_CreateDirAsync unsupported on Linux hosts");
+	return false;
+}
+
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="dir">The name of the directory to delete.</param>
+ * <remarks>
+ *  Uses <c>ShellExecute</c> on Windows only to invoke a directory deletion
+ *  script, without using a plugin.  May return before the deletion has
+ *  finished.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#pragma deprecated Use `Files_RemoveDirSync`, the async code doesn't save time.
+stock bool:Files_RemoveDirAsync(const string:dir[])
+{
+	if (Server_IsWindowsHost())
+	{
+		return Files_CallRMDirBat(dir);
+	}
+	P:E("Files_RemoveDirAsync unsupported on Linux hosts");
 	return false;
 }
 
