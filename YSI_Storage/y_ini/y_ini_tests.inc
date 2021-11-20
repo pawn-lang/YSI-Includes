@@ -926,10 +926,54 @@ TEST__ INI_Int1()
 
 TEST__ INI_WriteComments()
 {
+	new File:f;
+	new str[32];
+
+	f = fopen(MakeYINITestPath("test10.ini"), io_read);
+	ASSERT(!!f);
+	if (f)
+	{
+		fread(f, str);
+		StripNL(str);
+		ASSERT_SAME(str, "[tag_with_parent]");
+		fread(f, str);
+		StripNL(str);
+		ASSERT_SAME(str, "value_four=Some_semi_colons");
+		fread(f, str);
+		StripNL(str);
+		ASSERT_SAME(str, "value_three=Some\\;semi\\;colons");
+		fread(f, str);
+		StripNL(str);
+		ASSERT_SAME(str, "value=5");
+		fread(f, str);
+		StripNL(str);
+		ASSERT_SAME(str, "");
+		fclose(f);
+	}
+
 	new INI:i = INI_Open(MakeYINITestPath("test10.ini"));
 	INI_SetTag(i, "tag_with_parent");
 	INI_RemoveEntry(i, "value");
 	INI_Close(i);
+
+	f = fopen(MakeYINITestPath("test10.ini"), io_read);
+	ASSERT(!!f);
+	if (f)
+	{
+		fread(f, str);
+		StripNL(str);
+		ASSERT_SAME(str, "[tag_with_parent]");
+		fread(f, str);
+		StripNL(str);
+		ASSERT_SAME(str, "value_four=Some_semi_colons");
+		fread(f, str);
+		StripNL(str);
+		ASSERT_SAME(str, "value_three=Some\\;semi\\;colons");
+		fread(f, str);
+		StripNL(str);
+		ASSERT_SAME(str, "");
+		fclose(f);
+	}
 }
 
 TEST_CLOSE__ INI_WriteComments()
@@ -1038,6 +1082,21 @@ TEST__ INI_Inherit2()
 // Writing tests.
 
 TEST__ INI_AddToBuffer0()
+{
+	new
+		INI:i = INI_Open(MakeYINITestPath("test3.ini"));
+	ASSERT_NE(i, INI_NO_FILE);
+	ASSERT(!INI_AddToBuffer(i, "", "hi"));
+	ASSERT(!INI_AddToBuffer(INI_NO_FILE, "foo", "bar"));
+	ASSERT(INI_AddToBuffer(i, "key", "value"));
+	ASSERT(INI_AddToBuffer(i, "first", "second"));
+	ASSERT(INI_AddToBuffer(i, "first", "third"));
+	ASSERT(INI_AddToBuffer(i, "first", "fourth"));
+	ASSERT(INI_AddToBuffer(i, "first", "fifth"));
+	INI_Close(i);
+}
+
+TEST__ INI_AddToBuffer0a()
 {
 	new
 		INI:i = INI_Open(MakeYINITestPath("test3.ini"));
