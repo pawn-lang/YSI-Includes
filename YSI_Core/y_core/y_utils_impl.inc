@@ -3099,6 +3099,66 @@ stock bool:Files_Move(const string:src[], const string:dst[])
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
+ *  TryPercentage(percentage);
+ * </summary>
+ * <param name="percentage">The likelihood of returning <c>true</c>.</param>
+ * <returns>
+ *  <c>true</c>, <c>percentage%</c> of the time; or <c>false</c>
+ * </returns>
+ * <remarks>
+ *  Basically a percentage random number generator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:TryPercentage(percentage)
+{
+	return random(100) < percentage;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  TryPermille(permille);
+ * </summary>
+ * <param name="permille">The likelihood of returning <c>true</c>.</param>
+ * <returns>
+ *  <c>true</c>, <c>permille%o</c> of the time; or <c>false</c>
+ * </returns>
+ * <remarks>
+ *  Basically a permille random number generator (that's out of 1000).  Could be
+ *  used to replicate something with a <c>42.1%</c> chance of happening via:
+ *  <br />
+ *  <c>TryPermille(421)</c>
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:TryPermille(permille)
+{
+	return random(1000) < permille;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  TryPPM(ppm);
+ * </summary>
+ * <param name="ppm">The likelihood of returning <c>true</c>.</param>
+ * <returns>
+ *  <c>true</c>, <c>ppm%oooo</c> of the time; or <c>false</c>
+ * </returns>
+ * <remarks>
+ *  Basically a ppm random number generator (that's out of 1000000).  Could be
+ *  used to replicate something with a <c>1.0001%</c> chance of happening via:
+ *  <br />
+ *  <c>TryPPM(10001)</c>
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:TryPPM(ppm)
+{
+	return random(1000000) < ppm;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
  *  Float:FloatAbs(Float:number);
  * </summary>
  * <param name="number">The number to get the absolute value of.</param>
