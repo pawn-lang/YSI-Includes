@@ -3057,10 +3057,9 @@ stock bool:Files_CopyRange(File:i, end, const string:dst[])
 
 stock bool:Files_DoCopy(File:i, const string:dst[])
 {
-	fseek(i, 0, seek_start);
-	new bool:ret = Files_CopyRange(i, flength(i), dst);
-	fclose(i);
-	return ret;
+	return
+		I@ = _:(fseek(i, 0, seek_start) && Files_CopyRange(i, flength(i), dst)),
+		fclose(i) && I@;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -3074,7 +3073,13 @@ stock bool:Files_DoCopy(File:i, const string:dst[])
 stock bool:Files_Copy(const string:src[], const string:dst[])
 {
 	new File:i = fopen(src, io_read);
-	return i && Files_DoCopy(i, dst);
+	if (i)
+	{
+		return
+			I@ = _:Files_CopyRange(i, flength(i), dst),
+			fclose(i) && I@;
+	}
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -3088,11 +3093,11 @@ stock bool:Files_Copy(const string:src[], const string:dst[])
 stock bool:Files_Move(const string:src[], const string:dst[])
 {
 	new File:i = fopen(src, io_read);
-	if (i && Files_DoCopy(i, dst))
+	if (i)
 	{
 		return
-			fremove(src),
-			true;
+			I@ = _:(Files_CopyRange(i, flength(i), dst) && fremove(src)),
+			fclose(i) && I@;
 	}
 	return false;
 }

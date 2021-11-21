@@ -369,8 +369,7 @@ stock bool:Files_CopySync(const string:src[], const string:dst[])
 	// Use fallback copying.
 	return
 		len = _:Files_CopyRange(i, len, dst),
-		fclose(i),
-		bool:len;
+		fclose(i) && len;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -402,13 +401,9 @@ stock bool:Files_MoveSync(const string:src[], const string:dst[])
 		return true;
 	}
 	// Use fallback moving.
-	if ((len = _:Files_CopyRange(i, len, dst)))
-	{
-		fremove(src);
-	}
 	return
-		fclose(i),
-		bool:len;
+		len = _:(Files_CopyRange(i, len, dst) && fremove(src)),
+		fclose(i) && len;
 }
 
 /*-------------------------------------------------------------------------*//**
