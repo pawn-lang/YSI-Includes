@@ -430,12 +430,15 @@ static stock Master_GetCurrentMaster(installState)
 		// We are now in charge of `_MASTER`.  Rename relevant functions.
 		if (installState == 1)
 		{
+			P:6("Master_GetCurrentMaster: Installing %d", _MASTER);
 			_Master_RenameAll(_MASTER);
 		}
 		else if (installState == 0)
 		{
+			P:6("Master_GetCurrentMaster: Uninstalling %d", _MASTER);
 			_Master_UnnameAll(_MASTER);
 		}
+		P:C(else { P:6("Master_GetCurrentMaster: Neither %d", _MASTER); });
 }
 
 public OnMasterSystemInit(id)

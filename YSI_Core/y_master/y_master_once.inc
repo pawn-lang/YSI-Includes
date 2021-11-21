@@ -874,11 +874,13 @@ stock _Master_Relinquish(const library[])
 
 static stock _Master_Rename(const name[])
 {
+	P:3("_Master_Rename called: \"%s\"", name);
 	// Set the name of the function at `index` back to what it should be.
 	new
 		entry;
 	if (AMX_GetPublicEntry(0, entry, name, true))
 	{
+		P:5("_Master_Rename: found %d", entry);
 		new
 			len = strlen(name);
 		// These function names are stored in C order, not packed string order.
@@ -892,7 +894,7 @@ static stock _Master_Rename(const name[])
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
-		#emit ADD.C      0xFFFFFFFC
+		#emit ADD.C      0xFFFFFFFF
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry
@@ -903,6 +905,7 @@ static stock _Master_Rename(const name[])
 
 static stock _Master_Unname(const name[])
 {
+	P:3("_Master_Unname called: \"%s\"", name);
 	// Rename the public function to exactly the same thing with the last letter
 	// increased by one.  This ensures that it can't be called, but keeps its
 	// position in the binary tree (so that we don't need to sort the public
@@ -922,9 +925,11 @@ static stock _Master_Unname(const name[])
 				addr = entry + 12;
 			#emit LREF.S.pri addr
 			#emit LOAD.alt   AMX_BASE_ADDRESS
+			#emit ADD
 			#emit STOR.S.pri addr
 			new str[FUNCTION_LENGTH];
 			AMX_ReadString(addr, str);
+			P:5("_Master_Unname: Comparing \"%s\" and \"%s\" to %d", name, Unpack(str), len);
 			// Check if the strings are identical.
 			if (strlen(str) == len)
 			{
@@ -938,6 +943,7 @@ static stock _Master_Unname(const name[])
 					// about to be renamed but it is, because this will then
 					// take the place of the next function and be called instead
 					// of it, when neither should be called.
+					strunpack(str, str);
 					P:F("_Master_Unname: Function \"%s\" is adjacent to \"%s\"; cannot hide it.", name, str);
 					return;
 				}
@@ -954,7 +960,7 @@ static stock _Master_Unname(const name[])
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
-		#emit ADD.C      0xFFFFFFFC
+		#emit ADD.C      0xFFFFFFFF
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry
@@ -994,8 +1000,10 @@ stock _Master_RenameAll(master)
 		if (CallLocalFunction(buffer, YSI_EMPTY) == master)
 		{
 			buffer[0] = 0x40404040, // '@@@@',
-			strunpack(buffer, buffer),
-			--buffer[strlen(buffer) - 1],
+			strunpack(buffer, buffer);
+			P:6("_Master_RenameAll: Renaming to \"%s\"", buffer);
+			++buffer[strlen(buffer) - 1];
+			P:6("_Master_RenameAll: Renaming from \"%s\"", buffer);
 			_Master_Rename(buffer[2]);
 		}
 	}

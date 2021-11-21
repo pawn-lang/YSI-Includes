@@ -1,37 +1,37 @@
 // The prototypes to call.
 
-FOREIGN__ M_Func1();
-FOREIGN__ M_Func2(in);
-FOREIGN__ void:M_Func3(&ret, in);
-FOREIGN__ string:M_Func4();
-FOREIGN__ string:M_Func5(const string:in[]);
-FOREIGN__ M_Func6();
+FOREIGN__ M_FuncP();
+FOREIGN__ M_FuncR(in);
+FOREIGN__ void:M_FuncT(&ret, in);
+FOREIGN__ string:M_FuncV();
+FOREIGN__ string:M_FuncX(const string:in[]);
+FOREIGN__ M_FuncZ();
 
 static stock Master_TestAll(base)
 {
 	new
 		ret = 0;
-	ASSERT_EQ(M_Func1(), base);
-	ASSERT_EQ(M_Func2(42), 42 * base);
+	ASSERT_EQ(M_FuncP(), base);
+	ASSERT_EQ(M_FuncR(42), 42 * base);
 	ret = 0;
-	M_Func3(ret, 11);
+	M_FuncT(ret, 11);
 	if (base)
 	{
 		new
 			str[32];
 		ASSERT_EQ(ret, 11 + base);
 		format(str, sizeof (str), "MODULE %d", base);
-		ASSERT_SAME(M_Func4(), str);
+		ASSERT_SAME(M_FuncV(), str);
 		format(str, sizeof (str), "AA %d AA", base);
-		ASSERT_SAME(M_Func5("AA %d AA"), str);
-		ASSERT_EQ(M_Func6(), Master_ID() << 16 | base);
+		ASSERT_SAME(M_FuncX("AA %d AA"), str);
+		ASSERT_EQ(M_FuncZ(), Master_ID() << 16 | base);
 	}
 	else
 	{
 		ASSERT_EQ(ret, 0);
-		ASSERT_SAME(M_Func4(), YSI_EMPTY);
-		ASSERT_SAME(M_Func5("AA %d AA"), YSI_EMPTY);
-		ASSERT_EQ(M_Func6(), 0);
+		ASSERT_SAME(M_FuncV(), YSI_EMPTY);
+		ASSERT_SAME(M_FuncX("AA %d AA"), YSI_EMPTY);
+		ASSERT_EQ(M_FuncZ(), 0);
 	}
 }
 
@@ -40,14 +40,14 @@ TEST__ Master_ModulesPhase0a()
 	// Run the tests, without any server module loaded.
 	new
 		ret = 0;
-	ASSERT_EQ(M_Func1(), 0);
-	ASSERT_EQ(M_Func2(42), 0);
+	ASSERT_EQ(M_FuncP(), 0);
+	ASSERT_EQ(M_FuncR(42), 0);
 	ret = 0;
-	M_Func3(ret, 11);
+	M_FuncT(ret, 11);
 	ASSERT_EQ(ret, 0);
-	ASSERT_SAME(M_Func4(), YSI_EMPTY);
-	ASSERT_SAME(M_Func5("AA %d AA"), YSI_EMPTY);
-	ASSERT_EQ(M_Func6(), 0);
+	ASSERT_SAME(M_FuncV(), YSI_EMPTY);
+	ASSERT_SAME(M_FuncX("AA %d AA"), YSI_EMPTY);
+	ASSERT_EQ(M_FuncZ(), 0);
 }
 
 TEST__ Master_ModulesPhase0b()
