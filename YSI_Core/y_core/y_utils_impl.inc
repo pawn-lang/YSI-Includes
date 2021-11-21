@@ -2996,24 +2996,25 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 stock bool:Files_DoCopy(File:i, const string:dst[])
 {
 	// Must start at the start...
-	fseek(i, 0, seek_start);
 	new
-		File:o = fopen(dst, io_write),
-		end = flength(i),
-		count = min(YSI_UNSAFE_HUGE_LENGTH, end / cellbytes);
+		File:o = fopen(dst, io_write);
 	if (!o)
 	{
 		return
 			fclose(i),
 			false;
 	}
+	fseek(i, 0, seek_start);
+	new
+		end = flength(i),
+		count = min(YSI_UNSAFE_HUGE_LENGTH, end / cellbytes);
+	end &= cellbytes - 1;
 	// Only loop as long as we read a full block.  Partials mean the end.  Might
 	// do an extra read if `count` starts out as `0`, but that only happens on
 	// files less than 4 bytes long and doesn't matter anyway.
 	do
 	{
 		count = fblockread(i, YSI_UNSAFE_HUGE_STRING, count),
-		end -= count * cellbytes,
 		fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count);
 	}
 	while (count == YSI_UNSAFE_HUGE_LENGTH);
