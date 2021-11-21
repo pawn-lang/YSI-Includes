@@ -283,7 +283,7 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 	new
 		pos = strfind(name, "@", false, 4);
 	// Make "pos" a legal value inside the error message.
-	if (pos == -1) P:E("Invalid hook name: %s", unpack(name), ++pos);
+	if (pos == -1) P:E("Invalid hook name: %s", Unpack(name), ++pos);
 	name[pos] = '\0',
 	strdel(name, 0, 4);
 }
@@ -329,7 +329,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 			preloads[precount][E_CHAIN_HOOK_VALUE] = CallFunction(addr),
 			++precount;
 			if (strlen(name) > 15)
-				P:E("Overflow in prehook name \"%s\"", unpack(name));
+				P:E("Overflow in prehook name \"%s\"", Unpack(name));
 			// {
 				// new buffer[FUNCTION_LENGTH];
 				// strunpack(buffer, name);
@@ -378,16 +378,16 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 		idx = 0,
 		lfunc[64];
 	// Collect all the functions with something like this name.
-	P:2("Hooks_GetPreHooks start: %s", unpack(name));
+	P:2("Hooks_GetPreHooks start: %s", Unpack(name));
 	do
 	{
 		strcat(lfunc, name),
 		Hooks_MakeShortName(lfunc);
-		P:5("Hooks_GetPreHooks: search = %s", unpack(lfunc));
+		P:5("Hooks_GetPreHooks: search = %s", Unpack(lfunc));
 		P:C(new oc = count;);
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
-		P:C(if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[count] + 4) + AMX_BASE_ADDRESS, buffer); P:5("Hooks_GetPreHooks: found = %s", unpack(buffer)); });
-		strcpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
+		P:C(if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[count] + 4) + AMX_BASE_ADDRESS, buffer); P:5("Hooks_GetPreHooks: found = %s", Unpack(buffer)); });
+		StrCpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
 		strcat(lfunc, "_");
 	}
 	while (++idx <= precount);
@@ -635,7 +635,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 
 _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, const name[FUNCTION_LENGTH], idx)
 {
-	P:4("Hooks_Collate called: %s %d", unpack(name), idx);
+	P:4("Hooks_Collate called: %s %d", Unpack(name), idx);
 	// This records the amount of space available in the nametable, currently
 	// taken up by the names of hooks that we are about to destroy.
 	new
@@ -1169,8 +1169,8 @@ stock _Hooks_AddReplacement(const longName[], const shortName[])
 		P:E("Insufficient space in the replacements table.");
 		return;
 	}
-	strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 16),
-	strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LONG] , longName , 16),
+	StrCpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 16),
+	StrCpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LONG] , longName , 16),
 	YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MIN] = strlen(shortName),
 	YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MAX] = strlen(longName),
 	YSI_g_sReplacementsLongOrder[YSI_g_sReplacePtr] = YSI_g_sReplacePtr,
@@ -1435,9 +1435,9 @@ public OnRuntimeError(code, &bool:suppress)
 		{
 			if (++i == 1)
 			{
-				printf("[debug]");
-				printf("[debug] Parameter count corrections:");
-				printf("[debug]");
+				print("[debug]");
+				print("[debug] Parameter count corrections:");
+				print("[debug]");
 			}
 			// Not 8, because `cur` is `- 8`.
 			printf("[debug] The %s mangled argments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", ValstrWithOrdinal(i), AMX_Read(cur + 16) / 4);
@@ -1449,7 +1449,7 @@ public OnRuntimeError(code, &bool:suppress)
 		}
 		if (YSI_g_sActiveHooks)
 		{
-			printf("[debug]");
+			print("[debug]");
 			// Blank the active hooks value.  If this is the only public, this
 			// will reset it after the public is foribly ended.  If it isn't, it
 			// will be reset to a correct value when the next still active hook

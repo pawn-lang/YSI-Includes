@@ -156,7 +156,7 @@ public OnCodeInit()
 			#emit LREF.S.pri publicTableEntry
 			#emit STOR.S.pri pointer
 			AMX_ReadString(AMX_BASE_ADDRESS + pointer, buffer);
-			P:7("Timer_OnYSIInit: %s", unpack(buffer));
+			P:7("Timer_OnYSIInit: %s", Unpack(buffer));
 			// Get the time offset for the current call.  This should mean that
 			// all the functions are nicely spread out.
 			YSI_SetTimerEx(buffer, time * pre / total, false, "ii", 1, -1);

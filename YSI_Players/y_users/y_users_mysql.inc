@@ -426,7 +426,7 @@ GLOBAL__ Player_TryLogin(playerid, string:password[])
 			if (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS][0] && !strcmp(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], hash, false, MAX_PASSWORD_LENGTH))
 			{
 				// Wipe the password from memory.
-				memset(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
+				MemSet(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
 				// Extract the uid and call in to the login code.
 				Langs_SetPlayerLanguage(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_LANG]);
 				broadcastfunc Player_DoLogin(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID]);
@@ -701,7 +701,7 @@ static stock Player_HashPass(pass[], target[])
 	#elseif defined PP_MD5 && defined MD5_Hash
 		new
 			You_REALLY_shouldnt_use_MD5;
-		strcpy(target, MD5_Hash(pass, strlen(pass)));
+		StrCpy(target, MD5_Hash(pass, strlen(pass)));
 	#elseif defined PP_SHA1
 		#error SHA1 unsupported.
 	#elseif defined PP_YSI
@@ -904,7 +904,7 @@ GLOBAL__ Player_ChangePassword(playerid, string:password[])
 	// Save it.
 	Player_RewritePreload(playerid);
 	// Wipe it.
-	memset(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
+	MemSet(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
 	return 1;
 }
 
@@ -1214,7 +1214,7 @@ static stock Player_GetNewID()
 	if (fHnd)
 	{
 		fread(fHnd, num);
-		num[strfind(num, " ")] = '\0';
+		num[strfind(num, YSI_SPACE)] = '\0';
 		uid = strval(num) + 1;
 		valstr(num, uid);
 		fseek(fHnd, 0, seek_start);

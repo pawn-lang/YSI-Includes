@@ -110,7 +110,7 @@ static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 native Bitmap_FBlockReadAddr(File:file, addr, size) = fblockread;
 native Bitmap_FBlockReadRef(File:file, &ref, size) = fblockread;
 
-#define BITMAP_TO_32(%0) ((%0) * cellbytes)
+#define BITMAP_TO_32(%0) ((%0) * 4)
 #define BITMAP_TO_24(%0) ((%0) * 3) // * 3 / BITMAP_TO_32(4), cancels.
 
 static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
@@ -118,7 +118,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 	// Allocate the memory for the main input.  We don't need to use `CEILDIV`
 	// here because the BMP file format body is always an exact multiple of 4.
 	new
-		width = Bitmap_Width(ctx) * cellbytes,
+		width = Bitmap_Width(ctx) << __COMPILER_CELL_SHIFT,
 		size = ceildiv(width * 3, 4 * cellbytes),
 		Alloc:input = malloc(size);
 	if (!input)
@@ -129,7 +129,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 
 	new
 		y = Bitmap_Height(ctx),
-		dest = _:ctx * cellbytes + y * width;
+		dest = (_:ctx << __COMPILER_CELL_SHIFT) + y * width;
 	#emit CONST.pri            YSI_gMallocMemory
 	#emit LOAD.S.alt           dest
 	#emit ADD

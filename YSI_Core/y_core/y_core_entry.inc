@@ -117,6 +117,10 @@ Optional plugins:
 // used by literally any other include.
 #include "y_compilerdata"
 
+// The second include, because it sets up comments in all the others and has no
+// non-standard code.  Needs compiler pass information though.
+#include "y_pawndoc"
+
 // Avoid an error with `forward OnRuntimeError(code, &bool:suppress);` in here after already ALS
 // hooking it (#266).
 #tryinclude "..\..\crashdetect"

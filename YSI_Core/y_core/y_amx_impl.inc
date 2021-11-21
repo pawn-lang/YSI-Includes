@@ -1059,13 +1059,13 @@ stock AMX_DumpHeader()
 	new
 		idx = 0,
 		buffer[FUNCTION_LENGTH];
-	printf("================================");
+	print("================================");
 	while ((idx = AMX_GetPublicName(idx, buffer)))
 	{
 		strunpack(buffer, buffer);
 		printf(buffer);
 	}
-	printf("================================");
+	print("================================");
 }
 
 #define _A<%0> (_:H_Re(%0,0))

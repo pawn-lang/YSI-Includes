@@ -1,4 +1,4 @@
-/*
+	/*
 Legal:
 	Version: MPL 1.1
 	
@@ -344,10 +344,10 @@ HOOK__ OnYSIInit()
 	// I just spent another long debugging session tracking down another bug
 	// where the solution, in another totally unrelated file entirely, was
 	// adding this line here:
-	format(Q@, sizeof (Q@), "", AMX_HEADER_COD - AMX_BASE_ADDRESS);
+	format(Q@, sizeof (Q@), YSI_EMPTY, AMX_HEADER_COD - AMX_BASE_ADDRESS);
 	// WHY!?
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(ni, na, nu);
-	//CallLocalFunction("_Group_SpecialInit", "");
+	//CallLocalFunction("_Group_SpecialInit", YSI_EMPTY);
 	heapspace(); // I'm sure there's a reason this is here.  But I forgot it!
 	P:1("Group_OnYSIInit end");
 	return 1;
@@ -459,7 +459,7 @@ GLOBAL__ void:_Group_TryRemove()
 		MASTER_REMOVE<i>
 		MASTER_EMPTY<i>
 		{
-			//printf("removing i");
+			//print("removing i");
 			broadcastfunc _Group_Destroy(i, Iter_TrueArray(GroupPlayers[i]), Iter_TrueSize(GroupPlayers[]));
 			YSI_gGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 			YSI_gGroupData[i][E_GROUP_DATA_HASH] = 0;
@@ -528,12 +528,12 @@ HOOK__ OnPlayerConnect@9(playerid)
 			if (_YCM@y)
 		#endif
 			{
-				//printf("0");
+				//print("0");
 				P:6("Group_OnPlayerConnect: Master %d", playerid);
 				// Is master.  ALWAYS reset all players - if they start screwing
 				// around with loading orders then that's their own fault!
 				broadcastfunc _Group_FakePlayer(playerid, YSI_g_sDefaultGroups, bits<_MAX_GROUPS_G>);
-				//printf("1");
+				//print("1");
 			}
 		#if _YSIM_IS_CLOUD
 			else
@@ -858,9 +858,7 @@ GLOBAL__ bool:Group_GetPlayer(Group:g,p)
 	P:2("bool:Group_GetPlayer called: %i, %i", _:g, p);
 	if (_Group_IsValid(g) && VALID_PLAYERID(p))
 	{
-		//GROUP_FIX(g);
-		return Bit_Get(YSI_gGroupPlayers[_:GROUP_TEMP_FIX(g)], _:g);
-		//Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
+		return Bit_Get(YSI_gGroupPlayers[p], _:GROUP_TEMP_FIX(g));
 	}
 	return false;
 }
@@ -904,7 +902,7 @@ GLOBAL__ void:Group_SetName(Group:g,const string:n[])
 	if (_Group_IsValid(g))
 	{
 		GROUP_FIX(g);
-		if (isnull(n))
+		if (IsNull(n))
 		{
 			YSI_gGroupData[_:g][E_GROUP_DATA_NAME][0] = 0;
 			YSI_gGroupData[_:g][E_GROUP_DATA_HASH] = 0;
@@ -938,7 +936,7 @@ GLOBAL__ string:Group_GetName(Group:g)
 		ret[YSI_MAX_STRING];
 	if (_Group_IsValid(g))
 	{
-		//printf("Is Valid");
+		//print("Is Valid");
 		//return Bit_Get(YSI_gGroupPlayers[g], p);
 		//Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
 		strunpack(ret, YSI_gGroupData[_:GROUP_TEMP_FIX(g)][E_GROUP_DATA_NAME], YSI_MAX_STRING);
@@ -1147,7 +1145,7 @@ GLOBAL__ Group:_Group_Create(const string:name[])
 	P:2("Group_Create called in %d", Master_ID());
 	new
 		i = 0;
-	if (!isnull(name))
+	if (!IsNull(name))
 	{
 		// Get a group of the same name if it already exists.
 		i = _:Group_GetID(name);
@@ -1163,7 +1161,7 @@ GLOBAL__ Group:_Group_Create(const string:name[])
 		++i;
 	}
 	if (i == _MAX_GROUPS) return INVALID_GROUP;
-	if (isnull(name))
+	if (IsNull(name))
 	{
 		YSI_gGroupData[i][E_GROUP_DATA_NAME][0] = 0;
 		YSI_gGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS_TEMP | e_GROUP_FLAGS_ACTIVE;

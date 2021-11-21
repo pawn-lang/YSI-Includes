@@ -212,7 +212,7 @@ P:D(Bit_FastSet(BitArray:array<>,slot,bool:set,size = sizeof (array)));
 
 stock Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array))
 {
-	memset(_:array, set ? 0xFFFFFFFF : 0, size);
+	MemSet(_:array, set ? 0xFFFFFFFF : 0, size);
 }
 
 /*-------------------------------------------------------------------------*//**

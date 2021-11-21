@@ -482,5 +482,5 @@ public _Styles_SpecialInit()
 
 stock Styles_Reload()
 {
-	CallRemoteFunction("_Styles_SpecialInit", "");
+	CallRemoteFunction("_Styles_SpecialInit", YSI_EMPTY);
 }

@@ -414,7 +414,7 @@ static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 		}
 		default:
 		{
-			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = size * cellbytes;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = size << __COMPILER_CELL_SHIFT;
 			data[E_INLINE_DATA_STATE] |= 8;
 		}
 	}
@@ -1174,7 +1174,7 @@ static stock Callback_InlineByName(const name[], tag)
 					frm = ptr + AMX_Read(ret + cellbytes),
 					args = Inline_NumArgs(frm),
 					size = frm - ptr + 12 + args,
-					Alloc:closure = malloc(size / cellbytes + _:E_INLINE_CALL - 1);
+					Alloc:closure = malloc((size >>> __COMPILER_CELL_SHIFT) + (_:E_INLINE_CALL - 1));
 				if (!closure)
 					return 0;
 				mset(closure, _:E_INLINE_CALL_NULL, 0);
@@ -1189,7 +1189,7 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(ret));
 				new
 					ResolvedAlloc:ra = Malloc_Resolve(closure);
-				rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
+				RawMemCpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
 				AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm - ptr, args);
 				return Indirect_Ptr(ra);
 			}
@@ -1676,7 +1676,7 @@ static stock Inline_GenerateLocalsStore(ctx[AsmContext], const parameters[], cou
 				@emit STACK            accumulate
 			accumulate = 0;
 			@emit POP.alt
-			@emit SREF.S.alt       count * cellbytes + 12
+			@emit SREF.S.alt       (count << __COMPILER_CELL_SHIFT) + 12
 		}
 		case 0:
 			accumulate += cellbytes;
@@ -1962,7 +1962,7 @@ stock Inline_UI_(const &header)
 		// storage.  The other option would be allocating it separately later
 		// when we determine it is needed, but that would be no faster in the
 		// common case, and slower in the uncommon case, so just do it together.
-		Alloc:closure = malloc(size / cellbytes + _:E_INLINE_CALL - 1);
+		Alloc:closure = malloc((size >>> __COMPILER_CELL_SHIFT) + (_:E_INLINE_CALL - 1));
 	P:5("Inline_UI_: %d %d %d %d %d", ptr, frm, size, _:closure, AMX_Read(header));
 	if (!closure)
 		return 0;
@@ -1978,7 +1978,7 @@ stock Inline_UI_(const &header)
 	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(header));
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
-	rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
+	RawMemCpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
 	AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm, args);
 	return Indirect_Ptr(ra);
 }
@@ -2029,7 +2029,7 @@ stock Callback_Restore_(...)
 	new
 		ret = GetFrameReturn(frm),
 		pfr = GetFramePreviousFrame(frm);
-	rawMemcpy(ptr, closure + _:E_INLINE_CALL_PARAMS * cellbytes, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes)),
+	RawMemCpy(ptr, closure + _:E_INLINE_CALL_PARAMS * cellbytes, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes)),
 	SetFrameReturn(frm, ret),
 	SetFramePreviousFrame(frm, pfr);
 	return 0;

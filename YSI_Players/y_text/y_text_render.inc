@@ -149,7 +149,7 @@ stock _Text_SetDialogMode()
 
 stock Format_SetListSeparator(const string:lst[])
 {
-	strcpy(YSI_g_sListSep, lst);
+	StrCpy(YSI_g_sListSep, lst);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1273,7 +1273,7 @@ Format_Render_start:
 							// (need to find a way to return a single name for a
 							// player which gets to the specified command).
 							#if defined _inc_y_commands
-								strcpy(ts, Command_GetDisplay(arg, pid));
+								StrCpy(ts, Command_GetDisplay(arg, pid));
 								if (ts[0])
 								{
 									format(ts, sizeof (ts), scSpecifier, width, prec, ts);
@@ -1452,7 +1452,7 @@ Format_Render_start:
 									{
 										getproperty(8, "", YSIM_STRING, Q@);
 										strunpack(Q@, Q@);
-										if (isnull(Q@))
+										if (IsNull(Q@))
 										{
 											++curArg;
 											// Fix the stack.
@@ -1626,10 +1626,10 @@ Format_Render_start:
 				}
 				else if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] == e_STYLE_TYPE_DIALOG)
 				{
-					//printf("NL 1");
+					//print("NL 1");
 					// This works even for GTs which are always 0 by this point.
 					Y_RENDER_ADD(scDialogLineString)
-					//printf("NL 2");
+					//print("NL 2");
 				}
 				else
 				{
@@ -1657,9 +1657,9 @@ Format_Render_start:
 				else if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] == e_STYLE_TYPE_DIALOG)
 				{
 					// This works even for GTs which are always 0 by this point.
-					//printf("NL 3");
+					//print("NL 3");
 					Y_RENDER_ADD(scDialogLineString)
-					//printf("NL 4");
+					//print("NL 4");
 				}
 				else
 				{

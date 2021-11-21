@@ -109,7 +109,7 @@ static stock Jagged_MovePtr(array[][], maxSize, slot, shift)
 	#emit SREF.S.pri            shift
 	//printf("%d %d %d %d", tmp0, tmp1, shift, ptr);
 	#if _DEBUG >= 7
-		printf("Jagged_MovePtr: Header:");
+		print("Jagged_MovePtr: Header:");
 		_Jagged_PrintHeader(array, 4, 0);
 	#endif
 }
@@ -171,18 +171,18 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 			if (shift > 0)
 			{
 				// Blank the remainder of the slot we are growing.
-				rawMemset(slotEnd, 0, shift);
+				RawMemSet(slotEnd, 0, shift);
 			}
 			else
 			{
 				// Blank the end of the array.
-				rawMemset(arrayEnd + shift, 0, -shift);
+				RawMemSet(arrayEnd + shift, 0, -shift);
 			}
 		}
 		// Do nothing if they're the same.
 		return true;
 	}
-	P:C(else if (slot == size1) printf("Cannot alter the last slot in an array."););
+	P:C(else if (slot == size1) print("Cannot alter the last slot in an array."););
 	return false;
 }
 #define Jagged_ResizeOne(%0,%1) _Jagged_ResizeOne(_Jagged(%0),%1)
@@ -242,12 +242,12 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 //			if (shift > 0)
 //			{
 //				// Blank the remainder of the slot we are growing.
-//				rawMemset(slotEnd, 0, shift);
+//				RawMemSet(slotEnd, 0, shift);
 //			}
 //			else
 //			{
 //				// Blank the end of the array.
-//				rawMemset(arrayEnd + shift, 0, -shift);
+//				RawMemSet(arrayEnd + shift, 0, -shift);
 //			}
 //		}
 //		// Do nothing if they're the same.
@@ -361,7 +361,7 @@ stock bool:Jagged_MoveOne(array[][], size1, size2, slot, newSize)
 		// Do nothing if they're the same.
 		return true;
 	}
-	P:C(else if (slot == size1) printf("Cannot alter the last slot in an array."););
+	P:C(else if (slot == size1) print("Cannot alter the last slot in an array."););
 	return false;
 }
 
@@ -407,7 +407,7 @@ stock bool:_Jagged_Move(array[][], size1, size2, ...)
 stock _Jagged_Empty(array[][], size1, size2)
 {
 	// The size of the main storage area, including the header.
-	size2 = (size1 + size1 * size2) * cellbytes;
+	size2 = (size1 * size2 + size1) << __COMPILER_CELL_SHIFT;
 	while (--size1)
 	{
 		#emit LOAD.S.pri array

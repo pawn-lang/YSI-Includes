@@ -120,7 +120,7 @@ Optional plugins:
 #define AeC01e"}{"#%0"}"~h~ AeC01e"}{"#%0h"}"
 
 // Main code start.  Apparently there is a copy of the hash code in y_td.
-#define COLOUR_NAME_HASH(%0)            YHash((%0), false, hash_bernstein, (YSI_g_sCheckSpaces) ? (-1) : (strfind((%0), " ")))
+#define COLOUR_NAME_HASH(%0)            YHash((%0), false, hash_bernstein, (YSI_g_sCheckSpaces) ? (-1) : (strfind((%0), YSI_SPACE)))
 #define COLOR_NAME_HASH                 COLOUR_NAME_HASH
 
 #if !defined X11_ALLOW_SPACES

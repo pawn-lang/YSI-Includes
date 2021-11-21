@@ -135,7 +135,7 @@ static
 
 HOOK__ OnScriptInit()
 {
-	printf("hi");
+	print("hi");
 	y_hooks_OnScriptInit_called = true;
 }
 
@@ -445,7 +445,7 @@ forward Ony_hooksTest3(cmd[]);
 HOOK__ Ony_hooksTest3@000(cmd[])
 {
 	++YSI_g_sValue;
-	//printf("a");
+	//print("a");
 	return 1;
 }
 
@@ -453,7 +453,7 @@ HOOK__ Ony_hooksTest3@001(cmd[])
 {
 	// Called second due to forced orderings.
 	++YSI_g_sValue;
-	//printf("b");
+	//print("b");
 	return 1;
 }
 

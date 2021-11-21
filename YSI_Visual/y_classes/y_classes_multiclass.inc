@@ -192,9 +192,9 @@ HOOK__ OnYSIInit()
 			{
 				P:E("y_classes assumptions failed.  Do you have \"AddPlayerClass\" in your modes?");
 			}
-			//printf("==========================");
+			//print("==========================");
 			P:4("Class_OnYSIInit: classes = %d %d %d", classLeft, classMiddle, classRight);
-			//printf("==========================");
+			//print("==========================");
 			#if !defined YSI_NO_MASTER
 				switch (_Master_Get(#_YCM, true))
 				{
@@ -211,7 +211,7 @@ HOOK__ OnYSIInit()
 						state _YCM:u;
 						_YCM@ = _E_YCM@u;
 						// Determine the next unique name.
-						CallRemoteFunction(#_YCM, "");
+						CallRemoteFunction(#_YCM, YSI_EMPTY);
 						// There is a note in y_master about this being safe
 						// because servers always get the data.  This is the server
 						// code, but may be in use by cloud systems.  This, however,

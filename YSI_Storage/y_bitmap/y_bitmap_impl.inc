@@ -94,7 +94,7 @@ stock Bitmap:Bitmap_Create(xSize, ySize, bgColour = 0xFFFFFFFF)
 		return Bitmap:0;
 	}
 	// Raw malloc access.  Set the background colour.
-	memset(YSI_gMallocMemory[_:d + 3], bgColour | 0xFF, s);
+	MemSet(YSI_gMallocMemory[_:d + 3], bgColour | 0xFF, s);
 	// Store hidden data on the bitmap that only this include can see.
 	mset(d, 0, s);
 	mset(d, 1, xSize);
@@ -110,6 +110,6 @@ stock Bitmap_Destroy(Bitmap:ctx)
 
 stock Bitmap_Clear(Bitmap:ctx, bgColour = 0xFFFFFFFF)
 {
-	memset(YSI_gMallocMemory[_:ctx], bgColour | 0xFF, mget(Alloc:(_:ctx - 3), 0));
+	MemSet(YSI_gMallocMemory[_:ctx], bgColour | 0xFF, mget(Alloc:(_:ctx - 3), 0));
 }
 

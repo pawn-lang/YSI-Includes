@@ -99,8 +99,8 @@ YCMD:language(playerid, params[], help)
 			{
 				new
 					code[3];
-				strcpy(code, Langs_GetCode(i));
-				if (!isnull(code))
+				StrCpy(code, Langs_GetCode(i));
+				if (!IsNull(code))
 				{
 					// They may not be in order.
 					Text_Send(playerid, $YSI_LANGS_DISP, _:i, Langs_GetName(i), code);

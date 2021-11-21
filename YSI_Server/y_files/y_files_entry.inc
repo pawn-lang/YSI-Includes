@@ -1,0 +1,124 @@
+#if defined _INC_y_files
+	#endinput
+#endif
+#define _INC_y_files
+
+/*
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 the "License"; you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI framework.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright C 2011
+	the Initial Developer. All Rights Reserved.
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+	Cheaterman
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
+#include "..\..\YSI_Core\y_utils"
+
+#if defined YSI_NO_WINDOWS_FILES
+	// Aliases.
+	#define Files_CopySync Files_Copy
+	#define Files_MoveSync Files_Move
+#else
+	#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
+
+	#tryinclude "..\..\amx\windows\import_table"
+	#tryinclude <amx_assembly\windows\import_table>
+	#tryinclude "..\..\amx_assembly\windows\import_table"
+	#tryinclude "..\..\..\amx_assembly\windows\import_table"
+	#tryinclude "windows\import_table"
+	#tryinclude <windows\import_table>
+	#if !defined IMPORT_TABLE_INC
+		#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
+	#endif
+#endif
+
+// Declare the functions that might not exist.
+#pragma deprecated Use `Files_RemoveDirSync`, the async code doesn't save time.
+forward bool:Files_RemoveDirAsync(const string:dir[]);
+#pragma deprecated Use `Files_CreateDirSync`, the async code doesn't save time.
+forward bool:Files_CreateDirAsync(const string:dir[]);
+#pragma deprecated Use `Files_MoveSync`, the async code doesn't save time.
+forward bool:Files_MoveAsync(const string:src[], const string:dst[]);
+#pragma deprecated Use `Files_CopySync`, the async code doesn't save time.
+forward bool:Files_CopyAsync(const string:src[], const string:dst[]);
+forward bool:Files_RemoveDirSync(const string:dir[]);
+forward bool:Files_CreateDirSync(const string:dir[]);
+
+#if !defined YSI_LARGE_FILE_SIZE
+	#define YSI_LARGE_FILE_SIZE (1024 * 1024) // 1Mb
+#endif
+
+#include "y_files_impl"
+
+#if defined YSI_TESTS
+	#include "y_files_tests"
+#endif
+
+#if defined YSI_PROFILINGS
+	#include "y_files_profilings"
+#endif
+

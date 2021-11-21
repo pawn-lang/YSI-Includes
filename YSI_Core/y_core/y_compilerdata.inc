@@ -206,15 +206,6 @@ static stock __CompilerSecondPass() {}
 	#define __COMPILER_INCLUDE_GUARDS (0)
 #endif
 
-#if __COMPILER_1ST_PASS
-	// Disable matching the resulting function against (most) macros that are
-	// defined with the same name (since the whole point of this is to provide a
-	// concrete implementation for documentation to see).
-	#define Debug_PrintD(%1(%2)); __MACRO__%1 Debug_PrintD_OPEN %2 Debug_PrintD_CLOSE { return 0; }
-#else
-	#define Debug_PrintD(%1);
-#endif
-
 #define __MACRO__bool: bool:__MACRO__
 #define __MACRO__Iterator: Iterator:__MACRO__
 #define __MACRO__Float: Float:__MACRO__
@@ -259,6 +250,13 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #define DEFAULT__ __COMPILER_DEFAULT
 
 #if __COMPILER_MODIFIED
+	#if defined YSI_TESTS
+		#pragma option -E-
+
+		#define Y_COMPILERDATA_WARNING 0
+		#include "y_compilerdata_warning"
+	#endif
+
 	#if __COMPILER_PRAGMA
 		#define __COMPILER_NAKED() __pragma("naked")
 	#else
@@ -402,6 +400,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		#endif
 	#endif
 	#if !defined __COMPILER_sNAMEMAX
+		#define Y_COMPILERDATA_WARNING 1
 		#include "y_compilerdata_warning"
 		#define __COMPILER_sNAMEMAX (31)
 	#endif
@@ -486,7 +485,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		#emit MOVE.alt            // Make a copy of the pointer.
 		#emit ZERO.pri            // `pri = 0`.
 		#emit STOR.I              // Set the first cell of the target to NULL.
-		#emit PUSH.C       12     // Push the parameters for `strcpy`.
+		#emit PUSH.C       12     // Push the parameters for `StrCpy`.
 		#emit SYSREQ.C     strcat // Call `strcat`.
 		#emit LOAD.S.pri   0      // Reload the previous frame pointer.
 		#emit SCTRL        4      // Wipe out the stack.
@@ -544,6 +543,23 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
 #if charbits != 8
 	#error YSI assumes `charbits` is 8.
+#endif
+
+#define __COMPILER_CELL_BYTES cellbytes
+#define __COMPILER_CELL_BITS  cellbits
+#define __COMPILER_CHAR_BITS  charbits
+
+// How much to adjust a cell count by to get a byte count.
+#if cellbits == 8
+	#define __COMPILER_CELL_SHIFT (0)
+#elseif cellbits == 16
+	#define __COMPILER_CELL_SHIFT (1)
+#elseif cellbits == 32
+	#define __COMPILER_CELL_SHIFT (2)
+#elseif cellbits == 64
+	#define __COMPILER_CELL_SHIFT (3)
+#else
+	#error Unknown cellbits size.
 #endif
 
 #define FUNCTION_LENGTH (__COMPILER_sNAMEMAX + 1)

@@ -98,7 +98,7 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 
 #define YSI_VERSION_MAJOR               5
 #define YSI_VERSION_MINOR               05
-#define YSI_VERSION_BUILD               0404
+#define YSI_VERSION_BUILD               0505
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 
@@ -458,7 +458,7 @@ stock bool:Server_CrashDetectExists()
 		{
 			Server_PrintIntroPart(
 				"Crashdetect: <warning>",
-				"",
+				YSI_EMPTY,
 				"  Crashdetect has been found, but no",
 				"     long-call controls have been",
 				"   detected.  If you see a console",
@@ -502,7 +502,7 @@ stock bool:Server_CrashDetectExists()
 				Server_PrintIntroMessage(
 					"Unable to check the latest YSI version",
 					"- please watch the forums and github:",
-					"",
+					YSI_EMPTY,
 					"         https://git.io/5.x"
 				);
 			#endif
@@ -556,7 +556,7 @@ stock bool:Server_CrashDetectExists()
 		//  
 		// This remote script has now been updated to include changelog
 		// information and keeps a record of what IPs are connecting.
-		//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
+		//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, YSI_EMPTY, "YVers_Callback");
 		return 1;
 	}
 	
@@ -590,10 +590,10 @@ stock bool:Server_CrashDetectExists()
 				//data[pos + 9] = '\0';
 				new msg[40];
 				format(msg, sizeof (msg), "A new version (v%s) of YSI is", data[pos]),
-				Server_PrintIntroPart(msg, "available from:", "", "    www.y-less.com/YSI/YSI_1.0.zip");
+				Server_PrintIntroPart(msg, "available from:", YSI_EMPTY, "    www.y-less.com/YSI/YSI_1.0.zip");
 				if (data[0] == '2')
 				{
-					Server_PrintIntroPart("", "Changelog:", "");
+					Server_PrintIntroPart(YSI_EMPTY, "Changelog:", YSI_EMPTY);
 					// Print the changelog.
 					new
 						last = pos + 13;

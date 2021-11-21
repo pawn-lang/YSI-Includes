@@ -1187,7 +1187,7 @@ TEST__ y_stringhash__fixes_switch()
 	ASSERT_EQ(YHash("Myriad", false), _FIXES_Bernstein("mYRIAD"));
 	
 	// Print.
-	//printf("==========");
+	//print("==========");
 	//printf("%04x%04x", _FIXES_Bernstein("GAmemode0") >>> 16, _FIXES_Bernstein("GAmemode0") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("gAMemode1") >>> 16, _FIXES_Bernstein("gAMemode1") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("gaMEmode2") >>> 16, _FIXES_Bernstein("gaMEmode2") & 0xFFFF);
@@ -1221,7 +1221,7 @@ TEST__ y_stringhash__fixes_switch()
 	//printf("%04x%04x", _FIXES_Bernstein("hOsTnAmE") >>> 16, _FIXES_Bernstein("hOsTnAmE") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("PAssWOrd") >>> 16, _FIXES_Bernstein("PAssWOrd") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("biND") >>> 16, _FIXES_Bernstein("biND") & 0xFFFF);
-	//printf("==========");
+	//print("==========");
 	//printf("%04x%04x", _FIXES_Bernstein("cookielogging") >>> 16, _FIXES_Bernstein("cookielogging") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("concookies") >>> 16, _FIXES_Bernstein("concookies") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("db_log_queries") >>> 16, _FIXES_Bernstein("db_log_queries") & 0xFFFF);
@@ -1241,7 +1241,7 @@ TEST__ y_stringhash__fixes_switch()
 	//printf("%04x%04x", _FIXES_Bernstein("sleep") >>> 16, _FIXES_Bernstein("sleep") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("stream_rate") >>> 16, _FIXES_Bernstein("stream_rate") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("maxplayers") >>> 16, _FIXES_Bernstein("maxplayers") & 0xFFFF);
-	//printf("==========");
+	//print("==========");
 	//printf("%04x%04x", _FIXES_Bernstein("announce") >>> 16, _FIXES_Bernstein("announce") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("lanmode") >>> 16, _FIXES_Bernstein("lanmode") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("query") >>> 16, _FIXES_Bernstein("query") & 0xFFFF);
@@ -1249,6 +1249,6 @@ TEST__ y_stringhash__fixes_switch()
 	//printf("%04x%04x", _FIXES_Bernstein("logqueries") >>> 16, _FIXES_Bernstein("logqueries") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("timestamp") >>> 16, _FIXES_Bernstein("timestamp") & 0xFFFF);
 	//printf("%04x%04x", _FIXES_Bernstein("myriad") >>> 16, _FIXES_Bernstein("myriad") & 0xFFFF);
-	//printf("==========");
+	//print("==========");
 }
 

@@ -161,7 +161,7 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 	// password is to be loaded.
 	P:4("Player_Preload called: %s", name);
 	ret[E_USER_PRELOAD_YID] = -2;
-	memset(ret[E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
+	MemSet(ret[E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
 	ret[E_USER_PRELOAD_LANG] = NO_LANGUAGE;
 	ret[E_USER_PRELOAD_BITS] = 0;
 	ret[E_USER_PRELOAD_DATE] = 0;
@@ -436,7 +436,7 @@ GLOBAL__ Player_TryLogin(playerid, string:password[])
 			if (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS][0] && !strcmp(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], hash, false, MAX_PASSWORD_LENGTH))
 			{
 				// Wipe the password from memory.
-				memset(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
+				MemSet(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
 				// Extract the uid and call in to the login code.
 				Langs_SetPlayerLanguage(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_LANG]);
 				broadcastfunc Player_DoLogin(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID]);
@@ -482,7 +482,7 @@ GLOBAL__ Player_ForceLogin(playerid)
 		{
 			// Extract the uid and call in to the login code.
 			//YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS] = '\0';
-			memset(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
+			MemSet(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
 			Langs_SetPlayerLanguage(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_LANG]);
 			broadcastfunc Player_DoLogin(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID]);
 			Text_Send(playerid, $YSI_LOGIN_LOGIN);
@@ -676,7 +676,7 @@ static stock Player_HashPass(pass[], target[])
 	#elseif defined PP_MD5 && defined MD5_Hash
 		new
 			You_REALLY_shouldnt_use_MD5;
-		strcpy(target, MD5_Hash(pass, strlen(pass)));
+		StrCpy(target, MD5_Hash(pass, strlen(pass)));
 	#elseif defined PP_SHA1
 		#error SHA1 unsupported.
 	#elseif defined PP_YSI
@@ -787,7 +787,7 @@ GLOBAL__ Player_TryRegister(playerid, string:password[])
 			{
 				// Extract the uid and call in to the login code.
 				//YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS] = '\0';
-				memset(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
+				MemSet(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
 				Langs_SetPlayerLanguage(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_LANG]);
 				broadcastfunc Player_DoLogin(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID]);
 				Text_Send(playerid, $YSI_LOGIN_LOGIN);
@@ -878,7 +878,7 @@ GLOBAL__ Player_ChangePassword(playerid, string:password[])
 	// Save it.
 	Player_RewritePreload(playerid);
 	// Wipe it.
-	memset(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
+	MemSet(YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
 	return 1;
 }
 
@@ -1213,7 +1213,7 @@ static stock Player_GetNewID()
 	if (fHnd)
 	{
 		fread(fHnd, num);
-		num[strfind(num, " ")] = '\0';
+		num[strfind(num, YSI_SPACE)] = '\0';
 		uid = strval(num) + 1;
 		valstr(num, uid);
 		fseek(fHnd, 0, seek_start);
@@ -1278,7 +1278,7 @@ static stock Users_DoUpgrade0()
 					line[INDEX_DATA_LINE_LENGTH],
 					//Language:def = Langs_GetLanguageAt(0),
 					code[3];
-				strcpy(code, Langs_GetCode(Langs_GetLanguageAt(0)));
+				StrCpy(code, Langs_GetCode(Langs_GetLanguageAt(0)));
 				for (new i = -2; i != 26; ++i)
 				{
 					if (i == -2)
@@ -1346,22 +1346,11 @@ static stock Users_DoUpgrade0()
 							}
 						}
 					}
-					fseek(g);
 					fclose(f);
-					fremove(filename);
-					f = fopen(filename, io_write);
-					if (!f)
+					if (!Files_DoCopy(g, filename))
 					{
-						fclose(g);
 						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
-						continue;
 					}
-					while (fread(g, line))
-					{
-						fwrite(f, line);
-					}
-					fclose(f);
-					fclose(g);
 				}
 				f = fopen(USER_FILE_PATH "index.YSI", io_append);
 				if (f)
@@ -1407,7 +1396,7 @@ static stock Users_DoUpgrade1()
 					line[INDEX_DATA_LINE_LENGTH],
 					//Language:def = Langs_GetLanguageAt(0),
 					code[3];
-				strcpy(code, Langs_GetCode(Langs_GetLanguageAt(0)));
+				StrCpy(code, Langs_GetCode(Langs_GetLanguageAt(0)));
 				for (new i = -2; i != 26; ++i)
 				{
 					if (i == -2)
@@ -1445,7 +1434,7 @@ static stock Users_DoUpgrade1()
 						if (ch > 3)
 						{
 							// Get the current hash.
-							strcpy(hash, line[MAX_INDEX_LENGTH + 1 + MAX_PLAYER_NAME + 1], MAX_PASSWORD_LENGTH + 1);
+							StrCpy(hash, line[MAX_INDEX_LENGTH + 1 + MAX_PLAYER_NAME + 1], MAX_PASSWORD_LENGTH + 1);
 							//hash[MAX_PASSWORD_LENGTH] = '\0';
 							// Append their ID (not QUITE their join time, but
 							// best we can do retrospectively).
@@ -1470,22 +1459,11 @@ static stock Users_DoUpgrade1()
 							fwrite(g, line);
 						}
 					}
-					fseek(g);
 					fclose(f);
-					fremove(filename);
-					f = fopen(filename, io_write);
-					if (!f)
+					if (!Files_DoCopy(g, filename))
 					{
-						fclose(g);
 						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
-						continue;
 					}
-					while (fread(g, line))
-					{
-						fwrite(f, line);
-					}
-					fclose(f);
-					fclose(g);
 				}
 				f = fopen(USER_FILE_PATH "index.YSI", io_append);
 				if (f)

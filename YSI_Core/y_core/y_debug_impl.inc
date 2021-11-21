@@ -540,10 +540,15 @@ P:D(Debug_Print7(const str[], GLOBAL_TAG_TYPES:...));
 	Debug_Print0("*** YSI Info: " #%1);
 
 #define Debug_PrintF(%1); \
-	Debug_Print0("\7\7\7\7\7*** YSI Fatal Error: " #%1);
+	Debug_Print0("\7\7\7\7\7*** YSI Fatal Error: " #%1),Debug_Kill_();
 
 #define Debug_PrintC(%1); \
 	Debug_CodeX(%1);
+
+stock Debug_Kill_()
+{
+	#emit HALT 42
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="YSI_Format">str.</param>
@@ -724,7 +729,7 @@ native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, 
 static stock bool:Debug_IsStringLike(addr, len = 256)
 {
 	new i = 0;
-	len *= cellbytes;
+	len = len << __COMPILER_CELL_SHIFT;
 	for (i = 0; i != len; i += cellbytes)
 	{
 		new ch = AMX_Read(addr + i);

@@ -135,7 +135,7 @@ stock ZoneNames_Show(playerid, id)
 	ZoneNames_Hide(playerid);
 	YSI_g_sZNCur[playerid] = id,
 	strunpack(name, YSI_g_scZoneNames[id]),
-	Text_Send(playerid, $YSI_ZONE_NAME, "", name);
+	Text_Send(playerid, $YSI_ZONE_NAME, YSI_EMPTY, name);
 	new
 		td = Text_GetLastID();
 	if (td != -1)

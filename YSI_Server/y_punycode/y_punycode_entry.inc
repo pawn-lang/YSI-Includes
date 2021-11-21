@@ -285,7 +285,7 @@ stock Puny_EncodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (ds
 	if (bPacked) {
 		strunpack(sSrc, src);
 	} else {
-		strcpy(sSrc, src);
+		StrCpy(sSrc, src);
 	}
 
 	for (new bool:bb = true; ; ++rlen)

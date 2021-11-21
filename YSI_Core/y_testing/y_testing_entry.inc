@@ -312,7 +312,7 @@ stock _Testing_Start(const name[])
 	YSI_g_sCurHeap = heapspace();
 	P:3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
-	strcpy(YSI_gCurTestName, name[2]);
+	StrCpy(YSI_gCurTestName, name[2]);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -437,7 +437,7 @@ stock bool:_Testing_End()
 		printf("%s Heap allocation leak - was: %d, now: %d", TEST_FAILED, YSI_g_sCurHeap, space);
 #endif
 	}
-	TEST_REPORT(" ");
+	TEST_REPORT(YSI_SPACE);
 	return false;
 }
 
@@ -482,25 +482,25 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 				if (buffer{i} != buffer2{i})
 					goto Testing_Run_before_fail;
 			}
-			R@(buffer2, "");
+			R@(buffer2, YSI_EMPTY);
 Testing_Run_before_fail:
 		}
 		// Call the setup function if there is one.
 		buffer[0] = Y_TESTING_INIT,
-		R@(buffer, ""),
+		R@(buffer, YSI_EMPTY),
 		// Call the test.
 		buffer[0] = Y_TESTING_TEST,
 		fails = YSI_g_sFails;
-		P:5("Testing_Run(): Calling %s", unpack(buffer[1]));
+		P:5("Testing_Run(): Calling %s", Unpack(buffer[1]));
 		YSI_g_sInTest = true,
-		R@(buffer, ""),
+		R@(buffer, YSI_EMPTY),
 		YSI_g_sInTest = false;
 		++YSI_g_sTests;
 		if (!YSI_gTestComplete)
 		{
 #if defined INCLUDE_TESTS || defined RUN_TESTS
 			++YSI_g_sFails;
-			printf("Test did not complete (possible crash).\n");
+			print("Test did not complete (possible crash).\n");
 #endif
 		}
 		if (YSI_g_sFails != fails)
@@ -513,11 +513,11 @@ Testing_Run_before_fail:
 		else
 		{
 			TEST_REPORT(TEST_PASSED);
-			TEST_REPORT(" ");
+			TEST_REPORT(YSI_SPACE);
 		}
 #endif
 		buffer[0] = Y_TESTING_SHUT,
-		R@(buffer, "");
+		R@(buffer, YSI_EMPTY);
 
 		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_AFTER)))
 		{
@@ -526,7 +526,7 @@ Testing_Run_before_fail:
 				if (buffer{i} != buffer2{i})
 					goto Testing_Run_after_fail;
 			}
-			R@(buffer2, "");
+			R@(buffer2, YSI_EMPTY);
 Testing_Run_after_fail:
 		}
 	}
@@ -563,11 +563,10 @@ Testing_Run_after_fail:
 	{
 		if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid)) //!Player_IsNPC(playerid))
 		{
-			TEST_REPORT(" ");
-			TEST_REPORT("  ||==========================||  ");
-			TEST_REPORT("  || STARTING PLAYER TESTS... ||  ");
-			TEST_REPORT("  ||==========================||  ");
-			TEST_REPORT(" ");
+#if !defined LIGHT_TEST_REPORT
+			Server_PrintIntroMessage("       STARTING PLAYER TESTS..."),
+			Server_FinishIntroMessage();
+#endif
 			YSI_g_sTests = 0;
 			YSI_g_sChecks = 0;
 			YSI_g_sFails = 0;
@@ -591,7 +590,7 @@ Testing_Run_after_fail:
 			{
 				// Call the shutdown function if there is one.
 				buffer[0] = Y_TESTING_PSHUT;
-				P:5("Testing_Next(): Calling %s", unpack(buffer));
+				P:5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 			}
 			// Update fail counts.
@@ -621,11 +620,11 @@ Testing_Next_retry:
 				YSI_g_sAsked = false;
 				// Call the setup function if there is one.
 				buffer[0] = Y_TESTING_PINIT;
-				P:5("Testing_Next(): Calling %s", unpack(buffer));
+				P:5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 				// Call the test.
 				buffer[0] = Y_TESTING_PTEST;
-				P:5("Testing_Next(): Calling %s", unpack(buffer));
+				P:5("Testing_Next(): Calling %s", Unpack(buffer));
 				YSI_g_sInTest = true;
 				R@(buffer, "i", playerid);
 			}
@@ -647,22 +646,20 @@ Testing_Next_retry:
 						printf("    - %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
 						YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
 					}
+					print(YSI_SPACE);
 				}
 				else
 				{
-					#if defined YSI_NO_DIALOG_ASK
-						TEST_REPORT(" ");
-						TEST_REPORT("  ||==========================||  ");
-						TEST_REPORT("  || PLEASE NOTE FAILED TESTS ||  ");
-						TEST_REPORT("  ||==========================||  ");
-					#else
-						TEST_REPORT(" ");
-						TEST_REPORT("  ||==========================||  ");
-						TEST_REPORT("  || ALL PLAYER TESTS PASSED! ||  ");
-						TEST_REPORT("  ||==========================||  ");
+					#if !defined LIGHT_TEST_REPORT
+						#if defined YSI_NO_DIALOG_ASK
+							Server_PrintIntroMessage("       PLEASE NOTE FAILED TESTS."),
+							Server_FinishIntroMessage();
+						#else
+							Server_PrintIntroMessage("       ALL PLAYER TESTS PASSED!"),
+							Server_FinishIntroMessage();
+						#endif
 					#endif
 				}
-				TEST_REPORT(" ");
 				R@("OnPlayerTestsComplete", "iiii", playerid, YSI_g_sTests, YSI_g_sChecks, YSI_g_sFails);
 			}
 			// If the test needs a player but doesn't ask them anything
@@ -798,11 +795,10 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 				if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid)) //!Player_IsNPC(playerid))
 				{
 					YSI_g_sCurTest = YSI_g_sFailTests = 0;
-					TEST_REPORT(" ");
-					TEST_REPORT("  ||==========================||  ");
-					TEST_REPORT("  || STARTING PLAYER TESTS... ||  ");
-					TEST_REPORT("  ||==========================||  ");
-					TEST_REPORT(" ");
+					#if !defined LIGHT_TEST_REPORT
+						Server_PrintIntroMessage("       STARTING PLAYER TESTS..."),
+						Server_FinishIntroMessage();
+					#endif
 					YSI_g_sTests = 0;
 					YSI_g_sChecks = 0;
 					YSI_g_sFails = 0;
@@ -864,14 +860,13 @@ stock Testing_RunAll()
 	// The timing will be inaccurate since it will include many prints, but it
 	// isn't that important to be accurate.
 	startTime = tickcount();
-	TEST_REPORT(" ");
-	TEST_REPORT("  ||===================||  ");
-	TEST_REPORT("  || STARTING TESTS... ||  ");
-	TEST_REPORT("  ||===================||  ");
-	TEST_REPORT(" ");
+#if !defined LIGHT_TEST_REPORT
+	Server_PrintIntroMessage("           STARTING TESTS..."),
+	Server_FinishIntroMessage();
+#endif
 	Testing_Run(tests, checks, fails, _, true);
 #if !defined JUST_TEST && defined YSI_TESTS
-	if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
+	if (YSI_g_sTestResult != 9) print("*** Test system verification failed!");
 	else
 #endif
 	{
@@ -885,19 +880,19 @@ stock Testing_RunAll()
 				printf("    - %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
 				YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
 			}
+			print(YSI_SPACE);
 		}
 		else
 		{
-			TEST_REPORT(" ");
-			TEST_REPORT("  ||===================||  ");
-			TEST_REPORT("  || ALL TESTS PASSED! ||  ");
-			TEST_REPORT("  ||===================||  ");
+#if !defined LIGHT_TEST_REPORT
+			Server_PrintIntroMessage("           ALL TESTS PASSED!"),
+			Server_FinishIntroMessage();
+#endif
 		}
-		TEST_REPORT(" ");
 	}
 	endTime = tickcount();
 	printf("*** Time: %dms", endTime - startTime);
-	TEST_REPORT(" ");
+	TEST_REPORT(YSI_SPACE);
 	//state ysi_debug : on;
 	R@("OnTestsComplete", "iii", tests, checks, fails);
 	#if defined TEST_AUTO_EXIT
@@ -958,7 +953,7 @@ TEST__ y_testing_1()
 	ASSERT_EQ(FALSE, false);
 	ASSERT_EQ(TRUE, true);
 	ASSERT_NE(true, false);
-	ASSERT(isnull(NULL));
+	ASSERT(IsNull(NULL));
 	ASSERT_TRUE(true);
 	ASSERT_TRUE(!false);
 	ASSERT_FALSE(false);

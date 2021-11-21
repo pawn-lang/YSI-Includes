@@ -460,7 +460,7 @@ GLOBAL__ void:Area_Debug(area)
 				#if AREA_WORLDS > 0
 					printf("\tWorlds = %s", Bit_Display(YSI_g_sAreas[area][E_AREA_WORLDS], bits<AREA_WORLDS>));
 				#else
-					printf("\tNo Worlds");
+					print("\tNo Worlds");
 				#endif
 				printf("\tPlayers = %s", Bit_Display(YSI_g_sAreas[area][E_AREA_PLAYERS][1], bits<MAX_PLAYERS>));
 				printf("\tBounding Circle: %.2f, %.2f, %.2f, %.2f", YSI_g_sAreas[area][E_AREA_POLY_BOUND_X], YSI_g_sAreas[area][E_AREA_POLY_BOUND_Y], floatsqroot(YSI_g_sAreas[area][E_AREA_POLY_BOUND_R]), YSI_g_sAreas[area][E_AREA_POLY_BOUND_H]);
@@ -1584,7 +1584,7 @@ forward Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3,
 {
 	// This is the main chunk of the code.
 	new
-		Float:height = Float:isodd(count);
+		Float:height = Float:IsOdd(count);
 	count &= ~1;
 	new
 		reqSlots = ceildiv(count, CHILD_AREA_SLOTS) + 1;
@@ -2163,7 +2163,7 @@ stock Area_IsInPoly(Float:x, Float:y, Float:z, header)
 		if (((y0 <=y <= fy) || (fy <= y <= y0)) && (x0 + ((y - y0) * (fx - x0) / (fy - y0))) <= x) ++lines;
 		//P:7("Area_IsInPoly: %d %d %d %d %d", (y0 <= y <= fy), (fy <= y <= y0), (y0 <= y <= fy) || (fy <= y <= y0), (x0 + ((y - y0) * (fx - x0) / (fy - y0))) <= x, lines);
 		//P:7("Area_IsInPoly: Return %d", lines);
-		return isodd(lines);
+		return IsOdd(lines);
 	}
 	else
 	{
@@ -2199,7 +2199,7 @@ stock Area_IsInPoly(Float:x, Float:y, Float:z, header)
 		// Link the last and first points to complete the perimeter.
 		if (((y0 <=y <= fy) || (fy <= y <= y0)) && (x0 + ((y - y0) * (fx - x0) / (fy - y0))) <= x) ++lines;
 		//printf("Area_IsInPoly: Return %d", lines);
-		return isodd(lines);
+		return IsOdd(lines);
 	}
 }
 

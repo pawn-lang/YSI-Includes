@@ -107,7 +107,7 @@ Optional plugins:
 	#define TIMING_ITERATIONS (10)
 #endif
 
-#define ALS_MRET_(%0) forward PP_MRET();public PP_MRET(%0)(0,0,"")(NT_US)
+#define ALS_MRET_(%0) forward PP_MRET();public PP_MRET(%0)(0,0,YSI_EMPTY)(NT_US)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="t">The time in ms.</param>
@@ -463,68 +463,84 @@ P:D(floordiv(numerator, denominator));
  *  this is valid:
  *
  *  <code>
- *    new str[32]; isnull(str[5]);
+ *    new str[32]; IsNull(str[5]);
  *  </code>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:isnull(str[]));
+P:D(bool:IsNull(const str[]));
+#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
+
 #if defined isnull
 	#undef isnull
 #endif
-#if __COMPILER_1ST_PASS
-	#define isnull __MACRO__isnull
-#else
-	#define isnull(%0) ((%0[(%0[0])=='\1'])=='\0')
-#endif
+#define isnull(%0) ((%0[(%0[0])=='\1'])=='\0')
 #define _ALS_isnull
+
+//#pragma deprecated Use `IsNull` (i.e. use proper capitalisation).
+//stock bool:isnull(const str[])
+//{
+//	return IsNull(str);
+//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:isodd(value));
+P:D(bool:IsOdd(const str[]));
+#define IsOdd(%0) ((%0)&1)
+
 #if defined isodd
 	#undef isodd
 #endif
-#if __COMPILER_1ST_PASS
-	#define isodd __MACRO__isodd
-#else
-	#define isodd(%1) ((%1)&1)
-#endif
+#define isodd(%0) ((%0)&1)
 #define _ALS_isodd
+
+//#pragma deprecated Use `IsOdd` (i.e. use proper capitalisation).
+//stock bool:isodd(const str[])
+//{
+//	return IsOdd(str);
+//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:iseven(value));
+P:D(bool:IsEven(const str[]));
+#define IsEven(%0) (~(%0)&1)
+
 #if defined iseven
 	#undef iseven
 #endif
-#if __COMPILER_1ST_PASS
-	#define iseven __MACRO__iseven
-#else
-	#define iseven(%1) (!isodd(%1))
-#endif
+#define iseven(%0) (~(%0)&1)
 #define _ALS_iseven
 
-#if __COMPILER_1ST_PASS && !defined strcpy
-	static stock strcpy_undefined__() {}
+//#pragma deprecated Use `IsEven` (i.e. use proper capitalisation).
+//stock bool:iseven(const str[])
+//{
+//	return IsEven(str);
+//}
 
-	/*---------------------------------------------------------------------*//**
-	 * <param name="dest">Destination string.</param>
-	 * <param name="src">Source string.</param>
-	 * <param name="len">(Implicit) maximum length of the destination.</param>
-	 *//*--------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="dest">Destination string.</param>
+ * <param name="src">Source string.</param>
+ * <param name="len">(Implicit) maximum length of the destination.</param>
+ *//*------------------------------------------------------------------------**/
 
-	P:D(strcpy(dest[], const src[], len = sizeof (dest)));
+P:D(StrCpy(dest[], const src[], len = sizeof (dest)));
+#define StrCpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
+
+#if defined strcpy
+	#undef strcpy
 #endif
+#define strcpy(%0) strcat((%0[0] = '\0', %0), %1)
+#define _ALS_strcpy
 
-#if defined strcpy_undefined__
-	#define strcpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
-	#define _ALS_strcpy
-#endif
+//#pragma deprecated Use `StrCpy` (i.e. use proper capitalisation).
+//stock strcpy(dest[], const src[], len = sizeof (dest))
+//{
+//	return StrCpy(dest, src, len);
+//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to convert.</param>
@@ -555,7 +571,7 @@ stock StrToUpper(str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="minmax">Lower bound, or upper bound when only parameter.</param>
+ * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
  * <remarks>
  *  Generate a random float between the given numbers (min &lt;= n &lt; max).
@@ -563,18 +579,22 @@ stock StrToUpper(str[], len = sizeof (str))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Random(min, max = cellmin)
+stock RandomMinMax(min, max)
 {
-	if (max == cellmin)
-	{
-		if (min < 0)
-			return -random(-min);
-		return random(min);
-	}
-	if (max < min)
-		return random(min - max) + max;
+	assert(min < max);
 	return random(max - min) + min;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="max">Upper bound.</param>
+ * <remarks>
+ *  Generate a random float between the given numbers (min &lt;= n &lt; max).
+ *  Default minimum is 0 (changes the parameter order).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+native Random(max) = random;
+#define Random(%0,%1) RandomMinMax(%0,%1)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="minmax">Lower bound, or upper bound when only parameter.</param>
@@ -625,6 +645,14 @@ stock StripNL(str[])
 	while (i-- && str[i] <= ' ') str[i] = '\0';
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">The string to remove whitespace from the end of.</param>
+ * <remarks>
+ *  Updated from old versions, should be more efficient
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(StripR(str[]));
 #define StripR StripNL
 
 /*-------------------------------------------------------------------------*//**
@@ -665,13 +693,18 @@ stock Strip(str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock endofline(const line[], pos)
+stock bool:EndOfLine(const line[], pos)
 {
-	P:7("endofline called: \"%s\", %i", line, pos);
-	if (NOT_IN_RANGE(pos, 0, strlen(line))) return 0;
-	//if (pos < 0 || pos > strlen(line)) return 0;
-	while (line[pos]) if (line[pos++] > ' ') return 0;
-	return 1;
+	P:7("EndOfLine called: \"%s\", %i", line, pos);
+	if (NOT_IN_RANGE(pos, 0, strlen(line))) return false;
+	while (IS_IN_RANGE(line[pos], '\0' + 1, ' ' + 1)) ++pos;
+	return !line[pos];
+}
+
+#pragma deprecated Use `EndOfLine` (i.e. use proper capitalisation).
+stock bool:endofline(const line[], pos)
+{
+	return EndOfLine(line, pos);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -683,16 +716,18 @@ stock endofline(const line[], pos)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+stock ChrFind(needle, const haystack[], start = 0)
+{
+	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
+	new search[2];
+	search[0] = needle;
+	return strfind(haystack, search, false, start);
+}
+
+#pragma deprecated Use `ChrFind` (i.e. use proper capitalisation).
 stock chrfind(needle, const haystack[], start = 0)
 {
-	P:7("chrfind called: %c, \"%s\", %i", needle, haystack, start);
-	if (start < 0)
-	{
-		start = 0;
-	}
-	else if (start > strlen(haystack)) return -1;
-	while (haystack[start]) if (haystack[start++] == needle) return start - 1;
-	return -1;
+	return ChrFind(needle, haystack, start);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -703,20 +738,15 @@ stock chrfind(needle, const haystack[], start = 0)
  *  Fail - -1, Success - pos
  * </returns>
  * <remarks>
- *  Like <symbolref name="chrfind" />, but with no upper-bounds check on
- *  <paramref name="start" />.
+ *  Like <symbolref name="ChrFind" />, but with no upper-bounds check on
+ *  <paramref name="start" />.  Now it has them anyway...
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#pragma deprecated Use `ChrFind` (i.e. use proper capitalisation, and bounds checks).
 stock chrfindp(needle, const haystack[], start = 0)
 {
-	P:7("chrfind called: %c, \"%s\", %i", needle, haystack, start);
-	if (start < 0)
-	{
-		start = 0;
-	}
-	while (haystack{start}) if (haystack{start++} == needle) return start - 1;
-	return -1;
+	return ChrFind(needle, haystack, start);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -774,7 +804,7 @@ stock BernsteinHash(const string[] /* 12 */)
 	return h;
 }
 
-#pragma deprecated Use the new name `BernsteinHash()`.
+#pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
 stock bernstein(const string[] /* 12 */)
 {
 	new h = 5381, i = 0, j = 0;
@@ -813,9 +843,9 @@ stock JenkinsHash(const string[] /* 12 */)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock ishex(const str[])
+stock bool:IsHex(const str[])
 {
-	P:7("ishex called: \"%s\"", str);
+	P:3("ishex called: \"%s\"", str);
 	new
 		i = 0,
 		cur = 0;
@@ -829,6 +859,12 @@ stock ishex(const str[])
 	return !cur; // Valid if this is the end of the string.
 }
 
+#pragma deprecated Use `IsHex` (i.e. use proper capitalisation).
+stock bool:ishex(const str[])
+{
+	return IsHex(str);
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to unpack</param>
  * <returns>
@@ -839,9 +875,24 @@ stock ishex(const str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+stock Unpack(const str[])
+{
+	P:3("Unpack called: \"%s\"", str);
+	new
+		ret[YSI_MAX_STRING] = {0};
+	if (strlen(str) <= YSI_MAX_STRING)
+	{
+		strunpack(ret, str);
+	}
+	return ret;
+}
+
+#pragma deprecated Use `Unpack` (i.e. use proper capitalisation).
 stock unpack(const str[])
 {
-	P:7("unpack called: \"%s\"", str);
+	// Doesn't call the original, instead inlines the code because it returns a
+	// string, and the compiler doesn't like nested string returning functions.
+	P:3("unpack called: \"%s\"", str);
 	new
 		ret[YSI_MAX_STRING] = {0};
 	if (strlen(str) <= YSI_MAX_STRING)
@@ -862,13 +913,13 @@ stock unpack(const str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#define getstring        returnstringarg
+#define getstring        ReturnStringArg
 #define GetString        getstring
 #define getstringarg     va_getstring
 #define GetStringArg     va_getstring
-#define ReturnStringArg  returnstringarg
+#define returnstringarg  ReturnStringArg
 
-stock returnstringarg(idx)
+stock ReturnStringArg(idx)
 {
 	static
 		scSize = YSI_MAX_STRING;
@@ -895,7 +946,7 @@ stock returnstringarg(idx)
 	#emit PUSH.pri
 	// Load the address of the secret destination.
 	#emit LOAD.S.alt 16
-	// Blank the first cell so "strcat" behaves like "strcpy".
+	// Blank the first cell so "strcat" behaves like "StrCpy".
 	#emit CONST.pri  0
 	// Store the loaded number 0 to the loaded address.
 	#emit STOR.I
@@ -978,13 +1029,19 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock isnumeric(const str[])
+stock bool:IsNumeric(const str[])
 {
-	P:4("isnumeric called: \"%s\"", str);
+	P:4("IsNumeric called: \"%s\"", str);
 	new
 		i = -1;
 	while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
 	return !str[i];
+}
+
+#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
+stock bool:isnumeric(const str[])
+{
+	return IsNumeric(str);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1044,123 +1101,140 @@ stock Utils_ChaosMod(playerid)
 	}
 #endif
 
-#if !defined _inc_sscanf || 1
-	/*---------------------------------------------------------------------*//**
-	 *
-	 * <param name="string">String to convert to a number.</param>
-	 * <returns>
-	 *  value of the passed hex string.
-	 * </returns>
-	 * <remarks>
-	 *  Now stops on invalid characters.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-	
-	stock hexstr(const string[])
+
+/*-------------------------------------------------------------------------*//**
+ *
+ * <param name="string">String to convert to a number.</param>
+ * <returns>
+ *  value of the passed hex string.
+ * </returns>
+ * <remarks>
+ *  Now stops on invalid characters.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock HexStr(const string[])
+{
+	new
+		ret = 0,
+		val = 0,
+		i = 0;
+	if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
+	for ( ; ; )
 	{
-		new
-			ret = 0,
-			val = 0,
-			i = 0;
-		if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
-		for ( ; ; )
+		switch ((val = string[i++]))
 		{
-			switch ((val = string[i++]))
+			case '0' .. '9':
 			{
-				case '0' .. '9':
-				{
-					val -= '0';
-				}
-				case 'a' .. 'f':
-				{
-					val -= 'a' - 10;
-				}
-				case 'A' .. 'F':
-				{
-					val -= 'A' - 10;
-				}
-				default: break;
+				val -= '0';
 			}
-			ret = ret << 4 | val;
+			case 'a' .. 'f':
+			{
+				val -= 'a' - 10;
+			}
+			case 'A' .. 'F':
+			{
+				val -= 'A' - 10;
+			}
+			default: break;
 		}
-		return ret;
+		ret = ret << 4 | val;
 	}
-	
-	/*---------------------------------------------------------------------*//**
-	 *
-	 * <param name="string">String to try convert to a boolean.</param>
-	 * <returns>
-	 *  bool: passed boolean.
-	 * </returns>
-	 * <remarks>
-	 *  This can take a number of ways of representing booleans - 0, false and
-	 *  nothing there.  Anything not one of those things (false is not case
-	 *  sensitive) is assumed true.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-	
-	stock bool:boolstr(const string[])
+	return ret;
+}
+
+#pragma deprecated Use `HexStr` (i.e. use proper capitalisation).
+stock hexstr(const string[])
+{
+	return HexStr(string);
+}
+
+/*-------------------------------------------------------------------------*//**
+ *
+ * <param name="string">String to try convert to a boolean.</param>
+ * <returns>
+ *  bool: passed boolean.
+ * </returns>
+ * <remarks>
+ *  This can take a number of ways of representing booleans - 0, false and
+ *  nothing there.  Anything not one of those things (false is not case
+ *  sensitive) is assumed true.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:BoolStr(const string[])
+{
+	// Hooray for De Morgan's rules!
+	return string[0] && string[0] != '0' && strcmp(string, "false", true);
+}
+
+#pragma deprecated Use `BoolStr` (i.e. use proper capitalisation).
+stock bool:boolstr(const string[])
+{
+	return BoolStr(string);
+}
+
+/*-------------------------------------------------------------------------*//**
+ *
+ * <param name="string">String to try convert to a boolean.</param>
+ * <returns>
+ *  bool: passed boolean.
+ * </returns>
+ * <remarks>
+ *  This takes a value in 0110101 (boolean) format and returns it as a
+ *  regular value.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock BinStr(const string[])
+{
+	new
+		pos = 0;
+	switch (string[0])
 	{
-		// Hooray for De Morgan's rules!
-		return string[0] && string[0] != '0' && strcmp(string, "false", true);
+		case '0':
+		{
+			if (string[1] | 0x20 == 'b')
+			{
+				pos = 2;
+			}
+		}
+		case '1':
+		{
+		}
+		default:
+		{
+			return 0;
+		}
 	}
-	
-	/*---------------------------------------------------------------------*//**
-	 *
-	 * <param name="string">String to try convert to a boolean.</param>
-	 * <returns>
-	 *  bool: passed boolean.
-	 * </returns>
-	 * <remarks>
-	 *  This takes a value in 0110101 (boolean) format and returns it as a
-	 *  regular value.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-	
-	stock binstr(const string[])
+	new
+		value = 0;
+	for ( ; ; )
 	{
-		new
-			pos = 0;
-		switch (string[0])
+		switch (string[pos++])
 		{
 			case '0':
 			{
-				if (string[1] | 0x20 == 'b')
-				{
-					pos = 2;
-				}
+				value <<= 1;
 			}
 			case '1':
 			{
+				value = (value << 1) | 1;
 			}
 			default:
 			{
-				return 0;
+				break;
 			}
 		}
-		new
-			value = 0;
-		for ( ; ; )
-		{
-			switch (string[pos++])
-			{
-				case '0':
-				{
-					value <<= 1;
-				}
-				case '1':
-				{
-					value = (value << 1) | 1;
-				}
-				default:
-				{
-					break;
-				}
-			}
-		}
-		return value;
 	}
-#endif
+	return value;
+}
+
+#pragma deprecated Use `BinStr` (i.e. use proper capitalisation).
+stock binstr(const string[])
+{
+	return BinStr(string);
+}
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
@@ -1183,7 +1257,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
 		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98",
 		//tmp,
 		ret = 0;
-	num *= cellbytes;
+	num = num << __COMPILER_CELL_SHIFT;
 	if (len <= ceildiv(num, 3))
 	{
 		// How many complete chunks can we fit in?
@@ -1375,9 +1449,9 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
 		num = 0;
 	// Work out the final length.  Subtract some for incomplete bytes and
 	// insufficient destination data.
-	num = strlen(src);
-	len *= cellbytes;
-	blocks = num / cellbytes;
+	num = strlen(src),
+	len = len << __COMPILER_CELL_SHIFT,
+	blocks = num >>> __COMPILER_CELL_SHIFT;
 	if (src{num - 1}  == '=')
 	{
 		--blocks;
@@ -1549,7 +1623,7 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  rawMemcpy
+ *  RawMemCpy
  * </summary>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
@@ -1561,8 +1635,14 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-native rawMemcpy_(dest, src, index, numbytes, maxlength) = memcpy;
-#define rawMemcpy(%0,%1,%2) rawMemcpy_((%0),(%1),0,(%2),(cellmax>>>2))
+native RawMemCpy_(dest, src, index, numbytes, maxlength) = memcpy;
+#define RawMemCpy(%0,%1,%2) RawMemCpy_((%0),(%1),0,(%2),(cellmax>>>2))
+
+#pragma deprecated Use `RawMemCpy` (i.e. use proper capitalisation).
+stock rawMemcpy(dest, src, numbytes)
+{
+	return RawMemCpy(dest, src, numbytes);
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="arr">Array or address to set to a value.</param>
@@ -1575,7 +1655,7 @@ native rawMemcpy_(dest, src, index, numbytes, maxlength) = memcpy;
  *
  *  Modified to use binary flags instead of a loop.
  *
- *  "memset" takes an array, the size of the array, and a value to fill it with
+ *  "MemSet" takes an array, the size of the array, and a value to fill it with
  *  and sets the whole array to that value.
  *
  *  "rawmemset" is similar, but takes an AMX data segment address instead and
@@ -1584,6 +1664,17 @@ native rawMemcpy_(dest, src, index, numbytes, maxlength) = memcpy;
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+stock MemSet(arr[], val = 0, size = sizeof (arr))
+{
+	new
+		addr = 0;
+	#emit LOAD.S.pri arr
+	#emit STOR.S.pri addr
+	// Convert the size from cells to bytes.
+	return RawMemSet(addr, val, size * cellbytes);
+}
+
+#pragma deprecated Use `MemSet` (i.e. use proper capitalisation).
 stock memset(arr[], val = 0, size = sizeof (arr))
 {
 	new
@@ -1591,7 +1682,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	#emit LOAD.S.pri arr
 	#emit STOR.S.pri addr
 	// Convert the size from cells to bytes.
-	return rawMemset(addr, val, size * cellbytes);
+	return RawMemSet(addr, val, size * cellbytes);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1605,16 +1696,16 @@ stock memset(arr[], val = 0, size = sizeof (arr))
  *
  *  Modified to use binary flags instead of a loop.
  *
- *  "memset" takes an array, the size of the array, and a value to fill it with
+ *  "MemSet" takes an array, the size of the array, and a value to fill it with
  *  and sets the whole array to that value.
  *
- *  "rawmemset" is similar, but takes an AMX data segment address instead and
+ *  "RawMemSet" is similar, but takes an AMX data segment address instead and
  *  the size is in bytes, not cells.  However, the size must still be a multiple
  *  of 4.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
+stock RawMemSet(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 {
 	if (iSize < cellbytes)
 		return 0;
@@ -1718,6 +1809,12 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 //		// JIT not started/non-existant.  We can use code rewriting.
 //		return 1;
 //	}
+}
+
+#pragma deprecated Use `RawMemSet` (i.e. use proper capitalisation).
+stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
+{
+	return RawMemSet(iAddress, iValue, iSize);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2539,7 +2636,7 @@ stock Range(const arr[], num = sizeof (arr))
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock memcmp(arr1[], arr2[], count)
+stock MemCmp(arr1[], arr2[], count)
 {
 	for (new diff = 0, i = 0; i != count; ++i)
 	{
@@ -2548,6 +2645,12 @@ stock memcmp(arr1[], arr2[], count)
 			return diff;
 	}
 	return 0;
+}
+
+#pragma deprecated Use `MemCmp` (i.e. use proper capitalisation).
+stock memcmp(arr1[], arr2[], count)
+{
+	return MemCmp(arr1, arr2, count);
 }
 
 #define MAX_LEVENSHTEIN_STRING (32)
@@ -2868,26 +2971,26 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 				path[18] = '\0',
 				strcat(path, "YSI"),
 				strcat(path, YSI_gsDefaultDirs[dir]),
-				strcpy(test, path[18]),
+				StrCpy(test, path[18]),
 				strcat(test, ".gitkeep");
 				if ((file = fopen(test, io_write)))
 				{
 					// Found `YSI/dir/`.
-					strcpy(YSI_gsDefaultDirs[dir], path[18]),
+					StrCpy(YSI_gsDefaultDirs[dir], path[18]),
 					fclose(file);
 				}
 				else
 				{
 					if (first)
 					{
-						Server_PrintIntroPart(" Missing YSI scriptfiles directories: ", ""),
+						Server_PrintIntroPart(" Missing YSI scriptfiles directories: ", YSI_EMPTY),
 						first = false;
 					}
 					Server_PrintIntroPart(path);
 					if ((file = fopen(test[4], io_write)))
 					{
 						// Found `dir/`.
-						strcpy(YSI_gsDefaultDirs[dir], path[18 + 4]),
+						StrCpy(YSI_gsDefaultDirs[dir], path[18 + 4]),
 						fclose(file);
 					}
 					else
@@ -2904,6 +3007,160 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 		}
 	}
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="i">Handle to the file to copy.</param>
+ * <param name="end">How much of the file to copy.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Copy part of a file from the current read pointer, for <c>end</c> bytes.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_CopyRange(File:i, end, const string:dst[])
+{
+	// Must start at the start...
+	new
+		File:o = fopen(dst, io_write),
+		count = min(YSI_UNSAFE_HUGE_LENGTH, end >>> __COMPILER_CELL_SHIFT);
+	if (!o)
+	{
+		return false;
+	}
+	end &= cellbytes - 1;
+	// Only loop as long as we read a full block.  Partials mean the end.  Might
+	// do an extra read if `count` starts out as `0`, but that only happens on
+	// files less than 4 bytes long and doesn't matter anyway.
+	do
+	{
+		count = fblockread(i, YSI_UNSAFE_HUGE_STRING, count),
+		fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count);
+	}
+	while (count == YSI_UNSAFE_HUGE_LENGTH);
+	// Clean up any trailing bytes.
+	while (end--)
+	{
+		//printf("trailing char: %d", end);
+		fputchar(o, fgetchar(i, 0, false), false);
+	}
+	return bool:fclose(o);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="i">Handle to the file to copy.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Fast file copy routine.  Surprisingly widely used in YSI, in places where
+ *  temp files were used and <c>fseek</c>ed to the start.  Closes the file.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_DoCopy(File:i, const string:dst[])
+{
+	return
+		I@ = _:(fseek(i, 0, seek_start) == 0 && Files_CopyRange(i, flength(i), dst)),
+		fclose(i) && I@;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Copies a file from <c>src</c> to <c>dst</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_Copy(const string:src[], const string:dst[])
+{
+	new File:i = fopen(src, io_read);
+	if (i)
+	{
+		return
+			I@ = _:Files_CopyRange(i, flength(i), dst),
+			fclose(i) && I@;
+	}
+	return false;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Moves a file from <c>src</c> to <c>dst</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_Move(const string:src[], const string:dst[])
+{
+	new File:i = fopen(src, io_read);
+	if (i)
+	{
+		return
+			I@ = _:(Files_CopyRange(i, flength(i), dst) && fremove(src)),
+			fclose(i) && I@;
+	}
+	return false;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  TryPercentage(percentage);
+ * </summary>
+ * <param name="percentage">The likelihood of returning <c>true</c>.</param>
+ * <returns>
+ *  <c>true</c>, <c>percentage%</c> of the time; or <c>false</c>
+ * </returns>
+ * <remarks>
+ *  Basically a percentage random number generator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:TryPercentage(percentage)
+{
+	return random(100) < percentage;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  TryPermille(permille);
+ * </summary>
+ * <param name="permille">The likelihood of returning <c>true</c>.</param>
+ * <returns>
+ *  <c>true</c>, <c>permille%o</c> of the time; or <c>false</c>
+ * </returns>
+ * <remarks>
+ *  Basically a permille random number generator (that's out of 1000).  Could be
+ *  used to replicate something with a <c>42.1%</c> chance of happening via:
+ *  <br />
+ *  <c>TryPermille(421)</c>
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:TryPermille(permille)
+{
+	return random(1000) < permille;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  TryPPM(ppm);
+ * </summary>
+ * <param name="ppm">The likelihood of returning <c>true</c>.</param>
+ * <returns>
+ *  <c>true</c>, <c>ppm%oooo</c> of the time; or <c>false</c>
+ * </returns>
+ * <remarks>
+ *  Basically a ppm random number generator (that's out of 1000000).  Could be
+ *  used to replicate something with a <c>1.0001%</c> chance of happening via:
+ *  <br />
+ *  <c>TryPPM(10001)</c>
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:TryPPM(ppm)
+{
+	return random(1000000) < ppm;
+}
 
 /*-------------------------------------------------------------------------*//**
  * <summary>

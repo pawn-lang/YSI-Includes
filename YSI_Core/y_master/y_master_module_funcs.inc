@@ -1,26 +1,26 @@
-FOREIGN__ stock M_Func1();
-FOREIGN__ stock M_Func2(in);
-FOREIGN__ stock void:M_Func3(&ret, in);
-FOREIGN__ stock string:M_Func4();
-FOREIGN__ stock string:M_Func5(const string:in[]);
-FOREIGN__ stock M_Func6();
+FOREIGN__ stock M_FuncP();
+FOREIGN__ stock M_FuncR(in);
+FOREIGN__ stock void:M_FuncT(&ret, in);
+FOREIGN__ stock string:M_FuncV();
+FOREIGN__ stock string:M_FuncX(const string:in[]);
+FOREIGN__ stock M_FuncZ();
 
-GLOBAL__ M_Func1()
+GLOBAL__ M_FuncP()
 {
 	return YSIM_TEST_MODULE;
 }
 
-GLOBAL__ M_Func2(in)
+GLOBAL__ M_FuncR(in)
 {
 	return YSIM_TEST_MODULE * in;
 }
 
-GLOBAL__ void:M_Func3(&ret, in)
+GLOBAL__ void:M_FuncT(&ret, in)
 {
 	ret = YSIM_TEST_MODULE + in;
 }
 
-GLOBAL__ string:M_Func4()
+GLOBAL__ string:M_FuncV()
 {
 	new
 		str[YSI_MAX_STRING];
@@ -28,7 +28,7 @@ GLOBAL__ string:M_Func4()
 	return str;
 }
 
-GLOBAL__ string:M_Func5(const string:in[])
+GLOBAL__ string:M_FuncX(const string:in[])
 {
 	new
 		str[YSI_MAX_STRING];
@@ -36,7 +36,7 @@ GLOBAL__ string:M_Func5(const string:in[])
 	return str;
 }
 
-GLOBAL__ M_Func6()
+GLOBAL__ M_FuncZ()
 {
 	return Master_Caller() << 16 | YSIM_TEST_MODULE;
 }

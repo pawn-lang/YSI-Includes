@@ -446,8 +446,8 @@ public OnYSIInit()
 	P:1("Master_OnYSIInit");
 	state _ALS : _ALS_go;
 	#if !defined YSI_NO_MASTER
-		getproperty(8, "", YSIM_STRING + 1, YSI_g_sModuleName);
-		deleteproperty(8, "", YSIM_STRING + 1);
+		getproperty(8, YSI_EMPTY, YSIM_STRING + 1, YSI_g_sModuleName);
+		deleteproperty(8, YSI_EMPTY, YSIM_STRING + 1);
 		// This will fix `OnRconCommand` for the gamemode, so we can use the `module` commands.  It
 		// also takes up a filterscript slot, a fact we can abuse to get swap space while reloading
 		// modules (thus, even if you have the maximum modules loaded, you can still reload one).
@@ -465,7 +465,7 @@ public OnYSIInit()
 		}
 	#endif
 	@_ = 0;
-	CallRemoteFunction("Master_Reassert", "");
+	CallRemoteFunction("Master_Reassert", YSI_EMPTY);
 	new
 		masters = getproperty(8, YSIM_MASTER);
 	#if defined FIXES_ID
@@ -526,7 +526,7 @@ public OnScriptExit()
 		if (!Script_IsFilterscript())
 		{
 			// First call - disable all modules.
-			CallRemoteFunction("Master_OnCloseModules", "");
+			CallRemoteFunction("Master_OnCloseModules", YSI_EMPTY);
 		}
 		// Loop through everything this script is master for and call the remote function for it.
 		// EXCEPT for this script itself!
@@ -540,7 +540,7 @@ public OnScriptExit()
 			func[0] = YSI_g_sMasterData[i] & 0xFF,
 			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
 			func[2] = YSI_g_sMasterData[i] >> 16,
-			CallLocalFunction(func, "");
+			CallLocalFunction(func, YSI_EMPTY);
 			P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
 			// The properties currently clear instantly, but that may not always be the case.
 		}
@@ -553,11 +553,11 @@ public OnScriptExit()
 		if (!Script_IsFilterscript())
 		{
 			// Second call - pass off module data.
-			setproperty(8, "", YSIM_STRING + 2, "");
-			CallRemoteFunction("Master_OnCloseModules", "");
+			setproperty(8, YSI_EMPTY, YSIM_STRING + 2, YSI_EMPTY);
+			CallRemoteFunction("Master_OnCloseModules", YSI_EMPTY);
 
 			// Finally shut down all the modules.
-			getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+			getproperty(8, YSI_EMPTY, YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
 			new
 				prev = 0,
 				next = 0;
@@ -612,18 +612,18 @@ forward OnMasterSystemClose(id);
 				func[0] = YSI_g_sMasterData[i] & 0xFF,
 				func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
 				func[2] = YSI_g_sMasterData[i] >> 16,
-				CallLocalFunction(func, "");
+				CallLocalFunction(func, YSI_EMPTY);
 				P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
 				// The properties currently clear instantly, but that may not always be the case.
 			}
 			if (prev)
 			{
 				// Second call.
-				getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+				getproperty(8, YSI_EMPTY, YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
 				prev = strlen(YSI_UNSAFE_HUGE_STRING);
 				strcat(YSI_UNSAFE_HUGE_STRING[prev], YSI_g_sModuleName);
 				strcat(YSI_UNSAFE_HUGE_STRING[prev], ";");
-				setproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+				setproperty(8, YSI_EMPTY, YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
 				YSI_g_sMasterCount = 0;
 			}
 		}
@@ -637,7 +637,7 @@ forward OnMasterSystemClose(id);
 		}
 		else
 		{
-			setproperty(8, "", YSIM_STRING + 1, module);
+			setproperty(8, YSI_EMPTY, YSIM_STRING + 1, module);
 			new
 				masters = getproperty(8, YSIM_MASTER);
 			format(Q@, sizeof (Q@), "loadfs %s%s", YSI_g_scModulePath, module);
@@ -651,7 +651,7 @@ forward OnMasterSystemClose(id);
 			{
 				P:0("Module \"%s\" loaded", module);
 			}
-			deleteproperty(8, "", YSIM_STRING + 1);
+			deleteproperty(8, YSI_EMPTY, YSIM_STRING + 1);
 		}
 		return true;
 	}
@@ -676,7 +676,7 @@ forward OnMasterSystemClose(id);
 		// the reload, thus we'll loose data.  Instead, we use a hack to load the FS twice at once!
 		// We just alternate which is loaded and unloaded statelessly - detect which method
 		// succeeded.
-		setproperty(8, "", YSIM_STRING + 1, module);
+		setproperty(8, YSI_EMPTY, YSIM_STRING + 1, module);
 		new
 			masters = getproperty(8, YSIM_MASTER);
 		format(Q@, sizeof (Q@), "loadfs ./%s%s", YSI_g_scModulePath, module);
@@ -698,7 +698,7 @@ forward OnMasterSystemClose(id);
 			{
 				format(Q@, sizeof (Q@), "unloadfs ./%s%s", YSI_g_scModulePath, module);
 				SendRconCommand(Q@);
-				CallRemoteFunction("Master_Reassert", "");
+				CallRemoteFunction("Master_Reassert", YSI_EMPTY);
 				P:0("Module \"%s\" (re)loaded.", module);
 			}
 		}
@@ -707,7 +707,7 @@ forward OnMasterSystemClose(id);
 			// Loaded a second version of the script.  Unload the first version.
 			format(Q@, sizeof (Q@), "unloadfs %s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
-			CallRemoteFunction("Master_Reassert", "");
+			CallRemoteFunction("Master_Reassert", YSI_EMPTY);
 			P:0("Module \"%s\" (re)loaded.", module);
 		}
 		return true;
@@ -723,7 +723,7 @@ forward OnMasterSystemClose(id);
 			SendRconCommand(Q@);
 			format(Q@, sizeof (Q@), "unloadfs ./%s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
-			CallRemoteFunction("Master_Reassert", "");
+			CallRemoteFunction("Master_Reassert", YSI_EMPTY);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
 				P:F("Could not unload module \"%s\"", module);
@@ -874,11 +874,13 @@ stock _Master_Relinquish(const library[])
 
 static stock _Master_Rename(const name[])
 {
+	P:3("_Master_Rename called: \"%s\"", name);
 	// Set the name of the function at `index` back to what it should be.
 	new
 		entry;
 	if (AMX_GetPublicEntry(0, entry, name, true))
 	{
+		P:5("_Master_Rename: found %d", entry);
 		new
 			len = strlen(name);
 		// These function names are stored in C order, not packed string order.
@@ -892,7 +894,7 @@ static stock _Master_Rename(const name[])
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
-		#emit ADD.C      0xFFFFFFFC
+		#emit ADD.C      0xFFFFFFFF
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry
@@ -903,6 +905,7 @@ static stock _Master_Rename(const name[])
 
 static stock _Master_Unname(const name[])
 {
+	P:3("_Master_Unname called: \"%s\"", name);
 	// Rename the public function to exactly the same thing with the last letter
 	// increased by one.  This ensures that it can't be called, but keeps its
 	// position in the binary tree (so that we don't need to sort the public
@@ -922,9 +925,11 @@ static stock _Master_Unname(const name[])
 				addr = entry + 12;
 			#emit LREF.S.pri addr
 			#emit LOAD.alt   AMX_BASE_ADDRESS
+			#emit ADD
 			#emit STOR.S.pri addr
 			new str[FUNCTION_LENGTH];
 			AMX_ReadString(addr, str);
+			P:5("_Master_Unname: Comparing \"%s\" and \"%s\" to %d", name, Unpack(str), len);
 			// Check if the strings are identical.
 			if (strlen(str) == len)
 			{
@@ -938,6 +943,7 @@ static stock _Master_Unname(const name[])
 					// about to be renamed but it is, because this will then
 					// take the place of the next function and be called instead
 					// of it, when neither should be called.
+					strunpack(str, str);
 					P:F("_Master_Unname: Function \"%s\" is adjacent to \"%s\"; cannot hide it.", name, str);
 					return;
 				}
@@ -954,7 +960,7 @@ static stock _Master_Unname(const name[])
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
-		#emit ADD.C      0xFFFFFFFC
+		#emit ADD.C      0xFFFFFFFF
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry
@@ -973,7 +979,7 @@ stock _Master_UnnameAll(master)
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@yM_>)))
 	{
 		// Call the function and test the return value.
-		if (CallLocalFunction(buffer, "") == master)
+		if (CallLocalFunction(buffer, YSI_EMPTY) == master)
 		{
 			buffer[0] = 0x40404040, // '@@@@',
 			strunpack(buffer, buffer),
@@ -991,11 +997,13 @@ stock _Master_RenameAll(master)
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@yM_>)))
 	{
 		// Call the function and test the return value.
-		if (CallLocalFunction(buffer, "") == master)
+		if (CallLocalFunction(buffer, YSI_EMPTY) == master)
 		{
 			buffer[0] = 0x40404040, // '@@@@',
-			strunpack(buffer, buffer),
-			--buffer[strlen(buffer) - 1],
+			strunpack(buffer, buffer);
+			P:6("_Master_RenameAll: Renaming to \"%s\"", buffer);
+			++buffer[strlen(buffer) - 1];
+			P:6("_Master_RenameAll: Renaming from \"%s\"", buffer);
 			_Master_Rename(buffer[2]);
 		}
 	}
@@ -1037,10 +1045,10 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 			new
 				func[FUNCTION_LENGTH];
 			format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
-			master = CallLocalFunction(func, "");
+			master = CallLocalFunction(func, YSI_EMPTY);
 			// Might still be able to steal the master if we're a higher version.  We must be
 			// EXCLUSIVELY higher, not just same or higher.
-			CallRemoteFunction(func, "");
+			CallRemoteFunction(func, YSI_EMPTY);
 			if (master <= getproperty(8, YSIM_VERRET))
 			{
 				// Not got the master.
@@ -1055,7 +1063,7 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 		new
 			func[FUNCTION_LENGTH];
 		format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
-		if (CallLocalFunction(func, "") < getproperty(8, YSIM_VERMAX))
+		if (CallLocalFunction(func, YSI_EMPTY) < getproperty(8, YSIM_VERMAX))
 		{
 			// There's another pending library with a higher version than us.  If we're equal, its
 			// first-come, first-served.

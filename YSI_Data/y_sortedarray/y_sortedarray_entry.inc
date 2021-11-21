@@ -215,13 +215,13 @@ stock bool:_Sorted_Add(arr[], &size, value, max = sizeof (arr))
 	else if (arr[0] >= value)
 	{
 		// New smallest value.
-		memcpy(arr[1], arr[0], 0, size * cellbytes, max - 1);
+		memcpy(arr[1], arr[0], 0, size << __COMPILER_CELL_SHIFT, max - 1);
 		arr[0] = value;
 	}
 	else
 	{
 		new idx = _Sorted_FindInsert(arr, size, value);
-		memcpy(arr[idx + 1], arr[idx], 0, (size - idx) * cellbytes, max - idx - 1);
+		memcpy(arr[idx + 1], arr[idx], 0, (size - idx) << __COMPILER_CELL_SHIFT, max - idx - 1);
 		arr[idx] = value;
 	}
 	++size;
@@ -254,7 +254,7 @@ stock bool:_Sorted_Remove(arr[], &size, value)
 		return true;
 	}
 	// We are shrinking the array, so the destination size doesn't matter.
-	memcpy(arr[idx], arr[idx + 1], 0, (size - idx) * cellbytes, cellmax);
+	memcpy(arr[idx], arr[idx + 1], 0, (size - idx) << __COMPILER_CELL_SHIFT, cellmax);
 	return true;
 }
 #define Sorted_Remove SORTED_FUNC_N<Sorted_Remove>

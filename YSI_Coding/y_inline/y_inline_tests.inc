@@ -108,7 +108,7 @@ TEST__ y_inline0b()
 	new Func:cc<>;
 	inline const func()
 	{
-		//printf("1");
+		//print("1");
 		@return 42;
 	}
 	y_inline_GetX(using inline func, cc);
@@ -120,7 +120,7 @@ TEST__ y_inline0c()
 	new Func:cc<>;
 	inline const func()
 	{
-		//printf("1");
+		//print("1");
 		@return 42;
 	}
 	y_inline_GetX(using inline func, cc);
@@ -132,7 +132,7 @@ TEST__ y_inline0d()
 	new Func:cc<>;
 	inline const func()
 	{
-		//printf("1");
+		//print("1");
 		@return 42;
 	}
 	y_inline_GetX(using inline func, cc);
@@ -147,7 +147,7 @@ TEST__ y_inline0e()
 	new Func:cc<>;
 	inline func()
 	{
-		//printf("1");
+		//print("1");
 		@return 42;
 	}
 	y_inline_GetX(using inline func, cc);
@@ -162,7 +162,7 @@ TEST__ y_inline0f()
 	new Func:cc<>;
 	inline func()
 	{
-		//printf("1");
+		//print("1");
 		@return 42;
 	}
 	y_inline_GetX(using inline func, cc);
@@ -955,7 +955,7 @@ static stock y_inline_TestFunc_8(const string:svar0[])
 {
 	new
 		svar0b[20];
-	strcpy(svar0b, svar0);
+	StrCpy(svar0b, svar0);
 	inline TestCallback1()
 	{
 		YSI_g_sInlineTestVar2 = strval(svar0b);
@@ -982,7 +982,7 @@ static stock y_inline_TestFunc_10(const string:svar0[])
 {
 	new
 		svar0b[20];
-	strcpy(svar0b, svar0);
+	StrCpy(svar0b, svar0);
 	inline TestCallback1(string:svar1[])
 	{
 		YSI_g_sInlineTestVar2 = strval(svar0b) * strval(svar1);
@@ -1654,7 +1654,7 @@ static stock
 
 TEST__ y_inline1000timers()
 {
-	//printf("y_inline1000timers");
+	//print("y_inline1000timers");
 	inline const Total()
 	{
 		//for (new i = 0; i != sizeof (YSI_gsCounts); ++i)

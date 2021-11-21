@@ -119,8 +119,8 @@ forward _y_svar_include_@();
 
 public _y_svar_include_@()
 {
-	//memset("", 0, 0, 0);
-	INI_WriteArray(INI_NO_FILE, "", "", 0);
+	//MemSet(YSI_EMPTY, 0, 0, 0);
+	INI_WriteArray(INI_NO_FILE, YSI_EMPTY, YSI_EMPTY, 0);
 }
 
 static stock Svar_FindData(const name[], const data[])
@@ -136,7 +136,7 @@ static stock Svar_FindData(const name[], const data[])
 		#emit STOR.S.pri data
 		if (!strcmp(data[3], name))
 		{
-			strcpy(YSI_g_sLastName, name);
+			StrCpy(YSI_g_sLastName, name);
 			YSI_g_sLastSize = data[2];
 			YSI_g_sLastAddr = data[1];
 			//printf("found %s, %d, %d, %d", YSI_g_sLastName, YSI_g_sLastSize, YSI_g_sLastPlayers, YSI_g_sLastAddr);
@@ -160,7 +160,7 @@ public _Config_Load_y_svar(name[], value[])
 		if (strcmp(name, YSI_g_sLastName))
 		{
 			// Find the data.
-			Svar_FindData(name, "");
+			Svar_FindData(name, YSI_EMPTY);
 		}
 		if (YSI_g_sLastAddr == -1)
 		{
@@ -177,7 +177,7 @@ public _Config_Load_y_svar(name[], value[])
 		if (strcmp(name[2], YSI_g_sLastName, false))
 		{
 			// Find the data.
-			Svar_FindData(name[2], "");
+			Svar_FindData(name[2], YSI_EMPTY);
 		}
 		if (YSI_g_sLastAddr == -1)
 		{
@@ -270,7 +270,7 @@ stock M@(volatile const vardata[], dataSize, &pointer, ds2 = 1)
 	// location at which the data is stored.
 	#emit LOAD.S.pri vardata
 	#emit STOR.S.pri sAddr
-	printf("", YSI_g_sFirstUVarData);
+	printf(YSI_EMPTY, YSI_g_sFirstUVarData);
 	#emit LOAD.pri   YSI_g_sFirstUVarData
 	#emit SREF.S.pri sAddr
 	YSI_g_sFirstUVarData = sAddr;

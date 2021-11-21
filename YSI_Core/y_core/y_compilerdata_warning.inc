@@ -1,2 +1,25 @@
-#warning Could not determine `sNAMEMAX`, falling back on 31.
+#if Y_COMPILERDATA_WARNING == 0
+	// For reference, the pawno compiler window output is 1024 characters wide.
+	// But we can't align to that because the path is an unknown length.
+	// Inserting just a `\r`, `\n`, or `\r\n` doesn't work - as either a
+	// character or an escape sequence.
+
+	//#warning ================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+	//======================================================================================
+
+	#warning ==========================================
+	#warning |                                        |
+	#warning | Using `YSI_TESTS` will produce a huge  |
+	#warning | number of warnings.  However, they're  |
+	#warning |  all in tests and actually test that   |
+	#warning |    warnings are correctly produced.    |
+	#warning |                                        |
+	#warning ==========================================
+#endif
+
+#if Y_COMPILERDATA_WARNING == 1
+	#warning Could not determine `sNAMEMAX`, falling back on 31.
+#endif
+
+#undef Y_COMPILERDATA_WARNING
 

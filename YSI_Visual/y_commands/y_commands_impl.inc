@@ -470,7 +470,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	}
 	else
 	{
-		if (isnull(c))
+		if (IsNull(c))
 			return Command_OnReceived(INVALID_INPUT, p, NULL);
 	}
 	// Check for a valid player.
@@ -1441,7 +1441,7 @@ HOOK__ OnYSIInit()
 		}
 		// Add the command regardless.
 		Command_Add(buffer[1], ResolveJITAddress(AMX_Read(entryPublic)));
-		P:6("Command_OnYSIInit: Name %s", unpack(buffer[1]));
+		P:6("Command_OnYSIInit: Name %s", Unpack(buffer[1]));
 	}
 	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
@@ -1637,7 +1637,7 @@ GLOBAL__ Command_Add(string:cmd[], ptr)
 {
 	// The commands all need to be stored packed.
 	strpack(cmd, cmd, cellmax);
-	P:2("Command_Add: %s, %d", unpack(cmd), ptr);
+	P:2("Command_Add: %s, %d", Unpack(cmd), ptr);
 	new
 		id = Command_Find(cmd);
 	P:5("Command_Add: found %d", id);
