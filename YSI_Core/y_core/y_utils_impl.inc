@@ -3058,7 +3058,7 @@ stock bool:Files_CopyRange(File:i, end, const string:dst[])
 stock bool:Files_DoCopy(File:i, const string:dst[])
 {
 	return
-		I@ = _:(fseek(i, 0, seek_start) && Files_CopyRange(i, flength(i), dst)),
+		I@ = _:(fseek(i, 0, seek_start) == 0 && Files_CopyRange(i, flength(i), dst)),
 		fclose(i) && I@;
 }
 
