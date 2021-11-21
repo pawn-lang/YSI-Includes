@@ -2985,16 +2985,15 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <param name="i">Pointer to the file to copy.</param>
+ * <param name="i">Handle to the file to copy.</param>
  * <param name="end">How much of the file to copy.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
- *  Fast file copy routine.  Surprisingly widely used in YSI, in places where
- *  temp files were used and <c>fseek</c>ed to the start.
+ *  Copy part of a file from the current read pointer, for <c>end</c> bytes.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Files_DoCopy_(File:i, end, const string:dst[])
+stock bool:Files_CopyRange(File:i, end, const string:dst[])
 {
 	// Must start at the start...
 	new
@@ -3024,18 +3023,18 @@ stock bool:Files_DoCopy_(File:i, end, const string:dst[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="i">Pointer to the file to copy.</param>
+ * <param name="i">Handle to the file to copy.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
  *  Fast file copy routine.  Surprisingly widely used in YSI, in places where
- *  temp files were used and <c>fseek</c>ed to the start.
+ *  temp files were used and <c>fseek</c>ed to the start.  Closes the file.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock bool:Files_DoCopy(File:i, const string:dst[])
 {
 	fseek(i, 0, seek_start);
-	new ret = Files_DoCopy_(i, flength(i), dst);
+	new ret = Files_CopyRange(i, flength(i), dst);
 	fclose(i);
 	return ret;
 }
