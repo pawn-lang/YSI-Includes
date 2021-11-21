@@ -319,7 +319,7 @@ static stock YVA2_CodeGenDeepCleanup(ctx[AsmContext], depth, returningString)
 	if (returningString)
 		@emit POP.pri
 	// Remove all the temporary storage locations.
-	@emit STACK        depth * cellbytes
+	@emit STACK        (depth << __COMPILER_CELL_SHIFT)
 }
 
 static stock YVA2_CodeGenPushVariable(ctx[AsmContext], stack)
@@ -387,7 +387,7 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 			new
 				dest = YSI_g_sContexts[pos][AsmContext_buffer];
 			// First, rewrite the `___` call-site to call `YVA2_DoPush` instead.
-			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], hole, YSI_g_sSkips[pos], -YSI_g_sStacks[0] - pos * cellbytes), // YSI_g_sStacks[0]!!!
+			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], hole, YSI_g_sSkips[pos], -YSI_g_sStacks[0] - (pos << __COMPILER_CELL_SHIFT)), // YSI_g_sStacks[0]!!!
 			// Shift the code up.
 			YVA2_CodeGenShiftCode(
 				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
@@ -398,7 +398,7 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - codeLength + returningString) - 16;
 			if (len == 24)
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] -= 8;
-			YVA2_CodeGenPushVariable(YSI_g_sContexts[pos], -YSI_g_sStacks[0] - pos * cellbytes);
+			YVA2_CodeGenPushVariable(YSI_g_sContexts[pos], -YSI_g_sStacks[0] - (pos << __COMPILER_CELL_SHIFT));
 			YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
 			if (returningString == 12)
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;

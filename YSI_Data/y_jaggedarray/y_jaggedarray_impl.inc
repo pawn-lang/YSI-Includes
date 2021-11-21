@@ -407,7 +407,7 @@ stock bool:_Jagged_Move(array[][], size1, size2, ...)
 stock _Jagged_Empty(array[][], size1, size2)
 {
 	// The size of the main storage area, including the header.
-	size2 = (size1 + size1 * size2) * cellbytes;
+	size2 = (size1 * size2 + size1) << __COMPILER_CELL_SHIFT;
 	while (--size1)
 	{
 		#emit LOAD.S.pri array

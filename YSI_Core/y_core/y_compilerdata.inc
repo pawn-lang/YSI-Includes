@@ -543,6 +543,23 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#error YSI assumes `charbits` is 8.
 #endif
 
+#define __COMPILER_CELL_BYTES cellbytes
+#define __COMPILER_CELL_BITS  cellbits
+#define __COMPILER_CHAR_BITS  charbits
+
+// How much to adjust a cellcount by to get a byte count.
+#if cellbits == 8
+	#define __COMPILER_CELL_SHIFT (0)
+#elseif cellbits == 16
+	#define __COMPILER_CELL_SHIFT (1)
+#elseif cellbits == 32
+	#define __COMPILER_CELL_SHIFT (2)
+#elseif cellbits == 64
+	#define __COMPILER_CELL_SHIFT (3)
+#else
+	#error Unknown cellbits size.
+#endif
+
 #define FUNCTION_LENGTH (__COMPILER_sNAMEMAX + 1)
 
 #if defined _INC_indirection

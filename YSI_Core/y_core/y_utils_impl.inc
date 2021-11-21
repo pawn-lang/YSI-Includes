@@ -1257,7 +1257,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
 		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98",
 		//tmp,
 		ret = 0;
-	num *= cellbytes;
+	num = num << __COMPILER_CELL_SHIFT;
 	if (len <= ceildiv(num, 3))
 	{
 		// How many complete chunks can we fit in?
@@ -1449,9 +1449,9 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
 		num = 0;
 	// Work out the final length.  Subtract some for incomplete bytes and
 	// insufficient destination data.
-	num = strlen(src);
-	len *= cellbytes;
-	blocks = num / cellbytes;
+	num = strlen(src),
+	len = len << __COMPILER_CELL_SHIFT,
+	blocks = num >>> __COMPILER_CELL_SHIFT;
 	if (src{num - 1}  == '=')
 	{
 		--blocks;
@@ -3022,7 +3022,7 @@ stock bool:Files_CopyRange(File:i, end, const string:dst[])
 	// Must start at the start...
 	new
 		File:o = fopen(dst, io_write),
-		count = min(YSI_UNSAFE_HUGE_LENGTH, end / cellbytes);
+		count = min(YSI_UNSAFE_HUGE_LENGTH, end >>> __COMPILER_CELL_SHIFT);
 	if (!o)
 	{
 		return false;
