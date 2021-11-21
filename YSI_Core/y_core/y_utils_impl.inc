@@ -2986,6 +2986,7 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="i">Pointer to the file to copy.</param>
+ * <param name="end">How much of the file to copy.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
  *  Fast file copy routine.  Surprisingly widely used in YSI, in places where
@@ -2993,21 +2994,16 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Files_DoCopy(File:i, const string:dst[])
+stock bool:Files_DoCopy_(File:i, end, const string:dst[])
 {
 	// Must start at the start...
 	new
-		File:o = fopen(dst, io_write);
+		File:o = fopen(dst, io_write),
+		count = min(YSI_UNSAFE_HUGE_LENGTH, end / cellbytes);
 	if (!o)
 	{
-		return
-			fclose(i),
-			false;
+		return false;
 	}
-	fseek(i, 0, seek_start);
-	new
-		end = flength(i),
-		count = min(YSI_UNSAFE_HUGE_LENGTH, end / cellbytes);
 	end &= cellbytes - 1;
 	// Only loop as long as we read a full block.  Partials mean the end.  Might
 	// do an extra read if `count` starts out as `0`, but that only happens on
@@ -3022,12 +3018,26 @@ stock bool:Files_DoCopy(File:i, const string:dst[])
 	while (end--)
 	{
 		//printf("trailing char: %d", end);
-		fputchar(o, fgetchar(i, 0, false) & 0xFF, false);
+		fputchar(o, fgetchar(i, 0, false), false);
 	}
-	return
-		fclose(i),
-		fclose(o),
-		true;
+	return bool:fclose(o);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="i">Pointer to the file to copy.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Fast file copy routine.  Surprisingly widely used in YSI, in places where
+ *  temp files were used and <c>fseek</c>ed to the start.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_DoCopy(File:i, const string:dst[])
+{
+	fseek(i, 0, seek_start);
+	new ret = Files_DoCopy_(i, flength(i), dst);
+	fclose(i);
+	return ret;
 }
 
 /*-------------------------------------------------------------------------*//**

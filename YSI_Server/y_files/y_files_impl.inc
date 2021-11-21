@@ -356,7 +356,8 @@ stock bool:Files_CopySync(const string:src[], const string:dst[])
 	{
 		return false;
 	}
-	if (Server_IsWindowsHost() && flength(i) > YSI_LARGE_FILE_SIZE && Files_CallCopyBat(src, dst))
+	new len = flength(i);
+	if (Server_IsWindowsHost() && len > YSI_LARGE_FILE_SIZE && Files_CallCopyBat(src, dst))
 	{
 		// Use batch file copying.
 		fclose(i);
@@ -366,7 +367,10 @@ stock bool:Files_CopySync(const string:src[], const string:dst[])
 		return true;
 	}
 	// Use fallback copying.
-	return Files_DoCopy(i, dst);
+	return
+		len = _:Files_DoCopy_(i, len, dst),
+		fclose(i),
+		bool:len;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -387,7 +391,8 @@ stock bool:Files_MoveSync(const string:src[], const string:dst[])
 	{
 		return false;
 	}
-	if (Server_IsWindowsHost() && flength(i) > YSI_LARGE_FILE_SIZE && Files_CallMoveBat(src, dst))
+	new len = flength(i);
+	if (Server_IsWindowsHost() && len > YSI_LARGE_FILE_SIZE && Files_CallMoveBat(src, dst))
 	{
 		// Use batch file moving.
 		fclose(i);
@@ -397,13 +402,13 @@ stock bool:Files_MoveSync(const string:src[], const string:dst[])
 		return true;
 	}
 	// Use fallback moving.
-	if (Files_DoCopy(i, dst))
+	if ((len = _:Files_DoCopy_(i, len, dst)))
 	{
-		return
-			fremove(src),
-			true;
+		fremove(src);
 	}
-	return false;
+	return
+		fclose(i),
+		bool:len;
 }
 
 /*-------------------------------------------------------------------------*//**
