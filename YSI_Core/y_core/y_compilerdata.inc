@@ -251,6 +251,8 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
 #if __COMPILER_MODIFIED
 	#if defined YSI_TESTS
+		#pragma option -E-
+
 		#define Y_COMPILERDATA_WARNING 0
 		#include "y_compilerdata_warning"
 	#endif
@@ -547,7 +549,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #define __COMPILER_CELL_BITS  cellbits
 #define __COMPILER_CHAR_BITS  charbits
 
-// How much to adjust a cellcount by to get a byte count.
+// How much to adjust a cell count by to get a byte count.
 #if cellbits == 8
 	#define __COMPILER_CELL_SHIFT (0)
 #elseif cellbits == 16
