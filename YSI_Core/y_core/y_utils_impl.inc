@@ -471,11 +471,17 @@ P:D(floordiv(numerator, denominator));
 P:D(bool:IsNull(const str[]));
 #define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
 
-#pragma deprecated Use `IsNull` (i.e. use proper capitalisation).
-stock bool:isnull(const str[])
-{
-	return IsNull(str);
-}
+#if defined isnull
+	#undef isnull
+#endif
+#define isnull(%0) ((%0[(%0[0])=='\1'])=='\0')
+#define _ALS_isnull
+
+//#pragma deprecated Use `IsNull` (i.e. use proper capitalisation).
+//stock bool:isnull(const str[])
+//{
+//	return IsNull(str);
+//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is odd.</param>
@@ -484,24 +490,36 @@ stock bool:isnull(const str[])
 P:D(bool:IsOdd(const str[]));
 #define IsOdd(%0) ((%0)&1)
 
-#pragma deprecated Use `IsOdd` (i.e. use proper capitalisation).
-stock bool:isodd(const str[])
-{
-	return IsOdd(str);
-}
+#if defined isodd
+	#undef isodd
+#endif
+#define isodd(%0) ((%0)&1)
+#define _ALS_isodd
+
+//#pragma deprecated Use `IsOdd` (i.e. use proper capitalisation).
+//stock bool:isodd(const str[])
+//{
+//	return IsOdd(str);
+//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:IsEven(const str[]));
-#define IsEven(%0) (!IsOdd(%0))
+#define IsEven(%0) (~(%0)&1)
 
-#pragma deprecated Use `IsEven` (i.e. use proper capitalisation).
-stock bool:iseven(const str[])
-{
-	return IsEven(str);
-}
+#if defined iseven
+	#undef iseven
+#endif
+#define iseven(%0) (~(%0)&1)
+#define _ALS_iseven
+
+//#pragma deprecated Use `IsEven` (i.e. use proper capitalisation).
+//stock bool:iseven(const str[])
+//{
+//	return IsEven(str);
+//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="dest">Destination string.</param>
@@ -512,11 +530,17 @@ stock bool:iseven(const str[])
 P:D(StrCpy(dest[], const src[], len = sizeof (dest)));
 #define StrCpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
 
-#pragma deprecated Use `StrCpy` (i.e. use proper capitalisation).
-stock strcpy(dest[], const src[], len = sizeof (dest))
-{
-	return StrCpy(dest, src, len);
-}
+#if defined strcpy
+	#undef strcpy
+#endif
+#define strcpy(%0) strcat((%0[0] = '\0', %0), %1)
+#define _ALS_strcpy
+
+//#pragma deprecated Use `StrCpy` (i.e. use proper capitalisation).
+//stock strcpy(dest[], const src[], len = sizeof (dest))
+//{
+//	return StrCpy(dest, src, len);
+//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to convert.</param>
