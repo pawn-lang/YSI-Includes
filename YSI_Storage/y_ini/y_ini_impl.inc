@@ -1913,8 +1913,7 @@ static stock INI_Flush_(INI:file)
 {
 	YSI_g_sNL = false;
 	YSI_g_sTagNeeded = false;
-	new tmpName[32];
-	YSI_g_sCurrentFile = ftemp(tmpName);
+	YSI_g_sCurrentFile = ftemp();
 	if (!YSI_g_sCurrentFile)
 	{
 		return;
@@ -1957,11 +1956,8 @@ static stock INI_Flush_(INI:file)
 		new parent[FUNCTION_LENGTH] = "";
 		INI_ReadFile(fhnd, parent);
 	}
-	// Now write it back out.
-	//fseek(YSI_g_sCurrentFile, 0, seek_start),
 	fclose(fhnd),
-	fclose(YSI_g_sCurrentFile),
-	Files_Copy(tmpName, YSI_g_sINIWriteFile[file]);
+	Files_DoCopy(YSI_g_sCurrentFile, YSI_g_sINIWriteFile[file]);
 }
 
 static stock INI_FlushWithRestore(INI:file)

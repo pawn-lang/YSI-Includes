@@ -366,7 +366,7 @@ stock bool:Files_CopySync(const string:src[], const string:dst[])
 		return true;
 	}
 	// Use fallback copying.
-	return Files_DoCopy_(i, dst);
+	return Files_DoCopy(i, dst);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -397,7 +397,7 @@ stock bool:Files_MoveSync(const string:src[], const string:dst[])
 		return true;
 	}
 	// Use fallback moving.
-	if (Files_DoCopy_(i, dst))
+	if (Files_DoCopy(i, dst))
 	{
 		return
 			fremove(src),
