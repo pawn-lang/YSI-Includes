@@ -765,7 +765,8 @@ stock XML_WriteItem(const filename[], XMLEntry:item, bool:bIncludeXML = true, bo
 				return 0;
 			}
 			new
-				File:ftmp = ftemp();
+				tmpName[32],
+				File:ftmp = ftemp(tmpName);
 			if (!ftmp)
 			{
 				fclose(fhnd);
@@ -793,8 +794,8 @@ stock XML_WriteItem(const filename[], XMLEntry:item, bool:bIncludeXML = true, bo
 			fclose(fHnd);
 			if (data)
 			{
-				fseek(ftmp);
-				if (Files_DoCopy(ftmp, filename))
+				fclose(ftmp);
+				if (Files_Move(tmpName, filename))
 				{
 					YSI_g_sXMLWritePointer = _:item;
 					return 1;
@@ -976,7 +977,8 @@ stock XML_ReplaceItem(const file[], const tag[], const name[], replacement)
 			return 0;
 		}
 		new
-			File:ftmp = ftemp();
+			tmpName[32],
+			File:ftmp = ftemp(tmpName);
 		if (!ftmp)
 		{
 			fclose(fHnd);
@@ -1044,8 +1046,8 @@ stock XML_ReplaceItem(const file[], const tag[], const name[], replacement)
 			if (inTag == 3) inTag = 0;
 		}
 		fclose(fHnd);
-		fseek(ftmp);
-		if (Files_DoCopy(ftmp, file))
+		fclose(ftmp);
+		if (Files_Move(tmpName, file))
 		{
 			//fremove("_temp_ysi_user_file_.ysi");
 			if (replacement != -1) YSI_g_sXMLWritePointer = replacement;

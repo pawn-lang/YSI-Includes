@@ -1272,6 +1272,7 @@ static stock Users_DoUpgrade0()
 				P:I("Please wait, upgrading user files.");
 				new
 					ch = 0,
+					tmpName[32],
 					filename[] = USER_FILE_PATH "ind_X.YSI",
 					File:f = File:0,
 					File:g = File:0,
@@ -1303,7 +1304,7 @@ static stock Users_DoUpgrade0()
 						}
 						continue;
 					}
-					g = ftemp();
+					g = ftemp(tmpName);
 					if (!g)
 					{
 						fclose(f);
@@ -1346,9 +1347,9 @@ static stock Users_DoUpgrade0()
 							}
 						}
 					}
-					fseek(g, 0, seek_start),
+					fclose(g),
 					fclose(f);
-					if (!Files_DoCopy(g, filename))
+					if (!Files_Move(tmpName, filename))
 					{
 						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
 					}
@@ -1390,6 +1391,7 @@ static stock Users_DoUpgrade1()
 				P:I("Please wait, upgrading user files.");
 				new
 					ch = 0,
+					tmpName[32],
 					hash[MAX_PASSWORD_LENGTH + MAX_INDEX_LENGTH + 1],
 					filename[] = USER_FILE_PATH "ind_X.YSI",
 					File:f = File:0,
@@ -1422,7 +1424,7 @@ static stock Users_DoUpgrade1()
 						}
 						continue;
 					}
-					g = ftemp();
+					g = ftemp(tmpName);
 					if (!g)
 					{
 						fclose(f);
@@ -1460,9 +1462,9 @@ static stock Users_DoUpgrade1()
 							fwrite(g, line);
 						}
 					}
-					fseek(g),
+					fclose(g),
 					fclose(f);
-					if (!Files_DoCopy(g, filename))
+					if (!Files_Move(tmpName, filename))
 					{
 						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
 					}

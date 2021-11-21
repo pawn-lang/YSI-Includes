@@ -296,40 +296,6 @@ static stock bool:Files_CallMoveBat(const string:src[], const string:dst[])
 		Files_CallBat();
 }
 
-/*-------------------------------------------------------------------------*//**
- * <param name="src">The name of the input file.</param>
- * <param name="dst">The name of the output file.</param>
- * <remarks>
- *  Copies a file from <c>src</c> to <c>dst</c>.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock bool:Files_Copy(const string:src[], const string:dst[])
-{
-	new File:i = fopen(src, io_read);
-	return i && Files_DoCopy(i, dst);
-}
-
-/*-------------------------------------------------------------------------*//**
- * <param name="src">The name of the input file.</param>
- * <param name="dst">The name of the output file.</param>
- * <remarks>
- *  Moves a file from <c>src</c> to <c>dst</c>.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock bool:Files_Move(const string:src[], const string:dst[])
-{
-	new File:i = fopen(src, io_read);
-	if (i && Files_DoCopy(i, dst))
-	{
-		return
-			fremove(src),
-			true;
-	}
-	return false;
-}
-
 #if defined YSI_NO_WINDOWS_FILES
 	#endinput
 #endif
@@ -400,7 +366,7 @@ stock bool:Files_CopySync(const string:src[], const string:dst[])
 		return true;
 	}
 	// Use fallback copying.
-	return Files_DoCopy(i, dst);
+	return Files_DoCopy_(i, dst);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -431,7 +397,7 @@ stock bool:Files_MoveSync(const string:src[], const string:dst[])
 		return true;
 	}
 	// Use fallback moving.
-	if (Files_DoCopy(i, dst))
+	if (Files_DoCopy_(i, dst))
 	{
 		return
 			fremove(src),

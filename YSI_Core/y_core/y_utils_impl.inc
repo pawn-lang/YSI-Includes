@@ -2993,22 +2993,102 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Files_DoCopy(File:i, const string:dst[])
+stock bool:Files_DoCopy_(File:i, const string:dst[])
 {
-	new File:o = fopen(dst, io_write);
+	// Ensure pending operations are flushed.  `io_write` should truncate, but
+	// it doesn't seem to properly.
+	fseek(i, 0, seek_start),
+	fremove(dst);
+	new
+		File:o = fopen(dst, io_write),
+		end = flength(i),
+		count = min(YSI_UNSAFE_HUGE_LENGTH, end / cellbytes);
 	if (!o)
 	{
 		return
 			fclose(i),
 			false;
 	}
-	for (new count; (count = fblockread(i, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH)); fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count))
+	// Only loop as long as we read a full block.  Partials mean the end.
+	//while (end >= cellbytes)
+	//while (count)
+	do
 	{
+		count = fblockread(i, YSI_UNSAFE_HUGE_STRING, count),
+		end -= count * cellbytes,
+		fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count);
+		//if (count < YSI_UNSAFE_HUGE_LENGTH)
+		//{
+		//	break;
+		//}
+	}
+	while (count == YSI_UNSAFE_HUGE_LENGTH);
+	//do
+	//{
+	//	if (();
+	//	end -= count * cellbytes;
+	//}
+	//while ((count = fblockread(i, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH)))
+	//{
+	//	end -= count * cellbytes;
+	//	printf("%d", count);
+	//	new str[256];
+	//	memcpy(str, YSI_UNSAFE_HUGE_STRING, 0, 256);
+	//	str[min(255, count)] = '\0';
+	//	for (new i = 0; i != 256; ++i)
+	//	{
+	//		str[i] = swapchars(str[i]);
+	//	}
+	//	strunpack(str, str);
+	//	
+	//	printf("%s", str);
+	//	
+	//	fblockwrite(o, YSI_UNSAFE_HUGE_STRING, count);
+	//}
+	// Clean up any trailing bytes.
+	while (end--)
+	{
+		//printf("trailing char: %d", end);
+		fputchar(o, fgetchar(i, 0, false) & 0xFF, false);
 	}
 	return
 		fclose(i),
 		fclose(o),
 		true;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Copies a file from <c>src</c> to <c>dst</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_Copy(const string:src[], const string:dst[])
+{
+	new File:i = fopen(src, io_read);
+	return i && Files_DoCopy_(i, dst);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="src">The name of the input file.</param>
+ * <param name="dst">The name of the output file.</param>
+ * <remarks>
+ *  Moves a file from <c>src</c> to <c>dst</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Files_Move(const string:src[], const string:dst[])
+{
+	new File:i = fopen(src, io_read);
+	if (i && Files_DoCopy_(i, dst))
+	{
+		return
+			fremove(src),
+			true;
+	}
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
