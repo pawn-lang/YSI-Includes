@@ -319,15 +319,16 @@ static stock const
 	YSI_gscSpacer[] = " |                                        | ",
 	YSI_gscMiniGap[] = " ",
 	YSI_gscMinimalHeader0[] = "\n" \
-			"         ==========================================\n"\
-			"         |                                        |\n"\
-			"         |                YSI 5.x                 |\n"\
-			"         |                                        |",
+
+		"         ==========================================\n" \
+		"         |                                        |\n" \
+		"         |                 YSI 5.x                |\n" \
+		"         |                                        |",
 	YSI_gscMinimalHeader1[] = \
-			"         |           (c) 2021 MPL v1.1            |\n"\
-			"         |  Alex \"Y_Less\" Cole and contributors.  |\n"\
-			"         |                                        |\n"\
-			"         ==========================================",
+		"         |           (c) 2021 MPL v1.1            |\n" \
+		"         |  Alex \"Y_Less\" Cole and contributors.  |\n" \
+		"         |                                        |\n" \
+		"         ==========================================",
 	YSI_gscInitMsgA[] = "    Dumping \"pre-init.asm\", this",
 	YSI_gscInitMsgB[] = "    Dumping \"post-init.asm\", this",
 	YSI_gscInitMsgC[] = "   may take a little bit of time.",
