@@ -150,3 +150,15 @@ PTEST__ Timer3(playerid)
 	ASK("Is the green BIG MESSAGE stopping appearing after 4 seconds?");
 }
 
+forward Timer:_yT@ForwardTimer(string:msg[]);
+
+TEST__ ForwardTimer()
+{
+	DEFER__ ForwardTimer("hi");
+}
+
+timer ForwardTimer[5000](string:msg[])
+{
+	#pragma unused msg
+}
+
