@@ -231,6 +231,12 @@ stock Hooks_MakeShortName(name[64])
 		len = 0,
 		pos = -1,
 		idx = YSI_g_sReplacementsLongOrder[0];
+	// Special fixes.inc hack.  Needs a half-case-sensitive check.
+	//if (!strcmp(name, "On_On", true, 5))
+	if ((name[0] | 0x20 == 'o') && (name[1] | 0x20 == 'n') && (name[2] == '_') && (name[3] == 'O') && (name[4] == 'n'))
+	{
+		strdel(name, 3, 5);
+	}
 	for (new i = 0; (len = strlen(name)) >= FUNCTION_LENGTH && i != YSI_g_sReplacePtr; )
 	{
 		if ((pos = strfind(name, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_LONG], false, pos + 1)) == -1)
