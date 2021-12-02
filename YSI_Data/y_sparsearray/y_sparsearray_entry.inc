@@ -236,7 +236,7 @@ stock bool:_Sparse_ExchangeNew(const name[], index, &oldValue, newValue)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Sparse_Exchange(const name[], index, &oldValue)
+stock bool:_Sparse_Exchange(const name[], index, &oldValue)
 {
 	new id[64];
 	SparseArray_MakeName(id, name, index);
@@ -250,7 +250,8 @@ stock bool:Sparse_Exchange(const name[], index, &oldValue)
 }
 
 // Make the last parameter fully optional (not just with a default).
-#define Sparse_Exchange(%0,%1,%2,%3) _Sparse_ExchangeNew(%0,%1,%2,%3)
+#define Sparse_Exchange(%0) _Sparse_Exchange(%0)PP_DOLLAR$
+#define _Sparse_Exchange(%0,%1,%2,%3)%9$ _Sparse_ExchangeNew(%0,%1,%2,%3)%9$
 
 #if defined YSI_TESTS
 	#include "..\y_iterate"
