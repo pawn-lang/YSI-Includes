@@ -458,6 +458,11 @@ HOOK__ Streamer_OnPluginError(const error[])
 stock cb_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 {
 	Y_STREAMER_DESTROY(OBJECT_MOVED, objectid);
+	Y_STREAMER_DESTROY(OBJECT_EDITED, objectid);
+	Y_STREAMER_DESTROY(OBJECT_SELECTED, objectid);
+	Y_STREAMER_DESTROY(OBJECT_SHOT, objectid);
+	Y_STREAMER_DESTROY(OBJECT_IN, objectid);
+	Y_STREAMER_DESTROY(OBJECT_OUT, objectid);
 	return DestroyDynamicObject(objectid);
 }
 
@@ -470,6 +475,9 @@ stock cb_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 
 stock cb_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 {
+	Y_STREAMER_DESTROY(PICKUP, pickupid);
+	Y_STREAMER_DESTROY(PICKUP_IN, pickupid);
+	Y_STREAMER_DESTROY(PICKUP_OUT, pickupid);
 	return DestroyDynamicPickup(pickupid);
 }
 
@@ -482,6 +490,10 @@ stock cb_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 
 stock cb_DestroyDynamicCP(STREAMER_TAG_CP:checkpointid)
 {
+	Y_STREAMER_DESTROY(CP_ENTER, checkpointid);
+	Y_STREAMER_DESTROY(CP_LEAVE, checkpointid);
+	Y_STREAMER_DESTROY(CP_IN, checkpointid);
+	Y_STREAMER_DESTROY(CP_OUT, checkpointid);
 	return DestroyDynamicCP(checkpointid);
 }
 
@@ -494,6 +506,10 @@ stock cb_DestroyDynamicCP(STREAMER_TAG_CP:checkpointid)
 
 stock cb_DestroyDynamicRaceCP(STREAMER_TAG_RACE_CP:checkpointid)
 {
+	Y_STREAMER_DESTROY(RACE_CP_ENTER, checkpointid);
+	Y_STREAMER_DESTROY(RACE_CP_LEAVE, checkpointid);
+	Y_STREAMER_DESTROY(RACE_CP_IN, checkpointid);
+	Y_STREAMER_DESTROY(RACE_CP_OUT, checkpointid);
 	return DestroyDynamicRaceCP(checkpointid);
 }
 
@@ -506,7 +522,11 @@ stock cb_DestroyDynamicRaceCP(STREAMER_TAG_RACE_CP:checkpointid)
 
 stock cb_DestroyDynamicArea(STREAMER_TAG_AREA:areaid)
 {
-	return DestroyDynamicArea(STREAMER_TAG_AREA:areaid);
+	Y_STREAMER_DESTROY(AREA_ENTER, areaid);
+	Y_STREAMER_DESTROY(AREA_LEAVE, areaid);
+	Y_STREAMER_DESTROY(AREA_IN, areaid);
+	Y_STREAMER_DESTROY(AREA_OUT, areaid);
+	return DestroyDynamicArea(areaid);
 }
 
 #if defined _ALS_DestroyDynamicArea
@@ -515,6 +535,64 @@ stock cb_DestroyDynamicArea(STREAMER_TAG_AREA:areaid)
 	#define _ALS_DestroyDynamicArea
 #endif
 #define DestroyDynamicArea cb_DestroyDynamicArea
+
+stock cb_DestroyDynamicActor(STREAMER_TAG_ACTOR:actorid)
+{
+	Y_STREAMER_DESTROY(ACTOR_DAMAGE, actorid);
+	Y_STREAMER_DESTROY(ACTOR_IN, actorid);
+	Y_STREAMER_DESTROY(ACTOR_OUT, actorid);
+	return DestroyDynamicActor(actorid);
+}
+
+#if defined _ALS_DestroyDynamicActor
+	#undef DestroyDynamicActor
+#else
+	#define _ALS_DestroyDynamicActor
+#endif
+#define DestroyDynamicActor cb_DestroyDynamicActor
+
+stock cb_DestroyDynamicMapIcon(STREAMER_TAG_MAP_ICON:iconid)
+{
+	Y_STREAMER_DESTROY(MAP_ICON_IN, iconid);
+	Y_STREAMER_DESTROY(MAP_ICON_OUT, iconid);
+	return DestroyDynamicMapIcon(iconid);
+}
+
+#if defined _ALS_DestroyDynamicMapIcon
+	#undef DestroyDynamicMapIcon
+#else
+	#define _ALS_DestroyDynamicMapIcon
+#endif
+#define DestroyDynamicMapIcon cb_DestroyDynamicMapIcon
+
+stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
+{
+	Y_STREAMER_DESTROY(3D_TEXT_LABEL_IN, id);
+	Y_STREAMER_DESTROY(3D_TEXT_LABEL_OUT, id);
+	return DestroyDynamic3DTextLabel(id);
+}
+
+#if defined _ALS_DestroyDynamic3DTextLabel
+	#undef DestroyDynamic3DTextLabel
+#else
+	#define _ALS_DestroyDynamic3DTextLabel
+#endif
+#define DestroyDynamic3DTextLabel cb_DestroyDynamic3DTextLabel
+
+/*
+
+           db         88  88  
+          d88b        88  88  
+         d8'`8b       88  88  
+        d8'  `8b      88  88  
+       d8YaaaaY8b     88  88  
+      d8""""""""8b    88  88  
+     d8'        `8b   88  88  
+    d8'          `8b  88  88  
+
+
+
+*/
 
 stock cb_DestroyAllDynamicObjects()
 {
