@@ -76,9 +76,49 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Data\y_sparsearray"
 #include "..\..\YSI_Coding\y_inline"
 #include "..\..\YSI_Coding\y_hooks"
+
+#if defined E_STREAMER_CUSTOM && 0
+	// Store the callback data in `E_STREAMER_CUSTOM`
+	#define E_STREAMER_YSI_OBJECT_MOVED    E_STREAMER_CUSTOM(0x59534900) // YSI 00
+	#define E_STREAMER_YSI_OBJECT_EDITED   E_STREAMER_CUSTOM(0x59534901) // YSI 01
+	#define E_STREAMER_YSI_OBJECT_SELECTED E_STREAMER_CUSTOM(0x59534902) // YSI 02
+	#define E_STREAMER_YSI_OBJECT_SHOT     E_STREAMER_CUSTOM(0x59534903) // YSI 03
+	#define E_STREAMER_YSI_PICKUP          E_STREAMER_CUSTOM(0x59534910) // YSI 10
+	#define E_STREAMER_YSI_CP              E_STREAMER_CUSTOM(0x59534920) // YSI 20
+	#define E_STREAMER_YSI_RACE_CP         E_STREAMER_CUSTOM(0x59534930) // YSI 30
+	#define E_STREAMER_YSI_AREA            E_STREAMER_CUSTOM(0x59534940) // YSI 40
+
+	#define E_STREAMER_YSI(%0) E_STREAMER_YSI_%0
+#else
+	// Store the callback data in a per-entity sparse array.
+	#include "..\..\YSI_Data\y_sparsearray"
+
+	static stock
+		SparseArray:YSI_g_sDynamic_OBJECT_MOVED<>,
+		SparseArray:YSI_g_sDynamic_OBJECT_EDITED<>,
+		SparseArray:YSI_g_sDynamic_OBJECT_SELECTED<>,
+		SparseArray:YSI_g_sDynamic_OBJECT_SHOT<>,
+		SparseArray:YSI_g_sDynamic_PICKUP<>,
+		SparseArray:YSI_g_sDynamic_CP<>,
+		SparseArray:YSI_g_sDynamic_RACE_CP<>,
+		SparseArray:YSI_g_sDynamic_AREA<>;
+
+	#define Y_STREAMER_DESTROY(%0,%1) \
+		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDynamic_%0, _:(%1), y_streamer_cb); Indirect_Release(y_streamer_cb)) \
+			continue
+
+	#define Y_STREAMER_EXCHANCE(%0,%1,%2) \
+		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDynamic_%0, _:(%1), y_streamer_cb, _:(%2)); Indirect_Release(y_streamer_cb), Indirect_Claim(_:(%2))) \
+			continue
+
+	#define Y_STREAMER_MULTI(%0,%1,%2) \
+		for (new %2; __once && Sparse_TryGet(YSI_g_sDynamic_%0, _:(%1), _:(%2)); ) \
+
+	#define Y_STREAMER_ONCE(%0,%1,%2) \
+		for (new %2; __once && Sparse_TryGet(YSI_g_sDynamic_%0, _:(%1), _:(%2)); Indirect_Release(_:(%2))) \
+#endif
 
 #if defined STREAMER_ENABLE_TAGS
 	#define CB_STREAMER_TAG_OBJECT DynamicObject
@@ -99,19 +139,9 @@ Optional plugins:
 	#define CB_STREAMER_TAG_ACTOR _
 #endif
 
-static stock
-	SparseArray:YSI_g_sDynamicObjects<>,
-	SparseArray:YSI_g_sDynamicAreas<>,
-	SparseArray:YSI_g_sDynamicPickups<>,
-	SparseArray:YSI_g_sDynamicCPs<>,
-	SparseArray:YSI_g_sDynamicRaceCPs<>;
-
 stock cb_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 {
-	new
-		Func:cb<i>;
-	if (Sparse_Exchange(YSI_g_sDynamicObjects, _:objectid, _:cb))
-		Indirect_Release(cb);
+	Y_STREAMER_DESTROY(OBJECT_MOVED, objectid);
 	return DestroyDynamicObject(objectid);
 }
 
@@ -124,10 +154,7 @@ stock cb_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 
 stock cb_StopDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 {
-	new
-		Func:cb<i>;
-	if (Sparse_Exchange(YSI_g_sDynamicObjects, _:objectid, _:cb))
-		Indirect_Release(cb);
+	Y_STREAMER_DESTROY(OBJECT_MOVED, objectid);
 	return StopDynamicObject(objectid);
 }
 
@@ -142,45 +169,45 @@ stock cb_StopDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 
 stock cb_MoveDynamicObject(Func:onMoved<i>, CB_STREAMER_TAG_OBJECT:objectid, Float:x, Float:y, Float:z, Float:speed, Float:rx = -1000.0, Float:ry = -1000.0, Float:rz = -1000.0)
 {
-	new
-		Func:cb<i>;
-	if (Sparse_Exchange(YSI_g_sDynamicObjects, _:objectid, _:cb, _:onMoved))
-		Indirect_Release(cb);
-	Indirect_Claim(onMoved);
+	Y_STREAMER_EXCHANCE(OBJECT_MOVED, objectid, onMoved);
 	return MoveDynamicObject(objectid, x, y, z, speed, rx, ry, rz);
 }
 
 HOOK__ OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
 {
-	new
-		Func:cb<i>;
-	if (Sparse_Exchange(YSI_g_sDynamicObjects, _:objectid, _:cb))
+	Y_STREAMER_ONCE(OBJECT_MOVED, objectid, Func:cb<i>)
 	{
 		@.cb(_:objectid);
-		Indirect_Release(cb);
 	}
 }
 
-//hook OnPlayerEditDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, response, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz)
-//{
-//	
-//}
+HOOK__ OnPlayerEditDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, response, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz)
+{
+	Y_STREAMER_MULTI(OBJECT_EDITED, objectid, Func:cb<iiiffffff>)
+	{
+		@.cb(playerid, _:objectid, response, x, y, z, rx, ry, rz);
+	}
+}
 
-//hook OnPlayerSelectDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, modelid, Float:x, Float:y, Float:z)
-//{
-//	
-//}
+HOOK__ OnPlayerSelectDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, modelid, Float:x, Float:y, Float:z)
+{
+	Y_STREAMER_ONCE(OBJECT_SELECTED, objectid, Func:cb<iiifff>)
+	{
+		@.cb(playerid, _:objectid, modelid, x, y, z);
+	}
+}
 
-//hook OnPlayerShootDynamicObject(playerid, weaponid, CB_STREAMER_TAG_OBJECT:objectid, Float:x, Float:y, Float:z)
-//{
-//	
-//}
+HOOK__ OnPlayerShootDynamicObject(playerid, weaponid, CB_STREAMER_TAG_OBJECT:objectid, Float:x, Float:y, Float:z)
+{
+	Y_STREAMER_MULTI(OBJECT_SHOT, objectid, Func:cb<iiifff>)
+	{
+		@.cb(playerid, weaponid, _:objectid, x, y, z);
+	}
+}
 
 HOOK__ OnPlayerPickUpDynPickup(playerid, CB_STREAMER_TAG_PICKUP:pickupid)
 {
-	new
-		Func:cb<ii>;
-	if (Sparse_TryGet(YSI_g_sDynamicPickups, _:pickupid, _:cb))
+	Y_STREAMER_MULTI(PICKUP, objectid, Func:cb<ii>)
 	{
 		@.cb(playerid, _:pickupid);
 	}
@@ -188,15 +215,13 @@ HOOK__ OnPlayerPickUpDynPickup(playerid, CB_STREAMER_TAG_PICKUP:pickupid)
 
 HOOK__ OnPlayerEnterDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
 {
-	new
-		Func:cb<ii>;
-	if (Sparse_TryGet(YSI_g_sDynamicCPs, _:checkpointid, _:cb))
+	Y_STREAMER_MULTI(CP, objectid, Func:cb<ii>)
 	{
 		@.cb(playerid, _:checkpointid);
 	}
 }
 
-//hook OnPlayerLeaveDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
+//HOOK__ OnPlayerLeaveDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
 //{
 //	
 //}
@@ -205,13 +230,13 @@ HOOK__ OnPlayerEnterDynRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
 {
 	new
 		Func:cb<ii>;
-	if (Sparse_TryGet(YSI_g_sDynamicRaceCPs, _:checkpointid, _:cb))
+	if (Sparse_TryGet(YSI_g_sDynamic_RACE_CP, _:checkpointid, _:cb))
 	{
 		@.cb(playerid, _:checkpointid);
 	}
 }
 
-//hook OnPlayerLeaveDynamicRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
+//HOOK__ OnPlayerLeaveDynamicRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
 //{
 //	
 //}
@@ -220,43 +245,43 @@ HOOK__ OnPlayerEnterDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 {
 	new
 		Func:cb<ii>;
-	if (Sparse_TryGet(YSI_g_sDynamicAreas, _:areaid, _:cb))
+	if (Sparse_TryGet(YSI_g_sDynamic_AREA, _:areaid, _:cb))
 	{
 		@.cb(playerid, _:areaid);
 	}
 }
 
-//hook OnPlayerLeaveDynamicArea(playerid, CB_STREAMER_TAG_AREA:areaid)
+//HOOK__ OnPlayerLeaveDynamicArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 //{
 //	
 //}
 
-//hook OnPlayerGiveDamageDynamicActor(playerid, CB_STREAMER_TAG_ACTOR:actorid, Float:amount, weaponid, bodypart)
+//HOOK__ OnPlayerGiveDamageDynamicActor(playerid, CB_STREAMER_TAG_ACTOR:actorid, Float:amount, weaponid, bodypart)
 //{
 //	
 //}
 
-//hook OnDynamicActorStreamIn(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
+//HOOK__ OnDynamicActorStreamIn(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
 //{
 //	
 //}
 
-//hook OnDynamicActorStreamOut(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
+//HOOK__ OnDynamicActorStreamOut(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
 //{
 //	
 //}
 
-//hook Streamer_OnItemStreamIn(type, CB_STREAMER_ALL_TAGS:id)
+//HOOK__ Streamer_OnItemStreamIn(type, CB_STREAMER_ALL_TAGS:id)
 //{
 //	
 //}
 
-//hook Streamer_OnItemStreamOut(type, CB_STREAMER_ALL_TAGS:id)
+//HOOK__ Streamer_OnItemStreamOut(type, CB_STREAMER_ALL_TAGS:id)
 //{
 //	
 //}
 
-//hook Streamer_OnPluginError(const error[])
+//HOOK__ Streamer_OnPluginError(const error[])
 //{
 //	
 //}
@@ -276,19 +301,6 @@ HOOK__ OnPlayerEnterDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 //	}
 //}
 
-
-stock STREAMER_TAG_PICKUP:cb_CreateDynamicPickup(modelid, type, Float:x, Float:y, Float:z, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = STREAMER_PICKUP_SD, STREAMER_TAG_AREA:areaid = STREAMER_TAG_AREA:-1, priority = 0)
-{
-	return CreateDynamicPickup(modelid, type, x, y, z, worldid, interiorid, playerid, streamdistance, areaid, priority);
-}
-
-#if defined _ALS_CreateDynamicPickup
-	#undef CreateDynamicPickup
-#else
-	#define _ALS_CreateDynamicPickup
-#endif
-#define CreateDynamicPickup cb_CreateDynamicPickup
-
 stock cb_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 {
 	return DestroyDynamicPickup(pickupid);
@@ -300,19 +312,6 @@ stock cb_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 	#define _ALS_DestroyDynamicPickup
 #endif
 #define DestroyDynamicPickup cb_DestroyDynamicPickup
-
-
-stock STREAMER_TAG_CP:cb_CreateDynamicCP(Float:x, Float:y, Float:z, Float:size, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = STREAMER_CP_SD, STREAMER_TAG_AREA:areaid = STREAMER_TAG_AREA:-1, priority = 0)
-{
-	return CreateDynamicCP(x, y, z, size, worldid, interiorid, playerid, streamdistance, areaid, priority);
-}
-
-#if defined _ALS_CreateDynamicCP
-	#undef CreateDynamicCP
-#else
-	#define _ALS_CreateDynamicCP
-#endif
-#define CreateDynamicCP cb_CreateDynamicCP
 
 stock cb_DestroyDynamicCP(STREAMER_TAG_CP:checkpointid)
 {
@@ -326,19 +325,6 @@ stock cb_DestroyDynamicCP(STREAMER_TAG_CP:checkpointid)
 #endif
 #define DestroyDynamicCP cb_DestroyDynamicCP
 
-
-stock STREAMER_TAG_RACE_CP:cb_CreateDynamicRaceCP(type, Float:x, Float:y, Float:z, Float:nextx, Float:nexty, Float:nextz, Float:size, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = STREAMER_RACE_CP_SD, STREAMER_TAG_AREA:areaid = STREAMER_TAG_AREA:-1, priority = 0)
-{
-	return CreateDynamicRaceCP(type, x, y, z, nextx, nexty, nextz, size, worldid, interiorid, playerid, streamdistance, areaid, priority);
-}
-
-#if defined _ALS_CreateDynamicRaceCP
-	#undef CreateDynamicRaceCP
-#else
-	#define _ALS_CreateDynamicRaceCP
-#endif
-#define CreateDynamicRaceCP cb_CreateDynamicRaceCP
-
 stock cb_DestroyDynamicRaceCP(STREAMER_TAG_RACE_CP:checkpointid)
 {
 	return DestroyDynamicRaceCP(checkpointid);
@@ -351,91 +337,6 @@ stock cb_DestroyDynamicRaceCP(STREAMER_TAG_RACE_CP:checkpointid)
 #endif
 #define DestroyDynamicRaceCP cb_DestroyDynamicRaceCP
 
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicCircle(Float:x, Float:y, Float:size, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
-{
-	return CreateDynamicCircle(x, y, size, worldid, interiorid, playerid, priority);
-}
-
-#if defined _ALS_CreateDynamicCircle
-	#undef CreateDynamicCircle
-#else
-	#define _ALS_CreateDynamicCircle
-#endif
-#define CreateDynamicCircle cb_CreateDynamicCircle
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicCylinder(Float:x, Float:y, Float:minz, Float:maxz, Float:size, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
-{
-	return CreateDynamicCylinder(x, y, minz, maxz, size, worldid, interiorid, playerid, priority);
-}
-
-#if defined _ALS_CreateDynamicCylinder
-	#undef CreateDynamicCylinder
-#else
-	#define _ALS_CreateDynamicCylinder
-#endif
-#define CreateDynamicCylinder cb_CreateDynamicCylinder
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicSphere(Float:x, Float:y, Float:z, Float:size, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
-{
-	return CreateDynamicSphere(x, y, z, size, worldid, interiorid, playerid, priority);
-}
-
-#if defined _ALS_CreateDynamicSphere
-	#undef CreateDynamicSphere
-#else
-	#define _ALS_CreateDynamicSphere
-#endif
-#define CreateDynamicSphere cb_CreateDynamicSphere
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicRectangle(Float:minx, Float:miny, Float:maxx, Float:maxy, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
-{
-	return CreateDynamicRectangle(minx, miny, maxx, maxy, worldid, interiorid, playerid, priority);
-}
-
-#if defined _ALS_CreateDynamicRectangle
-	#undef CreateDynamicRectangle
-#else
-	#define _ALS_CreateDynamicRectangle
-#endif
-#define CreateDynamicRectangle cb_CreateDynamicRectangle
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicCuboid(Float:minx, Float:miny, Float:minz, Float:maxx, Float:maxy, Float:maxz, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
-{
-	return CreateDynamicCuboid(minx, miny, minz, maxx, maxy, maxz, worldid, interiorid, playerid, priority);
-}
-
-#if defined _ALS_CreateDynamicCuboid
-	#undef CreateDynamicCuboid
-#else
-	#define _ALS_CreateDynamicCuboid
-#endif
-#define CreateDynamicCuboid cb_CreateDynamicCuboid
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicCube(Float:minx, Float:miny, Float:minz, Float:maxx, Float:maxy, Float:maxz, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
-{
-	return CreateDynamicCube(minx, miny, minz, maxx, maxy, maxz, worldid, interiorid, playerid, priority);
-}
-
-#if defined _ALS_CreateDynamicCube
-	#undef CreateDynamicCube
-#else
-	#define _ALS_CreateDynamicCube
-#endif
-#define CreateDynamicCube cb_CreateDynamicCube
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicPolygon(const Float:points[], Float:minz = -FLOAT_INFINITY, Float:maxz = FLOAT_INFINITY, maxpoints = sizeof points, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
-{
-	return CreateDynamicPolygon(points, minz, maxz, maxpoints, worldid, interiorid, playerid, priority);
-}
-
-#if defined _ALS_CreateDynamicPolygon
-	#undef CreateDynamicPolygon
-#else
-	#define _ALS_CreateDynamicPolygon
-#endif
-#define CreateDynamicPolygon cb_CreateDynamicPolygon
-
 stock cb_DestroyDynamicArea(STREAMER_TAG_AREA:areaid)
 {
 	return DestroyDynamicArea(STREAMER_TAG_AREA:areaid);
@@ -447,142 +348,6 @@ stock cb_DestroyDynamicArea(STREAMER_TAG_AREA:areaid)
 	#define _ALS_DestroyDynamicArea
 #endif
 #define DestroyDynamicArea cb_DestroyDynamicArea
-
-
-
-stock STREAMER_TAG_PICKUP:cb_CreateDynamicPickupEx(modelid, type, Float:x, Float:y, Float:z, Float:streamdistance = STREAMER_PICKUP_SD, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, const STREAMER_TAG_AREA:areas[] = { STREAMER_TAG_AREA:-1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players, maxareas = sizeof areas)
-{
-	return CreateDynamicPickupEx(modelid, type, x, y, z, streamdistance, worlds, interiors, players, areas, priority, maxworlds, maxinteriors, maxplayers, maxareas);
-}
-
-#if defined _ALS_CreateDynamicPickupEx
-	#undef CreateDynamicPickupEx
-#else
-	#define _ALS_CreateDynamicPickupEx
-#endif
-#define CreateDynamicPickupEx cb_CreateDynamicPickupEx
-
-stock STREAMER_TAG_CP:cb_CreateDynamicCPEx(Float:x, Float:y, Float:z, Float:size, Float:streamdistance = STREAMER_CP_SD, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, const STREAMER_TAG_AREA:areas[] = { STREAMER_TAG_AREA:-1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players, maxareas = sizeof areas)
-{
-	return CreateDynamicCPEx(x, y, z, size, streamdistance, worlds, interiors, players, areas, priority, maxworlds, maxinteriors, maxplayers, maxareas);
-}
-
-#if defined _ALS_CreateDynamicCPEx
-	#undef CreateDynamicCPEx
-#else
-	#define _ALS_CreateDynamicCPEx
-#endif
-#define CreateDynamicCPEx cb_CreateDynamicCPEx
-
-stock STREAMER_TAG_RACE_CP:cb_CreateDynamicRaceCPEx(type, Float:x, Float:y, Float:z, Float:nextx, Float:nexty, Float:nextz, Float:size, Float:streamdistance = STREAMER_RACE_CP_SD, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, const STREAMER_TAG_AREA:areas[] = { STREAMER_TAG_AREA:-1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players, maxareas = sizeof areas)
-{
-	return CreateDynamicRaceCPEx(type, x, y, z, nextx, nexty, nextz, size, streamdistance, worlds, interiors, players, areas, priority, maxworlds, maxinteriors, maxplayers, maxareas);
-}
-
-#if defined _ALS_CreateDynamicRaceCPEx
-	#undef CreateDynamicRaceCPEx
-#else
-	#define _ALS_CreateDynamicRaceCPEx
-#endif
-#define CreateDynamicRaceCPEx cb_CreateDynamicRaceCPEx
-
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicCircleEx(Float:x, Float:y, Float:size, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players)
-{
-	return CreateDynamicCircleEx(x, y, size, worlds, interiors, players, priority, maxworlds, maxinteriors, maxplayers);
-}
-
-#if defined _ALS_CreateDynamicCircleEx
-	#undef CreateDynamicCircleEx
-#else
-	#define _ALS_CreateDynamicCircleEx
-#endif
-#define CreateDynamicCircleEx cb_CreateDynamicCircleEx
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicCylinderEx(Float:x, Float:y, Float:minz, Float:maxz, Float:size, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players)
-{
-	return CreateDynamicCylinderEx(x, y, minz, maxz, size, worlds, interiors, players, priority, maxworlds, maxinteriors, maxplayers);
-}
-
-#if defined _ALS_CreateDynamicCylinderEx
-	#undef CreateDynamicCylinderEx
-#else
-	#define _ALS_CreateDynamicCylinderEx
-#endif
-#define CreateDynamicCylinderEx cb_CreateDynamicCylinderEx
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicSphereEx(Float:x, Float:y, Float:z, Float:size, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players)
-{
-	return CreateDynamicSphereEx(x, y, z, size, worlds, interiors, players, priority, maxworlds, maxinteriors, maxplayers);
-}
-
-#if defined _ALS_CreateDynamicSphereEx
-	#undef CreateDynamicSphereEx
-#else
-	#define _ALS_CreateDynamicSphereEx
-#endif
-#define CreateDynamicSphereEx cb_CreateDynamicSphereEx
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicRectangleEx(Float:minx, Float:miny, Float:maxx, Float:maxy, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players)
-{
-	return CreateDynamicRectangleEx(minx, miny, maxx, maxy, worlds, interiors, players, priority, maxworlds, maxinteriors, maxplayers);
-}
-
-#if defined _ALS_CreateDynamicRectangleEx
-	#undef CreateDynamicRectangleEx
-#else
-	#define _ALS_CreateDynamicRectangleEx
-#endif
-#define CreateDynamicRectangleEx cb_CreateDynamicRectangleEx
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicCuboidEx(Float:minx, Float:miny, Float:minz, Float:maxx, Float:maxy, Float:maxz, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players)
-{
-	return CreateDynamicCuboidEx(minx, miny, minz, maxx, maxy, maxz, worlds, interiors, players, priority, maxworlds, maxinteriors, maxplayers);
-}
-
-#if defined _ALS_CreateDynamicCuboidEx
-	#undef CreateDynamicCuboidEx
-#else
-	#define _ALS_CreateDynamicCuboidEx
-#endif
-#define CreateDynamicCuboidEx cb_CreateDynamicCuboidEx
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicCubeEx(Float:minx, Float:miny, Float:minz, Float:maxx, Float:maxy, Float:maxz, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players)
-{
-	return CreateDynamicCubeEx(minx, miny, minz, maxx, maxy, maxz, worlds, interiors, players, priority, maxworlds, maxinteriors, maxplayers);
-}
-
-#if defined _ALS_CreateDynamicCubeEx
-	#undef CreateDynamicCubeEx
-#else
-	#define _ALS_CreateDynamicCubeEx
-#endif
-#define CreateDynamicCubeEx cb_CreateDynamicCubeEx
-
-stock STREAMER_TAG_AREA:cb_CreateDynamicPolygonEx(const Float:points[], Float:minz = -FLOAT_INFINITY, Float:maxz = FLOAT_INFINITY, maxpoints = sizeof points, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players)
-{
-	return CreateDynamicPolygonEx(points, minz, maxz, maxpoints, worlds, interiors, players, priority, maxworlds, maxinteriors, maxplayers);
-}
-
-#if defined _ALS_CreateDynamicPolygonEx
-	#undef CreateDynamicPolygonEx
-#else
-	#define _ALS_CreateDynamicPolygonEx
-#endif
-#define CreateDynamicPolygonEx cb_CreateDynamicPolygonEx
-
-stock STREAMER_TAG_ACTOR:cb_CreateDynamicActorEx(modelid, Float:x, Float:y, Float:z, Float:r, invulnerable = 1, Float:health = 100.0, Float:streamdistance = STREAMER_ACTOR_SD, const worlds[] = { -1 }, const interiors[] = { -1 }, const players[] = { -1 }, const STREAMER_TAG_AREA:areas[] = { STREAMER_TAG_AREA:-1 }, priority = 0, maxworlds = sizeof worlds, maxinteriors = sizeof interiors, maxplayers = sizeof players, maxareas = sizeof areas)
-{
-	return CreateDynamicActorEx(modelid, x, y, z, r, invulnerable, health, streamdistance, worlds, interiors, players, areas, priority, maxworlds, maxinteriors, maxplayers, maxareas);
-}
-
-#if defined _ALS_CreateDynamicActorEx
-	#undef CreateDynamicActorEx
-#else
-	#define _ALS_CreateDynamicActorEx
-#endif
-#define CreateDynamicActorEx cb_CreateDynamicActorEx
-
 
 stock cb_DestroyAllDynamicObjects()
 {
