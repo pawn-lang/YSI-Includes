@@ -105,7 +105,7 @@ Optional plugins:
 		// use the renamed version here.  Maybe.  Not sure why this doesn't use
 		// `_YSI_BCryptIsEqual`...
 		new success = bcrypt_is_equal();
-		#emit PUSH.S       success
+		//#emit PUSH.S       success
 		#emit PUSH.S       extra
 		#emit PUSH.C       8
 		#emit LCTRL        6
@@ -117,6 +117,9 @@ Optional plugins:
 		// Fun fact.  If we just got rid of `PUSH.S success` and added `RETN` right here, the code
 		// would still work because the `new` pushes the result on to the stack, then we push it a
 		// second time.
+		//
+		// ...So do it, and let the callee clean up for us.
+		#emit RETN
 	}
 
 	public YSI_BCryptHashDone(extra, ptr, hashid)
