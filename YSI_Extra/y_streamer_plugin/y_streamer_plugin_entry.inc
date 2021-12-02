@@ -731,36 +731,135 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 #else
 	stock cb_DestroyAllDynamicObjects()
 	{
+		new cb;
+		for (new i = 0, j = Streamer_GetUpperBound(STREAMER_TYPE_OBJECT); i != j; ++i)
+		{
+			if (IsValidDynamicObject(CB_STREAMER_TAG_OBJECT:i))
+			{
+				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_MOVED, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_EDITED, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_SELECTED, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_SHOT, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_IN, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_OUT, i, cb))
+					Indirect_Release(cb);
+			}
+		}
 		return DestroyAllDynamicObjects();
 	}
 
 	stock cb_DestroyAllDynamicPickups()
 	{
+		new cb;
+		for (new i = 0, j = Streamer_GetUpperBound(STREAMER_TYPE_OBJECT); i != j; ++i)
+		{
+			if (IsValidDynamicPickup(CB_STREAMER_TAG_PICKUP:i))
+			{
+				if (Sparse_Exchange(YSI_g_sDyn@PICKUP, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@PICKUP_IN, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@PICKUP_OUT, i, cb))
+					Indirect_Release(cb);
+			}
+		}
 		return DestroyAllDynamicPickups();
 	}
 
 	stock cb_DestroyAllDynamicCPs()
 	{
+		new cb;
+		for (new i = 0, j = Streamer_GetUpperBound(STREAMER_TYPE_OBJECT); i != j; ++i)
+		{
+			if (IsValidDynamicCP(CB_STREAMER_TAG_CP:i))
+			{
+				if (Sparse_Exchange(YSI_g_sDyn@CP_ENTER, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@CP_LEAVE, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@CP_IN, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@CP_OUT, i, cb))
+					Indirect_Release(cb);
+			}
+		}
 		return DestroyAllDynamicCPs();
 	}
 
 	stock cb_DestroyAllDynamicRaceCPs()
 	{
+		new cb;
+		for (new i = 0, j = Streamer_GetUpperBound(STREAMER_TYPE_OBJECT); i != j; ++i)
+		{
+			if (IsValidDynamicRaceCP(CB_STREAMER_TAG_RACE_CP:i))
+			{
+				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_ENTER, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_LEAVE, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_IN, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_OUT, i, cb))
+					Indirect_Release(cb);
+			}
+		}
 		return DestroyAllDynamicRaceCPs();
 	}
 
 	stock cb_DestroyAllDynamicAreas()
 	{
+		new cb;
+		for (new i = 0, j = Streamer_GetUpperBound(STREAMER_TYPE_OBJECT); i != j; ++i)
+		{
+			if (IsValidDynamicArea(CB_STREAMER_TAG_AREA:i))
+			{
+				if (Sparse_Exchange(YSI_g_sDyn@AREA_ENTER, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@AREA_LEAVE, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@AREA_IN, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@AREA_OUT, i, cb))
+					Indirect_Release(cb);
+			}
+		}
 		return DestroyAllDynamicAreas();
 	}
 
 	stock cb_DestroyAllDynamicMapIcons()
 	{
+		new cb;
+		for (new i = 0, j = Streamer_GetUpperBound(STREAMER_TYPE_OBJECT); i != j; ++i)
+		{
+			if (IsValidDynamicMapIcon(CB_STREAMER_TAG_MAP_ICON:i))
+			{
+				if (Sparse_Exchange(YSI_g_sDyn@MAP_ICON_IN, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@MAP_ICON_OUT, i, cb))
+					Indirect_Release(cb);
+			}
+		}
 		return DestroyAllDynamicMapIcons();
 	}
 
 	stock cb_DestroyAllDyn3DTextLabels()
 	{
+		new cb;
+		for (new i = 0, j = Streamer_GetUpperBound(STREAMER_TYPE_OBJECT); i != j; ++i)
+		{
+			if (IsValidDynamic3DTextLabel(CB_STREAMER_TAG_3D_TEXT_LABEL:i))
+			{
+				if (Sparse_Exchange(YSI_g_sDyn@3D_TEXT_LABEL_IN, i, cb))
+					Indirect_Release(cb);
+				if (Sparse_Exchange(YSI_g_sDyn@3D_TEXT_LABEL_OUT, i, cb))
+					Indirect_Release(cb);
+			}
+		}
 		return DestroyAllDynamic3DTextLabels();
 	}
 #endif
