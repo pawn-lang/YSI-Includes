@@ -95,7 +95,9 @@ Optional plugins:
 
 	// Plus keep the original version for backwards-compatibility.
 	#pragma deprecated Use `BCrypt_GetHash`.
-	native YSI_BCryptGetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
+	native YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
+	#define YSI_BCryptGetHash(%0,%1) YSI_BCryptGetHash(%0)
+	#define _ALS_YSI_BCryptGetHash
 
 	public YSI_BCryptCheckDone(extra, ptr)
 	{
