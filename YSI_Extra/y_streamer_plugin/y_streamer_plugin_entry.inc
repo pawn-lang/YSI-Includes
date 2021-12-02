@@ -81,48 +81,86 @@ Optional plugins:
 
 #if defined E_STREAMER_CUSTOM && 0
 	// Store the callback data in `E_STREAMER_CUSTOM`
-	#define E_STREAMER_YSI_OBJECT_MOVED    E_STREAMER_CUSTOM(0x59534900) // YSI 00
-	#define E_STREAMER_YSI_OBJECT_EDITED   E_STREAMER_CUSTOM(0x59534901) // YSI 01
-	#define E_STREAMER_YSI_OBJECT_SELECTED E_STREAMER_CUSTOM(0x59534902) // YSI 02
-	#define E_STREAMER_YSI_OBJECT_SHOT     E_STREAMER_CUSTOM(0x59534903) // YSI 03
-	#define E_STREAMER_YSI_PICKUP          E_STREAMER_CUSTOM(0x59534910) // YSI 10
-	#define E_STREAMER_YSI_CP_ENTER        E_STREAMER_CUSTOM(0x59534920) // YSI 20
-	#define E_STREAMER_YSI_CP_LEAVE        E_STREAMER_CUSTOM(0x59534921) // YSI 21
-	#define E_STREAMER_YSI_RACE_CP_ENTER   E_STREAMER_CUSTOM(0x59534930) // YSI 30
-	#define E_STREAMER_YSI_RACE_CP_LEAVE   E_STREAMER_CUSTOM(0x59534931) // YSI 31
-	#define E_STREAMER_YSI_AREA            E_STREAMER_CUSTOM(0x59534940) // YSI 40
+	#define E_YSI_DYN@OBJECT_MOVED      E_STREAMER_CUSTOM(0x59534900) // YSI 00
+	#define E_YSI_DYN@OBJECT_EDITED     E_STREAMER_CUSTOM(0x59534901) // YSI 01
+	#define E_YSI_DYN@OBJECT_SELECTED   E_STREAMER_CUSTOM(0x59534902) // YSI 02
+	#define E_YSI_DYN@OBJECT_SHOT       E_STREAMER_CUSTOM(0x59534903) // YSI 03
+	#define E_YSI_DYN@OBJECT_IN         E_STREAMER_CUSTOM(0x59534904) // YSI 04
+	#define E_YSI_DYN@OBJECT_OUT        E_STREAMER_CUSTOM(0x59534905) // YSI 05
+	#define E_YSI_DYN@PICKUP            E_STREAMER_CUSTOM(0x59534910) // YSI 10
+	#define E_YSI_DYN@PICKUP_IN         E_STREAMER_CUSTOM(0x59534911) // YSI 11
+	#define E_YSI_DYN@PICKUP_OUT        E_STREAMER_CUSTOM(0x59534912) // YSI 12
+	#define E_YSI_DYN@CP_ENTER          E_STREAMER_CUSTOM(0x59534920) // YSI 20
+	#define E_YSI_DYN@CP_LEAVE          E_STREAMER_CUSTOM(0x59534921) // YSI 21
+	#define E_YSI_DYN@CP_IN             E_STREAMER_CUSTOM(0x59534922) // YSI 22
+	#define E_YSI_DYN@CP_OUT            E_STREAMER_CUSTOM(0x59534923) // YSI 23
+	#define E_YSI_DYN@RACE_CP_ENTER     E_STREAMER_CUSTOM(0x59534930) // YSI 30
+	#define E_YSI_DYN@RACE_CP_LEAVE     E_STREAMER_CUSTOM(0x59534931) // YSI 31
+	#define E_YSI_DYN@RACE_CP_IN        E_STREAMER_CUSTOM(0x59534932) // YSI 32
+	#define E_YSI_DYN@RACE_CP_OUT       E_STREAMER_CUSTOM(0x59534933) // YSI 33
+	#define E_YSI_DYN@AREA_ENTER        E_STREAMER_CUSTOM(0x59534940) // YSI 40
+	#define E_YSI_DYN@AREA_LEAVE        E_STREAMER_CUSTOM(0x59534941) // YSI 41
+	#define E_YSI_DYN@AREA_IN           E_STREAMER_CUSTOM(0x59534942) // YSI 42
+	#define E_YSI_DYN@AREA_OUT          E_STREAMER_CUSTOM(0x59534943) // YSI 43
+	#define E_YSI_DYN@ACTOR_DAMAGE      E_STREAMER_CUSTOM(0x59534950) // YSI 50
+	#define E_YSI_DYN@ACTOR_IN          E_STREAMER_CUSTOM(0x59534951) // YSI 51
+	#define E_YSI_DYN@ACTOR_OUT         E_STREAMER_CUSTOM(0x59534952) // YSI 52
+	#define E_YSI_DYN@MAP_ICON_IN       E_STREAMER_CUSTOM(0x59534960) // YSI 60
+	#define E_YSI_DYN@MAP_ICON_OUT      E_STREAMER_CUSTOM(0x59534961) // YSI 61
+	#define E_YSI_DYN@3D_TEXT_LABEL_IN  E_STREAMER_CUSTOM(0x59534970) // YSI 70
+	#define E_YSI_DYN@3D_TEXT_LABEL_OUT E_STREAMER_CUSTOM(0x59534971) // YSI 71
+	#define E_YSI_DYN@TYPE_IN           E_STREAMER_CUSTOM(0x59534980) // YSI 80
+	#define E_YSI_DYN@TYPE_OUT          E_STREAMER_CUSTOM(0x59534981) // YSI 81
 
-	#define E_STREAMER_YSI(%0) E_STREAMER_YSI_%0
+	#define E_STREAMER_YSI(%0) E_YSI_DYN@%0
 #else
 	// Store the callback data in a per-entity sparse array.
 	#include "..\..\YSI_Data\y_sparsearray"
 
 	static stock
-		SparseArray:YSI_g_sDynamic_OBJECT_MOVED<>,
-		SparseArray:YSI_g_sDynamic_OBJECT_EDITED<>,
-		SparseArray:YSI_g_sDynamic_OBJECT_SELECTED<>,
-		SparseArray:YSI_g_sDynamic_OBJECT_SHOT<>,
-		SparseArray:YSI_g_sDynamic_PICKUP<>,
-		SparseArray:YSI_g_sDynamic_CP_ENTER<>,
-		SparseArray:YSI_g_sDynamic_CP_LEAVE<>,
-		SparseArray:YSI_g_sDynamic_RACE_CP_ENTER<>,
-		SparseArray:YSI_g_sDynamic_RACE_CP_LEAVE<>,
-		SparseArray:YSI_g_sDynamic_AREA<>,
+		SparseArray:YSI_g_sDyn@OBJECT_MOVED<>,
+		SparseArray:YSI_g_sDyn@OBJECT_EDITED<>,
+		SparseArray:YSI_g_sDyn@OBJECT_SELECTED<>,
+		SparseArray:YSI_g_sDyn@OBJECT_SHOT<>,
+		SparseArray:YSI_g_sDyn@OBJECT_IN<>,
+		SparseArray:YSI_g_sDyn@OBJECT_OUT<>,
+		SparseArray:YSI_g_sDyn@PICKUP<>,
+		SparseArray:YSI_g_sDyn@PICKUP_IN<>,
+		SparseArray:YSI_g_sDyn@PICKUP_OUT<>,
+		SparseArray:YSI_g_sDyn@CP_ENTER<>,
+		SparseArray:YSI_g_sDyn@CP_LEAVE<>,
+		SparseArray:YSI_g_sDyn@CP_IN<>,
+		SparseArray:YSI_g_sDyn@CP_OUT<>,
+		SparseArray:YSI_g_sDyn@RACE_CP_ENTER<>,
+		SparseArray:YSI_g_sDyn@RACE_CP_LEAVE<>,
+		SparseArray:YSI_g_sDyn@RACE_CP_IN<>,
+		SparseArray:YSI_g_sDyn@RACE_CP_OUT<>,
+		SparseArray:YSI_g_sDyn@AREA_ENTER<>,
+		SparseArray:YSI_g_sDyn@AREA_LEAVE<>,
+		SparseArray:YSI_g_sDyn@AREA_IN<>,
+		SparseArray:YSI_g_sDyn@AREA_OUT<>,
+		SparseArray:YSI_g_sDyn@ACTOR_DAMAGE<>,
+		SparseArray:YSI_g_sDyn@ACTOR_IN<>,
+		SparseArray:YSI_g_sDyn@ACTOR_OUT<>,
+		SparseArray:YSI_g_sDyn@MAP_ICON_IN<>,
+		SparseArray:YSI_g_sDyn@MAP_ICON_OUT<>,
+		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL_IN<>,
+		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL_OUT<>,
 		Func:YSI_g_sStreamerError<s>;
 
 	#define Y_STREAMER_DESTROY(%0,%1) \
-		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDynamic_%0, _:(%1), y_streamer_cb); Indirect_Release(y_streamer_cb)) \
+		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDyn@%0, _:(%1), y_streamer_cb); Indirect_Release(y_streamer_cb)) \
 			continue
 
 	#define Y_STREAMER_EXCHANCE(%0,%1,%2) \
-		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDynamic_%0, _:(%1), y_streamer_cb, _:(%2)); Indirect_Release(y_streamer_cb), Indirect_Claim(_:(%2))) \
+		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDyn@%0, _:(%1), y_streamer_cb, _:(%2)); Indirect_Release(y_streamer_cb), Indirect_Claim(_:(%2))) \
 			continue
 
 	#define Y_STREAMER_MULTI(%0,%1,%2) \
-		for (new %2; __once && Sparse_TryGet(YSI_g_sDynamic_%0, _:(%1), _:(%2)); ) \
+		for (new %2; __once && Sparse_TryGet(YSI_g_sDyn@%0, _:(%1), _:(%2)); ) \
 
 	#define Y_STREAMER_ONCE(%0,%1,%2) \
-		for (new %2; __once && Sparse_TryGet(YSI_g_sDynamic_%0, _:(%1), _:(%2)); Indirect_Release(_:(%2))) \
+		for (new %2; __once && Sparse_TryGet(YSI_g_sDyn@%0, _:(%1), _:(%2)); Indirect_Release(_:(%2))) \
 #endif
 
 #if defined STREAMER_ENABLE_TAGS
@@ -144,19 +182,6 @@ Optional plugins:
 	#define CB_STREAMER_TAG_ACTOR _
 #endif
 
-stock cb_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
-{
-	Y_STREAMER_DESTROY(OBJECT_MOVED, objectid);
-	return DestroyDynamicObject(objectid);
-}
-
-#if defined _ALS_DestroyDynamicObject
-	#undef DestroyDynamicObject
-#else
-	#define _ALS_DestroyDynamicObject
-#endif
-#define DestroyDynamicObject cb_DestroyDynamicObject
-
 stock cb_StopDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 {
 	Y_STREAMER_DESTROY(OBJECT_MOVED, objectid);
@@ -177,6 +202,20 @@ stock cb_MoveDynamicObject(Func:onMoved<i>, CB_STREAMER_TAG_OBJECT:objectid, Flo
 	Y_STREAMER_EXCHANCE(OBJECT_MOVED, objectid, onMoved);
 	return MoveDynamicObject(objectid, x, y, z, speed, rx, ry, rz);
 }
+/*
+
+      ,ad8888ba,               88  88  88                                   88                    
+     d8"'    `"8b              88  88  88                                   88                    
+    d8'                        88  88  88                                   88                    
+    88             ,adPPYYba,  88  88  88,dPPYba,   ,adPPYYba,   ,adPPYba,  88   ,d8   ,adPPYba,  
+    88             ""     `Y8  88  88  88P'    "8a  ""     `Y8  a8"     ""  88 ,a8"    I8[    ""  
+    Y8,            ,adPPPPP88  88  88  88       d8  ,adPPPPP88  8b          8888[       `"Y8ba,   
+     Y8a.    .a8P  88,    ,88  88  88  88b,   ,a8"  88,    ,88  "8a,   ,aa  88`"Yba,   aa    ]8I  
+      `"Y8888Y"'   `"8bbdP"Y8  88  88  8Y"Ybbd8"'   `"8bbdP"Y8   `"Ybbd8"'  88   `Y8a  `"YbbdP"'  
+
+
+
+*/
 
 HOOK__ OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
 {
@@ -253,7 +292,7 @@ HOOK__ OnPlayerLeaveDynRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
 
 HOOK__ OnPlayerEnterDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 {
-	Y_STREAMER_MULTI(RACE_AREA_ENTER, areaid, Func:cb<ii>)
+	Y_STREAMER_MULTI(AREA_ENTER, areaid, Func:cb<ii>)
 	{
 		@.cb(playerid, _:areaid);
 	}
@@ -261,7 +300,7 @@ HOOK__ OnPlayerEnterDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 
 HOOK__ OnPlayerLeaveDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 {
-	Y_STREAMER_MULTI(RACE_AREA_LEAVE, areaid, Func:cb<ii>)
+	Y_STREAMER_MULTI(AREA_LEAVE, areaid, Func:cb<ii>)
 	{
 		@.cb(playerid, _:areaid);
 	}
@@ -400,6 +439,34 @@ HOOK__ Streamer_OnPluginError(const error[])
 		@.YSI_g_sStreamerError(error);
 	}
 }
+
+/*
+
+    88888888ba,                                                                          
+    88      `"8b                            ,d                                           
+    88        `8b                           88                                           
+    88         88   ,adPPYba,  ,adPPYba,  MM88MMM  8b,dPPYba,   ,adPPYba,   8b       d8  
+    88         88  a8P_____88  I8[    ""    88     88P'   "Y8  a8"     "8a  `8b     d8'  
+    88         8P  8PP"""""""   `"Y8ba,     88     88          8b       d8   `8b   d8'   
+    88      .a8P   "8b,   ,aa  aa    ]8I    88,    88          "8a,   ,a8"    `8b,d8'    
+    88888888Y"'     `"Ybbd8"'  `"YbbdP"'    "Y888  88           `"YbbdP"'       Y88'     
+                                                                                d8'      
+                                                                               d8'       
+
+*/
+
+stock cb_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
+{
+	Y_STREAMER_DESTROY(OBJECT_MOVED, objectid);
+	return DestroyDynamicObject(objectid);
+}
+
+#if defined _ALS_DestroyDynamicObject
+	#undef DestroyDynamicObject
+#else
+	#define _ALS_DestroyDynamicObject
+#endif
+#define DestroyDynamicObject cb_DestroyDynamicObject
 
 stock cb_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 {
