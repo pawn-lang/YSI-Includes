@@ -1,7 +1,7 @@
-#if defined @INC_y_streamer_plugin
+#if defined _INC_y_streamer_plugin
 	#endinput
 #endif
-#define @INC_y_streamer_plugin
+#define _INC_y_streamer_plugin
 
 /*
 Legal:
@@ -169,8 +169,8 @@ Optional plugins:
 	#define E_YSI_DYN@MAP_ICON@OUT      E_STREAMER_CUSTOM(0x59534961) // YSI 61
 	#define E_YSI_DYN@3D_TEXT_LABEL@IN  E_STREAMER_CUSTOM(0x59534970) // YSI 70
 	#define E_YSI_DYN@3D_TEXT_LABEL@OUT E_STREAMER_CUSTOM(0x59534971) // YSI 71
-	#define E_YSI_DYN@TYPE@IN           E_STREAMER_CUSTOM(0x59534980) // YSI 80
-	#define E_YSI_DYN@TYPE@OUT          E_STREAMER_CUSTOM(0x59534981) // YSI 81
+	#define E_YSI_DYN@ITEM@IN           E_STREAMER_CUSTOM(0x59534980) // YSI 80
+	#define E_YSI_DYN@ITEM@OUT          E_STREAMER_CUSTOM(0x59534981) // YSI 81
 
 	#define E_STREAMER_YSI(%0,%1) E_YSI_DYN@%0@%1
 
@@ -222,6 +222,8 @@ Optional plugins:
 		SparseArray:YSI_g_sDyn@MAP_ICON@OUT<>,
 		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL@IN<>,
 		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL@OUT<>,
+		SparseArray:YSI_g_sDyn@ITEM@IN<>,
+		SparseArray:YSI_g_sDyn@ITEM@OUT<>,
 		Func:YSI_g_sStreamerError<s>;
 
 	#define Y_STREAMER_DESTROY(%0,%9\32;%3,%1) \
@@ -286,7 +288,7 @@ HOOK__ OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
 	}
 }
 
-HOOK__ OnPlayerEditDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, response, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz)
+HOOK__ OnPlayerEditDynObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, response, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz)
 {
 	Y_STREAMER_MULTI(OBJECT, EDITED, objectid, Func:cb<iiiffffff>)
 	{
@@ -294,7 +296,7 @@ HOOK__ OnPlayerEditDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, resp
 	}
 }
 
-HOOK__ OnPlayerSelectDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, modelid, Float:x, Float:y, Float:z)
+HOOK__ OnPlayerSelectDynObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, modelid, Float:x, Float:y, Float:z)
 {
 	Y_STREAMER_MULTI(OBJECT, SELECTED, objectid, Func:cb<iiifff>)
 	{
@@ -302,7 +304,7 @@ HOOK__ OnPlayerSelectDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, mo
 	}
 }
 
-HOOK__ OnPlayerShootDynamicObject(playerid, weaponid, CB_STREAMER_TAG_OBJECT:objectid, Float:x, Float:y, Float:z)
+HOOK__ OnPlayerShootDynObject(playerid, weaponid, CB_STREAMER_TAG_OBJECT:objectid, Float:x, Float:y, Float:z)
 {
 	Y_STREAMER_MULTI(OBJECT, SHOT, objectid, Func:cb<iiifff>)
 	{
@@ -366,7 +368,10 @@ HOOK__ OnPlayerLeaveDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 	}
 }
 
-HOOK__ OnPlayerGiveDamageDynActor(playerid, CB_STREAMER_TAG_ACTOR:actorid, Float:amount, weaponid, bodypart)
+DEFINE_HOOK_REPLACEMENT__(DynamicActor, DAct);
+DEFINE_HOOK_REPLACEMENT__(ItemStream, ItStream);
+
+HOOK__ OnPlayerGiveDamageDAct(playerid, CB_STREAMER_TAG_ACTOR:actorid, Float:amount, weaponid, bodypart)
 {
 	Y_STREAMER_MULTI(ACTOR, DAMAGE, actorid, Func:cb<iifii>)
 	{
@@ -390,7 +395,7 @@ HOOK__ OnDynamicActorStreamOut(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
 	}
 }
 
-HOOK__ Streamer_OnItemStreamIn(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
+HOOK__ Streamer_OnItStreamIn(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
 {
 	Y_STREAMER_MULTI(ITEM, IN, id, Func:cb<iii>)
 	{
@@ -441,7 +446,7 @@ HOOK__ Streamer_OnItemStreamIn(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
 	}
 }
 
-HOOK__ Streamer_OnItemStreamOut(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
+HOOK__ Streamer_OnItStreamOut(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
 {
 	Y_STREAMER_MULTI(ITEM, OUT, id, Func:cb<iii>)
 	{
