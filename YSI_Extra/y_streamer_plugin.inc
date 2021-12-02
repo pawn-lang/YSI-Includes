@@ -71,6 +71,10 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+//#if !defined E_STREAMER_CUSTOM
+//	#error y_streamer_plugin requires streamer plugin v2.9.5 or greater (included first).
+//#endif
+
 #if !defined _INC_y_streamer_plugin
 	#tryinclude "y_streamer_plugin\y_streamer_plugin_entry"
 #endif

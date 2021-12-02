@@ -86,8 +86,10 @@ Optional plugins:
 	#define E_STREAMER_YSI_OBJECT_SELECTED E_STREAMER_CUSTOM(0x59534902) // YSI 02
 	#define E_STREAMER_YSI_OBJECT_SHOT     E_STREAMER_CUSTOM(0x59534903) // YSI 03
 	#define E_STREAMER_YSI_PICKUP          E_STREAMER_CUSTOM(0x59534910) // YSI 10
-	#define E_STREAMER_YSI_CP              E_STREAMER_CUSTOM(0x59534920) // YSI 20
-	#define E_STREAMER_YSI_RACE_CP         E_STREAMER_CUSTOM(0x59534930) // YSI 30
+	#define E_STREAMER_YSI_CP_ENTER        E_STREAMER_CUSTOM(0x59534920) // YSI 20
+	#define E_STREAMER_YSI_CP_LEAVE        E_STREAMER_CUSTOM(0x59534921) // YSI 21
+	#define E_STREAMER_YSI_RACE_CP_ENTER   E_STREAMER_CUSTOM(0x59534930) // YSI 30
+	#define E_STREAMER_YSI_RACE_CP_LEAVE   E_STREAMER_CUSTOM(0x59534931) // YSI 31
 	#define E_STREAMER_YSI_AREA            E_STREAMER_CUSTOM(0x59534940) // YSI 40
 
 	#define E_STREAMER_YSI(%0) E_STREAMER_YSI_%0
@@ -101,9 +103,12 @@ Optional plugins:
 		SparseArray:YSI_g_sDynamic_OBJECT_SELECTED<>,
 		SparseArray:YSI_g_sDynamic_OBJECT_SHOT<>,
 		SparseArray:YSI_g_sDynamic_PICKUP<>,
-		SparseArray:YSI_g_sDynamic_CP<>,
-		SparseArray:YSI_g_sDynamic_RACE_CP<>,
-		SparseArray:YSI_g_sDynamic_AREA<>;
+		SparseArray:YSI_g_sDynamic_CP_ENTER<>,
+		SparseArray:YSI_g_sDynamic_CP_LEAVE<>,
+		SparseArray:YSI_g_sDynamic_RACE_CP_ENTER<>,
+		SparseArray:YSI_g_sDynamic_RACE_CP_LEAVE<>,
+		SparseArray:YSI_g_sDynamic_AREA<>,
+		Func:YSI_g_sStreamerError<s>;
 
 	#define Y_STREAMER_DESTROY(%0,%1) \
 		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDynamic_%0, _:(%1), y_streamer_cb); Indirect_Release(y_streamer_cb)) \
@@ -175,6 +180,7 @@ stock cb_MoveDynamicObject(Func:onMoved<i>, CB_STREAMER_TAG_OBJECT:objectid, Flo
 
 HOOK__ OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
 {
+	// This only happens once, then the callback is redundant.  Free it.
 	Y_STREAMER_ONCE(OBJECT_MOVED, objectid, Func:cb<i>)
 	{
 		@.cb(_:objectid);
@@ -191,7 +197,7 @@ HOOK__ OnPlayerEditDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, resp
 
 HOOK__ OnPlayerSelectDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, modelid, Float:x, Float:y, Float:z)
 {
-	Y_STREAMER_ONCE(OBJECT_SELECTED, objectid, Func:cb<iiifff>)
+	Y_STREAMER_MULTI(OBJECT_SELECTED, objectid, Func:cb<iiifff>)
 	{
 		@.cb(playerid, _:objectid, modelid, x, y, z);
 	}
@@ -207,7 +213,7 @@ HOOK__ OnPlayerShootDynamicObject(playerid, weaponid, CB_STREAMER_TAG_OBJECT:obj
 
 HOOK__ OnPlayerPickUpDynPickup(playerid, CB_STREAMER_TAG_PICKUP:pickupid)
 {
-	Y_STREAMER_MULTI(PICKUP, objectid, Func:cb<ii>)
+	Y_STREAMER_MULTI(PICKUP, pickupid, Func:cb<ii>)
 	{
 		@.cb(playerid, _:pickupid);
 	}
@@ -215,91 +221,185 @@ HOOK__ OnPlayerPickUpDynPickup(playerid, CB_STREAMER_TAG_PICKUP:pickupid)
 
 HOOK__ OnPlayerEnterDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
 {
-	Y_STREAMER_MULTI(CP, objectid, Func:cb<ii>)
+	Y_STREAMER_MULTI(CP_ENTER, checkpointid, Func:cb<ii>)
 	{
 		@.cb(playerid, _:checkpointid);
 	}
 }
 
-//HOOK__ OnPlayerLeaveDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
-//{
-//	
-//}
+HOOK__ OnPlayerLeaveDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
+{
+	Y_STREAMER_MULTI(CP_LEAVE, checkpointid, Func:cb<ii>)
+	{
+		@.cb(playerid, _:checkpointid);
+	}
+}
 
 HOOK__ OnPlayerEnterDynRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
 {
-	new
-		Func:cb<ii>;
-	if (Sparse_TryGet(YSI_g_sDynamic_RACE_CP, _:checkpointid, _:cb))
+	Y_STREAMER_MULTI(RACE_CP_ENTER, checkpointid, Func:cb<ii>)
 	{
 		@.cb(playerid, _:checkpointid);
 	}
 }
 
-//HOOK__ OnPlayerLeaveDynamicRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
-//{
-//	
-//}
+HOOK__ OnPlayerLeaveDynRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
+{
+	Y_STREAMER_MULTI(RACE_CP_LEAVE, checkpointid, Func:cb<ii>)
+	{
+		@.cb(playerid, _:checkpointid);
+	}
+}
 
 HOOK__ OnPlayerEnterDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 {
-	new
-		Func:cb<ii>;
-	if (Sparse_TryGet(YSI_g_sDynamic_AREA, _:areaid, _:cb))
+	Y_STREAMER_MULTI(RACE_AREA_ENTER, areaid, Func:cb<ii>)
 	{
 		@.cb(playerid, _:areaid);
 	}
 }
 
-//HOOK__ OnPlayerLeaveDynamicArea(playerid, CB_STREAMER_TAG_AREA:areaid)
-//{
-//	
-//}
+HOOK__ OnPlayerLeaveDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
+{
+	Y_STREAMER_MULTI(RACE_AREA_LEAVE, areaid, Func:cb<ii>)
+	{
+		@.cb(playerid, _:areaid);
+	}
+}
 
-//HOOK__ OnPlayerGiveDamageDynamicActor(playerid, CB_STREAMER_TAG_ACTOR:actorid, Float:amount, weaponid, bodypart)
-//{
-//	
-//}
+HOOK__ OnPlayerGiveDamageDynActor(playerid, CB_STREAMER_TAG_ACTOR:actorid, Float:amount, weaponid, bodypart)
+{
+	Y_STREAMER_MULTI(ACTOR_DAMAGE, actorid, Func:cb<iifii>)
+	{
+		@.cb(playerid, _:actorid, amount, weaponid, bodypart);
+	}
+}
 
-//HOOK__ OnDynamicActorStreamIn(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
-//{
-//	
-//}
+HOOK__ OnDynamicActorStreamIn(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
+{
+	Y_STREAMER_MULTI(ACTOR_IN, actorid, Func:cb<ii>)
+	{
+		@.cb(_:actorid, forplayerid);
+	}
+}
 
-//HOOK__ OnDynamicActorStreamOut(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
-//{
-//	
-//}
+HOOK__ OnDynamicActorStreamOut(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
+{
+	Y_STREAMER_MULTI(ACTOR_OUT, actorid, Func:cb<ii>)
+	{
+		@.cb(_:actorid, forplayerid);
+	}
+}
 
-//HOOK__ Streamer_OnItemStreamIn(type, CB_STREAMER_ALL_TAGS:id)
-//{
-//	
-//}
+HOOK__ Streamer_OnItemStreamIn(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
+{
+	Y_STREAMER_MULTI(ITEM_IN, id, Func:cb<iii>)
+	{
+		@.cb(type, _:id, forplayerid);
+	}
+	switch (type)
+	{
+	case STREAMER_TYPE_OBJECT:
+		Y_STREAMER_MULTI(OBJECT_IN, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_PICKUP:
+		Y_STREAMER_MULTI(PICKUP_IN, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_CP:
+		Y_STREAMER_MULTI(CP_IN, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_RACE_CP:
+		Y_STREAMER_MULTI(RACE_CP_IN, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_MAP_ICON:
+		Y_STREAMER_MULTI(MAP_ICON_IN, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_3D_TEXT_LABEL:
+		Y_STREAMER_MULTI(3D_TEXT_LABEL_IN, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_AREA:
+		Y_STREAMER_MULTI(AREA_IN, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_ACTOR:
+		Y_STREAMER_MULTI(ACTOR_IN, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	}
+}
 
-//HOOK__ Streamer_OnItemStreamOut(type, CB_STREAMER_ALL_TAGS:id)
-//{
-//	
-//}
+HOOK__ Streamer_OnItemStreamOut(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
+{
+	Y_STREAMER_MULTI(ITEM_OUT, id, Func:cb<iii>)
+	{
+		@.cb(type, _:id, forplayerid);
+	}
+	switch (type)
+	{
+	case STREAMER_TYPE_OBJECT:
+		Y_STREAMER_MULTI(OBJECT_OUT, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_PICKUP:
+		Y_STREAMER_MULTI(PICKUP_OUT, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_CP:
+		Y_STREAMER_MULTI(CP_OUT, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_RACE_CP:
+		Y_STREAMER_MULTI(RACE_CP_OUT, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_MAP_ICON:
+		Y_STREAMER_MULTI(MAP_ICON_OUT, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_3D_TEXT_LABEL:
+		Y_STREAMER_MULTI(3D_TEXT_LABEL_OUT, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_AREA:
+		Y_STREAMER_MULTI(AREA_OUT, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	case STREAMER_TYPE_ACTOR:
+		Y_STREAMER_MULTI(ACTOR_OUT, id, Func:cb<ii>)
+		{
+			@.cb(_:id, forplayerid);
+		}
+	}
+}
 
-//HOOK__ Streamer_OnPluginError(const error[])
-//{
-//	
-//}
-
-//stock Streamer_GetCallback(type, STREAMER_ALL_TAGS:id)
-//{
-//	switch (type)
-//	{
-//		case STREAMER_TYPE_OBJECT: {}
-//		case STREAMER_TYPE_PICKUP: {}
-//		case STREAMER_TYPE_CP: {}
-//		case STREAMER_TYPE_RACE_CP: {}
-//		case STREAMER_TYPE_MAP_ICON: {}
-//		case STREAMER_TYPE_3D_TEXT_LABEL: {}
-//		case STREAMER_TYPE_AREA: {}
-//		case STREAMER_TYPE_ACTOR: {}
-//	}
-//}
+HOOK__ Streamer_OnPluginError(const error[])
+{
+	if (YSI_g_sStreamerError)
+	{
+		@.YSI_g_sStreamerError(error);
+	}
+}
 
 stock cb_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 {
