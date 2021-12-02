@@ -81,14 +81,21 @@ Optional plugins:
 	forward YSI_BCryptCheckDone(extra, ptr);
 	forward YSI_BCryptHashDone(extra, ptr, hashid);
 
-	// Fix the missing native.
-	native BCrypt_GetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
-
-	// Plus keep the original version for backwards-compatibility.
-	native YSI_BCryptGetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
+	native _YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
 	native _YSI_BCryptCheck(const password[], const hash[], const callback_name[], const callback_format[], ...) = bcrypt_check;
 	native _YSI_BCryptHash(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_hash;
 	native bool:_YSI_BCryptIsEqual(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_is_equal;
+
+	// Fix the missing native.
+	stock BCrypt_GetHash(hash[], size = sizeof(hash))
+	{
+		assert(size >= 61);
+		return _YSI_BCryptGetHash(hash);
+	}
+
+	// Plus keep the original version for backwards-compatibility.
+	#pragma deprecated Use `BCrypt_GetHash`.
+	native YSI_BCryptGetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
 
 	public YSI_BCryptCheckDone(extra, ptr)
 	{
