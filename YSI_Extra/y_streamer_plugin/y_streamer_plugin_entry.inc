@@ -1,7 +1,7 @@
-#if defined _INC_y_streamer_plugin
+#if defined @INC_y_streamer_plugin
 	#endinput
 #endif
-#define _INC_y_streamer_plugin
+#define @INC_y_streamer_plugin
 
 /*
 Legal:
@@ -81,86 +81,92 @@ Optional plugins:
 
 #if defined E_STREAMER_CUSTOM && 0
 	// Store the callback data in `E_STREAMER_CUSTOM`
-	#define E_YSI_DYN@OBJECT_MOVED      E_STREAMER_CUSTOM(0x59534900) // YSI 00
-	#define E_YSI_DYN@OBJECT_EDITED     E_STREAMER_CUSTOM(0x59534901) // YSI 01
-	#define E_YSI_DYN@OBJECT_SELECTED   E_STREAMER_CUSTOM(0x59534902) // YSI 02
-	#define E_YSI_DYN@OBJECT_SHOT       E_STREAMER_CUSTOM(0x59534903) // YSI 03
-	#define E_YSI_DYN@OBJECT_IN         E_STREAMER_CUSTOM(0x59534904) // YSI 04
-	#define E_YSI_DYN@OBJECT_OUT        E_STREAMER_CUSTOM(0x59534905) // YSI 05
-	#define E_YSI_DYN@PICKUP            E_STREAMER_CUSTOM(0x59534910) // YSI 10
-	#define E_YSI_DYN@PICKUP_IN         E_STREAMER_CUSTOM(0x59534911) // YSI 11
-	#define E_YSI_DYN@PICKUP_OUT        E_STREAMER_CUSTOM(0x59534912) // YSI 12
-	#define E_YSI_DYN@CP_ENTER          E_STREAMER_CUSTOM(0x59534920) // YSI 20
-	#define E_YSI_DYN@CP_LEAVE          E_STREAMER_CUSTOM(0x59534921) // YSI 21
-	#define E_YSI_DYN@CP_IN             E_STREAMER_CUSTOM(0x59534922) // YSI 22
-	#define E_YSI_DYN@CP_OUT            E_STREAMER_CUSTOM(0x59534923) // YSI 23
-	#define E_YSI_DYN@RACE_CP_ENTER     E_STREAMER_CUSTOM(0x59534930) // YSI 30
-	#define E_YSI_DYN@RACE_CP_LEAVE     E_STREAMER_CUSTOM(0x59534931) // YSI 31
-	#define E_YSI_DYN@RACE_CP_IN        E_STREAMER_CUSTOM(0x59534932) // YSI 32
-	#define E_YSI_DYN@RACE_CP_OUT       E_STREAMER_CUSTOM(0x59534933) // YSI 33
-	#define E_YSI_DYN@AREA_ENTER        E_STREAMER_CUSTOM(0x59534940) // YSI 40
-	#define E_YSI_DYN@AREA_LEAVE        E_STREAMER_CUSTOM(0x59534941) // YSI 41
-	#define E_YSI_DYN@AREA_IN           E_STREAMER_CUSTOM(0x59534942) // YSI 42
-	#define E_YSI_DYN@AREA_OUT          E_STREAMER_CUSTOM(0x59534943) // YSI 43
-	#define E_YSI_DYN@ACTOR_DAMAGE      E_STREAMER_CUSTOM(0x59534950) // YSI 50
-	#define E_YSI_DYN@ACTOR_IN          E_STREAMER_CUSTOM(0x59534951) // YSI 51
-	#define E_YSI_DYN@ACTOR_OUT         E_STREAMER_CUSTOM(0x59534952) // YSI 52
-	#define E_YSI_DYN@MAP_ICON_IN       E_STREAMER_CUSTOM(0x59534960) // YSI 60
-	#define E_YSI_DYN@MAP_ICON_OUT      E_STREAMER_CUSTOM(0x59534961) // YSI 61
-	#define E_YSI_DYN@3D_TEXT_LABEL_IN  E_STREAMER_CUSTOM(0x59534970) // YSI 70
-	#define E_YSI_DYN@3D_TEXT_LABEL_OUT E_STREAMER_CUSTOM(0x59534971) // YSI 71
-	#define E_YSI_DYN@TYPE_IN           E_STREAMER_CUSTOM(0x59534980) // YSI 80
-	#define E_YSI_DYN@TYPE_OUT          E_STREAMER_CUSTOM(0x59534981) // YSI 81
+	#define E_YSI_DYN@OBJECT@MOVED      E_STREAMER_CUSTOM(0x59534900) // YSI 00
+	#define E_YSI_DYN@OBJECT@EDITED     E_STREAMER_CUSTOM(0x59534901) // YSI 01
+	#define E_YSI_DYN@OBJECT@SELECTED   E_STREAMER_CUSTOM(0x59534902) // YSI 02
+	#define E_YSI_DYN@OBJECT@SHOT       E_STREAMER_CUSTOM(0x59534903) // YSI 03
+	#define E_YSI_DYN@OBJECT@IN         E_STREAMER_CUSTOM(0x59534904) // YSI 04
+	#define E_YSI_DYN@OBJECT@OUT        E_STREAMER_CUSTOM(0x59534905) // YSI 05
+	#define E_YSI_DYN@PICKUP@PICKUP     E_STREAMER_CUSTOM(0x59534910) // YSI 10
+	#define E_YSI_DYN@PICKUP@IN         E_STREAMER_CUSTOM(0x59534911) // YSI 11
+	#define E_YSI_DYN@PICKUP@OUT        E_STREAMER_CUSTOM(0x59534912) // YSI 12
+	#define E_YSI_DYN@CP@ENTER          E_STREAMER_CUSTOM(0x59534920) // YSI 20
+	#define E_YSI_DYN@CP@LEAVE          E_STREAMER_CUSTOM(0x59534921) // YSI 21
+	#define E_YSI_DYN@CP@IN             E_STREAMER_CUSTOM(0x59534922) // YSI 22
+	#define E_YSI_DYN@CP@OUT            E_STREAMER_CUSTOM(0x59534923) // YSI 23
+	#define E_YSI_DYN@RACE_CP@ENTER     E_STREAMER_CUSTOM(0x59534930) // YSI 30
+	#define E_YSI_DYN@RACE_CP@LEAVE     E_STREAMER_CUSTOM(0x59534931) // YSI 31
+	#define E_YSI_DYN@RACE_CP@IN        E_STREAMER_CUSTOM(0x59534932) // YSI 32
+	#define E_YSI_DYN@RACE_CP@OUT       E_STREAMER_CUSTOM(0x59534933) // YSI 33
+	#define E_YSI_DYN@AREA@ENTER        E_STREAMER_CUSTOM(0x59534940) // YSI 40
+	#define E_YSI_DYN@AREA@LEAVE        E_STREAMER_CUSTOM(0x59534941) // YSI 41
+	#define E_YSI_DYN@AREA@IN           E_STREAMER_CUSTOM(0x59534942) // YSI 42
+	#define E_YSI_DYN@AREA@OUT          E_STREAMER_CUSTOM(0x59534943) // YSI 43
+	#define E_YSI_DYN@ACTOR@DAMAGE      E_STREAMER_CUSTOM(0x59534950) // YSI 50
+	#define E_YSI_DYN@ACTOR@IN          E_STREAMER_CUSTOM(0x59534951) // YSI 51
+	#define E_YSI_DYN@ACTOR@OUT         E_STREAMER_CUSTOM(0x59534952) // YSI 52
+	#define E_YSI_DYN@MAP_ICON@IN       E_STREAMER_CUSTOM(0x59534960) // YSI 60
+	#define E_YSI_DYN@MAP_ICON@OUT      E_STREAMER_CUSTOM(0x59534961) // YSI 61
+	#define E_YSI_DYN@3D_TEXT_LABEL@IN  E_STREAMER_CUSTOM(0x59534970) // YSI 70
+	#define E_YSI_DYN@3D_TEXT_LABEL@OUT E_STREAMER_CUSTOM(0x59534971) // YSI 71
+	#define E_YSI_DYN@TYPE@IN           E_STREAMER_CUSTOM(0x59534980) // YSI 80
+	#define E_YSI_DYN@TYPE@OUT          E_STREAMER_CUSTOM(0x59534981) // YSI 81
 
-	#define E_STREAMER_YSI(%0) E_YSI_DYN@%0
+	#define E_STREAMER_YSI(%0,%1) E_YSI_DYN@%0@%1
+
+	#define Y_STREAMER_GET(%0,%1,%2) \
+		((I@ = Streamer_HasIntData(, _:(%1), )) && (_:(%2) = Streamer_GetIntData(, _:(%1), ), I@))
 #else
 	// Store the callback data in a per-entity sparse array.
 	#include "..\..\YSI_Data\y_sparsearray"
 
 	static stock
-		SparseArray:YSI_g_sDyn@OBJECT_MOVED<>,
-		SparseArray:YSI_g_sDyn@OBJECT_EDITED<>,
-		SparseArray:YSI_g_sDyn@OBJECT_SELECTED<>,
-		SparseArray:YSI_g_sDyn@OBJECT_SHOT<>,
-		SparseArray:YSI_g_sDyn@OBJECT_IN<>,
-		SparseArray:YSI_g_sDyn@OBJECT_OUT<>,
-		SparseArray:YSI_g_sDyn@PICKUP<>,
-		SparseArray:YSI_g_sDyn@PICKUP_IN<>,
-		SparseArray:YSI_g_sDyn@PICKUP_OUT<>,
-		SparseArray:YSI_g_sDyn@CP_ENTER<>,
-		SparseArray:YSI_g_sDyn@CP_LEAVE<>,
-		SparseArray:YSI_g_sDyn@CP_IN<>,
-		SparseArray:YSI_g_sDyn@CP_OUT<>,
-		SparseArray:YSI_g_sDyn@RACE_CP_ENTER<>,
-		SparseArray:YSI_g_sDyn@RACE_CP_LEAVE<>,
-		SparseArray:YSI_g_sDyn@RACE_CP_IN<>,
-		SparseArray:YSI_g_sDyn@RACE_CP_OUT<>,
-		SparseArray:YSI_g_sDyn@AREA_ENTER<>,
-		SparseArray:YSI_g_sDyn@AREA_LEAVE<>,
-		SparseArray:YSI_g_sDyn@AREA_IN<>,
-		SparseArray:YSI_g_sDyn@AREA_OUT<>,
+		SparseArray:YSI_g_sDyn@OBJECT@MOVED<>,
+		SparseArray:YSI_g_sDyn@OBJECT@EDITED<>,
+		SparseArray:YSI_g_sDyn@OBJECT@SELECTED<>,
+		SparseArray:YSI_g_sDyn@OBJECT@SHOT<>,
+		SparseArray:YSI_g_sDyn@OBJECT@IN<>,
+		SparseArray:YSI_g_sDyn@OBJECT@OUT<>,
+		SparseArray:YSI_g_sDyn@PICKUP@PICKUP<>,
+		SparseArray:YSI_g_sDyn@PICKUP@IN<>,
+		SparseArray:YSI_g_sDyn@PICKUP@OUT<>,
+		SparseArray:YSI_g_sDyn@CP@ENTER<>,
+		SparseArray:YSI_g_sDyn@CP@LEAVE<>,
+		SparseArray:YSI_g_sDyn@CP@IN<>,
+		SparseArray:YSI_g_sDyn@CP@OUT<>,
+		SparseArray:YSI_g_sDyn@RACE_CP@ENTER<>,
+		SparseArray:YSI_g_sDyn@RACE_CP@LEAVE<>,
+		SparseArray:YSI_g_sDyn@RACE_CP@IN<>,
+		SparseArray:YSI_g_sDyn@RACE_CP@OUT<>,
+		SparseArray:YSI_g_sDyn@AREA@ENTER<>,
+		SparseArray:YSI_g_sDyn@AREA@LEAVE<>,
+		SparseArray:YSI_g_sDyn@AREA@IN<>,
+		SparseArray:YSI_g_sDyn@AREA@OUT<>,
 		SparseArray:YSI_g_sDyn@ACTOR_DAMAGE<>,
-		SparseArray:YSI_g_sDyn@ACTOR_IN<>,
-		SparseArray:YSI_g_sDyn@ACTOR_OUT<>,
-		SparseArray:YSI_g_sDyn@MAP_ICON_IN<>,
-		SparseArray:YSI_g_sDyn@MAP_ICON_OUT<>,
-		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL_IN<>,
-		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL_OUT<>,
+		SparseArray:YSI_g_sDyn@ACTOR@IN<>,
+		SparseArray:YSI_g_sDyn@ACTOR@OUT<>,
+		SparseArray:YSI_g_sDyn@MAP_ICON@IN<>,
+		SparseArray:YSI_g_sDyn@MAP_ICON@OUT<>,
+		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL@IN<>,
+		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL@OUT<>,
 		Func:YSI_g_sStreamerError<s>;
 
-	#define Y_STREAMER_DESTROY(%0,%1) \
-		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDyn@%0, _:(%1), y_streamer_cb); Indirect_Release(y_streamer_cb)) \
+	#define Y_STREAMER_DESTROY(%0,%9\32;%3,%1) \
+		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDyn@%0@%3, _:(%1), y_streamer_cb); Indirect_Release(y_streamer_cb)) \
 			continue
 
-	#define Y_STREAMER_EXCHANCE(%0,%1,%2) \
-		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDyn@%0, _:(%1), y_streamer_cb, _:(%2)); Indirect_Release(y_streamer_cb), Indirect_Claim(_:(%2))) \
+	#define Y_STREAMER_EXCHANCE(%0,%9\32;%3,%1,%2) \
+		for (new y_streamer_cb = 0; __once && Sparse_Exchange(YSI_g_sDyn@%0@%3, _:(%1), y_streamer_cb, _:(%2)); Indirect_Release(y_streamer_cb), Indirect_Claim(_:(%2))) \
 			continue
 
-	#define Y_STREAMER_MULTI(%0,%1,%2) \
-		for (new %2; __once && Sparse_TryGet(YSI_g_sDyn@%0, _:(%1), _:(%2)); ) \
+	#define Y_STREAMER_MULTI(%0,%9\32;%3,%1,%2) \
+		for (new %2; __once && Sparse_TryGet(YSI_g_sDyn@%0@%3, _:(%1), _:(%2)); ) \
 
-	#define Y_STREAMER_ONCE(%0,%1,%2) \
-		for (new %2; __once && Sparse_TryGet(YSI_g_sDyn@%0, _:(%1), _:(%2)); Indirect_Release(_:(%2))) \
+	#define Y_STREAMER_ONCE(%0,%9\32;%3,%1,%2) \
+		for (new %2; __once && Sparse_TryGet(YSI_g_sDyn@%0@%3, _:(%1), _:(%2)); Indirect_Release(_:(%2))) \
+
+	#define Y_STREAMER_GET(%0,%9\32;%3,%1,%2) \
+		Sparse_Exchange(YSI_g_sDyn@%0@%3, _:(%1), _:(%2))
 #endif
 
 #if defined STREAMER_ENABLE_TAGS
@@ -184,7 +190,7 @@ Optional plugins:
 
 stock cb_StopDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 {
-	Y_STREAMER_DESTROY(OBJECT_MOVED, objectid);
+	Y_STREAMER_DESTROY(OBJECT, MOVED, objectid);
 	return StopDynamicObject(objectid);
 }
 
@@ -199,7 +205,7 @@ stock cb_StopDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 
 stock cb_MoveDynamicObject(Func:onMoved<i>, CB_STREAMER_TAG_OBJECT:objectid, Float:x, Float:y, Float:z, Float:speed, Float:rx = -1000.0, Float:ry = -1000.0, Float:rz = -1000.0)
 {
-	Y_STREAMER_EXCHANCE(OBJECT_MOVED, objectid, onMoved);
+	Y_STREAMER_EXCHANCE(OBJECT, MOVED, objectid, onMoved);
 	return MoveDynamicObject(objectid, x, y, z, speed, rx, ry, rz);
 }
 /*
@@ -220,214 +226,214 @@ stock cb_MoveDynamicObject(Func:onMoved<i>, CB_STREAMER_TAG_OBJECT:objectid, Flo
 HOOK__ OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
 {
 	// This only happens once, then the callback is redundant.  Free it.
-	Y_STREAMER_ONCE(OBJECT_MOVED, objectid, Func:cb<i>)
+	Y_STREAMER_ONCE(OBJECT, MOVED, objectid, Func:cb<i>)
 	{
-		@.cb(_:objectid);
+		, .cb(_:objectid);
 	}
 }
 
 HOOK__ OnPlayerEditDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, response, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz)
 {
-	Y_STREAMER_MULTI(OBJECT_EDITED, objectid, Func:cb<iiiffffff>)
+	Y_STREAMER_MULTI(OBJECT, EDITED, objectid, Func:cb<iiiffffff>)
 	{
-		@.cb(playerid, _:objectid, response, x, y, z, rx, ry, rz);
+		, .cb(playerid, _:objectid, response, x, y, z, rx, ry, rz);
 	}
 }
 
 HOOK__ OnPlayerSelectDynamicObject(playerid, CB_STREAMER_TAG_OBJECT:objectid, modelid, Float:x, Float:y, Float:z)
 {
-	Y_STREAMER_MULTI(OBJECT_SELECTED, objectid, Func:cb<iiifff>)
+	Y_STREAMER_MULTI(OBJECT, SELECTED, objectid, Func:cb<iiifff>)
 	{
-		@.cb(playerid, _:objectid, modelid, x, y, z);
+		, .cb(playerid, _:objectid, modelid, x, y, z);
 	}
 }
 
 HOOK__ OnPlayerShootDynamicObject(playerid, weaponid, CB_STREAMER_TAG_OBJECT:objectid, Float:x, Float:y, Float:z)
 {
-	Y_STREAMER_MULTI(OBJECT_SHOT, objectid, Func:cb<iiifff>)
+	Y_STREAMER_MULTI(OBJECT, SHOT, objectid, Func:cb<iiifff>)
 	{
-		@.cb(playerid, weaponid, _:objectid, x, y, z);
+		, .cb(playerid, weaponid, _:objectid, x, y, z);
 	}
 }
 
 HOOK__ OnPlayerPickUpDynPickup(playerid, CB_STREAMER_TAG_PICKUP:pickupid)
 {
-	Y_STREAMER_MULTI(PICKUP, pickupid, Func:cb<ii>)
+	Y_STREAMER_MULTI(PICKUP, PICKUP, pickupid, Func:cb<ii>)
 	{
-		@.cb(playerid, _:pickupid);
+		, .cb(playerid, _:pickupid);
 	}
 }
 
 HOOK__ OnPlayerEnterDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
 {
-	Y_STREAMER_MULTI(CP_ENTER, checkpointid, Func:cb<ii>)
+	Y_STREAMER_MULTI(CP, ENTER, checkpointid, Func:cb<ii>)
 	{
-		@.cb(playerid, _:checkpointid);
+		, .cb(playerid, _:checkpointid);
 	}
 }
 
 HOOK__ OnPlayerLeaveDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
 {
-	Y_STREAMER_MULTI(CP_LEAVE, checkpointid, Func:cb<ii>)
+	Y_STREAMER_MULTI(CP, LEAVE, checkpointid, Func:cb<ii>)
 	{
-		@.cb(playerid, _:checkpointid);
+		, .cb(playerid, _:checkpointid);
 	}
 }
 
 HOOK__ OnPlayerEnterDynRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
 {
-	Y_STREAMER_MULTI(RACE_CP_ENTER, checkpointid, Func:cb<ii>)
+	Y_STREAMER_MULTI(RACE_CP, ENTER, checkpointid, Func:cb<ii>)
 	{
-		@.cb(playerid, _:checkpointid);
+		, .cb(playerid, _:checkpointid);
 	}
 }
 
 HOOK__ OnPlayerLeaveDynRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
 {
-	Y_STREAMER_MULTI(RACE_CP_LEAVE, checkpointid, Func:cb<ii>)
+	Y_STREAMER_MULTI(RACE_CP, LEAVE, checkpointid, Func:cb<ii>)
 	{
-		@.cb(playerid, _:checkpointid);
+		, .cb(playerid, _:checkpointid);
 	}
 }
 
 HOOK__ OnPlayerEnterDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 {
-	Y_STREAMER_MULTI(AREA_ENTER, areaid, Func:cb<ii>)
+	Y_STREAMER_MULTI(AREA, ENTER, areaid, Func:cb<ii>)
 	{
-		@.cb(playerid, _:areaid);
+		, .cb(playerid, _:areaid);
 	}
 }
 
 HOOK__ OnPlayerLeaveDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 {
-	Y_STREAMER_MULTI(AREA_LEAVE, areaid, Func:cb<ii>)
+	Y_STREAMER_MULTI(AREA, LEAVE, areaid, Func:cb<ii>)
 	{
-		@.cb(playerid, _:areaid);
+		, .cb(playerid, _:areaid);
 	}
 }
 
 HOOK__ OnPlayerGiveDamageDynActor(playerid, CB_STREAMER_TAG_ACTOR:actorid, Float:amount, weaponid, bodypart)
 {
-	Y_STREAMER_MULTI(ACTOR_DAMAGE, actorid, Func:cb<iifii>)
+	Y_STREAMER_MULTI(ACTOR, DAMAGE, actorid, Func:cb<iifii>)
 	{
-		@.cb(playerid, _:actorid, amount, weaponid, bodypart);
+		, .cb(playerid, _:actorid, amount, weaponid, bodypart);
 	}
 }
 
 HOOK__ OnDynamicActorStreamIn(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
 {
-	Y_STREAMER_MULTI(ACTOR_IN, actorid, Func:cb<ii>)
+	Y_STREAMER_MULTI(ACTOR, IN, actorid, Func:cb<ii>)
 	{
-		@.cb(_:actorid, forplayerid);
+		, .cb(_:actorid, forplayerid);
 	}
 }
 
 HOOK__ OnDynamicActorStreamOut(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
 {
-	Y_STREAMER_MULTI(ACTOR_OUT, actorid, Func:cb<ii>)
+	Y_STREAMER_MULTI(ACTOR, OUT, actorid, Func:cb<ii>)
 	{
-		@.cb(_:actorid, forplayerid);
+		, .cb(_:actorid, forplayerid);
 	}
 }
 
 HOOK__ Streamer_OnItemStreamIn(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
 {
-	Y_STREAMER_MULTI(ITEM_IN, id, Func:cb<iii>)
+	Y_STREAMER_MULTI(ITEM, IN, id, Func:cb<iii>)
 	{
-		@.cb(type, _:id, forplayerid);
+		, .cb(type, _:id, forplayerid);
 	}
 	switch (type)
 	{
 	case STREAMER_TYPE_OBJECT:
-		Y_STREAMER_MULTI(OBJECT_IN, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(OBJECT, IN, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_PICKUP:
-		Y_STREAMER_MULTI(PICKUP_IN, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(PICKUP, IN, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_CP:
-		Y_STREAMER_MULTI(CP_IN, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(CP, IN, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_RACE_CP:
-		Y_STREAMER_MULTI(RACE_CP_IN, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(RACE_CP, IN, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_MAP_ICON:
-		Y_STREAMER_MULTI(MAP_ICON_IN, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(MAP_ICON, IN, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_3D_TEXT_LABEL:
-		Y_STREAMER_MULTI(3D_TEXT_LABEL_IN, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(3D_TEXT_LABEL, IN, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_AREA:
-		Y_STREAMER_MULTI(AREA_IN, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(AREA, IN, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_ACTOR:
-		Y_STREAMER_MULTI(ACTOR_IN, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(ACTOR, IN, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	}
 }
 
 HOOK__ Streamer_OnItemStreamOut(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
 {
-	Y_STREAMER_MULTI(ITEM_OUT, id, Func:cb<iii>)
+	Y_STREAMER_MULTI(ITEM, OUT, id, Func:cb<iii>)
 	{
-		@.cb(type, _:id, forplayerid);
+		, .cb(type, _:id, forplayerid);
 	}
 	switch (type)
 	{
 	case STREAMER_TYPE_OBJECT:
-		Y_STREAMER_MULTI(OBJECT_OUT, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(OBJECT, OUT, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_PICKUP:
-		Y_STREAMER_MULTI(PICKUP_OUT, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(PICKUP, OUT, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_CP:
-		Y_STREAMER_MULTI(CP_OUT, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(CP, OUT, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_RACE_CP:
-		Y_STREAMER_MULTI(RACE_CP_OUT, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(RACE_CP, OUT, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_MAP_ICON:
-		Y_STREAMER_MULTI(MAP_ICON_OUT, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(MAP_ICON, OUT, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_3D_TEXT_LABEL:
-		Y_STREAMER_MULTI(3D_TEXT_LABEL_OUT, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(3D_TEXT_LABEL, OUT, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_AREA:
-		Y_STREAMER_MULTI(AREA_OUT, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(AREA, OUT, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	case STREAMER_TYPE_ACTOR:
-		Y_STREAMER_MULTI(ACTOR_OUT, id, Func:cb<ii>)
+		Y_STREAMER_MULTI(ACTOR, OUT, id, Func:cb<ii>)
 		{
-			@.cb(_:id, forplayerid);
+			, .cb(_:id, forplayerid);
 		}
 	}
 }
@@ -436,7 +442,7 @@ HOOK__ Streamer_OnPluginError(const error[])
 {
 	if (YSI_g_sStreamerError)
 	{
-		@.YSI_g_sStreamerError(error);
+		, .YSI_g_sStreamerError(error);
 	}
 }
 
@@ -457,12 +463,12 @@ HOOK__ Streamer_OnPluginError(const error[])
 
 stock cb_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 {
-	Y_STREAMER_DESTROY(OBJECT_MOVED, objectid);
-	Y_STREAMER_DESTROY(OBJECT_EDITED, objectid);
-	Y_STREAMER_DESTROY(OBJECT_SELECTED, objectid);
-	Y_STREAMER_DESTROY(OBJECT_SHOT, objectid);
-	Y_STREAMER_DESTROY(OBJECT_IN, objectid);
-	Y_STREAMER_DESTROY(OBJECT_OUT, objectid);
+	Y_STREAMER_DESTROY(OBJECT, MOVED, objectid);
+	Y_STREAMER_DESTROY(OBJECT, EDITED, objectid);
+	Y_STREAMER_DESTROY(OBJECT, SELECTED, objectid);
+	Y_STREAMER_DESTROY(OBJECT, SHOT, objectid);
+	Y_STREAMER_DESTROY(OBJECT, IN, objectid);
+	Y_STREAMER_DESTROY(OBJECT, OUT, objectid);
 	return DestroyDynamicObject(objectid);
 }
 
@@ -475,9 +481,9 @@ stock cb_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 
 stock cb_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 {
-	Y_STREAMER_DESTROY(PICKUP, pickupid);
-	Y_STREAMER_DESTROY(PICKUP_IN, pickupid);
-	Y_STREAMER_DESTROY(PICKUP_OUT, pickupid);
+	Y_STREAMER_DESTROY(PICKUP, PICKUP, pickupid);
+	Y_STREAMER_DESTROY(PICKUP, IN, pickupid);
+	Y_STREAMER_DESTROY(PICKUP, OUT, pickupid);
 	return DestroyDynamicPickup(pickupid);
 }
 
@@ -490,10 +496,10 @@ stock cb_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 
 stock cb_DestroyDynamicCP(STREAMER_TAG_CP:checkpointid)
 {
-	Y_STREAMER_DESTROY(CP_ENTER, checkpointid);
-	Y_STREAMER_DESTROY(CP_LEAVE, checkpointid);
-	Y_STREAMER_DESTROY(CP_IN, checkpointid);
-	Y_STREAMER_DESTROY(CP_OUT, checkpointid);
+	Y_STREAMER_DESTROY(CP, ENTER, checkpointid);
+	Y_STREAMER_DESTROY(CP, LEAVE, checkpointid);
+	Y_STREAMER_DESTROY(CP, IN, checkpointid);
+	Y_STREAMER_DESTROY(CP, OUT, checkpointid);
 	return DestroyDynamicCP(checkpointid);
 }
 
@@ -506,10 +512,10 @@ stock cb_DestroyDynamicCP(STREAMER_TAG_CP:checkpointid)
 
 stock cb_DestroyDynamicRaceCP(STREAMER_TAG_RACE_CP:checkpointid)
 {
-	Y_STREAMER_DESTROY(RACE_CP_ENTER, checkpointid);
-	Y_STREAMER_DESTROY(RACE_CP_LEAVE, checkpointid);
-	Y_STREAMER_DESTROY(RACE_CP_IN, checkpointid);
-	Y_STREAMER_DESTROY(RACE_CP_OUT, checkpointid);
+	Y_STREAMER_DESTROY(RACE_CP, ENTER, checkpointid);
+	Y_STREAMER_DESTROY(RACE_CP, LEAVE, checkpointid);
+	Y_STREAMER_DESTROY(RACE_CP, IN, checkpointid);
+	Y_STREAMER_DESTROY(RACE_CP, OUT, checkpointid);
 	return DestroyDynamicRaceCP(checkpointid);
 }
 
@@ -522,10 +528,10 @@ stock cb_DestroyDynamicRaceCP(STREAMER_TAG_RACE_CP:checkpointid)
 
 stock cb_DestroyDynamicArea(STREAMER_TAG_AREA:areaid)
 {
-	Y_STREAMER_DESTROY(AREA_ENTER, areaid);
-	Y_STREAMER_DESTROY(AREA_LEAVE, areaid);
-	Y_STREAMER_DESTROY(AREA_IN, areaid);
-	Y_STREAMER_DESTROY(AREA_OUT, areaid);
+	Y_STREAMER_DESTROY(AREA, ENTER, areaid);
+	Y_STREAMER_DESTROY(AREA, LEAVE, areaid);
+	Y_STREAMER_DESTROY(AREA, IN, areaid);
+	Y_STREAMER_DESTROY(AREA, OUT, areaid);
 	return DestroyDynamicArea(areaid);
 }
 
@@ -538,9 +544,9 @@ stock cb_DestroyDynamicArea(STREAMER_TAG_AREA:areaid)
 
 stock cb_DestroyDynamicActor(STREAMER_TAG_ACTOR:actorid)
 {
-	Y_STREAMER_DESTROY(ACTOR_DAMAGE, actorid);
-	Y_STREAMER_DESTROY(ACTOR_IN, actorid);
-	Y_STREAMER_DESTROY(ACTOR_OUT, actorid);
+	Y_STREAMER_DESTROY(ACTOR, DAMAGE, actorid);
+	Y_STREAMER_DESTROY(ACTOR, IN, actorid);
+	Y_STREAMER_DESTROY(ACTOR, OUT, actorid);
 	return DestroyDynamicActor(actorid);
 }
 
@@ -553,8 +559,8 @@ stock cb_DestroyDynamicActor(STREAMER_TAG_ACTOR:actorid)
 
 stock cb_DestroyDynamicMapIcon(STREAMER_TAG_MAP_ICON:iconid)
 {
-	Y_STREAMER_DESTROY(MAP_ICON_IN, iconid);
-	Y_STREAMER_DESTROY(MAP_ICON_OUT, iconid);
+	Y_STREAMER_DESTROY(MAP_ICON, IN, iconid);
+	Y_STREAMER_DESTROY(MAP_ICON, OUT, iconid);
 	return DestroyDynamicMapIcon(iconid);
 }
 
@@ -567,8 +573,8 @@ stock cb_DestroyDynamicMapIcon(STREAMER_TAG_MAP_ICON:iconid)
 
 stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 {
-	Y_STREAMER_DESTROY(3D_TEXT_LABEL_IN, id);
-	Y_STREAMER_DESTROY(3D_TEXT_LABEL_OUT, id);
+	Y_STREAMER_DESTROY(3D_TEXT_LABEL, IN, id);
+	Y_STREAMER_DESTROY(3D_TEXT_LABEL, OUT, id);
 	return DestroyDynamic3DTextLabel(id);
 }
 
@@ -602,17 +608,17 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicObject(CB_STREAMER_TAG_OBJECT:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_MOVED, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, OBJECT, MOVED, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_EDITED, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, OBJECT, EDITED, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_SELECTED, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, OBJECT, SELECTED, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_SHOT, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, OBJECT, SHOT, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_IN, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, OBJECT, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_OUT, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, OBJECT, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -626,11 +632,11 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicPickup(CB_STREAMER_TAG_PICKUP:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@PICKUP, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, PICKUP, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@PICKUP_IN, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, PICKUP, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@PICKUP_OUT, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, PICKUP, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -644,13 +650,13 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicCP(CB_STREAMER_TAG_CP:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@CP_ENTER, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, CP, ENTER, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@CP_LEAVE, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, CP, LEAVE, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@CP_IN, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, CP, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@CP_OUT, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, CP, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -664,13 +670,13 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicRaceCP(CB_STREAMER_TAG_RACE_CP:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_ENTER, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, RACE_CP, ENTER, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_LEAVE, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, RACE_CP, LEAVE, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_IN, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, RACE_CP, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_OUT, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, RACE_CP, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -684,13 +690,13 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicArea(CB_STREAMER_TAG_AREA:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@AREA_ENTER, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, AREA, ENTER, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@AREA_LEAVE, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, AREA, LEAVE, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@AREA_IN, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, AREA, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@AREA_OUT, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, AREA, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -704,9 +710,9 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicMapIcon(CB_STREAMER_TAG_MAP_ICON:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@MAP_ICON_IN, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, MAP_ICON, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@MAP_ICON_OUT, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, MAP_ICON, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -720,9 +726,9 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamic3DTextLabel(CB_STREAMER_TAG_3D_TEXT_LABEL:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@3D_TEXT_LABEL_IN, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, 3D_TEXT_LABEL, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@3D_TEXT_LABEL_OUT, i, cb))
+				if (Streamer_GetIntData(E_YSI_DYN, 3D_TEXT_LABEL, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -736,17 +742,17 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicObject(CB_STREAMER_TAG_OBJECT:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_MOVED, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, OBJECT, MOVED, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_EDITED, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, OBJECT, EDITED, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_SELECTED, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, OBJECT, SELECTED, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_SHOT, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, OBJECT, SHOT, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_IN, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, OBJECT, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@OBJECT_OUT, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, OBJECT, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -760,11 +766,11 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicPickup(CB_STREAMER_TAG_PICKUP:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@PICKUP, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, PICKUP, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@PICKUP_IN, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, PICKUP, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@PICKUP_OUT, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, PICKUP, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -778,13 +784,13 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicCP(CB_STREAMER_TAG_CP:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@CP_ENTER, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, CP, ENTER, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@CP_LEAVE, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, CP, LEAVE, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@CP_IN, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, CP, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@CP_OUT, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, CP, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -798,13 +804,13 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicRaceCP(CB_STREAMER_TAG_RACE_CP:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_ENTER, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, RACE_CP, ENTER, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_LEAVE, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, RACE_CP, LEAVE, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_IN, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, RACE_CP, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@RACE_CP_OUT, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, RACE_CP, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -818,13 +824,13 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicArea(CB_STREAMER_TAG_AREA:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@AREA_ENTER, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, AREA, ENTER, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@AREA_LEAVE, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, AREA, LEAVE, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@AREA_IN, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, AREA, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@AREA_OUT, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, AREA, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -838,9 +844,9 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamicMapIcon(CB_STREAMER_TAG_MAP_ICON:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@MAP_ICON_IN, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, MAP_ICON, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@MAP_ICON_OUT, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, MAP_ICON, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
@@ -854,9 +860,9 @@ stock cb_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 		{
 			if (IsValidDynamic3DTextLabel(CB_STREAMER_TAG_3D_TEXT_LABEL:i))
 			{
-				if (Sparse_Exchange(YSI_g_sDyn@3D_TEXT_LABEL_IN, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, 3D_TEXT_LABEL, IN, i, cb))
 					Indirect_Release(cb);
-				if (Sparse_Exchange(YSI_g_sDyn@3D_TEXT_LABEL_OUT, i, cb))
+				if (Sparse_Exchange(YSI_g_sDyn, 3D_TEXT_LABEL, OUT, i, cb))
 					Indirect_Release(cb);
 			}
 		}
