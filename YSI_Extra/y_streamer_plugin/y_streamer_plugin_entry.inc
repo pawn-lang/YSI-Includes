@@ -99,25 +99,35 @@ Optional plugins:
 #endif
 
 #if defined E_STREAMER_CUSTOM && 0
-
-	static stock bool:_Streamer_Exchange0(type, STREAMER_ALL_TAGS:id, data, &oldValue)
+	static stock bool:_Streamer_TryGet(type, id, data, &oldValue)
 	{
-		if (Streamer_HasIntData(type, id, data))
+		if (Streamer_HasIntData(type, CB_STREAMER_TAG_OBJECT:id, data))
 		{
-			oldValue = Streamer_GetIntData(type, id, data);
+			oldValue = Streamer_GetIntData(type, CB_STREAMER_TAG_OBJECT:id, data);
 			return true;
 		}
 		return false;
 	}
 
-	static stock bool:_Streamer_Exchange1(type, STREAMER_ALL_TAGS:id, data, &oldValue, newValue)
+	static stock bool:_Streamer_Exchange0(type, id, data, &oldValue)
 	{
-		new bool:ret = Streamer_HasIntData(type, id, data);
+		if (Streamer_HasIntData(type, CB_STREAMER_TAG_OBJECT:id, data))
+		{
+			oldValue = Streamer_GetIntData(type, CB_STREAMER_TAG_OBJECT:id, data);
+			Streamer_RemoveIntData(type, CB_STREAMER_TAG_OBJECT:id, data);
+			return true;
+		}
+		return false;
+	}
+
+	static stock bool:_Streamer_Exchange1(type, id, data, &oldValue, newValue)
+	{
+		new bool:ret = Streamer_HasIntData(type, CB_STREAMER_TAG_OBJECT:id, data);
 		if (ret)
 		{
-			oldValue = Streamer_GetIntData(type, id, data);
+			oldValue = Streamer_GetIntData(type, CB_STREAMER_TAG_OBJECT:id, data);
 		}
-		Streamer_SetIntData(type, id, data, newValue);
+		Streamer_SetIntData(type, CB_STREAMER_TAG_OBJECT:id, data, newValue);
 		return ret;
 	}
 
@@ -173,10 +183,10 @@ Optional plugins:
 			Indirect_Release(cb)
 
 	#define Y_STREAMER_MULTI(%0,%9\32;%3,%1,%2) \
-		for (new %2; __once && Sparse_TryGet(YSI_g_sDyn@%0@%3, _:(%1), _:(%2)); ) \
+		for (new %2; __once && _Streamer_TryGet(STREAMER_TYPE_%0, _:(%1), E_YSI_DYN@%0@%3, _:(%2)); )
 
 	#define Y_STREAMER_ONCE(%0,%9\32;%3,%1,%2) \
-		for (new %2; __once && Sparse_TryGet(YSI_g_sDyn@%0@%3, _:(%1), _:(%2)); Indirect_Release(_:(%2))) \
+		for (new %2; __once && _Streamer_Exchange0(STREAMER_TYPE_%0, _:(%1), E_YSI_DYN@%0@%3, _:(%2)); Indirect_Release(_:(%2)))
 #else
 	// Store the callback data in a per-entity sparse array.
 	#include "..\..\YSI_Data\y_sparsearray"
