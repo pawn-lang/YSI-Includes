@@ -654,3 +654,27 @@ stock cb_DestroyAllDynamicAreas()
 #endif
 #define DestroyAllDynamicAreas cb_DestroyAllDynamicAreas
 
+stock cb_DestroyAllDynamicMapIcons()
+{
+	return DestroyAllDynamicMapIcons();
+}
+
+#if defined _ALS_DestroyAllDynamicMapIcons
+	#undef DestroyAllDynamicMapIcons
+#else
+	#define _ALS_DestroyAllDynamicMapIcons
+#endif
+#define DestroyAllDynamicMapIcons cb_DestroyAllDynamicMapIcons
+
+stock cb_DestroyAllDyn3DTextLabels()
+{
+	return DestroyAllDynamic3DTextLabels();
+}
+
+#if defined _ALS_DestroyAllDyn3DTextLabels
+	#undef DestroyAllDynamic3DTextLabels
+#else
+	#define _ALS_DestroyAllDyn3DTextLabels
+#endif
+#define DestroyAllDynamic3DTextLabels cb_DestroyAllDynDTextLabels
+
