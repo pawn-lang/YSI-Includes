@@ -98,7 +98,7 @@ Optional plugins:
 	#define CB_STREAMER_TAG_ACTOR _
 #endif
 
-#if defined E_STREAMER_CUSTOM && 0
+#if defined E_STREAMER_CUSTOM
 	static stock bool:_Streamer_TryGet(type, id, data, &oldValue)
 	{
 		if (Streamer_HasIntData(type, CB_STREAMER_TAG_OBJECT:id, data))
@@ -131,14 +131,6 @@ Optional plugins:
 		return ret;
 	}
 
-	#define Y_STREAMER_DESTROY(%0,%9\32;%3,%1) \
-		if (Sparse_Exchange(YSI_g_sDyn@%0@%3, _:(%1), cb)) \
-			Indirect_Release(cb)
-
-	#define Y_STREAMER_EXCHANGE(%0,%9\32;%3,%1,%2) \
-		if (Sparse_Exchange(YSI_g_sDyn@%0@%3, _:(%1), cb, _:(%2))) \
-			Indirect_Release(cb)
-
 	#define Y_STREAMER_CB
 	// Store the callback data in `E_STREAMER_CUSTOM`
 	#define E_YSI_DYN@OBJECT@MOVED      E_STREAMER_CUSTOM(0x59534900) // YSI 00
@@ -169,8 +161,8 @@ Optional plugins:
 	#define E_YSI_DYN@MAP_ICON@OUT      E_STREAMER_CUSTOM(0x59534961) // YSI 61
 	#define E_YSI_DYN@3D_TEXT_LABEL@IN  E_STREAMER_CUSTOM(0x59534970) // YSI 70
 	#define E_YSI_DYN@3D_TEXT_LABEL@OUT E_STREAMER_CUSTOM(0x59534971) // YSI 71
-	#define E_YSI_DYN@ITEM@IN           E_STREAMER_CUSTOM(0x59534980) // YSI 80
-	#define E_YSI_DYN@ITEM@OUT          E_STREAMER_CUSTOM(0x59534981) // YSI 81
+	//#define E_YSI_DYN@ITEM@IN           E_STREAMER_CUSTOM(0x59534980) // YSI 80
+	//#define E_YSI_DYN@ITEM@OUT          E_STREAMER_CUSTOM(0x59534981) // YSI 81
 
 	#define E_STREAMER_YSI(%0,%1) E_YSI_DYN@%0@%1
 
@@ -221,10 +213,9 @@ Optional plugins:
 		SparseArray:YSI_g_sDyn@MAP_ICON@IN<>,
 		SparseArray:YSI_g_sDyn@MAP_ICON@OUT<>,
 		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL@IN<>,
-		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL@OUT<>,
-		SparseArray:YSI_g_sDyn@ITEM@IN<>,
-		SparseArray:YSI_g_sDyn@ITEM@OUT<>,
-		Func:YSI_g_sStreamerError<s>;
+		SparseArray:YSI_g_sDyn@3D_TEXT_LABEL@OUT<>;
+		//SparseArray:YSI_g_sDyn@ITEM@IN<>,
+		//SparseArray:YSI_g_sDyn@ITEM@OUT<>,
 
 	#define Y_STREAMER_DESTROY(%0,%9\32;%3,%1) \
 		if (Sparse_Exchange(YSI_g_sDyn@%0@%3, _:(%1), cb)) \
@@ -240,6 +231,9 @@ Optional plugins:
 	#define Y_STREAMER_ONCE(%0,%9\32;%3,%1,%2) \
 		for (new %2; __once && Sparse_Exchange(YSI_g_sDyn@%0@%3, _:(%1), _:(%2)); Indirect_Release(_:(%2)))
 #endif
+
+static stock
+	Func:YSI_g_sStreamerError<s>;
 
 stock cb_StopDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 {
@@ -397,10 +391,10 @@ HOOK__ OnDynamicActorStreamOut(CB_STREAMER_TAG_ACTOR:actorid, forplayerid)
 
 HOOK__ Streamer_OnItStreamIn(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
 {
-	Y_STREAMER_MULTI(ITEM, IN, id, Func:cb<iii>)
-	{
-		@.cb(type, _:id, forplayerid);
-	}
+	//Y_STREAMER_MULTI(ITEM, IN, id, Func:cb<iii>)
+	//{
+	//	@.cb(type, _:id, forplayerid);
+	//}
 	switch (type)
 	{
 	case STREAMER_TYPE_OBJECT:
@@ -448,10 +442,10 @@ HOOK__ Streamer_OnItStreamIn(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
 
 HOOK__ Streamer_OnItStreamOut(type, CB_STREAMER_ALL_TAGS:id, forplayerid)
 {
-	Y_STREAMER_MULTI(ITEM, OUT, id, Func:cb<iii>)
-	{
-		@.cb(type, _:id, forplayerid);
-	}
+	//Y_STREAMER_MULTI(ITEM, OUT, id, Func:cb<iii>)
+	//{
+	//	@.cb(type, _:id, forplayerid);
+	//}
 	switch (type)
 	{
 	case STREAMER_TYPE_OBJECT:
