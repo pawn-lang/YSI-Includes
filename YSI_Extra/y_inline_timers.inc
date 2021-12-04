@@ -107,14 +107,14 @@ public @y_inlineTimerCount(Func:func<>, time, count, due)
 	if (count == 0)
 	{
 		Indirect_Release(func);
-		P:7("y_inlineTimerCount ending: %d (%d)", func, ++YSI_gsCalls);
+		P:7("y_inlineTimerCount ending: %d (%d)", _:func, ++YSI_gsCalls);
 	}
 	else
 	{
 		// Run again, to track the count.  Reduce jitter by tracking due times.
 		new timer = YSI_SetTimerEx("@y_inlineTimerCount", time + (due - GetTickCount()), false, "iiii", _:func, time, count, due + time);
 		Indirect_SetMeta(func, timer);
-		P:7("y_inlineTimerCount calls: %d (%d), %d", func, ++YSI_gsCalls, timer);
+		P:7("y_inlineTimerCount calls: %d (%d), %d", _:func, ++YSI_gsCalls, timer);
 	}
 }
 
