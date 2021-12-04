@@ -90,12 +90,7 @@ Optional plugins:
 #include "..\y_hooks"
 
 #include "y_timers_impl"
-#if defined _YSI_PLUGINS_FIXES_2
-	//#error V3
-	#include "y_timers_v3"
-#else
-	#include "y_timers_v2"
-#endif
+#include "y_timers_macros"
 
 #if defined YSI_TESTS
 	#include "..\..\YSI_Coding\y_va"

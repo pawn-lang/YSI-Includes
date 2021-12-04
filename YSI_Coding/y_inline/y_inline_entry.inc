@@ -89,7 +89,7 @@ CHAIN_HOOK(Inline)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(Inline)
 
-#include "y_inline_impl2"
+#include "y_inline_impl"
 
 // Not implemented errors.
 #include "y_inline_extra"
