@@ -1022,7 +1022,10 @@ _Y_RACES_STATIC Race_DoEnterRaceCP(playerid)
  *  calls the relevant functions.
  *//*------------------------------------------------------------------------**/
 
-MASTER_HOOK__ OnPlayerStateChange(playerid, newstate, oldstate)
+#if !defined PLAYER_STATE
+	#define PLAYER_STATE: _:
+#endif
+MASTER_HOOK__ OnPlayerStateChange(playerid, PLAYER_STATE:newstate, PLAYER_STATE:oldstate)
 {
 	new
 		race = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE];

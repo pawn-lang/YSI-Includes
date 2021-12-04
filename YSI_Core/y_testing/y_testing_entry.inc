@@ -677,7 +677,10 @@ Testing_Next_retry:
 	}
 	
 	#if defined YSI_NO_DIALOG_ASK
-		public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
+		#if !defined KEY
+			#define KEY: _:
+		#endif
+		public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
 		{
 			if ((newkeys & KEY_NO) && !(oldkeys & KEY_NO))
 			{
