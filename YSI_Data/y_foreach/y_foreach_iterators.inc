@@ -304,7 +304,7 @@ iterfunc stock Filter(cur, val, const arr[], size = sizeof (arr))
 	return -1;
 }
 
-#define Iter_Func@None(%0,%1) _ITER<None>(%1,%0)
+#define Iter_Func@None(%0,%1) _ITER<Iter_None_Internal>(%1,%0)
 #define Iterator@None iterstart(-1)
 #define Iter_None_InternalA(%0,%1,%9) Iter_None_Internal(%1,F@s(%1)-1,%9)
 #define Iter_None_InternalB(%0,%2,%1,%9) Iter_None_Internal(%1,F@s(%1)-F@s(%0),%9)
@@ -324,7 +324,7 @@ stock Iter_None_Internal(const array[], size, value)
 	return -1;
 }
 
-#define Iter_Func@All(%0,%1) _ITER<All>(%1,%0)
+#define Iter_Func@All(%0,%1) _ITER<Iter_All_Internal>(%1,%0)
 #define Iterator@All iterstart(-1)
 #define Iter_All_InternalA(%0,%1,%9) Iter_All_Internal(%1,F@s(%1)-1,%9)
 #define Iter_All_InternalB(%0,%2,%1,%9) Iter_All_Internal(%1,F@s(%1)-F@s(%0),%9)
