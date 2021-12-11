@@ -423,9 +423,9 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_sNAMEMAX (31)
 	#define __COMPILER_CONST_TAGGED (0)
 	#define __COMPILER___EMIT (0)
-	
+
 	// It is sufficient simply for a variable to exist anywhere with the tag.
-	#define __COMPILER_TAG_DATA(%0,%1) static stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
+	#define __COMPILER_TAG_DATA(%0,%1) stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
 
 	// Fix `tagof (Float:)` and `tagof (Float:x)` on the old compiler, without
 	// breaking any default arguments in (I think) any case.  This was very
@@ -449,6 +449,16 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		stock bool:operator!=(_:a, __NO_TAGOF:b)
 		{
 			return a != _:b;
+		}
+
+		stock _:operator=(__NO_TAGOF:a)
+		{
+			return _:a;
+		}
+
+		stock __NO_TAGOF:operator=(_:a)
+		{
+			return __NO_TAGOF:a;
 		}
 	#endif
 
