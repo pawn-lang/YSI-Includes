@@ -228,7 +228,7 @@ P:D(Iter_InitAndClear(Iterator:iter[]<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Add(Iterator:iter<>, value));
-#define Iter_Add _ITER<Add>
+#define Iter_Add _ITER<Iter_Add_Internal>
 #define Iter_Add_InternalA(%0,%1,%9)    Iter_Add_InternalC(%0,_:%1,F@s(%1)-1,Iter_Tag(%1,%9))
 #define Iter_Add_InternalB(%0,%2,%1,%9) Iter_Add_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 
@@ -244,7 +244,7 @@ P:D(Iter_Add(Iterator:iter<>, value));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Remove(Iterator:iter<>, value));
-#define Iter_Remove _ITER<Remove>
+#define Iter_Remove _ITER<Iter_Remove_Internal>
 #define Iter_Remove_InternalA(%0,%1,%9)    Iter_Remove_InternalC(%0,_:%1,F@s(%1)-1,Iter_Tag(%1,%9))
 #define Iter_Remove_InternalB(%0,%2,%1,%9) Iter_Remove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 
@@ -260,7 +260,7 @@ P:D(Iter_Remove(Iterator:iter<>, value));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Free(Iterator:iter<>));
-#define Iter_Free _ITER<Free>
+#define Iter_Free _ITER<Iter_Free_Internal>
 #define Iter_Free_InternalA(%0,%1)    Iter_Free_Internal(_:%1,F@s(%1)-F@s(%0))
 #define Iter_Free_InternalB(%0,%2,%1) Iter_Free_Internal(_:%1,F@s(%1)-F@s(%0))
 
@@ -276,7 +276,7 @@ P:D(Iter_Free(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_FreeMulti(Iterator:iter<,>, ));
-#define Iter_FreeMulti _ITER<FreeMulti>
+#define Iter_FreeMulti _ITER<Iter_FreeMulti_Internal>
 #define Iter_FreeMulti_InternalA(%0,%1)    Iter_FreeMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0))
 #define Iter_FreeMulti_InternalB(%0,%2,%1) Iter_FreeMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0))
 
@@ -292,7 +292,7 @@ P:D(Iter_FreeMulti(Iterator:iter<,>, ));
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:Iter_Contains(Iterator:iter<>, value));
-#define Iter_Contains(%0) (bool:_ITER<Contains>(%0))
+#define Iter_Contains(%0) (bool:_ITER<Iter_Contains_Internal>(%0))
 #define Iter_Contains_InternalA(%0,%1,%9)     Iter_Contains_InternalC(_:%1,F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 #define Iter_Contains_InternalB(%0,%2,%1,%9)  Iter_Contains_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),-%2+F@s(%1)-1,Iter_Tag(%1,%9))
 #define Iter_Contains_InternalD(%0,%1,%2,-+%8,%3) Iter_Contains_InternalC(%1,%2,%3)
@@ -312,7 +312,7 @@ P:D(bool:Iter_Contains(Iterator:iter<>, value));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_GetMulti(Iterator:iter<,>, value));
-#define Iter_GetMulti _ITER<GetMulti>
+#define Iter_GetMulti _ITER<Iter_GetMulti_Internal>
 #define Iter_GetMulti_InternalA(%0,%1,%9)    Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 #define Iter_GetMulti_InternalB(%0,%2,%1,%9) Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 
@@ -331,7 +331,7 @@ P:D(Iter_GetMulti(Iterator:iter<,>, value));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_SafeRemove(Iterator:iter<>, value, &next));
-#define Iter_SafeRemove _ITER<SafeRemove>
+#define Iter_SafeRemove _ITER<Iter_SafeRemove_Internal>
 #define Iter_SafeRemove_InternalA(%0,%1,%9)    Iter_SafeRemove_InternalC(%0,_:%1,F@s(%1)-1,Iter_Tag(%1,%9))
 #define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 
@@ -346,7 +346,7 @@ P:D(Iter_SafeRemove(Iterator:iter<>, value, &next));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_RandomAdd(Iterator:iter<>));
-#define Iter_RandomAdd _ITER<RandomAdd>
+#define Iter_RandomAdd _ITER<Iter_RandomAdd_Internal>
 #define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,(_:%1),F@s(%1)-1)
 #define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,(_:%1),F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
 #define Iter_RandomAdd_InternalC(%0,(_:%1,%2),F@s(%9)%3) Iter_RandomAdd_InternalC(%0,(_:%1),F@s(%1)%3,%2)
@@ -363,7 +363,7 @@ P:D(Iter_RandomAdd(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_RandomRemove(Iterator:iter<>));
-#define Iter_RandomRemove _ITER<RandomRemove>
+#define Iter_RandomRemove _ITER<Iter_RandomRemove_Internal>
 #define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,(_:%1),F@s(%1)-1)
 #define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0[%2],(_:%1),F@s(%1)-F@s(%0),F@s(%1)-1-(%2))
 #define Iter_RandomRemove_InternalC(%0,(_:%1,%2),F@s(%9)%3) Iter_RandomRemove_InternalC(%0,(_:%1),F@s(%1)%3,%2)
@@ -380,7 +380,7 @@ P:D(Iter_RandomRemove(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_RandomFree(Iterator:iter<>));
-#define Iter_RandomFree _ITER<RandomFree>
+#define Iter_RandomFree _ITER<Iter_RandomFree_Internal>
 #define Iter_RandomFree_InternalA(%0,%1)    Iter_RandomFree_InternalC(%0,(_:%1),F@s(%1)-1)
 #define Iter_RandomFree_InternalB(%0,%2,%1) Iter_RandomFree_InternalD(%0,(_:%1),F@s(%1)-F@s(%0),F@s(%0))
 #define Iter_RandomFree_InternalC(%0,(_:%1,%2),F@s(%9)%3) Iter_RandomFree_InternalC(%0,(_:%1),F@s(%1)%3,%2)
@@ -397,7 +397,7 @@ P:D(Iter_RandomFree(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Random(Iterator:iter<>));
-#define Iter_Random _ITER<Random>
+#define Iter_Random _ITER<Iter_Random_Internal>
 #define Iter_Random_InternalA(%0,%1)    Iter_Random_Internal(%0,(_:%1),F@s(%1)-1)
 #define Iter_Random_InternalB(%0,%2,%1) Iter_Random_Internal(%0[%2],(_:%1),F@s(%1)-1-(%2))
 #define Iter_Random_Internal(%0,(_:%1,%2),F@s(%9)%3) Iter_Random_Internal(%0,(_:%1),F@s(%1)%3,%2)
@@ -413,7 +413,7 @@ P:D(Iter_Random(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Count(Iterator:iter<>));
-#define Iter_Count _ITER<Count>
+#define Iter_Count _ITER<Iter_Count_Internal>
 #define Iter_Count_InternalA(%0,%1)    (%0)
 #define Iter_Count_InternalB(%0,%2,%1) (%0[%2])
 
@@ -435,7 +435,7 @@ P:D(Iter_Count(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Clear(Iterator:iter<>));
-#define Iter_Clear _ITER<Clear>
+#define Iter_Clear _ITER<Iter_Clear_Internal>
 #define Iter_Clear_InternalA(%0,%1)           Iter_Clear_InternalC(_:%1,F@s(%1),F@s(%0),%0)
 #define Iter_Clear_InternalB(%0,%2,%1)        Iter_Clear_InternalD(_:%1,F@s(%1),F@s(%0),F@s(%1)-F@s(%0),%0,%2)
 #define Iter_Clear_InternalD(%0,%1,%2,%3,%4,) Iter_Clear_InternalC(%0,%1,%2,%4)
@@ -450,7 +450,7 @@ P:D(Iter_Clear(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_IsEmpty(Iterator:iter<>));
-#define Iter_IsEmpty _ITER<IsEmpty>
+#define Iter_IsEmpty _ITER<Iter_IsEmpty_Internal>
 #define Iter_IsEmpty_InternalA(%0,%1)    ((%0) == 0)
 #define Iter_IsEmpty_InternalB(%0,%2,%1) ((%0[%2]) == 0)
 
@@ -466,7 +466,7 @@ P:D(Iter_IsEmpty(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Alloc(Iterator:iter<>));
-#define Iter_Alloc _ITER<Alloc>
+#define Iter_Alloc _ITER<Iter_Alloc_Internal>
 #define Iter_Alloc_InternalA(%0,%1)    Iter_Alloc_InternalC(%0,_:%1,F@s(%1)-1)
 #define Iter_Alloc_InternalB(%0,%2,%1) Iter_Alloc_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0))
 
@@ -496,7 +496,7 @@ P:D(Iter_Alloc(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_FastClear(Iterator:iter<>));
-#define Iter_FastClear _ITER<FastClear>
+#define Iter_FastClear _ITER<Iter_FastClear_Internal>
 #define Iter_FastClear_InternalA(%0,%1);    {static YSII_Xg@Clear[F@s(%1)]={0,1,...};%1=YSII_Xg@Clear;%0=0;}
 #define Iter_FastClear_InternalB(%0,%2,%1); {static YSII_Xg@Clear[F@s(%1)]={0,1,...},YSII_Yg@Clear[F@s(%0)]={0,0,...};%1=YSII_Xg@Clear;%0=YSII_Yg@Clear;}
 
@@ -508,7 +508,7 @@ P:D(Iter_FastClear(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Begin(Iterator:iter<>));
-#define Iter_Begin _ITER<Begin>
+#define Iter_Begin _ITER<Iter_Begin_Internal>
 #define Iter_Begin_InternalA(%0,%1)    (F@s(%1)-F@s(%0))
 #define Iter_Begin_InternalB(%0,%2,%1) (F@s(%1)-1-(%2))
 
@@ -520,7 +520,7 @@ P:D(Iter_Begin(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_End(Iterator:iter<>));
-#define Iter_End _ITER<End>
+#define Iter_End _ITER<Iter_End_Internal>
 #define Iter_End_InternalA(%0,%1)    (F@s(%1)-F@s(%0))
 #define Iter_End_InternalB(%0,%2,%1) (F@s(%1)-1-(%2))
 
@@ -532,7 +532,7 @@ P:D(Iter_End(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_First(Iterator:iter<>));
-#define Iter_First _ITER<First>
+#define Iter_First _ITER<Iter_First_Internal>
 #define Iter_First_InternalA(%0,%1)    (_:%1[(F@s(%1)-F@s(%0))])
 #define Iter_First_InternalB(%0,%2,%1) (_:%1[(F@s(%1)-1-(%2))])
 
@@ -545,7 +545,7 @@ P:D(Iter_First(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Last(Iterator:iter<>));
-#define Iter_Last _ITER<Last>
+#define Iter_Last _ITER<Iter_Last_Internal>
 #define Iter_Last_InternalA(%0,%1)    ((_:%1[Iter_End_InternalA(%0,%1)-1])-1)
 #define Iter_Last_InternalB(%0,%2,%1) (Iter_Prev_InternalB(%0,%2,%1,Iter_End_InternalB(%0,%2,%1)))
 
@@ -558,7 +558,7 @@ P:D(Iter_Last(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Next(Iterator:iter<>, cur));
-#define Iter_Next _ITER<Next>
+#define Iter_Next _ITER<Iter_Next_Internal>
 #define Iter_Next_InternalA(%0,%1,%9)    (_:%1[Iter_Tag(%1,%9)])
 #define Iter_Next_InternalB(%0,%2,%1,%9) (_:%1[Iter_Tag(%1,%9)])
 
@@ -571,7 +571,7 @@ P:D(Iter_Next(Iterator:iter<>, cur));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Prev(Iterator:iter<>, cur));
-#define Iter_Prev _ITER<Prev>
+#define Iter_Prev _ITER<Iter_Prev_Internal>
 #define Iter_Prev_InternalA(%0,%1,%9)    (((_:%1[(Iter_Tag(%1,%9)-1)%F@s(%1)])-1)%F@s(%1))
 #define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0),F@s(%1),Iter_Tag(%1,%9))
 
@@ -613,7 +613,7 @@ P:D(Iter_TrueMulti(Iterator:iter<,>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_TrueSize(Iterator:iter<>));
-#define Iter_TrueSize _ITER<TrueSize>
+#define Iter_TrueSize _ITER<Iter_TrueSize_Internal>
 #define Iter_TrueSize_InternalA(%0,%1)    (F@s(%1))
 #define Iter_TrueSize_InternalB(%0,%2,%1) (F@s(%1))
 
@@ -625,7 +625,7 @@ P:D(Iter_TrueSize(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Starts(Iterator:iter<>));
-#define Iter_Starts _ITER<Starts>
+#define Iter_Starts _ITER<Iter_Starts_Internal>
 #define Iter_Starts_InternalA(%0,%1)    (F@s(%0))
 #define Iter_Starts_InternalB(%0,%2,%1) (F@s(%0))
 
@@ -637,7 +637,7 @@ P:D(Iter_Starts(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Size(Iterator:iter<>));
-#define Iter_Size _ITER<Size>
+#define Iter_Size _ITER<Iter_Size_Internal>
 #define Iter_Size_InternalA(%0,%1)    (F@s(%1)-F@s(%0))
 #define Iter_Size_InternalB(%0,%2,%1) (F@s(%1)-F@s(%0))
 
@@ -656,7 +656,7 @@ P:D(Iter_Size(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
-#define Iter_Index _ITER<Index>
+#define Iter_Index _ITER<Iter_Index_Internal>
 #define Iter_Index_InternalA(%0,%1,%9)    Iter_Index_Internal(%0,%1,F@s(%1)-1,F@s(%1)-1,Iter_Tag(%1,%9))
 #define Iter_Index_InternalB(%0,%2,%1,%9) Iter_Index_Internal(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 
@@ -828,7 +828,7 @@ P:D(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define F@D:(%0*(%1:%2))):_:(%9)) (%0*%1:(%2))):_:(%9))
 
 // y_iterate parser.  Takes an array input, and splits up all the components.
-#define _ITER<%5>(%1) (_:F@i:F@j:$Iter_%5_Internal(%1))
+#define _ITER<%5>(%1) (_:F@i:F@j:$%5(%1))
 
 // Separate "<>"s.  Parameters to the resulting macro/function:
 //  
