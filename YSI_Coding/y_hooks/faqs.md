@@ -18,6 +18,12 @@ Since there are only two types of function hook, this is much simpler to answer:
 
 2. Original function (i.e. the native or function).
 
+## How many hooks can you have?
+
+The easy answer is "1000 per function", but it usually isn't quite that many.  The reason is complicated and not important if you are nowhere near that limit.
+
+Every time you re-include **y_hooks** (which transitively re-includes **y_unique**) you get a new ID generated.  This can be done 1000 times, but that doesn't always translate to 1000 instances of every callback.  If you include it once and `hook OnPlayerConnect`, you've still "lost" an ID so you can now only `hook OnPlayerDisconnect` 999 times, even though you've not hooked it once yet.  So the best you can do is include **y_hooks** 1000 times and hook every callback each time.  This will give you the maximum possible number of hooked functions.  The worst you can do is include it 1000 times and hook a completely different function every time.
+
 # Errors
 
 ## `YSI Fatal Error: Could not write function name in "Hooks_MakePublicPointer".`
