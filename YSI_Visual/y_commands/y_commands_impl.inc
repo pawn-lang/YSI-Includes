@@ -243,11 +243,11 @@ P:D(bool:_Command_IsAlt(idx));
  *//*------------------------------------------------------------------------**/
 
 P:D(_Command_GetReal(&ptr,&idx,name[]));
-#define _Command_GetReal(%0,%1,%2);                             \
+#define _Command_GetReal(%0,%1,%2)                              \
 	if((%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER])&cellmin)   \
 			%1=(%0)&~cellmin,									\
 			%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER],		\
-			strunpack(%2,YSI_g_sCommands[(%1)][E_COMMAND_NAME]);
+			strunpack(%2,YSI_g_sCommands[(%1)][E_COMMAND_NAME])
 
 /*-------------------------------------------------------------------------*//**
  * <param name="error">Which error to show.</param>
