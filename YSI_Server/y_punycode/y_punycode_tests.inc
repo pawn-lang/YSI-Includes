@@ -115,6 +115,9 @@ TEST__ y_punycode_2()
 	Puny_EncodeHash(dst, "b‹cher", hash);
 	P:1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kva");
+	Puny_EncodeHash(dst, "b‹cher", hash, 32, '@');
+	P:1("TEST__ y_punycode_2: dst = %s", dst);
+	ASSERT_SAME(dst, "bcher@kva");
 }
 
 TEST__ y_punycode_hash()

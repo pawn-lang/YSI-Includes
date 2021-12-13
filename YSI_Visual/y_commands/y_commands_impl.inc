@@ -486,7 +486,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 			return sRet;
 	}
 	// Get the hashed version of the decoded string, skipping the possible  "/".
-	sPos = Puny_EncodeHash(sCmd[4], c[sRet], sHash, .delimiter = '@') + sRet;
+	sPos = Puny_EncodeHash(sCmd[4], c[sRet], sHash, sizeof (sCmd) - 4, '@') + sRet;
 	while (c[sPos] == ' ') ++sPos; // Better/slower: ('\0' < c[sPos] <= ' ').
 	// Find the command in the array.
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
