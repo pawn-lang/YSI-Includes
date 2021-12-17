@@ -109,7 +109,7 @@ stock bool:YSI_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data)
 		return bool:Streamer_HasIntData(type, id, data);
 	}
 	// https://github.com/samp-incognito/samp-streamer-plugin/pull/380
-	return Bad_Streamer_HasIntData(type, id, data);
+	return BAD_Streamer_HasIntData(type, id, data);
 }
 
 #if defined _ALS_Streamer_HasIntData
@@ -130,7 +130,7 @@ stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
 		return bool:Streamer_RemoveIntData(type, id, data);
 	}
 	// https://github.com/samp-incognito/samp-streamer-plugin/pull/380
-	return Bad_Streamer_RemoveIntData(type, id, data);
+	return BAD_Streamer_RemoveIntData(type, id, data);
 }
 
 #if defined _ALS_Streamer_RemoveIntData
