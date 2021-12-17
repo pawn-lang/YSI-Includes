@@ -98,6 +98,58 @@ Optional plugins:
 	#define CB_STREAMER_TAG_OBJECT DynamicObject
 #endif
 
+stock bool:YSI_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data)
+{
+	// This isn't a compile-time constant, so we can't use `#if`.
+	if (Streamer_IncludeFileVersion > 0x295)
+	{
+		return bool:Streamer_HasIntData(type, id, data);
+	}
+	// Push a fake extra parameter.
+	#emit PUSH.C               0
+	#emit PUSH.S               data
+	#emit PUSH.S               id
+	#emit PUSH.S               type
+	#emit PUSH.C               16
+	#emit SYSREQ.C             Streamer_HasIntData
+	#emit STACK                20
+	#emit RETN
+	__COMPILER_NAKED;
+}
+
+#if defined _ALS_Streamer_HasIntData
+	#undef Streamer_HasIntData
+#else
+	#define _ALS_Streamer_HasIntData
+#endif
+#define Streamer_HasIntData YSI_Streamer_HasIntData
+
+stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
+{
+	// This isn't a compile-time constant, so we can't use `#if`.
+	if (Streamer_IncludeFileVersion > 0x295)
+	{
+		return bool:Streamer_RemoveIntData(type, id, data);
+	}
+	// Push a fake extra parameter.
+	#emit PUSH.C               0
+	#emit PUSH.S               data
+	#emit PUSH.S               id
+	#emit PUSH.S               type
+	#emit PUSH.C               16
+	#emit SYSREQ.C             Streamer_RemoveIntData
+	#emit STACK                20
+	#emit RETN
+	__COMPILER_NAKED;
+}
+
+#if defined _ALS_Streamer_RemoveIntData
+	#undef Streamer_RemoveIntData
+#else
+	#define _ALS_Streamer_RemoveIntData
+#endif
+#define Streamer_RemoveIntData YSI_Streamer_RemoveIntData
+
 #if defined E_STREAMER_CUSTOM
 	#define E_YSI_DYNAMIC_OBJECT_MOVED E_STREAMER_CUSTOM(0x59534921) // YSI!
 
@@ -106,10 +158,10 @@ Optional plugins:
 	public OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
 	{
 		new ret = 0;
-		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
+		if (YSI_Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
 		{
 			new Func:cb<i> = Func:Streamer_GetIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED)<i>;
-			Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
+			YSI_Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
 			ret = @.cb();
 			Indirect_Release(cb);
 		}
@@ -133,10 +185,10 @@ Optional plugins:
 	// Hook stoping and destroying objects to remove the callbacks.
 	stock Inline_StopDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 	{
-		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
+		if (YSI_Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
 		{
 			new Func:cb<i> = Func:Streamer_GetIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED)<i>;
-			Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
+			YSI_Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
 			Indirect_Release(cb);
 		}
 		return StopDynamicObject(objectid);
@@ -152,10 +204,10 @@ Optional plugins:
 	// Hook stoping and destroying objects to remove the callbacks.
 	stock Inline_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 	{
-		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
+		if (YSI_Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
 		{
 			new Func:cb<i> = Func:Streamer_GetIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED)<i>;
-			Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
+			YSI_Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
 			Indirect_Release(cb);
 		}
 		return DestroyDynamicObject(objectid);
@@ -170,7 +222,7 @@ Optional plugins:
 
 	stock MoveDynamicObjectCallback(CB_STREAMER_TAG_OBJECT:objectid, Func:onMoved<i>, Float:x, Float:y, Float:z, Float:speed, Float:rx = -1000.0, Float:ry = -1000.0, Float:rz = -1000.0)
 	{
-		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
+		if (YSI_Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
 		{
 			new Func:cb<i> = Func:Streamer_GetIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED)<i>;
 			Indirect_Release(cb);
