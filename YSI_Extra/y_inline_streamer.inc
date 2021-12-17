@@ -95,7 +95,7 @@ Optional plugins:
 #if defined STREAMER_ENABLE_TAGS
 	#define CB_STREAMER_TAG_OBJECT DynamicObject
 #else
-	#define CB_STREAMER_TAG_OBJECT DynamicObject
+	#define CB_STREAMER_TAG_OBJECT _
 #endif
 
 // Push a fake extra parameter.
