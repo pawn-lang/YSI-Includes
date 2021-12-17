@@ -98,6 +98,9 @@ Optional plugins:
 	#define CB_STREAMER_TAG_OBJECT DynamicObject
 #endif
 
+// Push a fake extra parameter.
+native bool:BAD_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_HasIntData;
+
 stock bool:YSI_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data)
 {
 	// This isn't a compile-time constant, so we can't use `#if`.
@@ -105,16 +108,8 @@ stock bool:YSI_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data)
 	{
 		return bool:Streamer_HasIntData(type, id, data);
 	}
-	// Push a fake extra parameter.
-	#emit PUSH.C               0
-	#emit PUSH.S               data
-	#emit PUSH.S               id
-	#emit PUSH.S               type
-	#emit PUSH.C               16
-	#emit SYSREQ.C             Streamer_HasIntData
-	#emit STACK                20
-	#emit RETN
-	__COMPILER_NAKED;
+	// https://github.com/samp-incognito/samp-streamer-plugin/pull/380
+	return Bad_Streamer_HasIntData(type, id, data);
 }
 
 #if defined _ALS_Streamer_HasIntData
@@ -124,6 +119,9 @@ stock bool:YSI_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data)
 #endif
 #define Streamer_HasIntData YSI_Streamer_HasIntData
 
+// Push a fake extra parameter.
+native bool:BAD_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_RemoveIntData;
+
 stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
 {
 	// This isn't a compile-time constant, so we can't use `#if`.
@@ -131,16 +129,8 @@ stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
 	{
 		return bool:Streamer_RemoveIntData(type, id, data);
 	}
-	// Push a fake extra parameter.
-	#emit PUSH.C               0
-	#emit PUSH.S               data
-	#emit PUSH.S               id
-	#emit PUSH.S               type
-	#emit PUSH.C               16
-	#emit SYSREQ.C             Streamer_RemoveIntData
-	#emit STACK                20
-	#emit RETN
-	__COMPILER_NAKED;
+	// https://github.com/samp-incognito/samp-streamer-plugin/pull/380
+	return Bad_Streamer_RemoveIntData(type, id, data);
 }
 
 #if defined _ALS_Streamer_RemoveIntData
