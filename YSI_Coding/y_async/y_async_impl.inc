@@ -6,10 +6,6 @@
 #define USING__%0\32; (@Ip:@Iq:@Io:@Iu:@Ia:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
 #define USING_ASYNC__ (@Ik:@Il:Inline_UA_(),)
 
-#if YSI_KEYWORD(using)
-	#define using USING__
-#endif
-
 // new Async:__async_context;
 
 // Parameter type for passing callbacks about.
@@ -32,7 +28,7 @@
 //     operator+(a,return_tag:b) YSI_gLastRet = _:b;
 //     _yA@%0(Func:unused<>) return unused,return_tag:YSI_gLastRet;
 //
-#define await%0(%1) (__AWAIT(__async_context)+(%0(%1)),_yA@%0())
+#define AWAIT__%0(%1) (__AWAIT(__async_context)+(%0(%1)),_yA@%0())
 
 // If we use `using await` for legacy callbacks, replace `,_yA@%0()` with `*@Ic()`, so
 // that it is the first thing called when we return from the legacy function and can defer that way
@@ -87,6 +83,30 @@
 #define __AWAIT_VAR%9(%2) new %2;
 #define __AWAIT_FOR%9(%2) for (new %2;__once;)
 
+#define ASYNC__%0(%1) %0(%1)Async_B_(_:_Ay@%0(Async_A_()%1));stock _yA@%0()return _:_YSI_g_AsyncReturn;static stock _Ay@%0(__async_context,%1)
+
+#if YSI_KEYWORD(async)
+	#define async ASYNC__
+#endif
+
+#if YSI_KEYWORD(using)
+	#define using USING__
+#endif
+
+#if YSI_KEYWORD(await)
+	#define using AWAIT__
+#endif
+
+stock _Async_A()
+{
+	// Create a new context, or get the current context.
+}
+
+stock _Async_B(returnValue)
+{
+	_YSI_g_AsyncReturn = returnValue;
+}
+
 await SomeFunction();
 
 if (await SomeFunction()->(a, b, string:c[]))
@@ -120,9 +140,24 @@ await SomeFunction(using async);
 
 await SomeFunction(first, second, using async, third, fourth) -> (a, b, string:c[], Float:d[50], len);
 
-#define ASYNC__%0(%1) %0(%1)Async_B_(_:_Ay@%0(Async_A_()%1));stock _yA@%0()return tagged;static stock _Ay@%0(__async_context,%1)
+async MyFunction1()
+{
+}
 
-#if YSI_KEYWORD(async)
-	#define async ASYNC__
-#endif
+async MyFunction2(a, b)
+{
+}
+
+async MyFunction3(c[], len, string:x[])
+{
+}
+
+// Create a new context in the current function and specify the top level return value.
+new Async:__async_context = Async_Context(0); // With immediate return value.
+
+#define ASYNC_DETACH(%0) new Async:__async_context = Async_Detach(%0)
+
+//ASYNC_CONTEXT__(1);
+
+ASYNC_DETACH(0);
 
