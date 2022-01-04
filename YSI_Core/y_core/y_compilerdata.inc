@@ -249,6 +249,68 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #endif
 #define DEFAULT__ __COMPILER_DEFAULT
 
+#if !__COMPILER_PRAGMA
+	#define __pragma("%0"%1) __pragma_%0(%1)
+
+	#define __pragma_naked() return __COMPILER_DEFAULT
+	#define __pragma_unused(,%0) H@(%0)
+
+	// Unimplemented errors.
+	forward __pragma_option();
+	#define __pragma_option(,%0) __pragma_option(%0)
+	
+	forward __pragma_align();
+	#define __pragma_align(,%0) __pragma_align(%0)
+	
+	forward __pragma_amxlimit(limit);
+	#define __pragma_amxlimit(,%0) __pragma_amxlimit(%0)
+	
+	forward __pragma_amxram(ram);
+	#define __pragma_amxram(,%0) __pragma_amxram(%0)
+	
+	forward __pragma_codepage(const string:codepage[]);
+	#define __pragma_codepage(,%0) __pragma_codepage(#%0)
+	
+	forward __pragma_compress(bool:compress);
+	#define __pragma_compress(,%0) __pragma_compress(!!%0)
+	
+	forward __pragma_ctrlchar(character);
+	#define __pragma_ctrlchar(,%0) __pragma_ctrlchar(%0)
+	
+	forward __pragma_deprecated(const string:symbol[], ...);
+	#define __pragma_deprecated(,%0) __pragma_deprecated(_:__pragma_deprecated_:#%0)
+	#define __pragma_deprecated_:#%0, #%0,_:__pragma_deprecated_:
+	
+	forward __pragma_dynamic(ram);
+	#define __pragma_dynamic(,%0) __pragma_dynamic(%0)
+	
+	forward __pragma_library(const string:library[]);
+	#define __pragma_library(,%0) __pragma_library(#%0)
+	
+	forward __pragma_overlay(size);
+	#define __pragma_overlay(,%0) __pragma_overlay(%0)
+	
+	forward __pragma_pack(bool:pack);
+	#define __pragma_pack(,%0) __pragma_pack(!!%0)
+	
+	forward __pragma_rational(const string:tagname[], bits = -1);
+	#define __pragma_rational(,%0) __pragma_rational(_:__pragma_rational_:#%0)
+	#define __pragma_rational_:#%0(%1)) #%0,%1)
+	
+	forward __pragma_semicolon(bool:use);
+	#define __pragma_semicolon(,%0) __pragma_semicolon(!!%0)
+	
+	forward __pragma_tabsize(tabsize);
+	#define __pragma_tabsize(,%0) __pragma_tabsize(4)
+	
+	forward __pragma_pack(pack);
+	#define __pragma_pack(,%0) __pragma_pack(!!%0)
+#endif
+
+// Blank function that does nothing except returns.
+#define __COMPILER_UNUSED(%0) __pragma("unused", %0)
+#define __COMPILER_NAKED() __pragma("naked")
+
 #if __COMPILER_MODIFIED
 	#if defined YSI_TESTS
 		#pragma option -E-
@@ -257,11 +319,6 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		#include "y_compilerdata_warning"
 	#endif
 
-	#if __COMPILER_PRAGMA
-		#define __COMPILER_NAKED() __pragma("naked")
-	#else
-		#define __COMPILER_NAKED() return __COMPILER_DEFAULT
-	#endif
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
@@ -410,7 +467,6 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	// Disable the warning for `const &var`.
 	#define __COMPILER_CONST_REF (1)
 #else
-	#define __COMPILER_NAKED() return __COMPILER_DEFAULT
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
