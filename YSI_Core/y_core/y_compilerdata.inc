@@ -252,58 +252,83 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #if !__COMPILER_PRAGMA
 	#define __pragma("%0"%1) __pragma_%0(%1)
 
+	// The only two `__pragma`s we can fake.
 	#define __pragma_naked() return __COMPILER_DEFAULT
 	#define __pragma_unused(,%0) H@(%0)
 
 	// Unimplemented errors.
 	forward __pragma_option();
 	#define __pragma_option(,%0) __pragma_option(%0)
-	
+
 	forward __pragma_align();
 	#define __pragma_align(,%0) __pragma_align(%0)
-	
+
 	forward __pragma_amxlimit(limit);
 	#define __pragma_amxlimit(,%0) __pragma_amxlimit(%0)
-	
+
 	forward __pragma_amxram(ram);
 	#define __pragma_amxram(,%0) __pragma_amxram(%0)
-	
+
 	forward __pragma_codepage(const string:codepage[]);
 	#define __pragma_codepage(,%0) __pragma_codepage(#%0)
-	
+
 	forward __pragma_compress(bool:compress);
 	#define __pragma_compress(,%0) __pragma_compress(!!%0)
-	
+
 	forward __pragma_ctrlchar(character);
 	#define __pragma_ctrlchar(,%0) __pragma_ctrlchar(%0)
-	
+
 	forward __pragma_deprecated(const string:symbol[]);
 	#define __pragma_deprecated(,%0) __pragma_deprecated(#%0)
-	
+
 	forward __pragma_dynamic(ram);
 	#define __pragma_dynamic(,%0) __pragma_dynamic(%0)
-	
+
 	forward __pragma_library(const string:library[]);
 	#define __pragma_library(,%0) __pragma_library(#%0)
-	
+
 	forward __pragma_overlay(size);
 	#define __pragma_overlay(,%0) __pragma_overlay(%0)
-	
+
 	forward __pragma_pack(bool:pack);
 	#define __pragma_pack(,%0) __pragma_pack(!!%0)
-	
+
 	forward __pragma_rational(const string:tagname[], bits = -1);
 	#define __pragma_rational(,%0) __pragma_rational(_:__pragma_rational_:#%0)
 	#define __pragma_rational_:#%0(%1)) #%0,%1)
-	
+
 	forward __pragma_semicolon(bool:use);
 	#define __pragma_semicolon(,%0) __pragma_semicolon(!!%0)
-	
+
 	forward __pragma_tabsize(tabsize);
 	#define __pragma_tabsize(,%0) __pragma_tabsize(4)
-	
+
 	forward __pragma_pack(pack);
 	#define __pragma_pack(,%0) __pragma_pack(!!%0)
+
+	// New compiler pragmas.
+	enum __PRAGMA_WARNING
+	{
+		__PRAGMA_WARNING_enable,
+		__PRAGMA_WARNING_disable,
+		__PRAGMA_WARNING_push,
+		__PRAGMA_WARNING_pop,
+	}
+
+	forward __pragma_warning(__PRAGMA_WARNING:type, warning = -1);
+	#define __pragma_warning(,%0) __pragma_warning(__PRAGMA_WARNING__%0)
+	#define __PRAGMA_WARNING__%0\32; __PRAGMA_WARNING__
+
+	// Ensure that only two of these are followed by arguments.
+	#define __PRAGMA_WARNING__disable __PRAGMA_WARNING_disable,
+	#define __PRAGMA_WARNING__enable __PRAGMA_WARNING_enable,
+	#define __PRAGMA_WARNING__push __PRAGMA_WARNING_push
+	#define __PRAGMA_WARNING__pop __PRAGMA_WARNING_pop
+	#define __PRAGMA_WARNING_disable,%0, __PRAGMA_WARNING_disable,
+	#define __PRAGMA_WARNING_enable,%0, __PRAGMA_WARNING_enable,
+
+	forward __pragma_compat(bool:compatibility);
+	#define __pragma_compat(,%0) __pragma_compat(!!%0)
 #endif
 
 // Blank function that does nothing except returns.
