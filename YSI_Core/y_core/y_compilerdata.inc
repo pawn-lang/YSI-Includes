@@ -277,9 +277,8 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	forward __pragma_ctrlchar(character);
 	#define __pragma_ctrlchar(,%0) __pragma_ctrlchar(%0)
 	
-	forward __pragma_deprecated(const string:symbol[], ...);
-	#define __pragma_deprecated(,%0) __pragma_deprecated(_:__pragma_deprecated_:#%0)
-	#define __pragma_deprecated_:#%0, #%0,_:__pragma_deprecated_:
+	forward __pragma_deprecated(const string:symbol[]);
+	#define __pragma_deprecated(,%0) __pragma_deprecated(#%0)
 	
 	forward __pragma_dynamic(ram);
 	#define __pragma_dynamic(,%0) __pragma_dynamic(%0)
