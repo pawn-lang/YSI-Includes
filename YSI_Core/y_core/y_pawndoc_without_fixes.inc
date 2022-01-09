@@ -225,7 +225,7 @@ _FIXES_FUNC_PAWNDOC(CLOSE_PAWNDOC());
 		separately defined.
 		<p />
 		Note that the actual hiding itself is done by an XML comment started
-		earlier and ended here.
+		here and ended later.
 	</remarks>
 
 	<!--
