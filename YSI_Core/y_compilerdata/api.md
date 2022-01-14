@@ -127,6 +127,17 @@ __COMPILER___EMIT
 
 // Default value for any tag type.
 __COMPILER_DEFAULT
+
+// The value of `#pragma pack` so `0` (default) or `1` (default pack strings).
+__COMPILER_STRING_PACKING
+
+// The suffix to always pack strings, regardless of compiler settings.
+// Example: `new string[] = __COMPILER_PACK"This is always packed.";
+__COMPILER_PACK
+
+// The suffix to always unpack strings, regardless of compiler settings.
+// Example: `new string[] = __COMPILER_UKPACK"This is always unpacked.";
+__COMPILER_UKPACK
 ```
 
 ## Default Values

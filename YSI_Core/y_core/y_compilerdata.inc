@@ -156,6 +156,19 @@ static stock __CompilerSecondPass() {}
 
 #define __COMPILER_STATIC_ENUM enum
 
+// Determine if strings are packed by default or not.
+static stock const __COMPILER_PACKED_TEST[] = "YSI";
+
+#if sizeof (__COMPILER_PACKED_TEST) == 1
+	#define __COMPILER_STRING_PACKING (1)
+	#define __COMPILER_PACK
+	#define __COMPILER_UKPACK !
+#else
+	#define __COMPILER_STRING_PACKING (0)
+	#define __COMPILER_PACK !
+	#define __COMPILER_UKPACK
+#endif
+
 #if (__Pawn & 0x0F) >= 0x0A
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
@@ -302,9 +315,6 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
 	forward __pragma_tabsize(tabsize);
 	#define __pragma_tabsize(,%0) __pragma_tabsize(4)
-
-	forward __pragma_pack(pack);
-	#define __pragma_pack(,%0) __pragma_pack(!!%0)
 
 	// New compiler pragmas.
 	enum __PRAGMA_WARNING
