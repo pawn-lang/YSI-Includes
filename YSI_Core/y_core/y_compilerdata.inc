@@ -71,9 +71,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-// The macros `P:C` and `P:#` don't work without this.
-#pragma semicolon 1
-
 // Die tabsize 0!
 #pragma tabsize 4
 #define tabsize%00%0\10;%0 _DUMMY_do_not_use_tabsize_0
@@ -185,6 +182,7 @@ static stock const __COMPILER_PACKED_TEST[] = "YSI";
 	#if __PawnBuild >= 4
 		#undef __COMPILER_OPTION
 		#define __COMPILER_OPTION (1)
+		#pragma option -(+
 	#endif
 	#if __PawnBuild >= 8
 		#undef __COMPILER_BUG_317
@@ -215,12 +213,13 @@ const __COMPILER_DETERMINE_SEMICOLON = 0;
 #if __COMPILER_DETERMINE_SEMICOLON == 1
 	// `-;-`
 	#define __COMPILER_SEMICOLON (0)
-	#if __COMPILER_OPTION
+
+	// The macros `P:C` and `P:#` don't work without this.
+	#pragma semicolon 1
+
+	#if __COMPILER_MODIFIED
 		#define Y_COMPILERDATA_WARNING 2
 		#include "y_compilerdata_warning"
-		#pragma option -(+
-	#else
-		#error `-;+` is disabled.  Enable it as YSI requires it.
 	#endif
 #else
 	#define __COMPILER_SEMICOLON (1)

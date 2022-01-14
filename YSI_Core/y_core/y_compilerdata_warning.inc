@@ -22,7 +22,7 @@
 #endif
 
 #if Y_COMPILERDATA_WARNING == 2
-	#warning `-;+` was disabled.  Enabling as YSI requires it.
+	#warning Semicolons were disabled.  Enabling them YSI requires them.
 #endif
 
 #undef Y_COMPILERDATA_WARNING
