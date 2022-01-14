@@ -21,5 +21,9 @@
 	#warning Could not determine `sNAMEMAX`, falling back on 31.
 #endif
 
+#if Y_COMPILERDATA_WARNING == 2
+	#warning `-;+` was disabled.  Enabling as YSI requires it.
+#endif
+
 #undef Y_COMPILERDATA_WARNING
 

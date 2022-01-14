@@ -169,6 +169,9 @@ static stock const __COMPILER_PACKED_TEST[] = "YSI";
 	#define __COMPILER_UKPACK
 #endif
 
+// Has `#pragma option`
+#define __COMPILER_OPTION (0)
+
 #if (__Pawn & 0x0F) >= 0x0A
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
@@ -180,7 +183,8 @@ static stock const __COMPILER_PACKED_TEST[] = "YSI";
 		#define __COMPILER_STATIC_ENUM static enum
 	#endif
 	#if __PawnBuild >= 4
-		#pragma option -(+
+		#undef __COMPILER_OPTION
+		#define __COMPILER_OPTION (1)
 	#endif
 	#if __PawnBuild >= 8
 		#undef __COMPILER_BUG_317
@@ -201,6 +205,25 @@ static stock const __COMPILER_PACKED_TEST[] = "YSI";
 #else
 	#define __COMPILER_MODIFIED (0)
 	#define __COMPILER_OFFICIAL (1)
+#endif
+
+const __COMPILER_DETERMINE_SEMICOLON = 0;
+#define __COMPILER_DETERMINE_SEMICOLON%0; 1%0
+
+// The macro looks for `;`, which isn't here.  So if it matches, we must have
+// bypassed that requirement.
+#if __COMPILER_DETERMINE_SEMICOLON == 1
+	// `-;-`
+	#define __COMPILER_SEMICOLON (0)
+	#if __COMPILER_OPTION
+		#define Y_COMPILERDATA_WARNING 2
+		#include "y_compilerdata_warning"
+		#pragma option -(+
+	#else
+		#error `-;+` is disabled.  Enable it as YSI requires it.
+	#endif
+#else
+	#define __COMPILER_SEMICOLON (1)
 #endif
 
 #if __COMPILER_MODIFIED

@@ -125,6 +125,9 @@ __COMPILER_PRAGMA
 // Does this compiler have native `__emit`?
 __COMPILER___EMIT
 
+// Does this compiler have native `#pragma option`?
+__COMPILER_OPTION
+
 // Default value for any tag type.
 __COMPILER_DEFAULT
 
@@ -138,6 +141,9 @@ __COMPILER_PACK
 // The suffix to always unpack strings, regardless of compiler settings.
 // Example: `new string[] = __COMPILER_UKPACK"This is always unpacked.";
 __COMPILER_UKPACK
+
+// Are semi-colons required?  `1 = -;+`, `0 = -;-` (`0` also gives an error).
+__COMPILER_SEMICOLON
 ```
 
 ## Default Values
