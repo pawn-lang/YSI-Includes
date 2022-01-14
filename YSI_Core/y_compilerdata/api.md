@@ -122,6 +122,9 @@ __COMPILER_NAMEOF
 // Does this compiler have native `__pragma`?
 __COMPILER_PRAGMA
 
+// Does this compiler have native `__emit`?
+__COMPILER___EMIT
+
 // Default value for any tag type.
 __COMPILER_DEFAULT
 ```
@@ -148,3 +151,16 @@ new PlayerText3D:var = default();
 ```
 
 This also works for returns and macros, so you can set a sane initial value without even knowing the tag. 
+
+## Pragma
+
+The default compiler has `#pragma`, the updated compiler adds `__pragma` for inline/macro pragma uses.  This include polyfills a couple of uses of it:
+
+```pawn
+// Disable the warning for unused local variables only.
+__pragma("unused", var);
+
+// Same as `__COMPILER_NAKED`.
+__pragma("naked");
+```
+
