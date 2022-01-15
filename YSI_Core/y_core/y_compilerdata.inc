@@ -108,18 +108,21 @@ Optional plugins:
 	#error Somehow got a fourth compiler pass.  Please tell Y_Less how.
 #elseif defined __CompilerSecondPass
 	#define __COMPILER_PASS (2)
+	#define __COMPILER_GENERATING (1)
 	#define __COMPILER_DOCUMENTING (0)
 	#define __COMPILER_1ST_PASS (0)
 	#define __COMPILER_2ND_PASS (0)
 	#define __COMPILER_3RD_PASS (1)
 #elseif defined __CompilerFirstPass
 	#define __COMPILER_PASS (1)
+	#define __COMPILER_GENERATING (1)
 	#define __COMPILER_DOCUMENTING (0)
 	#define __COMPILER_1ST_PASS (0)
 	#define __COMPILER_2ND_PASS (1)
 	#define __COMPILER_3RD_PASS (0)
 #else
 	#define __COMPILER_PASS (0)
+	#define __COMPILER_GENERATING (0)
 	#define __COMPILER_DOCUMENTING (1)
 	#define __COMPILER_1ST_PASS (1)
 	#define __COMPILER_2ND_PASS (0)

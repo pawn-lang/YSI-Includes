@@ -50,14 +50,16 @@ __COMPILER_SECOND_PASS
 __COMPILER_THIRD_PASS
 ```
 
-As a general rule, just use `#if __COMPILER_1ST_PASS` and `#if !__COMPILER_1ST_PASS`, because passes 2 and 3 should be treated basically the same.  I debated how to expose them, and if `2ND` should be true in the third pass as well.
-
-YSI also has the `P:D` macro, which only outputs code in the first pass (used for generating `#define` documentation with `-r`.  Thus:
+As a general rule, just use `#if __COMPILER_1ST_PASS` and `#if !__COMPILER_1ST_PASS`, because passes 2 and 3 should be treated basically the same.  I debated how to expose them, and if `2ND` should be true in the third pass as well.  YSI also has the `P:D` macro, which only outputs code in the first pass (used for generating `#define` documentation with `-r`.  Thus there are two more macros which can be used to determine the *use* of the current pass, rather than the absolute number:
 
 ```pawn
-// 1 for first pass, 0 for second.  Used to indicate
-// if the documented code is generated or not this pass.
+// 1 for first pass, 0 for second and third.  Used to indicate if the documented
+// code is generated or not this pass.
 __COMPILER_DOCUMENTING
+
+// 0 for first pass, 1 for second and third.  Used to indicate if the compiled
+// output is generated in this pass.
+__COMPILER_GENERATING
 ```
 
 ## Compiler Information
