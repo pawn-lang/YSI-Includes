@@ -642,8 +642,9 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		#emit RETN                // Return (now within the parent context).
 		return 0;
 	}
-	
 #endif
+
+#define __COMPILER_ARRAY_RETURN __COMPILER_STRING_RETURN	
 
 //#if !__COMPILER_CONST_TAGGED
 //	// Fix for bugged const assignments.

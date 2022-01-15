@@ -4,6 +4,30 @@ This file is, strictly speaking, an internal YSI library, which is why it is fou
 2. Determining information about the compiler.
 3. Attempting to fix certain compiler bugs.  These are often fixed in updated compilers, but YSI builds on the old and new compilers, so sadly sometimes still needs work-arounds.
 
+## String Returns
+
+The original compiler has a code generation bug returning strings (actually arrays) from functions with variable arguments, i.e. this won't work correctly:
+
+```pawn
+Func(a, b, ...)
+{
+	new ret[32] = "hello";
+	return ret;
+}
+```
+
+The generated code assumes there are only the fixed parameters (two in this example), which is bad as array returns are done via a hidden last parameter.  This include provides a fix, which calls a function to do the correct operation on the original compiler, and is just `return` on the fixed compiler:
+
+```pawn
+Func(a, b, ...)
+{
+	new ret[32] = "hello";
+	__COMPILER_STRING_RETURN(ret);
+}
+```
+
+This could be extended to fix nested returns.  It is also aliased as the more correct `__COMPILER_ARRAY_RETURN`.
+
 ## Compiler Options
 
 The library makes the following changes to the default build options:
