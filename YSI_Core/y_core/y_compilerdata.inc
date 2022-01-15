@@ -404,7 +404,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
-	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
+	#define __COMPILER_STRING_RETURN(%0) return (__compiler_one_string_parameter:(%0))
 	#define __COMPILER_BUGGED_STRING_RETURN (0)
 	#define __COMPILER_BUGGED_SYSREQ (0)
 	#define __COMPILER_WARNING_SUPPRESSION (1)
@@ -552,7 +552,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #else
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
-	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
+	#define __COMPILER_STRING_RETURN(%0) return (__CompilerStringReturn(%0), __compiler_one_string_parameter:(%0))
 	#define __CompilerStringReturn("%0"%1);return%8(%8:(%3)) return $
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
 	#define __COMPILER_BUGGED_SYSREQ (1)
