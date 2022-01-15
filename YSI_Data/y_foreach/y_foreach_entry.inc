@@ -172,7 +172,7 @@ Optional plugins:
 			#define _Y_ITERATE_FOUND
 			#endinput
 		#endif
-	#elseif defined foreach && __COMPILER_FIRST_PASS
+	#elseif defined foreach && __COMPILER_1ST_PASS
 		// I made this a warning on compilers that supported them, but that's a
 		// silly idea!
 		#error The old <foreach> include is no longer compatible with YSI.

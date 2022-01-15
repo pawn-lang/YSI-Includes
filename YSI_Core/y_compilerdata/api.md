@@ -29,7 +29,7 @@ All these options are buried in various `#if` statements to only apply where nes
 
 ## Compiler Pass
 
-The PAWN compiler makes two passes over the code.  The first pass builds a list of all the functions that exist, and the second pass builds the code with this information.  This is why code using `#if defined Hooked_OnGameModeInit` works, even when that function is later in the code.  We can use this future knowledge to work out which pass the compiler is in and define symbols based on that:
+The PAWN compiler makes two or three passes over the code.  The first pass builds a list of all the functions that exist, and the second pass builds the code with this information - this is why code using `#if defined Hooked_OnGameModeInit` works, even when that function is later in the code.  The third pass is an emergency pass to correctly generate tag returns code without `forward` and gives a warning.  We can use this future knowledge to work out which pass the compiler is in and define symbols based on that:
 
 ```pawn
 // 0 for first pass, 1 for second.
@@ -38,13 +38,19 @@ __COMPILER_PASS
 // 1 for first pass, 0 for second.
 __COMPILER_1ST_PASS
 
-// 0 for first pass, 1 for second.
+// 0 for first pass, 0 for second, 1 for third.
 __COMPILER_2ND_PASS
+
+// 0 for first pass, 1 for second.
+__COMPILER_3RD_PASS
 
 // Same as above.
 __COMPILER_FIRST_PASS
 __COMPILER_SECOND_PASS
+__COMPILER_THIRD_PASS
 ```
+
+As a general rule, just use `#if __COMPILER_1ST_PASS` and `#if !__COMPILER_1ST_PASS`, because passes 2 and 3 should be treated basically the same.  I debated how to expose them, and if `2ND` should be true in the third pass as well.
 
 YSI also has the `P:D` macro, which only outputs code in the first pass (used for generating `#define` documentation with `-r`.  Thus:
 

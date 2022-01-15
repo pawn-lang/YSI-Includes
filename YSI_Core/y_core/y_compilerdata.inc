@@ -104,18 +104,50 @@ Optional plugins:
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
-#if defined __CompilerSecondPass
+#if defined __CompilerThirdPass
+	#error Somehow got a fourth compiler pass.  Please tell Y_Less how.
+#elseif defined __CompilerSecondPass
+	#define __COMPILER_PASS (2)
+	#define __COMPILER_DOCUMENTING (0)
+	#define __COMPILER_1ST_PASS (0)
+	#define __COMPILER_2ND_PASS (0)
+	#define __COMPILER_3RD_PASS (1)
+#elseif defined __CompilerFirstPass
 	#define __COMPILER_PASS (1)
 	#define __COMPILER_DOCUMENTING (0)
+	#define __COMPILER_1ST_PASS (0)
+	#define __COMPILER_2ND_PASS (1)
+	#define __COMPILER_3RD_PASS (0)
 #else
 	#define __COMPILER_PASS (0)
 	#define __COMPILER_DOCUMENTING (1)
+	#define __COMPILER_1ST_PASS (1)
+	#define __COMPILER_2ND_PASS (0)
+	#define __COMPILER_3RD_PASS (0)
 #endif
 
-#define __COMPILER_1ST_PASS (__COMPILER_PASS == (0))
-#define __COMPILER_2ND_PASS (__COMPILER_PASS == (1))
 #define __COMPILER_FIRST_PASS  __COMPILER_1ST_PASS
 #define __COMPILER_SECOND_PASS __COMPILER_2ND_PASS
+#define __COMPILER_THIRD_PASS __COMPILER_3RD_PASS
+
+/*-------------------------------------------------------------------------*//*+
+ * <remarks>
+ *  Exist purely to be detected before they are used.  If that check succeedes,
+ *  the compiler is on its second or third pass and already has a list of all
+ *  functions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+#if __COMPILER_FIRST_PASS
+	static stock __CompilerFirstPass() {}
+#endif
+
+#if __COMPILER_SECOND_PASS
+	static stock __CompilerSecondPass() {}
+#endif
+
+#if __COMPILER_THIRD_PASS
+	static stock __CompilerThirdPass() {}
+#endif
 
 // This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
 // or `__COMPILER_WINDOWS` depending on where the code is being built.  It does
@@ -131,14 +163,6 @@ Optional plugins:
 #define __COMPILER_WINDOWS (1)
 #define __COMPILER_OS __COMPILER_UNIX
 #tryinclude "Y_dEtErMiNe_Os"
-
-/*-------------------------------------------------------------------------*//*+
- * <remarks>
- *  Exists purely to be detected before it is used.  If that check succeedes,
- *  the compiler is on its second pass and already has a list of all functions.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-static stock __CompilerSecondPass() {}
 
 #if __Pawn >= 0x0400
 	#error YSI does not yet support PAWN 4.0
