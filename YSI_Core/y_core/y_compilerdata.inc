@@ -205,12 +205,12 @@ static stock const __COMPILER_PACKED_TEST[] = "YSI";
 	#define __COMPILER_OFFICIAL (1)
 #endif
 
-const __COMPILER_DETERMINE_SEMICOLON = 0;
-#define __COMPILER_DETERMINE_SEMICOLON%0; 1%0
+const __COMPILER_DETERMINE_SEMICOLON = 1;
+#define __COMPILER_DETERMINE_SEMICOLON%0; 0%0
 
 // The macro looks for `;`, which isn't here.  So if it matches, we must have
 // bypassed that requirement.
-#if __COMPILER_DETERMINE_SEMICOLON == 1
+#if __COMPILER_DETERMINE_SEMICOLON == 0
 	// `-;-`
 	#define __COMPILER_SEMICOLON (0)
 
