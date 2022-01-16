@@ -199,6 +199,9 @@ static stock const __COMPILER_PACKED_TEST[] = "YSI";
 #if (__Pawn & 0x0F) >= 0x0A
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
+
+	#define __COMPILER_USER_WARNING (1)
+
 	#if !defined __PawnBuild
 		#define __PawnBuild 0
 	#endif
@@ -228,6 +231,8 @@ static stock const __COMPILER_PACKED_TEST[] = "YSI";
 		//#define __COMPILER_PRAGMA (1)
 	#endif
 #else
+	#define __COMPILER_USER_WARNING (0)
+
 	#define __COMPILER_MODIFIED (0)
 	#define __COMPILER_OFFICIAL (1)
 #endif
@@ -244,7 +249,7 @@ const __COMPILER_DETERMINE_SEMICOLON = 1;
 	// The macros `P:C` and `P:#` don't work without this.
 	#pragma semicolon 1
 
-	#if __COMPILER_MODIFIED
+	#if __COMPILER_USER_WARNING
 		#define Y_COMPILERDATA_WARNING 2
 		#include "y_compilerdata_warning"
 	#endif
@@ -408,7 +413,6 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_BUGGED_STRING_RETURN (0)
 	#define __COMPILER_BUGGED_SYSREQ (0)
 	#define __COMPILER_WARNING_SUPPRESSION (1)
-	#define __COMPILER_USER_WARNING (1)
 	#define __COMPILER___EMIT (1)
 
 	stock YSI_gAMXAddress_;
@@ -557,7 +561,6 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
 	#define __COMPILER_BUGGED_SYSREQ (1)
 	#define __COMPILER_WARNING_SUPPRESSION (0)
-	#define __COMPILER_USER_WARNING (0)
 	#define __COMPILER_CONST_REF (0)
 	#define __COMPILER_sNAMEMAX (31)
 	#define __COMPILER_CONST_TAGGED (0)
