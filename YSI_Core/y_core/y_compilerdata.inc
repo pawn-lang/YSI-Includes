@@ -717,6 +717,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
 #define FUNCTION_LENGTH (__COMPILER_sNAMEMAX + 1)
 
+// Core tags.
 #if defined _INC_indirection
 	stock File:operator=(__CompilerDefault:a) return a, File:(0);
 	stock Float:operator=(__CompilerDefault:a) return a, Float:(0);
@@ -724,9 +725,12 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	__COMPILER_TAG_DATA(Float, 0);
 	__COMPILER_TAG_DATA(File, 0);
 #endif
-
 __COMPILER_TAG_DATA(_, 0);
 __COMPILER_TAG_DATA(bool, 0);
+__COMPILER_TAG_DATA(filemode, 0);
+__COMPILER_TAG_DATA(seek_whence, 0);
+
+// SA:MP tags.
 __COMPILER_TAG_DATA(DB, 0);
 __COMPILER_TAG_DATA(DBResult, 0);
 __COMPILER_TAG_DATA(Text, 65535);
@@ -734,9 +738,8 @@ __COMPILER_TAG_DATA(PlayerText, 65535);
 __COMPILER_TAG_DATA(Menu, 255);
 __COMPILER_TAG_DATA(Text3D, 65535);
 __COMPILER_TAG_DATA(PlayerText3D, 65535);
-__COMPILER_TAG_DATA(filemode, 0);
-__COMPILER_TAG_DATA(seek_whence, 0);
 
+// YSI tags.
 __COMPILER_TAG_DATA(Language, -1);
 __COMPILER_TAG_DATA(Bit, 0);
 __COMPILER_TAG_DATA(Style, 0);
@@ -746,6 +749,7 @@ __COMPILER_TAG_DATA(Group, -1);
 __COMPILER_TAG_DATA(Timer, 0);
 __COMPILER_TAG_DATA(INI, -1);
 
+// PawnPlus tags.
 __COMPILER_TAG_DATA(ConstString, 0);
 __COMPILER_TAG_DATA(String, 0);
 __COMPILER_TAG_DATA(error_level, 0);
@@ -776,6 +780,7 @@ __COMPILER_TAG_DATA(AmxVariantBuffer, 0);
 __COMPILER_TAG_DATA(Guard, 0);
 // I'm not doing the generic tags as well...
 
+// Streamer tags.
 __COMPILER_TAG_DATA(DynamicObject, 0);
 __COMPILER_TAG_DATA(DynamicPickup, 0);
 __COMPILER_TAG_DATA(DynamicCP, 0);
@@ -785,6 +790,7 @@ __COMPILER_TAG_DATA(DynamicText3D, 0);
 __COMPILER_TAG_DATA(DynamicArea, 0);
 __COMPILER_TAG_DATA(DynamicActor, 0);
 
+// Pawn.Regex tags.
 __COMPILER_TAG_DATA(E_REGEX_GRAMMAR, 0);
 __COMPILER_TAG_DATA(E_REGEX_FLAG, 1);
 __COMPILER_TAG_DATA(E_MATCH_FLAG, 1);
@@ -793,15 +799,18 @@ __COMPILER_TAG_DATA(regex, 0);
 __COMPILER_TAG_DATA(RegexMatch, 0);
 __COMPILER_TAG_DATA(match_results, 0);
 
+// Pawn.Raknet tags.
 __COMPILER_TAG_DATA(PR_HandlerType, 0);
 __COMPILER_TAG_DATA(PR_ValueType, 0);
 __COMPILER_TAG_DATA(PR_PacketPriority, 0);
 __COMPILER_TAG_DATA(PR_PacketReliability, 6);
 __COMPILER_TAG_DATA(BitStream, 0);
 
+// amx_assembly tags.
 __COMPILER_TAG_DATA(Opcode, 0);
 __COMPILER_TAG_DATA(AsmError, 0);
 __COMPILER_TAG_DATA(DisasmResult, 0);
 
+// md-sort tags.
 __COMPILER_TAG_DATA(E_SORT_ORDER, 0);
 
