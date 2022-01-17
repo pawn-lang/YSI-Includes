@@ -68,12 +68,15 @@ The current list of detected codepages are:
 * `1255` – Windows Hebrew.
 * `1256` – Windows Arabic.
 * `1257` – Windows Baltic.
+* `1258` – Windows Vietnamese*.
 * `932` - Japanese Shift-JIS.
 * `936` - Simplified Chinese GBK.
 * `949` - Korean Unified Hangul Code.
 * `950` - Traditional Chinese Big5.
 * `855` - Cyrillic.
 * `872` - Cyrillic with Euro symbol.
+
+\* This codepage probably won't compile due to its DBCS characters, but you can try.
 
 Detecting a compiler codepage option (either `-c` or `#pragma codepage`) can be done by just testing that `__COMPILER_CODEPAGE` is non-zero.
 
