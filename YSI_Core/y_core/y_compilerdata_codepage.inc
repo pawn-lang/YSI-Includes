@@ -12,7 +12,22 @@
 // character in the file.
 //
 
-// DBCS tests.
+/*
+
+    88888888ba,                              88           88
+    88      `"8b                             88           88
+    88        `8b                            88           88
+    88         88   ,adPPYba,   88       88  88,dPPYba,   88   ,adPPYba,
+    88         88  a8"     "8a  88       88  88P'    "8a  88  a8P_____88
+    88         8P  8b       d8  88       88  88       d8  88  8PP"""""""
+    88      .a8P   "8a,   ,a8"  "8a,   ,a88  88b,   ,a8"  88  "8b,   ,aa
+    88888888Y"'     `"YbbdP"'    `"YbbdP'Y8  8Y"Ybbd8"'   88   `"Ybbd8"'
+
+
+*/
+
+// Detect DBCS codepages.  There's a good chance that your code just won't
+// compile if you're using one of these, but at least it can be detected.
 
 // Use an unpacked raw string, to maybe get translations.
 static stock const __COMPILER_CODEPAGE_TEST_6[] = __COMPILER_UKPACK\"AÒ";
@@ -35,6 +50,21 @@ static stock const __COMPILER_CODEPAGE_TEST_6[] = __COMPILER_UKPACK\"AÒ";
 	#define __COMPILER_CODEPAGE (-1)
 	#endinput
 #endif
+
+/*
+
+     ad88888ba   88                            88
+    d8"     "8b  ""                            88
+    Y8,                                        88
+    `Y8aaaaa,    88  8b,dPPYba,    ,adPPYb,d8  88   ,adPPYba,
+      `"""""8b,  88  88P'   `"8a  a8"    `Y88  88  a8P_____88
+            `8b  88  88       88  8b       88  88  8PP"""""""
+    Y8a     a8P  88  88       88  "8a,   ,d88  88  "8b,   ,aa
+     "Y88888P"   88  88       88   `"YbbdP"Y8  88   `"Ybbd8"'
+                                   aa,    ,88
+                                    "Y8bbdP"
+
+*/
 
 const __COMPILER_CODEPAGE_TEST_1 = 'ÿ'; // '\255'
 
@@ -118,6 +148,8 @@ const __COMPILER_CODEPAGE_TEST_1 = 'ÿ'; // '\255'
 	#define __COMPILER_CODEPAGE (-1)
 	#endinput
 #endif
+
+// Byte `\xFF;` (`\255`) is not translated.  Try some others.
 
 const __COMPILER_CODEPAGE_TEST_3 = '€'; // '\128'
 
