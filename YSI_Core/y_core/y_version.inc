@@ -199,6 +199,19 @@ stock Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = 
 	Script_GetCompilerString(version, os, vlen, olen);
 }
 
+stock Script_GetCompilerCodepage(version[], vlen = sizeof (version))
+{
+	#if __COMPILER_CODEPAGE == 0
+		version[0] = '\0',
+		strcat(version, "<none>", vlen);
+	#elseif __COMPILER_CODEPAGE == -1
+		version[0] = '\0',
+		strcat(version, "<unknown>", vlen);
+	#else
+		valstr(version, __COMPILER_CODEPAGE, false);
+	#endif
+}
+
 /*
 
 Version examples:
@@ -443,6 +456,9 @@ stock bool:Server_CrashDetectExists()
 		Server_PrintIntroPart(version),
 		Script_GetCompilerString(version, os),
 		format(version, sizeof (version), "Compiler:    %s - %s", version, os),
+		Server_PrintIntroPart(version),
+		Script_GetCompilerCodepage(version),
+		format(version, sizeof (version), "Codepage:    %s", version),
 		Server_PrintIntroPart(version),
 		Server_PrintIntroPart("YSI:         " YSI_VERSION),
 		format(version, sizeof (version), "Started:     %d", Server_GetStartTime()),
