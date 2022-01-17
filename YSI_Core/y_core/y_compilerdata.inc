@@ -167,6 +167,8 @@ Optional plugins:
 #define __COMPILER_OS __COMPILER_UNIX
 #tryinclude "Y_dEtErMiNe_Os"
 
+#include "y_compilerdata_codepage"
+
 #if __Pawn >= 0x0400
 	#error YSI does not yet support PAWN 4.0
 #elseif __Pawn < 0x0300

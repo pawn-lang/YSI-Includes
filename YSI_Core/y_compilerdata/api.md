@@ -51,6 +51,33 @@ The library makes the following changes to the default build options:
 
 All these options are buried in various `#if` statements to only apply where nescessary, and when the options even exist.
 
+## Codepage
+
+This code can detect the compiler being run with certain codepage settings.  However, this list is far from exhaustive and there may be some collisions between the supported codepages and untested codepages.  Most codepages can be detected, but each one needs unique code and so if you want a codepage adding please ask.  The value is stored in `__COMPILER_CODEPAGE`.
+
+The current list of detected codepages are:
+
+* `0` - None.  No option set.
+* `-1` - Unknown.  A codepage was selected, but that one isn't detected yet.
+* `874` – Windows Thai.
+* `1250` – Windows Central Europe.
+* `1251` – Windows Cyrillic.
+* `1252` – Windows Western.
+* `1253` – Windows Greek.
+* `1254` – Windows Turkish.
+* `1255` – Windows Hebrew.
+* `1256` – Windows Arabic.
+* `1257` – Windows Baltic.
+* `932` - Japanese Shift-JIS.
+* `936` - Simplified Chinese GBK.
+* `949` - Korean Unified Hangul Code.
+* `950` - Traditional Chinese Big5.
+* `855` - Cyrillic.
+* `872` - Cyrillic with Euro symbol.
+
+Detecting a compiler codepage option (either `-c` or `#pragma codepage`) can be done by just testing that `__COMPILER_CODEPAGE` is non-zero.
+
+
 ## Compiler Pass
 
 The PAWN compiler makes two or three passes over the code.  The first pass builds a list of all the functions that exist, and the second pass builds the code with this information - this is why code using `#if defined Hooked_OnGameModeInit` works, even when that function is later in the code.  The third pass is an emergency pass to correctly generate tag returns code without `forward` and gives a warning.  We can use this future knowledge to work out which pass the compiler is in and define symbols based on that:
@@ -176,6 +203,9 @@ __COMPILER_UKPACK
 
 // Are semi-colons required?  `1 = -;+`, `0 = -;-` (`0` also gives an error).
 __COMPILER_SEMICOLON
+
+// One of a limited number of codepages that the compiler might be using.
+__COMPILER_CODEPAGE
 ```
 
 ## Default Values
