@@ -141,7 +141,7 @@ The main use of y_compilerdata is to provide information about what the current 
 // Always 0.
 __COMPILER_UNIX
 
-// Always 1
+// Always 1.
 __COMPILER_WINDOWS
 
 // 0 or 1 depending on which OS is being used to COMPILE the code
