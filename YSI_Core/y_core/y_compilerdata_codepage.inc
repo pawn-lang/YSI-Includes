@@ -113,6 +113,103 @@ const __COMPILER_CODEPAGE_TEST_1 = 'ÿ'; // '\255'
 	#endinput
 #endif
 
+#if __COMPILER_CODEPAGE_TEST_1 == 160
+	const __COMPILER_CODEPAGE_TEST_2 = '˜'; // '\152'
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 9488
+		#define __COMPILER_CODEPAGE (708)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 1569
+		#define __COMPILER_CODEPAGE (720)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 945
+		#define __COMPILER_CODEPAGE (737)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 1118
+		#define __COMPILER_CODEPAGE (855)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 204
+		#define __COMPILER_CODEPAGE (860)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 253
+		#define __COMPILER_CODEPAGE (861)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 1512
+		#define __COMPILER_CODEPAGE (862)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 164
+		#define __COMPILER_CODEPAGE (863)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 187
+		#define __COMPILER_CODEPAGE (864)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 1064
+		#define __COMPILER_CODEPAGE (866)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_2 == 911
+		#define __COMPILER_CODEPAGE (869)
+		#endinput
+	#endif
+
+	const __COMPILER_CODEPAGE_TEST_4 = 'Ð'; // '\208'
+
+	#if __COMPILER_CODEPAGE_TEST_4 == 261
+		#define __COMPILER_CODEPAGE (775)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_4 == 273
+		#define __COMPILER_CODEPAGE (852)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_4 == 240
+		#define __COMPILER_CODEPAGE (850)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_4 == 9576
+		#define __COMPILER_CODEPAGE (865)
+		#endinput
+	#endif
+
+	const __COMPILER_CODEPAGE_TEST_5 = 'Ï'; // '\207'
+
+	#if __COMPILER_CODEPAGE_TEST_5 == 8364
+		#define __COMPILER_CODEPAGE (872)
+		#endinput
+	#endif
+
+	#if __COMPILER_CODEPAGE_TEST_5 == 164
+		#define __COMPILER_CODEPAGE (855)
+		#endinput
+	#endif
+
+	// Unknown.
+	#define __COMPILER_CODEPAGE (-1)
+	#endinput
+#endif
+
 #if __COMPILER_CODEPAGE_TEST_1 == 729
 	const __COMPILER_CODEPAGE_TEST_2 = 'þ'; // '\254'
 
@@ -123,24 +220,6 @@ const __COMPILER_CODEPAGE_TEST_1 = 'ÿ'; // '\255'
 
 	#if __COMPILER_CODEPAGE_TEST_2 == 382
 		#define __COMPILER_CODEPAGE (1257)
-		#endinput
-	#endif
-
-	// Unknown.
-	#define __COMPILER_CODEPAGE (-1)
-	#endinput
-#endif
-
-#if __COMPILER_CODEPAGE_TEST_1 == 160
-	const __COMPILER_CODEPAGE_TEST_2 = 'Ï'; // '\207'
-
-	#if __COMPILER_CODEPAGE_TEST_2 == 8364
-		#define __COMPILER_CODEPAGE (872)
-		#endinput
-	#endif
-
-	#if __COMPILER_CODEPAGE_TEST_2 == 164
-		#define __COMPILER_CODEPAGE (855)
 		#endinput
 	#endif
 

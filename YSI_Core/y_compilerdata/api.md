@@ -75,6 +75,23 @@ The current list of detected codepages are:
 * `950` - Traditional Chinese Big5.
 * `855` - Cyrillic.
 * `872` - Cyrillic with Euro symbol.
+* `708` – Arabic (ASMO 708).
+* `720` – Arabic (Transparent ASMO).
+* `737` – Greek.
+* `775` = Latin-7.
+* `850` – Latin-1.
+* `852` – Latin-2.
+* `855` – Cyrillic.
+* `857` – Latin-5.
+* `858` – Latin-1 with euro symbol.
+* `860` – Portuguese.
+* `861` – Icelandic.
+* `862` – Hebrew.
+* `863` – Canadian French.
+* `864` – Arabic.
+* `865` – Danish/Norwegian.
+* `866` – Belarusian, Russian, Ukrainian.
+* `869` – Greek.
 
 \* This codepage probably won't compile due to its DBCS characters, but you can try.
 
