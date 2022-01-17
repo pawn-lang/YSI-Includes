@@ -71,6 +71,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if __Pawn >= 0x0400
+	#error YSI does not yet support PAWN 4.0
+#elseif __Pawn < 0x0300
+	#error YSI does not yet support PAWN 2.0/1.0
+#endif
+
 // Die tabsize 0!
 #pragma tabsize 4
 #define tabsize%00%0\10;%0 _DUMMY_do_not_use_tabsize_0
@@ -103,6 +109,21 @@ Optional plugins:
 //   
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
+
+// This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
+// or `__COMPILER_WINDOWS` depending on where the code is being built.  It does
+// this in a very simple manner - by trying to include a file by the wrong name,
+// by which I mean ignoring case.  The file is saved as `y_determine_os.inc`,
+// but is included as `Y_dEtErMiNe_Os`.  On a case-insensitive OS (Windows) this
+// still works because the files are considered to be the same, but on Unix it
+// fails because they aren't.  Thus it uses `#tryinclude` to not error on Unix,
+// sets Unix as the default OS, and changes the OS in the include file if the
+// inclusion worked.  Note that only one letter difference was really needed -
+// the excessive changes in case weren't required, but were fun.
+#define __COMPILER_UNIX (0)
+#define __COMPILER_WINDOWS (1)
+#define __COMPILER_OS __COMPILER_UNIX
+#tryinclude "Y_dEtErMiNe_Os"
 
 #if defined __CompilerThirdPass
 	#error Somehow got a fourth compiler pass.  Please tell Y_Less how.
@@ -152,38 +173,8 @@ Optional plugins:
 	static stock __CompilerThirdPass() {}
 #endif
 
-// This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
-// or `__COMPILER_WINDOWS` depending on where the code is being built.  It does
-// this in a very simple manner - by trying to include a file by the wrong name,
-// by which I mean ignoring case.  The file is saved as `y_determine_os.inc`,
-// but is included as `Y_dEtErMiNe_Os`.  On a case-insensitive OS (Windows) this
-// still works because the files are considered to be the same, but on Unix it
-// fails because they aren't.  Thus it uses `#tryinclude` to not error on Unix,
-// sets Unix as the default OS, and changes the OS in the include file if the
-// inclusion worked.  Note that only one letter difference was really needed -
-// the excessive changes in case weren't required, but were fun.
-#define __COMPILER_UNIX (0)
-#define __COMPILER_WINDOWS (1)
-#define __COMPILER_OS __COMPILER_UNIX
-#tryinclude "Y_dEtErMiNe_Os"
-
-#include "y_compilerdata_codepage"
-
-#if __Pawn >= 0x0400
-	#error YSI does not yet support PAWN 4.0
-#elseif __Pawn < 0x0300
-	#error YSI does not yet support PAWN 2.0/1.0
-#endif
-
-#define __COMPILER_BUG_317 (1)
-#define __COMPILER_NAMEOF (0)
-#define __COMPILER_PRAGMA (0)
-#define __COMPILER___EMIT_U (0)
-
-#define __COMPILER_STATIC_ENUM enum
-
 // Determine if strings are packed by default or not.
-static stock const __COMPILER_PACKED_TEST[] = "YSI";
+static stock const __COMPILER_PACKED_TEST[] = " ";
 
 #if sizeof (__COMPILER_PACKED_TEST) == 1
 	#define __COMPILER_STRING_PACKING (1)
@@ -194,6 +185,15 @@ static stock const __COMPILER_PACKED_TEST[] = "YSI";
 	#define __COMPILER_PACK !
 	#define __COMPILER_UKPACK
 #endif
+
+#include "y_compilerdata_codepage"
+
+#define __COMPILER_BUG_317 (1)
+#define __COMPILER_NAMEOF (0)
+#define __COMPILER_PRAGMA (0)
+#define __COMPILER___EMIT_U (0)
+
+#define __COMPILER_STATIC_ENUM enum
 
 // Has `#pragma option`
 #define __COMPILER_OPTION (0)
