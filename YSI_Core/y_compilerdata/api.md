@@ -103,16 +103,16 @@ Detecting a compiler codepage option (either `-c` or `#pragma codepage`) can be 
 The PAWN compiler makes two or three passes over the code.  The first pass builds a list of all the functions that exist, and the second pass builds the code with this information - this is why code using `#if defined Hooked_OnGameModeInit` works, even when that function is later in the code.  The third pass is an emergency pass to correctly generate tag returns code without `forward` and gives a warning.  We can use this future knowledge to work out which pass the compiler is in and define symbols based on that:
 
 ```pawn
-// 0 for first pass, 1 for second.
+// 0 for first pass, 1 for second, 2 for third.
 __COMPILER_PASS
 
-// 1 for first pass, 0 for second.
+// 1 for first pass, 0 for second, 0 for third.
 __COMPILER_1ST_PASS
 
-// 0 for first pass, 0 for second, 1 for third.
+// 0 for first pass, 1 for second, 0 for third.
 __COMPILER_2ND_PASS
 
-// 0 for first pass, 1 for second.
+// 0 for first pass, 0 for second, 1 for third.
 __COMPILER_3RD_PASS
 
 // Same as above.
