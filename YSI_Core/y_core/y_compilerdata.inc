@@ -752,16 +752,16 @@ __COMPILER_TAG_DATA(Timer, 0);
 __COMPILER_TAG_DATA(INI, -1);
 
 // PawnPlus tags.
-__COMPILER_TAG_DATA(ConstString, 0);
-__COMPILER_TAG_DATA(String, 0);
+__COMPILER_TAG_DATA(String@Const, -1);
+__COMPILER_TAG_DATA(String, -1);
 __COMPILER_TAG_DATA(error_level, 0);
 __COMPILER_TAG_DATA(locale_category, 0);
 __COMPILER_TAG_DATA(filter_type, 0);
 __COMPILER_TAG_DATA(handler_flags, 0);
-__COMPILER_TAG_DATA(Variant, 0);
-__COMPILER_TAG_DATA(ConstVariant, 0);
-__COMPILER_TAG_DATA(Iter, 0);
-__COMPILER_TAG_DATA(Handle, 0);
+__COMPILER_TAG_DATA(Variant, -1);
+__COMPILER_TAG_DATA(Variant@Const, -1);
+__COMPILER_TAG_DATA(Iter, -1);
+__COMPILER_TAG_DATA(Handle, -1);
 __COMPILER_TAG_DATA(tag_uid, 0);
 __COMPILER_TAG_DATA(Task, 0);
 __COMPILER_TAG_DATA(LinkedList, 0);
@@ -780,6 +780,11 @@ __COMPILER_TAG_DATA(AmxVariant, 0);
 __COMPILER_TAG_DATA(ConstAmxVariant, 0);
 __COMPILER_TAG_DATA(AmxVariantBuffer, 0);
 __COMPILER_TAG_DATA(Guard, 0);
+__COMPILER_TAG_DATA(CallbackHandler, 0);
+__COMPILER_TAG_DATA(NativeHook, 0);
+__COMPILER_TAG_DATA(Pool, 0);
+__COMPILER_TAG_DATA(Expression, 0);
+__COMPILER_TAG_DATA(Symbol, 0);
 // I'm not doing the generic tags as well...
 
 // Streamer tags.
