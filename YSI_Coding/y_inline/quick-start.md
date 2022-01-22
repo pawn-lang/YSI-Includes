@@ -9,6 +9,9 @@ takes time and number of calls (0 for unlimited), not time and forever/once bool
 // Include for `inline`.
 #include <YSI_Coding\y_inline>
 
+// Include for `va_...` functions
+#include <YSI_Coding\y_va>
+
 // Include for `Timer_CreateCallback`.
 #include <YSI_Extra\y_inline_timers>
 
