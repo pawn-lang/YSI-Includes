@@ -341,8 +341,10 @@ ScriptInit_PostExitFuncs_()
 stock _YSI_ConstMod(const &var, const val)
 {
 	#pragma unused var, val
-	#emit LOAD.S.pri val
-	#emit SREF.S.pri var
+	#emit LREF.S.pri val
+	#emit LOAD.S.alt var
+	#emit SREF.S.alt val
+	return 0;
 }
 
 native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = memcpy;

@@ -508,8 +508,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 			static
 				ch = 0;
 			// There's no length parameter for "Puny_Encode", so we need a limit.
-			ch = url[idx],
-			_YSI_ConstMod(url[idx], '\0'),
+			ch = _YSI_ConstMod(url[idx], '\0'),
 			sPart[0] = '\0';
 			switch (Puny_Encode(sPart, url[prev]))
 			{
