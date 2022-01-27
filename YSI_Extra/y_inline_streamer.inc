@@ -98,47 +98,43 @@ Optional plugins:
 	#define CB_STREAMER_TAG_OBJECT _
 #endif
 
-// Push a fake extra parameter.
-native bool:BAD_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_HasIntData;
+#if !defined _ALS_Streamer_HasIntData
+	// Push a fake extra parameter.
+	native bool:BAD_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_HasIntData;
 
-stock bool:YSI_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data)
-{
-	// This isn't a compile-time constant, so we can't use `#if`.
-	if (Streamer_IncludeFileVersion > 0x295)
+	stock bool:YSI_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data)
 	{
-		return bool:Streamer_HasIntData(type, id, data);
+		// This isn't a compile-time constant, so we can't use `#if`.
+		if (Streamer_IncludeFileVersion > 0x295)
+		{
+			return bool:Streamer_HasIntData(type, id, data);
+		}
+		// https://github.com/samp-incognito/samp-streamer-plugin/pull/380
+		return BAD_Streamer_HasIntData(type, id, data);
 	}
-	// https://github.com/samp-incognito/samp-streamer-plugin/pull/380
-	return BAD_Streamer_HasIntData(type, id, data);
-}
 
-#if defined _ALS_Streamer_HasIntData
-	#undef Streamer_HasIntData
-#else
 	#define _ALS_Streamer_HasIntData
+	#define Streamer_HasIntData( YSI_Streamer_HasIntData(
 #endif
-#define Streamer_HasIntData( YSI_Streamer_HasIntData(
 
-// Push a fake extra parameter.
-native bool:BAD_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_RemoveIntData;
+#if !defined _ALS_Streamer_RemoveIntData
+	// Push a fake extra parameter.
+	native bool:BAD_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_RemoveIntData;
 
-stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
-{
-	// This isn't a compile-time constant, so we can't use `#if`.
-	if (Streamer_IncludeFileVersion > 0x295)
+	stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
 	{
-		return bool:Streamer_RemoveIntData(type, id, data);
+		// This isn't a compile-time constant, so we can't use `#if`.
+		if (Streamer_IncludeFileVersion > 0x295)
+		{
+			return bool:Streamer_RemoveIntData(type, id, data);
+		}
+		// https://github.com/samp-incognito/samp-streamer-plugin/pull/380
+		return BAD_Streamer_RemoveIntData(type, id, data);
 	}
-	// https://github.com/samp-incognito/samp-streamer-plugin/pull/380
-	return BAD_Streamer_RemoveIntData(type, id, data);
-}
 
-#if defined _ALS_Streamer_RemoveIntData
-	#undef Streamer_RemoveIntData
-#else
 	#define _ALS_Streamer_RemoveIntData
+	#define Streamer_RemoveIntData( YSI_Streamer_RemoveIntData(
 #endif
-#define Streamer_RemoveIntData( YSI_Streamer_RemoveIntData(
 
 #if defined E_STREAMER_CUSTOM
 	#define E_YSI_DYNAMIC_OBJECT_MOVED E_STREAMER_CUSTOM(0x59534921) // YSI!
@@ -148,10 +144,10 @@ stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
 	public OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
 	{
 		new ret = 0;
-		if (YSI_Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
+		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
 		{
 			new Func:cb<i> = Func:Streamer_GetIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED)<i>;
-			YSI_Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
+			Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
 			ret = @.cb();
 			Indirect_Release(cb);
 		}
@@ -175,10 +171,10 @@ stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
 	// Hook stoping and destroying objects to remove the callbacks.
 	stock Inline_StopDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 	{
-		if (YSI_Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
+		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
 		{
 			new Func:cb<i> = Func:Streamer_GetIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED)<i>;
-			YSI_Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
+			Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
 			Indirect_Release(cb);
 		}
 		return StopDynamicObject(objectid);
@@ -194,10 +190,10 @@ stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
 	// Hook stoping and destroying objects to remove the callbacks.
 	stock Inline_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
 	{
-		if (YSI_Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
+		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
 		{
 			new Func:cb<i> = Func:Streamer_GetIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED)<i>;
-			YSI_Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
+			Streamer_RemoveIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED);
 			Indirect_Release(cb);
 		}
 		return DestroyDynamicObject(objectid);
@@ -212,7 +208,7 @@ stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
 
 	stock MoveDynamicObjectCallback(CB_STREAMER_TAG_OBJECT:objectid, Func:onMoved<i>, Float:x, Float:y, Float:z, Float:speed, Float:rx = -1000.0, Float:ry = -1000.0, Float:rz = -1000.0)
 	{
-		if (YSI_Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
+		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED))
 		{
 			new Func:cb<i> = Func:Streamer_GetIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_OBJECT_MOVED)<i>;
 			Indirect_Release(cb);
