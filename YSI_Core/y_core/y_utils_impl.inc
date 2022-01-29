@@ -582,18 +582,31 @@ stock StrToUpper(str[], len = sizeof (str))
 stock RandomMinMax(min, max)
 {
 	assert(min < max);
-	return random(max - min) + min;
+	return YSI_Random(max - min) + min;
 }
 
 /*-------------------------------------------------------------------------*//**
  * <param name="max">Upper bound.</param>
  * <remarks>
  *  Generate a random float between the given numbers (min &lt;= n &lt; max).
- *  Default minimum is 0 (changes the parameter order).
+ *  Default minimum is 0 (changes the parameter order).  This uses a compile-
+ *  time macro to detect one or two parameters.  If there is only one parameter
+ *  it uses the native.  If there are two it uses the stock.  Actually now uses
+ *  a stock for both, so that when there is only one parameter and it is below
+ *  naught, it uses naught as the max and the parameter as the min instead.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-native Random(max) = random;
+stock Random(max)
+{
+	if (max < 0)
+	{
+		return -YSI_Random(-max);
+	}
+	return YSI_Random(max);
+}
+
+// The macro to detect two parameters.
 #define Random(%0,%1) RandomMinMax(%0,%1)
 
 /*-------------------------------------------------------------------------*//**

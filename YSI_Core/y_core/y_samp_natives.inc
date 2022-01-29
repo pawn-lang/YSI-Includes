@@ -75,6 +75,9 @@ Optional plugins:
 // when they should really be "core" functions.
 // 
 // TODO: Detect new line requirements.
+//
+// TODO: Figure out what I meant by that `TODO` above...
+//
 native YSI_Print(const string[]) = print;
 native YSI_PrintF(const format[], GLOBAL_TAG_TYPES:...) = printf;
 
@@ -87,6 +90,9 @@ native YSI_Format(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYPES
 native YSI_SendRconCommand(const str[]) = SendRconCommand;
 native YSI_SendClientCheck(playerid, type, memoryAddress, memoryOffset, byteCount) = SendClientCheck;
 native YSI_SHA256Hash_BAD_DONT_USE(const password[], const salt[], output[], size = sizeof (output)) = SHA256_PassHash;
+
+// Proper casing.
+native YSI_Random(max) = random;
 
 #define YSI_JOIN(%0,%1,%2) %0And%1And%2
 
