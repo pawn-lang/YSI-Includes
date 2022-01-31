@@ -1064,6 +1064,10 @@ stock bool:isnumeric(const str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if !defined WEAPON
+	#define WEAPON: _:
+#endif
+
 stock Utils_ChaosMod(playerid)
 {
 	new tmp;
@@ -1092,7 +1096,7 @@ stock Utils_ChaosMod(playerid)
 		}
 		case 3:
 		{
-			SetPlayerArmedWeapon(playerid, 0);
+			SetPlayerArmedWeapon(playerid, WEAPON:0);
 		}
 		case 4:
 		{

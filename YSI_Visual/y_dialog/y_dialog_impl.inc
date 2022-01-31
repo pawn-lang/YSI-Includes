@@ -80,6 +80,10 @@ Optional plugins:
 #define YSI_DIALOG_MASK (Func:cellmax<iiiis>)
 #define YSI_DIALOG_INVALID (Func:cellmin<iiiis>)
 
+#if !defined DIALOG_STYLE
+	#define DIALOG_STYLE: _:
+#endif
+
 static stock
 	YSI_g_sPlayerDialog[MAX_PLAYERS] = {-1, ...},
 	Func:YSI_g_sPlayerCallback[MAX_PLAYERS]<iiiis>;
@@ -104,11 +108,11 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 #if defined _ALS_ShowPlayerDialog
 	#define Dialog_ShowPlayerNative ShowPlayerDialog
 #else
-	native Dialog_ShowPlayerNative(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
+	native Dialog_ShowPlayerNative(playerid, dialogid, DIALOG_STYLE:style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
 #endif
 
 // Func:callback<iiiis> | Func:callback<iis>
-stock Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "", tag = tagof (callback))
+stock Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "", tag = tagof (callback))
 {
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID_1);
 	Indirect_Claim(callback),
@@ -119,12 +123,12 @@ stock Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, style, const 
 }
 
 #pragma deprecated Use Dialog_ShowCallback
-stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
+stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
 	return Dialog_ShowCallback(playerid, F@_@iiiis:callback[E_CALLBACK_DATA:0], style, title, caption, button1, button2);
 }
 
-stock Dialog_Show(playerid, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
+stock Dialog_Show(playerid, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID_2);
 	YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_INVALID;
@@ -135,7 +139,7 @@ stock Dialog_Hide(playerid)
 {
 	// This almost looks like a Windows API function call!
 	broadcastfunc Dialog_Set(playerid, -1);
-	return Dialog_ShowPlayerNative(playerid, -1, 0, NULL, NULL, NULL, NULL);
+	return Dialog_ShowPlayerNative(playerid, -1, DIALOG_STYLE_MSGBOX, NULL, NULL, NULL, NULL);
 }
 
 HOOK__ OnPlayerDisconnect(playerid, reason)
@@ -155,7 +159,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 			Indirect_Release(YSI_g_sPlayerCallback[playerid]);
 		}
 		YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_NONE,
-		Dialog_ShowPlayerNative(playerid, -1, 0, NULL, NULL, NULL, NULL);
+		Dialog_ShowPlayerNative(playerid, -1, DIALOG_STYLE_MSGBOX, NULL, NULL, NULL, NULL);
 	}
 	return 1;
 }
@@ -199,7 +203,7 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	return 0;
 }
 
-stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], const string:caption[], const string:button1[], const string:button2[])
+stock Dialog_ShowPlayerDialog(playerid, dialog, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[])
 {
 	// Fail.
 	if (dialog == YSI_DIALOG_ID_1 || dialog == YSI_DIALOG_ID_2)
