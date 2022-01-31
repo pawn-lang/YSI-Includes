@@ -1663,8 +1663,8 @@ stock rawMemcpy(dest, src, numbytes)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="arr">Array or address to set to a value.</param>
- * <param name="iValue">What to set the cells to.</param>
- * <param name="iSize">Number of cells to fill.</param>
+ * <param name="value">What to set the cells to.</param>
+ * <param name="size">Number of cells to fill.</param>
  * <remarks>
  *  Based on code by Slice:
  *
@@ -1681,14 +1681,14 @@ stock rawMemcpy(dest, src, numbytes)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock MemSet(arr[], val = 0, size = sizeof (arr))
+stock MemSet(arr[], value = 0, size = sizeof (arr))
 {
 	new
 		addr = 0;
 	#emit LOAD.S.pri arr
 	#emit STOR.S.pri addr
 	// Convert the size from cells to bytes.
-	return RawMemSet(addr, val, size * cellbytes);
+	return RawMemSet(addr, value, size * cellbytes);
 }
 
 #pragma deprecated Use `MemSet` (i.e. use proper capitalisation).
@@ -1703,9 +1703,9 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="iAddress">Array or address to set to a value.</param>
- * <param name="iValue">What to set the cells to.</param>
- * <param name="iSize">Number of cells to fill.</param>
+ * <param name="address">Array or address to set to a value.</param>
+ * <param name="value">What to set the cells to.</param>
+ * <param name="size">Number of bytes to fill.</param>
  * <remarks>
  *  Based on code by Slice:
  *
@@ -1722,11 +1722,11 @@ stock memset(arr[], val = 0, size = sizeof (arr))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RawMemSet(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
+stock RawMemSet(address /* 12 */, value /* 16 */, size /* 20 */)
 {
-	if (iSize < cellbytes)
+	if (size < cellbytes)
 		return 0;
-	if (iAddress < 0)
+	if (address < 0)
 	{
 		// Somewhere in COD, not DAT.  Can't use FILL because it checks the
 		// address.  Unless we are running in the JIT, which doesn't have
@@ -1734,90 +1734,90 @@ stock RawMemSet(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 		// anyway.
 		do
 		{
-			#emit LOAD.S.pri iValue
-			#emit SREF.S.pri iAddress
-			iAddress += cellbytes;
+			#emit LOAD.S.pri value
+			#emit SREF.S.pri address
+			address += cellbytes;
 		}
-		while ((iSize -= cellbytes) > 0);
+		while ((size -= cellbytes) > 0);
 		return 1;
 	}
 	else //if (Server_JITComplete())
 	{
-		while (iSize >= 4096)
+		while (size >= 4096)
 		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
+			#emit LOAD.S.pri value
+			#emit LOAD.S.alt address
 			#emit FILL       4096
-			iAddress += 4096;
-			iSize -= 4096;
+			address += 4096;
+			size -= 4096;
 		}
-		if (iSize & 2048)
+		if (size & 2048)
 		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
+			#emit LOAD.S.pri value
+			#emit LOAD.S.alt address
 			#emit FILL       2048
-			iAddress += 2048;
+			address += 2048;
 		}
-		if (iSize & 1024)
+		if (size & 1024)
 		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
+			#emit LOAD.S.pri value
+			#emit LOAD.S.alt address
 			#emit FILL       1024
-			iAddress += 1024;
+			address += 1024;
 		}
-		if (iSize & 512)
+		if (size & 512)
 		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
+			#emit LOAD.S.pri value
+			#emit LOAD.S.alt address
 			#emit FILL       512
-			iAddress += 512;
+			address += 512;
 		}
-		if (iSize & 256)
+		if (size & 256)
 		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
+			#emit LOAD.S.pri value
+			#emit LOAD.S.alt address
 			#emit FILL       256
-			iAddress += 256;
+			address += 256;
 		}
-		if (iSize & 128)
+		if (size & 128)
 		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
+			#emit LOAD.S.pri value
+			#emit LOAD.S.alt address
 			#emit FILL       128
-			iAddress += 128;
+			address += 128;
 		}
-		if (iSize & 64)
+		if (size & 64)
 		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
+			#emit LOAD.S.pri value
+			#emit LOAD.S.alt address
 			#emit FILL       64
-			iAddress += 64;
+			address += 64;
 		}
-		if (iSize & 32)
+		if (size & 32)
 		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
+			#emit LOAD.S.pri value
+			#emit LOAD.S.alt address
 			#emit FILL       32
-			iAddress += 32;
+			address += 32;
 		}
-		if (iSize & 16)
+		if (size & 16)
 		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
+			#emit LOAD.S.pri value
+			#emit LOAD.S.alt address
 			#emit FILL       16
-			iAddress += 16;
+			address += 16;
 		}
-		if (iSize & 8)
+		if (size & 8)
 		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
+			#emit LOAD.S.pri value
+			#emit LOAD.S.alt address
 			#emit FILL       8
-			iAddress += 8;
+			address += 8;
 		}
-		if (iSize & 4)
+		if (size & 4)
 		{
-			#emit LOAD.S.pri iValue
-			#emit SREF.S.pri iAddress
+			#emit LOAD.S.pri value
+			#emit SREF.S.pri address
 		}
 		return 1;
 	}
@@ -1829,9 +1829,9 @@ stock RawMemSet(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 }
 
 #pragma deprecated Use `RawMemSet` (i.e. use proper capitalisation).
-stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
+stock rawMemset(address /* 12 */, value /* 16 */, size /* 20 */)
 {
-	return RawMemSet(iAddress, iValue, iSize);
+	return RawMemSet(address, value, size);
 }
 
 /*-------------------------------------------------------------------------*//**
