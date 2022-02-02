@@ -324,7 +324,7 @@ stock _Testing_Start(const name[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#if !defined DIALOG_STYLE:
+#if !defined DIALOG_STYLE
 	#define DIALOG_STYLE: _:
 #endif
 
