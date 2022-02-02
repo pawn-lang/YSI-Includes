@@ -487,7 +487,7 @@ P:D(bool:IsNull(const str[]));
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsOdd(const str[]));
+P:D(bool:IsOdd(value));
 #define IsOdd(%0) ((%0)&1)
 
 #if defined isodd
@@ -506,7 +506,7 @@ P:D(bool:IsOdd(const str[]));
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsEven(const str[]));
+P:D(bool:IsEven(value));
 #define IsEven(%0) (~(%0)&1)
 
 #if defined iseven
