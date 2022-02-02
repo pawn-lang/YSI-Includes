@@ -83,9 +83,13 @@ Optional plugins:
 */
 
 // VERY VERY VERY IMPORTANT!!! y_text uses "144" explicitly.  Change it too.
-#define YSI_MAX_STRING (144)
+#if !defined YSI_MAX_STRING
+	#define YSI_MAX_STRING (144)
+#endif
 #if YSI_MAX_STRING != 144
-	#error Please update all explicit YSI_MAX_STRING uses.
+	//#error Please update all explicit YSI_MAX_STRING uses.
+	#define Y_COMPILERDATA_WARNING 3
+	#include "y_compilerdata_warning"
 #endif
 
 #if !defined YSIM_STRING
