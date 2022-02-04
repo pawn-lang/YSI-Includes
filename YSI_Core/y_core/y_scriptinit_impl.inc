@@ -848,43 +848,43 @@ public OnJITCompile()
 	#error OnCodeInit defined
 #endif
 
-#if _YSI_SAFE_STARTUP
-	// open.mp
-	forward OnScriptInit(id);
-
-	public OnScriptInit(id)
-	{
-		state _ALS : _ALS_go;
-		YSI_OPEN_MP = true;
-		state _script_init_fix_state : false;
-		// Dump the final assembly of this script so we can inspect it.
-		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
-		{
-			YSI_gsStartTime = gettime();
-			ResolveYSIScriptfileDirs();
-			DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
-			if (!ScriptInit_CallOnCodeInit(false, true))
-				return 0;
-		}
-		YVers_StartCheck();
-		Server_FinishIntroMessage();
-		#if defined ScriptInit_OnYSIInit
-			ScriptInit_OnYSIInit();
-		#endif
-		ScriptInit_PreInitFuncs_();
-		CallLocalFunction("OnScriptInit@A", YSI_EMPTY);
-		ScriptInit_PostInitFuncs_();
-		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
-		{
-			// Dump the final assembly of this script so we can inspect it.
-			DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
-		}
-		Server_FinishIntroMessage();
-		CallLocalFunction("OnScriptInit@B", YSI_EMPTY);
-		CallLocalFunction("OnScriptInit@C", YSI_EMPTY);
-		return 1;
-	}
-#endif
+//#if _YSI_SAFE_STARTUP
+//	// open.mp
+//	forward OnScriptInit(id);
+//
+//	public OnScriptInit(id)
+//	{
+//		state _ALS : _ALS_go;
+//		YSI_OPEN_MP = true;
+//		state _script_init_fix_state : false;
+//		// Dump the final assembly of this script so we can inspect it.
+//		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+//		{
+//			YSI_gsStartTime = gettime();
+//			ResolveYSIScriptfileDirs();
+//			DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
+//			if (!ScriptInit_CallOnCodeInit(false, true))
+//				return 0;
+//		}
+//		YVers_StartCheck();
+//		Server_FinishIntroMessage();
+//		#if defined ScriptInit_OnYSIInit
+//			ScriptInit_OnYSIInit();
+//		#endif
+//		ScriptInit_PreInitFuncs_();
+//		CallLocalFunction("OnScriptInit@A", YSI_EMPTY);
+//		ScriptInit_PostInitFuncs_();
+//		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+//		{
+//			// Dump the final assembly of this script so we can inspect it.
+//			DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
+//		}
+//		Server_FinishIntroMessage();
+//		CallLocalFunction("OnScriptInit@B", YSI_EMPTY);
+//		CallLocalFunction("OnScriptInit@C", YSI_EMPTY);
+//		return 1;
+//	}
+//#endif
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : true"/>
