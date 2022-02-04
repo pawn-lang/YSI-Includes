@@ -1867,7 +1867,8 @@ stock GetPlayerRPName(playerid, name[], len = sizeof (name))
 	if (GetPlayerName(playerid, name, len - 1))
 	{
 		// Replace `_` with ` `.
-		if ((len = strfind(name, "_")) != -1)
+		len = -1;
+		while ((len = strfind(name, "_", false, len + 1)) != -1)
 		{
 			name[len] = ' ';
 		}
@@ -1880,50 +1881,96 @@ stock GetPlayerRPName(playerid, name[], len = sizeof (name))
  *  IsRPName
  * </summary>
  * <param name="name">The name to test.</param>
+ * <param name="casing">Check for string casing?  I.e. allow <c>James</c> but
+ *  not <c>james</c>.</param>
+ * <param name="longNames">Allow more than two name parts?</param>
  * <remarks>
  *  Is this name in the form <c>First_Last</c>?
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:IsRPName(const name[])
+stock bool:IsRPName(const name[], bool:casing = false, bool:longNames = false)
 {
 	new
-		ch,
+		parts = 0,
+		ch = name[0],
 		pos = -1;
-	while ((ch = name[++pos]))
+	if (ch == ' ' || ch == '_' || ch == '\0')
 	{
-		// Allow real spaces, YSF can enable that.
-		if (ch == '_' || ch == ' ')
-		{
-			if (pos == 0)
-			{
-				// No letters before the gap.
-				return false;
-			}
-			// To check the name doesn't end here.
-			ch = name[pos + 1];
-			break;
-		}
-		if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
-		{
-			// Not a valid name letter.
-			return false;
-		}
-	}
-	if (ch == '\0')
-	{
-		// Only letters.
+		// Leading bad characters.
 		return false;
 	}
-	while ((ch = name[++pos]))
+	if (casing)
 	{
-		if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
+		do
 		{
-			// Not a valid name letter.
-			return false;
+			if (NOT_IN_RANGE((ch = name[++pos]), 'A', 'Z' + 1))
+			{
+				// Not a capital letter.
+				return false;
+			}
+			while ((ch = name[++pos]))
+			{
+				// Allow real spaces, YSF can enable that.
+				if (ch == '_' || ch == ' ')
+				{
+					if (name[pos + 1] == '\0')
+					{
+						// Ends with `_`.
+						return false;
+					}
+					break;
+				}
+				if (NOT_IN_RANGE(ch, 'a', 'z' + 1))
+				{
+					// Not a lower-case letter.
+					return false;
+				}
+			}
+			// Found a name part.
+			++parts;
 		}
+		while (ch);
 	}
-	return true;
+	else
+	{
+		do
+		{
+			while ((ch = name[++pos]))
+			{
+				// Allow real spaces, YSF can enable that.
+				if (ch == '_' || ch == ' ')
+				{
+					if (name[pos + 1] == '\0')
+					{
+						// Ends with `_`.
+						return false;
+					}
+					break;
+				}
+				if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
+				{
+					// Not a valid name letter.
+					return false;
+				}
+			}
+			// Found a name part.
+			++parts;
+		}
+		while (ch);
+	}
+	switch (parts)
+	{
+	case 1:
+		// Not enough parts.
+		return false;
+	case 2:
+		// Exactly two parts.
+		return true;
+	default:
+		// More parts.  Is this allowed?
+		return longNames;
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1931,12 +1978,15 @@ stock bool:IsRPName(const name[])
  *  HasRPName
  * </summary>
  * <param name="playerid">Player whose name you want to test.</param>
+ * <param name="casing">Check for string casing?  I.e. allow <c>James</c> but
+ *  not <c>james</c>.</param>
+ * <param name="longNames">Allow more than two name parts?</param>
  * <remarks>
  *  Is this player's name in the form <c>First_Last</c>?
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:HasRPName(playerid)
+stock bool:HasRPName(playerid, bool:casing = false, bool:longNames = false)
 {
 	new
 		name[MAX_PLAYER_NAME];

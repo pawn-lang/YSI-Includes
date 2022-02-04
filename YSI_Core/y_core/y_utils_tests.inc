@@ -99,8 +99,9 @@ TEST__ y_utils_LevenshteinDistance()
 	ASSERT_EQ(LevenshteinDistance("0123456789012345678901234567890123456789", "01234567890123456789012345678901234567890123456789012345678901234567890123456789"), 1);
 }
 
-TEST__ IsRPName()
+TEST__ IsRPName1()
 {
+	// Standard names.
 	ASSERT(IsRPName("Bob_Bobson"));
 	ASSERT(IsRPName("Y_Less"));
 	ASSERT(!IsRPName("_hello"));
@@ -112,5 +113,31 @@ TEST__ IsRPName()
 	ASSERT(!IsRPName("0_0"));
 	ASSERT(!IsRPName("Tim1 Tom"));
 	ASSERT(!IsRPName("Tim_"));
+}
+
+TEST__ IsRPName2()
+{
+	// Casing.
+	ASSERT(IsRPName("Bob_Bobson", false, false));
+	ASSERT(IsRPName("bob_bobson", false, false));
+	ASSERT(IsRPName("Bob_Bobson", true, false));
+	ASSERT(!IsRPName("bob_bobson", true, false));
+	ASSERT(!IsRPName("James_Bob_Bobson", false, false));
+	ASSERT(!IsRPName("James_bob_bobson", false, false));
+	ASSERT(!IsRPName("James_Bob_Bobson", true, false));
+	ASSERT(!IsRPName("James_bob_bobson", true, false));
+}
+
+TEST__ IsRPName3()
+{
+	// Long.
+	ASSERT(IsRPName("Bob_Bobson", false, true));
+	ASSERT(IsRPName("bob_bobson", false, true));
+	ASSERT(IsRPName("Bob_Bobson", true, true));
+	ASSERT(!IsRPName("bob_bobson", true, true));
+	ASSERT(IsRPName("James_Bob_Bobson", false, true));
+	ASSERT(IsRPName("James_bob_bobson", false, true));
+	ASSERT(IsRPName("James_Bob_Bobson", true, true));
+	ASSERT(!IsRPName("James_bob_bobson", true, true));
 }
 
