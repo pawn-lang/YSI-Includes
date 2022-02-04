@@ -1967,10 +1967,9 @@ stock bool:IsRPName(const name[], bool:casing = false, bool:longNames = false)
 	case 2:
 		// Exactly two parts.
 		return true;
-	default:
-		// More parts.  Is this allowed?
-		return longNames;
 	}
+	// More parts.  Is this allowed?
+	return longNames;
 }
 
 /*-------------------------------------------------------------------------*//**
