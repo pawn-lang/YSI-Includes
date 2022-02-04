@@ -1989,9 +1989,9 @@ stock bool:IsRPName(const name[], bool:casing = false, bool:longNames = false)
 stock bool:HasRPName(playerid, bool:casing = false, bool:longNames = false)
 {
 	new
-		name[MAX_PLAYER_NAME];
+		name[MAX_PLAYER_NAME + 1];
 	// Also check they are connected.
-	return GetPlayerName(playerid, name, MAX_PLAYER_NAME - 1) && IsRPName(name);
+	return GetPlayerName(playerid, name, MAX_PLAYER_NAME) && IsRPName(name);
 }
 
 /*-------------------------------------------------------------------------*//**
