@@ -99,3 +99,18 @@ TEST__ y_utils_LevenshteinDistance()
 	ASSERT_EQ(LevenshteinDistance("0123456789012345678901234567890123456789", "01234567890123456789012345678901234567890123456789012345678901234567890123456789"), 1);
 }
 
+TEST__ IsRPName()
+{
+	ASSERT(IsRPName("Bob_Bobson"));
+	ASSERT(IsRPName("Y_Less"));
+	ASSERT(!IsRPName("_hello"));
+	ASSERT(!IsRPName("Y__Less"));
+	ASSERT(!IsRPName("William"));
+	ASSERT(IsRPName("William Thompson"));
+	ASSERT(!IsRPName("William Thompson."));
+	ASSERT(!IsRPName("0_0"));
+	ASSERT(!IsRPName("0_0"));
+	ASSERT(!IsRPName("Tim1 Tom"));
+	ASSERT(!IsRPName("Tim_"));
+}
+

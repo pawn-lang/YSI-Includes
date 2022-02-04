@@ -1840,17 +1840,126 @@ stock rawMemset(address /* 12 */, value /* 16 */, size /* 20 */)
  * </summary>
  * <param name="playerid">Player whose name you want to get.</param>
  * <remarks>
- *  Now uses a global array to avoid repeated function calls.  Actually doesn't
- *  because that causes issues with multiple scripts.
+ *  Get a player's name.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock ReturnPlayerName(playerid)
 {
 	new
-		str[MAX_PLAYER_NAME];
-	GetPlayerName(playerid, str, sizeof (str));
-	return str;
+		name[MAX_PLAYER_NAME];
+	GetPlayerName(playerid, name, MAX_PLAYER_NAME - 1);
+	return name;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  GetPlayerRPName
+ * </summary>
+ * <param name="playerid">Player whose name you want to get.</param>
+ * <remarks>
+ *  Get a player's name, with <c>_<c/> replaced by <c> <c/>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock GetPlayerRPName(playerid, name[], len = sizeof (name))
+{
+	if (GetPlayerName(playerid, name, len - 1))
+	{
+		// Replace `_` with ` `.
+		if ((len = strfind(name, "_")) != -1)
+		{
+			name[len] = ' ';
+		}
+	}
+	return name;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  IsRPName
+ * </summary>
+ * <param name="name">The name to test.</param>
+ * <remarks>
+ *  Is this name in the form <c>First_Last</c>?
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:IsRPName(const name[])
+{
+	new
+		ch,
+		pos = -1;
+	while ((ch = name[++pos]))
+	{
+		// Allow real spaces, YSF can enable that.
+		if (ch == '_' || ch == ' ')
+		{
+			if (pos == 0)
+			{
+				// No letters before the gap.
+				return false;
+			}
+			// To check the name doesn't end here.
+			ch = name[pos + 1];
+			break;
+		}
+		if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
+		{
+			// Not a valid name letter.
+			return false;
+		}
+	}
+	if (ch == '\0')
+	{
+		// Only letters.
+		return false;
+	}
+	while ((ch = name[++pos]))
+	{
+		if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
+		{
+			// Not a valid name letter.
+			return false;
+		}
+	}
+	return true;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  HasRPName
+ * </summary>
+ * <param name="playerid">Player whose name you want to test.</param>
+ * <remarks>
+ *  Is this player's name in the form <c>First_Last</c>?
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:HasRPName(playerid)
+{
+	new
+		name[MAX_PLAYER_NAME];
+	// Also check they are connected.
+	return GetPlayerName(playerid, name, MAX_PLAYER_NAME - 1) && IsRPName(name);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  ReturnPlayerRPName
+ * </summary>
+ * <param name="playerid">Player whose name you want to get.</param>
+ * <remarks>
+ *  Get a player's name, with <c>_<c/> replaced by <c> <c/>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock ReturnPlayerRPName(playerid)
+{
+	new
+		name[MAX_PLAYER_NAME];
+	GetPlayerRPName(playerid, name, MAX_PLAYER_NAME);
+	return name;
 }
 
 /*-------------------------------------------------------------------------*//**
