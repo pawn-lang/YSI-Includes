@@ -1991,7 +1991,7 @@ stock bool:HasRPName(playerid, bool:casing = false, bool:longNames = false)
 	new
 		name[MAX_PLAYER_NAME + 1];
 	// Also check they are connected.
-	return GetPlayerName(playerid, name, MAX_PLAYER_NAME) && IsRPName(name);
+	return GetPlayerName(playerid, name, MAX_PLAYER_NAME) && IsRPName(name, casing, longNames);
 }
 
 /*-------------------------------------------------------------------------*//**
