@@ -252,13 +252,8 @@ stock Hooks_MakeShortName(name[64])
 	}
 	// Hard-code initialisation hooks, because they don't work too well in the
 	// middle of the initialisation itself.
-	if (!strcmp(name, "OnScriptInit"))
-	{
-		name = "OnScriptInit@A";
-		len = 14;
-	}
 #if _YSI_SAFE_STARTUP || defined FILTERSCRIPT
-	else if (!strcmp(name, "OnFilterScriptInit"))
+	if (!strcmp(name, "OnFilterScriptInit"))
 	{
 		// Only needs renaming in filterscripts.
 		name = "OnScriptInit@C";
@@ -266,7 +261,7 @@ stock Hooks_MakeShortName(name[64])
 	}
 #endif
 #if _YSI_SAFE_STARTUP || !defined FILTERSCRIPT
-	else if (!strcmp(name, "OnGameModeInit"))
+	if (!strcmp(name, "OnGameModeInit"))
 	{
 		// Only needs renaming in gamemodes.
 		name = "OnScriptInit@E";
