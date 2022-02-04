@@ -73,8 +73,8 @@ Optional plugins:
 
 // Allocate some space right at the top of the stack for callback parameters.
 #if !defined YSI_DEFAULT_MALLOC
-	// Will actually allocate 271 bytes (rounds up to 16n-1).
-	#define YSI_DEFAULT_MALLOC (256)
+	// Rounds up to 16n-1, so will actually allocate 2047 bytes.
+	#define YSI_DEFAULT_MALLOC (2047)
 #endif
 
 forward Alloc:Malloc_Allocate(size, const bool:clear = false);
