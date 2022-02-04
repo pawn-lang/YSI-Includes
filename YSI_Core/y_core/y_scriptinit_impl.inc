@@ -880,8 +880,8 @@ public OnJITCompile()
 //			DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
 //		}
 //		Server_FinishIntroMessage();
-//		CallLocalFunction("OnScriptInit@B", YSI_EMPTY);
 //		CallLocalFunction("OnScriptInit@C", YSI_EMPTY);
+//		CallLocalFunction("OnScriptInit@E", YSI_EMPTY);
 //		return 1;
 //	}
 //#endif
@@ -920,7 +920,7 @@ public OnJITCompile()
 					ScriptInit_OnYSIInit();
 				#endif
 				ScriptInit_PreInitFuncs_();
-				CallLocalFunction("OnScriptInit@A", YSI_EMPTY);
+				CallLocalFunction("OnScriptInit", YSI_EMPTY);
 				ScriptInit_PostInitFuncs_();
 				if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 				{
@@ -951,7 +951,7 @@ public OnJITCompile()
 						}
 					#endif
 				#endif
-				CallLocalFunction("OnScriptInit@B", YSI_EMPTY);
+				CallLocalFunction("OnScriptInit@C", YSI_EMPTY);
 			}
 			return 1;
 	}
@@ -1091,7 +1091,7 @@ ScriptInit_Purge_retry:
 						ScriptInit_OnYSIInit();
 					#endif
 					ScriptInit_PreInitFuncs_();
-					CallLocalFunction("OnScriptInit@A", YSI_EMPTY);
+					CallLocalFunction("OnScriptInit", YSI_EMPTY);
 					ScriptInit_PostInitFuncs_();
 					if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 					{
@@ -1122,7 +1122,7 @@ ScriptInit_Purge_retry:
 			if (!YSI_OPEN_MP)
 		#endif
 			{
-				CallLocalFunction("OnScriptInit@C", YSI_EMPTY);
+				CallLocalFunction("OnScriptInit@E", YSI_EMPTY);
 			}
 			return 1;
 	}
@@ -1209,11 +1209,9 @@ ScriptInit_Purge_retry:
 	forward ScriptInit_OnCodeInit();
 #endif
 
-#define _ALS_OnScriptInit
-#define OnScriptInit(%0) OnScriptInit@A(%0)
-#if defined OnScriptInit@A
-	forward OnScriptInit@A();
-#endif
+//#define _ALS_OnScriptInit
+//#define OnScriptInit(%0) OnScriptInit@A(%0)
+forward OnScriptInit PP_LEFT_BRACKET<>PP_RIGHT_BRACKET<>;
 
 CHAIN_FORWARD:ScriptInit_OnJITCompile() = 1;
 #if defined _ALS_OnJITCompile
@@ -1229,9 +1227,9 @@ CHAIN_FORWARD:ScriptInit_OnJITCompile() = 1;
 	#else
 		#define _ALS_OnFilterScriptInit
 	#endif
-	#define OnFilterScriptInit( OnScriptInit@B(
-	#if defined OnScriptInit@B
-		forward OnScriptInit@B();
+	#define OnFilterScriptInit( OnScriptInit@C(
+	#if defined OnScriptInit@C
+		forward OnScriptInit@C();
 	#endif
 #endif
 
@@ -1241,9 +1239,9 @@ CHAIN_FORWARD:ScriptInit_OnJITCompile() = 1;
 	#else
 		#define _ALS_OnGameModeInit
 	#endif
-	#define OnGameModeInit( OnScriptInit@C(
-	#if defined OnScriptInit@C
-		forward OnScriptInit@C();
+	#define OnGameModeInit( OnScriptInit@E(
+	#if defined OnScriptInit@E
+		forward OnScriptInit@E();
 	#endif
 #endif
 

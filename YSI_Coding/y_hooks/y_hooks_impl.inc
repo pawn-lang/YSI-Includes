@@ -261,7 +261,7 @@ stock Hooks_MakeShortName(name[64])
 	else if (!strcmp(name, "OnFilterScriptInit"))
 	{
 		// Only needs renaming in filterscripts.
-		name = "OnScriptInit@B";
+		name = "OnScriptInit@C";
 		len = 14;
 	}
 #endif
@@ -269,7 +269,7 @@ stock Hooks_MakeShortName(name[64])
 	else if (!strcmp(name, "OnGameModeInit"))
 	{
 		// Only needs renaming in gamemodes.
-		name = "OnScriptInit@C";
+		name = "OnScriptInit@E";
 		len = 14;
 	}
 #endif
