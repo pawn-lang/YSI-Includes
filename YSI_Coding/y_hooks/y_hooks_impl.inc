@@ -96,15 +96,18 @@ DEFINE_HOOK_RETURN__(OnPlayerCommandText, 0);
 
 DEFINE_HOOK_RETURN__(OnRconCommand, 0);
 
-// Create the default replacements.
+// Create the default replacements.  I try to avoid defining replacements for
+// the words `Player` and `Vehicle` - they're too important and fundamental.
 DEFINE_HOOK_REPLACEMENT__(Checkpoint, CP );
+DEFINE_HOOK_REPLACEMENT__(Collisions, Col);
 DEFINE_HOOK_REPLACEMENT__(Container , Cnt);
 DEFINE_HOOK_REPLACEMENT__(Inventory , Inv);
-DEFINE_HOOK_REPLACEMENT__(Dynamic   , Dyn);
 DEFINE_HOOK_REPLACEMENT__(TextDraw  , TD );
-DEFINE_HOOK_REPLACEMENT__(Update    , Upd);
-DEFINE_HOOK_REPLACEMENT__(Object    , Obj);
 DEFINE_HOOK_REPLACEMENT__(Command   , Cmd);
+DEFINE_HOOK_REPLACEMENT__(Dynamic   , Dyn);
+DEFINE_HOOK_REPLACEMENT__(Action    , Act);
+DEFINE_HOOK_REPLACEMENT__(Object    , Obj);
+DEFINE_HOOK_REPLACEMENT__(Update    , Upd);
 
 // SPECIAL HACK!  The streamer plugin already shortens "Checkpoint" to "CP", without this line
 // y_hooks will try to expand it again to `OnPlayerEnterDynamicCheckpoint`, which is a valid
