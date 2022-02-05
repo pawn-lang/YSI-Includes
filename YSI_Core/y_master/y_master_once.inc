@@ -430,6 +430,21 @@ enum _E_YCM
 	}
 #endif
 
+static stock const
+	YSI_FIXES_gscSingleProperty[] = "FIXES_gscSingleProperty";
+
+#if !defined FIXES_ID
+	forward _FIXES_DetermineID();
+
+	public _FIXES_DetermineID()
+	{
+		if (~@_) // != -1
+		{
+			setproperty(5, YSI_FIXES_gscSingleProperty, getproperty(5, YSI_FIXES_gscSingleProperty) | @_);
+		}
+	}
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <returns>
  *  OnYSIInit
@@ -456,27 +471,17 @@ public OnYSIInit()
 		#endif
 	#endif
 	// Properties get lost between script changes so we need to force a rebuild.
-	#if defined FIXES_ID
-		new
-			old = @_;
-		if (old == -1)
-		{
-			P:E("fixes.inc and y_master conflict in initialisation order.");
-		}
-	#endif
 	@_ = 0;
+	setproperty(8, YSIM_MASTER, 0);
 	CallRemoteFunction("Master_Reassert", YSI_EMPTY);
+	// For fixes.inc.  If it exists we just override its result.
+	@_ = -1;
+	setproperty(5, YSI_FIXES_gscSingleProperty, 0);
+	CallRemoteFunction("_FIXES_DetermineID", YSI_EMPTY);
 	new
-		masters = getproperty(8, YSIM_MASTER);
-	#if defined FIXES_ID
-		if (masters & old)
-		{
-			P:E("fixes.inc and y_master conflict in master ID.  Was one script compiled without fixes.inc?");
-		}
-		@_ = old;
-	#else
-		@_ = Cell_GetLowestEmpty(masters);
-	#endif
+		masters = getproperty(8, YSIM_MASTER) | getproperty(5, YSI_FIXES_gscSingleProperty);
+	@_ = Cell_GetLowestEmpty(masters);
+	P:I("YSI Script ID: %d", @_);
 	setproperty(8, YSIM_MASTER, masters | Master_ID());
 	C:1(if (!Master_ID()) P:E("MasterID not assigned"););
 	#if !defined YSI_NO_MASTER
