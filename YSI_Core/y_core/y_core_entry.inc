@@ -341,9 +341,9 @@ ScriptInit_PostExitFuncs_()
 stock _YSI_ConstMod(const &var, const val)
 {
 	#pragma unused var, val
-	#emit LREF.S.pri val
-	#emit LOAD.S.alt var
-	#emit SREF.S.alt val
+	#emit LREF.S.pri var
+	#emit LOAD.S.alt val
+	#emit SREF.S.alt var
 	return 0;
 }
 
