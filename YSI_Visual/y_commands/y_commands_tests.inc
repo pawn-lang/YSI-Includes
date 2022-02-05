@@ -361,29 +361,36 @@ TEST__ y_commands_3()
 
 YCMD:y_commands_4(playerid, cmdtext[], help)
 {
+	//printf("y_commands_4 %d %s %d", playerid, cmdtext, help);
 	gSomeVar = playerid + strval(cmdtext);
 	return 1;
 }
 
-YCMD:y_commands_5(playerid, cmdtext[], help) = y_commands_4;
-YCMD:y_commands_6(playerid, cmdtext[], help) = y_commands_5;
-YCMD:y_commands_8(playerid, cmdtext[], help) = y_commands_7;
+YCMD:y_commands_6(playerid, cmdtext[], help) = y_commands_4;
+YCMD:y_commands_8(playerid, cmdtext[], help) = y_commands_6;
+
+// TODO: Make this line an error.
+YCMD:y_commands_12(playerid, cmdtext[], help) = y_commands_10;
 
 TEST__ y_commands_4()
 {
 	call OnPlayerConnect(80);
 	gSomeVar = 42;
+	//printf("gSomeVar: %d", gSomeVar);
 	call OnPlayerCommandText(80, "/y_commands_4 40");
+	//printf("gSomeVar: %d", gSomeVar);
 	ASSERT_EQ(gSomeVar, 120);
-	call OnPlayerCommandText(80, "/y_commands_5 50");
+	call OnPlayerCommandText(80, "/y_commands_6 50");
+	//printf("gSomeVar: %d", gSomeVar);
 	ASSERT_EQ(gSomeVar, 130);
-	call OnPlayerCommandText(80, "/y_commands_6 70");
+	call OnPlayerCommandText(80, "/y_commands_8 70");
+	//printf("gSomeVar: %d", gSomeVar);
 	ASSERT_EQ(gSomeVar, 150);
 	ASSERT_NE(YCMD:y_commands_4, COMMAND_NOT_FOUND);
-	ASSERT_NE(YCMD:y_commands_5, COMMAND_NOT_FOUND);
 	ASSERT_NE(YCMD:y_commands_6, COMMAND_NOT_FOUND);
-	ASSERT_EQ(YCMD:y_commands_7, COMMAND_NOT_FOUND);
-	ASSERT_EQ(YCMD:y_commands_8, COMMAND_NOT_FOUND);
+	ASSERT_NE(YCMD:y_commands_8, COMMAND_NOT_FOUND);
+	ASSERT_EQ(YCMD:y_commands_10, COMMAND_NOT_FOUND);
+	ASSERT_EQ(YCMD:y_commands_12, COMMAND_NOT_FOUND);
 }
 
 static stock
