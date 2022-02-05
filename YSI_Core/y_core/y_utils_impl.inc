@@ -1862,7 +1862,7 @@ stock ReturnPlayerName(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock GetPlayerRPName(playerid, name[], len = sizeof (name))
+stock bool:GetPlayerRPName(playerid, name[], len = sizeof (name))
 {
 	if (GetPlayerName(playerid, name, len - 1))
 	{
@@ -1872,8 +1872,9 @@ stock GetPlayerRPName(playerid, name[], len = sizeof (name))
 		{
 			name[len] = ' ';
 		}
+		return true;
 	}
-	return name;
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
