@@ -532,7 +532,7 @@ TEST__ Callback_Array1()
 	Callback_Call(cc, a, str, c);
 	ASSERT_EQ(a, 7);
 	pars[0] = AMX_Ref(a);
-	pars[1] = AMX_Ref(str);
+	pars[1] = AMX_Ref(str[0]);
 	pars[2] = AMX_Ref(c);
 	// Test more parameters.
 	a = 2;
@@ -1468,7 +1468,7 @@ TEST__ nu_Callback_Array1()
 	Callback_Call(cc, a, str, c);
 	ASSERT_EQ(a, 7);
 	pars[0] = AMX_Ref(a);
-	pars[1] = AMX_Ref(str);
+	pars[1] = AMX_Ref(str[0]);
 	pars[2] = AMX_Ref(c);
 	// Test more parameters.
 	a = 2;

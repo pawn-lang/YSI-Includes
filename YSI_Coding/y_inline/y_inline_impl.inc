@@ -626,7 +626,7 @@ public OnCodeInit()
 	// Optimised.
 	new csm1a[CodeScanMatcher];
 	CodeScanMatcherInit(csm1a, &Inline_FoundStart);
-	CodeScanMatcherData(csm1a, AMX_Ref(data));
+	CodeScanMatcherData(csm1a, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm1a,
 		OP(STACK,              -4)
 		OP(CONST_PRI,          ???)
@@ -645,7 +645,7 @@ public OnCodeInit()
 	// Unoptimised.
 	new csm1b[CodeScanMatcher];
 	CodeScanMatcherInit(csm1b, &Inline_FoundStart);
-	CodeScanMatcherData(csm1b, AMX_Ref(data));
+	CodeScanMatcherData(csm1b, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm1b,
 		OP(STACK,              -4)
 		OP(CONST_PRI,          ???)
@@ -664,7 +664,7 @@ public OnCodeInit()
 	// Mid point.
 	new csm2a[CodeScanMatcher];
 	CodeScanMatcherInit(csm2a, &Inline_FoundMid);
-	CodeScanMatcherData(csm2a, AMX_Ref(data));
+	CodeScanMatcherData(csm2a, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm2a,
 		OP(PUSH_C,             0)
 		OP(CALL,               &I@F)
@@ -681,7 +681,7 @@ public OnCodeInit()
 	//   
 	new csm3a[CodeScanMatcher];
 	CodeScanMatcherInit(csm3a, &Inline_FoundVar);
-	CodeScanMatcherData(csm3a, AMX_Ref(data));
+	CodeScanMatcherData(csm3a, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm3a,
 		OP(ZERO_PRI)
 		OP(HEAP,               4)
@@ -692,7 +692,7 @@ public OnCodeInit()
 	
 	new csm3b[CodeScanMatcher];
 	CodeScanMatcherInit(csm3b, &Inline_FoundVar);
-	CodeScanMatcherData(csm3b, AMX_Ref(data));
+	CodeScanMatcherData(csm3b, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm3b,
 		OP(ZERO_PRI)
 		OP(HEAP,               4)
@@ -725,7 +725,7 @@ public OnCodeInit()
 	//   
 	new csm4a[CodeScanMatcher];
 	CodeScanMatcherInit(csm4a, &Inline_FoundRef);
-	CodeScanMatcherData(csm4a, AMX_Ref(data));
+	CodeScanMatcherData(csm4a, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm4a,
 		OP(CONST_PRI,          ???)
 		OP(HEAP,               4)
@@ -736,7 +736,7 @@ public OnCodeInit()
 	
 	new csm4b[CodeScanMatcher];
 	CodeScanMatcherInit(csm4b, &Inline_FoundRef);
-	CodeScanMatcherData(csm4b, AMX_Ref(data));
+	CodeScanMatcherData(csm4b, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm4b,
 		OP(CONST_PRI,          ???)
 		OP(HEAP,               4)
@@ -749,7 +749,7 @@ public OnCodeInit()
 	// End
 	new csm5a[CodeScanMatcher];
 	CodeScanMatcherInit(csm5a, &Inline_FoundEnd);
-	CodeScanMatcherData(csm5a, AMX_Ref(data));
+	CodeScanMatcherData(csm5a, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm5a,
 		OP(CALL,               &I@L)
 		OP(HEAP,               ???)
@@ -760,7 +760,7 @@ public OnCodeInit()
 	// Constness
 	new csm6a[CodeScanMatcher];
 	CodeScanMatcherInit(csm6a, &Inline_FoundConst);
-	CodeScanMatcherData(csm6a, AMX_Ref(data));
+	CodeScanMatcherData(csm6a, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm6a,
 		OP(PUSH_C,             ???)
 		OP(PUSH_C,             4)
@@ -770,7 +770,7 @@ public OnCodeInit()
 	
 	new csm6b[CodeScanMatcher];
 	CodeScanMatcherInit(csm6b, &Inline_FoundConst);
-	CodeScanMatcherData(csm6b, AMX_Ref(data));
+	CodeScanMatcherData(csm6b, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm6b,
 		OP(CONST_PRI,          ???)
 		OP(PUSH_PRI)
@@ -781,7 +781,7 @@ public OnCodeInit()
 	
 	new csm6c[CodeScanMatcher];
 	CodeScanMatcherInit(csm6c, &Inline_FoundConst2);
-	CodeScanMatcherData(csm6c, AMX_Ref(data));
+	CodeScanMatcherData(csm6c, AMX_Ref(data[E_INLINE_DATA:0]));
 	CodeScanMatcherPattern(csm6c,
 		OP(ZERO_PRI)
 		OP(PUSH_PRI)
@@ -1396,7 +1396,7 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx("Inline_MaybeConst_", 0, false, "i", AMX_Ref(func));
+	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx("Inline_MaybeConst_", 0, false, "i", AMX_Ref(func[E_INLINE_CALL_NULL]));
 }
 
 /*-------------------------------------------------------------------------*//**

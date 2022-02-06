@@ -327,7 +327,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 		AMX_Write(prev, ptr),
 		// Get the hashed string destination size, and copy the string.
 		next = m[HASH_MAP_SIZE_3],
-		RawMemCpy(ptr - next, AMX_Ref(str), next);
+		RawMemCpy(ptr - next, AMX_Ref(str[0]), next);
 		return true;
 	}
 	return false;
@@ -574,7 +574,7 @@ stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 			sString[128 char];
 		new
 			size = m[HASH_MAP_SIZE_3];
-		RawMemCpy(AMX_Ref(sString), m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2] - size, min(size, sizeof (sString) * 4));
+		RawMemCpy(AMX_Ref(sString[0]), m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2] - size, min(size, sizeof (sString) * 4));
 		return HashMap_RemoveKey(m, sString);
 	}
 	return false;
