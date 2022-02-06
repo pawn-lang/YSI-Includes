@@ -81,20 +81,9 @@ forward bool:_Testing_End();
 #include "..\y_utils"
 #include "..\..\YSI_Server\y_stringise"
 
-//#tryinclude "..\..\amx\amx_memory"
-//#tryinclude <amx_assembly\amx_memory>
-//#tryinclude "..\..\amx_assembly\amx_memory"
-//#tryinclude "..\..\..\amx_assembly\amx_memory"
-//#tryinclude "amx_memory"
-//#tryinclude <amx_memory>
-
 CHAIN_HOOK(Testing)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(Testing)
-
-//#if !defined AMX_MEMORY_INC
-//	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
-//#endif
 
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
@@ -509,8 +498,8 @@ Testing_Run_before_fail:
 		}
 		if (YSI_g_sFails != fails)
 		{
-			WriteAmxMemory(YSI_g_sCurTest, YSI_g_sFailTests),
-			WriteAmxMemory(YSI_g_sCurTest + 4, YSI_g_sFails - fails),
+			AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
+			AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - fails),
 			YSI_g_sFailTests = YSI_g_sCurTest;
 		}
 #if !defined TEST_SHOW_PASSES
@@ -600,8 +589,8 @@ Testing_Run_after_fail:
 			// Update fail counts.
 			if (YSI_g_sPlayerFails != YSI_g_sFails)
 			{
-				WriteAmxMemory(YSI_g_sCurTest, YSI_g_sFailTests),
-				WriteAmxMemory(YSI_g_sCurTest + 4, YSI_g_sFails - YSI_g_sPlayerFails),
+				AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
+				AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - YSI_g_sPlayerFails),
 				YSI_g_sFailTests = YSI_g_sCurTest,
 				YSI_g_sPlayerFails = YSI_g_sFails;
 			}
@@ -647,8 +636,8 @@ Testing_Next_retry:
 					// that didn't pass.
 					while (YSI_g_sFailTests != 0)
 					{
-						printf("    - %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
-						YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
+						printf("    - %s (%d)", AMX_Deref(YSI_g_sFailTests + 8), AMX_Read(YSI_g_sFailTests + 4)),
+						YSI_g_sFailTests = AMX_Read(YSI_g_sFailTests);
 					}
 					print(YSI_SPACE);
 				}
@@ -884,8 +873,8 @@ stock Testing_RunAll()
 			// that didn't pass.
 			while (YSI_g_sFailTests != 0)
 			{
-				printf("    - %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
-				YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
+				printf("    - %s (%d)", AMX_Deref(YSI_g_sFailTests + 8), AMX_Read(YSI_g_sFailTests + 4)),
+				YSI_g_sFailTests = AMX_Read(YSI_g_sFailTests);
 			}
 			print(YSI_SPACE);
 		}

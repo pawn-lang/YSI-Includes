@@ -93,6 +93,7 @@ native YSI_SHA256Hash_BAD_DONT_USE(const password[], const salt[], output[], siz
 
 // Proper casing.
 native YSI_Random(max) = random;
+native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = memcpy;
 
 #define YSI_JOIN(%0,%1,%2) %0And%1And%2
 

@@ -1020,6 +1020,16 @@ stock AMX_WriteArray(addr, const src[], len = sizeof (src))
 	}
 }
 
+stock AMX_Deref(addr)
+{
+	P:7("AMX_Deref called: %i", addr);
+	#emit LOAD.S.pri                    addr
+	#emit STOR.S.pri                    16
+	#emit RETN
+	new ret[2];
+	return ret;
+}
+
 stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 {
 	new
@@ -1395,11 +1405,20 @@ stock AMX_Read(addr)
 	__pragma("naked");
 }
 
-stock AMX_Ref(...)
+#if __COMPILER_CONST_REF
+	#pragma warning push
+	#pragma warning disable 238
+#endif
+
+stock AMX_Ref(const &addr)
 {
-	assert(numargs() == 1);
-	#emit LOAD.S.pri                    12
+	P:7("AMX_Ref called: %i", addr);
+	#emit LOAD.S.pri                    addr
 	#emit RETN
 	__pragma("naked");
 }
+
+#if __COMPILER_CONST_REF
+	#pragma warning pop
+#endif
 

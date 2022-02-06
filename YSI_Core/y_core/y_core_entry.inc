@@ -347,8 +347,6 @@ stock _YSI_ConstMod(const &var, const val)
 	return 0;
 }
 
-native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = memcpy;
-
 #if __COMPILER_CONST_REF
 	#pragma warning pop
 #endif
