@@ -322,7 +322,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __pragma("%0"%1) __pragma_%0(%1)
 
 	// The only two `__pragma`s we can fake.
-	#define __pragma_naked() return __COMPILER_DEFAULT
+	#define __pragma_naked() return 0 //__COMPILER_DEFAULT
 	#define __pragma_unused(,%0) H@(%0)
 
 	// Unimplemented errors.

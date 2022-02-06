@@ -1439,7 +1439,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
 			#emit RETN
 		}
 	}
-	__COMPILER_NAKED();
+	__pragma("naked");
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2950,7 +2950,7 @@ stock PrintArg(n)
 	#emit SYSREQ.C     print
 	#emit STACK        8
 	#emit RETN
-	__COMPILER_NAKED();
+	__pragma("naked");
 }
 
 #define printarg PrintArg

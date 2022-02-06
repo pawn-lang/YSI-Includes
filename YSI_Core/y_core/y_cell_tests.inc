@@ -425,7 +425,7 @@ static stock y_cell_CountBits_v3(GLOBAL_TAG_TYPES:data)
 	#emit SMUL.C               0x1010101
 	#emit SHR.C.pri            24
 	#emit RETN
-	__COMPILER_NAKED();
+	__pragma("naked");
 }
 
 static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
@@ -492,7 +492,7 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 	
 	// Return.
 	#emit RETN
-	__COMPILER_NAKED();
+	__pragma("naked");
 }
 
 TEST__ y_cell_CountBits0()

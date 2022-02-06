@@ -819,7 +819,7 @@ stock AMX_GetEntryPointer(tableEntry)
 {
 	#emit LREF.S.pri tableEntry
 	#emit RETN
-	__COMPILER_NAKED();
+	__pragma("naked");
 }
 
 stock AMX_GetEntryFromNativeIndex(index)
@@ -1392,6 +1392,6 @@ stock AMX_Read(addr)
 	P:7("AMX_Read called: %i", addr);
 	#emit LREF.S.pri                    addr
 	#emit RETN
-	return 0;
+	__pragma("naked");
 }
 
