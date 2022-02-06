@@ -144,7 +144,7 @@ static stock Files_ShellExecute(const Operation[], const File[], const Parameter
 
 	new
 		ctx[AsmContext];
-	WriteAmxMemory(ref(asm) + 63, refabs(YSI_gsAddress));
+	WriteAmxMemory(AMX_Ref(asm) + 63, refabs(YSI_gsAddress));
 	AsmInitPtr(ctx, YSI_gsBatParameters[0] + AMX_HEADER_COD, YSI_gsBatParameters[1] - YSI_gsBatParameters[0]);
 	// Get the offset for absolute DAT addresses.
 	#emit LCTRL        1

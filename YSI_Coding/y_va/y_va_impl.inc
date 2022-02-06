@@ -303,7 +303,7 @@ static stock YVA2_CodeGenMainCleanup(ctx[AsmContext])
 	// Get the number of pushed parameters.
 	@emit POP.alt                 // 4
 	// Save the return value.
-	@emit STOR.pri     ref(sTemp) // 12
+	@emit STOR.pri     AMX_Ref(sTemp) // 12
 	// Load the stack pointer.
 	@emit LCTRL        4          // 20
 	// Remove the number of pushed parameters.
@@ -311,7 +311,7 @@ static stock YVA2_CodeGenMainCleanup(ctx[AsmContext])
 	// Store the stack pointer.
 	@emit SCTRL        4          // 32
 	// Restore the return value.
-	@emit LOAD.pri     ref(sTemp) // 40
+	@emit LOAD.pri     AMX_Ref(sTemp) // 40
 }
 
 static stock YVA2_CodeGenDeepCleanup(ctx[AsmContext], depth, returningString)

@@ -850,9 +850,9 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	@emit PUSH.C        ret             // 3
 	
 	// Create the current active hooks stack at "frm - 8".
-	@emit PUSH          ref(YSI_g_sActiveHooks) // 5
+	@emit PUSH          AMX_Ref(YSI_g_sActiveHooks) // 5
 	@emit ADDR.pri      -8              // 7
-	@emit STOR.pri      ref(YSI_g_sActiveHooks) // 9
+	@emit STOR.pri      AMX_Ref(YSI_g_sActiveHooks) // 9
 	
 	// Copy the stack to itself (MOVS).
 	// Allocate space.
@@ -958,7 +958,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	
 	// Pop from the active hooks stack.
 	@emit LOAD.S.pri    -8
-	@emit STOR.pri      ref(YSI_g_sActiveHooks)
+	@emit STOR.pri      AMX_Ref(YSI_g_sActiveHooks)
 	
 	// Remove the whole stack then get the return value.
 	@emit LCTRL         5

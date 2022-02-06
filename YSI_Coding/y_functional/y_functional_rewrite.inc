@@ -325,12 +325,12 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	AsmInitPtr(ctx, callPos, 16);
 	// The relative jumps are all `+ 8` internally, since they add on the size of the `JUMP` OP.
 	@emit JUMP.rel         (YSI_g_sFunctionalStartPos - callPos)
-	@emit LOAD.pri         ref(I@)
+	@emit LOAD.pri         AMX_Ref(I@)
 	//@emit PUSH.C           -YSI_g_sFunctionalExpectedDepth
 	//@emit CALL             0
 	
 	AsmInitPtr(ctx, YSI_g_sFunctionalEndPos, 8);
-	@emit STOR.pri         ref(I@)
+	@emit STOR.pri         AMX_Ref(I@)
 	
 	AsmInitPtr(ctx, YSI_g_sFunctionalStartPos, 40);
 	if (excess)

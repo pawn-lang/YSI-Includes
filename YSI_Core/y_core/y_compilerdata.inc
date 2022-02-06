@@ -422,6 +422,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#if __COMPILER___EMIT_U
 		#define AMX_Read(%0) (_:(__emit(load.u.pri %0, stor.pri YSI_gAMXAddress_, lref.pri YSI_gAMXAddress_)))
 		#define AMX_Write(%0,%1) __emit(push.u %1, load.u.alt %0, stor.alt YSI_gAMXAddress_, pop.pri, sref.pri YSI_gAMXAddress_)
+		#define AMX_Ref(%0) (_:(__emit(addr.pri %0)))
 	#endif
 	
 	// Error with:

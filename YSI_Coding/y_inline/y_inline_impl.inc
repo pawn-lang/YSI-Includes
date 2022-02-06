@@ -562,7 +562,7 @@ static stock Inline_FoundDestructor(const scanner[CodeScanner])
 	{
 		// Remove this inline function from the linked list of inlines.
 		@emit LOAD.S.pri       func
-		@emit STOR.pri         ref(YSI_g_sInlineLinkedList)
+		@emit STOR.pri         AMX_Ref(YSI_g_sInlineLinkedList)
 	}
 	@emit NOP
 	@emit NOP
@@ -626,7 +626,7 @@ public OnCodeInit()
 	// Optimised.
 	new csm1a[CodeScanMatcher];
 	CodeScanMatcherInit(csm1a, &Inline_FoundStart);
-	CodeScanMatcherData(csm1a, ref(data));
+	CodeScanMatcherData(csm1a, AMX_Ref(data));
 	CodeScanMatcherPattern(csm1a,
 		OP(STACK,              -4)
 		OP(CONST_PRI,          ???)
@@ -645,7 +645,7 @@ public OnCodeInit()
 	// Unoptimised.
 	new csm1b[CodeScanMatcher];
 	CodeScanMatcherInit(csm1b, &Inline_FoundStart);
-	CodeScanMatcherData(csm1b, ref(data));
+	CodeScanMatcherData(csm1b, AMX_Ref(data));
 	CodeScanMatcherPattern(csm1b,
 		OP(STACK,              -4)
 		OP(CONST_PRI,          ???)
@@ -664,7 +664,7 @@ public OnCodeInit()
 	// Mid point.
 	new csm2a[CodeScanMatcher];
 	CodeScanMatcherInit(csm2a, &Inline_FoundMid);
-	CodeScanMatcherData(csm2a, ref(data));
+	CodeScanMatcherData(csm2a, AMX_Ref(data));
 	CodeScanMatcherPattern(csm2a,
 		OP(PUSH_C,             0)
 		OP(CALL,               &I@F)
@@ -681,7 +681,7 @@ public OnCodeInit()
 	//   
 	new csm3a[CodeScanMatcher];
 	CodeScanMatcherInit(csm3a, &Inline_FoundVar);
-	CodeScanMatcherData(csm3a, ref(data));
+	CodeScanMatcherData(csm3a, AMX_Ref(data));
 	CodeScanMatcherPattern(csm3a,
 		OP(ZERO_PRI)
 		OP(HEAP,               4)
@@ -692,7 +692,7 @@ public OnCodeInit()
 	
 	new csm3b[CodeScanMatcher];
 	CodeScanMatcherInit(csm3b, &Inline_FoundVar);
-	CodeScanMatcherData(csm3b, ref(data));
+	CodeScanMatcherData(csm3b, AMX_Ref(data));
 	CodeScanMatcherPattern(csm3b,
 		OP(ZERO_PRI)
 		OP(HEAP,               4)
@@ -725,7 +725,7 @@ public OnCodeInit()
 	//   
 	new csm4a[CodeScanMatcher];
 	CodeScanMatcherInit(csm4a, &Inline_FoundRef);
-	CodeScanMatcherData(csm4a, ref(data));
+	CodeScanMatcherData(csm4a, AMX_Ref(data));
 	CodeScanMatcherPattern(csm4a,
 		OP(CONST_PRI,          ???)
 		OP(HEAP,               4)
@@ -736,7 +736,7 @@ public OnCodeInit()
 	
 	new csm4b[CodeScanMatcher];
 	CodeScanMatcherInit(csm4b, &Inline_FoundRef);
-	CodeScanMatcherData(csm4b, ref(data));
+	CodeScanMatcherData(csm4b, AMX_Ref(data));
 	CodeScanMatcherPattern(csm4b,
 		OP(CONST_PRI,          ???)
 		OP(HEAP,               4)
@@ -749,7 +749,7 @@ public OnCodeInit()
 	// End
 	new csm5a[CodeScanMatcher];
 	CodeScanMatcherInit(csm5a, &Inline_FoundEnd);
-	CodeScanMatcherData(csm5a, ref(data));
+	CodeScanMatcherData(csm5a, AMX_Ref(data));
 	CodeScanMatcherPattern(csm5a,
 		OP(CALL,               &I@L)
 		OP(HEAP,               ???)
@@ -760,7 +760,7 @@ public OnCodeInit()
 	// Constness
 	new csm6a[CodeScanMatcher];
 	CodeScanMatcherInit(csm6a, &Inline_FoundConst);
-	CodeScanMatcherData(csm6a, ref(data));
+	CodeScanMatcherData(csm6a, AMX_Ref(data));
 	CodeScanMatcherPattern(csm6a,
 		OP(PUSH_C,             ???)
 		OP(PUSH_C,             4)
@@ -770,7 +770,7 @@ public OnCodeInit()
 	
 	new csm6b[CodeScanMatcher];
 	CodeScanMatcherInit(csm6b, &Inline_FoundConst);
-	CodeScanMatcherData(csm6b, ref(data));
+	CodeScanMatcherData(csm6b, AMX_Ref(data));
 	CodeScanMatcherPattern(csm6b,
 		OP(CONST_PRI,          ???)
 		OP(PUSH_PRI)
@@ -781,7 +781,7 @@ public OnCodeInit()
 	
 	new csm6c[CodeScanMatcher];
 	CodeScanMatcherInit(csm6c, &Inline_FoundConst2);
-	CodeScanMatcherData(csm6c, ref(data));
+	CodeScanMatcherData(csm6c, AMX_Ref(data));
 	CodeScanMatcherPattern(csm6c,
 		OP(ZERO_PRI)
 		OP(PUSH_PRI)
@@ -1396,7 +1396,7 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx("Inline_MaybeConst_", 0, false, "i", ref(func));
+	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx("Inline_MaybeConst_", 0, false, "i", AMX_Ref(func));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1729,7 +1729,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 		if (needStore)
 		{
 			// Back up `pri` somewhere for returning later.
-			@emit STOR.pri         ref(I@)
+			@emit STOR.pri         AMX_Ref(I@)
 			// This used to exploit the fact that the bottom of the stack was
 			// still in `alt`, as in:
 			//
@@ -1750,7 +1750,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			Inline_GenerateLocalsStore(ctx, parameters, count);
 			// Restore the return value.
 			@emit SCTRL            4
-			@emit LOAD.pri         ref(I@)
+			@emit LOAD.pri         AMX_Ref(I@)
 			@emit RETN
 		}
 		else
@@ -1763,7 +1763,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 	}
 	else
 	{
-		@emit STOR.pri         ref(I@)
+		@emit STOR.pri         AMX_Ref(I@)
 		if (needStore)
 		{
 			@emit LOAD.S.alt       0xFFFFFFF8
@@ -1826,10 +1826,10 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 
 	// Add the current inline to the linked list of in-scope inlines.  Also push
 	// the inline address and current frame data.
-	@emit PUSH             ref(YSI_g_sInlineLinkedList)
+	@emit PUSH             AMX_Ref(YSI_g_sInlineLinkedList)
 	@emit PUSH.C           data[E_INLINE_DATA_NAME]
 	@emit ADDR.alt         -data[E_INLINE_DATA_LOCALS]
-	@emit STOR.alt         ref(YSI_g_sInlineLinkedList)
+	@emit STOR.alt         AMX_Ref(YSI_g_sInlineLinkedList)
 	
 	// Size of inline parameters.
 	startaddr = data[E_INLINE_DATA_STACK] - data[E_INLINE_DATA_LOCALS];
@@ -1948,7 +1948,7 @@ stock Inline_UI_(const &header)
 	// checking, and we change that in assembly so that the return from this
 	// function is truly what is pushed.
 	// 
-	// We can't use `ref()` here because passing a `const &` to a `...` function
+	// We can't use `AMX_Ref()` here because passing a `const &` to a `...` function
 	// gets the address of a heap temporary, instead of the original.  Even
 	// `const ...` doesn't solve this.
 	P:3("Inline_UI_ called: %d", header);

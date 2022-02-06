@@ -97,7 +97,7 @@ TEST__ y_hashmap_Init()
 TEST__ RawMemCpy()
 {
 	new src[100] = "Hello there", dst[100];
-	RawMemCpy(ref(dst), ref(src), 100 * 4);
+	RawMemCpy(AMX_Ref(dst), AMX_Ref(src), 100 * 4);
 	ASSERT(bool:dst[0]);
 	ASSERT_SAME(dst, "Hello there");
 }

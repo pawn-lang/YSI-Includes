@@ -1395,3 +1395,11 @@ stock AMX_Read(addr)
 	__pragma("naked");
 }
 
+stock AMX_Ref(...)
+{
+	assert(numargs() == 1);
+	#emit LOAD.S.pri                    12
+	#emit RETN
+	__pragma("naked");
+}
+

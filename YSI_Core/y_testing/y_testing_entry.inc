@@ -305,7 +305,7 @@ stock _Testing_Start(const name[])
 	// list of failures.
 	setarg(0, 0, 0); // Bypass `const`.
 	setarg(0, 1, 0); //name[0] = name[1] = 0,
-	YSI_g_sCurTest = ref(name);
+	YSI_g_sCurTest = AMX_Ref(name);
 	// My very first legitimate usage of `heapspace()` for something other than
 	// as a dummy no-op function call!  I'm actually quite happy I found a use
 	// for it!

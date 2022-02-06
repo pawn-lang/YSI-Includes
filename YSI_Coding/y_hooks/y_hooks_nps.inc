@@ -612,13 +612,13 @@ stock _yH@(compressedFormat)
 
 	@emit PUSH.C       8                                                        // 7
 	@emit PUSH.pri     // Save the return address again.                        // 8
-	@emit PUSH         ref(YSI_g_sNPSStack)                                     // 10
+	@emit PUSH         AMX_Ref(YSI_g_sNPSStack)                                 // 10
 
 	// Copy 20 bytes over (includes the return address and fake param count).
 	@emit HEAP         20                                                       // 12
 	@emit LCTRL        4                                                        // 14
 	@emit MOVS         20                                                       // 16
-	@emit STOR.alt     ref(YSI_g_sNPSStack)                                     // 18
+	@emit STOR.alt     AMX_Ref(YSI_g_sNPSStack)                                 // 18
 
 	// Call, and return to here to clean up the heap.
 	@emit STACK        20                                                       // 20
@@ -630,13 +630,13 @@ stock _yH@(compressedFormat)
 	@emit PUSH.pri                                                              // 27
 
 	// Copy from the heap.
-	@emit LOAD.pri     ref(YSI_g_sNPSStack)                                     // 29
+	@emit LOAD.pri     AMX_Ref(YSI_g_sNPSStack)                                 // 29
 	@emit MOVS         20                                                       // 31
 
 	// Restore the return address and `continue` stack.
 	@emit POP.pri                                                               // 32
 	@emit POP.alt                                                               // 33
-	@emit STOR.alt     ref(YSI_g_sNPSStack)                                     // 35
+	@emit STOR.alt     AMX_Ref(YSI_g_sNPSStack)                                 // 35
 	@emit HEAP         -20                                                      // 37
 
 	// Return from this "function", with our fake parameters and return address.
@@ -653,7 +653,7 @@ stock _yH@(compressedFormat)
 
 		// Returns to here.
 		@emit PUSH.alt
-		@emit PUSH         ref(YSI_g_sTempRet)
+		@emit PUSH         AMX_Ref(YSI_g_sTempRet)
 		@emit RETN
 	}
 
@@ -688,7 +688,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 	@emit PUSH.pri
 
 	// Load the bitmap of parameter types.
-	@emit LOAD.pri     ref(YSI_g_sNPSStack)
+	@emit LOAD.pri     AMX_Ref(YSI_g_sNPSStack)
 	@emit ADD.C        16
 	@emit LOAD.I
 	@emit MOVE.alt
@@ -717,7 +717,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 
 	@emit POP.pri
 
-	@emit LOAD.pri     ref(YSI_g_sNPSStack)
+	@emit LOAD.pri     AMX_Ref(YSI_g_sNPSStack)
 	@emit ADD.C        12
 	@emit LOAD.I
 
@@ -736,7 +736,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 
 	// Save the bottom of the stack.
 	@emit POP.alt
-	@emit STOR.alt     ref(YSI_g_sTempRet)
+	@emit STOR.alt     AMX_Ref(YSI_g_sTempRet)
 	@emit POP.alt
 
 	// Jump to the next function in the chain.
@@ -749,7 +749,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
     //
 	//// Returns to here.
 	//@emit PUSH.alt
-	//@emit PUSH         ref(YSI_g_sTempRet)
+	//@emit PUSH         AMX_Ref(YSI_g_sTempRet)
 	//@emit RETN
 
 	AsmEmitPadding(ctx);

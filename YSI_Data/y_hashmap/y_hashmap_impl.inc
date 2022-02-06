@@ -273,7 +273,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 		// Add this entry to the correct binary tree.
 		P:5("HashMap_Add: mask = %d", hash & 0xFF);
 		new
-			prev = ref(m[hash & 0xFF]),
+			prev = AMX_Ref(m[hash & 0xFF]),
 			next = 0;
 		for ( ; ; )
 		{
@@ -327,7 +327,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 		AMX_Write(prev, ptr),
 		// Get the hashed string destination size, and copy the string.
 		next = m[HASH_MAP_SIZE_3],
-		RawMemCpy(ptr - next, ref(str), next);
+		RawMemCpy(ptr - next, AMX_Ref(str), next);
 		return true;
 	}
 	return false;
@@ -376,7 +376,7 @@ stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = fals
 {
 	P:3("HashMap_Get called: mask = %d (%d)", hash, hash & 0xFF);
 	new
-		prev = ref(m[hash & 0xFF]),
+		prev = AMX_Ref(m[hash & 0xFF]),
 		next = 0;
 	static
 		res = 0;
@@ -436,7 +436,7 @@ stock bool:HashMap_RemoveKeyWithHash(HashMap:m<>, const str[], hash, bool:ignore
 {
 	// First, find the key and it's parent.
 	new
-		prev = ref(m[hash & 0xFF]),
+		prev = AMX_Ref(m[hash & 0xFF]),
 		next = 0;
 	static
 		res = 0;
@@ -574,7 +574,7 @@ stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 			sString[128 char];
 		new
 			size = m[HASH_MAP_SIZE_3];
-		RawMemCpy(ref(sString), m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2] - size, min(size, sizeof (sString) * 4));
+		RawMemCpy(AMX_Ref(sString), m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2] - size, min(size, sizeof (sString) * 4));
 		return HashMap_RemoveKey(m, sString);
 	}
 	return false;
