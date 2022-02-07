@@ -526,7 +526,8 @@ stock bool:Server_IsLongCallEnabled()
 {
 	#emit ZERO.pri
 	#emit LCTRL         0xFF
-	#emit SHR.C.pri     1
+	#emit CONST.alt     1
+	#emit AND
 	#emit RETN
 	return false;
 }
@@ -535,6 +536,7 @@ stock Server_GetLongCallTime()
 {
 	#emit ZERO.pri
 	#emit LCTRL         0xFE
+	#emit SHR.C.pri     1
 	#emit RETN
 	return 0;
 }
