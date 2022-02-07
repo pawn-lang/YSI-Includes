@@ -354,6 +354,33 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], value, bool:ignorecase = false)
  * <param name="m">The hash map to search.</param>
  * <param name="str">The key to find.</param>
  * <returns>
+ *  Does this hash map contain the given value?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:HashMap_Has(HashMap:m<>, const str[], bool:ignorecase = false)
+{
+	return HashMap_GetWithHash(m, str, YHash(str, .sensitive = !ignorecase), ignorecase) != -1;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="m">The hash map to search.</param>
+ * <param name="str">The key to find.</param>
+ * <param name="hash">The hashed key.</param>
+ * <returns>
+ *  Does this hash map contain the given value?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:HashMap_HasWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = false)
+{
+	return HashMap_GetWithHash(m, str, hash, ignorecase) != -1;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="m">The hash map to search.</param>
+ * <param name="str">The key to find.</param>
+ * <returns>
  *  The value associated with this key in the given hash map.
  * </returns>
  *//*------------------------------------------------------------------------**/
