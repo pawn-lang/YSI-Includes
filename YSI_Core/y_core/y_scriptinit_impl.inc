@@ -541,6 +541,34 @@ stock Server_GetLongCallTime()
 	return 0;
 }
 
+stock Server_DisableDetectAddr0() {
+	#emit CONST.pri     0
+	#emit SCTRL         0xFD
+}
+
+stock Server_EnableDetectAddr0() {
+	#emit CONST.pri     1
+	#emit SCTRL         0xFD
+}
+
+stock bool:Server_IsDetectAddr0Enabled() {
+	// Is the check enabled?  0 if off or doesn't exist.
+	#emit CONST.pri     0
+	#emit LCTRL 0xFD
+	#emit RETN
+	return false;
+}
+
+stock bool:Server_HasDetectAddr0() {
+	// Is the check possible?
+	#emit CONST.pri     0xFFFFFFFF // -1
+	#emit LCTRL 0xFD               // 0 or 1
+	#emit CONST.alt     0
+	#emit SGEQ                     // >= 0
+	#emit RETN
+	return false;
+}
+
 stock Server_GetStartTime()
 {
 	return YSI_gsStartTime;
