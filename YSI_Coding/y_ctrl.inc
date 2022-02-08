@@ -1,5 +1,5 @@
 /**
- * <library name="y_ctl">
+ * <library name="y_ctrl">
  * <section>
  *  Description
  * </section>
@@ -82,26 +82,26 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_ctl
-	#undef _inc_y_ctl
+#if defined _inc_y_ctrl
+	#undef _inc_y_ctrl
 #endif
 
-#if !defined _INC_y_ctl
-	#tryinclude "y_ctl\y_ctl_entry"
+#if !defined _INC_y_ctrl
+	#tryinclude "y_ctrl\y_ctrl_entry"
 #endif
-#if !defined _INC_y_ctl
-	#tryinclude "YSI_Coding\y_ctl\y_ctl_entry"
+#if !defined _INC_y_ctrl
+	#tryinclude "YSI_Coding\y_ctrl\y_ctrl_entry"
 #endif
-#if !defined _INC_y_ctl
-	#tryinclude "YSI\YSI_Coding\y_ctl\y_ctl_entry"
+#if !defined _INC_y_ctrl
+	#tryinclude "YSI\YSI_Coding\y_ctrl\y_ctrl_entry"
 #endif
-#if !defined _INC_y_ctl
-	#tryinclude <YSI_Coding\y_ctl\y_ctl_entry>
+#if !defined _INC_y_ctrl
+	#tryinclude <YSI_Coding\y_ctrl\y_ctrl_entry>
 #endif
-#if !defined _INC_y_ctl
-	#tryinclude <YSI\YSI_Coding\y_ctl\y_ctl_entry>
+#if !defined _INC_y_ctrl
+	#tryinclude <YSI\YSI_Coding\y_ctrl\y_ctrl_entry>
 #endif
-#if !defined _INC_y_ctl
-	#error Could not find y_ctl
+#if !defined _INC_y_ctrl
+	#error Could not find y_ctrl
 #endif
 

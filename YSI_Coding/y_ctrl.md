@@ -1,4 +1,4 @@
-# y_ctl
+# y_ctrl
 
 Provides language syntax and support for "hooking" functions.  Allowing you to intercept them, or use the same callback in multiple files at once.
 
@@ -11,11 +11,11 @@ For general YSI information, see the following links:
 
 ## Documentation
 
-* [Quick Start](y_ctl/quick-start.md) - One very simple example of getting started with this library.
-* [Features](y_ctl/features.md) - More features and examples.
-* [FAQs](y_ctl/faqs.md) - Frequently Asked Questions, including errors and solutions.
-* [API](y_ctl/api.md) - Full list of all functions and their meaning.
-* [Internal](y_ctl/internal.md) - Internal developer documentation for the system.
+* [Quick Start](y_ctrl/quick-start.md) - One very simple example of getting started with this library.
+* [Features](y_ctrl/features.md) - More features and examples.
+* [FAQs](y_ctrl/faqs.md) - Frequently Asked Questions, including errors and solutions.
+* [API](y_ctrl/api.md) - Full list of all functions and their meaning.
+* [Internal](y_ctrl/internal.md) - Internal developer documentation for the system.
 
 ## External Links
 

@@ -9,7 +9,7 @@ Only registers above `255` are called via this method.  `XCTRL 0` - `XCTRL 255` 
 VM and plugins (e.g. crashdetect uses `254` and `255`).
 
 ```pawn
-#include <YSI_Coding\y_ctl>
+#include <YSI_Coding\y_ctrl>
 
 new gVar = 5;
 

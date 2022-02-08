@@ -1,7 +1,7 @@
-#if defined _INC_y_ctl
+#if defined _INC_y_ctrl
 	#endinput
 #endif
-#define _INC_y_ctl
+#define _INC_y_ctrl
 
 /*
 Legal:
@@ -79,9 +79,9 @@ Optional plugins:
 #include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
 
-#include "y_ctl_impl"
+#include "y_ctrl_impl"
 
 #if defined YSI_TESTS
-	#include "y_ctl_tests"
+	#include "y_ctrl_tests"
 #endif
 
