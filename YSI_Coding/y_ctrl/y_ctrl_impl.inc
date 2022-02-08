@@ -133,8 +133,21 @@ public OnCodeInit()
 		CTL_WriteStub(AMX_Read(entry));
 	}
 
-	return 1;
+	#if defined CTRL_OnCodeInit
+		return CTRL_OnCodeInit();
+	#else
+		return 1;
+	#endif
 }
+
+#if defined _ALS_OnCodeInit
+	#undef OnCodeInit
+#endif
+#define _ALS_OnCodeInit
+#define OnCodeInit( CTRL_OnCodeInit(
+#if defined CTRL_OnCodeInit
+	forward CTRL_OnCodeInit();
+#endif
 
 static stock CTL_WriteStub(addr)
 {
