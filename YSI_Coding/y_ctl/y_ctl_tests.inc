@@ -1,8 +1,3 @@
-#if defined _INC_y_ctl
-	#endinput
-#endif
-#define _INC_y_ctl
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -76,12 +71,27 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
+static
+	YSI_g_sValue = 0;
 
-#include "y_ctl_impl"
+@lctrl(558453593) YSI_LCTRL(pri, alt)
+{
+	#pragma unused pri, alt
+	return YSI_g_sValue;
+}
 
-#if defined YSI_TESTS
-	#include "y_ctl_tests"
-#endif
+@sctrl(558453593) YSI_SCTRL(pri, alt)
+{
+	YSI_g_sValue = pri + alt;
+}
 
+TEST__ LCTRL_SCTRL()
+{
+	new a = 0;
+	#emit CONST.pri 4
+	#emit CONST.alt 5
+	#emit SCTRL 558453593
+	#emit LCTRL 558453593
+	#emit STOR.S.pri a
+	ASSERT_EQ(a, 9);
+}
