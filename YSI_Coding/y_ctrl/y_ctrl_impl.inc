@@ -125,18 +125,74 @@ public OnCodeInit()
 		//reg = strval(name);
 		// TODO: Invalidate entries.
 		//CTL_WriteStub(addr);
-		CTL_WriteStub(AMX_Read(entry));
+		CTL_WriteLCTRL(AMX_Read(entry));
 	}
 
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@y_S>)))
 	{
-		CTL_WriteStub(AMX_Read(entry));
+		CTL_WriteSCTRL(AMX_Read(entry));
 	}
 
 	return 1;
 }
 
-static stock CTL_WriteStub(addr)
+static stock CTL_WriteLCTRL(addr)
+{
+	static
+		pri,
+		alt;
+	// Find the call target.
+	new
+		target,
+		dctx[DisasmContext];
+	DisasmInit(dctx, addr);
+	while (DisasmNext(dctx)) {
+		if (dctx[DisasmContext_opcode] == OP_CALL) {
+			target = DisasmGetOperand(dctx);
+			break;
+		}
+	}
+
+	new
+		ctx[AsmContext];
+	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 32);
+	// Search the function for a call to the implementation.
+
+	// Pass `pri` and `alt` as parameters, and get the return address.
+	@emit PUSH.alt
+	@emit PUSH.pri
+
+	// Push the parameter count.
+	@emit PUSH.C           4
+
+	// Push the return address.
+	//@emit PUSH.alt
+
+	// Jump to the function.
+	@emit CALL             target
+
+	// Return.
+	@emit POP.alt
+	@emit POP.pri
+	@emit PUSH.C           0
+	@emit PUSH.pri
+	
+
+	// There is no way that can't fit within the code space reserved by the wrapper
+	// public.  By my maths the smallest it can possibly be is nine cells:
+	//
+	//     PROC
+	//     ZERO.pri
+	//     PUSH.pri
+	//     PUSH.pri
+	//     PUSH.C              8
+	//     CALL                %1
+	//     RETN
+	//
+	// And the code we actually want is only seven cells.
+}
+
+static stock CTL_WriteSCTRL(addr)
 {
 	// Find the call target.
 	new
@@ -167,7 +223,6 @@ static stock CTL_WriteStub(addr)
 
 	// Jump to the function.
 	@emit JUMP             target
-	@emit NOP
     
 	// There is no way that can't fit within the code space reserved by the wrapper
 	// public.  By my maths the smallest it can possibly be is ten cells:
