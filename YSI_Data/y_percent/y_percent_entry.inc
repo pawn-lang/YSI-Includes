@@ -1,15 +1,9 @@
-/**
- * <library name="y_percent">
- * <section>
- *  Description
- * </section>
- *  Adds a <c>Percent:</c> tag to perform percentage-based maths.
- * <section>
- *  Version
- * </section>
- *  2.0
- * </library>
- *//** *//*
+#if defined _INC_y_percent
+	#endinput
+#endif
+#define _INC_y_percent
+
+/*
 Legal:
 	Version: MPL 1.1
 	
@@ -82,26 +76,11 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_percent
-	#undef _inc_y_percent
-#endif
+#include "..\..\YSI_Core\y_utils"
 
-#if !defined _INC_y_percent
-	#tryinclude "y_percent\y_percent_entry"
-#endif
-#if !defined _INC_y_percent
-	#tryinclude "YSI_Coding\y_percent\y_percent_entry"
-#endif
-#if !defined _INC_y_percent
-	#tryinclude "YSI\YSI_Coding\y_percent\y_percent_entry"
-#endif
-#if !defined _INC_y_percent
-	#tryinclude <YSI_Coding\y_percent\y_percent_entry>
-#endif
-#if !defined _INC_y_percent
-	#tryinclude <YSI\YSI_Coding\y_percent\y_percent_entry>
-#endif
-#if !defined _INC_y_percent
-	#error Could not find y_percent
+#include "y_percent_impl"
+
+#if defined YSI_TESTS
+	#include "y_percent_tests"
 #endif
 

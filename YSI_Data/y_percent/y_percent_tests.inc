@@ -1,15 +1,4 @@
-/**
- * <library name="y_percent">
- * <section>
- *  Description
- * </section>
- *  Adds a <c>Percent:</c> tag to perform percentage-based maths.
- * <section>
- *  Version
- * </section>
- *  2.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	
@@ -82,26 +71,25 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_percent
-	#undef _inc_y_percent
-#endif
+TEST__ y_percent()
+{
+	new Percent:TWENTY = Percent:20;
 
-#if !defined _INC_y_percent
-	#tryinclude "y_percent\y_percent_entry"
-#endif
-#if !defined _INC_y_percent
-	#tryinclude "YSI_Coding\y_percent\y_percent_entry"
-#endif
-#if !defined _INC_y_percent
-	#tryinclude "YSI\YSI_Coding\y_percent\y_percent_entry"
-#endif
-#if !defined _INC_y_percent
-	#tryinclude <YSI_Coding\y_percent\y_percent_entry>
-#endif
-#if !defined _INC_y_percent
-	#tryinclude <YSI\YSI_Coding\y_percent\y_percent_entry>
-#endif
-#if !defined _INC_y_percent
-	#error Could not find y_percent
-#endif
+	// _ / Percent
+	ASSERT_EQ(5 - TWENTY, 4);
+	ASSERT_EQ(5 + TWENTY, 6);
+	ASSERT_EQ(5 * TWENTY, 1);
+
+	// Percent / _
+	ASSERT_EQ(Percent:5 - 20, -15);
+	ASSERT_EQ(Percent:5 + 20, 25);
+	ASSERT_EQ(Percent:5 * 20, 100);
+	ASSERT_EQ(Percent:50 / 20, 2);
+	ASSERT_EQ(Percent:50 % 20, 10);
+
+	// Percent / Percent
+	ASSERT_EQ(Percent:5 - TWENTY, -15);
+	ASSERT_EQ(Percent:5 + TWENTY, 25);
+	ASSERT_EQ(Percent:5 * TWENTY, 1);
+}
 

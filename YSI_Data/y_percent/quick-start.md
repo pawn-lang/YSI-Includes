@@ -12,9 +12,11 @@ To add percentages, put them first:
 new Percent:twenty = Percent:10 + 10; // 20%
 ```
 
-Using both does the original maths:
+Using both does a mix:
 
 ```pawn
-new Percent:eleven = Percent:10 + Percent:10; // 10% + 10% of 10% = 11%
+new Percent:twenty = Percent:10 + Percent:10; // 10% + 10% = 20%
+new Percent:naught = Percent:10 - Percent:10; // 10% - 10% =  0%
+new Percent:one = Percent:10 * Percent:10; // 10% * 10% =  1%
 ```
 
