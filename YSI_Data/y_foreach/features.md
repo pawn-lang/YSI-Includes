@@ -855,6 +855,14 @@ Equivalent to:
 for (new i = min; i < max; i += step)
 ```
 
+### `N`
+
+Loops *n* times:
+
+```pawn
+foreach (new i : N(10))
+```
+
 ### `Powers`
 
 ```pawn
@@ -996,6 +1004,153 @@ Goes through an iterator backwards:
 
 ```pawn
 foreach (new i : Reverse(Player))
+```
+
+## Main Iterators
+
+### `Player`
+
+Loop over all players (excludes NPCs):
+
+```pawn
+foreach (new i : Player)
+```
+
+### `StreamedPlayer`
+
+Loop over all players streamed in for another player (excludes NPCs):
+
+```pawn
+foreach (new i : StreamedPlayer[playerid])
+```
+
+### `Bot`/`NPC`
+
+Loop over all bots (NPCs):
+
+```pawn
+foreach (new i : Bot)
+```
+
+### `StreamedBot`
+
+Loop over all bots streamed in for a player:
+
+```pawn
+foreach (new i : StreamedBot[playerid])
+```
+
+### `Character`
+
+Loop over all bots and players:
+
+```pawn
+foreach (new i : Character)
+```
+
+### `StreamedCharacter`
+
+Loop over all bots and players streamed in for another player
+
+```pawn
+foreach (new i : StreamedCharacter[playerid])
+```
+
+### `Actor`
+
+Loop over all actors:
+
+```pawn
+foreach (new i : Actor)
+```
+
+### `StreamedActor`
+
+Loop over all actors streamed in for a player:
+
+```pawn
+foreach (new i : StreamedActor[playerid])
+```
+
+### `Vehicle`
+
+Loop over all vehicles:
+
+```pawn
+foreach (new i : Vehicle)
+```
+
+### `LocalVehicle`
+
+Loop over all vehicles created in the current mode:
+
+```pawn
+foreach (new i : LocalVehicle)
+```
+
+### `StreamedVehicle`
+
+Loop over all vehicles streamed in for a player:
+
+```pawn
+foreach (new i : StreamedVehicle[playerid])
+```
+
+### `VehicleOccupant`
+
+Loop over all players in a vehicle:
+
+```pawn
+foreach (new i : VehicleOccupant(vehicleid))
+```
+
+### `Command`
+
+Loop over all y_commands command IDs:
+
+```pawn
+foreach (new i : Command)
+```
+
+### `PlayerCommand`
+
+Loop over all y_commands command IDs that the given player can use:
+
+```pawn
+foreach (new i : PlayerCommand(playerid))
+```
+
+### `Group`
+
+Loop over all y_groups groups:
+
+```pawn
+foreach (new Group:g : Group)
+```
+
+### `PlayerGroups`
+
+Loop over all y_groups groups a single player is in:
+
+```pawn
+foreach (new Group:g : PlayerGroups(playerid)) // [sic]
+```
+
+### `GroupMember`
+
+Loop over everyone in a y_groups group:
+
+```pawn
+foreach (new i : GroupMember(groupid)) // [sic]
+```
+
+### `Group_...`
+
+For every library that uses y_groups for permissions, there is an iterator to loop over items from
+that library in a group.  For example, to loop over all the commands enabled in a group:
+
+```pawn
+foreach (new i : Group_Command(groupid))
 ```
 
 ## You don't need n-dimensional arrays.
