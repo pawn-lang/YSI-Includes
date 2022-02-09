@@ -92,14 +92,14 @@ public OnCodeInit()
 	CodeScanInit(scanner);
 
 	new lctrl[CodeScanMatcher];
-	CodeScanMatcherInit(lctrl, &CTL_FoundLCTRL);
+	CodeScanMatcherInit(lctrl, &CTRL_FoundLCTRL);
 	CodeScanMatcherPattern(lctrl,
 		OP(LCTRL, ???)
 	);
 	CodeScanAddMatcher(scanner, lctrl);
 
 	new sctrl[CodeScanMatcher];
-	CodeScanMatcherInit(sctrl, &CTL_FoundSCTRL);
+	CodeScanMatcherInit(sctrl, &CTRL_FoundSCTRL);
 	CodeScanMatcherPattern(sctrl,
 		OP(SCTRL, ???)
 	);
@@ -124,13 +124,13 @@ public OnCodeInit()
 		//AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS + 4, name);
 		//reg = strval(name);
 		// TODO: Invalidate entries.
-		//CTL_WriteStub(addr);
-		CTL_WriteStub(AMX_Read(entry));
+		//CTRL_WriteStub(addr);
+		CTRL_WriteLCTRLStub(AMX_Read(entry));
 	}
 
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@y_S>)))
 	{
-		CTL_WriteStub(AMX_Read(entry));
+		CTRL_WriteSCTRLStub(AMX_Read(entry));
 	}
 
 	#if defined CTRL_OnCodeInit
@@ -149,7 +149,117 @@ public OnCodeInit()
 	forward CTRL_OnCodeInit();
 #endif
 
-static stock CTL_WriteStub(addr)
+static stock CTRL_LCTRLStub()
+{
+	// The call to this function skips the `PROC` - we don't want it.
+
+	// Save `pri` and `alt.
+	#emit PUSH.alt
+	#emit PUSH.pri
+
+	// Get the return address.
+	#emit PICK             8
+
+	// We can finally "enter" the function.
+	#emit PUSH.C           16
+	#emit PUSH.pri
+	#emit PROC
+
+	// Push the `pri` and `alt` parameters.
+	#emit PUSH.S           16
+	#emit PUSH.S           12
+	#emit PUSH.C           8
+
+	// And set up a second function call.
+	#emit LCTRL            6
+	#emit ADD.C            36
+	#emit LCTRL            8
+	#emit PUSH.pri
+	#emit LOAD.S.pri       20
+	#emit SCTRL            6
+
+	// We return to here, from which cleanup is easy.
+	#emit LOAD.S.alt       16
+	#emit RETN
+}
+
+static stock CTRL_SCTRLStub()
+{
+	// The call to this function skips the `PROC` - we don't want it.
+
+	// Save `pri` and `alt.
+	#emit PUSH.alt
+	#emit PUSH.pri
+
+	// Get the return address.
+	#emit PICK             8
+
+	// We can finally "enter" the function.
+	#emit PUSH.C           16
+	#emit PUSH.pri
+	#emit PROC
+
+	// Push the `pri` and `alt` parameters.
+	#emit PUSH.S           16
+	#emit PUSH.S           12
+	#emit PUSH.C           8
+
+	// And set up a second function call.
+	#emit LCTRL            6
+	#emit ADD.C            36
+	#emit LCTRL            8
+	#emit PUSH.pri
+	#emit LOAD.S.pri       20
+	#emit SCTRL            6
+
+	// We return to here, from which cleanup is easy.
+	#emit LOAD.S.alt       16
+	#emit LOAD.S.pri       12
+	#emit RETN
+}
+
+#define CALL@CTRL_LCTRLStub CTRL_LCTRLStub()
+#define CALL@CTRL_SCTRLStub CTRL_SCTRLStub()
+
+static stock CTRL_WriteLCTRLStub(addr)
+{
+	// Find the call target.
+	new
+		target,
+		dctx[DisasmContext];
+	DisasmInit(dctx, addr);
+	while (DisasmNext(dctx)) {
+		if (dctx[DisasmContext_opcode] == OP_CALL) {
+			// Search the function for a call to the implementation.
+			target = DisasmGetOperand(dctx);
+			break;
+		}
+	}
+
+	new
+		ctx[AsmContext];
+	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 16);
+
+	// Push the implementation addres and jump to the common register preserving
+	// stub, so that `pri` and `alt` aren't clobbered (skipping `PROC`).
+	@emit PUSH.C           target
+	@emit JUMP             addressof (CTRL_LCTRLStub) + 4
+
+	// There is no way that can't fit within the code space reserved by the wrapper
+	// public.  By my maths the smallest it can possibly be is nine cells:
+	//
+	//     PROC
+	//     ZERO.pri
+	//     PUSH.pri
+	//     PUSH.pri
+	//     PUSH.C              8
+	//     CALL                %1
+	//     RETN
+	//
+	// And the code we actually want is only four cells.
+}
+
+static stock CTRL_WriteSCTRLStub(addr)
 {
 	// Find the call target.
 	new
@@ -165,37 +275,13 @@ static stock CTL_WriteStub(addr)
 
 	new
 		ctx[AsmContext];
-	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 32);
-	// Search the function for a call to the implementation.
+	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 16);
 
-	// Pass `pri` and `alt` as parameters, and get the return address.
-	@emit SWAP.alt
-	@emit PUSH.pri
-
-	// Push the parameter count.
-	@emit PUSH.C           8
-
-	// Push the return address.
-	@emit PUSH.alt
-
-	// Jump to the function.
-	@emit JUMP             target
-
-	// There is no way that can't fit within the code space reserved by the wrapper
-	// public.  By my maths the smallest it can possibly be is nine cells:
-	//
-	//     PROC
-	//     ZERO.pri
-	//     PUSH.pri
-	//     PUSH.pri
-	//     PUSH.C              8
-	//     CALL                %1
-	//     RETN
-	//
-	// And the code we actually want is only seven cells.
+	@emit PUSH.C           target
+	@emit JUMP             addressof (CTRL_LCTRLStub) + 4
 }
 
-static stock CTL_FoundLCTRL(const scanner[CodeScanner])
+static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
 {
 	new reg = CodeScanGetMatchHole(scanner, 0);
 	if (0 <= reg <= 255)
@@ -221,7 +307,7 @@ static stock CTL_FoundLCTRL(const scanner[CodeScanner])
 	}
 }
 
-static stock CTL_FoundSCTRL(const scanner[CodeScanner])
+static stock CTRL_FoundSCTRL(const scanner[CodeScanner])
 {
 	new reg = CodeScanGetMatchHole(scanner, 0);
 	if (0 <= reg <= 255)

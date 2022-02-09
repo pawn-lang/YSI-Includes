@@ -1236,6 +1236,7 @@ ScriptInit_Purge_retry:
 
 */
 
+#define _ALS_OnCodeInit
 #define OnCodeInit ScriptInit_OnCodeInit
 #if defined ScriptInit_OnCodeInit
 	forward ScriptInit_OnCodeInit();
