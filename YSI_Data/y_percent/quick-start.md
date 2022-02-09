@@ -10,6 +10,8 @@ To add percentages, put them first:
 
 ```pawn
 new Percent:twenty = Percent:10 + 10; // 20%
+new Percent:naught = Percent:10 - 10; //  0%
+new Percent:hundred = Percent:10 * 10; // 100%
 ```
 
 Using both does a mix:
