@@ -20,6 +20,8 @@ Although YSI provides a lot of libraries, they aren't included unless you includ
 
 PAWN scripting improvements (i.e. new language features).
 
+* [y_ctrl](YSI_Coding/y_ctrl.md)
+* [y_cgen](YSI_Coding/y_cgen.md)
 * [y_functional](YSI_Coding/y_functional.md)
 * [y_hooks](YSI_Coding/y_hooks.md)
 * [y_inline](YSI_Coding/y_inline.md)
@@ -36,6 +38,7 @@ Core libraries, used almost everywhere else.
 
 * [y_als](YSI_Core/y_als.md)
 * [y_cell](YSI_Core/y_cell.md)
+* [y_compilerdata](YSI_Core/y_compilerdata.md)
 * [y_debug](YSI_Core/y_debug.md)
 * [y_master](YSI_Core/y_master.md)
 * [y_profiling](YSI_Core/y_profiling.md)
@@ -52,6 +55,7 @@ Data structures and algorithms.
 * [y_iterate](YSI_Data/y_iterate.md) (AKA y_foreach)
 * [y_hashmap](YSI_Data/y_hashmap.md)
 * [y_jaggedarray](YSI_Data/y_jaggedarray.md)
+* [y_percent](YSI_Data/y_percent.md)
 * [y_playerarray](YSI_Data/y_playerarray.md)
 * [y_playerset](YSI_Data/y_playerset.md)
 * [y_sortedarray](YSI_Data/y_sortedarray.md)

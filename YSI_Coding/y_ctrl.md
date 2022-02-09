@@ -1,6 +1,6 @@
 # y_ctrl
 
-Provides language syntax and support for "hooking" functions.  Allowing you to intercept them, or use the same callback in multiple files at once.
+Create new control registers and use them via `LCTRL` and `SCTRL`.
 
 ## YSI
 
