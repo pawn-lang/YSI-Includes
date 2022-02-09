@@ -1,12 +1,9 @@
 # Quick Start
 
-Create new VM registers and use them via `LCTRL` and `SCTRL`.
-
-*IMPORTANT*:  Unlike normal register reads and writes these will currently clobber `pri` and `alt`
-(`LCTRL` always clobbers `pri`, thats its job).
-
-Only registers above `255` are called via this method.  `XCTRL 0` - `XCTRL 255` are reserved for the
-VM and plugins (e.g. crashdetect uses `254` and `255`).
+Create new VM registers and use them via `LCTRL` and `SCTRL`.  Only registers above `255` are called
+via this method.  `XCTRL 0` - `XCTRL 255` are reserved for the VM and plugins (e.g. crashdetect uses
+`254` and `255`).  As with normal register reads/writes `pri` and `alt` are preserved across `SCTRL`
+and `alt` is preserved across `LCTRL` (`pri` isn't - it is the return value).
 
 ```pawn
 #include <YSI_Coding\y_ctrl>

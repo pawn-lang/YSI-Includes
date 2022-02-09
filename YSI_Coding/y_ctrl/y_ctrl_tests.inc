@@ -87,11 +87,18 @@ static
 
 TEST__ LCTRL_SCTRL()
 {
-	new a = 0;
+	new p0, a0, p1, a1;
 	#emit CONST.pri 4
 	#emit CONST.alt 5
 	#emit SCTRL 558453593
+	#emit STOR.S.pri p0
+	#emit STOR.S.alt a0
 	#emit LCTRL 558453593
-	#emit STOR.S.pri a
-	ASSERT_EQ(a, 9);
+	#emit STOR.S.pri p1
+	#emit STOR.S.alt a1
+	ASSERT_EQ(a0, 5);
+	ASSERT_EQ(p0, 4);
+	ASSERT_EQ(a1, 5);
+	ASSERT_EQ(p1, 9);
 }
+
