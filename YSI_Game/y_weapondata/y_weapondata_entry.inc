@@ -90,7 +90,7 @@ Optional plugins:
 
 */
 
-P:D(Weapon_IsValid(weaponid));
+//P:D(Weapon_IsValid(weaponid));
 #define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
 
 enum E_WEAPON_DATA
@@ -151,13 +151,13 @@ new YSI_g_WeaponInformation[47][E_WEAPON_DATA] = {
     {"Parachute", 46, 11, 371 }
 };
 
-P:D(Weapon_GetSlot(weaponid));
+//P:D(Weapon_GetSlot(weaponid));
 stock Weapon_GetSlot(weaponid)
 {
 	return YSI_g_WeaponInformation[weaponid][Slot];
 }
 
-P:D(Weapon_GetModelID(weaponid));
+//P:D(Weapon_GetModelID(weaponid));
 stock Weapon_GetModelID(weaponid)
 {
 	return YSI_g_WeaponInformation[weaponid][Model];
