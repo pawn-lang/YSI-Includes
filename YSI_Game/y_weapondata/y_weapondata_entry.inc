@@ -90,9 +90,6 @@ Optional plugins:
 
 */
 
-//P:D(Weapon_IsValid(weaponid));
-#define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
-
 enum E_WEAPON_DATA
 {
     Name[24],
@@ -150,6 +147,9 @@ new YSI_g_WeaponInformation[47][E_WEAPON_DATA] = {
     {"Thermal Goggles", 45, 11, 369 },
     {"Parachute", 46, 11, 371 }
 };
+
+//P:D(Weapon_IsValid(weaponid));
+#define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
 
 //P:D(Weapon_GetSlot(weaponid));
 stock Weapon_GetSlot(weaponid)
