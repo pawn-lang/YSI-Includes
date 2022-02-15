@@ -90,13 +90,6 @@ Optional plugins:
 
 */
 
-enum E_WEAPON_DATA
-{
-    ID,
-    Slot,
-    Model
-}
-
 static stock YSI_g_WeaponModels[47] = {
 	0,331,333,334,335,336,
     337,338,339,341,321,321,
