@@ -155,6 +155,51 @@ stock bool:Weapon_IsValid(weaponid)
 	return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? (true) : (false);
 }
 
+stock bool:Weapon_IsAssaultRifle(weaponid)
+{
+	switch(weaponid)
+	{
+		case 30, 31: return true;
+	}
+	return false;
+}
+
+stock bool:Weapon_IsPistol(weaponid)
+{
+	switch(weaponid)
+	{
+		case 22, 23, 24: return true;
+	}
+	return false;
+}
+
+stock bool:Weapon_IsShotgun(weaponid)
+{
+	switch(weaponid)
+	{
+		case 25, 26, 27: return true;
+	}
+	return false;
+}
+
+stock bool:Weapon_IsSubmachineGun(weaponid)
+{
+	switch(weaponid)
+	{
+		case 28, 29, 32: return true;
+	}
+	return false;
+}
+
+stock bool:Weapon_IsRifle(weaponid)
+{
+	switch(weaponid)
+	{
+		case 33, 34: return true;
+	}
+	return false;
+}
+
 //P:D(Weapon_GetSlot(weaponid));
 stock Weapon_GetSlot(weaponid)
 {
