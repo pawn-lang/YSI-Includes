@@ -1,6 +1,6 @@
 # y_weapondata
 
-Information about GTA vehicles - speeds, abilities, colours, etc.
+Provides information about GTA weapons - their name, ID, slot and model ID.
 
 ## YSI
 
@@ -11,11 +11,11 @@ For general YSI information, see the following links:
 
 ## Documentation
 
-* [Quick Start](y_vehicledata/quick-start.md) - One very simple example of getting started with this library.
-* [Features](y_vehicledata/features.md) - More features and examples.
-* [FAQs](y_vehicledata/faqs.md) - Frequently Asked Questions, including errors and solutions.
-* [API](y_vehicledata/api.md) - Full list of all functions and their meaning.
-* [Internal](y_vehicledata/internal.md) - Internal developer documentation for the system.
+* [Quick Start](y_weapondata/quick-start.md) - One very simple example of getting started with this library.
+* [Features](y_weapondata/features.md) - More features and examples.
+* [FAQs](y_weapondata/faqs.md) - Frequently Asked Questions, including errors and solutions.
+* [API](y_weapondata/api.md) - Full list of all functions and their meaning.
+* [Internal](y_weapondata/internal.md) - Internal developer documentation for the system.
 
 ## External Links
 
