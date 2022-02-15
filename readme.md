@@ -74,6 +74,7 @@ Optional features.
 Libraries that provide information about the game.
 
 * [y_vehicledata](YSI_Game/y_vehicledata.md)
+* [y_weapondata](YSI_Game/y_weapondata.md)
 
 ### Players
 
