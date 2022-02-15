@@ -43,6 +43,7 @@ Contributors:
 	paulommu
 	udan111
 	Cheaterman
+	DEntisT
 
 Thanks:
 	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
