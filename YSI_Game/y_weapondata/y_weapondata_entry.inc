@@ -173,3 +173,15 @@ stock Weapon_GetModelID(weaponid)
 {
 	return YSI_g_WeaponModels[weaponid];
 }
+
+stock Weapon_GetIDFromModelID(modelid)
+{
+	for(new i; i < 47; i++)
+	{
+		if(YSI_g_WeaponModels[i] == modelid)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
