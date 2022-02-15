@@ -149,7 +149,11 @@ new YSI_g_WeaponInformation[47][E_WEAPON_DATA] = {
 };
 
 //P:D(Weapon_IsValid(weaponid));
-#define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
+//#define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
+stock bool:Weapon_IsValid(weaponid)
+{
+	return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? (true) : (false);
+}
 
 //P:D(Weapon_GetSlot(weaponid));
 stock Weapon_GetSlot(weaponid)
