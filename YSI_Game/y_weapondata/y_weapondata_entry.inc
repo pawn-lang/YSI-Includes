@@ -90,16 +90,18 @@ Optional plugins:
 
 */
 
+P:D(Weapon_IsValid(weaponid));
 #define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
 
-enum g_WeapInfoEnum{
+enum E_WEAPON_DATA
+{
     Name[24],
     ID,
     Slot,
     Model
 }
 
-new g_WeaponInformation[ 47 ][ g_WeapInfoEnum ] = {
+new YSI_g_WeaponInformation[47][E_WEAPON_DATA] = {
     {"No gun", 0, 0, 0 },
     {"Brass Knuckles", 1, 0, 331 },
     {"Golf Club", 2, 1, 333 },
@@ -148,3 +150,15 @@ new g_WeaponInformation[ 47 ][ g_WeapInfoEnum ] = {
     {"Thermal Goggles", 45, 11, 369 },
     {"Parachute", 46, 11, 371 }
 };
+
+P:D(Weapon_GetSlot(weaponid));
+stock Weapon_GetSlot(weaponid)
+{
+	return YSI_g_WeaponInformation[weaponid][Slot];
+}
+
+P:D(Weapon_GetModelID(weaponid));
+stock Weapon_GetModelID(weaponid)
+{
+	return YSI_g_WeaponInformation[weaponid][Model];
+}
