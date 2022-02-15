@@ -99,7 +99,7 @@ enum E_WEAPON_DATA
 }
 
 new YSI_g_WeaponInformation[47][E_WEAPON_DATA] = {
-    {"No gun", 0, 0, 0 },
+    {"Fist", 0, 0, 0 },
     {"Brass Knuckles", 1, 0, 331 },
     {"Golf Club", 2, 1, 333 },
     {"Nightstick", 3, 1, 334 },
