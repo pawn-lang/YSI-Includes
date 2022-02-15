@@ -92,67 +92,36 @@ Optional plugins:
 
 enum E_WEAPON_DATA
 {
-    Name[24],
     ID,
     Slot,
     Model
 }
 
-new YSI_g_WeaponInformation[47][E_WEAPON_DATA] = {
-    {"Fist", 0, 0, 0 },
-    {"Brass Knuckles", 1, 0, 331 },
-    {"Golf Club", 2, 1, 333 },
-    {"Nightstick", 3, 1, 334 },
-    {"Knife", 4, 1, 335 },
-    {"Baseball Bat", 5, 1, 336 },
-    {"Shovel", 6, 1, 337 },
-    {"Pool Cue", 7, 1, 338 },
-    {"Katana", 8, 1, 339 },
-    {"Chainsaw", 9, 1, 341 },
-    {"Double-ended Dildo", 10, 10, 321 },
-    {"Dildo", 11, 10, 321 },
-    {"Vibrator", 12, 10, 323 },
-    {"Silver Vibrator", 13, 10, 324 },
-    {"Flowers", 14, 10, 325 },
-    {"Cane", 15, 10, 326 },
-    {"Grenade", 16, 8, 342 },
-    {"Tear Gas", 17, 8, 343 },
-    {"Molotov Cocktail", 18, 8, 344 },
-    {"No gun", 19, -1, 0 },
-    {"No gun", 20, -1, 0 },
-    {"No gun", 21, -1, 0 },
-    {"Colt .45", 22, 2, 346 },
-    {"Silenced Colt .45", 23, 2, 347 },
-    {"Desert Eagle", 24, 2, 348 },
-    {"Shotgun", 25, 3, 349 },
-    {"Sawnoff Shotgun", 26, 3, 350 },
-    {"Combat Shotgun", 27, 3, 351 },
-    {"Micro SMG", 28, 4, 352 },
-    {"MP5", 29, 4, 353 },
-    {"AK47", 30, 5, 355 },
-    {"M4", 31, 5, 356 },
-    {"Tec-9", 32, 4, 372 },
-    {"Country Rifle", 33, 6, 357 },
-    {"Sniper Rifle", 34, 6, 358 },
-    {"RPG", 35, 7, 359 },
-    {"HS Rocket", 36, 7, 360 },
-    {"Flamethrower", 37, 7, 361 },
-    {"Minigun", 38, 7, 362 },
-    {"Satchel Charge", 39, 8, 363 },
-    {"Detonator", 40, 12, 364 },
-    {"Spraycan", 41, 9, 365 },
-    {"Fire Extinguisher", 42, 9, 366 },
-    {"Camera", 43, 9, 367 },
-    {"Night Vis Goggles", 44, 11, 368 },
-    {"Thermal Goggles", 45, 11, 369 },
-    {"Parachute", 46, 11, 371 }
+static stock YSI_g_WeaponModels[47] = {
+	0,331,333,334,335,336,
+    337,338,339,341,321,321,
+	323,324,325,326,342,343,
+	344,0,0,0,346,347,348,349,
+	350,351,352,353,355,356,
+	372,357,358,359,360,361,
+	362,363,364,365,366,367,
+   	368,369,371
+	
+};
+
+static stock YSI_g_WeaponSlots[47] = {
+	0,0,1,1,1,1,1,1,1,1,
+	10,10,10,10,10,10,8,8,8,
+	-1,-1,-1,2,2,2,3,3,3,4,
+	4,5,5,4,6,6,7,7,7,7,8,12,
+	9,9,9,11,11,11
 };
 
 //P:D(Weapon_IsValid(weaponid));
 //#define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
 stock bool:Weapon_IsValid(weaponid)
 {
-	return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? (true) : (false);
+	return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46);
 }
 
 stock bool:Weapon_IsAssaultRifle(weaponid)
@@ -203,11 +172,11 @@ stock bool:Weapon_IsRifle(weaponid)
 //P:D(Weapon_GetSlot(weaponid));
 stock Weapon_GetSlot(weaponid)
 {
-	return YSI_g_WeaponInformation[weaponid][Slot];
+	return YSI_g_WeaponSlots[weaponid];
 }
 
 //P:D(Weapon_GetModelID(weaponid));
 stock Weapon_GetModelID(weaponid)
 {
-	return YSI_g_WeaponInformation[weaponid][Model];
+	return YSI_g_WeaponModels[weaponid];
 }
