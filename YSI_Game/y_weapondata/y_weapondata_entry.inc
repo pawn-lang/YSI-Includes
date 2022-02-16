@@ -90,11 +90,23 @@ Optional plugins:
 
 */
 
+#define WEAPON_FIRE_TYPE_MELEE 0
+#define WEAPON_FIRE_TYPE_PROJECTILE 1
+#define WEAPON_FIRE_TYPE_INSTANT_HIT 2
+#define WEAPON_FIRE_TYPE_AREA_EFFECT 3
+#define WEAPON_FIRE_TYPE_USE 4
+#define WEAPON_FIRE_TYPE_CAMERA 5
+
+static stock YSI_g_InvalidReturn = -1;
+
 static stock YSI_g_WeaponModels[47] = {
 	0,331,333,334,335,336,
     337,338,339,341,321,321,
 	323,324,325,326,342,343,
-	344,0,0,0,346,347,348,349,
+	344,YSI_g_InvalidReturn,
+	YSI_g_InvalidReturn,
+	YSI_g_InvalidReturn
+	,346,347,348,349,
 	350,351,352,353,355,356,
 	372,357,358,359,360,361,
 	362,363,364,365,366,367,
@@ -105,9 +117,62 @@ static stock YSI_g_WeaponModels[47] = {
 static stock YSI_g_WeaponSlots[47] = {
 	0,0,1,1,1,1,1,1,1,1,
 	10,10,10,10,10,10,8,8,8,
-	-1,-1,-1,2,2,2,3,3,3,4,
+	YSI_g_InvalidReturn,
+	YSI_g_InvalidReturn,
+	YSI_g_InvalidReturn,
+	2,2,2,3,3,3,4,
 	4,5,5,4,6,6,7,7,7,7,8,12,
 	9,9,9,11,11,11
+};
+
+static stock YSI_g_WeaponFireType[47] = {
+    WEAPON_FIRE_TYPE_MELEE, //{"Fist", 0, 0, 0 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Brass Knuckles", 1, 0, 331 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Golf Club", 2, 1, 333 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Nightstick", 3, 1, 334 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Knife", 4, 1, 335 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Baseball Bat", 5, 1, 336 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Shovel", 6, 1, 337 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Pool Cue", 7, 1, 338 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Katana", 8, 1, 339 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Chainsaw", 9, 1, 341 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Double-ended Dildo", 10, 10, 321 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Dildo", 11, 10, 321 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Vibrator", 12, 10, 323 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Silver Vibrator", 13, 10, 324 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Flowers", 14, 10, 325 },
+    WEAPON_FIRE_TYPE_MELEE, //{"Cane", 15, 10, 326 },
+    WEAPON_FIRE_TYPE_PROJECTILE, //{"Grenade", 16, 8, 342 },
+    WEAPON_FIRE_TYPE_PROJECTILE, //{"Tear Gas", 17, 8, 343 },
+    WEAPON_FIRE_TYPE_PROJECTILE, //{"Molotov Cocktail", 18, 8, 344 },
+    YSI_g_InvalidReturn, //{"No gun", 19, -1, 0 },
+    YSI_g_InvalidReturn, //{"No gun", 20, -1, 0 },
+    YSI_g_InvalidReturn, //{"No gun", 21, -1, 0 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Colt .45", 22, 2, 346 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Silenced Colt .45", 23, 2, 347 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Desert Eagle", 24, 2, 348 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Shotgun", 25, 3, 349 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Sawnoff Shotgun", 26, 3, 350 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Combat Shotgun", 27, 3, 351 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Micro SMG", 28, 4, 352 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"MP5", 29, 4, 353 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"AK47", 30, 5, 355 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"M4", 31, 5, 356 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Tec-9", 32, 4, 372 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Country Rifle", 33, 6, 357 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Sniper Rifle", 34, 6, 358 },
+    WEAPON_FIRE_TYPE_PROJECTILE, //{"RPG", 35, 7, 359 },
+    WEAPON_FIRE_TYPE_PROJECTILE, //{"HS Rocket", 36, 7, 360 },
+    WEAPON_FIRE_TYPE_AREA_EFFECT, //{"Flamethrower", 37, 7, 361 },
+    WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Minigun", 38, 7, 362 },
+    WEAPON_FIRE_TYPE_PROJECTILE, //{"Satchel Charge", 39, 8, 363 },
+    WEAPON_FIRE_TYPE_USE, //{"Detonator", 40, 12, 364 },
+    WEAPON_FIRE_TYPE_AREA_EFFECT, //{"Spraycan", 41, 9, 365 },
+    WEAPON_FIRE_TYPE_AREA_EFFECT, //{"Fire Extinguisher", 42, 9, 366 },
+    WEAPON_FIRE_TYPE_AREA_CAMERA, //{"Camera", 43, 9, 367 },
+    WEAPON_FIRE_TYPE_AREA_USE, //{"Night Vis Goggles", 44, 11, 368 },
+    WEAPON_FIRE_TYPE_AREA_USE, //{"Thermal Goggles", 45, 11, 369 },
+    WEAPON_FIRE_TYPE_AREA_USE  //{"Parachute", 46, 11, 371 }
 };
 
 //P:D(Weapon_IsValid(weaponid));
