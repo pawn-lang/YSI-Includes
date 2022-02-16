@@ -1,6 +1,6 @@
 # y_weapondata
 
-Provides information about GTA weapons - their name, ID, slot and model ID.
+Provides information about GTA weapons - their slot, animation group, ammo names, model IDs etc.
 
 ## YSI
 
