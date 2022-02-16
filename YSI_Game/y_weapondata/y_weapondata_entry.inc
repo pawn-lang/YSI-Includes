@@ -96,6 +96,12 @@ Optional plugins:
 #define WEAPON_FIRE_TYPE_AREA_EFFECT 3
 #define WEAPON_FIRE_TYPE_USE 4
 #define WEAPON_FIRE_TYPE_CAMERA 5
+//P:D(Weapon_IsValid(weaponid));
+//#define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
+stock bool:Weapon_IsValid(weaponid)
+{
+	return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46);
+}
 
 static stock YSI_g_InvalidReturn = -1;
 
@@ -175,11 +181,64 @@ static stock YSI_g_WeaponFireType[47] = {
     WEAPON_FIRE_TYPE_AREA_USE  //{"Parachute", 46, 11, 371 }
 };
 
-//P:D(Weapon_IsValid(weaponid));
-//#define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
-stock bool:Weapon_IsValid(weaponid)
+stock Weapon_GetFireType(weaponid)
 {
-	return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46);
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponFireType[weaponid] : (YSI_g_InvalidReturn);
+}
+
+static stock Float:YSI_g_MaxWeaponRange[47] = {
+    1.6, //{"Fist", 0, 0, 0 },
+    1.6, //{"Brass Knuckles", 1, 0, 331 },
+    1.6, //{"Golf Club", 2, 1, 333 },
+    1.6, //{"Nightstick", 3, 1, 334 },
+    1.6, //{"Knife", 4, 1, 335 },
+    1.6, //{"Baseball Bat", 5, 1, 336 },
+    1.6, //{"Shovel", 6, 1, 337 },
+    1.6, //{"Pool Cue", 7, 1, 338 },
+    1.6, //{"Katana", 8, 1, 339 },
+    1.6, //{"Chainsaw", 9, 1, 341 },
+    1.6, //{"Double-ended Dildo", 10, 10, 321 },
+    1.6, //{"Dildo", 11, 10, 321 },
+    1.6, //{"Vibrator", 12, 10, 323 },
+    1.6, //{"Silver Vibrator", 13, 10, 324 },
+    1.6, //{"Flowers", 14, 10, 325 },
+    1.6, //{"Cane", 15, 10, 326 },
+    40.0, //{"Grenade", 16, 8, 342 },
+    40.0, //{"Tear Gas", 17, 8, 343 },
+    40.0, //{"Molotov Cocktail", 18, 8, 344 },
+    YSI_g_InvalidReturn, //{"No gun", 19, -1, 0 },
+    YSI_g_InvalidReturn, //{"No gun", 20, -1, 0 },
+    YSI_g_InvalidReturn, //{"No gun", 21, -1, 0 },
+    30.0, //{"Colt .45", 22, 2, 346 },
+    35.0, //{"Silenced Colt .45", 23, 2, 347 },
+    35.0, //{"Desert Eagle", 24, 2, 348 },
+    35.0, //{"Shotgun", 25, 3, 349 },
+    40.0, //{"Sawnoff Shotgun", 26, 3, 350 },
+    40.0, //{"Combat Shotgun", 27, 3, 351 },
+    30.0, //{"Micro SMG", 28, 4, 352 },
+    45.0, //{"MP5", 29, 4, 353 },
+    70.0, //{"AK47", 30, 5, 355 },
+    90.0, //{"M4", 31, 5, 356 },
+    35.0, //{"Tec-9", 32, 4, 372 },
+    100.0, //{"Country Rifle", 33, 6, 357 },
+    100.0, //{"Sniper Rifle", 34, 6, 358 },
+    40.0, //{"RPG", 35, 7, 359 },
+    40.0, //{"HS Rocket", 36, 7, 360 },
+    5.1, //{"Flamethrower", 37, 7, 361 },
+    75.0, //{"Minigun", 38, 7, 362 },
+    40.0, //{"Satchel Charge", 39, 8, 363 },
+    25.0, //{"Detonator", 40, 12, 364 },
+    6.1, //{"Spraycan", 41, 9, 365 },
+    10.1, //{"Fire Extinguisher", 42, 9, 366 },
+    100.0, //{"Camera", 43, 9, 367 },
+    100.0, //{"Night Vis Goggles", 44, 11, 368 },
+    100.0, //{"Thermal Goggles", 45, 11, 369 },
+    25.0  //{"Parachute", 46, 11, 371 }
+};
+
+stock Float:Weapon_GetMaxRange(weaponid)
+{
+	return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (YSI_g_InvalidReturn);
 }
 
 stock bool:Weapon_IsAssaultRifle(weaponid)
