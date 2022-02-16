@@ -113,6 +113,10 @@ stock bool:Weapon_IsValid(weaponid)
 	return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46);
 }
 
+#if !defined YSI_WEAPDATA_MAX_STRING_SIZE
+	#define YSI_WEAPDATA_MAX_STRING_SIZE (24)
+#endif
+
 //static stock YSI_g_InvalidReturn = -1;
 
 static stock YSI_g_WeaponModels[47] = {
@@ -239,8 +243,8 @@ static stock Float:YSI_g_MinWeaponRange[47] = {
 	30.0, //{"Tec-9", 32, 4, 372 },
 	100.0, //{"Country Rifle", 33, 6, 357 },
 	100.0, //{"Sniper Rifle", 34, 6, 358 },
-	55.0, //{"RPG", 35, 7, 359 },
-	55.0, //{"HS Rocket", 36, 7, 360 },
+	40.0, //{"RPG", 35, 7, 359 },
+	40.0, //{"HS Rocket", 36, 7, 360 },
 	5.1, //{"Flamethrower", 37, 7, 361 },
 	75.0, //{"Minigun", 38, 7, 362 },
 	40.0, //{"Satchel Charge", 39, 8, 363 },
@@ -313,7 +317,7 @@ stock Float:Weapon_GetMaxRange(weaponid)
 	return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (-1);
 }
 
-static stock YSI_g_WeaponAmmoNames[47][24] = {
+static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	WEAPONDATA_NO_AMMO, //{"Fist", 0, 0, 0 },
 	WEAPONDATA_NO_AMMO, //{"Brass Knuckles", 1, 0, 331 },
 	WEAPONDATA_NO_AMMO, //{"Golf Club", 2, 1, 333 },
@@ -365,13 +369,75 @@ static stock YSI_g_WeaponAmmoNames[47][24] = {
 
 stock Weapon_GetAmmoName(weaponid)
 {
-	new dest[24];
+	new dest[YSI_WEAPDATA_MAX_STRING_SIZE];
 	if(!Weapon_IsValid(weaponid))
 	{
 		strcat(dest, " ");
 		return dest;
 	}
 	else strcat(dest, YSI_g_WeaponAmmoNames[weaponid]);
+	return dest;
+}
+
+static stock YSI_g_WeaponAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
+	"null", //{"Fist", 0, 0, 0 },
+	"null", //{"Brass Knuckles", 1, 0, 331 },
+	"null", //{"Golf Club", 2, 1, 333 },
+	"null", //{"Nightstick", 3, 1, 334 },
+	"stealth_kn", //{"Knife", 4, 1, 335 },
+	"null", //{"Baseball Bat", 5, 1, 336 },
+	"null", //{"Shovel", 6, 1, 337 },
+	"null", //{"Pool Cue", 7, 1, 338 },
+	"null", //{"Katana", 8, 1, 339 },
+	"null", //{"Chainsaw", 9, 1, 341 },
+	"null", //{"Double-ended Dildo", 10, 10, 321 },
+	"null", //{"Dildo", 11, 10, 321 },
+	"null", //{"Vibrator", 12, 10, 323 },
+	"null", //{"Silver Vibrator", 13, 10, 324 },
+	"null", //{"Flowers", 14, 10, 325 },
+	"null", //{"Cane", 15, 10, 326 },
+	"grenade", //{"Grenade", 16, 8, 342 },
+	"grenade", //{"Tear Gas", 17, 8, 343 },
+	"grenade", //{"Molotov Cocktail", 18, 8, 344 },
+	"null", //{"No gun", 19, -1, 0 },
+	"null", //{"No gun", 20, -1, 0 },
+	"null", //{"No gun", 21, -1, 0 },
+	"colt45", //{"Colt .45", 22, 2, 346 },
+	"silenced", //{"Silenced Colt .45", 23, 2, 347 },
+	"pythonbad", //{"Desert Eagle", 24, 2, 348 },
+	"shotgunbad", //{"Shotgun", 25, 3, 349 },
+	"sawnoff", //{"Sawnoff Shotgun", 26, 3, 350 },
+	"buddy", //{"Combat Shotgun", 27, 3, 351 },
+	"colt45", //{"Micro SMG", 28, 4, 352 },
+	"uzi", //{"MP5", 29, 4, 353 },
+	"rifle", //{"AK47", 30, 5, 355 },
+	"rifle", //{"M4", 31, 5, 356 },
+	"colt45", //{"Tec-9", 32, 4, 372 },
+	"sniper", //{"Country Rifle", 33, 6, 357 },
+	"sniper", //{"Sniper Rifle", 34, 6, 358 },
+	"rocket", //{"RPG", 35, 7, 359 },
+	"rocket", //{"HS Rocket", 36, 7, 360 },
+	"flame", //{"Flamethrower", 37, 7, 361 },
+	"flame", //{"Minigun", 38, 7, 362 },
+	"grenade", //{"Satchel Charge", 39, 8, 363 },
+	"null", //{"Detonator", 40, 12, 364 },
+	"spraycan", //{"Spraycan", 41, 9, 365 },
+	"flame", //{"Fire Extinguisher", 42, 9, 366 },
+	"rifle", //{"Camera", 43, 9, 367 },
+	"goggles", //{"Night Vis Goggles", 44, 11, 368 },
+	"goggles", //{"Thermal Goggles", 45, 11, 369 },
+	"null"  //{"Parachute", 46, 11, 371 }
+};
+
+stock Weapon_GetAnimGroup(weaponid)
+{
+	new dest[YSI_WEAPDATA_MAX_STRING_SIZE];
+	if(!Weapon_IsValid(weaponid))
+	{
+		strcat(dest, " ");
+		return dest;
+	}
+	else strcat(dest, YSI_g_WeaponAnimGroups[weaponid]);
 	return dest;
 }
 
