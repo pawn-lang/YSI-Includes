@@ -90,14 +90,15 @@ Optional plugins:
 
 */
 
-#define __WEAPONDATA_NO_AMMO 	" "
-#define __WEAPONDATA_45ACP 		".45 ACP"
-#define __WEAPONDATA_9MM 		"9mm"
-#define __WEAPONDATA_12GUAGE	"12 Guage"
-#define __WEAPONDATA_556MM		"5.56mm"
-#define __WEAPONDATA_762MM		"7.62mm"
-#define __WEAPONDATA_300MAGNUM	".300 Magnum"
-#define __WEAPONDATA_ROCKET		"Rocket"
+#define WEAPONDATA_NO_AMMO 	" "
+#define WEAPONDATA_45ACP 		".45 ACP"
+#define WEAPONDATA_9MM 		"9mm"
+#define WEAPONDATA_12GUAGE	"12 Guage"
+#define WEAPONDATA_556MM		"5.56mm"
+#define WEAPONDATA_762MM		"7.62mm"
+#define WEAPONDATA_300MAGNUM	".300 Magnum"
+#define WEAPONDATA_ROCKET		"Rocket"
+#define WEAPONDATA_INVALID_RETURN -1
 
 #define WEAPON_FIRE_TYPE_MELEE 0
 #define WEAPON_FIRE_TYPE_PROJECTILE 1
@@ -121,8 +122,11 @@ static stock YSI_g_WeaponModels[47] = {
 	341,321,321,
 	323,324,325,
 	326,342,343,
-	344,-1,-1,
-	-1,346,347,
+	344,
+	WEAPONDATA_INVALID_RETURN,
+	WEAPONDATA_INVALID_RETURN,
+	WEAPONDATA_INVALID_RETURN
+	,346,347,
 	348,349,350,
 	351,352,353,
 	355,356,372,
@@ -136,9 +140,9 @@ static stock YSI_g_WeaponModels[47] = {
 static stock YSI_g_WeaponSlots[47] = {
 	0,0,1,1,1,1,1,1,1,1,
 	10,10,10,10,10,10,8,8,8,
-	-1,
-	-1,
-	-1,
+	WEAPONDATA_INVALID_RETURN,
+	WEAPONDATA_INVALID_RETURN,
+	WEAPONDATA_INVALID_RETURN,
 	2,2,2,3,3,3,4,
 	4,5,5,4,6,6,7,7,7,7,8,12,
 	9,9,9,11,11,11
@@ -164,9 +168,9 @@ static stock YSI_g_WeaponFireType[47] = {
 	WEAPON_FIRE_TYPE_PROJECTILE, //{"Grenade", 16, 8, 342 },
 	WEAPON_FIRE_TYPE_PROJECTILE, //{"Tear Gas", 17, 8, 343 },
 	WEAPON_FIRE_TYPE_PROJECTILE, //{"Molotov Cocktail", 18, 8, 344 },
-	-1, //{"No gun", 19, -1, 0 },
-	-1, //{"No gun", 20, -1, 0 },
-	-1, //{"No gun", 21, -1, 0 },
+	WEAPONDATA_INVALID_RETURN, //{"No gun", 19, -1, 0 },
+	WEAPONDATA_INVALID_RETURN, //{"No gun", 20, -1, 0 },
+	WEAPONDATA_INVALID_RETURN, //{"No gun", 21, -1, 0 },
 	WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Colt .45", 22, 2, 346 },
 	WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Silenced Colt .45", 23, 2, 347 },
 	WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Desert Eagle", 24, 2, 348 },
@@ -219,9 +223,9 @@ static stock Float:YSI_g_MaxWeaponRange[47] = {
 	40.0, //{"Grenade", 16, 8, 342 },
 	40.0, //{"Tear Gas", 17, 8, 343 },
 	40.0, //{"Molotov Cocktail", 18, 8, 344 },
-	-1, //{"No gun", 19, -1, 0 },
-	-1, //{"No gun", 20, -1, 0 },
-	-1, //{"No gun", 21, -1, 0 },
+	WEAPONDATA_INVALID_RETURN, //{"No gun", 19, -1, 0 },
+	WEAPONDATA_INVALID_RETURN, //{"No gun", 20, -1, 0 },
+	WEAPONDATA_INVALID_RETURN, //{"No gun", 21, -1, 0 },
 	30.0, //{"Colt .45", 22, 2, 346 },
 	35.0, //{"Silenced Colt .45", 23, 2, 347 },
 	35.0, //{"Desert Eagle", 24, 2, 348 },
@@ -255,53 +259,53 @@ stock Float:Weapon_GetMaxRange(weaponid)
 }
 
 static stock YSI_g_WeaponAmmoNames[47][24] = {
-	__WEAPONDATA_NO_AMMO, //{"Fist", 0, 0, 0 },
-	__WEAPONDATA_NO_AMMO, //{"Brass Knuckles", 1, 0, 331 },
-	__WEAPONDATA_NO_AMMO, //{"Golf Club", 2, 1, 333 },
-	__WEAPONDATA_NO_AMMO, //{"Nightstick", 3, 1, 334 },
-	__WEAPONDATA_NO_AMMO, //{"Knife", 4, 1, 335 },
-	__WEAPONDATA_NO_AMMO, //{"Baseball Bat", 5, 1, 336 },
-	__WEAPONDATA_NO_AMMO, //{"Shovel", 6, 1, 337 },
-	__WEAPONDATA_NO_AMMO, //{"Pool Cue", 7, 1, 338 },
-	__WEAPONDATA_NO_AMMO, //{"Katana", 8, 1, 339 },
-	__WEAPONDATA_NO_AMMO, //{"Chainsaw", 9, 1, 341 },
-	__WEAPONDATA_NO_AMMO, //{"Double-ended Dildo", 10, 10, 321 },
-	__WEAPONDATA_NO_AMMO, //{"Dildo", 11, 10, 321 },
-	__WEAPONDATA_NO_AMMO, //{"Vibrator", 12, 10, 323 },
-	__WEAPONDATA_NO_AMMO, //{"Silver Vibrator", 13, 10, 324 },
-	__WEAPONDATA_NO_AMMO, //{"Flowers", 14, 10, 325 },
-	__WEAPONDATA_NO_AMMO, //{"Cane", 15, 10, 326 },
-	__WEAPONDATA_NO_AMMO, //{"Grenade", 16, 8, 342 },
-	__WEAPONDATA_NO_AMMO, //{"Tear Gas", 17, 8, 343 },
-	__WEAPONDATA_NO_AMMO, //{"Molotov Cocktail", 18, 8, 344 },
-	__WEAPONDATA_NO_AMMO, //{"No gun", 19, -1, 0 },
-	__WEAPONDATA_NO_AMMO, //{"No gun", 20, -1, 0 },
-	__WEAPONDATA_NO_AMMO, //{"No gun", 21, -1, 0 },
-	__WEAPONDATA_45ACP, //{"Colt .45", 22, 2, 346 },
-	__WEAPONDATA_45ACP, //{"Silenced Colt .45", 23, 2, 347 },
-	__WEAPONDATA_45ACP, //{"Desert Eagle", 24, 2, 348 },
-	__WEAPONDATA_12GUAGE, //{"Shotgun", 25, 3, 349 },
-	__WEAPONDATA_12GUAGE, //{"Sawnoff Shotgun", 26, 3, 350 },
-	__WEAPONDATA_12GUAGE, //{"Combat Shotgun", 27, 3, 351 },
-	__WEAPONDATA_9MM, //{"Micro SMG", 28, 4, 352 },
-	__WEAPONDATA_9MM, //{"MP5", 29, 4, 353 },
-	__WEAPONDATA_762MM, //{"AK47", 30, 5, 355 },
-	__WEAPONDATA_556MM, //{"M4", 31, 5, 356 },
-	__WEAPONDATA_9MM, //{"Tec-9", 32, 4, 372 },
-	__WEAPONDATA_762MM, //{"Country Rifle", 33, 6, 357 },
-	__WEAPONDATA_300MAGNUM, //{"Sniper Rifle", 34, 6, 358 },
-	__WEAPONDATA_ROCKET, //{"RPG", 35, 7, 359 },
-	__WEAPONDATA_ROCKET, //{"HS Rocket", 36, 7, 360 },
-	__WEAPONDATA_NO_AMMO, //{"Flamethrower", 37, 7, 361 },
-	__WEAPONDATA_762MM, //{"Minigun", 38, 7, 362 },
-	__WEAPONDATA_NO_AMMO, //{"Satchel Charge", 39, 8, 363 },
-	__WEAPONDATA_NO_AMMO, //{"Detonator", 40, 12, 364 },
-	__WEAPONDATA_NO_AMMO, //{"Spraycan", 41, 9, 365 },
-	__WEAPONDATA_NO_AMMO, //{"Fire Extinguisher", 42, 9, 366 },
-	__WEAPONDATA_NO_AMMO, //{"Camera", 43, 9, 367 },
-	__WEAPONDATA_NO_AMMO, //{"Night Vis Goggles", 44, 11, 368 },
-	__WEAPONDATA_NO_AMMO, //{"Thermal Goggles", 45, 11, 369 },
-	__WEAPONDATA_NO_AMMO  //{"Parachute", 46, 11, 371 }
+	WEAPONDATA_NO_AMMO, //{"Fist", 0, 0, 0 },
+	WEAPONDATA_NO_AMMO, //{"Brass Knuckles", 1, 0, 331 },
+	WEAPONDATA_NO_AMMO, //{"Golf Club", 2, 1, 333 },
+	WEAPONDATA_NO_AMMO, //{"Nightstick", 3, 1, 334 },
+	WEAPONDATA_NO_AMMO, //{"Knife", 4, 1, 335 },
+	WEAPONDATA_NO_AMMO, //{"Baseball Bat", 5, 1, 336 },
+	WEAPONDATA_NO_AMMO, //{"Shovel", 6, 1, 337 },
+	WEAPONDATA_NO_AMMO, //{"Pool Cue", 7, 1, 338 },
+	WEAPONDATA_NO_AMMO, //{"Katana", 8, 1, 339 },
+	WEAPONDATA_NO_AMMO, //{"Chainsaw", 9, 1, 341 },
+	WEAPONDATA_NO_AMMO, //{"Double-ended Dildo", 10, 10, 321 },
+	WEAPONDATA_NO_AMMO, //{"Dildo", 11, 10, 321 },
+	WEAPONDATA_NO_AMMO, //{"Vibrator", 12, 10, 323 },
+	WEAPONDATA_NO_AMMO, //{"Silver Vibrator", 13, 10, 324 },
+	WEAPONDATA_NO_AMMO, //{"Flowers", 14, 10, 325 },
+	WEAPONDATA_NO_AMMO, //{"Cane", 15, 10, 326 },
+	WEAPONDATA_NO_AMMO, //{"Grenade", 16, 8, 342 },
+	WEAPONDATA_NO_AMMO, //{"Tear Gas", 17, 8, 343 },
+	WEAPONDATA_NO_AMMO, //{"Molotov Cocktail", 18, 8, 344 },
+	WEAPONDATA_NO_AMMO, //{"No gun", 19, -1, 0 },
+	WEAPONDATA_NO_AMMO, //{"No gun", 20, -1, 0 },
+	WEAPONDATA_NO_AMMO, //{"No gun", 21, -1, 0 },
+	WEAPONDATA_45ACP, //{"Colt .45", 22, 2, 346 },
+	WEAPONDATA_45ACP, //{"Silenced Colt .45", 23, 2, 347 },
+	WEAPONDATA_45ACP, //{"Desert Eagle", 24, 2, 348 },
+	WEAPONDATA_12GUAGE, //{"Shotgun", 25, 3, 349 },
+	WEAPONDATA_12GUAGE, //{"Sawnoff Shotgun", 26, 3, 350 },
+	WEAPONDATA_12GUAGE, //{"Combat Shotgun", 27, 3, 351 },
+	WEAPONDATA_9MM, //{"Micro SMG", 28, 4, 352 },
+	WEAPONDATA_9MM, //{"MP5", 29, 4, 353 },
+	WEAPONDATA_762MM, //{"AK47", 30, 5, 355 },
+	WEAPONDATA_556MM, //{"M4", 31, 5, 356 },
+	WEAPONDATA_9MM, //{"Tec-9", 32, 4, 372 },
+	WEAPONDATA_762MM, //{"Country Rifle", 33, 6, 357 },
+	WEAPONDATA_300MAGNUM, //{"Sniper Rifle", 34, 6, 358 },
+	WEAPONDATA_ROCKET, //{"RPG", 35, 7, 359 },
+	WEAPONDATA_ROCKET, //{"HS Rocket", 36, 7, 360 },
+	WEAPONDATA_NO_AMMO, //{"Flamethrower", 37, 7, 361 },
+	WEAPONDATA_762MM, //{"Minigun", 38, 7, 362 },
+	WEAPONDATA_NO_AMMO, //{"Satchel Charge", 39, 8, 363 },
+	WEAPONDATA_NO_AMMO, //{"Detonator", 40, 12, 364 },
+	WEAPONDATA_NO_AMMO, //{"Spraycan", 41, 9, 365 },
+	WEAPONDATA_NO_AMMO, //{"Fire Extinguisher", 42, 9, 366 },
+	WEAPONDATA_NO_AMMO, //{"Camera", 43, 9, 367 },
+	WEAPONDATA_NO_AMMO, //{"Night Vis Goggles", 44, 11, 368 },
+	WEAPONDATA_NO_AMMO, //{"Thermal Goggles", 45, 11, 369 },
+	WEAPONDATA_NO_AMMO  //{"Parachute", 46, 11, 371 }
 };
 
 stock Weapon_GetAmmoName(weaponid)
@@ -364,13 +368,13 @@ stock bool:Weapon_IsRifle(weaponid)
 //P:D(Weapon_GetSlot(weaponid));
 stock Weapon_GetSlot(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (-1);
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (WEAPONDATA_INVALID_RETURN);
 }
 
 //P:D(Weapon_GetModelID(weaponid));
 stock Weapon_GetModelID(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (-1);
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (WEAPONDATA_INVALID_RETURN);
 }
 
 stock Weapon_GetIDFromModelID(modelid)
@@ -382,5 +386,5 @@ stock Weapon_GetIDFromModelID(modelid)
 			return i;
 		}
 	}
-	return -1;
+	return WEAPONDATA_INVALID_RETURN;
 }
