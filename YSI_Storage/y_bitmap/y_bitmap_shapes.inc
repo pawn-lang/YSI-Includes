@@ -338,3 +338,31 @@ stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, const 
 	}
 }
 
+// Interesting simple circle algorithm:
+static stock Bitmap_Bresenham(x, y, radius, colour)
+{
+	// I know people don't like me documenting things with references, but tough:
+	//
+	//   https://possiblywrong.wordpress.com/2022/02/14/bresenhams-circles-are-always-optimal/
+	//
+	// It is way more in-depth than I can do here.  However I don't actually use
+	// this code, it was just interesting to port.
+	#define BITMAP_BRESENHAM_PLOT(%0,%1,%2) YSI_gMallocMemory[Bitmap_IndexInt(ctx, (%0), width, (%1))] = (%2)
+	for (new error = 3 - 2 * radius, h = radius, v = 0; h >= v; error += 4 * (++v) + 2)
+	{
+		BITMAP_BRESENHAM_PLOT(x + h, y + v, colour),
+		BITMAP_BRESENHAM_PLOT(x + h, y - v, colour),
+		BITMAP_BRESENHAM_PLOT(x - h, y + v, colour),
+		BITMAP_BRESENHAM_PLOT(x - h, y - v, colour),
+		BITMAP_BRESENHAM_PLOT(x + v, y + h, colour),
+		BITMAP_BRESENHAM_PLOT(x + v, y - h, colour),
+		BITMAP_BRESENHAM_PLOT(x - v, y + h, colour),
+		BITMAP_BRESENHAM_PLOT(x - v, y - h, colour);
+		if (error > 0)
+		{
+			error -= 4 * (--h);
+		}
+	}
+	#undef BITMAP_BRESENHAM_PLOT
+}
+
