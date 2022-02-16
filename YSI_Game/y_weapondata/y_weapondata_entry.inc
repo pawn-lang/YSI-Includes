@@ -112,29 +112,33 @@ stock bool:Weapon_IsValid(weaponid)
 	return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46);
 }
 
-static stock YSI_g_InvalidReturn = -1;
+//static stock YSI_g_InvalidReturn = -1;
 
 static stock YSI_g_WeaponModels[47] = {
-	0,331,333,334,335,336,
-	337,338,339,341,321,321,
-	323,324,325,326,342,343,
-	344,YSI_g_InvalidReturn,
-	YSI_g_InvalidReturn,
-	YSI_g_InvalidReturn
-	,346,347,348,349,
-	350,351,352,353,355,356,
-	372,357,358,359,360,361,
-	362,363,364,365,366,367,
-	368,369,371
-	
+	0,331,333,
+	334,335,336,
+	337,338,339,
+	341,321,321,
+	323,324,325,
+	326,342,343,
+	344,-1,-1,
+	-1,346,347,
+	348,349,350,
+	351,352,353,
+	355,356,372,
+	357,358,359,
+	360,361,362,
+	363,364,365,
+	366,367,368,
+	369,371	
 };
 
 static stock YSI_g_WeaponSlots[47] = {
 	0,0,1,1,1,1,1,1,1,1,
 	10,10,10,10,10,10,8,8,8,
-	YSI_g_InvalidReturn,
-	YSI_g_InvalidReturn,
-	YSI_g_InvalidReturn,
+	-1,
+	-1,
+	-1,
 	2,2,2,3,3,3,4,
 	4,5,5,4,6,6,7,7,7,7,8,12,
 	9,9,9,11,11,11
@@ -160,9 +164,9 @@ static stock YSI_g_WeaponFireType[47] = {
 	WEAPON_FIRE_TYPE_PROJECTILE, //{"Grenade", 16, 8, 342 },
 	WEAPON_FIRE_TYPE_PROJECTILE, //{"Tear Gas", 17, 8, 343 },
 	WEAPON_FIRE_TYPE_PROJECTILE, //{"Molotov Cocktail", 18, 8, 344 },
-	YSI_g_InvalidReturn, //{"No gun", 19, -1, 0 },
-	YSI_g_InvalidReturn, //{"No gun", 20, -1, 0 },
-	YSI_g_InvalidReturn, //{"No gun", 21, -1, 0 },
+	-1, //{"No gun", 19, -1, 0 },
+	-1, //{"No gun", 20, -1, 0 },
+	-1, //{"No gun", 21, -1, 0 },
 	WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Colt .45", 22, 2, 346 },
 	WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Silenced Colt .45", 23, 2, 347 },
 	WEAPON_FIRE_TYPE_INSTANT_HIT, //{"Desert Eagle", 24, 2, 348 },
@@ -192,7 +196,7 @@ static stock YSI_g_WeaponFireType[47] = {
 
 stock Weapon_GetFireType(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponFireType[weaponid] : (YSI_g_InvalidReturn);
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponFireType[weaponid] : (-1);
 }
 
 static stock Float:YSI_g_MaxWeaponRange[47] = {
@@ -215,9 +219,9 @@ static stock Float:YSI_g_MaxWeaponRange[47] = {
 	40.0, //{"Grenade", 16, 8, 342 },
 	40.0, //{"Tear Gas", 17, 8, 343 },
 	40.0, //{"Molotov Cocktail", 18, 8, 344 },
-	YSI_g_InvalidReturn, //{"No gun", 19, -1, 0 },
-	YSI_g_InvalidReturn, //{"No gun", 20, -1, 0 },
-	YSI_g_InvalidReturn, //{"No gun", 21, -1, 0 },
+	-1, //{"No gun", 19, -1, 0 },
+	-1, //{"No gun", 20, -1, 0 },
+	-1, //{"No gun", 21, -1, 0 },
 	30.0, //{"Colt .45", 22, 2, 346 },
 	35.0, //{"Silenced Colt .45", 23, 2, 347 },
 	35.0, //{"Desert Eagle", 24, 2, 348 },
@@ -247,7 +251,7 @@ static stock Float:YSI_g_MaxWeaponRange[47] = {
 
 stock Float:Weapon_GetMaxRange(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (YSI_g_InvalidReturn);
+	return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (-1);
 }
 
 static stock YSI_g_WeaponAmmoNames[47][24] = {
@@ -360,13 +364,13 @@ stock bool:Weapon_IsRifle(weaponid)
 //P:D(Weapon_GetSlot(weaponid));
 stock Weapon_GetSlot(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (YSI_g_InvalidReturn);
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (-1);
 }
 
 //P:D(Weapon_GetModelID(weaponid));
 stock Weapon_GetModelID(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (YSI_g_InvalidReturn);
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (-1);
 }
 
 stock Weapon_GetIDFromModelID(modelid)
@@ -378,5 +382,5 @@ stock Weapon_GetIDFromModelID(modelid)
 			return i;
 		}
 	}
-	return YSI_g_InvalidReturn;
+	return -1;
 }
