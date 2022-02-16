@@ -230,13 +230,13 @@ stock bool:Weapon_IsRifle(weaponid)
 //P:D(Weapon_GetSlot(weaponid));
 stock Weapon_GetSlot(weaponid)
 {
-	return YSI_g_WeaponSlots[weaponid];
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (-1);
 }
 
 //P:D(Weapon_GetModelID(weaponid));
 stock Weapon_GetModelID(weaponid)
 {
-	return YSI_g_WeaponModels[weaponid];
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (-1);
 }
 
 stock Weapon_GetIDFromModelID(modelid)
