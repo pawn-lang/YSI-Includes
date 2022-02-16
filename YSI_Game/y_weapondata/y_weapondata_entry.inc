@@ -230,13 +230,13 @@ stock bool:Weapon_IsRifle(weaponid)
 //P:D(Weapon_GetSlot(weaponid));
 stock Weapon_GetSlot(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (-1);
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (YSI_g_InvalidReturn);
 }
 
 //P:D(Weapon_GetModelID(weaponid));
 stock Weapon_GetModelID(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (-1);
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (YSI_g_InvalidReturn);
 }
 
 stock Weapon_GetIDFromModelID(modelid)
@@ -248,5 +248,5 @@ stock Weapon_GetIDFromModelID(modelid)
 			return i;
 		}
 	}
-	return -1;
+	return YSI_g_InvalidReturn;
 }
