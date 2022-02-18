@@ -226,6 +226,9 @@ __COMPILER_SEMICOLON
 
 // One of a limited number of codepages that the compiler might be using.
 __COMPILER_CODEPAGE
+
+// The compiler has native support for the AMXModX `decl` keyword.
+__COMPILER_DECL
 ```
 
 ## Default Values
@@ -261,5 +264,31 @@ __pragma("unused", var);
 
 // Same as `__COMPILER_NAKED`.
 __pragma("naked");
+```
+
+## `DECL__`
+
+`DECL__` (or `decl` if the keyword is optionally enabled with `YSI_KEYWORD_decl` as is the default) can be used to declare variables without initialising them.  Their contents are rubbish ("garbage"[sic]).  This is somewhat useful for large arrays that will just be passed straight to other functions to be initialised, so the default naught initialisation is never needed:
+
+```pawn
+main()
+{
+	decl a, Float:b, c[32];
+	printf("%d %f %s", a, b, c); // Prints rubbish.
+}
+```
+
+Note that you can have multiple variables, including tags and arrays, in the `decl` declaration, but they must all be on the same line.  This will not work:
+
+```pawn
+main()
+{
+	// Many errors.
+	DECL__
+		a,
+		Float:b,
+		c[32];
+	printf("%d %f %s", a, b, c);
+}
 ```
 

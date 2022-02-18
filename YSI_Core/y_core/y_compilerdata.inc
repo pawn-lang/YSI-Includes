@@ -306,6 +306,21 @@ static stock const
 	#define __nameof(%0) (__CMPREMCLN:tagof(%0),#%0)
 #endif
 
+#define __COMPILER_DECL (0)
+
+#if __COMPILER_DECL
+	#define DECL__%0; PP_SINGLE_VAR<DO_DECL_SKIP>%0,$new %0;
+	#define DO_DECL_SKIP(%0)%1; goto decl_skip_ %0;PP_DISCARD[]$%1;decl_skip_ %0:PP_DISCARD[]$
+	#define goto%0:%1;%8$%2;%3:%4:%9$ goto decl_skip_ %1;%8$%2;decl_skip_ %4:%9$
+	#define decl_skip_%9\32;%1[%9]%3$%4;decl_skip_%9\32;%5[%9]%6$ decl_skip_%1;PP_DISCARD[]$%4;decl_skip_%5:PP_DISCARD[]$
+
+	#if YSI_KEYWORD(decl)
+		#define decl DECL__
+	#endif
+#else
+	#define DECL__ decl
+#endif
+
 const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
 #if YSI_KEYWORD(default)
