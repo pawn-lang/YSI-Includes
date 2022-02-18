@@ -126,23 +126,15 @@ public OnCodeInit()
 	// their file contents.
 	new
 		idx = 0,
-		//name[FUNCTION_LENGTH char],
-		//addr,
-		//reg,
-		entry;
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@y_L>)))
+		addr;
+	while ((idx = AMX_GetPublicPointerPrefix(idx, addr, _A<@y_L>)))
 	{
-		//addr = AMX_Read(entry);
-		//AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS + 4, name);
-		//reg = strval(name);
-		// TODO: Invalidate entries.
-		//CTRL_WriteStub(addr);
-		CTRL_WriteLCTRLStub(AMX_Read(entry));
+		CTRL_WriteLCTRLStub(addr);
 	}
 
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@y_S>)))
+	while ((idx = AMX_GetPublicPointerPrefix(idx, addr, _A<@y_S>)))
 	{
-		CTRL_WriteSCTRLStub(AMX_Read(entry));
+		CTRL_WriteSCTRLStub(addr);
 	}
 
 	#if defined CTRL_OnCodeInit
