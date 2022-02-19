@@ -119,6 +119,7 @@ over YSI and is the reason why many macros work regardless of spacing.
 
 ```pawn
 static stock
+	YSI_g_sBaseRelocation,
 	YSI_g_sLCTRLStubAddress;
 
 #define CALL@CTRL_LCTRLStub CTRL_LCTRLStub()
@@ -141,9 +142,8 @@ initialisation code is run in `OnScriptInit`.  Because YSI itself uses this call
 things up many features such as `hook` and `inline` do not work yet within this callback.
 
 ```pawn
-new
-	base = -DisasmReloc(0);
-YSI_g_sLCTRLStubAddress = addressof (CTRL_LCTRLStub) + 4 + base;
+YSI_g_sBaseRelocation = -DisasmReloc(0);
+YSI_g_sLCTRLStubAddress = addressof (CTRL_LCTRLStub) + 4 + YSI_g_sBaseRelocation;
 ```
 
 This is where the address of `CTRL_LCTRLStub` is looked up (what this function does will be
@@ -154,9 +154,9 @@ getting the script address of the server address naught and negating it to be ab
 same relocations as the VM does.
 
 `addressof` gets the address of the start of the function (in the AMX), `+ 4` skips over the first
-instruction (usually `PROC`, and definitely `PROC` for this function), and `+ base` performs the
-previously mentioned relocation to get the real address in the server of the function, rather than
-the logical address in the script.
+instruction (usually `PROC`, and definitely `PROC` for this function), and `+ YSI_g_sBaseRelocation`
+performs the previously mentioned relocation to get the real address in the server of the function,
+rather than the logical address in the script.
 
 ## Code Scanner
 

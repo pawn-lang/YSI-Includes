@@ -85,6 +85,7 @@ Optional plugins:
 // there is no frame update yet):
 
 static stock
+	YSI_g_sBaseRelocation,
 	YSI_g_sLCTRLStubAddress,
 	YSI_g_sSCTRLStubAddress;
 
@@ -93,10 +94,9 @@ static stock
 
 public OnCodeInit()
 {
-	new
-		base = -DisasmReloc(0);
-	YSI_g_sLCTRLStubAddress = addressof (CTRL_LCTRLStub) + 4 + base;
-	YSI_g_sSCTRLStubAddress = addressof (CTRL_SCTRLStub) + 4 + base;
+	YSI_g_sBaseRelocation = -DisasmReloc(0);
+	YSI_g_sLCTRLStubAddress = addressof (CTRL_LCTRLStub) + 4 + YSI_g_sBaseRelocation;
+	YSI_g_sSCTRLStubAddress = addressof (CTRL_SCTRLStub) + 4 + YSI_g_sBaseRelocation;
 
 	// Scan for `LCTRL` and `SCTRL`.  Modify any that are >= 256 to calls.
 	// Optimised.
@@ -228,26 +228,33 @@ static stock CTRL_WriteLCTRLStub(addr)
 {
 	// Find the call target.
 	new
-		target,
+		handlerAddress,
 		dctx[DisasmContext];
 	DisasmInit(dctx, addr);
 	while (DisasmNext(dctx))
 	{
-		if (dctx[DisasmContext_opcode] == OP_CALL)
+		if (DisasmGetOpcode(dctx) == OP_CALL)
 		{
 			// Search the function for a call to the implementation.
-			target = DisasmGetOperandReloc(dctx);
+			handlerAddress = DisasmGetOperand(dctx);
 			break;
 		}
 	}
 
 	new
 		ctx[AsmContext];
-	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 16);
+	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 32);
 
-	// Push the implementation addres and jump to the common register preserving
-	// stub, so that `pri` and `alt` aren't clobbered (skipping `PROC`).
-	@emit PUSH.C           target
+	// Write a tiny empty function in case someone tries to call this public
+	// normally.
+	@emit PROC
+	@emit CALL.abs         addr + 16
+	@emit RETN
+
+	// Push the implementation address and jump to the common register
+	// preserving stub, so that `pri` and `alt` aren't clobbered (skipping
+	// `PROC`).
+	@emit PUSH.C           DisasmReloc(handlerAddress)
 	@emit JUMP             YSI_g_sLCTRLStubAddress
 
 	// There is no way that can't fit within the code space reserved by the wrapper
@@ -261,30 +268,36 @@ static stock CTRL_WriteLCTRLStub(addr)
 	//     CALL                %1
 	//     RETN
 	//
-	// And the code we actually want is only four cells.
+	// And the code we actually want is only eight cells.
 }
 
 static stock CTRL_WriteSCTRLStub(addr)
 {
 	// Find the call target.
 	new
-		target,
+		handlerAddress,
 		dctx[DisasmContext];
 	DisasmInit(dctx, addr);
 	while (DisasmNext(dctx))
 	{
 		if (dctx[DisasmContext_opcode] == OP_CALL)
 		{
-			target = DisasmGetOperandReloc(dctx);
+			handlerAddress = DisasmGetOperand(dctx);
 			break;
 		}
 	}
 
 	new
 		ctx[AsmContext];
-	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 16);
+	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 32);
 
-	@emit PUSH.C           target
+	// Write a tiny empty function in case someone tries to call this public
+	// normally.
+	@emit PROC
+	@emit CALL.abs         addr + 16
+	@emit RETN
+
+	@emit PUSH.C           DisasmReloc(handlerAddress)
 	@emit JUMP             YSI_g_sSCTRLStubAddress
 }
 
@@ -305,7 +318,7 @@ static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
 	format(name, sizeof (name), "@y_L%d", reg);
 	if (AMX_GetPublicPointer(0, ptr, name))
 	{
-		@emit CALL.abs         ptr
+		@emit CALL.abs         ptr + 16
 	}
 	else
 	{
@@ -331,7 +344,7 @@ static stock CTRL_FoundSCTRL(const scanner[CodeScanner])
 	format(name, sizeof (name), "@y_S%d", reg);
 	if (AMX_GetPublicPointer(0, ptr, name))
 	{
-		@emit CALL.abs         ptr
+		@emit CALL.abs         ptr + 16
 	}
 	else
 	{
