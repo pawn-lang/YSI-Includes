@@ -232,6 +232,11 @@ Optional plugins:
 #define PP_RIGHT_ANGLE_BRACKET<> >
 #define PP_NULL<>
 #define PP_DOLLAR$
+#define PP_DISCARD%0$
+
+// Isolate a single variable in declarations, ended by either `;` or `,`.
+#define _PP_MAKE_SINGLE_VAR_STRIP<%9>%0;%1: %9(%0)
+#define PP_SINGLE_VAR<%9>%0,%1$ _PP_MAKE_SINGLE_VAR_STRIP<%9>%0;:
 
 #define PP_MRET(%0)(%1)(%3) PP_MRET(){%0(%1);}DO%3E_%0(){}
 
