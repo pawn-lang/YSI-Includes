@@ -186,6 +186,11 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 	#define __COMPILER_UKPACK
 #endif
 
+//  __assert
+#if !defined __assert
+#define __assert(%0) if((%0)!=true)printf("*** YSI: assertion failed; %0")
+#endif
+
 #include "y_compilerdata_codepage"
 
 #define __COMPILER_BUG_317 (1)
