@@ -17,7 +17,7 @@ of "addresses" for these registers accessed using a different instruction.
 
 In pawn the special registers hold information such as the current instruction pointer (CIP, which
 instruction is currently being run), the stack pointer, offsets to the start of the code and data
-segments, and more.  There are 7 by default, numbered `0` to `6`.  The crashdetect plugin adds
+segments, and more.  There are seven by default, numbered `0` to `6`.  The crashdetect plugin adds
 registers `0xFF` and `0xFE` for sending it instructions (as opposed to using normal functions since
 the plugin is optional and may not exist).  These registers are read using `LCTRL` and written using
 `SCTRL`.  The read result is placed in `pri` and the write data is (usually) read from `pri`:
@@ -93,6 +93,15 @@ reversed).
 The public function defines the register number by its name (thus defines will not work in the
 decorator) and calls the implementing function (the handler).  At this stage only dummy data
 (`0, 0`) is given for `pri` and `alt`, the call merely exists to be found and manipulated later.
+The value from the handler function `%1` is returned from the public function to ensure that the
+compiler enforces users return a value.  `LCTRL` handlers must by definition return something,
+because they are *Load ConTRoL register* functions.  Adding `return` here will give a warning if the
+handler function doesn't also contain `return`.  `SCTRL` shouldn't return a value and so it discards
+any returned values and doesn't require the handler to contain `return`:
+
+```pawn
+#define @sctrl(%0)%1(%2) @y_S%0(); @y_S%0() { %1(0, 0); } %1(%2)
+```
 
 ## Header
 
@@ -338,4 +347,172 @@ that one handler, but there was too much code to fit in (if someone can do it, p
 Although the basic call is only eight cells, the trampoline with its stack modifications is slightly
 longer and doesn't fit in the space afforded by that short function call at `-O1 -d0`.  Another
 option is to just insert more dummy code in to the `public` to make it slightly longer and provide
-some more code generation space.
+some more code generation space.  However, the method opted for was to replace the `LCTRL` with a
+`CALL` to a trampoline function replacing the original `public`, and in there push a pointer to the
+final handler then `JUMP` to the full trampoline code (thus only requiring one instance of that
+code).  The jump address is the modified one obtained earlier.  Thus the code within the `public`
+becomes nothing more than:
+
+```asm
+PUSH.C     handlerAddress
+JUMP       YSI_g_sLCTRLStubAddress
+```
+
+`CALL` pushes the return address, this code pushes the target address, so the state of the stack by
+the time the trampoline is called looks like:
+
+| Frame offset         | Contents             |
+| -------------------- | -------------------- |
+| ???                  | Return Address       |
+| ??? - 4              | Handler Address      |
+
+A function normally starts with `PROC`, which updates the frame pointer.  It hasn't yet been called,
+so the offsets are still unknown.  Normally before `PROC` the stack would look like:
+
+| Frame offset         | Contents             |
+| -------------------- | -------------------- |
+| ??? + N              | Parameters           |
+| ???                  | Parameter Size       |
+| ??? - 4              | Return Address       |
+
+And after `PROC` saving the previous frame address and updating to the new one:
+
+| Frame offset         | Contents             |
+| -------------------- | -------------------- |
+| 12+                  | Parameters           |
+| 8                    | Parameter Size       |
+| 4                    | Return Address       |
+| 0                    | Previous Frame       |
+
+So this is the target.  The handler address is a parameter to the function, as are both `pri` and
+`alt`.  As explained above the jump skips the `PROC` at the start of the function so the first
+instructions continue operating in the previous function's stack frame:
+
+```pawn
+// The call to this function skips the `PROC` - we don't want it.
+```
+
+Push more "parameters" to the function, i.e. save `pri` and `alt` for later:
+
+```pawn
+// Save `pri` and `alt.
+#emit PUSH.alt
+#emit PUSH.pri
+```
+
+The stack now looks like:
+
+| Frame offset         | Contents             |
+| -------------------- | -------------------- |
+| ???                  | Return Address       |
+| ??? -  4             | Handler Address      |
+| ??? -  8             | alt                  |
+| ??? - 12             | pri                  |
+
+These are treated as the parameters to the function and now the standard entry can be done.  First
+the parameter size is pushed (`16`).  Then normally `CALL` would happen to push the return address
+but we already have the return address from a `CALL` earlier so push a placeholder.  Then correctly
+start the function with `PROC`:
+
+```pawn
+// We can finally "enter" the function.
+#emit PUSH.C           16
+#emit PUSH.pri
+#emit PROC
+```
+
+`PROC` updates the frame pointer, so the stack is now:
+
+| Frame offset         | Contents             |
+| -------------------- | -------------------- |
+| 24                   | Return Address       |
+| 20                   | Handler Address      |
+| 16                   | alt                  |
+| 12                   | pri                  |
+| 8                    | Parameter Size (16)  |
+| 4                    | Placeholder Return   |
+| 0                    | Previous Frame       |
+
+Calling `RETN` at this point will fail because although we have the return address stored, it is in
+the wrong place, so fix that and replace the "Placeholder Return" (address `+4`) with the real
+return (address `+24`):
+
+```pawn
+// Get the return address.
+#emit LOAD.S.pri       24
+#emit STOR.S.pri       4
+```
+
+At this point the trampoline's stack is correct and the function is fully entered.  We have
+succeeded in calling a function with just two cells of space.  The next job is to call the handler
+stored in "Handler Address" (address `+20`).  This will be called more correctly, so first push the
+parameters and size to that function.  This pushes the saved copies of `pri` and `alt` from the
+trampoline's parameters.  `PUSH.alt` and `PUSH.pri` won't work any more as too much other code has
+been done in the interim and has changed their values.  The values of `pri` and `alt` passed in
+need to be the values they had before the original `LCTRL ???` instruction:
+
+```pawn
+// Push the `pri` and `alt` parameters.
+#emit PUSH.S           16
+#emit PUSH.S           12
+#emit PUSH.C           8
+```
+
+Now call the function by pointer.  `CALL` won't work as that takes a constant so the functionality
+of `CALL` is replicated - pushing the return address and then updating the current instruction
+pointer (the `CIP`).  `CALL`, `JUMP`, and other instructions work by modifying `CIP`, which means
+when the next instruction is read it is read from a totally different location.  `CIP` can also be
+written to directly, ironically using `SCTRL 6`.  So the moment `SCTRL 6` finishes the next
+instruction will be somewhere else entirely (the code scanner library is aware of this trick and
+treats it the same as `CALL`).  But before that the return address needs to be pushed, and needs to
+be the address of the instruction immediately following the `SCTRL 6`:
+
+```pawn
+#emit LCTRL            6
+#emit ADD.C            36
+#emit LCTRL            8
+```
+
+`LCTRL 6` gets the value of `CIP` (technically the value of `CIP` at the END of that instruction, so
+really a pointer to the `ADD.C 36` instruction).  There are nine cells, thirty-six bytes, between
+the end of the `LCTRL 6` instruction and the end of the `SCTRL 6` instruction, so that is the
+modification needed to be made.  Then `LCTRL 8` is called, but didn't we earlier say there were only
+seven control registers, numbered `0` to `6`?  What is this one?  `LCTRL 8` is a register in the JIT
+plugin that takes a pawn code address and translates it to a JIT code address.  If the code is
+running under the JIT plugin this step is essential to correct the return address.  If the code
+isn't running in the JIT plugin this step does nothing at all.  The standard pawn VM doesn't know
+the control register `8`, so just instantly returns without altering `pri` or `alt`.  As also
+mentioned earlier *y_ctrl* doesn't modify registers from 0-255, this is another example of why.
+
+Finally the return address is pushed as would be done automatically by `CALL`, the target handler
+function's address is loaded from parameter `20`, and execution jumps to that point:
+
+```pawn
+#emit PUSH.pri
+#emit LOAD.S.pri       20
+#emit SCTRL            6
+```
+
+Once the handler returns (the handler is just a normal function in this respect) is the only place
+where the code in `CTRL_SCTRLStub` and `CTRL_LCTRLStub` differ.  `CTRL_LCTRLStub` needs to restore
+only `alt` to its previous value (stored earlier in its parameters), then return:
+
+```pawn
+// We return to here, from which cleanup is easy.
+#emit LOAD.S.alt       16
+#emit RETN
+```
+
+`CTRL_SCTRLStub` needs to restore both `pri` and `alt`, then return:
+
+```pawn
+// We return to here, from which cleanup is easy.
+#emit LOAD.S.alt       16
+#emit LOAD.S.pri       12
+#emit RETN
+```
+
+Because by the point the frame has been repaired, the `RETN` here behaves correctly, removes all the
+parameters from the stack, reverts the frame pointer to the previous one, and returns execution to
+the original call point.
+
