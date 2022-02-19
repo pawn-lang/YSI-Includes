@@ -660,3 +660,153 @@ Now we can finally write the trampoline:
 
 Which is exactly the assembly mentioned above!
 
+## Replacing `LCTRL ???`
+
+Having set everything else up and explained all the trampoline code, we can finally return to the
+`CTRL_FoundLCTRL` function found when the code scan matcher finds an instance of `LCTRL ???`.  You
+will recall the matcher is set up as:
+
+```pawn
+CodeScanMatcherInit(lctrl, &CTRL_FoundLCTRL);
+CodeScanMatcherPattern(lctrl,
+	OP(LCTRL, ???)
+);
+```
+
+`CodeScanMatcherInit` can use `&` to get the address of any function whose signature is:
+
+```pawn
+MatcherFunction(const scanner[CodeScanner])
+```
+
+Note: Plus optional meta-data not used here.
+
+Every time an `LCTRL` opcode with any operand is found this function is called:
+
+```pawn
+static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
+```
+
+The `scanner` variable holds information about which scanner was being run, where in the code the
+match started, the values of wildcards, and more.  Since we need to know which `LCTRL ???` this is
+we get the value of the first wildcard (*hole*), and ignore it if it is `0 <= operand <= 255`:
+
+```pawn
+new reg = CodeScanGetMatchHole(scanner, 0);
+if (0 <= reg <= 255)
+{
+	// Reserved registers (VM and plugins).  Do nothing.
+	return;
+}
+```
+
+As in `CTRL_WriteLCTRLStub` we create an `asm.inc` context to write code to the location of the
+match (again adjusting for `DAT` -> `COD`), with enough space to write two cells:
+
+```pawn
+new
+	ctx[AsmContext];
+AsmInitPtr(ctx, CodeScanGetMatchAddress(scanner) + AMX_HEADER_COD, 8);
+```
+
+The public function that was replaced above with some of the trampoline code is what this
+`LCTRL ???` must be replaced with a call to.  So first find the pointer to it.  This uses
+`AMX_GetPublicPointer`, which takes a full string name, not `AMX_GetPublicPointerPrefix` which is
+more useful for looping over many similar functions.  This time we want an exact match.  The
+function still returns a non-zero index if there is a match so this can be tested to ensure there
+was a function with the exact given name:
+
+First construct the name, as `@y_L` followed by the control register number:
+
+```pawn
+new
+	ptr,
+	name[FUNCTION_LENGTH];
+format(name, sizeof (name), "@y_L%d", reg);
+```
+
+Then search for a function with this exact name:
+
+```pawn
+AMX_GetPublicPointer(0, ptr, name);
+```
+
+Remember earlier when the code contained `LCTRL 8` to translate addresses if the JIT plugin was in
+use?  This demonstrates a fundamental part of control registers - they are optional.  If control
+register 8 doesn't exist, nothing happens.  There is no compile-time error, there is no run-time
+crash.  `pri` and `alt` keep exactly their previous values.  The crashdetect plugin include uses
+this exact feature to detect the presense of the plugin.  It sets `pri` to some invalid value first
+then calls `LCTRL 255`.  If `pri` is `0` or `1` the plugin exists and changed `pri`, if it is still
+the invalid value there was no handler for the register.
+
+This is what this `if` check determines.  Is there a handler registered anywhere to deal with this
+number of control register?  If there is, insert the `CALL` code discussed before.  If there isn't
+the result should be the same as the input, and the simplest way to do that is to just remove the
+load entirely:
+
+```pawn
+if (AMX_GetPublicPointer(0, ptr, name))
+{
+	@emit CALL.abs         ptr + 16
+}
+else
+{
+	@emit NOP
+	@emit NOP
+}
+```
+
+The `ptr + 16` skips over the first four cells of the public function, which is where the tiny
+fallback handler was inserted in case someone decided to call the function directly for some reason.
+
+## Conclusion
+
+That is it!  This code:
+
+* Scans the entire assembly for `LCTRL ???` instructions.
+* Extracts the value of the register.
+* Looks up a handler for that register.
+* If the handler is found, replaces the entire instruction with a partially invalid call to a trampoline.
+* Searches again for all registered handlers and replaces them with said trampoline.
+* That trampoline pushes the address of the true handler function and calls another trampoline (because of code size limitations).
+* This second common trampoline fixes the stack from the partially invalid calls.
+* It also saves the values of `pri` and `alt` to be restored after the handler completes.
+* And finally calls the handler.
+
+At this point the execution is in normal pawn code and the handler can do anything:
+
+```pawn
+#include <YSI_Coding\y_ctrl>
+
+@lctrl(2022) Handler(pri, alt)
+{
+	printf("Our control register has been called!");
+	new year;
+	getdate(year);
+	if (year == pri)
+	{
+		printf("Yes, we are in %d.", pri);
+		return 1;
+	}
+	printf("No, we are in %d.", year);
+	return 0;
+}
+
+main()
+{
+	// Check if the year is 2022.
+	new is2022 = -1;
+	#emit CONST.pri        2022
+	#emit LCTRL            2022
+	#emit STOR.S.pri       is2022
+	if (is2022 == -1)
+	{
+		print("The handler can't return `-1`, so it doesn't exist.");
+	}
+	else
+	{
+		print(is2022 ? ("Yes") : ("No"));
+	}
+}
+```
+
