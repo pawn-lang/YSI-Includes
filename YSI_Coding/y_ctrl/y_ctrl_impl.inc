@@ -231,8 +231,10 @@ static stock CTRL_WriteLCTRLStub(addr)
 		target,
 		dctx[DisasmContext];
 	DisasmInit(dctx, addr);
-	while (DisasmNext(dctx)) {
-		if (dctx[DisasmContext_opcode] == OP_CALL) {
+	while (DisasmNext(dctx))
+	{
+		if (dctx[DisasmContext_opcode] == OP_CALL)
+		{
 			// Search the function for a call to the implementation.
 			target = DisasmGetOperandReloc(dctx);
 			break;
@@ -269,8 +271,10 @@ static stock CTRL_WriteSCTRLStub(addr)
 		target,
 		dctx[DisasmContext];
 	DisasmInit(dctx, addr);
-	while (DisasmNext(dctx)) {
-		if (dctx[DisasmContext_opcode] == OP_CALL) {
+	while (DisasmNext(dctx))
+	{
+		if (dctx[DisasmContext_opcode] == OP_CALL)
+		{
 			target = DisasmGetOperandReloc(dctx);
 			break;
 		}
