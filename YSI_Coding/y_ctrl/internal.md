@@ -586,7 +586,8 @@ break;
 *disasm.inc* has `DisasmGetOperand` and `DisasmGetOperandReloc`.  `CALL` is one of the instructions
 mentioned earlier whose parameters (*operaands*) are relocated by the VM when the mode starts.  The
 function address is changed from an AMX address to a server address.  We need the original AMX
-address because that's what `SCTRL 6` takes, so the operand is loaded and relocated.
+address because that's what `SCTRL 6` takes, so the operand is loaded and relocated, hence calling
+`DisasmGetOperandReloc` instead.
 
 ### Writing The Code
 
@@ -635,18 +636,18 @@ offset in the `DAT` segment so large it ends up going in to the other segment.  
 
 The code is replacing a function called `@y_L300` (for example) with tiny stub code that isn't a
 valid function.  While unlikely, someone could try and call this function directly via `@y_L300();`
-or `CallLocalFunction` etc.  So the first two instructions generate a tiny but valid function at the
-exact start address of the existing function (this code actually replaces `PROC` with `PROC`):
+or `CallLocalFunction` etc.  So the first few instructions generate a tiny but valid function at the
+exact start address of the existing function (this code actually replaces `PROC` with `PROC`).  This
+tiny function calls the trampoline in exactly the same way as the code replacing `LCTRL ???` will:
 
 ```pawn
-// Write a tiny empty function in case someone tries to call this public
-// normally.
+// Write a function in case someone tries to call this public normally.
 @emit PROC
+@emit CALL.abs         addr + 16
 @emit RETN
 ```
 
-Anyone for some reason calling the function will now hit this and instantly return instead of
-crashing.
+Anyone for some reason calling the function will now hit this and still get the result.
 
 Now we can finally write the trampoline:
 

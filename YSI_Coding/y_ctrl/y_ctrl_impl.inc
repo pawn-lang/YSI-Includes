@@ -236,7 +236,7 @@ static stock CTRL_WriteLCTRLStub(addr)
 		if (DisasmGetOpcode(dctx) == OP_CALL)
 		{
 			// Search the function for a call to the implementation.
-			handlerAddress = DisasmGetOperand(dctx);
+			handlerAddress = DisasmGetOperandReloc(dctx);
 			break;
 		}
 	}
@@ -245,8 +245,7 @@ static stock CTRL_WriteLCTRLStub(addr)
 		ctx[AsmContext];
 	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 32);
 
-	// Write a tiny empty function in case someone tries to call this public
-	// normally.
+	// Write a function in case someone tries to call this public normally.
 	@emit PROC
 	@emit CALL.abs         addr + 16
 	@emit RETN
@@ -254,7 +253,7 @@ static stock CTRL_WriteLCTRLStub(addr)
 	// Push the implementation address and jump to the common register
 	// preserving stub, so that `pri` and `alt` aren't clobbered (skipping
 	// `PROC`).
-	@emit PUSH.C           DisasmReloc(handlerAddress)
+	@emit PUSH.C           handlerAddress
 	@emit JUMP             YSI_g_sLCTRLStubAddress
 
 	// There is no way that can't fit within the code space reserved by the wrapper
@@ -282,7 +281,7 @@ static stock CTRL_WriteSCTRLStub(addr)
 	{
 		if (dctx[DisasmContext_opcode] == OP_CALL)
 		{
-			handlerAddress = DisasmGetOperand(dctx);
+			handlerAddress = DisasmGetOperandReloc(dctx);
 			break;
 		}
 	}
@@ -297,7 +296,7 @@ static stock CTRL_WriteSCTRLStub(addr)
 	@emit CALL.abs         addr + 16
 	@emit RETN
 
-	@emit PUSH.C           DisasmReloc(handlerAddress)
+	@emit PUSH.C           handlerAddress
 	@emit JUMP             YSI_g_sSCTRLStubAddress
 }
 
