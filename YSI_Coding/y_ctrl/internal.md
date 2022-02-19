@@ -810,3 +810,5 @@ main()
 }
 ```
 
+And remember - all this code is doubled, once for `LCTRL` and once for `SCTRL`.
+
