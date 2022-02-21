@@ -32,7 +32,7 @@ Float:Weapon_GetMaxRange(weaponid);
 *y_weapondata* also provides some minimal information about the weapon ammo.
 ### Ammo names
 Get a certain weapon's ammo name using:
-```pawnđ
+```pawn
 bool:Weapon_GetAmmoName(weaponid, dest[], size = sizeof (dest));
 ```
 ## Animation groups
