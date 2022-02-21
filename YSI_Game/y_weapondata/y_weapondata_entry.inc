@@ -369,6 +369,7 @@ static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 
 stock bool:Weapon_GetAmmoName(weaponid, dest[], size = sizeof (dest))
 {
+	dest[0] = '\0';
     if (Weapon_IsValid(weaponid))
     {
         strcat(dest, YSI_g_WeaponAmmoNames[weaponid], size);
@@ -429,6 +430,7 @@ static stock YSI_g_WeaponAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 
 stock bool:Weapon_GetAnimGroup(weaponid, dest[], size = sizeof (dest))
 {
+	dest[0] = '\0';
     if (Weapon_IsValid(weaponid))
     {
         strcat(dest, YSI_g_WeaponAnimGroups[weaponid], size);
@@ -489,6 +491,7 @@ static stock YSI_g_WeaponProAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 
 stock bool:Weapon_GetProAnimGroup(weaponid, dest[], size = sizeof (dest))
 {
+	dest[0] = '\0';
     if (Weapon_IsValid(weaponid))
     {
         strcat(dest, YSI_g_WeaponProAnimGroups[weaponid], size);
