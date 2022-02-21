@@ -183,7 +183,7 @@ __COMPILER_BUGGED_SYSREQ
 // 1 when `#pragma warning` exists, 0 when it doesn't.
 __COMPILER_WARNING_SUPPRESSION
 
-// 1 when `#warning` exists, 0 when is doesn't.
+// 1 when `#warning` exists, 0 when it doesn't.
 __COMPILER_USER_WARNING
 
 // 1 when `const &` is a warning, 0 when is isn't.
