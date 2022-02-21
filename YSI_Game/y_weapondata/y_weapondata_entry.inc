@@ -367,17 +367,15 @@ static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	WEAPONDATA_NO_AMMO  //{"Parachute", 46, 11, 371 }
 };
 
-stock Weapon_GetAmmoName(weaponid)
+stock Weapon_GetAmmoName(weaponid, const dest[], size = sizeof(dest))
 {
-	/*new dest[YSI_WEAPDATA_MAX_STRING_SIZE];
 	if(!Weapon_IsValid(weaponid))
 	{
-		strcat(dest, " ");
-		return dest;
+		strcat(dest, "");
+		return false;
 	}
-	else strcat(dest, YSI_g_WeaponAmmoNames[weaponid]);
-	return dest;*/
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponAmmoNames[weaponid] : " ";
+	strcat(dest, YSI_g_WeaponAmmoNames[weaponid]);
+	return true;
 }
 
 static stock YSI_g_WeaponAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
@@ -429,7 +427,7 @@ static stock YSI_g_WeaponAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	"goggles", //{"Thermal Goggles", 45, 11, 369 },
 	"null"  //{"Parachute", 46, 11, 371 }
 };
-
+/*
 stock Weapon_GetAnimGroup(weaponid)
 {
 	/*new dest[YSI_WEAPDATA_MAX_STRING_SIZE];
@@ -441,6 +439,18 @@ stock Weapon_GetAnimGroup(weaponid)
 	else strcat(dest, YSI_g_WeaponAnimGroups[weaponid]);
 	return dest;*/
 	return Weapon_IsValid(weaponid) ? YSI_g_WeaponAnimGroups[weaponid] : " ";
+}
+*/
+
+stock Weapon_GetAnimGroup(weaponid, const dest[], size = sizeof(dest))
+{
+	if(!Weapon_IsValid(weaponid))
+	{
+		strcat(dest, "");
+		return false;
+	}
+	strcat(dest, YSI_g_WeaponAnimGroups[weaponid]);
+	return true;
 }
 
 static stock YSI_g_WeaponProAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
@@ -492,7 +502,7 @@ static stock YSI_g_WeaponProAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	"goggles", //{"Thermal Goggles", 45, 11, 369 },
 	"null"  //{"Parachute", 46, 11, 371 }
 };
-
+/*
 stock Weapon_GetProAnimGroup(weaponid)
 {
 	/*new dest[YSI_WEAPDATA_MAX_STRING_SIZE];
@@ -504,6 +514,17 @@ stock Weapon_GetProAnimGroup(weaponid)
 	else strcat(dest, YSI_g_WeaponProAnimGroups[weaponid]);
 	return dest;*/
 	return Weapon_IsValid(weaponid) ? YSI_g_WeaponProAnimGroups[weaponid] : " ";
+}*/
+
+stock Weapon_GetProAnimGroup(weaponid, const dest[], size = sizeof(dest))
+{
+	if(!Weapon_IsValid(weaponid))
+	{
+		strcat(dest, "");
+		return false;
+	}
+	strcat(dest, YSI_g_WeaponProAnimGroups[weaponid]);
+	return true;
 }
 
 stock bool:Weapon_IsAssaultRifle(weaponid)
