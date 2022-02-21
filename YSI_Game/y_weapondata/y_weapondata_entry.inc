@@ -367,15 +367,14 @@ static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	WEAPONDATA_NO_AMMO  //{"Parachute", 46, 11, 371 }
 };
 
-stock Weapon_GetAmmoName(weaponid, const dest[], size = sizeof(dest))
+stock bool:Weapon_GetAmmoName(weaponid, dest[], size = sizeof (dest))
 {
-	if(!Weapon_IsValid(weaponid))
-	{
-		strcat(dest, "");
-		return false;
-	}
-	strcat(dest, YSI_g_WeaponAmmoNames[weaponid]);
-	return true;
+    if (Weapon_IsValid(weaponid))
+    {
+        strcat(dest, YSI_g_WeaponAmmoNames[weaponid], size);
+        return true;
+    }
+    return false;
 }
 
 static stock YSI_g_WeaponAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
@@ -442,15 +441,14 @@ stock Weapon_GetAnimGroup(weaponid)
 }
 */
 
-stock Weapon_GetAnimGroup(weaponid, const dest[], size = sizeof(dest))
+stock bool:Weapon_GetAnimGroup(weaponid, dest[], size = sizeof (dest))
 {
-	if(!Weapon_IsValid(weaponid))
-	{
-		strcat(dest, "");
-		return false;
-	}
-	strcat(dest, YSI_g_WeaponAnimGroups[weaponid]);
-	return true;
+    if (Weapon_IsValid(weaponid))
+    {
+        strcat(dest, YSI_g_WeaponAnimGroups[weaponid], size);
+        return true;
+    }
+    return false;
 }
 
 static stock YSI_g_WeaponProAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
@@ -516,15 +514,14 @@ stock Weapon_GetProAnimGroup(weaponid)
 	return Weapon_IsValid(weaponid) ? YSI_g_WeaponProAnimGroups[weaponid] : " ";
 }*/
 
-stock Weapon_GetProAnimGroup(weaponid, const dest[], size = sizeof(dest))
+stock bool:Weapon_GetProAnimGroup(weaponid, dest[], size = sizeof (dest))
 {
-	if(!Weapon_IsValid(weaponid))
-	{
-		strcat(dest, "");
-		return false;
-	}
-	strcat(dest, YSI_g_WeaponProAnimGroups[weaponid]);
-	return true;
+    if (Weapon_IsValid(weaponid))
+    {
+        strcat(dest, YSI_g_WeaponProAnimGroups[weaponid], size);
+        return true;
+    }
+    return false;
 }
 
 stock bool:Weapon_IsAssaultRifle(weaponid)
