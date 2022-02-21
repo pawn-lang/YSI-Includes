@@ -369,14 +369,15 @@ static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 
 stock Weapon_GetAmmoName(weaponid)
 {
-	new dest[YSI_WEAPDATA_MAX_STRING_SIZE];
+	/*new dest[YSI_WEAPDATA_MAX_STRING_SIZE];
 	if(!Weapon_IsValid(weaponid))
 	{
 		strcat(dest, " ");
 		return dest;
 	}
 	else strcat(dest, YSI_g_WeaponAmmoNames[weaponid]);
-	return dest;
+	return dest;*/
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponAmmoNames[weaponid] : " ";
 }
 
 static stock YSI_g_WeaponAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
