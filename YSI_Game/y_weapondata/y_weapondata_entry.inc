@@ -426,20 +426,6 @@ static stock YSI_g_WeaponAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	"goggles", //{"Thermal Goggles", 45, 11, 369 },
 	"null"  //{"Parachute", 46, 11, 371 }
 };
-/*
-stock Weapon_GetAnimGroup(weaponid)
-{
-	/*new dest[YSI_WEAPDATA_MAX_STRING_SIZE];
-	if(!Weapon_IsValid(weaponid))
-	{
-		strcat(dest, " ");
-		return dest;
-	}
-	else strcat(dest, YSI_g_WeaponAnimGroups[weaponid]);
-	return dest;*/
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponAnimGroups[weaponid] : " ";
-}
-*/
 
 stock bool:Weapon_GetAnimGroup(weaponid, dest[], size = sizeof (dest))
 {
@@ -500,19 +486,6 @@ static stock YSI_g_WeaponProAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	"goggles", //{"Thermal Goggles", 45, 11, 369 },
 	"null"  //{"Parachute", 46, 11, 371 }
 };
-/*
-stock Weapon_GetProAnimGroup(weaponid)
-{
-	/*new dest[YSI_WEAPDATA_MAX_STRING_SIZE];
-	if(!Weapon_IsValid(weaponid))
-	{
-		strcat(dest, " ");
-		return dest;
-	}
-	else strcat(dest, YSI_g_WeaponProAnimGroups[weaponid]);
-	return dest;*/
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponProAnimGroups[weaponid] : " ";
-}*/
 
 stock bool:Weapon_GetProAnimGroup(weaponid, dest[], size = sizeof (dest))
 {
@@ -569,13 +542,11 @@ stock bool:Weapon_IsRifle(weaponid)
 	return false;
 }
 
-//P:D(Weapon_GetSlot(weaponid));
 stock Weapon_GetSlot(weaponid)
 {
 	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (WEAPONDATA_INVALID_RETURN);
 }
 
-//P:D(Weapon_GetModelID(weaponid));
 stock Weapon_GetModelID(weaponid)
 {
 	return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (WEAPONDATA_INVALID_RETURN);
