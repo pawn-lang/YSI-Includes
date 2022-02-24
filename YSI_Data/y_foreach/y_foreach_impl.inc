@@ -673,7 +673,7 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 			array[value] = -123456789,
 			// Set the reverse pointer.  The one before the next is NEVER in the
 			// iterator at this point, because we just removed its previous.
-			array[(array[last] - 1) % size] = (last + 1) % size - size;
+			array[(array[last] - 1) % size] = (last + 1) % size - size - size;
 	}
 	else
 	{
