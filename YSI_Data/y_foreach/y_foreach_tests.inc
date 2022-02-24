@@ -3702,3 +3702,18 @@ TEST__ y_iter_RandomExclude()
 	ASSERT_FALSE(selected[19]);
 }
 
+TEST__ y_iter_RemoveMidLoop()
+{
+	new
+		Iterator:iter<20>;
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 6);
+	FOREACH__(new i : iter)
+	{
+		ASSERT_EQ(i, 5);
+		Iter_Remove(iter, i);
+		ASSERT_EQ(Iterator@iter[5], -123456789);
+		break;
+	}
+}
+

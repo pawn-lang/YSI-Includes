@@ -670,7 +670,7 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 			--count,
 			last = (array[(value - 1) % size] - 1) % size,
 			array[last] = array[value],
-			array[value] = value,
+			array[value] = -123456789,
 			array[(array[last] - 1) % size] = (last + 1) % size;
 	}
 	return INVALID_ITERATOR_SLOT;
@@ -690,7 +690,7 @@ stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
 				return
 					--count,
 					array[last] = array[value],
-					array[value] = value;
+					array[value] = -123456789;
 			}
 			last = start;
 		}
