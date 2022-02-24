@@ -68,3 +68,19 @@ values:  42, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
 This also enables querying the next/previous valid value to an invalid value in `O(1)` operations
 (for next, get the previous first and advance).
 
+# Extensions
+
+The latest version of this library, in use on several hundred specific game servers, has a
+modification to the previous value lookup.  Reverse iteration is done modulo the length of the list,
+so many values will give the same previous value and this property is exploited in a somewhat
+aggressive manner to crash in certain situations.  As with many iterators modifying the list within
+a loop over it can be dangerous.  With this algorithm adding a new element mid loop is not a
+problem but removing the current value is not supported.  The value left in the removed index is not
+usable within forward iteration and could point to junk values or worse itself.  So the value is
+instead replaced with the previous value `- size`, i.e. a negative number.  Reverse iteration still
+works as the code already performs a modulo operation to loop back to the start once the loop is
+complete, but forward iteration will almost instantly crash with an OOB access.  While a crash is
+bad, it is at least more useful than the silent infinite loop caused by an index pointing to itself
+- the problem location can be quickly identified and the root cause derived.  Of course if you're in
+a language without bounds checking, this is less helpful.
+
