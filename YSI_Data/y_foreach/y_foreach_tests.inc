@@ -3707,12 +3707,27 @@ TEST__ y_iter_RemoveMidLoop()
 	new
 		Iterator:iter<20>;
 	Iter_Add(iter, 5);
-	Iter_Add(iter, 6);
 	FOREACH__(new i : iter)
 	{
 		ASSERT_EQ(i, 5);
 		Iter_Remove(iter, i);
-		ASSERT_EQ(Iterator@iter[5], -123456789);
+		ASSERT_LT(Iterator@iter[5], 0);
+		break;
+	}
+	Iter_Add(iter, 0);
+	FOREACH__(new i : iter)
+	{
+		ASSERT_EQ(i, 0);
+		Iter_Remove(iter, i);
+		ASSERT_LT(Iterator@iter[0], 0);
+		break;
+	}
+	Iter_Add(iter, 19);
+	FOREACH__(new i : iter)
+	{
+		ASSERT_EQ(i, 19);
+		Iter_Remove(iter, i);
+		ASSERT_LT(Iterator@iter[19], 0);
 		break;
 	}
 }

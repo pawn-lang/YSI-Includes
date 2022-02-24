@@ -661,19 +661,39 @@ stock Iter_Remove_InternalD(&count, array[], start, size, value)
 
 stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 {
-	last = size;
 	if (0 <= value < size++ && array[value] > value)
 	{
 		// This version has reverse iterators, which need maintaining, and can
 		// be used in place of a loop to jump backwards in the list.
-		return
-			--count,
-			last = (array[(value - 1) % size] - 1) % size,
-			array[last] = array[value],
-			array[value] = -123456789,
-			array[(array[last] - 1) % size] = (last + 1) % size;
+		if (array[value] == value + 1)
+		{
+			// Stepping to the next value.
+			return
+				--count,
+				last = (array[(value - 1) % size] - 1) % size,
+				array[last] = value + 1,
+				// Set the reverse pointer, as a negative number.
+				array[value] = (last + 1) % size - size;
+		}
+		else
+		{
+			// Stepping to a future value.
+			return
+				--count,
+				last = (array[(value - 1) % size] - 1) % size,
+				array[last] = array[value],
+				// Set the current value.
+				array[value] = -123456789,
+				// Set the reverse pointer.
+				array[(array[last] - 1) % size] = (last + 1) % size - size;
+		}
 	}
-	return INVALID_ITERATOR_SLOT;
+	else
+	{
+		return
+			last = size,
+			INVALID_ITERATOR_SLOT;
+	}
 }
 
 stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
