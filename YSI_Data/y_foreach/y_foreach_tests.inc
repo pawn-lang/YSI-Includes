@@ -3732,3 +3732,119 @@ TEST__ y_iter_RemoveMidLoop()
 	}
 }
 
+TEST__ y_iter_RemoveTheReverse()
+{
+	new
+		Iterator:iter<20>;
+	new j;
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 6);
+	Iter_Add(iter, 7);
+	Iter_Add(iter, 9);
+	Iter_Add(iter, 13);
+	j = 0;
+	FOREACH__(new i : iter)
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 5);
+		case 1:
+			ASSERT_EQ(i, 6);
+		case 2:
+			ASSERT_EQ(i, 7);
+		case 3:
+			ASSERT_EQ(i, 9);
+		case 4:
+			ASSERT_EQ(i, 13);
+		default:
+			ASSERT(false);
+		}
+	}
+	j = 0;
+	FOREACH__(new i : Reverse(iter))
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 13);
+		case 1:
+			ASSERT_EQ(i, 9);
+		case 2:
+			ASSERT_EQ(i, 7);
+		case 3:
+			ASSERT_EQ(i, 6);
+		case 4:
+			ASSERT_EQ(i, 5);
+		default:
+			ASSERT(false);
+		}
+	}
+	Iter_Remove(iter, 6);
+	j = 0;
+	FOREACH__(new i : iter)
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 5);
+		case 1:
+			ASSERT_EQ(i, 7);
+		case 2:
+			ASSERT_EQ(i, 9);
+		case 3:
+			ASSERT_EQ(i, 13);
+		default:
+			ASSERT(false);
+		}
+	}
+	j = 0;
+	FOREACH__(new i : Reverse(iter))
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 13);
+		case 1:
+			ASSERT_EQ(i, 9);
+		case 2:
+			ASSERT_EQ(i, 7);
+		case 3:
+			ASSERT_EQ(i, 5);
+		default:
+			ASSERT(false);
+		}
+	}
+	Iter_Remove(iter, 9);
+	j = 0;
+	FOREACH__(new i : iter)
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 5);
+		case 1:
+			ASSERT_EQ(i, 7);
+		case 2:
+			ASSERT_EQ(i, 13);
+		default:
+			ASSERT(false);
+		}
+	}
+	j = 0;
+	FOREACH__(new i : Reverse(iter))
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 13);
+		case 1:
+			ASSERT_EQ(i, 7);
+		case 2:
+			ASSERT_EQ(i, 5);
+		default:
+			ASSERT(false);
+		}
+	}
+}
+
