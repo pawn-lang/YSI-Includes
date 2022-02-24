@@ -108,3 +108,20 @@ foreach (new i : Iterator)
 Iter_Clear(Iterator);
 ```
 
+## Why Do I Get A Negative Array Index Access?
+
+This is a recent change designed to help spot the previous issue, that of using `Iter_Remove` from
+inside a loop that uses it.  Before, doing so could result in an infinite loop, which is sometimes
+hard to spot.  The code in `Iter_Remove` was slightly modified to replace the removed value with a
+negative number (while still preserving reverse iteration properties).  This will often cause a
+crash when you try and use that next iterator value, BUT this crash is identifiable with the
+crashdetect plugin.  If you see a negative index value of `-123456789` this is almost certainly the
+cause, but other values are also possible.  They will always be less than `-size`, the capacity of
+the iterator as a negative number.  E.g. an index of `-1` cannot be from this change, but an index
+of `-(MAX_PLAYERS + 10)` might be.
+
+## Why Did You ADD Negative Array Index Access?
+
+As mentioned before - they are easier to spot.  A mistake which causes a loud error that can be
+pinpointed is far better than a mistake which can cause wierd errors you might not notice.
+
