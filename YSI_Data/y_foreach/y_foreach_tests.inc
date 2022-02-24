@@ -3732,7 +3732,7 @@ TEST__ y_iter_RemoveMidLoop()
 	}
 }
 
-TEST__ y_iter_RemoveTheReverse()
+TEST__ y_iter_RemoveThenReverse()
 {
 	new
 		Iterator:iter<20>;
@@ -3760,6 +3760,7 @@ TEST__ y_iter_RemoveTheReverse()
 		default:
 			ASSERT(false);
 		}
+		++j;
 	}
 	j = 0;
 	FOREACH__(new i : Reverse(iter))
@@ -3779,6 +3780,7 @@ TEST__ y_iter_RemoveTheReverse()
 		default:
 			ASSERT(false);
 		}
+		++j;
 	}
 	Iter_Remove(iter, 6);
 	j = 0;
@@ -3797,6 +3799,7 @@ TEST__ y_iter_RemoveTheReverse()
 		default:
 			ASSERT(false);
 		}
+		++j;
 	}
 	j = 0;
 	FOREACH__(new i : Reverse(iter))
@@ -3814,6 +3817,7 @@ TEST__ y_iter_RemoveTheReverse()
 		default:
 			ASSERT(false);
 		}
+		++j;
 	}
 	Iter_Remove(iter, 9);
 	j = 0;
@@ -3830,6 +3834,7 @@ TEST__ y_iter_RemoveTheReverse()
 		default:
 			ASSERT(false);
 		}
+		++j;
 	}
 	j = 0;
 	FOREACH__(new i : Reverse(iter))
@@ -3845,6 +3850,7 @@ TEST__ y_iter_RemoveTheReverse()
 		default:
 			ASSERT(false);
 		}
+		++j;
 	}
 }
 
