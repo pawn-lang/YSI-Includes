@@ -123,5 +123,8 @@ of `-(MAX_PLAYERS + 10)` might be.
 ## Why Did You ADD Negative Array Index Access?
 
 As mentioned before - they are easier to spot.  A mistake which causes a loud error that can be
-pinpointed is far better than a mistake which can cause wierd errors you might not notice.
+pinpointed is far better than a mistake which can cause wierd errors you might not notice.  If
+crashdetect (yes, this does rely on using the plugin, but you would probably struggle to spot the
+problem without it before anyway) can tell you the exact line of the invalid access with a message
+as specific as trying to access index `-123456789` that's vastly better than randomly hanging.
 
