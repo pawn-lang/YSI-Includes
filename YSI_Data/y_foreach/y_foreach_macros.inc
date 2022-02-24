@@ -812,6 +812,9 @@ P:D(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define F@g(%0,%8) %0 F@a$
 #define F@h:%0) %0 F@a$)
 
+// Consume spaces.  Read this macro in a Geordie accent.
+#define yI@_%0\32; yI@_
+
 // Sort out tagged parameters plus extra parameters.  Expanded so it will fail
 // to match parameters outside the required area.  Note to self.  Using
 // `TRUE ? val : _:tag_check` is shorter in code, but longer (by one instruction
@@ -843,7 +846,7 @@ P:D(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@A:F@m:F@a$%1,%0$
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2)),yI@_%1;_:(yI@_%1=_:Iterator@%0 F@a$[_:%1],%1)<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
 #define iterstart(%1)%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o))-1+(_:%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
