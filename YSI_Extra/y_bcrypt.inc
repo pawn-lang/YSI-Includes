@@ -142,7 +142,9 @@ Optional plugins:
 		if (AMX_GetPublicPointer(0, ptr, callback))
 		{
 			_YSI_BCryptCheck(input, hash, "YSI_BCryptCheckDone", "ii", extra, ptr);
+			return 1;
 		}
+		return 0;
 	}
 
 	stock BCrypt_Hash(extra, const callback[], const input[], cost)
