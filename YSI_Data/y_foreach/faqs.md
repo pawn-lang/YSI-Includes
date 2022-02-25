@@ -120,6 +120,9 @@ cause, but other values are also possible.  They will always be less than `-size
 the iterator as a negative number.  E.g. an index of `-1` cannot be from this change, but an index
 of `-(MAX_PLAYERS + 10)` might be.
 
+If you get this error see [the advice above](https://github.com/pawn-lang/YSI-Includes/blob/5.x/YSI_Data/y_foreach/faqs.md#why-does-my-loop-crash)
+for how to resolve this issue.
+
 ## Why Did You ADD Negative Array Index Access?
 
 As mentioned before - they are easier to spot.  A mistake which causes a loud error that can be
