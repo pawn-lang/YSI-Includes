@@ -78,6 +78,8 @@ Optional plugins:
 
 // Unify the two BCrypt plugins in to a single API.
 #if defined bcrypt_included
+	stock _YSI_gHashID = 0;
+
 	forward YSI_BCryptCheckDone(extra, ptr);
 	forward YSI_BCryptHashDone(extra, ptr, hashid);
 
@@ -145,11 +147,10 @@ Optional plugins:
 
 	stock BCrypt_Hash(extra, const callback[], const input[], cost)
 	{
-		static hashid = 0;
 		new ptr;
 		return
-			++hashid,
-			AMX_GetPublicPointer(0, ptr, callback) && _YSI_BCryptHash(input, cost, "YSI_BCryptHashDone", "iii", extra, ptr, hashid) ? hashid : 0;
+			++_YSI_gHashID,
+			AMX_GetPublicPointer(0, ptr, callback) && _YSI_BCryptHash(input, cost, "YSI_BCryptHashDone", "iii", extra, ptr, _YSI_gHashID) ? _YSI_gHashID : 0;
 	}
 
 #elseif defined _samp_bcrypt_included

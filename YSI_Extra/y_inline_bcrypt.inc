@@ -143,13 +143,13 @@ stock bool:BCrypt_CheckInline(const text[], const hash[], Func:cb<i>)
 	return false;
 }
 
-stock bool:BCrypt_HashInline(const text[], cost = 12, Func:cb<s>)
+stock BCrypt_HashInline(const text[], cost = 12, Func:cb<s>)
 {
-	if (BCrypt_Hash(_:cb, "_Inline_BCryptHashDone", text, cost))
+	if ((cost = BCrypt_Hash(_:cb, "_Inline_BCryptHashDone", text, cost)))
 	{
 		Indirect_Claim(cb);
-		return true;
 	}
-	return false;
+	// Return the hashid.
+	return cost;
 }
 
