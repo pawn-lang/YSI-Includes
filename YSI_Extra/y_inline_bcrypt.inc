@@ -114,42 +114,89 @@ Optional plugins:
 	#error Could not find y_bcrypt
 #endif
 
-forward _Inline_BCryptCheckDone(Func:cb<i>, bool:success);
-forward _Inline_BCryptHashDone(Func:cb<s>, hashid);
-
-public _Inline_BCryptCheckDone(Func:cb<i>, bool:success)
-{
-	new ret = @.cb(success);
-	Indirect_Release(cb);
-	return ret;
-}
-
-public _Inline_BCryptHashDone(Func:cb<s>, hashid)
-{
-	new hash[61];
-	BCrypt_GetHash(hash);
-	new ret = @.cb(hash);
-	Indirect_Release(cb);
-	return ret;
-}
-
-stock bool:BCrypt_CheckInline(const text[], const hash[], Func:cb<i>)
-{
-	if (BCrypt_Check(_:cb, "_Inline_BCryptCheckDone", text, hash))
+#if defined bcrypt_included
+	forward _Inline_BCryptCheckDone(Func:cb<i>);
+	forward _Inline_BCryptHashDone(Func:cb<si>, hashid);
+    
+	public _Inline_BCryptCheckDone(Func:cb<i>)
 	{
-		Indirect_Claim(cb);
-		return true;
+		new ret = @.cb(_YSI_BCryptIsEqual());
+		Indirect_Release(cb);
+		return ret;
 	}
-	return false;
-}
-
-stock BCrypt_HashInline(const text[], cost = 12, Func:cb<s>)
-{
-	if ((cost = BCrypt_Hash(_:cb, "_Inline_BCryptHashDone", text, cost)))
+    
+	public _Inline_BCryptHashDone(Func:cb<si>, hashid)
 	{
-		Indirect_Claim(cb);
+		new hash[61];
+		_YSI_BCryptGetHash(hash),
+		hashid = @.cb(hash, hashid),
+		Indirect_Release(cb);
+		return hashid;
 	}
-	// Return the hashid.
-	return cost;
-}
+    
+	stock bool:BCrypt_CheckInline(const password[], const hash[], Func:cb<i>)
+	{
+		if (_YSI_BCryptCheck(password, hash, "_Inline_BCryptCheckDone", "i", cb))
+		{
+			Indirect_Claim(cb);
+			return true;
+		}
+		return false;
+	}
+    
+	stock BCrypt_HashInline(const password[], cost = 12, {F@_@s, F@_@si}:cb) // Func:cb<s> | Func:cb<si>
+	{
+		if (_YSI_BCryptHash(password, cost, "_Inline_BCryptHashDone", "ii", cb, ++_YSI_gHashID))
+		{
+			Indirect_Claim(cb);
+			return _YSI_gHashID;
+		}
+		return 0;
+	}
+#elseif defined _samp_bcrypt_included
+	forward _Inline_BCryptCheckDone(Func:cb<i>, bool:success);
+	forward _Inline_BCryptHashDone(Func:cb<si>, hashid);
+
+	public _Inline_BCryptCheckDone(Func:cb<i>, bool:success)
+	{
+		new ret = @.cb(success);
+		Indirect_Release(cb);
+		return ret;
+	}
+
+	public _Inline_BCryptHashDone(Func:cb<si>, hashid)
+	{
+		new hash[61];
+		BCrypt_GetHash(hash),
+		hashid = @.cb(hash, hashid),
+		Indirect_Release(cb);
+		return hashid;
+	}
+
+	stock bool:BCrypt_CheckInline(const password[], const hash[], Func:cb<i>)
+	{
+		if (BCrypt_Check(_:cb, "_Inline_BCryptCheckDone", password, hash))
+		{
+			Indirect_Claim(cb);
+			return true;
+		}
+		return false;
+	}
+
+	stock BCrypt_HashInline(const password[], cost = 12, {F@_@s, F@_@si}:cb) // Func:cb<s> | Func:cb<si>
+	{
+		if ((cost = BCrypt_Hash(_:cb, "_Inline_BCryptHashDone", password, cost)))
+		{
+			Indirect_Claim(cb);
+			// Return the hashid.
+			return cost;
+		}
+		return 0;
+	}
+
+#else
+	// We used to not have an error for this case, just gave undefined errors.  But now they must
+	// include it explicitly, so add a real error.
+	#error Please include either BCrypt plugin first.
+#endif
 
