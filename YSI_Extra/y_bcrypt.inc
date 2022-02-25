@@ -81,21 +81,22 @@ Optional plugins:
 	forward YSI_BCryptCheckDone(extra, ptr);
 	forward YSI_BCryptHashDone(extra, ptr, hashid);
 
-	native _YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
-	native _YSI_BCryptCheck(const password[], const hash[], const callback_name[], const callback_format[], ...) = bcrypt_check;
-	native _YSI_BCryptHash(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_hash;
+	native bool:_YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
+	native bool:_YSI_BCryptCheck(const password[], const hash[], const callback_name[], const callback_format[], ...) = bcrypt_check;
+	native bool:_YSI_BCryptHash(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_hash;
 	native bool:_YSI_BCryptIsEqual(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_is_equal;
 
 	// Fix the missing native.
-	stock BCrypt_GetHash(hash[], size = sizeof(hash))
+	stock bool:BCrypt_GetHash(hash[], size = sizeof (hash))
 	{
+		// The native doesn't take a size parameter, so check it here.
 		assert(size >= 61);
 		return _YSI_BCryptGetHash(hash);
 	}
 
 	// Plus keep the original version for backwards-compatibility.
 	#pragma deprecated Use `BCrypt_GetHash`.
-	native YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
+	native bool:YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
 	#define YSI_BCryptGetHash(%0,%1) YSI_BCryptGetHash(%0)
 	#define _ALS_YSI_BCryptGetHash
 
@@ -136,36 +137,27 @@ Optional plugins:
 		#emit SCTRL        6
 	}
 
-	stock BCrypt_Check(extra, const callback[], const input[], const hash[])
+	stock bool:BCrypt_Check(extra, const callback[], const input[], const hash[])
 	{
 		new ptr;
-		if (AMX_GetPublicPointer(0, ptr, callback))
-		{
-			_YSI_BCryptCheck(input, hash, "YSI_BCryptCheckDone", "ii", extra, ptr);
-			return 1;
-		}
-		return 0;
+		return AMX_GetPublicPointer(0, ptr, callback) && _YSI_BCryptCheck(input, hash, "YSI_BCryptCheckDone", "ii", extra, ptr);
 	}
 
 	stock BCrypt_Hash(extra, const callback[], const input[], cost)
 	{
-		new ptr;
 		static hashid = 0;
-		++hashid;
-		if (AMX_GetPublicPointer(0, ptr, callback))
-		{
-			_YSI_BCryptHash(input, cost, "YSI_BCryptHashDone", "iii", extra, ptr, hashid);
-			return hashid;
-		}
-		return 0;
+		new ptr;
+		return
+			++hashid,
+			AMX_GetPublicPointer(0, ptr, callback) && _YSI_BCryptHash(input, cost, "YSI_BCryptHashDone", "iii", extra, ptr, hashid) ? hashid : 0;
 	}
 
 #elseif defined _samp_bcrypt_included
 	// I've never had to de-const a native before!
 	// Wait, that's not true - `GetPlayerName` is over-const!
-	native BCrypt_GetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
-	native BCrypt_Check(extra, const callback[], const input[], const hash[]) = bcrypt_verify;
-	native BCrypt_Hash(extra, const callback[], const input[], cost) = bcrypt_hash;
+	native bool:BCrypt_GetHash(hash[], size = sizeof (hash)) = bcrypt_get_hash;
+	native bool:BCrypt_Check(extra, const callback[], const input[], const hash[]) = bcrypt_verify;
+	native bool:BCrypt_Hash(extra, const callback[], const input[], cost) = bcrypt_hash;
 #else
 	// We used to not have an error for this case, just gave undefined errors.  But now they must
 	// include it explicitly, so add a real error.
