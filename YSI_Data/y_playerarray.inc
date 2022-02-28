@@ -1,10 +1,10 @@
 /**
  * <library name="y_playerarray" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  This code provides arrays of players who can do things.  This is for support
  *  of the text system which can take arrays of player ids, bit arrays or just a
  *  single ID.
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:

@@ -111,7 +111,7 @@ Optional plugins:
 
 /**
  * <library name="y_iterate" version="0.4" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  <p>
  *  Provides efficient looping through sparse data sets, such as connected
  *  players.  Significantly improved from the original version to be a generic
@@ -126,7 +126,7 @@ Optional plugins:
  *  For extensive documentation on writing and using iterators, see
  *  <a href="http://forum.sa-mp.com/showthread.php?t=481877">this topic</a>
  *  </p>
- * </description>
+ * </remarks>
  * <section>
  *  Functions
  * </section>

@@ -1,6 +1,6 @@
 /**
  * <library name="y_punycode" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  <p>
  *  Functions for converting unicode strings to and from punycode, to be
  *  represented in just ASCII characters.  Based on several public
@@ -11,7 +11,7 @@
  *  Also includes a function that hooks the "HTTP" function to allow for
  *  internationalised domain names with that function.
  *  </p>
- * </description>
+ * </remarks>
  * <section>
  *  Functions
  * </section>

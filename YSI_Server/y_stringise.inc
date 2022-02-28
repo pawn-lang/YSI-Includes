@@ -1,6 +1,6 @@
 /**
  * <library name="y_stringise" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Similar to <c>#</c>, but more complete in that it handles brackets, commas,
  *  and more.  Note that the brackets it handles must be matched.  It is also
  *  different to <c>#</c> in other ways - quotes are converted to <c>`</c>,
@@ -13,7 +13,7 @@
  *   <tr><td><c>STRINGISE__(A "B")</c></td><td><c>"A`B`"</c></td></tr>
  * </table>
  *
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:
