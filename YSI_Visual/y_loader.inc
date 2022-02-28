@@ -1,5 +1,8 @@
 /**
- * <library name="y_loader" description="Loads MTA XML format map files for use with the object and race systems." version="1.0">
+ * <library name="y_loader" version="1.0">
+ * <description>
+ *  Loads MTA XML format map files for use with the object and race systems.
+ * </description>
  * <section>
  *  Legal
  * </section>

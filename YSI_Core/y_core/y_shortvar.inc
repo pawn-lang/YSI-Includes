@@ -1,5 +1,8 @@
 /*+
- * <library name="y_shortvar" description="Declares a few variables with very short names, used all over YSI." version="0.2">
+ * <library name="y_shortvar" version="0.2">
+ * <description>
+ *  Declares a few variables with very short names, used all over YSI.
+ * </description>
  * </library>
  *//** *//*
 Legal:

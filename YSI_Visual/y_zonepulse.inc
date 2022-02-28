@@ -1,5 +1,8 @@
 /**
- * <library name="y_zonepulse" description="Gradually fades a zone's colour between one colour and another, then back." version="0.1">
+ * <library name="y_zonepulse" version="0.1">
+ * <description>
+ *  Gradually fades a zone's colour between one colour and another, then back.
+ * </description>
  * <section>
  *  Functions
  * </section>

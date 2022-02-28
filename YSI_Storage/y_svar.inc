@@ -1,5 +1,8 @@
 /**
- * <library name="y_svar" description="Declares data to be automatically saved and loaded for the whole server." version="0.1">
+ * <library name="y_svar" version="0.1">
+ * <description>
+ *  Declares data to be automatically saved and loaded for the whole server.
+ * </description>
  * </library>
  *//** *//*
 Legal:

@@ -1,6 +1,9 @@
 /**
- * <library name="y_cell" description="Provides a few functions for manipulating the bits in single cells.  Note
- *  that this is distinct from the y_bit library." version="0.2">
+ * <library name="y_cell" version="0.2">
+ * <description>
+ *  Provides a few functions for manipulating the bits in single cells.  Note
+ *  that this is distinct from the y_bit library.
+ * </description>
  * </library>
  *//** *//*
 Legal:

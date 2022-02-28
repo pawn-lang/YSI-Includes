@@ -1,10 +1,13 @@
 /**
- * <library name="y_scriptinit" description="This file provides "OnYSIInit" and "OnScriptExit" which are called at the
- *  start and end of the current script, regardless of what the type of the
- *  script is (note: doesn't support NPC modes).  It also provides
- *  "YSI_FILTERSCRIPT" as a (partial) replacement for "FILTERSCRIPT" which
- *  detects what the mode is at runtime for a more reliable system (but it is a
- *  run-time variable, not a compile-time constant)." version="1.0">
+ * <library name="y_scriptinit" version="1.0">
+ * <description>
+ *  This file provides <c>OnScriptInit</c> and <c>OnScriptExit</c> which are
+ *  called at the start and end of the current script, regardless of what the
+ *  type of the script is.  It also provides <c>IS_FILTERSCRIPT</c> as a
+ *  (partial) replacement for <c>FILTERSCRIPT</c> which detects what the mode is
+ *  at runtime for a more reliable system (but it is a run-time variable, not a
+ *  compile-time constant).
+ * </description>
  * </library>
  *//** *//*
 	

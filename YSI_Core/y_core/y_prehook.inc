@@ -1,5 +1,8 @@
 /*+
- * <library name="y_prehook" description="State-based ALS hooking with better control of orderings." version="1.0">
+ * <library name="y_prehook" version="1.0">
+ * <description>
+ *  State-based ALS hooking with better control of orderings.
+ * </description>
  * </library>
  *//** *//*
 Legal:

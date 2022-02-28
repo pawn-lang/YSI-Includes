@@ -1,11 +1,16 @@
 /*+
- * <library name="y_stripnumbers" description="Removes tag overrides which are actually numbers.  This allows for:
+ * <library name="y_stripnumbers" version="1.0">
+ * <description>
+ *  Removes tag overrides which are actually numbers.  This allows for:
  *
- *      uvar g_a[MAX_PLAYERS][E_SOME_ENUM];
+ * <code>
+ *      uvar g_a[MAX_PLAYERS][E_SOME_ENUM]; <br />
  *      uvar g_b[MAX_PLAYERS][42];
+ * </code>
  *
  *  Without stripping you would end with code doing "42:0" or getting a tag
- *  mismatch on "E_SOME_ENUM", both of which are problems." version="1.0">
+ *  mismatch on "E_SOME_ENUM", both of which are problems.
+ * </description>
  * </library>
  *//** *//*
 Legal:

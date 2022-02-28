@@ -1,5 +1,8 @@
 /**
- * <library name="y_ctrl" description="Create new VM registers and use them via <c>LCTRL</c> and <c>SCTRL</c>." version="1.0">
+ * <library name="y_ctrl" version="1.0">
+ * <description>
+ *  Create new VM registers and use them via <c>LCTRL</c> and <c>SCTRL</c>.
+ * </description>
  * </library>
  *//** *//*
 Legal:

@@ -1,5 +1,7 @@
 /**
- * <library name="y_stringise" description="Similar to <c>#</c>, but more complete in that it handles brackets, commas,
+ * <library name="y_stringise" version="1.0">
+ * <description>
+ *  Similar to <c>#</c>, but more complete in that it handles brackets, commas,
  *  and more.  Note that the brackets it handles must be matched.  It is also
  *  different to <c>#</c> in other ways - quotes are converted to <c>`</c>,
  *  concatenation is not allowed, and te output is enclosed in <c>"</c>s:
@@ -10,7 +12,8 @@
  *   <tr><td><c>STRINGISE__(A)"B"</c></td><td><c>&lt;invalid&gt;</c></td></tr>
  *   <tr><td><c>STRINGISE__(A "B")</c></td><td><c>"A`B`"</c></td></tr>
  * </table>
- *" version="1.0">
+ *
+ * </description>
  * </library>
  *//** *//*
 Legal:

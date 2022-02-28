@@ -4,7 +4,10 @@
 #define _INC_y_thirdpartyinclude
 
 /*+
- * <library name="y_thirdpartyinclude" description="Try and include all YSI dependencies, looking in as many places as needed." version="1.0">
+ * <library name="y_thirdpartyinclude" version="1.0">
+ * <description>
+ *  Try and include all YSI dependencies, looking in as many places as needed.
+ * </description>
  * </library>
  *//** *//*
 Legal:

@@ -1,5 +1,9 @@
 /**
- * <library name="y_functional" description="Lambda functions and functional program functions - map, fold, etc." version="1.0">
+ * <library name="y_functional" version="1.0">
+ * <description>
+ *  Lambda functions and functional program functions - <c>map</c>, <c>fold</c>,
+ *  etc.
+ * </description>
  * </library>
  *//** *//*
 Legal:

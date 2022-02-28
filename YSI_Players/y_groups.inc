@@ -115,8 +115,11 @@ Optional plugins:
 #endif
 
 /**
- * <library name="y_groups" description="Admin levels, gangs, teams etc - they're all "groups" of people, this
- *  provides an abstraction for all of these collections." version="1.0">
+ * <library name="y_groups" version="1.0">
+ * <description>
+ *  Admin levels, gangs, teams etc - they're all <em>groups</em> of people, this
+ *  provides an abstraction for all of these collections.
+ * </description>
  * </library>
  *//** */
 

@@ -1,5 +1,8 @@
 /*+
- * <library name="y_pawndoc" description="Fix pawndoc comments." version="0.2">
+ * <library name="y_pawndoc" version="0.2">
+ * <description>
+ *  Fix pawndoc comments.
+ * </description>
  * </library>
  *//** *//*
 Legal:

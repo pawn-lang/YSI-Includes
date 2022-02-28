@@ -1,5 +1,8 @@
 /**
- * <library name="y_files" description="Provides native declarations for YSF functions." version="0.1">
+ * <library name="y_files" version="0.1">
+ * <description>
+ *  Provides native declarations for YSF functions.
+ * </description>
  * </library>
  *//** *//*
 Legal:

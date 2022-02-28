@@ -1,5 +1,8 @@
 /**
- * <library name="y_testing" description="Runs any functions named as tests when the Testing_Run function is called." version="1.0">
+ * <library name="y_testing" version="1.0">
+ * <description>
+ *  Runs any functions named as tests when the Testing_Run function is called.
+ * </description>
  * </library>
  *//** *//*
 Legal:

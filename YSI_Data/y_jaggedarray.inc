@@ -1,5 +1,8 @@
 /**
- * <library name="y_jaggedarray" description="Provides code to easilly manipulate the sizes of 2d array slots." version="1.0">
+ * <library name="y_jaggedarray" version="1.0">
+ * <description>
+ *  Provides code to easilly manipulate the sizes of 2d array slots.
+ * </description>
  * </library>
  *//** *//*
 Legal:

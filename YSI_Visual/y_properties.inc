@@ -1,5 +1,8 @@
 /**
- * <library name="y_properties" description="Handles properties and other common features for some modes." version="0.1">
+ * <library name="y_properties" version="0.1">
+ * <description>
+ *  Handles properties and other common features for some modes.
+ * </description>
  * <section>
  *  Functions
  * </section>

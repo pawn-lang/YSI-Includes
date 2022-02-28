@@ -1,5 +1,8 @@
 /**
- * <library name="y_circular" description="Provide circular buffers, so <c>arr[0]</c> is always the oldest." version="1.0">
+ * <library name="y_circular" version="1.0">
+ * <description>
+ *  Provide circular buffers, so <c>arr[0]</c> is always the oldest.
+ * </description>
  * </library>
  *//** *//*
 Legal:

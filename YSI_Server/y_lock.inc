@@ -1,5 +1,8 @@
 /**
- * <library name="y_lock" description="Ensures that the server is running on the IP specified by "bind"." version="0.1">
+ * <library name="y_lock" version="0.1">
+ * <description>
+ *  Ensures that the server is running on the IP specified by <c>bind</c>.
+ * </description>
  * </library>
  *//** *//*
 Legal:

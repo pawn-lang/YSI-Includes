@@ -1,8 +1,11 @@
 /**
- * <library name="y_td" description="Provides a wrapper to the SA:MP text_draw functions offering much
+ * <library name="y_td" version="1.0">
+ * <description>
+ *  Provides a wrapper to the SA:MP text_draw functions offering much
  *  improved functionality including XML definable styles, safe display,
  *  timed displays, styles and text separated, styles updateable dynamically
- *  and more." version="1.0">
+ *  and more.
+ * </description>
  * </library>
  *//** *//*
 Legal:

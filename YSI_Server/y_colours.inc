@@ -1,9 +1,12 @@
 /**
- * <library name="y_colours" description="This holds the colour information that used to be part of the text system
+ * <library name="y_colours" version="1.0">
+ * <description>
+ *  This holds the colour information that used to be part of the text system
  *  but which is far more useful than just for text.  This now supports the full
  *  set of X11 colours, both by name and by definition.  You can also define
  *  your own if you so choose (up to 32 - should be enough given that this
- *  includes the X11 colours)." version="1.0">
+ *  includes the X11 colours).
+ * </description>
  * </library>
  *//** *//*
 Legal:

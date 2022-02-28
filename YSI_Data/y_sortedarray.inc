@@ -1,5 +1,8 @@
 /**
- * <library name="y_sortedarray" description="Adds and removes values from an array, keeping them sorted for lookup speed." version="1.0">
+ * <library name="y_sortedarray" version="1.0">
+ * <description>
+ *  Adds and removes values from an array, keeping them sorted for lookup speed.
+ * </description>
  * </library>
  *//** *//*
 Legal:

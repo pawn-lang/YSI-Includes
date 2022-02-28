@@ -116,23 +116,32 @@ Optional plugins:
 #endif
 
 /**
- * <library name="y_master" description="Handles distribution of control of code segments across all running scripts
+ * <library name="y_master" version="0.2">
+ * <description>
+ *  <p>
+ *  Handles distribution of control of code segments across all running scripts
  *  with YSI to avoid conflicts of checkpoint streamers etc and allow features
  *  like "/commands" displaying all commands on the server.
+ *  </p>
  *
+ *  <p>
  *  Now fully autonomous - to use the master system simply define which one you
  *  want and include the script:
  *
- *  <c>
- *    #define MASTER 14
+ *  <code>
+ *    #define MASTER 14 <br />
  *    #include "Master"
- *  </c>
+ *  </code>
  *
  *  That will make the current script attempt to make itself the main master -
  *  you don't need ANY other code for initialisation anywhere (which took a
  *  while to figure out)...
+ *  </p>
  *
- *  This is now over 2000 lines of repetitive and complex macros!" version="0.2">
+ *  <p>
+ *  This is now over 2000 lines of repetitive and complex macros!
+ *  </p>
+ * </description>
  * <section>
  *  Macros
  * </section><ul>

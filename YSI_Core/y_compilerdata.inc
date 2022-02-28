@@ -1,5 +1,8 @@
 /**
- * <library name="y_compilerdata" description="Compile-time information about the compiler itself, such as version and capabilities." version="0.2">
+ * <library name="y_compilerdata" version="0.2">
+ * <description>
+ *  Compile-time information about the compiler itself, such as version and capabilities.
+ * </description>
  * </library>
  *//** *//*
 Legal:

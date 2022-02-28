@@ -1,5 +1,8 @@
 /**
- * <library name="y_utils" description="Misc functions used throughout." version="0.1.3">
+ * <library name="y_utils" version="0.1.3">
+ * <description>
+ *  Misc functions used throughout.
+ * </description>
  * <section>
  *  Functions
  * </section>

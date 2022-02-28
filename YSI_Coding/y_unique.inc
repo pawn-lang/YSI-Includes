@@ -1,5 +1,8 @@
 /*+
- * <library name="y_unique" description="Defines a symbol differently every time it is included." version="1.0">
+ * <library name="y_unique" version="1.0">
+ * <description>
+ *  Defines a symbol differently every time it is included.
+ * </description>
  * </library>
  *//** *//*
 Legal:

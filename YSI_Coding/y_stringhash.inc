@@ -1,5 +1,8 @@
 /**
- * <library name="y_stringhash" description="Allows you to hash strings at compile time to use them in a switch." version="2.0">
+ * <library name="y_stringhash" version="2.0">
+ * <description>
+ *  Allows you to hash strings at compile time to use them in a switch.
+ * </description>
  * <section>
  *  Functions
  * </section>

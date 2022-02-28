@@ -4,7 +4,10 @@
 #define _INC_y_profiling
 
 /**
- * <library name="y_profiling" description="Runs any functions named as profilings when the Profiling_Run function is called." version="1.0">
+ * <library name="y_profiling" version="1.0">
+ * <description>
+ *  Runs any functions named as profilings when the Profiling_Run function is called.
+ * </description>
  * </library>
  *//** *//*
 Legal:

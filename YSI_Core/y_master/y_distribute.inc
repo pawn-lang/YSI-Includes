@@ -1,6 +1,9 @@
 /*+
- * <library name="y_distribute" description="This library simplifies the task of sending data to the new master script
- *  when one takes over from another." version="0.1">
+ * <library name="y_distribute" version="0.1">
+ * <description>
+ *  This library simplifies the task of sending data to the new master script
+ *  when one takes over from another.
+ * </description>
  * </library>
  *//** *//*
 Legal:

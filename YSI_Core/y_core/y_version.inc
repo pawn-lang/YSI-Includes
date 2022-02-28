@@ -1,5 +1,8 @@
 /*+
- * <library name="y_version" description="Checks online to see if there is a newer version of YSI available." version="0.2">
+ * <library name="y_version" version="0.2">
+ * <description>
+ *  Checks online to see if there is a newer version of YSI available.
+ * </description>
  * <section>
  *  Hooks
  * </section><ul>

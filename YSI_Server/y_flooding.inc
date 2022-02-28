@@ -1,5 +1,8 @@
 /**
- * <library name="y_flooding" description="Allows a limited number of connections from a single IP." version="1.0">
+ * <library name="y_flooding" version="1.0">
+ * <description>
+ *  Allows a limited number of connections from a single IP.
+ * </description>
  * <section>
  *  Functions
  * </section>

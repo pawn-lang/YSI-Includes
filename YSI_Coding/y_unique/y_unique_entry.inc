@@ -1,5 +1,8 @@
 /*+
- * <library name="y_unique" description="Defines a symbol differently every time it is included." version="1.0">
+ * <library name="y_unique" version="1.0">
+ * <description>
+ *  Defines a symbol differently every time it is included.
+ * </description>
  * </library>
  *//** *//*
 Legal:
@@ -124,6 +127,15 @@ Optional plugins:
 		#include "y_unique__900_to_999"
 	#endif
 #else
+	// The non-repeating header.
+	/**
+	 * <library name="y_unique" version="1.0">
+	 * <description>
+	 *  Defines a symbol differently every time it is included.
+	 * </description>
+	 * </library>
+	 *//** */
+
 	static stock const UNIQUE_SYMBOL_DOESNT_EXIST = cellmin;
 	#define UNIQUE_SYMBOL (0)
 	#define UNIQUE_FUNCTION<%0...%1> %0000%1

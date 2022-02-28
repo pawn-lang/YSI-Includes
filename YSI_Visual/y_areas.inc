@@ -1,5 +1,8 @@
 /**
- * <library name="y_areas" description="Handles area checks for player location based code not involving CPs." version="0.3">
+ * <library name="y_areas" version="0.3">
+ * <description>
+ *  Handles area checks for player location based code not involving CPs.
+ * </description>
  * <section>
  *  Functions
  * </section>
