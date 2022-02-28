@@ -1,8 +1,8 @@
 /**
  * <library name="y_zonepulse" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Gradually fades a zone's colour between one colour and another, then back.
- * </description>
+ * </remarks>
  * <section>
  *  Functions
  * </section>

@@ -1,8 +1,8 @@
 /**
  * <library name="y_loader" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Loads MTA XML format map files for use with the object and race systems.
- * </description>
+ * </remarks>
  * <section>
  *  Legal
  * </section>

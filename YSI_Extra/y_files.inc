@@ -1,8 +1,8 @@
 /**
  * <library name="y_files" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Provides native declarations for YSF functions.
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:

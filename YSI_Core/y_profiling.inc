@@ -5,9 +5,9 @@
 
 /**
  * <library name="y_profiling" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Runs any functions named as profilings when the Profiling_Run function is called.
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:

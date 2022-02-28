@@ -1,6 +1,6 @@
 /**
  * <library name="y_xml" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  <p>Parses XML files according to a set of defined rules.  A rule is a custom
  *  function called on a tag when all the data for that tag has been collected.
  *  The data for a tag could consist of simple <c>bla="bla"</c> pairs,
@@ -10,7 +10,7 @@
  *  <p>Data for the tag is retrieved from a custom function using only:</p>
  *
  *  <code>while (XML_GetKeyValue(ident, data)) {}</code>
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:

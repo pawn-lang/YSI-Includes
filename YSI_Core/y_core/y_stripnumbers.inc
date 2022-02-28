@@ -1,6 +1,6 @@
 /*+
  * <library name="y_stripnumbers" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Removes tag overrides which are actually numbers.  This allows for:
  *
  * <code>
@@ -10,7 +10,7 @@
  *
  *  Without stripping you would end with code doing "42:0" or getting a tag
  *  mismatch on "E_SOME_ENUM", both of which are problems.
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:

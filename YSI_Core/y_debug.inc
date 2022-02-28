@@ -1,6 +1,6 @@
 /**
  * <library name="y_debug" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  <p>Ensures debug levels are set and defines debug functions.</p>
  *
  *  <p>General debug levels:</p>
@@ -19,7 +19,7 @@
  *
  *  <p>If you use <c>P:0</c> you get an optional debug print controlled by the
  *  global state <c>ysi_debug</c> - which is either on or off.</p>
- * </description>
+ * </remarks>
  * <section>
  *  Functions
  * </section>

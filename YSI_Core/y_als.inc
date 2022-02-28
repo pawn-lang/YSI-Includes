@@ -111,10 +111,10 @@ Optional plugins:
 
 /**
  * <library name="y_als" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Provides a number of macros for making ALS (Advanced Library System)
  *  callback hooking simpler.
- * </description>
+ * </remarks>
  * </library>
  *//** */
 

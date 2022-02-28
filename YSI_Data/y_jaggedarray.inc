@@ -1,8 +1,8 @@
 /**
  * <library name="y_jaggedarray" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Provides code to easilly manipulate the sizes of 2d array slots.
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:

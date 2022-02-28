@@ -1,9 +1,9 @@
 /**
  * <library name="y_vehicledata" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Basic functions for gathering data on various vehicle models.  Things like
  *  what sort of vehicle they are and what organisation they belong to.
- * </description>
+ * </remarks>
  * <section>
  *  Functions
  * </section>

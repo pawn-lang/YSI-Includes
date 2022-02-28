@@ -5,10 +5,10 @@
 
 /*+
  * <library name="y_cgen" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Large chunks of code that isn't used, so that the space can be reclaimed and
  *  reused by other code generating functions.
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:

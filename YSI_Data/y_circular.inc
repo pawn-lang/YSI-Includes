@@ -1,8 +1,8 @@
 /**
  * <library name="y_circular" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Provide circular buffers, so <c>arr[0]</c> is always the oldest.
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:

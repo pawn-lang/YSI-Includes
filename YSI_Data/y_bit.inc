@@ -1,6 +1,6 @@
 /**
  * <library name="y_bit" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  <p>
  *  Provides functions for bit manipulation and bit arrays greater than 32bits.
  *  The arrays are usually bigger than required due to cell boundaries but this
@@ -12,7 +12,7 @@
  *  Note that y_commands has a few optimisations which bypass the code in here
  *  so any modifications to bit array layouts will need to be reflected there.
  *  </p>
- * </description>
+ * </remarks>
  * <section>
  *  Functions
  * </section>

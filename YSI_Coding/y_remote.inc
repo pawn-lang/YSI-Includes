@@ -1,9 +1,9 @@
 /**
  * <library name="y_remote" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Wrapper for <c>__CallRemoteFunction</c>.  Enforces some features like no returns
  *  and arrays being followed by their length.
- * </description>
+ * </remarks>
  * <section>
  *  Macros
  * </section><ul>

@@ -1,8 +1,8 @@
 /**
  * <library name="y_ctrl" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Create new VM registers and use them via <c>LCTRL</c> and <c>SCTRL</c>.
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:

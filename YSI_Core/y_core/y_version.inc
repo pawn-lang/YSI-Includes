@@ -1,8 +1,8 @@
 /**
  * <library name="y_version" version="0.3" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Checks online to see if there is a newer version of YSI available.
- * </description>
+ * </remarks>
  * <section>
  *  Hooks
  * </section><ul>

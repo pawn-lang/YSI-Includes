@@ -1,13 +1,13 @@
 /**
  * <library name="y_va" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  This library currently provides two functions - va_printf and va_format
  *  which perform printf and format using variable arguments passed to another
  *  function.
  *
  *  This is bsed on the variable parameter passing method based on code by Zeex.
  *  See page 15 of the code optimisations topic.
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:

@@ -1,8 +1,8 @@
 /**
  * <library name="y_svar" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <description>
+ * <remarks>
  *  Declares data to be automatically saved and loaded for the whole server.
- * </description>
+ * </remarks>
  * </library>
  *//** *//*
 Legal:
