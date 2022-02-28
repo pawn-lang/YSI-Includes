@@ -4,7 +4,7 @@
 #define _INC_y_classgroups
 
 /*+
- * <library name="y_classes" version="1.0">
+ * <library name="y_classes" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Allows for advanced class selection options such as skins only certain
  *  people can see and actually removing skins from class selection.

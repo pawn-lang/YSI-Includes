@@ -1,5 +1,5 @@
 /**
- * <library name="y_hashmap" version="2.0">
+ * <library name="y_hashmap" version="2.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Maps string indexes to integer indexes.  Uses a fast hash to get an array
  *  slot, then a linked list to resolve collisions.

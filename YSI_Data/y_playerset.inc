@@ -1,5 +1,5 @@
 /**
- * <library name="y_playerset" version="1.0">
+ * <library name="y_playerset" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  This code is a huge abstraction of collections of players.  It allows you to
  *  define functions which take one or more players, specified in a number of

@@ -1,5 +1,5 @@
 /**
- * <library name="y_td" version="1.0">
+ * <library name="y_td" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Provides a wrapper to the SA:MP text_draw functions offering much
  *  improved functionality including XML definable styles, safe display,

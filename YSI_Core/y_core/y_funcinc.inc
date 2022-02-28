@@ -1,5 +1,5 @@
 /*+
- * <library name="y_funcinc" version="1.0">
+ * <library name="y_funcinc" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Calls functions which are used in SYSREQ.C calls before they are used.  The
  *  compiler crashes if the functions are not used in an included function

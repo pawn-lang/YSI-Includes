@@ -1,5 +1,5 @@
 /**
- * <library name="y_cell" version="0.2">
+ * <library name="y_cell" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Provides a few functions for manipulating the bits in single cells.  Note
  *  that this is distinct from the y_bit library.

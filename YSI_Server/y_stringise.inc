@@ -1,5 +1,5 @@
 /**
- * <library name="y_stringise" version="1.0">
+ * <library name="y_stringise" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Similar to <c>#</c>, but more complete in that it handles brackets, commas,
  *  and more.  Note that the brackets it handles must be matched.  It is also

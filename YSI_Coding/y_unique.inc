@@ -1,5 +1,5 @@
 /*+
- * <library name="y_unique" version="1.0">
+ * <library name="y_unique" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Defines a symbol differently every time it is included.
  * </description>

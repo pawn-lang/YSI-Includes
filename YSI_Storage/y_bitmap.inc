@@ -1,5 +1,5 @@
 /**
- * <library name="y_bitmap" version="0.1">
+ * <library name="y_bitmap" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Code to generate images on the server in the bitmap format.  This is by far
  *  the simplest format to write to as it is just a huge array of colours (at

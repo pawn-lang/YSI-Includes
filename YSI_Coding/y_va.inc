@@ -1,5 +1,5 @@
 /**
- * <library name="y_va" version="1.0">
+ * <library name="y_va" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  This library currently provides two functions - va_printf and va_format
  *  which perform printf and format using variable arguments passed to another

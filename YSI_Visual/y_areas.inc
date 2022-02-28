@@ -1,5 +1,5 @@
 /**
- * <library name="y_areas" version="0.3">
+ * <library name="y_areas" version="0.3" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Handles area checks for player location based code not involving CPs.
  * </description>

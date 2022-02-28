@@ -1,5 +1,5 @@
 /*+
- * <library name="y_version" version="0.2">
+ * <library name="y_version" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Checks online to see if there is a newer version of YSI available.
  * </description>

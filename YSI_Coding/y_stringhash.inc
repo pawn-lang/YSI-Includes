@@ -1,5 +1,5 @@
 /**
- * <library name="y_stringhash" version="2.0">
+ * <library name="y_stringhash" version="2.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Allows you to hash strings at compile time to use them in a switch.
  * </description>

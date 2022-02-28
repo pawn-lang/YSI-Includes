@@ -1,5 +1,5 @@
 /*+
- * <library name="y_prehook" version="1.0">
+ * <library name="y_prehook" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  State-based ALS hooking with better control of orderings.
  * </description>

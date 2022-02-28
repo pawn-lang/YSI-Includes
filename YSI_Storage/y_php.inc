@@ -1,5 +1,5 @@
 /**
- * <library name="y_php" version="0.1">
+ * <library name="y_php" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Sends and receives data from a PHP server with shmop installed.
  * </description>

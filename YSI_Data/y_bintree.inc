@@ -1,5 +1,5 @@
 /**
- * <library name="y_bintree" version="0.1.3">
+ * <library name="y_bintree" version="0.1.3" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Provides functions to generate balanced binary search trees for efficient
  *  searching of large arrays by value.  Left branch is less than, right branch

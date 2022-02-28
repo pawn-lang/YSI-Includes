@@ -1,5 +1,5 @@
 /**
- * <library name="y_utils" version="0.1.3">
+ * <library name="y_utils" version="0.1.3" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Misc functions used throughout.
  * </description>

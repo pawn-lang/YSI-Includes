@@ -1,5 +1,5 @@
 /**
- * <library name="y_bit" version="0.2">
+ * <library name="y_bit" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  <p>
  *  Provides functions for bit manipulation and bit arrays greater than 32bits.
