@@ -1,4 +1,15 @@
-/*
+/**
+ * <library name="y_circular">
+ * <section>
+ *  Description
+ * </section>
+ *  Provide circular buffers, so <c>arr[0]</c> is always the oldest.
+ * <section>
+ *  Version
+ * </section>
+ *  1.0
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
