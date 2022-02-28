@@ -3,7 +3,7 @@
  *   name="y_malloc"
  *   version="0.1"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Functions for using malloc/calloc/free type functions in PAWN."
  * >
  * <section>
  *  Functions

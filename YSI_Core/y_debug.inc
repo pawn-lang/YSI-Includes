@@ -2,7 +2,7 @@
  * <library
  *   name="y_debug"
  *   version="1.0"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  <p>Ensures debug levels are set and defines debug functions.</p>

@@ -3,7 +3,7 @@
  *   name="y_flooding"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Allows a limited number of connections from a single IP."
  * >
  * <section>
  *  Functions

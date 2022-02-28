@@ -114,7 +114,7 @@ Optional plugins:
  *   name="y_als"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Provides a number of macros for making ALS (Advanced Library System) callback hooking simpler."
  * >
  * </library>
  *//** */

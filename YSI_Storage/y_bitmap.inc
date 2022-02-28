@@ -2,7 +2,7 @@
  * <library
  *   name="y_bitmap"
  *   version="0.1"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  Code to generate images on the server in the bitmap format.  This is by far

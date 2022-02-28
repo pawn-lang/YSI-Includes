@@ -3,7 +3,7 @@
  *   name="y_pawndoc"
  *   version="0.2"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Fix pawndoc comments."
  * >
  * </library>
  *//** *//*

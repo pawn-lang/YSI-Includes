@@ -2,7 +2,7 @@
  * <library
  *   name="y_inline"
  *   version="1.0"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  This library allows a user to write inline functions in their script.  It

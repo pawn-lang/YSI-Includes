@@ -2,7 +2,7 @@
  * <library
  *   name="y_colours"
  *   version="1.0"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  This holds the colour information that used to be part of the text system

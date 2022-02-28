@@ -2,7 +2,7 @@
  * <library
  *   name="y_funcinc"
  *   version="1.0"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  Calls functions which are used in SYSREQ.C calls before they are used.  The

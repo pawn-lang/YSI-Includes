@@ -3,7 +3,7 @@
  *   name="y_unique"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Defines a symbol differently every time it is included."
  * >
  * </library>
  *//** *//*

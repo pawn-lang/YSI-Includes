@@ -3,7 +3,7 @@
  *   name="y_areas"
  *   version="0.3"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Handles area checks for player location based code not involving CPs."
  * >
  * <section>
  *  Functions

@@ -2,7 +2,7 @@
  * <library
  *   name="y_amx"
  *   version="1.0"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  Allows a script access to information about itself, such as function names.

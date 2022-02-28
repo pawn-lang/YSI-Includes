@@ -3,7 +3,7 @@
  *   name="y_zonepulse"
  *   version="0.1"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Gradually fades a zone's colour between one colour and another, then back."
  * >
  * <section>
  *  Functions

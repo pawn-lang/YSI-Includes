@@ -3,7 +3,7 @@
  *   name="y_sparsearray"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Like a normal array, but when there are very few very spread out bits of data."
  * >
  * </library>
  *//** *//*

@@ -2,7 +2,7 @@
  * <library
  *   name="y_bintree"
  *   version="0.1.3"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  Provides functions to generate balanced binary search trees for efficient

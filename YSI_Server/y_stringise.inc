@@ -2,7 +2,7 @@
  * <library
  *   name="y_stringise"
  *   version="1.0"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  Similar to <c>#</c>, but more complete in that it handles brackets, commas,

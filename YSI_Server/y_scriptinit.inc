@@ -2,7 +2,7 @@
  * <library
  *   name="y_scriptinit"
  *   version="1.0"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  This file provides <c>OnScriptInit</c> and <c>OnScriptExit</c> which are

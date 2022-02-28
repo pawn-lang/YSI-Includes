@@ -3,7 +3,7 @@
  *   name="y_classes"
  *   version="0.1"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Allows greater control over classes so not everyone has every class.  Uses a form of compression for locations."
  * >
  * <section>
  *  Functions

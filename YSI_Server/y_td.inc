@@ -2,7 +2,7 @@
  * <library
  *   name="y_td"
  *   version="1.0"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  Provides a wrapper to the SA:MP text_draw functions offering much

@@ -3,7 +3,7 @@
  *   name="y_properties"
  *   version="0.1"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Handles properties and other common features for some modes."
  * >
  * <section>
  *  Functions

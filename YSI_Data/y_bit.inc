@@ -2,7 +2,7 @@
  * <library
  *   name="y_bit"
  *   version="0.2"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  <p>

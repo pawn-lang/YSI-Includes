@@ -3,7 +3,7 @@
  *   name="y_testing"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Runs any functions named as tests when the Testing_Run function is called."
  * >
  * </library>
  *//** *//*

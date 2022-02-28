@@ -113,7 +113,7 @@ Optional plugins:
  * <library
  *   name="y_iterate"
  *   version="0.4"
- *   license=".*"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
  * <remarks>
  *  <p>

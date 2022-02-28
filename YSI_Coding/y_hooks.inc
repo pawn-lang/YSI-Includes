@@ -3,7 +3,7 @@
  *   name="y_hooks"
  *   version="2.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Automatically hooks any callbacks with a very simple syntax."
  * >
  * </library>
  *//** *//*

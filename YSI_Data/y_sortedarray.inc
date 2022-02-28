@@ -3,7 +3,7 @@
  *   name="y_sortedarray"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary=".*"
+ *   summary="Adds and removes values from an array, keeping them sorted for lookup speed."
  * >
  * </library>
  *//** *//*
