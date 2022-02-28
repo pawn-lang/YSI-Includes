@@ -145,7 +145,7 @@ stock Distribute_Do(const func[], GLOBAL_TAG_TYPES:...)
 	#emit STACK       20
 }
 
-/*-------------------------------------------------------------------------*//*+
+/*-------------------------------------------------------------------------*//**
  * <param name="func">The name of the receiving function.</param>
  * <param name="idx">The index of the data being sent in its array.</param>
  * <param name="masters">This data's masters.</param>
@@ -188,7 +188,7 @@ stock Distribute_So(const func[], idx, const Bit:masters[], GLOBAL_TAG_TYPES:...
 	}
 }
 
-/*-------------------------------------------------------------------------*//*+
+/*-------------------------------------------------------------------------*//**
  * <param name="str">String to get the size of.</param>
  * <returns>
  *  The number of BYTES this string takes up including the NULL.

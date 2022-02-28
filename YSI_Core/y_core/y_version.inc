@@ -1,5 +1,5 @@
-/*+
- * <library name="y_version" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
+/**
+ * <library name="y_version" version="0.3" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
  * <description>
  *  Checks online to see if there is a newer version of YSI available.
  * </description>
@@ -485,18 +485,7 @@ stock bool:Server_CrashDetectExists()
 		}
 		Server_FinishIntroPart();
 	}
-
-	/*---------------------------------------------------------------------*//*+
-	 * <returns>
-	 *  OnYSIInit
-	 * </returns>
-	 * <remarks>
-	 *      Constructor.  Checks to see if there is a new version available.
-	 *      This code can not use ANY of the rest of YSI as it needs to be
-	 *      included by everything first.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-		
+	
 	#if !defined HTTP
 		stock YVers_StartCheck()
 		{
@@ -524,6 +513,17 @@ stock bool:Server_CrashDetectExists()
 	#endif
 	
 	forward YVers_Callback(index, code, data[]);
+
+	/*---------------------------------------------------------------------*//**
+	 * <returns>
+	 *  OnYSIInit
+	 * </returns>
+	 * <remarks>
+	 *      Constructor.  Checks to see if there is a new version available.
+	 *      This code can not use ANY of the rest of YSI as it needs to be
+	 *      included by everything first.
+	 * </remarks>
+	 *//*--------------------------------------------------------------------**/
 	
 	stock YVers_StartCheck()
 	{
@@ -571,7 +571,7 @@ stock bool:Server_CrashDetectExists()
 		return 1;
 	}
 	
-	/*---------------------------------------------------------------------*//*+
+	/*---------------------------------------------------------------------*//**
 	 *
 	 * <param name="	index">Not used.</param>
 	 * <param name="	code">Response code from the server.</param>
