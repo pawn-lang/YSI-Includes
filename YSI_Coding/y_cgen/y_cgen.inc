@@ -4,11 +4,7 @@
 #define _INC_y_cgen
 
 /*+
- * <library name="y_cgen" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  Large chunks of code that isn't used, so that the space can be reclaimed and
- *  reused by other code generating functions.
- * </remarks>
+ * <library name="y_cgen" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Large chunks of code that isn't used, so that the space can be reclaimed and reused by other code generating functions.">
  * </library>
  *//** *//*
 Legal:

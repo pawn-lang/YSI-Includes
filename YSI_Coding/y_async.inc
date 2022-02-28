@@ -1,8 +1,5 @@
 /**
- * <library name="y_async" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  <c>async</c> and <c>await</c>.
- * </remarks>
+ * <library name="y_async" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="<c>async</c> and <c>await</c>.">
  * <section>
  *  Macros
  * </section>

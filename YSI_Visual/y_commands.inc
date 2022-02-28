@@ -1,9 +1,5 @@
 /**
- * <library name="y_commands" version="0.1.4" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  Runs commands registered with the system and calls the required functions.
- *  Also handles alternate names and prefixes.  Based very loosely on dcmd.
- * </remarks>
+ * <library name="y_commands" version="0.1.4" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Runs commands registered with the system and calls the required functions. Also handles alternate names and prefixes.  Based very loosely on dcmd.">
  * <section>
  *  Functions
  * </section>

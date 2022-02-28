@@ -1,8 +1,5 @@
 /**
- * <library name="y_languages" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  Handles language features - loading, listing and which one a player is.
- * </remarks>
+ * <library name="y_languages" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Handles language features - loading, listing and which one a player is.">
  * </library>
  *//** *//*
 Legal:

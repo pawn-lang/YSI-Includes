@@ -1,8 +1,5 @@
 /*+
- * <library name="y_shortfunc" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  Defines new names for native functions.
- * </remarks>
+ * <library name="y_shortfunc" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Defines new names for native functions.">
  * <section>
  *  Natives
  * </section><ul>

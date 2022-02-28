@@ -1,8 +1,5 @@
 /*+
- * <library name="y_pp" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  More complex processing in the pre-processor.
- * </remarks>
+ * <library name="y_pp" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="More complex processing in the pre-processor.">
  * </library>
  *//** *//*
 Legal:

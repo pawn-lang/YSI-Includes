@@ -4,10 +4,7 @@
 #define _INC_y_codeparse
 
 /*+
- * <library name="y_thirdpartyinclude" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  Try and include all YSI dependencies, looking in as many places as needed.
- * </remarks>
+ * <library name="y_thirdpartyinclude" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Try and include all YSI dependencies, looking in as many places as needed.">
  * </library>
  *//** *//*
 Legal:

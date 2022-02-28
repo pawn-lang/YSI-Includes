@@ -117,7 +117,7 @@ Optional plugins:
 
 /**
  * <library name="y_master" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
+ * <description>
  *  <p>
  *  Handles distribution of control of code segments across all running scripts
  *  with YSI to avoid conflicts of checkpoint streamers etc and allow features
@@ -141,7 +141,7 @@ Optional plugins:
  *  <p>
  *  This is now over 2000 lines of repetitive and complex macros!
  *  </p>
- * </remarks>
+ * </description>
  * <section>
  *  Macros
  * </section><ul>

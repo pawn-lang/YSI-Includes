@@ -1,8 +1,5 @@
 /**
- * <library name="y_races" version="2.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  Create, manage, and run races.
- * </remarks>
+ * <library name="y_races" version="2.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Create, manage, and run races.">
  * </library>
  *//** *//*
 Legal:

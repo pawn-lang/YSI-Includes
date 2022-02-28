@@ -1,8 +1,5 @@
 /**
- * <library name="y_properties" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  Handles properties and other common features for some modes.
- * </remarks>
+ * <library name="y_properties" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Handles properties and other common features for some modes.">
  * <section>
  *  Functions
  * </section>

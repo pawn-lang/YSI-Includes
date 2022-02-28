@@ -1,8 +1,5 @@
 /*+
- * <library name="y_pawndoc" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  Fix pawndoc comments.
- * </remarks>
+ * <library name="y_pawndoc" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Fix pawndoc comments.">
  * </library>
  *//** *//*
 Legal:

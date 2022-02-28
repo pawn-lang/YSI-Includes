@@ -1,10 +1,10 @@
 /**
  * <library name="y_amx" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
+ * <description>
  *  Allows a script access to information about itself, such as function names.
  *  This can be used for a range of things, including automatic callback hooking
  *  and testing.
- * </remarks>
+ * </description>
  * </library>
  *//** *//*
 Legal:

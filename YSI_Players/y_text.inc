@@ -1,10 +1,10 @@
 /**
  * <library name="y_text" version="0.1.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
+ * <description>
  *  Provides interfaces for displaying text from anywhere by way of native like
  *  functions using text indexes rather than text.  Due to a compile problem a
  *  number of the stock functions should be static but can't be.
- * </remarks>
+ * </description>
  * <section>
  *  Functions
  * </section>

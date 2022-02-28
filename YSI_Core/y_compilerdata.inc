@@ -1,8 +1,5 @@
 /**
- * <library name="y_compilerdata" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
- * <remarks>
- *  Compile-time information about the compiler itself, such as version and capabilities.
- * </remarks>
+ * <library name="y_compilerdata" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Compile-time information about the compiler itself, such as version and capabilities.">
  * </library>
  *//** *//*
 Legal:
