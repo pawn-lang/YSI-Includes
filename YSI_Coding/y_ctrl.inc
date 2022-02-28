@@ -7,7 +7,7 @@
  * <section>
  *  Version
  * </section>
- *  2.0
+ *  1.0
  * </library>
  *//** *//*
 Legal:
