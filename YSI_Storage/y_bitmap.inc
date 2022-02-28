@@ -1,15 +1,7 @@
 /**
- * <library name="y_bitmap">
- * <section>
- *  Description
- * </section>
- *  Code to generate images on the server in the bitmap format.  This is by far
+ * <library name="y_bitmap" description="Code to generate images on the server in the bitmap format.  This is by far
  *  the simplest format to write to as it is just a huge array of colours (at
- *  least 24-bit bitmaps are, and we only do them).
- * <section>
- *  Version
- * </section>
- *  0.1
+ *  least 24-bit bitmaps are, and we only do them)." version="0.1">
  * </library>
  *//** *//*
 Legal:

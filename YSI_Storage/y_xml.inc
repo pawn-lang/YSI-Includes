@@ -1,9 +1,5 @@
 /**
- * <library name="y_xml">
- * <section>
- *  Description
- * </section>
- *  <p>Parses XML files according to a set of defined rules.  A rule is a custom
+ * <library name="y_xml" description="<p>Parses XML files according to a set of defined rules.  A rule is a custom
  *  function called on a tag when all the data for that tag has been collected.
  *  The data for a tag could consist of simple <c>bla="bla"</c> pairs,
  *  <c>&lt;tag&gt;data&lt;/tag&gt;</c> pairs or cominations of the two,
@@ -11,11 +7,7 @@
  *
  *  <p>Data for the tag is retrieved from a custom function using only:</p>
  *
- *  <c>while (XML_GetKeyValue(ident, data)) {}</c>
- * <section>
- *  Version
- * </section>
- *  1.0
+ *  <c>while (XML_GetKeyValue(ident, data)) {}</c>" version="1.0">
  * </library>
  *//** *//*
 Legal:

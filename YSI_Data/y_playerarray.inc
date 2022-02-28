@@ -1,15 +1,7 @@
 /**
- * <library name="y_playerarray">
- * <section>
- *  Description
- * </section>
- *  This code provides arrays of players who can do things.  This is for support
+ * <library name="y_playerarray" description="This code provides arrays of players who can do things.  This is for support
  *  of the text system which can take arrays of player ids, bit arrays or just a
- *  single ID.
- * <section>
- *  Version
- * </section>
- *  1.0
+ *  single ID." version="1.0">
  * </library>
  *//** *//*
 Legal:

@@ -116,11 +116,7 @@ Optional plugins:
 #endif
 
 /**
- * <library name="y_master">
- * <section>
- *  Description
- * </section>
- *  Handles distribution of control of code segments across all running scripts
+ * <library name="y_master" description="Handles distribution of control of code segments across all running scripts
  *  with YSI to avoid conflicts of checkpoint streamers etc and allow features
  *  like "/commands" displaying all commands on the server.
  *
@@ -136,11 +132,7 @@ Optional plugins:
  *  you don't need ANY other code for initialisation anywhere (which took a
  *  while to figure out)...
  *
- *  This is now over 2000 lines of repetitive and complex macros!
- * <section>
- *  Version
- * </section>
- *  0.2
+ *  This is now over 2000 lines of repetitive and complex macros!" version="0.2">
  * <section>
  *  Macros
  * </section><ul>

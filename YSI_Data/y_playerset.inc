@@ -1,16 +1,8 @@
 /**
- * <library name="y_playerset">
- * <section>
- *  Description
- * </section>
- *  This code is a huge abstraction of collections of players.  It allows you to
+ * <library name="y_playerset" description="This code is a huge abstraction of collections of players.  It allows you to
  *  define functions which take one or more players, specified in a number of
  *  formats, and perform the code for all those player.  Essentially it is an
- *  abstraction of loops over players.
- * <section>
- *  Version
- * </section>
- *  1.0
+ *  abstraction of loops over players." version="1.0">
  * </library>
  *//** *//*
 Legal:

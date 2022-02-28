@@ -1,13 +1,5 @@
 /**
- * <library name="y_files">
- * <section>
- *  Description
- * </section>
- *  Optimised copy/move file functions, plus directory creation on Windows.
- * <section>
- *  Version
- * </section>
- *  0.1
+ * <library name="y_files" description="Optimised copy/move file functions, plus directory creation on Windows." version="0.1">
  * <section>
  *  Functions
  * </section>

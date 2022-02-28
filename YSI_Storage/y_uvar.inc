@@ -1,13 +1,5 @@
 /**
- * <library name="y_uvar">
- * <section>
- *  Description
- * </section>
- *  Declares data to be automatically saved and loaded on a per-player basis.
- * <section>
- *  Version
- * </section>
- *  0.1.3
+ * <library name="y_uvar" description="Declares data to be automatically saved and loaded on a per-player basis." version="0.1.3">
  * </library>
  *//** *//*
 Legal:

@@ -1,15 +1,7 @@
 /**
- * <library name="y_amx">
- * <section>
- *  Description
- * </section>
- *  Allows a script access to information about itself, such as function names.
+ * <library name="y_amx" description="Allows a script access to information about itself, such as function names.
  *  This can be used for a range of things, including automatic callback hooking
- *  and testing.
- * <section>
- *  Version
- * </section>
- *  1.0
+ *  and testing." version="1.0">
  * </library>
  *//** *//*
 Legal:

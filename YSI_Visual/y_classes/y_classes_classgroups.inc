@@ -4,16 +4,8 @@
 #define _INC_y_classgroups
 
 /*+
- * <library name="y_classes">
- * <section>
- *  Description
- * </section>
- *  Allows for advanced class selection options such as skins only certain
- *  people can see and actually removing skins from class selection.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library name="y_classes" description="Allows for advanced class selection options such as skins only certain
+ *  people can see and actually removing skins from class selection." version="1.0">
  * </library>
  *//** *//*
 Legal:

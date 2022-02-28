@@ -110,16 +110,8 @@ Optional plugins:
 #endif
 
 /**
- * <library name="y_als">
- * <section>
- *  Description
- * </section>
- *  Provides a number of macros for making ALS (Advanced Library System)
- *  callback hooking simpler.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library name="y_als" description="Provides a number of macros for making ALS (Advanced Library System)
+ *  callback hooking simpler." version="1.0">
  * </library>
  *//** */
 

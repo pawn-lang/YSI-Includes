@@ -1,13 +1,5 @@
 /*+
- * <library name="y_pp">
- * <section>
- *  Description
- * </section>
- *  More complex processing in the pre-processor.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library name="y_pp" description="More complex processing in the pre-processor." version="1.0">
  * </library>
  *//** *//*
 Legal:

@@ -1,10 +1,8 @@
 /**
- * <library name="y_loader">
+ * <library name="y_loader" description="Loads MTA XML format map files for use with the object and race systems." version="1.0">
  * <section>
- *  Description
+ *  Legal
  * </section>
- *  Loads MTA XML format map files for use with the object and race systems.
- * Legal:
  *  Copyright (C) 2007 Alex "Y_Less" Cole
  *
  *  This program is free software; you can redistribute it and/or

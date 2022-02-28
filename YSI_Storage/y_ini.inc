@@ -1,14 +1,6 @@
 /**
- * <library name="y_ini">
- * <section>
- *  Description
- * </section>
- *  Reads the INI and also exports a number of functions to other "classes" for
- *  easy reading of data files there.
- * <section>
- *  Version
- * </section>
- *  1.5
+ * <library name="y_ini" description="Reads the INI and also exports a number of functions to other "classes" for
+ *  easy reading of data files there." version="1.5">
  * <section>
  *  Functions
  * </section>

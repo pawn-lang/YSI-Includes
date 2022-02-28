@@ -1,14 +1,6 @@
 /**
- * <library name="y_hashmap">
- * <section>
- *  Description
- * </section>
- *  Maps string indexes to integer indexes.  Uses a fast hash to get an array
- *  slot, then a linked list to resolve collisions.
- * <section>
- *  Version
- * </section>
- *  2.0
+ * <library name="y_hashmap" description="Maps string indexes to integer indexes.  Uses a fast hash to get an array
+ *  slot, then a linked list to resolve collisions." version="2.0">
  * <section>
  *  Functions
  * </section>

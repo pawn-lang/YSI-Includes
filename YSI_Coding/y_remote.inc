@@ -1,14 +1,6 @@
 /**
- * <library name="y_remote">
- * <section>
- *  Description
- * </section>
- *  Wrapper for "__CallRemoteFunction".  Enforces some features like no returns
- *  and arrays being followed by their length.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library name="y_remote" description="Wrapper for "__CallRemoteFunction".  Enforces some features like no returns
+ *  and arrays being followed by their length." version="1.0">
  * <section>
  *  Macros
  * </section><ul>

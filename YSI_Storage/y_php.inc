@@ -1,13 +1,5 @@
 /**
- * <library name="y_php">
- * <section>
- *  Description
- * </section>
- *  Sends and receives data from a PHP server with shmop installed.
- * <section>
- *  Version
- * </section>
- *  0.1
+ * <library name="y_php" description="Sends and receives data from a PHP server with shmop installed." version="0.1">
  * </library>
  *//** *//*
 Legal:

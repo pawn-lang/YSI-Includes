@@ -1,14 +1,6 @@
 /**
- * <library name="y_vehicledata">
- * <section>
- *  Description
- * </section>
- *  Basic functions for gathering data on various vehicle models.  Things like
- *  what sort of vehicle they are and what organisation they belong to.
- * <section>
- *  Version
- * </section>
- *  0.2
+ * <library name="y_vehicledata" description="Basic functions for gathering data on various vehicle models.  Things like
+ *  what sort of vehicle they are and what organisation they belong to." version="0.2">
  * <section>
  *  Functions
  * </section>

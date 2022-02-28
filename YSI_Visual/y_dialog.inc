@@ -1,14 +1,6 @@
 /**
- * <library name="y_dialog">
- * <section>
- *  Description
- * </section>
- *  Provides functions for dealing with dialogs, without needing to worry about
- *  IDs or huge "OnDialogResponse" callbacks.
- * <section>
- *  Version
- * </section>
- *  0.1
+ * <library name="y_dialog" description="Provides functions for dealing with dialogs, without needing to worry about
+ *  IDs or huge "OnDialogResponse" callbacks." version="0.1">
  * </library>
  *//** *//*
 Legal:

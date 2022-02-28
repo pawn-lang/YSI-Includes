@@ -1,9 +1,5 @@
 /**
- * <library name="y_debug">
- * <section>
- *  Description
- * </section>
- *  <p>Ensures debug levels are set and defines debug functions.</p>
+ * <library name="y_debug" description="<p>Ensures debug levels are set and defines debug functions.</p>
  *
  *  <p>General debug levels:</p>
  *
@@ -20,11 +16,7 @@
  *  </ul>
  *
  *  <p>If you use <c>P:0</c> you get an optional debug print controlled by the
- *  global state <c>ysi_debug</c> - which is either on or off.</p>
- * <section>
- *  Version
- * </section>
- *  1.0
+ *  global state <c>ysi_debug</c> - which is either on or off.</p>" version="1.0">
  * <section>
  *  Functions
  * </section>

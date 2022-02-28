@@ -1,13 +1,5 @@
 /**
- * <library name="y_languages">
- * <section>
- *  Description
- * </section>
- *  Handles language features - loading, listing and which one a player is.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library name="y_languages" description="Handles language features - loading, listing and which one a player is." version="1.0">
  * </library>
  *//** *//*
 Legal:

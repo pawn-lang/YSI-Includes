@@ -1,13 +1,5 @@
 /**
- * <library name="y_testing">
- * <section>
- *  Description
- * </section>
- *  Runs any functions named as tests when the Testing_Run function is called.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library name="y_testing" description="Runs any functions named as tests when the Testing_Run function is called." version="1.0">
  * </library>
  *//** *//*
 Legal:

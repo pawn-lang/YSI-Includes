@@ -1,13 +1,5 @@
 /**
- * <library name="y_hooks">
- * <section>
- *  Description
- * </section>
- *  Automatically hooks any callbacks with a very simple syntax.
- * <section>
- *  Version
- * </section>
- *  2.0
+ * <library name="y_hooks" description="Automatically hooks any callbacks with a very simple syntax." version="2.0">
  * </library>
  *//** *//*
 Legal:

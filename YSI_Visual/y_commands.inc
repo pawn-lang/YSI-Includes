@@ -1,14 +1,6 @@
 /**
- * <library name="y_commands">
- * <section>
- *  Description
- * </section>
- *  Runs commands registered with the system and calls the required functions.
- *  Also handles alternate names and prefixes.  Based very loosely on dcmd.
- * <section>
- *  Version
- * </section>
- *  0.1.4
+ * <library name="y_commands" description="Runs commands registered with the system and calls the required functions.
+ *  Also handles alternate names and prefixes.  Based very loosely on dcmd." version="0.1.4">
  * <section>
  *  Functions
  * </section>

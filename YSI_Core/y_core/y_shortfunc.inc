@@ -1,13 +1,5 @@
 /*+
- * <library name="y_shortfunc">
- * <section>
- *  Description
- * </section>
- *  Defines new names for native functions.
- * <section>
- *  Version
- * </section>
- *  0.2
+ * <library name="y_shortfunc" description="Defines new names for native functions." version="0.2">
  * <section>
  *  Natives
  * </section><ul>

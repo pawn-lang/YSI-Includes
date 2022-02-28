@@ -110,11 +110,7 @@ Optional plugins:
 #endif
 
 /**
- * <library name="y_iterate">
- * <section>
- *  Description
- * </section>
- *  Provides efficient looping through sparse data sets, such as connected
+ * <library name="y_iterate" description="Provides efficient looping through sparse data sets, such as connected
  *  players.  Significantly improved from the original version to be a generic
  *  loop system, rather then purely a player loop system.  When used for
  *  players this has constant time O(n) for number of connected players (n),
@@ -125,11 +121,7 @@ Optional plugins:
  *  For extensive documentation on writing and using iterators, see this topic:
  *
  *      <a href="http://forum.sa-mp.com/showthread.php?t=481877" />
- *
- * <section>
- *  Version
- * </section>
- *  0.4
+ *" version="0.4">
  * <section>
  *  Functions
  * </section>

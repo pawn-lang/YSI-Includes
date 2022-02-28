@@ -1,13 +1,5 @@
 /**
- * <library name="y_async">
- * <section>
- *  Description
- * </section>
- *  "async" and "await"
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library name="y_async" description=""async" and "await"" version="1.0">
  * <section>
  *  Macros
  * </section>

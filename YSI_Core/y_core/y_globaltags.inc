@@ -1,13 +1,5 @@
 /*+
- * <library name="y_globaltags">
- * <section>
- *  Description
- * </section>
- *  Declare GLOBAL_TAG_TYPES to define many tag types for function calls.
- * <section>
- *  Version
- * </section>
- *  0.1
+ * <library name="y_globaltags" description="Declare GLOBAL_TAG_TYPES to define many tag types for function calls." version="0.1">
  * </library>
  *//** *//*
 Legal:

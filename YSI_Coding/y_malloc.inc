@@ -1,13 +1,5 @@
 /**
- * <library name="y_malloc">
- * <section>
- *  Description
- * </section>
- *  Functions for using malloc/calloc/free type functions in PAWN.
- * <section>
- *  Version
- * </section>
- *  0.1
+ * <library name="y_malloc" description="Functions for using malloc/calloc/free type functions in PAWN." version="0.1">
  * <section>
  *  Functions
  * </section>

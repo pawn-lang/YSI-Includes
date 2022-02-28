@@ -1,13 +1,5 @@
 /**
- * <library name="y_races">
- * <section>
- *  Description
- * </section>
- *  Create, manage, and run races.
- * <section>
- *  Version
- * </section>
- *  2.0
+ * <library name="y_races" description="Create, manage, and run races." version="2.0">
  * </library>
  *//** *//*
 Legal:

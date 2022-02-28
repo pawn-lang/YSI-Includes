@@ -1,15 +1,7 @@
 /**
- * <library name="y_bintree">
- * <section>
- *  Description
- * </section>
- *  Provides functions to generate balanced binary search trees for efficient
+ * <library name="y_bintree" description="Provides functions to generate balanced binary search trees for efficient
  *  searching of large arrays by value.  Left branch is less than, right branch
- *  is greater than or equal to for multiple matching values.
- * <section>
- *  Version
- * </section>
- *  0.1.3
+ *  is greater than or equal to for multiple matching values." version="0.1.3">
  * <section>
  *  Functions
  * </section>

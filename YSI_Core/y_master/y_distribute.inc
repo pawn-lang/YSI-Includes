@@ -1,14 +1,6 @@
 /*+
- * <library name="y_distribute">
- * <section>
- *  Description
- * </section>
- *  This library simplifies the task of sending data to the new master script
- *  when one takes over from another.
- * <section>
- *  Version
- * </section>
- *  0.1
+ * <library name="y_distribute" description="This library simplifies the task of sending data to the new master script
+ *  when one takes over from another." version="0.1">
  * </library>
  *//** *//*
 Legal:

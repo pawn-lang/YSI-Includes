@@ -1,13 +1,5 @@
 /**
- * <library name="y_sparsearray">
- * <section>
- *  Description
- * </section>
- *  Like a normal array, but when there are very few very spread out bits of data.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library name="y_sparsearray" description="Like a normal array, but when there are very few very spread out bits of data." version="1.0">
  * </library>
  *//** *//*
 Legal:

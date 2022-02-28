@@ -1,15 +1,7 @@
 /**
- * <library name="y_text">
- * <section>
- *  Description
- * </section>
- *  Provides interfaces for displaying text from anywhere by way of native like
+ * <library name="y_text" description="Provides interfaces for displaying text from anywhere by way of native like
  *  functions using text indexes rather than text.  Due to a compile problem a
- *  number of the stock functions should be static but can't be.
- * <section>
- *  Version
- * </section>
- *  0.1.1
+ *  number of the stock functions should be static but can't be." version="0.1.1">
  * <section>
  *  Functions
  * </section>

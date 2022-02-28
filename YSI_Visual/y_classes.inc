@@ -1,14 +1,6 @@
 /**
- * <library name="y_classes">
- * <section>
- *  Description
- * </section>
- *  Allows greater control over classes so not everyone has every class.  Uses
- *  a form of compression for locations.
- * <section>
- *  Version
- * </section>
- *  0.1
+ * <library name="y_classes" description="Allows greater control over classes so not everyone has every class.  Uses
+ *  a form of compression for locations." version="0.1">
  * <section>
  *  Functions
  * </section>

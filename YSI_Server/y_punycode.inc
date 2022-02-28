@@ -1,20 +1,12 @@
 /**
- * <library name="y_punycode">
- * <section>
- *  Description
- * </section>
- *  Functions for converting unicode strings to and from punycode, to be
+ * <library name="y_punycode" description="Functions for converting unicode strings to and from punycode, to be
  *  represented in just ASCII characters.  Based on several public
  *  implementations and the RFC, adapted for PAWN.  For more information see:
  *
  *  <a href="https://en.wikipedia.org/wiki/Punycode" />
  *
  *  Also includes a function that hooks the "HTTP" function to allow for
- *  internationalised domain names with that function.
- * <section>
- *  Version
- * </section>
- *  0.1
+ *  internationalised domain names with that function." version="0.1">
  * <section>
  *  Functions
  * </section>

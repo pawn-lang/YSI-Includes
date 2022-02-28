@@ -4,16 +4,8 @@
 #define _INC_y_cgen
 
 /*+
- * <library name="y_cgen">
- * <section>
- *  Description
- * </section>
- *  Large chunks of code that isn't used, so that the space can be reclaimed and
- *  reused by other code generating functions.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library name="y_cgen" description="Large chunks of code that isn't used, so that the space can be reclaimed and
+ *  reused by other code generating functions." version="1.0">
  * </library>
  *//** *//*
 Legal:

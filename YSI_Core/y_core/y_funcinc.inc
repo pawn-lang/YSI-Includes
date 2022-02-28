@@ -1,16 +1,8 @@
 /*+
- * <library name="y_funcinc">
- * <section>
- *  Description
- * </section>
- *  Calls functions which are used in SYSREQ.C calls before they are used.  The
+ * <library name="y_funcinc" description="Calls functions which are used in SYSREQ.C calls before they are used.  The
  *  compiler crashes if the functions are not used in an included function
  *  before being used in a SYSREQ.C call as the function is not in the native
- *  functions table.
- * <section>
- *  Version
- * </section>
- *  1.0
+ *  functions table." version="1.0">
  * </library>
  *//** *//*
 Legal:

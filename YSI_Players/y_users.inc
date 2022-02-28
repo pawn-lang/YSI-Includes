@@ -1,13 +1,5 @@
 /**
- * <library name="y_users">
- * <section>
- *  Description
- * </section>
- *  Provides access to a user system for registering and saving users.
- * <section>
- *  Version
- * </section>
- *  2.2
+ * <library name="y_users" description="Provides access to a user system for registering and saving users." version="2.2">
  * </library>
  *//** *//*
 Legal:
