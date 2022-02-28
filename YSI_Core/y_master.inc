@@ -116,7 +116,11 @@ Optional plugins:
 #endif
 
 /**
- * <library name="y_master" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
+ * <library
+ *   name="y_master"
+ *   version="0.2"
+ *   license=".*"
+ * >
  * <remarks>
  *  <p>
  *  Handles distribution of control of code segments across all running scripts

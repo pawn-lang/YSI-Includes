@@ -1,5 +1,9 @@
 /*+
- * <library name="y_stripnumbers" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
+ * <library
+ *   name="y_stripnumbers"
+ *   version="1.0"
+ *   license=".*"
+ * >
  * <remarks>
  *  Removes tag overrides which are actually numbers.  This allows for:
  *

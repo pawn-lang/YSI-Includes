@@ -1,5 +1,10 @@
 /**
- * <library name="y_dialog" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Provides functions for dealing with dialogs, without needing to worry about IDs or huge <c>OnDialogResponse</c> callbacks.">
+ * <library
+ *   name="y_dialog"
+ *   version="0.1"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary=".*"
+ * >
  * </library>
  *//** *//*
 Legal:

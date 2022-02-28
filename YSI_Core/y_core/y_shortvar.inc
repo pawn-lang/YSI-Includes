@@ -1,5 +1,10 @@
 /*+
- * <library name="y_shortvar" version="0.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Declares a few variables with very short names, used all over YSI.">
+ * <library
+ *   name="y_shortvar"
+ *   version="0.2"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary=".*"
+ * >
  * </library>
  *//** *//*
 Legal:

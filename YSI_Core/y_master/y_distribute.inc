@@ -1,5 +1,10 @@
 /*+
- * <library name="y_distribute" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="This library simplifies the task of sending data to the new master script when one takes over from another.">
+ * <library
+ *   name="y_distribute"
+ *   version="0.1"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary=".*"
+ * >
  * </library>
  *//** *//*
 Legal:

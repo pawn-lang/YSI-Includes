@@ -1,5 +1,10 @@
 /**
- * <library name="y_files" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Optimised copy/move file functions, plus directory creation on Windows.">
+ * <library
+ *   name="y_files"
+ *   version="0.1"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary=".*"
+ * >
  * <section>
  *  Functions
  * </section>

@@ -1,5 +1,10 @@
 /**
- * <library name="y_uvar" version="0.1.3" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Declares data to be automatically saved and loaded on a per-player basis.">
+ * <library
+ *   name="y_uvar"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary=".*"
+ * >
  * </library>
  *//** *//*
 Legal:

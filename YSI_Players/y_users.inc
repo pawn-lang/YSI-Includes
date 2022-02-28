@@ -1,5 +1,10 @@
 /**
- * <library name="y_users" version="2.2" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Provides access to a user system for registering and saving users.">
+ * <library
+ *   name="y_users"
+ *   version="2.2"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary=".*"
+ * >
  * </library>
  *//** *//*
 Legal:

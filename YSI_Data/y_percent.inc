@@ -1,5 +1,6 @@
 /**
- * <library name="y_percent">
+ * <library
+ *   name="y_percent">
  * <section>
  *  Description
  * </section>

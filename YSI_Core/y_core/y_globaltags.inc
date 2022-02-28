@@ -1,5 +1,10 @@
 /*+
- * <library name="y_globaltags" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Declare GLOBAL_TAG_TYPES to define many tag types for function calls.">
+ * <library
+ *   name="y_globaltags"
+ *   version="0.1"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary=".*"
+ * >
  * </library>
  *//** *//*
 Legal:

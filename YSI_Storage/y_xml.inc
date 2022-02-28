@@ -1,5 +1,9 @@
 /**
- * <library name="y_xml" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
+ * <library
+ *   name="y_xml"
+ *   version="1.0"
+ *   license=".*"
+ * >
  * <remarks>
  *  <p>Parses XML files according to a set of defined rules.  A rule is a custom
  *  function called on a tag when all the data for that tag has been collected.

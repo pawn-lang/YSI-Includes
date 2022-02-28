@@ -1,5 +1,10 @@
 /**
- * <library name="y_lock" version="0.1" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Ensures that the server is running on the IP specified by <c>bind</c>.">
+ * <library
+ *   name="y_lock"
+ *   version="0.1"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary=".*"
+ * >
  * </library>
  *//** *//*
 Legal:

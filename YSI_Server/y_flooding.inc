@@ -1,5 +1,10 @@
 /**
- * <library name="y_flooding" version="1.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1" summary="Allows a limited number of connections from a single IP.">
+ * <library
+ *   name="y_flooding"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary=".*"
+ * >
  * <section>
  *  Functions
  * </section>

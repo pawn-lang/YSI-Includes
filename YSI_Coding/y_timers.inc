@@ -1,5 +1,9 @@
 /**
- * <library name="y_timers" version="2.0" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
+ * <library
+ *   name="y_timers"
+ *   version="2.0"
+ *   license=".*"
+ * >
  * <remarks>
  *  Sets up repeating timers without requiring any SetTimers and arranges them
  *  so that they will be very unlikely to meet (at least for a long time) using

@@ -110,7 +110,11 @@ Optional plugins:
 #endif
 
 /**
- * <library name="y_iterate" version="0.4" license="(c) 2022 YSI contibutors, licensed under MPL 1.1">
+ * <library
+ *   name="y_iterate"
+ *   version="0.4"
+ *   license=".*"
+ * >
  * <remarks>
  *  <p>
  *  Provides efficient looping through sparse data sets, such as connected

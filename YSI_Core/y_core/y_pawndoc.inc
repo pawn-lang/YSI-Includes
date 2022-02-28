@@ -1,5 +1,6 @@
 /*+
- * <library name="y_pawndoc">
+ * <library
+ *   name="y_pawndoc">
  * <section>
  *  Description
  * </section>
