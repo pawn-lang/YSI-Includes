@@ -88,9 +88,6 @@ Optional plugins:
 // Defer macro expansion.
 #define PP_BRACKETS<> ()
 
-// Consume excess spaces.
-#define _@%0\32; _@
-
 /**
  * <remarks>
  * Creates fake functions that Pawndoc comments can be attached to in the first
@@ -188,9 +185,11 @@ _FIXES_FUNC_PAWNDOC(HIDE_PAWNDOC(const symbol[]));
  * <remarks>
  * There's a bug with the pawndoc for enums.  They loose the documentation, or
  * get some other documentation unless they're immediately followed by another
- * declaration, most notably a function.  This declares a <c>native</c> with a
- * similar name (prefixed with <c>_@</c>, so watch symbol lengths) so the docs
- * are attached to the correct symbol and the additional function isn't output.
+ * declaration, most notably a function.  This uses the same
+ * <c>PAWNDOC&lt;&gt;</c> trick as <c>FUNC_PAWNDOC</c> to use the <c>enum</c>
+ * name as a symbol, this time passing it to a function that should always
+ * exist.  This ensures the docs are attached to the correct symbol and the
+ * additional function is well documented.
  * </remarks>
  */
 
