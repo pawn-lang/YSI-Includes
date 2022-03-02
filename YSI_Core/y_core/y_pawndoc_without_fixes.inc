@@ -79,6 +79,18 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+// So others know the pawndoc macros exist.
+#define FIXES_PAWNDOC
+
+// Strip tags from states.
+#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
+
+// Defer macro expansion.
+#define PP_BRACKETS<> ()
+
+// Consume excess spaces.
+#define _@%0\32; _@
+
 /**
  * <remarks>
  * Creates fake functions that Pawndoc comments can be attached to in the first
@@ -168,8 +180,9 @@ _FIXES_FUNC_PAWNDOC(CONST_PAWNDOC(const symbol[] = 0));
  * </remarks>
  */
 
-_FIXES_FUNC_PAWNDOC(HIDE_PAWNDOC(const symbol[]));
 #define _FIXES_HIDE_PAWNDOC(%0); const %0 = 0;
+
+_FIXES_FUNC_PAWNDOC(HIDE_PAWNDOC(const symbol[]));
 
 /**
  * <remarks>
@@ -181,8 +194,9 @@ _FIXES_FUNC_PAWNDOC(HIDE_PAWNDOC(const symbol[]));
  * </remarks>
  */
 
+#define _FIXES_ENUM_PAWNDOC(%0); stock PAWNDOC PP_BRACKETS<> <__PAWNDOC:%0> { random(_:%0); }
+
 _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
-#define _FIXES_ENUM_PAWNDOC(%0); static stock %0:_@%0() { return %0; }
 
 /**
  * <remarks>
@@ -191,7 +205,6 @@ _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
  * </remarks>
  */
 
-_FIXES_FUNC_PAWNDOC(CLOSE_PAWNDOC());
 #if __COMPILER_1ST_PASS
 	// First compiler pass only.
 	stock PAWNDOC() <__PAWNDOC:PAWNDOC>
@@ -202,6 +215,9 @@ _FIXES_FUNC_PAWNDOC(CLOSE_PAWNDOC());
 	{
 	}
 #endif
+
+// Some compile-time safety.
+#define PAWNDOC() Dont_Call_PAWNDOC()
 
 /**
 	<hidden />
@@ -289,10 +305,4 @@ static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
 */
 
 static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy;
-
-// Strip tags from states.
-#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
-
-// Some compile-time safety.
-#define PAWNDOC() Dont_Call_PAWNDOC()
 
