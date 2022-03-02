@@ -111,12 +111,10 @@ Optional plugins:
 
 #if __COMPILER_1ST_PASS
 	// First compiler pass only.
-	#define _FIXES_FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC() <__PAWNDOC:%0> { (%0()); }
+	#define _FIXES_FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC PP_BRACKETS<> <__PAWNDOC:%0> { (%0()); }
 #else
 	#define _FIXES_FUNC_PAWNDOC(%0(%1));
 #endif
-// Strip tags from states.
-#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
 
 _FIXES_FUNC_PAWNDOC(FUNC_PAWNDOC(const symbol[]));
 
@@ -291,4 +289,10 @@ static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
 */
 
 static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy;
+
+// Strip tags from states.
+#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
+
+// Some compile-time safety.
+#define PAWNDOC() Dont_Call_PAWNDOC()
 
