@@ -85,7 +85,7 @@ Optional plugins:
  * compilation phase, before the real macros are created.  Macros can't have
  * documentation comments, but why not?  They need documenting...
  * <p/>
- * Used internally as <c>_FIXES_FUNC_PAWNDOC</c>.
+ * Used internally as <c>YSI_FUNC_PAWNDOC</c>.
  * <p/>
  * This creates a native of the same name, then calls it from a special function
  * (called <c>PAWNDOC</c>) with a state set to the name of this function, to
@@ -111,7 +111,7 @@ Optional plugins:
 
 #if __COMPILER_1ST_PASS
 	// First compiler pass only.
-	#define _FIXES_FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; static stock PAWNDOC() <__PAWNDOC:%0> { (%0()); }
+	#define _FIXES_FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC() <__PAWNDOC:%0> { (%0()); }
 #else
 	#define _FIXES_FUNC_PAWNDOC(%0(%1));
 #endif
@@ -126,7 +126,7 @@ _FIXES_FUNC_PAWNDOC(FUNC_PAWNDOC(const symbol[]));
  * compilation phase, before the real macros are created.  Macros can't have
  * documentation comments, but why not?  They need documenting...
  * <p/>
- * Used internally as <c>_FIXES_CONST_PAWNDOC</c>.
+ * Used internally as <c>YSI_CONST_PAWNDOC</c>.
  * <p/>
  * This creates a static stock of the same name to attach the documentation to,
  * before actually defining the macro.
@@ -147,19 +147,19 @@ _FIXES_FUNC_PAWNDOC(FUNC_PAWNDOC(const symbol[]));
 
 #if __COMPILER_1ST_PASS
 	// First compiler pass only.
-	#define _FIXES_CONST_PAWNDOC(%0); static stock %0 = 0;
+	#define _FIXES_CONST_PAWNDOC(%0=%1); static stock %0 = %1;
 #else
 	#define _FIXES_CONST_PAWNDOC(%0);
 #endif
 
-_FIXES_FUNC_PAWNDOC(CONST_PAWNDOC(const symbol[]));
+_FIXES_FUNC_PAWNDOC(CONST_PAWNDOC(const symbol[] = 0));
 
 /**
  * <remarks>
  * Create a <c>const</c> that is never used, which has pawndoc documentation
  * attached to it.  This seems to be the best way to prevent the documentation
  * from appearing in XML (<c>-r</c>) output - even conditional compilation
- * doesn't work on comments.  Used internally as <c>_FIXES_HIDE_PAWNDOC</c>.
+ * doesn't work on comments.  Used internally as <c>YSI_HIDE_PAWNDOC</c>.
  * <p />
  * The input should have some unique name, so when using it within an ifdef
  * block, don't use the same name as the tested symbol, because the the
@@ -196,9 +196,13 @@ _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
 _FIXES_FUNC_PAWNDOC(CLOSE_PAWNDOC());
 #if __COMPILER_1ST_PASS
 	// First compiler pass only.
-	#define _FIXES_CLOSE_PAWNDOC(); static stock PAWNDOC() <__PAWNDOC:PAWNDOC> {} static stock PAWNDOC() <> {}
-#else
-	#define _FIXES_CLOSE_PAWNDOC();
+	stock PAWNDOC() <__PAWNDOC:PAWNDOC>
+	{
+	}
+
+	stock PAWNDOC() <>
+	{
+	}
 #endif
 
 /**
