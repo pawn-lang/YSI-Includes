@@ -1858,7 +1858,7 @@ stock ReturnPlayerName(playerid)
  * </summary>
  * <param name="playerid">Player whose name you want to get.</param>
  * <remarks>
- *  Get a player's name, with <c>_<c/> replaced by <c> <c/>.
+ *  Get a player's name, with <c>_</c> replaced by <c> </c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2000,7 +2000,7 @@ stock bool:HasRPName(playerid, bool:casing = false, bool:longNames = false)
  * </summary>
  * <param name="playerid">Player whose name you want to get.</param>
  * <remarks>
- *  Get a player's name, with <c>_<c/> replaced by <c> <c/>.
+ *  Get a player's name, with <c>_</c> replaced by <c> </c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

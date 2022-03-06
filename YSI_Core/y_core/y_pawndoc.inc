@@ -486,7 +486,7 @@ static stock _9;
 	<remarks>
 		This variable only exists to hide other variables.  It starts a massive
 		comment block in the pawndoc XML output that hides all YSI internal
-		variables - that is, those that start with <c>YSI_g<c>.
+		variables - that is, those that start with <c>YSI_g</c>.
 		<p />
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
@@ -502,7 +502,7 @@ static stock YSI_g;
 	<remarks>
 		This variable only exists to hide other variables.  It ends a massive
 		comment block in the pawndoc XML output that hides all YSI internal
-		variables - that is, those that start with <c>YSI_g<c>.
+		variables - that is, those that start with <c>YSI_g</c>.
 	</remarks>
 
 	-->
