@@ -177,6 +177,17 @@ P:D(Bit_Vet(BitArray:array<>,slot));
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Array of bits.</param>
  * <param name="slot">Bit slot.</param>
+ * <remarks>
+ *  Swaps the bit value.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Bit_Toggle(BitArray:array<>,slot));
+#define Bit_Toggle(%1,%2) (%1[(%2)>>>CELLSHIFT]^=Bit:(1<<((%2)&cellbits-1)))
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="array">Array of bits.</param>
+ * <param name="slot">Bit slot.</param>
  * <param name="set">State to set the slot to.</param>
  * <param name="size">Size of array.</param>
  *//*------------------------------------------------------------------------**/
