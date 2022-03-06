@@ -1,15 +1,25 @@
 /*+
  * <library
- *   name="y_pawndoc">
- * <section>
- *  Description
- * </section>
- *  Fix pawndoc comments.
- * <section>
- *  Version
- * </section>
- *  0.2
- * </library>
+ *   name="y_pawndoc"
+ *   version="0.2"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Fix pawndoc comments."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *  <section>
+ *    Description
+ *  </section>
+ *    Fix pawndoc comments.
+ *  <section>
+ *    Version
+ *  </section>
+ *    0.2
+ *  </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

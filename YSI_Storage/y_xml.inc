@@ -4,17 +4,23 @@
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
- * <remarks>
- *  <p>Parses XML files according to a set of defined rules.  A rule is a custom
- *  function called on a tag when all the data for that tag has been collected.
- *  The data for a tag could consist of simple <c>bla="bla"</c> pairs,
- *  <c>&lt;tag&gt;data&lt;/tag&gt;</c> pairs or cominations of the two,
- *  including subtags, each with their own possible custom handlers.</p>
- *
- *  <p>Data for the tag is retrieved from a custom function using only:</p>
- *
- *  <code>while (XML_GetKeyValue(ident, data)) {}</code>
- * </remarks>
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     <p>Parses XML files according to a set of defined rules.  A rule is a custom
+ *     function called on a tag when all the data for that tag has been collected.
+ *     The data for a tag could consist of simple <c>bla="bla"</c> pairs,
+ *     <c>&lt;tag&gt;data&lt;/tag&gt;</c> pairs or cominations of the two,
+ *     including subtags, each with their own possible custom handlers.</p>
+ *     
+ *     <p>Data for the tag is retrieved from a custom function using only:</p>
+ *     
+ *     <code>while (XML_GetKeyValue(ident, data)) {}</code>
+ *   </remarks>
  * </library>
  *//** *//*
 Legal:

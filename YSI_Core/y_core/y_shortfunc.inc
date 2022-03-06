@@ -5,14 +5,20 @@
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  *   summary="Defines new names for native functions."
  * >
- * <section>
- *  Natives
- * </section><ul>
- *  <symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>
- *  <symbol name="V@">Renaming of <symbolref name="getproperty" /> for size reasons.</symbol>
- *  <symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
- *  <symbol name="R@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
- * </ul>
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <section>
+ *     Natives
+ *   </section><ul>
+ *     <symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>
+ *     <symbol name="V@">Renaming of <symbolref name="getproperty" /> for size reasons.</symbol>
+ *     <symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
+ *     <symbol name="R@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:

@@ -5,6 +5,12 @@
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  *   summary="Defines a symbol differently every time it is included."
  * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
  * </library>
  *//** *//*
 Legal:
@@ -128,22 +134,29 @@ Optional plugins:
 		static stock const UNIQUE_SYMBOL_OTHER_VALUE = cellmin;
 		#include "y_unique__900_to_999"
 	#endif
-#else
-	// The non-repeating header.
-	/**
-	 * <library
+	
+	#endinput
+#endif
+// The non-repeating header.
+/**
+ * <library
  *   name="y_unique"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  *   summary="Defines a symbol differently every time it is included."
  * >
-	 * </library>
-	 *//** */
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** */
 
-	static stock const UNIQUE_SYMBOL_DOESNT_EXIST = cellmin;
-	#define UNIQUE_SYMBOL (0)
-	#define UNIQUE_FUNCTION<%0...%1> %0000%1
-#endif
+static stock const UNIQUE_SYMBOL_DOESNT_EXIST = cellmin;
+#define UNIQUE_SYMBOL (0)
+#define UNIQUE_FUNCTION<%0...%1> %0000%1
 
 #if !defined Y_UNIQUE_LOCK_CONTRIBUTION
 	#define Y_UNIQUE_LOCK_CONTRIBUTION 0

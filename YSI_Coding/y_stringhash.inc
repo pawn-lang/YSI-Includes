@@ -5,19 +5,25 @@
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  *   summary="Allows you to hash strings at compile time to use them in a switch."
  * >
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="YHash">Generate a string hash at run time.</symbol>
- * </ul><section>
- *  Definitions
- * </section><ul>
- *  <symbol name="_H">Generate a string hash at compile time.</symbol>
- *  <symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
- * </ul>
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <section>
+ *     Functions
+ *   </section>
+ *   <subsection>
+ *     Stock
+ *   </subsection><ul>
+ *     <symbol name="YHash">Generate a string hash at run time.</symbol>
+ *   </ul><section>
+ *     Definitions
+ *   </section><ul>
+ *     <symbol name="_H">Generate a string hash at compile time.</symbol>
+ *     <symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:

@@ -4,15 +4,22 @@
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
- * <remarks>
- *  This library allows a user to write inline functions in their script.  It
- *  first detects all inline functions and generates data on them, such as
- *  parameter counts and addresses.  When an inline function is passed in code
- *  its current context data is stored.  Finally, when an inline function is
- *  found to be called at some point its current local stack is stored in global
- *  memory.  When the function actually is called, the stack is restored, and
- *  additional parameters which are the inline function parameters, are passed.
- * </remarks>
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     This library allows a user to write inline functions in their script.  It
+ *     first detects all inline functions and generates data on them, such as
+ *     parameter counts and addresses.  When an inline function is passed in
+ *     code its current context data is stored.  Finally, when an inline
+ *     function is found to be called at some point its current local stack is
+ *     stored in global memory.  When the function actually is called, the stack
+ *     is restored, and additional parameters which are the inline function
+ *     parameters, are passed.
+ *   </remarks>
  * </library>
  *//** *//*
 Legal:

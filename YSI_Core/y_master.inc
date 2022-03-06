@@ -121,54 +121,60 @@ Optional plugins:
  *   version="0.2"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
  * >
- * <remarks>
- *  <p>
- *  Handles distribution of control of code segments across all running scripts
- *  with YSI to avoid conflicts of checkpoint streamers etc and allow features
- *  like "/commands" displaying all commands on the server.
- *  </p>
- *
- *  <p>
- *  Now fully autonomous - to use the master system simply define which one you
- *  want and include the script:
- *
- *  <code>
- *    #define MASTER 14 <br />
- *    #include "Master"
- *  </code>
- *
- *  That will make the current script attempt to make itself the main master -
- *  you don't need ANY other code for initialisation anywhere (which took a
- *  while to figure out)...
- *  </p>
- *
- *  <p>
- *  This is now over 2000 lines of repetitive and complex macros!
- *  </p>
- * </remarks>
- * <section>
- *  Macros
- * </section><ul>
- *  <symbol name="RF">Declare a function which may be remote.</symbol>
- *  <symbol name="RV">Declare a void function which may be remote.</symbol>
- *  <symbol name="RS">Declare an optional callback.</symbol>
- *  <symbol name="RFN">Declare an optional callback with no parameters.</symbol>
- *  <symbol name="RFC">Declare a slower but shorter function.</symbol>
- *  <symbol name="RFP">Declare a function with tags and give recall hints.</symbol>
- *  <symbol name="RFPC">Combination of P and C.</symbol>
- *  <symbol name="RFCP">Combination of P and C.</symbol>
- * </ul><section>
- *  Variables
- * </section>
- * <subsection>
- * Global
- * </subsection><ul>
- *  <symbol name="@_">ID of this script.</symbol>
- * </ul><section>Compile options</section><ul>
- *  <symbol name="YSI_NO_MASTER">Don't use the master system.</symbol>
- *  <symbol name="YSI_IS_CLIENT">Script is a client only script.</symbol>
- *  <symbol name="YSI_IS_SERVER">Script is a server only script.</symbol>
- * </ul>
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     <p>
+ *     Handles distribution of control of code segments across all running scripts
+ *     with YSI to avoid conflicts of checkpoint streamers etc and allow features
+ *     like "/commands" displaying all commands on the server.
+ *     </p>
+ *     
+ *     <p>
+ *     Now fully autonomous - to use the master system simply define which one you
+ *     want and include the script:
+ *     
+ *     <code>
+ *       #define MASTER 14 <br />
+ *       #include "Master"
+ *     </code>
+ *     
+ *     That will make the current script attempt to make itself the main master -
+ *     you don't need ANY other code for initialisation anywhere (which took a
+ *     while to figure out)...
+ *     </p>
+ *     
+ *     <p>
+ *     This is now over 2000 lines of repetitive and complex macros!
+ *     </p>
+ *   </remarks>
+ *   <section>
+ *     Macros
+ *   </section><ul>
+ *     <symbol name="RF">Declare a function which may be remote.</symbol>
+ *     <symbol name="RV">Declare a void function which may be remote.</symbol>
+ *     <symbol name="RS">Declare an optional callback.</symbol>
+ *     <symbol name="RFN">Declare an optional callback with no parameters.</symbol>
+ *     <symbol name="RFC">Declare a slower but shorter function.</symbol>
+ *     <symbol name="RFP">Declare a function with tags and give recall hints.</symbol>
+ *     <symbol name="RFPC">Combination of P and C.</symbol>
+ *     <symbol name="RFCP">Combination of P and C.</symbol>
+ *   </ul><section>
+ *     Variables
+ *   </section>
+ *   <subsection>
+ *     Global
+ *   </subsection><ul>
+ *     <symbol name="@_">ID of this script.</symbol>
+ *   </ul><section>Compile options</section><ul>
+ *     <symbol name="YSI_NO_MASTER">Don't use the master system.</symbol>
+ *     <symbol name="YSI_IS_CLIENT">Script is a client only script.</symbol>
+ *     <symbol name="YSI_IS_SERVER">Script is a server only script.</symbol>
+ *   </ul>
  * </library>
  *//** */
 
