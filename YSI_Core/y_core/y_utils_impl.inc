@@ -571,11 +571,59 @@ stock StrToUpper(str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="minOrMax">Upper bound, or lower bound with 2+ parameters or when less than naught.</param>
+ * <param name="max">Upper bound.</param>
+ * <param name="except">Value to not return.</param>
+ * <remarks>
+ *   Generate a random number between the given numbers (min &lt;= n &lt; max).
+ *   Default minimum is 0 (changes the parameter order).  This uses a compile-
+ *   time macro to detect the number of parameters and adjust the implementation
+ *   accordingly.  Also when there is only one parameter and it is below naught,
+ *   it uses naught as the max and the parameter as the min instead.  Won't
+ *   return the value <c>except</c> if it is between the limits.  So can be
+ *   called with one, two, or three parameters.  Don't try
+ *   <c>Random(0, _, 2);</c> for example, it won't work.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Random(minOrMax, max, except)
+{
+	// Here for documentation only.
+	return 0;
+}
+ 
+/*-------------------------------------------------------------------------*//**
+ * <param name="min">Lower bound.</param>
+ * <param name="max">Upper bound.</param>
+ * <param name="except">Value to not return.</param>
+ * <remarks>
+ *   Generate a random number between the given numbers (min &lt;= n &lt; max).
+ *   Default minimum is 0 (changes the parameter order).  Won't return the value
+ *   <c>except</c> if it is between the limits.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock RandomMinMaxExcept(min, max, except)
+{
+	assert(min < max);
+	if (max <= except)
+	{
+		// The ignored value is outside the range we care about.
+		return YSI_Random(max - min) + min;
+	}
+	else
+	{
+		// Select from one fewer random numbers, and shift the results.
+		return (max = YSI_Random(max - 1 - min)) + min + (max >= except);
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
  * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
  * <remarks>
- *  Generate a random float between the given numbers (min &lt;= n &lt; max).
- *  Default minimum is 0 (changes the parameter order).
+ *   Generate a random number  between the given numbers (min &lt;= n &lt; max).
+ *   Default minimum is 0 (changes the parameter order).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -588,16 +636,15 @@ stock RandomMinMax(min, max)
 /*-------------------------------------------------------------------------*//**
  * <param name="max">Upper bound.</param>
  * <remarks>
- *  Generate a random float between the given numbers (min &lt;= n &lt; max).
- *  Default minimum is 0 (changes the parameter order).  This uses a compile-
- *  time macro to detect one or two parameters.  If there is only one parameter
- *  it uses the native.  If there are two it uses the stock.  Actually now uses
- *  a stock for both, so that when there is only one parameter and it is below
- *  naught, it uses naught as the max and the parameter as the min instead.
+ *   Generate a random number between the given numbers (min &lt;= n &lt; max).
+ *   Default minimum is 0 (changes the parameter order).  This uses a compile-
+ *   time macro to detect the number of parameters and adjust the implementation
+ *   accordingly.  Also when there is only one parameter and it is below naught,
+ *   it uses naught as the max and the parameter as the min instead.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Random(max)
+stock RandomMax(max)
 {
 	if (max < 0)
 	{
@@ -606,16 +653,22 @@ stock Random(max)
 	return YSI_Random(max);
 }
 
+// The macro to detect one parameter.
+#define Random(%0) RandomMax(%0)
+
 // The macro to detect two parameters.
-#define Random(%0,%1) RandomMinMax(%0,%1)
+#define RandomMax(%0,%1) RandomMinMax(%0,%1)
+
+// The macro to detect three parameters.
+#define RandomMinMax(%0,%1,%2) RandomMinMaxExcept(%0,%1,%2)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="minmax">Lower bound, or upper bound when only parameter.</param>
  * <param name="max">Upper bound.</param>
  * <param name="dp">How small to make the differences</param>
  * <remarks>
- *  Generate a random float between the given numbers (min &lt;= n &lt; max).  Default
- *  minimum is 0.0 (changes the parameter order).
+ *   Generate a random float between the given numbers (min &lt;= n &lt; max).
+ *   Default minimum is 0.0 (changes the parameter order).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -646,7 +699,7 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 /*-------------------------------------------------------------------------*//**
  * <param name="str">The string to remove whitespace from the end of.</param>
  * <remarks>
- *  Updated from old versions, should be more efficient
+ *   Updated from old versions, should be more efficient
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -661,7 +714,7 @@ stock StripNL(str[])
 /*-------------------------------------------------------------------------*//**
  * <param name="str">The string to remove whitespace from the end of.</param>
  * <remarks>
- *  Updated from old versions, should be more efficient
+ *   Updated from old versions, should be more efficient
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -702,7 +755,7 @@ stock Strip(str[])
  * <param name="line">String to check.</param>
  * <param name="pos">Postion to start from.</param>
  * <remarks>
- *  Checks if the current point in a line is the end of non-whitespace data.
+ *   Checks if the current point in a line is the end of non-whitespace data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -725,7 +778,7 @@ stock bool:endofline(const line[], pos)
  * <param name="haystack">The string to find it in.</param>
  * <param name="start">The offset to start from.</param>
  * <returns>
- *  Fail - -1, Success - pos
+ *   Fail - -1, Success - pos
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -748,11 +801,11 @@ stock chrfind(needle, const haystack[], start = 0)
  * <param name="haystack">The string to find it in.</param>
  * <param name="start">The offset to start from.</param>
  * <returns>
- *  Fail - -1, Success - pos
+ *   Fail - -1, Success - pos
  * </returns>
  * <remarks>
- *  Like <symbolref name="ChrFind" />, but with no upper-bounds check on
- *  <paramref name="start" />.  Now it has them anyway...
+ *   Like <symbolref name="ChrFind" />, but with no upper-bounds check on
+ *   <paramref name="start" />.  Now it has them anyway...
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -782,30 +835,32 @@ stock IPToInt(const ip[])
 /*-------------------------------------------------------------------------*//**
  * <param name="string">the string to hash.</param>
  * <returns>
- *  the bernstein hash of the input string
+ *   The bernstein hash of the input string
  * </returns>
  * <remarks>
- *  This is a 32bit hash system so is not very secure, however we're only
- *  using this as a string enumerator to uniquely identify strings easilly
- *  and allow for a binary search of strings based on the hash of their name.
- *  crc32, then jenkins were originally used however this is far faster, if a
- *  little collision prone, but we're checking the strings manually anyway.
- *  This doesn't matter as it would be done regardless of hash method, so this
- *  doesn't need to be accounted for.  Speed is all that matters with at 
- *  least a bit of non collision (the number of strings we're dealing with,
- *  this should have none-few collisions).
- *
- *  I modified it slightly from the original code pasted by aru, to code
- *  closer to the code <a href="http://www.burtleburtle.net/bob/hash/doobs.html" />
- *  and to work with PAWN (and shaved 0.2�s off the time for one call :D).
- *
- *  Uber reduced version (just for fun):
- *  b(s[]){new h=-1,i,j;while((j=s[i++]))h=h*33+j;return h;}
- *
- *  Update: Contrary to what I said above this is also used to identify colour
- *  strings for the updated text system involving file based styling and this
- *  is not checked for collisions as it's unimportant.  But this doesn't affect
- *  the function at all, I just mentioned it here for "interest".
+ *   This is a 32bit hash system so is not very secure, however we're only using
+ *   this as a string enumerator to uniquely identify strings easilly and allow
+ *   for a binary search of strings based on the hash of their name.
+ *   <em>crc32</em>, then <em>jenkins</em> were originally used however this is
+ *   far faster, if a little collision prone, but we're checking the strings
+ *   manually anyway.  This doesn't matter as it would be done regardless of
+ *   hash method, so this doesn't need to be accounted for.  Speed is all that
+ *   matters with at least least a bit of non collision (the number of strings
+ *   we're dealing with, this should have none-to-few collisions).
+ *   <p/>
+ *   I modified it slightly from the original code pasted by aru, to code closer
+ *   to <a href="http://www.burtleburtle.net/bob/hash/doobs.html">the code</a>
+ *   and to work with PAWN (and shaved 0.2us off the time for one call :D).
+ *   <p/>
+ *   Uber reduced version (just for fun):
+ *   <code>
+ *   b(s[]){new h=-1,i,j;while((j=s[i++]))h=h*33+j;return h;}
+ *   </code>
+ *   <p/>
+ *   Update: Contrary to what I said above this is also used to identify colour
+ *   strings for the updated text system involving file based styling and this
+ *   is not checked for collisions as it's unimportant.  But this doesn't affect
+ *   the function at all, I just mentioned it here for "interest".
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -829,12 +884,12 @@ stock bernstein(const string[] /* 12 */)
 /*-------------------------------------------------------------------------*//**
  * <param name="string">the string to hash.</param>
  * <returns>
- *  the Jenkins hash of the input string
+ *   the Jenkins hash of the input string
  * </returns>
  * <remarks>
- *  This is a 32bit hash system so is not very secure, however we're only
- *  using this as a string enumerator to uniquely identify strings easilly
- *  and allow for a binary search of strings based on the hash of their name.
+ *   This is a 32bit hash system so is not very secure, however we're only using
+ *   this as a string enumerator to uniquely identify strings easilly and allow
+ *   for a binary search of strings based on the hash of their name.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -852,7 +907,7 @@ stock JenkinsHash(const string[] /* 12 */)
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to check.</param>
  * <returns>
- *  true/false.
+ *   true/false.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -881,10 +936,10 @@ stock bool:ishex(const str[])
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to unpack</param>
  * <returns>
- *  unpacked string
+ *   unpacked string
  * </returns>
  * <remarks>
- *  Mainly used for debugging.
+ *   Mainly used for debugging.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -918,11 +973,11 @@ stock unpack(const str[])
 /*-------------------------------------------------------------------------*//**
  * <param name="idx">Index of the string in the parameters.</param>
  * <returns>
- *  string
+ *   string
  * </returns>
  * <remarks>
- *  Is passed the result of getarg, which will be the address of a string (in
- *  theory) and uses that for DMA to get the string.
+ *   Is passed the result of getarg, which will be the address of a string (in
+ *   theory) and uses that for DMA to get the string.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -987,9 +1042,8 @@ stock ReturnStringArg(idx)
  *  Formatted string.
  * </returns>
  * <remarks>
- *  Just wraps <c>format</c> and returns a string instead.
- *
- *  Has extra code to ensure that it works correct on the old compiler.
+ *   Just wraps <c>format</c> and returns a string instead.  Has extra code to
+ *   ensure that it works correctly on the old compiler.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1038,7 +1092,7 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to check</param>
  * <remarks>
- *  Checks if a given string is numeric.
+ *   Checks if a given string is numeric.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1060,7 +1114,7 @@ stock bool:isnumeric(const str[])
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player to mess up</param>
  * <remarks>
- *  Make some random effects on the player.
+ *   Make some random effects on the player.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1120,13 +1174,12 @@ stock Utils_ChaosMod(playerid)
 
 
 /*-------------------------------------------------------------------------*//**
- *
  * <param name="string">String to convert to a number.</param>
  * <returns>
- *  value of the passed hex string.
+ *   value of the passed hex string.
  * </returns>
  * <remarks>
- *  Now stops on invalid characters.
+ *   Now stops on invalid characters.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1167,15 +1220,14 @@ stock hexstr(const string[])
 }
 
 /*-------------------------------------------------------------------------*//**
- *
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
- *  bool: passed boolean.
+ *   bool: passed boolean.
  * </returns>
  * <remarks>
- *  This can take a number of ways of representing booleans - 0, false and
- *  nothing there.  Anything not one of those things (false is not case
- *  sensitive) is assumed true.
+ *   This can take a number of ways of representing booleans - 0, false and
+ *   nothing there.  Anything not one of those things (false is not case
+ *   sensitive) is assumed true.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1192,14 +1244,13 @@ stock bool:boolstr(const string[])
 }
 
 /*-------------------------------------------------------------------------*//**
- *
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
- *  bool: passed boolean.
+ *   bool: passed boolean.
  * </returns>
  * <remarks>
- *  This takes a value in 0110101 (boolean) format and returns it as a
- *  regular value.
+ *   This takes a value in 0110101 (boolean) format and returns it as a
+ *   regular value.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1255,12 +1306,12 @@ stock binstr(const string[])
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Base64Encode
+ *   Base64Encode
  * </summary>
  * <remarks>
- *  Encodes data using proper base64.  This code is complicated by the fact that
- *  PAWN packed strings are backwards by cells in memory, so we need to do the
- *  writes in what seems like a strange order.
+ *   Encodes data using proper base64.  This code is complicated by the fact
+ *   that PAWN packed strings are backwards by cells in memory, so we need to do
+ *   the writes in what seems like a strange order.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1444,10 +1495,10 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Base64Decode
+ *   Base64Decode
  * </summary>
  * <remarks>
- *  Decodes data using proper base64.
+ *   Decodes data using proper base64.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1640,15 +1691,15 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  RawMemCpy
+ *   RawMemCpy
  * </summary>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
  * <param name="numbytes">Number of bytes to copy.</param>
  * <remarks>
- *  Like memcpy, but takes addresses instead of arrays.  Also far less secure
- *  because it doesn't check the destination size - it just assumes it is large
- *  enough.
+ *   Like memcpy, but takes addresses instead of arrays.  Also far less secure
+ *   because it doesn't check the destination size - it just assumes it is large
+ *   enough.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1666,18 +1717,15 @@ stock rawMemcpy(dest, src, numbytes)
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of cells to fill.</param>
  * <remarks>
- *  Based on code by Slice:
+ *   Based on <a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781">
+ *   code by Slice</a>, modified to use binary flags instead of a loop.
  *
- *  <a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781" />
+ *   "MemSet" takes an array, the size of the array, and a value to fill it with
+ *   and sets the whole array to that value.
  *
- *  Modified to use binary flags instead of a loop.
- *
- *  "MemSet" takes an array, the size of the array, and a value to fill it with
- *  and sets the whole array to that value.
- *
- *  "rawmemset" is similar, but takes an AMX data segment address instead and
- *  the size is in bytes, not cells.  However, the size must still be a multiple
- *  of 4.
+ *   "rawmemset" is similar, but takes an AMX data segment address instead and
+ *   the size is in bytes, not cells.  However, the size must still be a
+ *   multiple of 4.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
