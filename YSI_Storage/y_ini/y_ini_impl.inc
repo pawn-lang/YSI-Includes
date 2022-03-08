@@ -833,20 +833,20 @@ stock INI:INI_Open(const filename[])
 		P:W("INI_Open could not find or create file %s", filename);
 	}
 	new
-		INI:i = INI:0;
-	while (i != INI:INI_MAX_WRITES && YSI_g_sINITagBuffer[i])
+		i = 0;
+	while (i != _:INI_MAX_WRITES && YSI_g_sINITagBuffer[INI:i])
 	{
 		++i;
 	}
-	if (i == INI:INI_MAX_WRITES)
+	if (INI:i == INI:INI_MAX_WRITES)
 	{
 		return INI_NO_FILE;
 	}
 	return
 		// Reset tags.
-		INI_SetTag_(i, YSI_EMPTY),
-		StrCpy(YSI_g_sINIWriteFile[i], filename, YSI_MAX_STRING),
-		i;
+		INI_SetTag_(INI:i, YSI_EMPTY),
+		StrCpy(YSI_g_sINIWriteFile[INI:i], filename, YSI_MAX_STRING),
+		INI:i;
 }
 
 /*-------------------------------------------------------------------------*//**

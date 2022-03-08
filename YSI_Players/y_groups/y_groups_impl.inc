@@ -1627,11 +1627,12 @@ forward Group:operator-(Group:a);
  */
 forward Group:operator+(Group:a, Group:b);
 
-/**
+/* *
  * <library>y_groups</library>
  * <summary>Disable the operator.</summary>
  */
-forward Group:operator+(Group:a, _:b);
+// Adds players.
+//forward Group:operator+(Group:a, _:b);
 
 /**
  * <library>y_groups</library>
@@ -1645,11 +1646,12 @@ forward Group:operator-(Group:a, Group:b);
  */
 forward Group:operator-(_:a, Group:b);
 
-/**
+/* *
  * <library>y_groups</library>
  * <summary>Disable the operator.</summary>
  */
-forward Group:operator-(Group:a, _:b);
+// Removes players.
+//forward Group:operator-(Group:a, _:b);
 
 /* *
  * <library>y_groups</library>
@@ -1720,11 +1722,12 @@ forward bool:operator<(_:a, Group:b);
  */
 forward bool:operator<(Group:a, _:b);
 
-/**
+/* *
  * <library>y_groups</library>
  * <summary>Disable the operator.</summary>
  */
-forward bool:operator<=(Group:a, Group:b);
+// Used in here.
+//forward bool:operator<=(Group:a, Group:b);
 
 /**
  * <library>y_groups</library>
