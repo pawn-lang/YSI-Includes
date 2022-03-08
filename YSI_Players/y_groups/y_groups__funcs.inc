@@ -719,7 +719,7 @@ GGLOBAL__ Iter_Func@Group_Global...(start)
 	return -1;
 }
 
-stock const
+const
 	F@z:_GROUP_MAKE_NAME<Iterator@Group_Global...> = F@z:0,
 	_GROUP_MAKE_NAME<iterstart@Group_Global...> = -1;
 
@@ -768,7 +768,7 @@ stock const
 
 */
 
-static stock void:Group_Handoff(i,const a[],s)
+static stock void:Group_Handoff(i, const a[], s)
 {
 	s = min(s, bits<_:_MAX_GROUPS_G>);
 	if (i == cellmin)
