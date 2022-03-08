@@ -1602,3 +1602,172 @@ GLOBAL__ bool:Group_IsDescendant(Group:p, Group:c)
 //	return g != o && Group_IsDescendant(o, g);
 //}
 
+// Disable the operators.
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator++(Group:a);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator--(Group:a);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator-(Group:a);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator+(Group:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator+(Group:a, _:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator-(Group:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator-(_:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator-(Group:a, _:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator*(Group:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator*(Group:a, _:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator/(Group:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator/(_:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator/(Group:a, _:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator%(Group:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator%(_:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Group:operator%(Group:a, _:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(Group:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(_:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(Group:a, _:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(Group:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(_:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(Group:a, _:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(Group:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(_:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(Group:a, _:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(Group:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(_:a, Group:b);
+
+/**
+ * <library>y_groups</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(Group:a, _:b);
+

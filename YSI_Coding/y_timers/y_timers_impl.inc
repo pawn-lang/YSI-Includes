@@ -555,3 +555,172 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 	#define timer%0[%1]%3(%2) TIMER__%0[%1]%3(%2)
 #endif
 
+// Disable the operators.
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator++(Timer:a);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator--(Timer:a);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator-(Timer:a);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator+(Timer:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator+(Timer:a, _:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator-(Timer:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator-(_:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator-(Timer:a, _:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator*(Timer:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator*(Timer:a, _:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator/(Timer:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator/(_:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator/(Timer:a, _:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator%(Timer:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator%(_:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward Timer:operator%(Timer:a, _:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(Timer:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(_:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(Timer:a, _:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(Timer:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(_:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(Timer:a, _:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(Timer:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(_:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(Timer:a, _:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(Timer:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(_:a, Timer:b);
+
+/**
+ * <library>y_timers</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(Timer:a, _:b);
+
