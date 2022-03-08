@@ -834,7 +834,7 @@ public OnJITCompile()
 
 #define y_@I%0\32; y_@I
 
-#define u@$ 0]);
+#define u@$ 1]);
 
 // Detect tags.
 #define _@Iy:%8$%3:%0(%1)<_> %8$%0(%1)<%3>

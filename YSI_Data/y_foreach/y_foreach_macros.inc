@@ -887,7 +887,7 @@ P:D(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define itrst:%1=itrst:(%6,%7) %1[]={%6,%7}
 
 // Ultimate macro: <a href="http://forum.sa-mp.com/showpost.php?p=3801730" />
-#define u@$ 0]);
+#define u@$ 1]);
 #define __:%0$ u@(u[_:%0 u@$
 
 // Consume spaces in the iterator state variables.
