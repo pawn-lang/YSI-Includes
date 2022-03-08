@@ -96,22 +96,39 @@ public _@_y_funcinc_@_()
 {
 	new tmp[2];
 	// This function calls any functions used in assembly code in YSI to ensure
-	// that they are included in the native function table.
-	print(tmp);
-	printf(tmp);
-	strunpack(tmp, tmp);
-	memcpy(tmp, tmp, 0, 0, 0);
-	format(tmp, 0, tmp);
-	strfind(tmp, tmp, false, 0);
-	strcat(tmp, tmp, 0);
-	strlen(tmp);
-	CallRemoteFunction(tmp, tmp);
-	CallLocalFunction(tmp, tmp);
-	SetTimerEx(tmp, 0, false, tmp);
-	heapspace();
-	setproperty(0, tmp, 0, tmp);
-	getproperty(0, tmp, 0, tmp);
-	swapchars(0);
-	strcmp(tmp, tmp);
+	// that they are included in the native function table.  The newlines are to
+	// prevent macro replacements.
+	print
+		(tmp);
+	printf
+		(tmp);
+	strunpack
+		(tmp, tmp);
+	memcpy
+		(tmp, tmp, 0, 0, 0);
+	format
+		(tmp, 0, tmp);
+	strfind
+		(tmp, tmp, false, 0);
+	strcat
+		(tmp, tmp, 0);
+	strlen
+		(tmp);
+	CallRemoteFunction
+		(tmp, tmp);
+	CallLocalFunction
+		(tmp, tmp);
+	SetTimerEx
+		(tmp, 0, false, tmp);
+	heapspace
+		();
+	setproperty
+		(0, tmp, 0, tmp);
+	getproperty
+		(0, tmp, 0, tmp);
+	swapchars
+		(0);
+	strcmp
+		(tmp, tmp);
 }
 
