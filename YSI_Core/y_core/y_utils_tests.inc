@@ -141,3 +141,43 @@ TEST__ IsRPName3()
 	ASSERT(!IsRPName("James_bob_bobson", true, true));
 }
 
+TEST__ Random1()
+{
+	for (new i = 0; i != 10000; ++i)
+	{
+		new rnd = Random(10);
+		ASSERT(0 <= rnd < 10);
+	}
+}
+
+TEST__ Random2()
+{
+	for (new i = 0; i != 10000; ++i)
+	{
+		new rnd = Random(10, 20);
+		ASSERT(10 <= rnd < 20);
+	}
+}
+
+TEST__ Random3()
+{
+	for (new i = 0; i != 10000; ++i)
+	{
+		new rnd = Random(10, 20, 13);
+		ASSERT(10 <= rnd < 20);
+		ASSERT_NE(rnd, 13);
+	}
+}
+
+TEST__ RandomN()
+{
+	for (new i = 0; i != 10000; ++i)
+	{
+		new rnd = Random(10, 20, 13, 14, 9, 40, 15);
+		ASSERT(10 <= rnd < 20);
+		ASSERT_NE(rnd, 13);
+		ASSERT_NE(rnd, 14);
+		ASSERT_NE(rnd, 15);
+	}
+}
+

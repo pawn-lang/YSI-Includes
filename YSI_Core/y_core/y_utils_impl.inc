@@ -573,7 +573,7 @@ stock StrToUpper(str[], len = sizeof (str))
 /*-------------------------------------------------------------------------*//**
  * <param name="minOrMax">Upper bound, or lower bound with 2+ parameters or when less than naught.</param>
  * <param name="max">Upper bound.</param>
- * <param name="except">Value to not return.</param>
+ * <param>Value(s) to not return.</param>
  * <remarks>
  *   Generate a random number between the given numbers (min &lt;= n &lt; max).
  *   Default minimum is 0 (changes the parameter order).  This uses a compile-
@@ -582,11 +582,12 @@ stock StrToUpper(str[], len = sizeof (str))
  *   it uses naught as the max and the parameter as the min instead.  Won't
  *   return the value <c>except</c> if it is between the limits.  So can be
  *   called with one, two, or three parameters.  Don't try
- *   <c>Random(0, _, 2);</c> for example, it won't work.
+ *   <c>Random(0, _, 2);</c> for example, it won't work.  With more than two
+ *   parameters all the rest are numbers that should not be returned.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Random(minOrMax, max, except)
+static stock Random(minOrMax, max, ...)
 {
 	// Here for documentation only.
 	return 0;
@@ -595,11 +596,86 @@ static stock Random(minOrMax, max, except)
 /*-------------------------------------------------------------------------*//**
  * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
+ * <param name="">Values to not return.</param>
+ * <remarks>
+ *   Generate a random number between the given numbers (min &lt;= n &lt; max).
+ *   Default minimum is 0 (changes the parameter order).  Won't return any of
+ *   the extra parameter values, so you can do:
+ *   <code>
+ *     Random(0, 20, 11, 12, 13);
+ *   </code>
+ *   To randomly select <c>0-10, 14-19</c> (inclusive).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock RandomMinMaxExceptMany(min, max, ...)
+{
+	assert(min < max);
+	// This can't use the same technique as `RandomMinMaxExcept`, because the
+	// exception values may not be unique.  That method would fail miserably
+	// with `RandomMinMaxExceptMany(0, 4, 1, 1, 1, 1);`
+	new args = numargs();
+	//new valid = 0;
+	//// Count how many excluded values are actually within the random selection
+	//// range.
+	//for (new i = 2; i != args; ++i)
+	//{
+	//	if (min <= getarg(i) < max)
+	//	{
+	//		++valid;
+	//	}
+	//}
+	// Instead we will have to first check that there are valid candidates
+	// returns.
+	for (new i = min, j; i != max; ++i)
+	{
+		j = 1;
+		while (++j != args)
+		{
+			// Check if any of the exceptions match this input value.
+			if (getarg(j) == i)
+			{
+				break;
+			}
+		}
+		if (j == args)
+		{
+			// There is at least one number that can be returned.
+			for ( ; ; )
+			{
+				// Get a random number.
+				i = YSI_Random(max - min) + min;
+				// Check if it is invalid.
+				j = 1;
+				while (++j != args)
+				{
+					// Check if any of the exceptions match this input value.
+					if (getarg(j) == i)
+					{
+						break;
+					}
+				}
+				if (j == args)
+				{
+					// Not found;
+					return i;
+				}
+			}
+		}
+	}
+	// Will probably fail.  If you get an exception here you called the code
+	// with an invalid set of values.
+	assert(numargs() == 0);
+	return max;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="min">Lower bound.</param>
+ * <param name="max">Upper bound.</param>
  * <param name="except">Value to not return.</param>
  * <remarks>
  *   Generate a random number between the given numbers (min &lt;= n &lt; max).
- *   Default minimum is 0 (changes the parameter order).  Won't return the value
- *   <c>except</c> if it is between the limits.
+ *   Won't return the value <c>except</c> if it is between the limits.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -623,7 +699,6 @@ stock RandomMinMaxExcept(min, max, except)
  * <param name="max">Upper bound.</param>
  * <remarks>
  *   Generate a random number  between the given numbers (min &lt;= n &lt; max).
- *   Default minimum is 0 (changes the parameter order).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -661,6 +736,9 @@ stock RandomMax(max)
 
 // The macro to detect three parameters.
 #define RandomMinMax(%0,%1,%2) RandomMinMaxExcept(%0,%1,%2)
+
+// The macro to detect many parameters.
+#define RandomMinMaxExcept(%0,%1,%2,%3) RandomMinMaxExceptMany(%0,%1,%2,%3)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="minmax">Lower bound, or upper bound when only parameter.</param>
