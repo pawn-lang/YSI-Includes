@@ -724,6 +724,7 @@ const
 	_GROUP_MAKE_NAME<iterstart@Group_Global...> = -1;
 
 #if defined GROUP_LIBRARY_TAGS
+	
 	stock Group:operator+(Group:g, GROUP_LIBRARY_TAGS:o)
 	{
 		_GROUP_MAKE_NAME<Group_Set...>(g, o, true);
@@ -751,6 +752,7 @@ const
 	{
 		return !_GROUP_MAKE_NAME<Group_Get...>(g, o);
 	}
+	
 #endif
 
 /*

@@ -833,20 +833,20 @@ stock INI:INI_Open(const filename[])
 		P:W("INI_Open could not find or create file %s", filename);
 	}
 	new
-		i = 0;
-	while (i != _:INI_MAX_WRITES && YSI_g_sINITagBuffer[INI:i])
+		INI:i = INI:0;
+	while (i != INI:INI_MAX_WRITES && YSI_g_sINITagBuffer[i])
 	{
 		++i;
 	}
-	if (INI:i == INI:INI_MAX_WRITES)
+	if (i == INI:INI_MAX_WRITES)
 	{
 		return INI_NO_FILE;
 	}
 	return
 		// Reset tags.
-		INI_SetTag_(INI:i, YSI_EMPTY),
-		StrCpy(YSI_g_sINIWriteFile[INI:i], filename, YSI_MAX_STRING),
-		INI:i;
+		INI_SetTag_(i, YSI_EMPTY),
+		StrCpy(YSI_g_sINIWriteFile[i], filename, YSI_MAX_STRING),
+		i;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1980,173 +1980,4 @@ static stock INI_FlushWithoutRestore(INI:file)
 	// the compiler didn't know that.  This way just ensures it isn't possible.
 	INI_Flush_(file);
 }
-
-// Disable the operators.
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator++(INI:a);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator--(INI:a);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator-(INI:a);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator+(INI:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator+(INI:a, _:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator-(INI:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator-(_:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator-(INI:a, _:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator*(INI:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator*(INI:a, _:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator/(INI:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator/(_:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator/(INI:a, _:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator%(INI:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator%(_:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward INI:operator%(INI:a, _:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator<(INI:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator<(_:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator<(INI:a, _:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator<=(INI:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator<=(_:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator<=(INI:a, _:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator>(INI:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator>(_:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator>(INI:a, _:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator>=(INI:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator>=(_:a, INI:b);
-
-/**
- * <library>y_ini</library>
- * <summary>Disable the operator.</summary>
- */
-forward bool:operator>=(INI:a, _:b);
 
