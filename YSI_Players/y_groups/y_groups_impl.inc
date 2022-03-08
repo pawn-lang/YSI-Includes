@@ -1651,17 +1651,19 @@ forward Group:operator-(_:a, Group:b);
  */
 forward Group:operator-(Group:a, _:b);
 
-/**
+/* *
  * <library>y_groups</library>
  * <summary>Disable the operator.</summary>
  */
-forward Group:operator*(Group:a, Group:b);
+// Actually use by the `Group()` iterator.
+//forward Group:operator*(Group:a, Group:b);
 
-/**
+/* *
  * <library>y_groups</library>
  * <summary>Disable the operator.</summary>
  */
-forward Group:operator*(Group:a, _:b);
+// Actually use by the `Group()` iterator.
+//forward Group:operator*(Group:a, _:b);
 
 /**
  * <library>y_groups</library>
@@ -1699,11 +1701,12 @@ forward Group:operator%(_:a, Group:b);
  */
 forward Group:operator%(Group:a, _:b);
 
-/**
+/* *
  * <library>y_groups</library>
  * <summary>Disable the operator.</summary>
  */
-forward bool:operator<(Group:a, Group:b);
+// Actually use by the `Group()` iterator.
+//forward bool:operator<(Group:a, Group:b);
 
 /**
  * <library>y_groups</library>
