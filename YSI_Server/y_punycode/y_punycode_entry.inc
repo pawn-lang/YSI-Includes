@@ -83,13 +83,15 @@ Optional plugins:
 // Some versions use "-1" or "cellmax", the RFC uses "PUNY_BASE".
 #define PUNY_INVL PUNY_BASE
 
-static stock const
+__COMPILER_CONST_STATIC
 	PUNY_TMIN = 1,
 	PUNY_TMAX = 26,
 	PUNY_SKEW = 38,
 	PUNY_BIAS = 72,
 	PUNY_INIT = 128,
-	PUNY_DAMP = 700,
+	PUNY_DAMP = 700;
+
+static stock const
 	YSI_gscDecoder[128] =
 		{
 			PP_LOOP<48>(PUNY_INVL)(,),

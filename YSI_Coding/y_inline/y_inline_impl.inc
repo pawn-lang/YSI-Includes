@@ -248,10 +248,10 @@ Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE
 
 // Revert to the old scanning design, but using the new code scanner.
 
-const INLINE_PATTERN_1 = _C<Alex>;
-const INLINE_PATTERN_2 = _C<_Y_L>;
-const INLINE_PATTERN_3 = _C<ess_>;
-const INLINE_PATTERN_4 = _C<Cole>;
+__COMPILER_CONST_STATIC INLINE_PATTERN_1 = _C<Alex>;
+__COMPILER_CONST_STATIC INLINE_PATTERN_2 = _C<_Y_L>;
+__COMPILER_CONST_STATIC INLINE_PATTERN_3 = _C<ess_>;
+__COMPILER_CONST_STATIC INLINE_PATTERN_4 = _C<Cole>;
 
 forward Callback_Release_(ResolvedAlloc:a);
 forward Inline_MaybeFree_(Alloc:slot);
