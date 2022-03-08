@@ -934,7 +934,9 @@ stock const
 	// This is the best I could do to warn about the old syntax.  That code
 	// should now be "foreach (new i : Player)".  It may become an error later.
 	bool:using_deprecated_foreach_syntax = false,
-	bool:using_deprecated_itertag_syntax = false,
+	bool:using_deprecated_itertag_syntax = false;
+
+const
 	F@o = 1;
 
 /*-------------------------------------------------------------------------*//**
