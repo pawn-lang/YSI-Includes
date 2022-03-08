@@ -152,69 +152,100 @@ TEST__ Random1()
 
 TEST__ Random2a()
 {
+	new values[10];
 	for (new i = 0; i != 10000; ++i)
 	{
 		new rnd = Random(10, 20);
 		ASSERT(10 <= rnd < 20);
+		++values[rnd - 10];
+	}
+	for (new i = 0; i != sizeof (values); ++i)
+	{
+		ASSERT_NZ(values[i]);
 	}
 }
 
 TEST__ Random2b()
 {
+	new values[30];
 	for (new i = 0; i != 10000; ++i)
 	{
 		new rnd = Random(-10, 20);
 		ASSERT(-10 <= rnd < 20);
+		++values[rnd + 10];
+	}
+	for (new i = 0; i != sizeof (values); ++i)
+	{
+		ASSERT_NZ(values[i]);
 	}
 }
 
 TEST__ Random2c()
 {
+	new values[10];
 	for (new i = 0; i != 10000; ++i)
 	{
 		new rnd = Random(-20, -10);
 		ASSERT(-20 <= rnd < -10);
+		++values[rnd + 20];
+	}
+	for (new i = 0; i != sizeof (values); ++i)
+	{
+		ASSERT_NZ(values[i]);
 	}
 }
 
 TEST__ Random3a()
 {
+	new values[10];
 	for (new i = 0; i != 10000; ++i)
 	{
 		new rnd = Random(10, 20, 13);
 		ASSERT(10 <= rnd < 20);
 		ASSERT_NE(rnd, 13);
+		++values[rnd - 10];
+	}
+	for (new i = 0; i != sizeof (values); ++i)
+	{
+		if (i == 3)
+		{
+			ASSERT_ZE(values[i]);
+		}
+		else
+		{
+			ASSERT_NZ(values[i]);
+		}
 	}
 }
 
 TEST__ Random3b()
 {
-	new bool:saw19 = false;
+	new values[10];
 	for (new i = 0; i != 10000; ++i)
 	{
 		new rnd = Random(10, 20, 30);
 		ASSERT(10 <= rnd < 20);
-		if (rnd == 19)
-		{
-			saw19 = true;
-		}
+		++values[rnd - 10];
 	}
-	ASSERT(saw19);
+	for (new i = 0; i != sizeof (values); ++i)
+	{
+		ASSERT_NZ(values[i]);
+	}
 }
 
 TEST__ Random3c()
 {
-	new bool:saw19 = false;
+	new values[10];
 	for (new i = 0; i != 10000; ++i)
 	{
 		new rnd = Random(10, 20, 9);
 		ASSERT(10 <= rnd < 20);
-		if (rnd == 19)
-		{
-			saw19 = true;
-		}
+		++values[rnd - 10];
 	}
-	ASSERT(saw19);
+	for (new i = 0; i != sizeof (values); ++i)
+	{
+		ASSERT_NZ(values[i]);
+	}
 }
 
 TEST__ RandomN()
