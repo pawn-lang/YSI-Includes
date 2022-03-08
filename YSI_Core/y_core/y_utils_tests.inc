@@ -150,7 +150,7 @@ TEST__ Random1()
 	}
 }
 
-TEST__ Random2()
+TEST__ Random2a()
 {
 	for (new i = 0; i != 10000; ++i)
 	{
@@ -159,7 +159,25 @@ TEST__ Random2()
 	}
 }
 
-TEST__ Random3()
+TEST__ Random2b()
+{
+	for (new i = 0; i != 10000; ++i)
+	{
+		new rnd = Random(-10, 20);
+		ASSERT(-10 <= rnd < 20);
+	}
+}
+
+TEST__ Random2c()
+{
+	for (new i = 0; i != 10000; ++i)
+	{
+		new rnd = Random(-20, -10);
+		ASSERT(-20 <= rnd < -10);
+	}
+}
+
+TEST__ Random3a()
 {
 	for (new i = 0; i != 10000; ++i)
 	{
@@ -167,6 +185,36 @@ TEST__ Random3()
 		ASSERT(10 <= rnd < 20);
 		ASSERT_NE(rnd, 13);
 	}
+}
+
+TEST__ Random3b()
+{
+	new bool:saw19 = false;
+	for (new i = 0; i != 10000; ++i)
+	{
+		new rnd = Random(10, 20, 30);
+		ASSERT(10 <= rnd < 20);
+		if (rnd == 19)
+		{
+			saw19 = true;
+		}
+	}
+	ASSERT(saw19);
+}
+
+TEST__ Random3c()
+{
+	new bool:saw19 = false;
+	for (new i = 0; i != 10000; ++i)
+	{
+		new rnd = Random(10, 20, 9);
+		ASSERT(10 <= rnd < 20);
+		if (rnd == 19)
+		{
+			saw19 = true;
+		}
+	}
+	ASSERT(saw19);
 }
 
 TEST__ RandomN()

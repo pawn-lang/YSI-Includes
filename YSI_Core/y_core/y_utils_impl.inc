@@ -682,15 +682,15 @@ stock RandomMinMaxExceptMany(min, max, ...)
 stock RandomMinMaxExcept(min, max, except)
 {
 	assert(min < max);
-	if (max <= except)
+	if (min <= except < max)
 	{
-		// The ignored value is outside the range we care about.
-		return YSI_Random(max - min) + min;
+		// Select from one fewer random numbers, and shift the results.
+		return (max = YSI_Random(max - 1 - min) + min) + (max >= except);
 	}
 	else
 	{
-		// Select from one fewer random numbers, and shift the results.
-		return (max = YSI_Random(max - 1 - min)) + min + (max >= except);
+		// The ignored value is outside the range we care about.
+		return YSI_Random(max - min) + min;
 	}
 }
 
