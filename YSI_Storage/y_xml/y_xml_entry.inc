@@ -1054,3 +1054,172 @@ stock XML_ReplaceItem(const file[], const tag[], const name[], replacement)
 	return 1;
 }
 
+// Disable the operators.
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator++(XML:a);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator--(XML:a);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator-(XML:a);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator+(XML:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator+(XML:a, _:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator-(XML:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator-(_:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator-(XML:a, _:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator*(XML:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator*(XML:a, _:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator/(XML:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator/(_:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator/(XML:a, _:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator%(XML:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator%(_:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward XML:operator%(XML:a, _:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(XML:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(_:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(XML:a, _:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(XML:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(_:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(XML:a, _:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(XML:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(_:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(XML:a, _:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(XML:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(_:a, XML:b);
+
+/**
+ * <library>y_xml</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(XML:a, _:b);
+

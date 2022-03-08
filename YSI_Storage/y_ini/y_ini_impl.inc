@@ -1981,3 +1981,172 @@ static stock INI_FlushWithoutRestore(INI:file)
 	INI_Flush_(file);
 }
 
+// Disable the operators.
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator++(INI:a);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator--(INI:a);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator-(INI:a);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator+(INI:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator+(INI:a, _:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator-(INI:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator-(_:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator-(INI:a, _:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator*(INI:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator*(INI:a, _:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator/(INI:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator/(_:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator/(INI:a, _:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator%(INI:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator%(_:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward INI:operator%(INI:a, _:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(INI:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(_:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<(INI:a, _:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(INI:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(_:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator<=(INI:a, _:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(INI:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(_:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>(INI:a, _:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(INI:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(_:a, INI:b);
+
+/**
+ * <library>y_ini</library>
+ * <summary>Disable the operator.</summary>
+ */
+forward bool:operator>=(INI:a, _:b);
+
