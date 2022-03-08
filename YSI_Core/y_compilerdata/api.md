@@ -167,6 +167,9 @@ __COMPILER_NAKED
 // `static enum` when that's allowed, `enum` otherwise.
 __COMPILER_STATIC_ENUM
 
+// `const static` when that's allowed, `const` otherwise.
+__COMPILER_CONST_STATIC
+
 // 1 when `{ {}, ... }` is allowed, 0 otherwise.
 __COMPILER_NESTED_ELLIPSIS
 
