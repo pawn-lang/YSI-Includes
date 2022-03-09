@@ -97,3 +97,6 @@ native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = mem
 
 #define YSI_JOIN(%0,%1,%2) %0And%1And%2
 
+native _YSI_FGetChar(File:handle, value, bool:utf8 = true) = fgetchar;
+#define YSI_FGetChar(%0,%1) _YSI_FGetChar((%0),_:(%1),(%1))
+

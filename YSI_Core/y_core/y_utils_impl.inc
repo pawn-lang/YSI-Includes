@@ -685,7 +685,7 @@ stock RandomMinMaxExcept(min, max, except)
 	if (min <= except < max)
 	{
 		// Select from one fewer random numbers, and shift the results.
-		return (max = YSI_Random(max - 1 - min) + min) + (max >= except);
+		return (max = YSI_Random(max - 1 - min) + min) + _:(max >= except);
 	}
 	else
 	{
@@ -3343,7 +3343,7 @@ stock bool:Files_CopyRange(File:i, end, const string:dst[])
 	while (end--)
 	{
 		//printf("trailing char: %d", end);
-		fputchar(o, fgetchar(i, 0, false), false);
+		fputchar(o, YSI_FGetChar(i, false), false);
 	}
 	return bool:fclose(o);
 }
