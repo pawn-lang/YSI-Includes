@@ -753,14 +753,14 @@ FOREIGN__ Group:_Group_SetBalancedInternal(p,const Group:gs[],c);
 
 GLOBAL__ Group:_Group_SetBalancedInternal(p,const Group:gs[],c)
 {
-	// Find which of the listed groups has the least players in.
+	// Find which of the listed groups has the fewest players in.
 	P:4("_Group_SetBalancedInternal called: %d, %d", p, c);
 	new
 		count = cellmax,
 		Group:id = INVALID_GROUP;
 	for (new i = 0; i != c; ++i)
 	{
-		// Find the group with the least players.
+		// Find the group with the fewest players.
 		new
 			gi = _:gs[i];
 		if (_Group_IsValid(Group:gi))
@@ -801,7 +801,7 @@ GLOBAL__ Group:_Group_SetBalancedInternal(p,const Group:gs[],c)
  *  The group they have been added to.
  * </returns>
  * <remarks>
- *  Puts a player in whichever of the given groups currently has the least
+ *  Puts a player in whichever of the given groups currently has the fewest
  *  players.
  *
  *  Now ONLY takes a list - arrays should use "Group_SetBalancedArray".  As a
