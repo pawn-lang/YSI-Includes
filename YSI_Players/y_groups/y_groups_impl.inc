@@ -819,7 +819,7 @@ stock Group:Group_SetBalancedArray(p, const Group:gs[], c = sizeof (gs))
  * <param name="playerid">Player to put in one of a number of groups</param>
  * <param name="">A list of groups.</param>
  * <remarks>
- *  Puts a player in whichever of the given groups currently has the least
+ *  Puts a player in whichever of the given groups currently has the fewest
  *  players.
  *
  *  Now ONLY takes a list - arrays should use "Group_SetBalancedArray".  As a
