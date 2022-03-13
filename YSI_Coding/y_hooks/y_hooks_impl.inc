@@ -287,6 +287,7 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 	new
 		pos = strfind(name, "@", false, 4);
 	// Make "pos" a legal value inside the error message.
+	if (pos == 4) P:E("Invalid hook name: <none> ('hook (args)`)");
 	if (pos == -1) P:E("Invalid hook name: %s", Unpack(name), ++pos);
 	name[pos] = '\0',
 	strdel(name, 0, 4);
