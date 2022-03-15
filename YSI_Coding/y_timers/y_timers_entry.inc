@@ -99,3 +99,6 @@ Optional plugins:
 	#include "..\y_hooks"
 #endif
 
+// Decorator syntax.
+#define @timer(%0)%1(%2) TIMER__ %1[%0](%2)
+
