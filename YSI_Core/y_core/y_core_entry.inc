@@ -130,6 +130,12 @@ Optional plugins:
 
 // `FIX_OnRconCommand` and `FIX_OnClientCheckResponse` might use `_FIXES_DEFAULT`.
 
+#if defined YSI_OPEN
+	#if 1 YSI_OPEN.MP == 1
+		#define YSI_OPENMP__
+	#endif
+#endif
+
 #if defined _INC_SAMP_Community_fixes
 	#if defined FIXES_DefaultDisabled
 		#if FIXES_DefaultDisabled == 1
@@ -148,7 +154,7 @@ Optional plugins:
 	#endif
 
 	#undef _FIXES_DEFAULT
-#else
+#elseif !defined YSI_OPENMP__
 	#define YSI_FIX_CALLBACKS
 #endif
 
