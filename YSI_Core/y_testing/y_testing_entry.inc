@@ -731,27 +731,50 @@ Testing_Next_retry:
 		#endif
 		public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
 		{
+			// TODO: Test if we are in a test before parsing the keys.
 			if ((newkeys & KEY_NO) && !(oldkeys & KEY_NO))
 			{
-				// Fail.
-				++YSI_g_sChecks;
-				TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
-				++YSI_g_sFails;
-				Testing_Next(playerid);
-				return 1;
+					// Fail.
+					++YSI_g_sChecks;
+					TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
+					++YSI_g_sFails;
+					Testing_Next(playerid);
+				#if defined Testing_OnPlayerKeyStateChange
+					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+				#else
+					return 1;
+				#endif
 			}
 			else if ((newkeys & KEY_YES) && !(oldkeys & KEY_YES))
 			{
-				// Pass.
-				TEST_REPORT(TEST_PASSED);
-				Testing_Next(playerid);
-				return 1;
+					// Pass.
+					TEST_REPORT(TEST_PASSED);
+					Testing_Next(playerid);
+				#if defined Testing_OnPlayerKeyStateChange
+					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+				#else
+					return 1;
+				#endif
 			}
 			else
 			{
-				return 0;
+				#if defined Testing_OnPlayerKeyStateChange
+					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+				#else
+					return 0;
+				#endif
 			}
 		}
+		
+		#if defined _ALS_OnPlayerKeyStateChange
+			#undef OnPlayerKeyStateChange
+		#else
+			#define _ALS_OnPlayerKeyStateChange
+		#endif
+		#define OnPlayerKeyStateChange Testing_OnPlayerKeyStateChange
+		#if defined Testing_OnPlayerKeyStateChange
+			forward Testing_OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys);
+		#endif
 	#else
 		public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		{
