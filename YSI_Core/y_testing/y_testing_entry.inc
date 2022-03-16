@@ -130,13 +130,69 @@ static stock const TEST_PASSED[] = "PASS!";
 #define Y_TESTING_BEFORE _A<y@Q_>
 #define Y_TESTING_AFTER _A<y@_Q>
 
+stock _Testing_Str(GLOBAL_TAG_TYPES:b, tag = tagof (b))
+{
+	#pragma unused b
+	new ret1[16] = "%s %s (%.2f)";
+	new ret2[16] = "%s %s (%d)";
+	return (tag == tagof (Float:)) ? ret1 : ret2;
+}
+
+stock bool:_Testing_Cmp(a, GLOBAL_TAG_TYPES:b, op, tag = tagof (b))
+{
+	if (tag == tagof (Float:))
+	{
+		switch (op)
+		{
+		case 0:
+			// Approximately equal
+			return Float:a - Float:b < 0.01 && Float:b - Float:a < 0.01;
+		case 1:
+			// Approximately equal
+			return Float:a - Float:b >= 0.01 || Float:b - Float:a >= 0.01;
+		case 2:
+			return Float:a <= Float:b;
+		case 3:
+			return Float:a <  Float:b;
+		case 4:
+			return Float:a >= Float:b;
+		case 5:
+			return Float:a >  Float:b;
+		}
+	}
+	else
+	{
+		switch (op)
+		{
+		case 0:
+			// Approximately equal
+			return a == b;
+		case 1:
+			// Approximately equal
+			return a != b;
+		case 2:
+			return a <= b;
+		case 3:
+			return a <  b;
+		case 4:
+			return a >= b;
+		case 5:
+			return a >  b;
+		}
+	}
+	return false;
+}
+
 // Numbers.
-#define ASSERT_EQ(%1,%0) Testing_Test(J@ == _:(%0), "%s %s (%d)", STRINGISE__(%1 == %0), (J@ = _:(%1)))
-#define ASSERT_NE(%1,%0) Testing_Test(J@ != _:(%0), "%s %s (%d)", STRINGISE__(%1 != %0), (J@ = _:(%1)))
-#define ASSERT_LE(%1,%0) Testing_Test(J@ <= _:(%0), "%s %s (%d)", STRINGISE__(%1 <= %0), (J@ = _:(%1)))
-#define ASSERT_LT(%1,%0) Testing_Test(J@ <  _:(%0), "%s %s (%d)", STRINGISE__(%1 <  %0), (J@ = _:(%1)))
-#define ASSERT_GE(%1,%0) Testing_Test(J@ >= _:(%0), "%s %s (%d)", STRINGISE__(%1 >= %0), (J@ = _:(%1)))
-#define ASSERT_GT(%1,%0) Testing_Test(J@ >  _:(%0), "%s %s (%d)", STRINGISE__(%1 >  %0), (J@ = _:(%1)))
+// Just don't do side-effects in assertations!
+// `_EQ` and `_NE` now convert to float and check the values are close-enough.
+// For ints the subtraction will always be whole, so fail or pass correctly.
+#define ASSERT_EQ(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 0), _Testing_Str((%0)), STRINGISE__(%1 == %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
+#define ASSERT_NE(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 1), _Testing_Str((%0)), STRINGISE__(%1 != %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
+#define ASSERT_LE(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 2), _Testing_Str((%0)), STRINGISE__(%1 <= %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
+#define ASSERT_LT(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 3), _Testing_Str((%0)), STRINGISE__(%1 <  %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
+#define ASSERT_GE(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 4), _Testing_Str((%0)), STRINGISE__(%1 >= %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
+#define ASSERT_GT(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 5), _Testing_Str((%0)), STRINGISE__(%1 >  %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
 
 // Zeroes.
 #define ASSERT_ZE(%1) Testing_Test(J@ == 0, "%s %s (%d)", STRINGISE__(%1 == 0), (J@ = _:(%1)))
