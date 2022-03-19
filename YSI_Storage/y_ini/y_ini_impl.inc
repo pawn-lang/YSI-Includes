@@ -221,7 +221,7 @@ P:D(INI_String(const name[],variable[]));
 
 P:D(INI_Bool(const name[],&bool:variable));
 #define INI_Bool(%1,%2) \
-	if (!strcmp((%1), name, true)) return %2 = boolstr(value)
+	if (!strcmp((%1), name, true)) return %2 = BoolStr(value)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Name of the INI key.</param>
