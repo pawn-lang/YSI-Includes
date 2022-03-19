@@ -111,11 +111,11 @@ CHAIN_HOOK(Testing)
 static stock const TEST_FAILED[] = "FAIL:";
 static stock const TEST_PASSED[] = "PASS!";
 
-#define ASSERT(%0) Testing_Test(%0, "%s %s", STRINGISE__(%0))
+#define ASSERT(%0) Testing_Test(%0,"%s %s",STRINGISE__(%0))
 #define ASSERT_TRUE(%0) ASSERT(!!%0)
 #define ASSERT_FALSE(%0) ASSERT(!%0)
-#define ASSERT_NULL(%0) ASSERT(0 == %0)
-#define ASSERT_N:%1(%0) ASSERT(%1 == %0)
+#define ASSERT_NULL(%0) ASSERT_EQ(%0,0)
+#define ASSERT_N:%1(%0) ASSERT_EQ(%0,%1)
 
 #define ASK(%0) Testing_Ask(playerid,%0)
 
@@ -130,7 +130,7 @@ static stock const TEST_PASSED[] = "PASS!";
 #define Y_TESTING_BEFORE _A<y@Q_>
 #define Y_TESTING_AFTER _A<y@_Q>
 
-stock _Testing_Str(GLOBAL_TAG_TYPES:b, tag = tagof (b))
+stock _y@T(GLOBAL_TAG_TYPES:b, tag = tagof (b))
 {
 	#pragma unused b
 	new ret1[16] = "%s %s (%.2f)";
@@ -138,7 +138,7 @@ stock _Testing_Str(GLOBAL_TAG_TYPES:b, tag = tagof (b))
 	return (tag == tagof (Float:)) ? ret1 : ret2;
 }
 
-stock bool:_Testing_Cmp(a, GLOBAL_TAG_TYPES:b, op, tag = tagof (b))
+stock bool:_@yT(a, GLOBAL_TAG_TYPES:b, op, tag = tagof (b))
 {
 	if (tag == tagof (Float:))
 	{
@@ -187,21 +187,21 @@ stock bool:_Testing_Cmp(a, GLOBAL_TAG_TYPES:b, op, tag = tagof (b))
 // Just don't do side-effects in assertations!
 // `_EQ` and `_NE` now convert to float and check the values are close-enough.
 // For ints the subtraction will always be whole, so fail or pass correctly.
-#define ASSERT_EQ(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 0), _Testing_Str((%0)), STRINGISE__(%1 == %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
-#define ASSERT_NE(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 1), _Testing_Str((%0)), STRINGISE__(%1 != %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
-#define ASSERT_LE(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 2), _Testing_Str((%0)), STRINGISE__(%1 <= %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
-#define ASSERT_LT(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 3), _Testing_Str((%0)), STRINGISE__(%1 <  %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
-#define ASSERT_GE(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 4), _Testing_Str((%0)), STRINGISE__(%1 >= %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
-#define ASSERT_GT(%1,%0) Testing_Test(_Testing_Cmp(J@, (%0), 5), _Testing_Str((%0)), STRINGISE__(%1 >  %0), (J@ = _:(((%0) ^ (%0)) | (%1))))
+#define ASSERT_EQ(%1,%0) Testing_Test(_@yT(J@,(%0),0),_y@T((%0)),STRINGISE__(%1 == %0),(J@=_:(((%0)^(%0))|(%1))))
+#define ASSERT_NE(%1,%0) Testing_Test(_@yT(J@,(%0),1),_y@T((%0)),STRINGISE__(%1 != %0),(J@=_:(((%0)^(%0))|(%1))))
+#define ASSERT_LE(%1,%0) Testing_Test(_@yT(J@,(%0),2),_y@T((%0)),STRINGISE__(%1 <= %0),(J@=_:(((%0)^(%0))|(%1))))
+#define ASSERT_LT(%1,%0) Testing_Test(_@yT(J@,(%0),3),_y@T((%0)),STRINGISE__(%1 <  %0),(J@=_:(((%0)^(%0))|(%1))))
+#define ASSERT_GE(%1,%0) Testing_Test(_@yT(J@,(%0),4),_y@T((%0)),STRINGISE__(%1 >= %0),(J@=_:(((%0)^(%0))|(%1))))
+#define ASSERT_GT(%1,%0) Testing_Test(_@yT(J@,(%0),5),_y@T((%0)),STRINGISE__(%1 >  %0),(J@=_:(((%0)^(%0))|(%1))))
 
 // Zeroes.
-#define ASSERT_ZE(%1) Testing_Test(J@ == 0, "%s %s (%d)", STRINGISE__(%1 == 0), (J@ = _:(%1)))
-#define ASSERT_NZ(%1) Testing_Test(J@ != 0, "%s %s (%d)", STRINGISE__(%1 != 0), (J@ = _:(%1)))
+#define ASSERT_ZE(%1) Testing_Test(J@==0,"%s%s(%d)",STRINGISE__(%1==0),(J@=_:(%1)))
+#define ASSERT_NZ(%1) Testing_Test(J@!=0,"%s%s(%d)",STRINGISE__(%1!=0),(J@=_:(%1)))
 
-// Strings.
-#define ASSERT_SAME(%1,%0) Testing_Test(strlen(%0) ? (Q@[0] != '\0' && strcmp(Q@, (%0)) == 0) : (Q@[0] == '\0'), "%s %s (\"%s\")", STRINGISE__(%1 == %0), (strunpack(Q@, (%1)), Q@))
-#define ASSERT_DIFF(%1,%0) Testing_Test(strlen(%0) ? (Q@[0] == '\0' || strcmp(Q@, (%0)) != 0) : (Q@[0] != '\0'), "%s %s (\"%s\")", STRINGISE__(%1 != %0), (strunpack(Q@, (%1)), Q@))
-#define ASSERT_NEAR(%1,%0) Testing_Test(strlen(%0) ? (Q@[0] != '\0' && strcmp(Q@, (%0), true) == 0) : (Q@[0] == '\0'), "%s %s (\"%s\")", STRINGISE__(%1 ~= %0), (strunpack(Q@, (%1)), Q@))
+//Strings.
+#define ASSERT_SAME(%1,%0) Testing_Test(strlen(%0)?(Q@[0]&&!strcmp(Q@,(%0))):(!Q@[0]),"%s%s(\"%s\")",STRINGISE__(%1 == %0),(strunpack(Q@,(%1)),Q@))
+#define ASSERT_DIFF(%1,%0) Testing_Test(strlen(%0)?(!Q@[0]||strcmp(Q@,(%0))):(Q@[0]),"%s%s(\"%s\")",STRINGISE__(%1 != %0),(strunpack(Q@,(%1)),Q@))
+#define ASSERT_NEAR(%1,%0) Testing_Test(strlen(%0)?(Q@[0]&&!strcmp(Q@,(%0),true)):(!Q@[0]),"%s%s(\"%s\")",STRINGISE__(%1 ~= %0),(strunpack(Q@,(%1)),Q@))
 
 static stock
 	YSI_g_sCurTest = 0,
