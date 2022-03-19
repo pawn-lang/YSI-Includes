@@ -58,7 +58,7 @@ forward y_va_PublicRecurseFunction(const func[], vara);
 public y_va_PublicRecurseFunction(const func[], vara)
 {
 	// "" Passed to "CallLocalFunction" crashes it.
-	ASSERT_EQ(123, y_va_CallLocalFunction_X(func, "\1", vara));
+	ASSERT_EQ(y_va_CallLocalFunction_X(func, "\1", vara), 123);
 }
 
 forward y_va_PublicCallFunction(const func[], vara);
