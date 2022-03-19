@@ -822,9 +822,7 @@ public OnJITCompile()
 
 #define y_@I%0\32; y_@I
 
-#if defined u@
-	#undef u@
-#endif
+#define __script_init_u@_1
 #define u@$ 1]);
 
 // Detect tags.

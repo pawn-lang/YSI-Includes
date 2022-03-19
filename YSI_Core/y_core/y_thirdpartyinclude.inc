@@ -348,6 +348,8 @@ Optional plugins:
 #tryinclude <code-parse>
 #if !defined _INC_code_parse_inc
 	#error Could not include "https://github.com/Y-Less/code-parse.inc" - ensure its files are in "include\code-parse\"
+#elseif !defined __code_parse_u@_1
+	#error Please update "https://github.com/Y-Less/code-parse.inc" to the latest version.
 #endif
 
 #tryinclude "..\..\indirection\indirection"
