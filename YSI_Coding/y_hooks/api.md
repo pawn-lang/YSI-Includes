@@ -15,7 +15,7 @@
 >* **Returns:**
 >	* -
 >* **Remarks:**
->	Compresses function names when required to fit within 32 characters
+>	Compresses function names when required to fit within 32 or 64 characters
 >	according to well defined rules (see "YSI_g_sReplacements").
  
 ***
