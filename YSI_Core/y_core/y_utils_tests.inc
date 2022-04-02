@@ -50,7 +50,7 @@ TEST_COMPILE__ y_utils()
 	bernstein(str);
 	IsHex(str);
 	Unpack(str);
-	#if defined _samp_included
+	#if defined _samp_included && !defined YSI_NO_GET_IP
 		ASSERT_ZE(GetIP(0));
 	#endif
 	ReturnStringArg(0);

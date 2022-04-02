@@ -200,7 +200,7 @@ stock bool:_@yT(a, GLOBAL_TAG_TYPES:b, op, tag = tagof (b))
 
 //Strings.
 #define ASSERT_SAME(%1,%0) Testing_Test(strlen(%0)?(Q@[0]&&!strcmp(Q@,(%0))):(!Q@[0]),"%s%s(\"%s\")",STRINGISE__(%1 == %0),(strunpack(Q@,(%1)),Q@))
-#define ASSERT_DIFF(%1,%0) Testing_Test(strlen(%0)?(!Q@[0]||strcmp(Q@,(%0))):(Q@[0]),"%s%s(\"%s\")",STRINGISE__(%1 != %0),(strunpack(Q@,(%1)),Q@))
+#define ASSERT_DIFF(%1,%0) Testing_Test(strlen(%0)?(!Q@[0]||strcmp(Q@,(%0))):(!!Q@[0]),"%s%s(\"%s\")",STRINGISE__(%1 != %0),(strunpack(Q@,(%1)),Q@))
 #define ASSERT_NEAR(%1,%0) Testing_Test(strlen(%0)?(Q@[0]&&!strcmp(Q@,(%0),true)):(!Q@[0]),"%s%s(\"%s\")",STRINGISE__(%1 ~= %0),(strunpack(Q@,(%1)),Q@))
 
 static stock
