@@ -2956,7 +2956,7 @@ stock memcmp(arr1[], arr2[], count)
 	return MemCmp(arr1, arr2, count);
 }
 
-#define MAX_LEVENSHTEIN_STRING (144)
+#define MAX_LEVENSHTEIN_STRING (YSI_MAX_STRING)
 
 static stock DoLevenshteinDistance(const a[], lenA, const b[], lenB)
 {
