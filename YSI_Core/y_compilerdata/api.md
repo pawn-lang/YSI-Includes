@@ -232,6 +232,9 @@ __COMPILER_CODEPAGE
 
 // The compiler has native support for the AMXModX `decl` keyword.
 __COMPILER_DECL
+
+// The compiler has native support for #234 (i.e. `obj.Method()` syntax).
+__COMPILER_THIS
 ```
 
 ## Default Values
@@ -294,4 +297,36 @@ main()
 	printf("%d %f %s", a, b, c);
 }
 ```
+
+## `THIS__`
+
+`THIS__` allows you to use a limited form of OO-like syntax, based on the variable `this`.  You need to define `this` at the top of a file, then undefine it at the end using `THIS__`:
+
+```pawn
+// Top.
+#define this. THIS__(Entity)
+
+// Code.
+Float:SomeFunction(Entity:this)
+{
+	return this.GetAngle();
+}
+
+// End.
+#undef this
+```
+
+Becomes:
+
+```pawn
+// Code.
+Float:SomeFunction(Entity:this)
+{
+	return Entity_GetAngle(this);
+}
+```
+
+`this` must have the tag specified in `THIS__`.
+
+There is currently no support for varaibles like `this.Data[ANGLE]`, but I'm thinking about how to achieve it.
 

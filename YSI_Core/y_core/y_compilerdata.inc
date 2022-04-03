@@ -201,25 +201,25 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 
 // Example:
 //
-//   #define this. __COMPILER_THIS(Entity)
-//   this.GetAngle()
+//   #define this. THIS__(Entity)
+//   this.GetAngle();
 //
 // Becomes:
 //
-//   Entity_GetAngle(this)
+//   Entity_GetAngle(this);
 //
 // And if #234 (or even just a `__tagof` precursor) is made it just becomes:
 //
-//   #define __COMPILER_THIS(%0)%1(%2) __tagof(this).%1(__tagof(this):_:this,%2)
+//   #define THIS__(%0)%1(%2) __tagof(this).%1(__tagof(this):_:this,%2)
 //
 // Unfortunately making it this:
 //
-//   #define __COMPILER_THIS(%0) this.
+//   #define THIS__(%0) this.
 //
 // Is a recursive definition and will hang the compiler in an infinite loop.
 // Trying to defer the replacements with something like:
 //
-//   #define __COMPILER_THIS(%0) this PP_DEFER.
+//   #define THIS__(%0) this PP_DEFER.
 //
 // Would prevent the infinite loop, but then may not be valid syntax - it
 // depends if we want `this .Func` to work as opposed to just `this.Func`.  I
@@ -233,10 +233,6 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 // need to worry about the effect of multiple replacements.  Actually, even if
 // `__tagof` is added, there's no real need to change this definition - it
 // already works in the special cases for which it is defined.
-//
-// Of course, to make things simpler there is a `YSI_KEYWORD` wrapper giving:
-//
-//   #define this. THIS(Entity)
 //
 // `%0:_:` is a trick in since the earlies days of YSI.  There is a macro:
 //
@@ -254,10 +250,8 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 //   Entity_Data[this][ANGLE] = Entity_GetAngle(this);
 //
 // While I can detect `)` or `]`, I can't until after the opening brackets.
-#define __COMPILER_THIS(%0)%1(%2) %0_%1(%0:_:(%1),%2)
-#if YSI_KEYWORD(THIS)
-	#define THIS __COMPILER_THIS
-#endif
+#define THIS__(%0)%1(%2) %0_%1(%0:_:(%1),%2)
+#define __COMPILER_THIS (0)
 
 #if (__Pawn & 0x0F) >= 0x0A
 	#define __COMPILER_MODIFIED (1)
