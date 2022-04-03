@@ -201,12 +201,12 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 
 // Example:
 //
-//   #define this. __COMPILER_THIS(Object)
+//   #define this. __COMPILER_THIS(Entity)
 //   this.GetAngle()
 //
 // Becomes:
 //
-//   Object_GetAngle(this)
+//   Entity_GetAngle(this)
 //
 // And if #234 (or even just a `__tagof` precursor) is made it just becomes:
 //
@@ -236,7 +236,7 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 //
 // Of course, to make things simpler there is a `YSI_KEYWORD` wrapper giving:
 //
-//   #define this. THIS(Object)
+//   #define this. THIS(Entity)
 //
 // `%0:_:` is a trick in since the earlies days of YSI.  There is a macro:
 //
@@ -244,6 +244,16 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 //
 // Which will remove trailing commas in function parameter lists, so if `%2` is
 // empty this won't cause any problems.
+//
+// I've not yet worked out a way to support both of these at once:
+//
+//   this.Data[ANGLE] = this.GetAngle();
+//
+// Becoming:
+//
+//   Entity_Data[this][ANGLE] = Entity_GetAngle(this);
+//
+// While I can detect `)` or `]`, I can't until after the opening brackets.
 #define __COMPILER_THIS(%0)%1(%2) %0_%1(%0:_:(%1),%2)
 #if YSI_KEYWORD(THIS)
 	#define THIS __COMPILER_THIS
