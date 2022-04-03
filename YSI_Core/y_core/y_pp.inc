@@ -237,6 +237,7 @@ Optional plugins:
 #define PP_NULL<>
 #define PP_DOLLAR$
 #define PP_DISCARD%0$
+#define PP_DEFER
 
 // Isolate a single variable in declarations, ended by either `;` or `,`.
 #define _PP_MAKE_SINGLE_VAR_STRIP<%9>%0;%1: %9(%0)
