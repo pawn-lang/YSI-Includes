@@ -823,9 +823,7 @@ public OnJITCompile()
 #define y_@I%0\32; y_@I
 
 #define __script_init_u@_1
-#if defined u@
-	#undef u@
-#endif
+// Can't `#undef` this because it declares a `forward` with the same name.
 #define u@$ 1]);
 
 // Detect tags.
