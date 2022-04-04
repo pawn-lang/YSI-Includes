@@ -94,7 +94,7 @@ Optional plugins:
 #define FLOAT_E                         (Float:0x402DF854) // e
 #define FLOAT_PI                        (Float:0x40490FDB) // pi
 #define FLOAT_ROOT_2                    (Float:0x3FB504F3) // sqrt(2)
-#define FLOAT_EPSILON                   (Float:0x3FB504F3) // https://en.wikipedia.org/wiki/Machine_epsilon
+#define FLOAT_EPSILON                   (Float:0x00000001) // https://en.wikipedia.org/wiki/Machine_epsilon
 
 #define IS_NAN(%0) (_:((Float:0x7FFFFFFF) & (%0)) > (0x7F800000))
 
