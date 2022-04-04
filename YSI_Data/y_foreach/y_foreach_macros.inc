@@ -888,6 +888,9 @@ P:D(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 
 // Ultimate macro: <a href="http://forum.sa-mp.com/showpost.php?p=3801730" />
 #define __foreach_u@_1
+#if defined u@
+	#undef u@
+#endif
 #define u@$ 1]);
 #define __:%0$ u@(u[_:%0 u@$
 

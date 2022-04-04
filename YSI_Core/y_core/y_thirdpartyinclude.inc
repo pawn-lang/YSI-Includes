@@ -338,6 +338,8 @@ Optional plugins:
 //	#error Please update "https://github.com/oscar-broman/md-sort" to the latest version.
 //#endif
 
+// Manually fix earlier versions.
+#undef u@
 #tryinclude "..\..\code-parse\code-parse"
 #tryinclude <code-parse\code-parse>
 #tryinclude "..\..\code-parse.inc\code-parse"
@@ -346,11 +348,14 @@ Optional plugins:
 #tryinclude <code-parse.inc-master\code-parse>
 #tryinclude "code-parse"
 #tryinclude <code-parse>
-#if !defined _INC_code_parse_inc
+#if defined _INC_code_parse_inc
+	#undef u@
+#else
 	#error Could not include "https://github.com/Y-Less/code-parse.inc" - ensure its files are in "include\code-parse\"
-#elseif !defined __code_parse_u@_1
-	#error Please update "https://github.com/Y-Less/code-parse.inc" to the latest version.
+//#elseif !defined __code_parse_u@_1
+//	#error Please update "https://github.com/Y-Less/code-parse.inc" to the latest version.
 #endif
+#define u@$ 1]);
 
 #tryinclude "..\..\indirection\indirection"
 #tryinclude <indirection\indirection>
