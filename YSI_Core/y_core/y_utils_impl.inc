@@ -534,7 +534,7 @@ P:D(StrCpy(dest[], const src[], len = sizeof (dest)));
 #if defined strcpy
 	#undef strcpy
 #endif
-#define strcpy(%0) strcat((%0[0] = '\0', %0), %1)
+#define strcpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
 #define _ALS_strcpy
 
 //#pragma deprecated Use `StrCpy` (i.e. use proper capitalisation).
@@ -3464,6 +3464,8 @@ stock bool:TryPPM(ppm)
 {
 	return random(1000000) < ppm;
 }
+
+forward y_utils_end();
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
