@@ -522,6 +522,10 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 	{
 	case 0:
 	{
+		if (!(slot = _YSI_g_sCurrentTimer))
+		{
+			return 0;
+		}
 		// "next"
 		force = mget(Alloc:slot, 2);
 		if (--force == -1)
@@ -552,6 +556,8 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 		{
 			return 0;
 		}
+		// Clear the current timer ID.
+		_YSI_g_sCurrentTimer = Timer:0;
 	}
 	}
 	// Remove from the list.
