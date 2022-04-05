@@ -167,10 +167,11 @@ static stock
 
 timer StopAndStart[50]()
 {
-	//printf("StopAndStart started");
+	printf("StopAndStart started");
 	STOP__;
+	printf("===================");
 	STOP__ YSI_g_sStopAndStart;
-	//printf("StopAndStart ended");
+	printf("StopAndStart ended");
 }
 
 TEST__ StopAndStart()
@@ -186,8 +187,8 @@ TEST__ StopAndStart()
 
 timer StopAndStop[50]()
 {
-	//printf("StopAndStop started");
-	//printf("StopAndStop: %d", _YSI_g_sCurrentTimer);
+	printf("StopAndStop started");
+	printf("StopAndStop: %d", _YSI_g_sCurrentTimer);
 }
 
 TEST__ StopAndStop()
@@ -195,7 +196,7 @@ TEST__ StopAndStop()
 	YSI_g_sStopAndStart = REPEAT__[5] StopAndStop();
 	for (new i = 0; i != 1000; ++i)
 	{
-		ASSERT(DEFER__ StopAndStop());
+		printf("%d", DEFER__ StopAndStop());
 	}
 }
 

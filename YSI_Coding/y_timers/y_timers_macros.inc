@@ -119,5 +119,5 @@ Optional plugins:
 #define STOP__%0; {_Timer_F((%0),1);}
 
 // `stop` given without a timer ID - kill the current one.
-#define _Timer_F((),1) _Timer_F(Timer:0,1)
+#define _Timer_F((),1) _Timer_F(Timer:0,2)
 

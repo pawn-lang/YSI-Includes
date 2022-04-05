@@ -466,6 +466,19 @@ stock Timer:_Timer_C(timerID)
 	// UPDATE 2: Now ALL timers are freed like this, because we need an ID we
 	// can know in advance.
 	mset(YSI_g_sFirstSlot, 1, timerID);
+	// Set the ID we return to the user.
+	if (++YSI_g_sUserId == 0)
+	{
+		++YSI_g_sUserId;
+	}
+	mset(YSI_g_sFirstSlot, 4, YSI_g_sUserId);
+	mset(YSI_g_sFirstSlot, 5, _:YSI_g_sTimerList);
+	mset(YSI_g_sFirstSlot, 6, _:NO_ALLOC);
+	if (YSI_g_sTimerList != NO_ALLOC)
+	{
+		mset(YSI_g_sTimerList, 6, _:YSI_g_sFirstSlot);
+	}
+	YSI_g_sTimerList = YSI_g_sFirstSlot;
 	// Just so it isn't a real timer ID (or possibly isn't).
 	YSI_g_sFirstSlot = NO_ALLOC;
 	YSI_g_sLastSlot = NO_ALLOC;
@@ -495,45 +508,21 @@ stock _Timer_B(repeatCount)
 	{
 		mset(YSI_g_sFirstSlot, 3, 0);
 	}
-	// Set the ID we return to the user.
-	if (++YSI_g_sUserId == 0)
-	{
-		++YSI_g_sUserId;
-	}
-	mset(YSI_g_sFirstSlot, 4, YSI_g_sUserId);
-	mset(YSI_g_sFirstSlot, 5, _:YSI_g_sTimerList);
-	mset(YSI_g_sFirstSlot, 6, _:NO_ALLOC);
-	if (YSI_g_sTimerList != NO_ALLOC)
-	{
-		mset(YSI_g_sTimerList, 6, _:YSI_g_sFirstSlot);
-	}
-	YSI_g_sTimerList = YSI_g_sFirstSlot;
 	// Just so it isn't a real timer ID (or possibly isn't).
-	return _:YSI_g_sUserId;
+	return _:YSI_g_sFirstSlot;
 }
 
 // Free all timer resources.
 stock _Timer_F(Timer:slot = Timer:0, force = 0)
 {
-	if (!slot)
-	{
-		if (!(slot = _YSI_g_sCurrentTimer))
-		{
-			return 0;
-		}
-	}
-	if (!(slot = Timer:_Timer_Get(slot)))
-	{
-		return 0;
-	}
-	// Clear the current timer ID.
-	_YSI_g_sCurrentTimer = Timer:0;
 	P:3("_Timer_F called");
 	// This is done here for convenience.
 	// Always called with the first ID.
-	if (!force)
+	switch (force)
 	{
-		// `force` is used by `stop`.
+	case 0:
+	{
+		// "next"
 		force = mget(Alloc:slot, 2);
 		if (--force == -1)
 		{
@@ -547,6 +536,23 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 			mset(Alloc:slot, 2, force);
 			return 0;
 		}
+	}	
+	case 1:
+	{
+		// Given an ID.
+		if (!(slot = Timer:_Timer_Get(slot)))
+		{
+			return 0;
+		}
+	}
+	case 2:
+	{
+		// Current timer.
+		if (!(slot = _YSI_g_sCurrentTimer))
+		{
+			return 0;
+		}
+	}
 	}
 	// Remove from the list.
 	new
