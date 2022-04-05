@@ -415,7 +415,7 @@ Any pointers parameters (references, strings, and arrays) to the caller function
 PrintLater(string:str[])
 {
 	new localString[32];
-	strcpy(localString, str);
+	StrCpy(localString, str);
 	inline const PrintNow()
 	{
 		print(localString);
@@ -675,7 +675,7 @@ Simply cache the string like so:
 OuterFunc(outerString[])
 {
 	new innerString[32];
-	strcpy(innerString, outerString);
+	StrCpy(innerString, outerString);
 	inline InnerFunc()
 	{
 		printf("%s", innerString);
