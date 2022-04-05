@@ -162,3 +162,25 @@ timer ForwardTimer[5000](string:msg[])
 	#pragma unused msg
 }
 
+static stock
+	Timer:YSI_g_sStopAndStart;
+
+timer StopAndStart[50]()
+{
+	printf("StopAndStart started");
+	STOP__;
+	STOP__ YSI_g_sStopAndStart;
+	printf("StopAndStart ended");
+}
+
+TEST__ StopAndStart()
+{
+	YSI_g_sStopAndStart = DEFER__ StopAndStart();
+	ASSERT(Timer_IsRunning(YSI_g_sStopAndStart));
+	ASSERT(_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
+	ASSERT(!Timer_IsRunning(YSI_g_sStopAndStart));
+	ASSERT(!_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
+	ASSERT(!Timer_IsRunning(YSI_g_sStopAndStart));
+	YSI_g_sStopAndStart = DEFER__ StopAndStart();
+}
+

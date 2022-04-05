@@ -76,7 +76,9 @@ Optional plugins:
 static stock
 	Alloc:YSI_g_sLastSlot = NO_ALLOC,
 	Alloc:YSI_g_sFirstSlot = NO_ALLOC,
-	YSI_g_sPlayerTimers = -1;
+	YSI_g_sPlayerTimers = -1,
+	YSI_g_sUserId = 0,
+	Alloc:YSI_g_sTimerList = NO_ALLOC;
 
 stock
 	Timer:_YSI_g_sCurrentTimer = Timer:0;
@@ -340,15 +342,17 @@ static stock Alloc:Timer_GetSingleSlot(len)
 	// Allocates memory and secretly appends data to the start.
 	++len;
 	P:4("Timer_GetSingleSlot called: %d", len);
-	// `4` is for the timer header.  Slots:
+	// `6` is for the timer header, `- 1` for `++` above.  Slots:
 	//
 	// 0 - Next.
-	// 1 - Timer ID.
+	// 1 - Native timer ID.
 	// 2 - Repeat count remaining.
 	// 3 - Repeat count total (or count for `0`).
+	// 4 - User timer ID.
+	// 5 - Next existing timer.
 	//
 	new
-		Alloc:slot = malloc(len ? len : 3);
+		Alloc:slot = malloc(len ? len : (6 - 1));
 	if (slot == NO_ALLOC)
 	{
 		return NO_ALLOC;
@@ -377,16 +381,43 @@ static stock Alloc:Timer_GetSingleSlot(len)
 	return slot;
 }
 
+static stock Alloc:_Timer_Get(Timer:slot)
+{
+	new Alloc:cur = YSI_g_sTimerList;
+	while (cur != NO_ALLOC)
+	{
+		if (Timer:mget(cur, 4) == slot)
+		{
+			return cur;
+		}
+		cur = Alloc:mget(cur, 5);
+	}
+	return NO_ALLOC;
+}
+
 stock Timer_GetCallCount(Timer:slot = Timer:0)
 {
 	if (!slot)
 	{
 		slot = _YSI_g_sCurrentTimer;
 	}
-	new count = mget(Alloc:slot, 2);
-	// Repeat forever, or repeat N?  If forever, `count` is `0` and slto 3 is
-	// the true count.
-	return mget(Alloc:slot, 3) - count;
+	if ((slot = Timer:_Timer_Get(slot)))
+	{
+		new count = mget(Alloc:slot, 2);
+		// Repeat forever, or repeat N?  If forever, `count` is `0` and slto 3 is
+		// the true count.
+		return mget(Alloc:slot, 3) - count;
+	}
+	return -1;
+}
+
+stock bool:Timer_IsRunning(Timer:slot = Timer:0)
+{
+	if (!slot)
+	{
+		slot = _YSI_g_sCurrentTimer;
+	}
+	return _Timer_Get(slot) != NO_ALLOC;
 }
 
 // Allocate memory to store a string.
@@ -435,11 +466,23 @@ stock Timer:_Timer_C(timerID)
 	// UPDATE 2: Now ALL timers are freed like this, because we need an ID we
 	// can know in advance.
 	mset(YSI_g_sFirstSlot, 1, timerID);
+	// Set the ID we return to the user.
+	if (++YSI_g_sUserId == 0)
+	{
+		++YSI_g_sUserId;
+	}
+	mset(YSI_g_sFirstSlot, 4, YSI_g_sUserId);
+	mset(YSI_g_sFirstSlot, 5, _:YSI_g_sTimerList);
+	mset(YSI_g_sFirstSlot, 6, _:NO_ALLOC);
+	if (YSI_g_sTimerList != NO_ALLOC)
+	{
+		mset(YSI_g_sTimerList, 6, _:YSI_g_sFirstSlot);
+	}
+	YSI_g_sTimerList = YSI_g_sFirstSlot;
 	// Just so it isn't a real timer ID (or possibly isn't).
-	timerID = _:YSI_g_sFirstSlot;
 	YSI_g_sFirstSlot = NO_ALLOC;
 	YSI_g_sLastSlot = NO_ALLOC;
-	return Timer:timerID;
+	return Timer:YSI_g_sUserId;
 }
 
 // Allocate the ID.
@@ -479,6 +522,10 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 			return 0;
 		}
 	}
+	if (!(slot = Timer:_Timer_Get(slot)))
+	{
+		return 0;
+	}
 	// Clear the current timer ID.
 	_YSI_g_sCurrentTimer = Timer:0;
 	P:3("_Timer_F called");
@@ -500,6 +547,23 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 			mset(Alloc:slot, 2, force);
 			return 0;
 		}
+	}
+	// Remove from the list.
+	new
+		Alloc:next = Alloc:mget(Alloc:slot, 5),
+		Alloc:prev = Alloc:mget(Alloc:slot, 6);
+	if (prev == NO_ALLOC)
+	{
+		// First timer.
+		YSI_g_sTimerList = next;
+	}
+	else
+	{
+		mset(prev, 5, _:next);
+	}
+	if (next != NO_ALLOC)
+	{
+		mset(next, 6, _:prev);
 	}
 	// Kill time timer.
 	KillTimer(mget(Alloc:slot, 1));
