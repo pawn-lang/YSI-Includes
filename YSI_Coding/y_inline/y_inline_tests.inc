@@ -1647,6 +1647,14 @@ TEST__ y_inline_timer()
 	Timer_KillCallback(timer);
 }
 
+TEST__ y_inline_repeating()
+{
+	inline const X()
+	{
+	}
+	new timer = Timer_CreateCallback(using inline X, 10, 1000);
+}
+
 static stock
 	YSI_gsStarts[1000],
 	YSI_gsCounts[sizeof (YSI_gsStarts)],

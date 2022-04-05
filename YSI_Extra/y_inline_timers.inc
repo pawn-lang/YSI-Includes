@@ -112,7 +112,10 @@ public @y_inlineTimerCount(Func:func<>, time, count, due)
 	else
 	{
 		// Run again, to track the count.  Reduce jitter by tracking due times.
-		new timer = YSI_SetTimerEx("@y_inlineTimerCount", time + (due - GetTickCount()), false, "iiii", _:func, time, count, due + time);
+		//printf("%d %d %d", time, due, GetTickCount());
+		new timer = time + (due - GetTickCount());
+		//printf("delay = %d", timer);
+		timer = YSI_SetTimerEx("@y_inlineTimerCount", timer < 0 ? 0 : timer, false, "iiii", _:func, time, count, due + time);
 		Indirect_SetMeta(func, timer);
 		P:7("y_inlineTimerCount calls: %d (%d), %d", _:func, ++YSI_gsCalls, timer);
 	}
@@ -131,7 +134,10 @@ forward @y_inlineTimerStart(Func:func<>, time, due);
 public @y_inlineTimerStart(Func:func<>, time, due)
 {
 	// Initial repeating timer, to set the time offset.
-	new timer = YSI_SetTimerEx("@y_inlineTimerRepeat", time + (due - GetTickCount()), true, "i", _:func, due + time);
+	//printf("%d %d %d", time, due, GetTickCount());
+	new timer = time + (due - GetTickCount());
+	//printf("delay = %d", timer);
+	timer = YSI_SetTimerEx("@y_inlineTimerRepeat", timer < 0 ? 0 : timer, true, "i", _:func);
 	Indirect_SetMeta(func, timer);
 	// Call the function after setting the meta, incase it kills the timer.
 	@.func();

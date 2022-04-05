@@ -190,7 +190,7 @@ timer StopAndStop[50]()
 	STOP__;
 	STOP__;
 	STOP__;
-	//printf("StopAndStop finished");
+	printf("StopAndStop finished");
 }
 
 TEST__ StopAndStop()
