@@ -466,19 +466,6 @@ stock Timer:_Timer_C(timerID)
 	// UPDATE 2: Now ALL timers are freed like this, because we need an ID we
 	// can know in advance.
 	mset(YSI_g_sFirstSlot, 1, timerID);
-	// Set the ID we return to the user.
-	if (++YSI_g_sUserId == 0)
-	{
-		++YSI_g_sUserId;
-	}
-	mset(YSI_g_sFirstSlot, 4, YSI_g_sUserId);
-	mset(YSI_g_sFirstSlot, 5, _:YSI_g_sTimerList);
-	mset(YSI_g_sFirstSlot, 6, _:NO_ALLOC);
-	if (YSI_g_sTimerList != NO_ALLOC)
-	{
-		mset(YSI_g_sTimerList, 6, _:YSI_g_sFirstSlot);
-	}
-	YSI_g_sTimerList = YSI_g_sFirstSlot;
 	// Just so it isn't a real timer ID (or possibly isn't).
 	YSI_g_sFirstSlot = NO_ALLOC;
 	YSI_g_sLastSlot = NO_ALLOC;
@@ -508,8 +495,21 @@ stock _Timer_B(repeatCount)
 	{
 		mset(YSI_g_sFirstSlot, 3, 0);
 	}
+	// Set the ID we return to the user.
+	if (++YSI_g_sUserId == 0)
+	{
+		++YSI_g_sUserId;
+	}
+	mset(YSI_g_sFirstSlot, 4, YSI_g_sUserId);
+	mset(YSI_g_sFirstSlot, 5, _:YSI_g_sTimerList);
+	mset(YSI_g_sFirstSlot, 6, _:NO_ALLOC);
+	if (YSI_g_sTimerList != NO_ALLOC)
+	{
+		mset(YSI_g_sTimerList, 6, _:YSI_g_sFirstSlot);
+	}
+	YSI_g_sTimerList = YSI_g_sFirstSlot;
 	// Just so it isn't a real timer ID (or possibly isn't).
-	return _:YSI_g_sFirstSlot;
+	return _:YSI_g_sUserId;
 }
 
 // Free all timer resources.
