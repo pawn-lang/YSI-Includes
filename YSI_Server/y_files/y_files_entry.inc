@@ -102,7 +102,3 @@ forward bool:Files_CreateDirSync(const string:dir[]);
 	#include "y_files_tests"
 #endif
 
-#if defined YSI_PROFILINGS
-	#include "y_files_profilings"
-#endif
-
