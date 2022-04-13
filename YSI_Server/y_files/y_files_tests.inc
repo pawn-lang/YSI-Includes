@@ -143,28 +143,28 @@ TEST__ y_files_LargeCopy()
 	ASSERT(Files_CopySync("YSI\\tests\\y_files\\large.in", "YSI\\tests\\y_files\\large.out"));
 	ASSERT(!!fexist("YSI\\tests\\y_files\\large.in"));
 	ASSERT(!!fexist("YSI\\tests\\y_files\\large.out"));
-	while (!(f = fopen("YSI\\tests\\y_files\\large.in", io_read))) {}
-	//f = fopen("YSI\\tests\\y_files\\large.in", io_read);
-	//if (f)
-	//{
-	ASSERT_EQ(flength(f), 10000000);
-	fclose(f);
-	//}
-	//else
-	//{
-	//	ASSERT(false, "in check");
-	//}
-	while (!(f = fopen("YSI\\tests\\y_files\\large.out", io_read))) {}
-	//f = fopen("YSI\\tests\\y_files\\large.out", io_read);
-	//if (f)
-	//{
-	ASSERT_EQ(flength(f), 10000000);
-	fclose(f);
-	//}
-	//else
-	//{
-	//	ASSERT(false, "out check");
-	//}
+	//while (!(f = fopen("YSI\\tests\\y_files\\large.in", io_read))) {}
+	f = fopen("YSI\\tests\\y_files\\large.in", io_read);
+	if (f)
+	{
+		ASSERT_EQ(flength(f), 10000000);
+		fclose(f);
+	}
+	else
+	{
+		ASSERT(false, "in check");
+	}
+	//while (!(f = fopen("YSI\\tests\\y_files\\large.out", io_read))) {}
+	f = fopen("YSI\\tests\\y_files\\large.out", io_read);
+	if (f)
+	{
+		ASSERT_EQ(flength(f), 10000000);
+		fclose(f);
+	}
+	else
+	{
+		ASSERT(false, "out check");
+	}
 }
 
 TEST__ y_files_SmallMove()
