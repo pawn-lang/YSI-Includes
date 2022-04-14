@@ -280,11 +280,18 @@ static stock y_va2_format(dest[], size, const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	format(dest, size, fmat, ___(3));
 }
+mx
 
 TEST__ y_va2_format()
 {
 	new
 		str[64];
+	// Use `H` and `h` in open.mp for upper- and lower-case HEX.
+	y_va2_format(str, sizeof (str), "Hello %d %04H %s", 99, 0x1F, "woop");
+	ASSERT_SAME(str, "Hello 99 001F woop");
+	y_va2_format(str, sizeof (str), "Hello %d %04h %s", 99, 0x1F, "woop");
+	ASSERT_SAME(str, "Hello 99 001f woop");
+	// Keep `x` as upper-case for backwards compatibility.
 	y_va2_format(str, sizeof (str), "Hello %d %04x %s", 99, 0x1F, "woop");
 	ASSERT_SAME(str, "Hello 99 001F woop");
 }
