@@ -135,6 +135,13 @@ TEST__ y_va_CallLocalFunction()
 	ASSERT_EQ(YSI_g_sVariable, 45);
 }
 
+forward y_va_SetTimerExPublic(a, b, c);
+
+public y_va_SetTimerExPublic(a, b, c)
+{
+	#pragma unused a, b, c
+}
+
 static stock y_va_SetTimerEx(va_args<>)
 {
 	return va_SetTimerEx("y_va_SetTimerExPublic", 1000, false, "iii", va_start<0>);
