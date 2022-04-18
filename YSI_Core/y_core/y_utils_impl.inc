@@ -3475,6 +3475,7 @@ stock bool:TryPPM(ppm)
  * <param name="end">The index to end the current line at (excluding hyphen).</param>
  * <param name="next">The index to start the next line from (skips trailing spaces).</param>
  * <param name="hyphen">Should a hyphen be included?</param>
+ * <param name="useHyphen">May a hyphen be included?</param>
  * <returns>
  *  Does the function need to be called again to show another line?
  * </returns>
@@ -3484,7 +3485,7 @@ stock bool:TryPPM(ppm)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:hyphen)
+stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, bool:useHyphen = true)
 {
 	// Returns `true` if there is more text to come.
 	new
@@ -3574,7 +3575,7 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 	// hyphen or move it down to the next line.
 	if (text[i] > ' ')
 	{
-		if (wordLen < 4)
+		if (!useHyphen || wordLen < 4)
 		{
 			// Not enough space for three characters plus a hyphen on the
 			// current line.  Move it down to the next line.
