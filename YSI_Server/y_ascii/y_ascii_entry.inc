@@ -109,34 +109,28 @@ stock ASCII_PrintLine(const text[], len, bool:hypen, ASCII_BORDER_STYLE:border, 
 	{
 		switch (alignment)
 		{
-		case ASCII_ALIGNMENT_STYLE_LEFT:
-			YSI_PrintF(" | %38s | ", text);
-		case ASCII_ALIGNMENT_STYLE_CENTRE:
-			padding = (38 - len) / 2 + padding,
-			YSI_PrintF(" | %*s%*s | ", padding, spacer, 38 - padding, text);
+		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (38 - len) / 2;
+		default: {}
 		}
+		YSI_PrintF(" | %*s%*s | ", padding, spacer, 38 - padding, text);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
 		switch (alignment)
 		{
-		case ASCII_ALIGNMENT_STYLE_LEFT:
-			YSI_PrintF("         | %52s |", text);
-		case ASCII_ALIGNMENT_STYLE_CENTRE:
-			padding = (52 - len) / 2 + padding,
-			YSI_PrintF("         | %*s%*s |", padding, spacer, 52 - padding, text);
+		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (52 - len) / 2;
+		default: {}
 		}
+		YSI_PrintF("         | %*s%*s |", padding, spacer, 52 - padding, text);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
 		switch (alignment)
 		{
-		case ASCII_ALIGNMENT_STYLE_LEFT:
-			YSI_PrintF("    |||||||  %53s  |||||||", text);
-		case ASCII_ALIGNMENT_STYLE_CENTRE:
-			padding = (53 - len) / 2 + padding,
-			YSI_PrintF("    |||||||  %*s%*s  |||||||", padding, spacer, 53 - padding, text);
+		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (53 - len) / 2;
+		default: {}
 		}
+		YSI_PrintF("    |||||||  %*s%*s  |||||||", padding, spacer, 53 - padding, text);
 	}
 	}
 	// Reset the string.
