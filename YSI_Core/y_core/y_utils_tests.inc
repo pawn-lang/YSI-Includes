@@ -515,3 +515,32 @@ TEST__ IterativeColouredSkipWords2()
 	ASSERT_EQ(colour, 5);
 }
 
+TEST__ IterativeColouredSkipWords3()
+{
+	new end, bool:hyphen, colour = 8;
+	end = IterativeColouredSkipWords("abcdefg   {000000}longword", 10, 10, hyphen, colour);
+	ASSERT_EQ(end, 10);
+	ASSERT_EQ(hyphen, false);
+	ASSERT_EQ(colour, 0);
+	colour = 9;
+	end = IterativeColouredSkipWords("abcdefg   long{000000}word", 10, 10, hyphen, colour);
+	ASSERT_EQ(end, 14);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 9);
+	colour = 7;
+	end = IterativeColouredSkipWords("abcdefg   longg{000000}word", 10, 10, hyphen, colour);
+	ASSERT_EQ(end, 15);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 7);
+	colour = 6;
+	end = IterativeColouredSkipWords("abcdefg   longg{000000}wo", 10, 10, hyphen, colour);
+	ASSERT_EQ(end, 14);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 6);
+	colour = 5;
+	end = IterativeColouredSkipWords("abcdefg   longgg{000000}w", 10, 10, hyphen, colour);
+	ASSERT_EQ(end, 14);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 5);
+}
+
