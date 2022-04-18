@@ -544,3 +544,23 @@ TEST__ IterativeColouredSkipWords3()
 	ASSERT_EQ(colour, 5);
 }
 
+TEST__ IterativeColouredSkipWS1()
+{
+	new end, colour = 8;
+	end = IterativeColouredSkipWhitespace("    hi", 0, colour);
+	ASSERT_EQ(end, 4);
+	ASSERT_EQ(colour, 8);
+	colour = 9;
+	end = IterativeColouredSkipWhitespace("  \n  hi", 0, colour);
+	ASSERT_EQ(end, 2);
+	ASSERT_EQ(colour, 9);
+	colour = 7;
+	end = IterativeColouredSkipWhitespace("    hi", 0, colour);
+	ASSERT_EQ(end, 4);
+	ASSERT_EQ(colour, 7);
+	colour = 5;
+	end = IterativeColouredSkipWhitespace(" {112233}   hi", 0, colour);
+	ASSERT_EQ(end, 12);
+	ASSERT_EQ(colour, 0x112233);
+}
+
