@@ -436,10 +436,10 @@ TEST__ IterativeTextSplitter7()
 	ASSERT_EQ(next, 105);
 	ASSERT_EQ(hyphen, false);
 	IterativeTextSplitter(str, 38, 105, end, next, hyphen);
-	ASSERT_EQ(end, 134);
-	ASSERT_EQ(next, 135);
-	ASSERT_EQ(hyphen, false);
-	IterativeTextSplitter(str, 38, 135, end, next, hyphen);
+	ASSERT_EQ(end, 141);
+	ASSERT_EQ(next, 141);
+	ASSERT_EQ(hyphen, true);
+	IterativeTextSplitter(str, 38, 141, end, next, hyphen);
 	ASSERT_EQ(end, 165);
 	ASSERT_EQ(next, 166);
 	ASSERT_EQ(hyphen, false);
@@ -459,5 +459,30 @@ TEST__ IterativeTextSplitter7()
 	ASSERT_EQ(end, 208);
 	ASSERT_EQ(next, 208);
 	ASSERT_EQ(hyphen, false);
+}
+
+TEST__ IterativeColouredSkipWords1()
+{
+	new end, bool:hyphen, colour = 8;
+	end = IterativeColouredSkipWords("alongwordwithnosymbols", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 9);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 8);
+	end = IterativeColouredSkipWords("alongwordw", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 10);
+	ASSERT_EQ(hyphen, false);
+	ASSERT_EQ(colour, 8);
+	end = IterativeColouredSkipWords("alongwordwi", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 8);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 8);
+	end = IterativeColouredSkipWords("alongwordwit", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 9);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 8);
+	end = IterativeColouredSkipWords("alongwordwith", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 9);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 8);
 }
 

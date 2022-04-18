@@ -3465,6 +3465,199 @@ stock bool:TryPPM(ppm)
 	return random(1000000) < ppm;
 }
 
+stock IterativeColouredSkipWhitespace(const text[], start, &colour)
+{
+	new
+		ch = 0,
+		i = 0,
+		cc = 0;
+	while ((ch = text[start]))
+	{
+		if (ch == '\r' || ch == '\n')
+		{
+			// Instantly end.  We don't skip this whitespace.
+			return start;
+		}
+		else if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
+		{
+			// Interesting whitespace.  Will exclude `'\r'` and `'\n'` thanks to
+			// the `else`.
+			++start;
+		}
+		else if (ch == '{')
+		{
+			for (i = 1, cc = 0; i != 7; ++i)
+			{
+				ch = text[start + i];
+				if (IS_IN_RANGE(ch, '0', '9' + 1))
+				{
+					cc = (cc << 4) | (ch - '0');
+				}
+				else if (IS_IN_RANGE(ch, 'a', 'f' + 1))
+				{
+					cc = (cc << 4) | (ch - ('a' - 10));
+				}
+				else if (IS_IN_RANGE(ch, 'A', 'F' + 1))
+				{
+					cc = (cc << 4) | (ch - ('A' - 10));
+				}
+				else
+				{
+					// Bad HEX.
+					return start;
+				}
+			}
+			if (text[start + 7] == '}')
+			{
+				colour = cc,
+				start += 8;
+			}
+			else
+			{
+				// Not valid whitespace.
+				return start;
+			}
+		}
+		else
+		{
+			// Not valid whitespace.
+			return start;
+		}
+	}
+	return start;
+}
+
+stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colour)
+{
+	#pragma unused width
+	new
+		// How many real letters appear within the width.
+		preLen = 0,
+		// How many real letters appear in the whole word?
+		truLen = 0,
+		bool:word = true,
+		g1 = 0,
+		g2 = 0,
+		ch = 0,
+		i = start,
+		j = 0,
+		cc = 0;
+	while ((ch = text[i]) > ' ')
+	{
+		if (IS_IN_RANGE(ch, 'a', 'z' + 1) || IS_IN_RANGE(ch, 'A', 'Z' + 1))
+		{
+			// Real letter.
+			if (i < width)
+			{
+				g1 = g2,
+				g2 = i,
+				++preLen;
+			}
+			++truLen;
+		}
+		else switch (ch)
+		{
+		case '{':
+		{
+			for (j = 1, cc = 0; ; ++j)
+			{
+				ch = text[i + j];
+				if (ch <= ' ')
+				{
+					word = false,
+					i += j;
+					break;
+				}
+				else if (j == 7)
+				{
+					if (ch == '}')
+					{
+						colour = cc;
+					}
+					else
+					{
+						word = false;
+					}
+					i += 8;
+					break;
+				}
+				else if (IS_IN_RANGE(ch, '0', '9' + 1))
+				{
+					cc = (cc << 4) | (ch - '0');
+				}
+				else if (IS_IN_RANGE(ch, 'a', 'f' + 1))
+				{
+					cc = (cc << 4) | (ch - ('a' - 10));
+				}
+				else if (IS_IN_RANGE(ch, 'A', 'F' + 1))
+				{
+					cc = (cc << 4) | (ch - ('A' - 10));
+				}
+				else
+				{
+					// Bad HEX.
+					word = false,
+					// NOT an OBOE, rechecks one character.
+					i += j;
+					break;
+				}
+			}
+			// Don't re-increment.
+			continue;
+		}
+		case '.', ',', '?', '!', '\'':
+		{
+			// Allow these in normal text.  Thus do nothing.
+		}
+		default:
+		{
+			// Not a real word.  Can't be hyphenated.
+			word = false;
+		}
+		}
+		++i;
+	}
+	// End of the word.
+	if (i <= width)
+	{
+		// Enough space.
+		return
+			hyphen = false,
+			i;
+	}
+	else if (word && truLen > 6 && preLen > 3)
+	{
+		// Can and should be hyphenated.
+		switch (truLen - preLen)
+		{
+		case 0:
+		{
+			// Can only happen when the split is in a trailing colour.
+			return
+				hyphen = false,
+				g2 + 1;
+		}
+		case 1:
+		{
+			// Only 1 character after the split.
+			return
+				hyphen = true,
+				g1;
+		}
+		default:
+		{
+			return
+				hyphen = true,
+				g2;
+		}
+		}
+	}
+	// Move the whole thing to the next line.
+	return
+		hyphen = false,
+		start;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  bool:IterativeTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
@@ -3474,7 +3667,7 @@ stock bool:TryPPM(ppm)
  * <param name="width">The maximum size of the output (including hyphen).</param>
  * <param name="end">The index to end the current line at (excluding hyphen).</param>
  * <param name="next">The index to start the next line from (skips trailing spaces).</param>
- * <param name="hyphen">Should a hyphen be included?</param>
+ * <param name="hyphen">Should a hyphen be inserted in to the output?</param>
  * <param name="useHyphen">May a hyphen be included?</param>
  * <returns>
  *  Does the function need to be called again to show another line?
@@ -3634,6 +3827,228 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 		next = i,
 		ch != '\0';
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  bool:IterativeColouredTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
+ * </summary>
+ * <param name="text">The input string to split up.</param>
+ * <param name="start">Where in the string to start the next line.</param>
+ * <param name="width">The maximum size of the output (including hyphen).</param>
+ * <param name="end">The index to end the current line at (excluding hyphen).</param>
+ * <param name="next">The index to start the next line from (skips trailing spaces).</param>
+ * <param name="hyphen">Should a hyphen be inserted in to the output?</param>
+ * <param name="colour">The colour for the start of the next line.</param>
+ * <param name="useHyphen">May a hyphen be included?</param>
+ * <returns>
+ *  Does the function need to be called again to show another line?
+ * </returns>
+ * <remarks>
+ *  Split some text in to multiple lines.  With sensible breaks at spaces or
+ *  mid-word if they're long enough.  Unlike <c>IterativeTextSplitter</c> it
+ * will never split in the middle of <c>{RRGGBB}</c> colour sequences, and can
+ * ignore them for many checks.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+//stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, &colour, bool:useHyphen = true)
+//{
+//	// Returns `true` if there is more text to come.
+//	new
+//		lastSpace = start,
+//		wordLen = 0,
+//		i = start,
+//		ch = '\0',
+//		bool:inColour = false,
+//		curColour = 0;
+//	for (new j = 0; j != width; ++i, ++j)
+//	{
+//		switch ((ch = text[i]))
+//		{
+//		case '\0':
+//		{
+//			// End of the string.  Quite easy.
+//			return
+//				end = wordLen ? i : lastSpace,
+//				// Just initialise this, the value shouldn't be used.
+//				next = i,
+//				// No hyphen, obviously.
+//				hyphen = false,
+//				// No more calls after this.
+//				false;
+//		}
+//		case '\r':
+//		{
+//			// New line.  Quite easy.
+//			return
+//				end = wordLen ? i : lastSpace,
+//				next = text[i + 1] == '\n' ? i + 2 : i + 1,
+//				hyphen = false,
+//				true;
+//		}
+//		case '\n':
+//		{
+//			// New line.  Very easy.
+//			return
+//				end = wordLen ? i : lastSpace,
+//				next = i + 1,
+//				hyphen = false,
+//				true;
+//		}
+//		case 1 .. 9, 11 .. 12, 14 .. 32:
+//		{
+//			// Spacing.
+//			if (wordLen)
+//			{
+//				// Was in a word, now aren't.
+//				lastSpace = i,
+//				wordLen = 0;
+//			}
+//			// Else do nothing, we're just skipping an extended space.
+//		}
+//		case '{':
+//		{
+//			// Skip the colour.
+//			inColour = 1,
+//			++wordLen,
+//			curColour = 0;
+//		}
+//		case '}':
+//		{
+//			if (inColour == 7)
+//			{
+//				wordLen -= 7,
+//				colour = curColour;
+//			}
+//			else
+//			{
+//				++wordLen;
+//			}
+//			inColour = 0;
+//		}
+//		case '0' .. '9':
+//		{
+//			++wordLen;
+//			if (inColour)
+//			{
+//				++inColour,
+//				curColour = (curColour << 4) | (ch - '0');
+//			}
+//		}
+//		case 'a' .. 'f':
+//		{
+//			++wordLen;
+//			if (inColour)
+//			{
+//				++inColour,
+//				curColour = (curColour << 4) | (ch - ('a' - 10));
+//			}
+//		}
+//		case 'A' .. 'F':
+//		{
+//			++wordLen;
+//			if (inColour)
+//			{
+//				++inColour,
+//				curColour = (curColour << 4) | (ch - ('A' - 10));
+//			}
+//		}
+//		default:
+//		{
+//			++wordLen,
+//			inColour = 0;
+//		}
+//		}
+//	}
+//	// If we reach the end of the loop we've found the full width of text.
+//	if (wordLen == 0)
+//	{
+//		// In space.  Good.  Skip the rest of the space.
+//		end = lastSpace,
+//		hyphen = false;
+//		while ('\0' < (ch = text[i]) <= ' ')
+//		{
+//			if (ch == '\r')
+//			{
+//				return
+//					next = text[i + 1] == '\n' ? i + 2 : i + 1,
+//					true;
+//			}
+//			else if (ch == '\n')
+//			{
+//				return
+//					next = i + 1,
+//					true;
+//			}
+//			++i;
+//		}
+//		return
+//			next = i,
+//			ch != '\0';
+//	}
+//	// In the middle of a string.  Work out if we should split the text with a
+//	// hyphen or move it down to the next line.
+//	if (text[i] > ' ')
+//	{
+//		if (!useHyphen || wordLen < 4)
+//		{
+//			// Not enough space for three characters plus a hyphen on the
+//			// current line.  Move it down to the next line.
+//			return
+//				end = lastSpace,
+//				next = i - wordLen,
+//				hyphen = false,
+//				true;
+//		}
+//		if (text[i + 1] > ' ')
+//		{
+//			// There will be at least three characters on the next line (the new
+//			// two plus the one replaced by the hyphen).
+//			return
+//				end = i - 1,
+//				next = i - 1,
+//				hyphen = true,
+//				true;
+//		}
+//		if (wordLen >= 6)
+//		{
+//			// There are at least six characters total.
+//			return
+//				end = i - 2,
+//				next = i - 2,
+//				hyphen = true,
+//				true;
+//		}
+//		// Five or six characters long.  Move to the next line.
+//		return
+//			end = lastSpace,
+//			next = i - wordLen,
+//			hyphen = false,
+//			true;
+//	}
+//	// The word fits precisely.
+//	end = i,
+//	hyphen = false;
+//	while ('\0' < (ch = text[i]) <= ' ')
+//	{
+//		if (ch == '\r')
+//		{
+//			return
+//				next = text[i + 1] == '\n' ? i + 2 : i + 1,
+//				true;
+//		}
+//		else if (ch == '\n')
+//		{
+//			return
+//				next = i + 1,
+//				true;
+//		}
+//		++i;
+//	}
+//	return
+//		next = i,
+//		ch != '\0';
+//}
 
 forward y_utils_end();
 
