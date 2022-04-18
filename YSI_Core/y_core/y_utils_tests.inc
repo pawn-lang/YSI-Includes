@@ -594,13 +594,13 @@ TEST__ IterativeColouredText2()
 	new str[] = "Hello, {FFAA11}I'm just splitting a string normally.";
 	colour = 33;
 	IterativeColouredTextSplitter(str, 20, 0, end, next, hyphen, colour);
-	ASSERT_EQ(end, 19);
+	ASSERT_EQ(end, 18);
 	ASSERT_EQ(next, 19);
 	ASSERT_EQ(colour, 0xFFAA11);
 	ASSERT(!hyphen);
 	colour = 32;
 	IterativeColouredTextSplitter(str, 20, 19, end, next, hyphen, colour);
-	ASSERT_EQ(end, 36);
+	ASSERT_EQ(end, 35);
 	ASSERT_EQ(next, 36);
 	ASSERT_EQ(colour, 32);
 	ASSERT(!hyphen);

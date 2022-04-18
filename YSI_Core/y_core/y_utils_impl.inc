@@ -3856,13 +3856,13 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
 	new
 		ch;
 	hyphen = false,
-	width += start;
+	width += start,
+	end = start;
 	while ((ch = text[start]))
 	{
 		if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
 		{
 			// Skip whitespace.
-			end = start,
 			start = IterativeColouredSkipWhitespace(text, start, colour);
 			switch (text[start])
 			{
@@ -3894,15 +3894,21 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
 		}
 		else
 		{
-			end = IterativeColouredSkipWords(text, width, start, hyphen, colour, useHyphen);
-			if (end == start || hyphen)
+			ch = IterativeColouredSkipWords(text, width, start, hyphen, colour, useHyphen);
+			if (ch == start)
 			{
 				// Either showed nothing of this word, or parts.
 				return
-					next = end,
+					next = ch,
 					true;
 			}
-			start = end;
+			else if (hyphen)
+			{
+				return
+					next = end = ch,
+					true;
+			}
+			start = end = ch;
 		}
 	}
 	return
