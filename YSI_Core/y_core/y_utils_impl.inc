@@ -3538,6 +3538,7 @@ stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colo
 		bool:word = true,
 		g1 = 0,
 		g2 = 0,
+		g3 = 0,
 		ch = 0,
 		i = start,
 		j = 0,
@@ -3550,7 +3551,8 @@ stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colo
 			if (i < width)
 			{
 				g1 = g2,
-				g2 = i,
+				g2 = g3,
+				g3 = i + 1,
 				++preLen;
 			}
 			++truLen;
@@ -3630,13 +3632,6 @@ stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colo
 		// Can and should be hyphenated.
 		switch (truLen - preLen)
 		{
-		case 0:
-		{
-			// Can only happen when the split is in a trailing colour.
-			return
-				hyphen = false,
-				g2 + 1;
-		}
 		case 1:
 		{
 			// Only 1 character after the split.

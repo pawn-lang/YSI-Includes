@@ -486,3 +486,12 @@ TEST__ IterativeColouredSkipWords1()
 	ASSERT_EQ(colour, 8);
 }
 
+TEST__ IterativeColouredSkipWords2()
+{
+	new end, bool:hyphen, colour = 8;
+	end = IterativeColouredSkipWords("long{000000}word", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 4);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 0);
+}
+
