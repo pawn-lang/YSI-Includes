@@ -3529,7 +3529,8 @@ stock IterativeColouredSkipWhitespace(const text[], start, &colour)
 
 stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colour)
 {
-	#pragma unused width
+	// Offset.
+	width += start;
 	new
 		// How many real letters appear within the width.
 		preLen = 0,
@@ -3570,15 +3571,16 @@ stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colo
 				}
 				else if (j == 7)
 				{
-					if (ch == '}')
-					{
-						colour = cc;
-					}
-					else
+					i += 8;
+					if (ch != '}')
 					{
 						word = false;
 					}
-					i += 8;
+					else if (i <= width)
+					{
+						// Only propagate the colour if it is complete in the line.
+						colour = cc;
+					}
 					break;
 				}
 				else if (IS_IN_RANGE(ch, '0', '9' + 1))
