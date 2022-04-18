@@ -3595,7 +3595,7 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 				hyphen = true,
 				true;
 		}
-		if (wordLen >= 5)
+		if (wordLen >= 6)
 		{
 			// There are at least six characters total.
 			return
@@ -3604,7 +3604,7 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 				hyphen = true,
 				true;
 		}
-		// Exactly five characters long.  Move to the next line.
+		// Five or six characters long.  Move to the next line.
 		return
 			end = lastSpace,
 			next = i - wordLen,
