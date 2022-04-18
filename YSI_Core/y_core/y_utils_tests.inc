@@ -493,5 +493,17 @@ TEST__ IterativeColouredSkipWords2()
 	ASSERT_EQ(end, 4);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 0);
+	end = IterativeColouredSkipWords("longg{000000}word", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 5);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 0);
+	end = IterativeColouredSkipWords("longg{000000}wo", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 4);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 0);
+	end = IterativeColouredSkipWords("longgg{000000}w", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 4);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 0);
 }
 
