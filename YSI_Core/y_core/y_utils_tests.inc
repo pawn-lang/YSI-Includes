@@ -260,3 +260,107 @@ TEST__ RandomN()
 	}
 }
 
+TEST__ IterativeTextSplitter1()
+{
+	new end, next, bool:hyphen;
+	IterativeTextSplitter("This is the first line with short words", 20, 0, end, next, hyphen);
+	ASSERT_EQ(end, 17);
+	ASSERT_EQ(next, 18);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the first line with short words", 21, 0, end, next, hyphen);
+	ASSERT_EQ(end, 17);
+	ASSERT_EQ(next, 18);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the first line with short words", 22, 0, end, next, hyphen);
+	ASSERT_EQ(end, 22);
+	ASSERT_EQ(next, 23);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the first  line with short words", 22, 0, end, next, hyphen);
+	ASSERT_EQ(end, 17);
+	ASSERT_EQ(next, 19);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the first  line with short words", 22, 19, end, next, hyphen);
+	ASSERT_EQ(end, 40);
+	ASSERT_EQ(next, 40);
+	ASSERT_EQ(hyphen, false);
+}
+
+TEST__ IterativeTextSplitter2()
+{
+	new end, next, bool:hyphen;
+	IterativeTextSplitter("This is the secondlinewithlongwords", 20, 0, end, next, hyphen);
+	ASSERT_EQ(end, 19);
+	ASSERT_EQ(next, 19);
+	ASSERT_EQ(hyphen, true);
+	IterativeTextSplitter("This is the secondlinewithlongwords", 34, 0, end, next, hyphen);
+	ASSERT_EQ(end, 32);
+	ASSERT_EQ(next, 32);
+	ASSERT_EQ(hyphen, true);
+	IterativeTextSplitter("This is the secondlinewithlongwords", 15, 0, end, next, hyphen);
+	ASSERT_EQ(end, 11);
+	ASSERT_EQ(next, 12);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the secondlinewithlongwords", 15, 12, end, next, hyphen);
+	ASSERT_EQ(end, 26);
+	ASSERT_EQ(next, 26);
+	ASSERT_EQ(hyphen, true);
+}
+
+TEST__ IterativeTextSplitter3()
+{
+	new end, next, bool:hyphen;
+	IterativeTextSplitter("This is the thirdline", 15, 0, end, next, hyphen);
+	ASSERT_EQ(end, 11);
+	ASSERT_EQ(next, 12);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the thirdline", 15, 12, end, next, hyphen);
+	ASSERT_EQ(end, 21);
+	ASSERT_EQ(next, 21);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the fourthlineisnice", 15, 0, end, next, hyphen);
+	ASSERT_EQ(end, 11);
+	ASSERT_EQ(next, 12);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the fourthlineisnice", 15, 12, end, next, hyphen);
+	ASSERT_EQ(end, 25);
+	ASSERT_EQ(next, 25);
+	ASSERT_EQ(hyphen, true);
+}
+
+TEST__ IterativeTextSplitter4()
+{
+	new end, next, bool:hyphen;
+	IterativeTextSplitter("This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 0, end, next, hyphen);
+	ASSERT_EQ(end, 11);
+	ASSERT_EQ(next, 12);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 12, end, next, hyphen);
+	ASSERT_EQ(end, 17);
+	ASSERT_EQ(next, 19);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 19, end, next, hyphen);
+	ASSERT_EQ(end, 28);
+	ASSERT_EQ(next, 30);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 30, end, next, hyphen);
+	ASSERT_EQ(end, 30);
+	ASSERT_EQ(next, 31);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 31, end, next, hyphen);
+	ASSERT_EQ(end, 31);
+	ASSERT_EQ(next, 32);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 32, end, next, hyphen);
+	ASSERT_EQ(end, 32);
+	ASSERT_EQ(next, 33);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 33, end, next, hyphen);
+	ASSERT_EQ(end, 44);
+	ASSERT_EQ(next, 56);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter("This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 56, end, next, hyphen);
+	ASSERT_EQ(end, 66);
+	ASSERT_EQ(next, 66);
+	ASSERT_EQ(hyphen, false);
+}
+

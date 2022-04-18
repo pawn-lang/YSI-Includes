@@ -3465,6 +3465,175 @@ stock bool:TryPPM(ppm)
 	return random(1000000) < ppm;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  bool:IterativeTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
+ * </summary>
+ * <param name="text">The input string to split up.</param>
+ * <param name="start">Where in the string to start the next line.</param>
+ * <param name="width">The maximum size of the output (including hyphen).</param>
+ * <param name="end">The index to end the current line at (excluding hyphen).</param>
+ * <param name="next">The index to start the next line from (skips trailing spaces).</param>
+ * <param name="hyphen">Should a hyphen be included?</param>
+ * <returns>
+ *  Does the function need to be called again to show another line?
+ * </returns>
+ * <remarks>
+ *  Split some text in to multiple lines.  With sensible breaks at spaces or
+ *  mid-word if they're long enough.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:hyphen)
+{
+	// Returns `true` if there is more text to come.
+	new
+		lastSpace = start,
+		wordLen = 0,
+		i = start,
+		ch;
+	for (new j = 0; j != width; ++i, ++j)
+	{
+		switch ((ch = text[i]))
+		{
+		case '\0':
+		{
+			// End of the string.  Quite easy.
+			return
+				end = wordLen ? i : lastSpace,
+				// Just initialise this, the value shouldn't be used.
+				next = i,
+				// No hyphen, obviously.
+				hyphen = false,
+				// No more calls after this.
+				false;
+		}
+		case '\r':
+		{
+			// New line.  Quite easy.
+			return
+				end = wordLen ? i : lastSpace,
+				next = text[i + 1] == '\n' ? i + 2 : i + 1,
+				hyphen = false,
+				true;
+		}
+		case '\n':
+		{
+			// New line.  Very easy.
+			return
+				end = wordLen ? i : lastSpace,
+				next = i + 1,
+				hyphen = false,
+				true;
+		}
+		case 1 .. 9, 11 .. 12, 14 .. 32:
+		{
+			// Spacing.
+			if (wordLen)
+			{
+				// Was in a word, now aren't.
+				lastSpace = i,
+				wordLen = 0;
+			}
+			// Else do nothing, we're just skipping an extended space.
+		}
+		default:
+		{
+			// Text.
+			++wordLen;
+		}
+		}
+	}
+	// If we reach the end of the loop we've found the full width of text.
+	if (wordLen == 0)
+	{
+		// In space.  Good.  Skip the rest of the space.
+		end = lastSpace,
+		hyphen = false;
+		while ('\0' < (ch = text[i]) <= ' ')
+		{
+			if (ch == '\r')
+			{
+				return
+					next = text[i + 1] == '\n' ? i + 2 : i + 1,
+					true;
+			}
+			else if (ch == '\n')
+			{
+				return
+					next = i + 1,
+					true;
+			}
+			++i;
+		}
+		return
+			next = i,
+			ch != '\0';
+	}
+	// In the middle of a string.  Work out if we should split the text with a
+	// hyphen or move it down to the next line.
+	if (text[i] > ' ')
+	{
+		if (wordLen < 4)
+		{
+			// Not enough space for three characters plus a hyphen on the
+			// current line.  Move it down to the next line.
+			return
+				end = lastSpace,
+				next = i - wordLen,
+				hyphen = false,
+				true;
+		}
+		if (text[i + 1] > ' ')
+		{
+			// There will be at least three characters on the next line (the new
+			// two plus the one replaced by the hyphen).
+			return
+				end = i - 1,
+				next = i - 1,
+				hyphen = true,
+				true;
+		}
+		if (wordLen >= 5)
+		{
+			// There are at least six characters total.
+			return
+				end = i - 2,
+				next = i - 2,
+				hyphen = true,
+				true;
+		}
+		// Exactly five characters long.  Move to the next line.
+		return
+			end = lastSpace,
+			next = i - wordLen,
+			hyphen = false,
+			true;
+	}
+	// The word fits precisely.
+	end = i,
+	hyphen = false;
+	while ('\0' < (ch = text[i]) <= ' ')
+	{
+		if (ch == '\r')
+		{
+			return
+				next = text[i + 1] == '\n' ? i + 2 : i + 1,
+				true;
+		}
+		else if (ch == '\n')
+		{
+			return
+				next = i + 1,
+				true;
+		}
+		++i;
+	}
+	return
+		next = i,
+		ch != '\0';
+}
+
 forward y_utils_end();
 
 /*-------------------------------------------------------------------------*//**
