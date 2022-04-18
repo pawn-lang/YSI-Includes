@@ -262,6 +262,12 @@ stock const YSIM_VERMAX[] = "X";
 // The ever loved `y_version`.
 #include "y_version"
 
+#if defined YSI_TESTS
+	#define _Y_CORE_STATIC
+#else
+	#define _Y_CORE_STATIC static
+#endif
+
 // More common utilities and user-facing functions.
 #include "y_debug_impl"
 #include "y_cell_impl"

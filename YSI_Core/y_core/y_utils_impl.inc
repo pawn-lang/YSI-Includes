@@ -3465,7 +3465,7 @@ stock bool:TryPPM(ppm)
 	return random(1000000) < ppm;
 }
 
-stock IterativeColouredSkipWhitespace(const text[], start, &colour)
+_Y_CORE_STATIC stock IterativeColouredSkipWhitespace(const text[], start, &colour)
 {
 	new
 		ch = 0,
@@ -3527,7 +3527,7 @@ stock IterativeColouredSkipWhitespace(const text[], start, &colour)
 	return start;
 }
 
-stock IterativeColouredSkipWords(const text[], lastIndex, start, &bool:hyphen, &colour, bool:useHyphen = true)
+_Y_CORE_STATIC stock IterativeColouredSkipWords(const text[], lastIndex, start, &bool:hyphen, &colour, bool:useHyphen = true)
 {
 	// Offset.
 	new
