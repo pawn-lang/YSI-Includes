@@ -356,6 +356,7 @@ stock _YSI_ConstMod(const &var, const val)
 	#emit LREF.S.pri var
 	#emit LOAD.S.alt val
 	#emit SREF.S.alt var
+	#emit RETN
 	return 0;
 }
 
