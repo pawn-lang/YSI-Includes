@@ -3855,6 +3855,7 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
 {
 	new
 		ch;
+	hyphen = false,
 	width += start;
 	while ((ch = text[start]))
 	{

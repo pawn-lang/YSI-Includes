@@ -573,15 +573,72 @@ TEST__ IterativeColouredText1()
 	ASSERT_EQ(end, 19);
 	ASSERT_EQ(next, 19);
 	ASSERT_EQ(colour, 33);
+	ASSERT(hyphen);
 	colour = 32;
 	IterativeColouredTextSplitter(str, 20, 19, end, next, hyphen, colour);
 	ASSERT_EQ(end, 38);
 	ASSERT_EQ(next, 38);
 	ASSERT_EQ(colour, 32);
+	ASSERT(hyphen);
 	colour = 31;
 	IterativeColouredTextSplitter(str, 20, 38, end, next, hyphen, colour);
 	ASSERT_EQ(end, 44);
 	ASSERT_EQ(next, 44);
 	ASSERT_EQ(colour, 31);
+	ASSERT(!hyphen);
+}
+
+TEST__ IterativeColouredText2()
+{
+	new end, next, bool:hyphen, colour;
+	new str[] = "Hello, {FFAA11}I'm just splitting a string normally.";
+	colour = 33;
+	IterativeColouredTextSplitter(str, 20, 0, end, next, hyphen, colour);
+	ASSERT_EQ(end, 19);
+	ASSERT_EQ(next, 19);
+	ASSERT_EQ(colour, 0xFFAA11);
+	ASSERT(!hyphen);
+	colour = 32;
+	IterativeColouredTextSplitter(str, 20, 19, end, next, hyphen, colour);
+	ASSERT_EQ(end, 36);
+	ASSERT_EQ(next, 36);
+	ASSERT_EQ(colour, 32);
+	ASSERT(!hyphen);
+	colour = 31;
+	IterativeColouredTextSplitter(str, 20, 36, end, next, hyphen, colour);
+	ASSERT_EQ(end, 52);
+	ASSERT_EQ(next, 52);
+	ASSERT_EQ(colour, 31);
+	ASSERT(!hyphen);
+}
+
+TEST__ IterativeColouredText3()
+{
+	new end, next, bool:hyphen, colour;
+	new str[] = "Hello, {FFAA11}I'm      just {123456}splitting a string normally.";
+	colour = 33;
+	IterativeColouredTextSplitter(str, 20, 0, end, next, hyphen, colour);
+	ASSERT_EQ(end, 18);
+	ASSERT_EQ(next, 24);
+	ASSERT_EQ(colour, 0xFFAA11);
+	ASSERT(!hyphen);
+	colour = 32;
+	IterativeColouredTextSplitter(str, 20, 24, end, next, hyphen, colour);
+	ASSERT_EQ(end, 43);
+	ASSERT_EQ(next, 43);
+	ASSERT_EQ(colour, 0x123456);
+	ASSERT(hyphen);
+	colour = 31;
+	IterativeColouredTextSplitter(str, 20, 43, end, next, hyphen, colour);
+	ASSERT_EQ(end, 61);
+	ASSERT_EQ(next, 61);
+	ASSERT_EQ(colour, 31);
+	ASSERT(hyphen);
+	colour = 30;
+	IterativeColouredTextSplitter(str, 20, 61, end, next, hyphen, colour);
+	ASSERT_EQ(end, 65);
+	ASSERT_EQ(next, 65);
+	ASSERT_EQ(colour, 30);
+	ASSERT(!hyphen);
 }
 
