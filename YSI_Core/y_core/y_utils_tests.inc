@@ -518,27 +518,27 @@ TEST__ IterativeColouredSkipWords2()
 TEST__ IterativeColouredSkipWords3()
 {
 	new end, bool:hyphen, colour = 8;
-	end = IterativeColouredSkipWords("abcdefg   {000000}longword", 10, 10, hyphen, colour);
+	end = IterativeColouredSkipWords("abcdefg   {000000}longword", 20, 10, hyphen, colour);
 	ASSERT_EQ(end, 10);
 	ASSERT_EQ(hyphen, false);
 	ASSERT_EQ(colour, 0);
 	colour = 9;
-	end = IterativeColouredSkipWords("abcdefg   long{000000}word", 10, 10, hyphen, colour);
+	end = IterativeColouredSkipWords("abcdefg   long{000000}word", 20, 10, hyphen, colour);
 	ASSERT_EQ(end, 14);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 9);
 	colour = 7;
-	end = IterativeColouredSkipWords("abcdefg   longg{000000}word", 10, 10, hyphen, colour);
+	end = IterativeColouredSkipWords("abcdefg   longg{000000}word", 20, 10, hyphen, colour);
 	ASSERT_EQ(end, 15);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 7);
 	colour = 6;
-	end = IterativeColouredSkipWords("abcdefg   longg{000000}wo", 10, 10, hyphen, colour);
+	end = IterativeColouredSkipWords("abcdefg   longg{000000}wo", 20, 10, hyphen, colour);
 	ASSERT_EQ(end, 14);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 6);
 	colour = 5;
-	end = IterativeColouredSkipWords("abcdefg   longgg{000000}w", 10, 10, hyphen, colour);
+	end = IterativeColouredSkipWords("abcdefg   longgg{000000}w", 20, 10, hyphen, colour);
 	ASSERT_EQ(end, 14);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 5);
@@ -562,5 +562,26 @@ TEST__ IterativeColouredSkipWS1()
 	end = IterativeColouredSkipWhitespace(" {112233}   hi", 0, colour);
 	ASSERT_EQ(end, 12);
 	ASSERT_EQ(colour, 0x112233);
+}
+
+TEST__ IterativeColouredText1()
+{
+	new end, next, bool:hyphen, colour;
+	new str[] = "Hello, I'm just splitting a string normally.";
+	colour = 33;
+	IterativeColouredTextSplitter(str, 20, 0, end, next, hyphen, colour);
+	ASSERT_EQ(end, 19);
+	ASSERT_EQ(next, 19);
+	ASSERT_EQ(colour, 33);
+	colour = 32;
+	IterativeColouredTextSplitter(str, 20, 19, end, next, hyphen, colour);
+	ASSERT_EQ(end, 38);
+	ASSERT_EQ(next, 38);
+	ASSERT_EQ(colour, 32);
+	colour = 31;
+	IterativeColouredTextSplitter(str, 20, 38, end, next, hyphen, colour);
+	ASSERT_EQ(end, 44);
+	ASSERT_EQ(next, 44);
+	ASSERT_EQ(colour, 31);
 }
 

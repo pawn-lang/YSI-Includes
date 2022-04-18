@@ -3527,10 +3527,9 @@ stock IterativeColouredSkipWhitespace(const text[], start, &colour)
 	return start;
 }
 
-stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colour, bool:useHyphen = true)
+stock IterativeColouredSkipWords(const text[], lastIndex, start, &bool:hyphen, &colour, bool:useHyphen = true)
 {
 	// Offset.
-	width += start;
 	new
 		// How many real letters appear within the width.
 		preLen = 0,
@@ -3547,7 +3546,7 @@ stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colo
 		if (IS_IN_RANGE(ch, 'a', 'z' + 1) || IS_IN_RANGE(ch, 'A', 'Z' + 1))
 		{
 			// Real letter.
-			if (i < width)
+			if (i < lastIndex)
 			{
 				g1 = g2,
 				g2 = i,
@@ -3575,7 +3574,7 @@ stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colo
 					{
 						useHyphen = false;
 					}
-					else if (i <= width)
+					else if (i <= lastIndex)
 					{
 						// Only propagate the colour if it is complete in the line.
 						colour = cc;
@@ -3619,7 +3618,7 @@ stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colo
 		++i;
 	}
 	// End of the word.
-	if (i <= width)
+	if (i <= lastIndex)
 	{
 		// Enough space.
 		return
@@ -3649,7 +3648,7 @@ stock IterativeColouredSkipWords(const text[], width, start, &bool:hyphen, &colo
 		{
 			return
 				hyphen = true,
-				g2 + 1 == width ? g2 : g2 + 1;
+				g2 + 1 == lastIndex ? g2 : g2 + 1;
 		}
 		}
 	}
@@ -3854,204 +3853,60 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 
 stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, &colour, bool:useHyphen = true)
 {
-	
-	
-	
-	// Returns `true` if there is more text to come.
 	new
-		lastSpace = start,
-		wordLen = 0,
-		i = start,
-		ch = '\0',
-		bool:inColour = false,
-		curColour = 0;
-	for (new j = 0; j != width; ++i, ++j)
+		ch;
+	width += start;
+	while ((ch = text[start]))
 	{
-		switch ((ch = text[i]))
+		if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
 		{
-		case '\0':
-		{
-			// End of the string.  Quite easy.
-			return
-				end = wordLen ? i : lastSpace,
-				// Just initialise this, the value shouldn't be used.
-				next = i,
-				// No hyphen, obviously.
-				hyphen = false,
-				// No more calls after this.
-				false;
-		}
-		case '\r':
-		{
-			// New line.  Quite easy.
-			return
-				end = wordLen ? i : lastSpace,
-				next = text[i + 1] == '\n' ? i + 2 : i + 1,
-				hyphen = false,
-				true;
-		}
-		case '\n':
-		{
-			// New line.  Very easy.
-			return
-				end = wordLen ? i : lastSpace,
-				next = i + 1,
-				hyphen = false,
-				true;
-		}
-		case 1 .. 9, 11 .. 12, 14 .. 32:
-		{
-			// Spacing.
-			if (wordLen)
+			// Skip whitespace.
+			end = start,
+			start = IterativeColouredSkipWhitespace(text, start, colour);
+			switch (text[start])
 			{
-				// Was in a word, now aren't.
-				lastSpace = i,
-				wordLen = 0;
-			}
-			// Else do nothing, we're just skipping an extended space.
-		}
-		case '{':
-		{
-			// Skip the colour.
-			inColour = 1,
-			++wordLen,
-			curColour = 0;
-		}
-		case '}':
-		{
-			if (inColour == 7)
-			{
-				wordLen -= 7,
-				colour = curColour;
-			}
-			else
-			{
-				++wordLen;
-			}
-			inColour = 0;
-		}
-		case '0' .. '9':
-		{
-			++wordLen;
-			if (inColour)
-			{
-				++inColour,
-				curColour = (curColour << 4) | (ch - '0');
-			}
-		}
-		case 'a' .. 'f':
-		{
-			++wordLen;
-			if (inColour)
-			{
-				++inColour,
-				curColour = (curColour << 4) | (ch - ('a' - 10));
-			}
-		}
-		case 'A' .. 'F':
-		{
-			++wordLen;
-			if (inColour)
-			{
-				++inColour,
-				curColour = (curColour << 4) | (ch - ('A' - 10));
-			}
-		}
-		default:
-		{
-			++wordLen,
-			inColour = 0;
-		}
-		}
-	}
-	// If we reach the end of the loop we've found the full width of text.
-	if (wordLen == 0)
-	{
-		// In space.  Good.  Skip the rest of the space.
-		end = lastSpace,
-		hyphen = false;
-		while ('\0' < (ch = text[i]) <= ' ')
-		{
-			if (ch == '\r')
+			case '\r':
 			{
 				return
-					next = text[i + 1] == '\n' ? i + 2 : i + 1,
+					next = text[start + 1] == '\n' ? start + 2 : start + 1,
 					true;
 			}
-			else if (ch == '\n')
+			case '\n':
 			{
 				return
-					next = i + 1,
+					next = start + 1,
 					true;
 			}
-			++i;
+			case '\0':
+			{
+				return
+					next = start,
+					false;
+			}
+			}
+			if (start > width)
+			{
+				return
+					next = start,
+					true;
+			}
 		}
-		return
-			next = i,
-			ch != '\0';
-	}
-	// In the middle of a string.  Work out if we should split the text with a
-	// hyphen or move it down to the next line.
-	if (text[i] > ' ')
-	{
-		if (!useHyphen || wordLen < 4)
+		else
 		{
-			// Not enough space for three characters plus a hyphen on the
-			// current line.  Move it down to the next line.
-			return
-				end = lastSpace,
-				next = i - wordLen,
-				hyphen = false,
-				true;
+			end = IterativeColouredSkipWords(text, width, start, hyphen, colour, useHyphen);
+			if (end == start || hyphen)
+			{
+				// Either showed nothing of this word, or parts.
+				return
+					next = end,
+					true;
+			}
+			start = end;
 		}
-		if (text[i + 1] > ' ')
-		{
-			// There will be at least three characters on the next line (the new
-			// two plus the one replaced by the hyphen).
-			return
-				end = i - 1,
-				next = i - 1,
-				hyphen = true,
-				true;
-		}
-		if (wordLen >= 6)
-		{
-			// There are at least six characters total.
-			return
-				end = i - 2,
-				next = i - 2,
-				hyphen = true,
-				true;
-		}
-		// Five or six characters long.  Move to the next line.
-		return
-			end = lastSpace,
-			next = i - wordLen,
-			hyphen = false,
-			true;
-	}
-	// The word fits precisely.
-	end = i,
-	hyphen = false;
-	while ('\0' < (ch = text[i]) <= ' ')
-	{
-		if (ch == '\r')
-		{
-			return
-				next = text[i + 1] == '\n' ? i + 2 : i + 1,
-				true;
-		}
-		else if (ch == '\n')
-		{
-			return
-				next = i + 1,
-				true;
-		}
-		++i;
 	}
 	return
-		next = i,
-		ch != '\0';
+		next = start,
+		false;
 }
 
 forward y_utils_end();
