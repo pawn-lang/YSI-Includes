@@ -91,14 +91,14 @@ enum ASCII_ALIGNMENT_STYLE
 	ASCII_ALIGNMENT_STYLE_CENTRE,
 }
 
-stock ASCII_PrintLine(const text[], len, bool:hypen, ASCII_BORDER_STYLE:border, ASCII_ALIGNMENT_STYLE:alignment, padding = 0)
+stock ASCII_PrintLine(const text[], len, bool:hyphen, ASCII_BORDER_STYLE:border, ASCII_ALIGNMENT_STYLE:alignment, padding = 1)
 {
 	new
 		spacer[] = "",
 		ch0,
 		ch1;
 	// End the string.
-	if (hypen)
+	if (hyphen)
 	{
 		ch0 = _YSI_ConstMod(text[len++], '-');
 	}
@@ -109,42 +109,238 @@ stock ASCII_PrintLine(const text[], len, bool:hypen, ASCII_BORDER_STYLE:border, 
 	{
 		switch (alignment)
 		{
-		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (38 - len) / 2;
+		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (40 - len) / 2;
 		default: {}
 		}
-		YSI_PrintF(" | %*s%*s | ", padding, spacer, 38 - padding, text);
+		YSI_PrintF(" |%*s%*s%*s| ", padding, spacer, 40 - padding - padding, text, padding, spacer);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
 		switch (alignment)
 		{
-		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (52 - len) / 2;
+		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (54 - len) / 2;
 		default: {}
 		}
-		YSI_PrintF("         | %*s%*s |", padding, spacer, 52 - padding, text);
+		YSI_PrintF("         |%*s%*s%*s|", padding, spacer, 54 - padding - padding, text, padding, spacer);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
 		switch (alignment)
 		{
-		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (53 - len) / 2;
+		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (57 - len) / 2;
 		default: {}
 		}
-		YSI_PrintF("    |||||||  %*s%*s  |||||||", padding, spacer, 53 - padding, text);
+		YSI_PrintF("    |||||||%*s%*s%*s|||||||", padding, spacer, 57 - padding - padding, text, padding, spacer);
 	}
 	}
 	// Reset the string.
-	if (hypen)
+	if (hyphen)
 	{
 		_YSI_ConstMod(text[len - 1], ch0);
 	}
 	_YSI_ConstMod(text[len], ch1);
 }
 
+stock ASCII_PrintText(const text[], ASCII_BORDER_STYLE:border, ASCII_ALIGNMENT_STYLE:alignment, padding = 1)
+{
+	new
+		width;
+	switch (border)
+	{
+	case ASCII_BORDER_STYLE_SMALL: width = 40 - padding - padding;
+	case ASCII_BORDER_STYLE_LARGE: width = 54 - padding - padding;
+	case ASCII_BORDER_STYLE_PILLARS: width = 57 - padding - padding;
+	}
+	new
+		start = 0,
+		end,
+		next,
+		bool:hyphen,
+		bool:cont;
+	do
+	{
+		cont = IterativeTextSplitter(text, width, start, end, next, hyphen),
+		ASCII_PrintLine(text[start], end - start, hyphen, border, alignment, padding),
+		start = next;
+	}
+	while (cont);
+}
 
-#if !defined YSI_LARGE_FILE_SIZE
-	#define YSI_LARGE_FILE_SIZE (1024 * 1024) // 1Mb
-#endif
+stock ASCII_StartDisplay(ASCII_BORDER_STYLE:border)
+{
+	switch (border)
+	{
+	case ASCII_BORDER_STYLE_SMALL:
+	{
+		YSI_PrintF(" ========================================== ");
+	}
+	case ASCII_BORDER_STYLE_LARGE:
+	{
+		YSI_Print("         ==============================================================");
+	}
+	case ASCII_BORDER_STYLE_PILLARS:
+	{
+		YSI_Print("                                   ___---___                                   "),
+		YSI_Print("                             ___---___---___---___                             "),
+		YSI_Print("                       ___---___---    *    ---___---___                       "),
+		YSI_Print("                 ___---___---    o/ 0_/  @  o ^   ---___---___                 "),
+		YSI_Print("           ___---___--- @  i_e J-U /|  -+D O|-| (o) /   ---___---___           "),
+		YSI_Print("     ___---___---    __/|  //\\  /|  |\\  /\\  |\\|  |_  __--oj   ---___---___     "),
+		YSI_Print("__---___---_________________________________________________________---___---__"),
+		YSI_Print("==============================================================================="),
+		YSI_Print(" ||||                                                                     |||| "),
+		YSI_Print(" |---------------------------------------------------------------------------| "),
+		YSI_Print(" |___-----___-----___-----___-----___-----___-----___-----___-----___-----___| "),
+		YSI_Print(" / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\ "),
+		YSI_Print("( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) )"),
+		YSI_Print(" \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/ "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)    "),
+		YSI_Print("    J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L    "),
+		YSI_Print("   ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ   "),
+		YSI_Print("  ===========================================================================  ");
+	}
+	}
+}
+
+stock ASCII_StartSection(ASCII_BORDER_STYLE:border)
+{
+	switch (border)
+	{
+	case ASCII_BORDER_STYLE_SMALL:
+	{
+		YSI_Print(" |                                        | ");
+	}
+	case ASCII_BORDER_STYLE_LARGE:
+	{
+		YSI_Print("         |                                                            |"),
+		YSI_Print("         |                                                            |");
+	}
+	case ASCII_BORDER_STYLE_PILLARS:
+	{
+		YSI_Print(" ||||                                                                     |||| ");
+		YSI_Print(" |---------------------------------------------------------------------------| ");
+		YSI_Print(" |___-----___-----___-----___-----___-----___-----___-----___-----___-----___| ");
+		YSI_Print(" / _ \\===/ _ \\                                                   / _ \\===/ _ \\ ");
+		YSI_Print("( (.\\ oOo /.) )                                                 ( (.\\ oOo /.) )");
+		YSI_Print(" \\__/=====\\__/                                                   \\__/=====\\__/ ");
+		YSI_Print("    |||||||                                                         |||||||    ");
+		YSI_Print("    |||||||                                                         |||||||    ");
+		YSI_Print("    |||||||                                                         |||||||    ");
+		YSI_Print("    |||||||                                                         |||||||    ");
+	}
+	}
+}
+
+stock ASCII_EndSection(ASCII_BORDER_STYLE:border)
+{
+	switch (border)
+	{
+	case ASCII_BORDER_STYLE_SMALL:
+	{
+		YSI_Print(" |                                        | ");
+	}
+	case ASCII_BORDER_STYLE_LARGE:
+	{
+		YSI_Print("         |                                                            |"),
+		YSI_Print("         |                                                            |");
+	}
+	case ASCII_BORDER_STYLE_PILLARS:
+	{
+		YSI_Print("    |||||||                                                         |||||||    "),
+		YSI_Print("    |||||||                                                         |||||||    "),
+		YSI_Print("    |||||||                                                         |||||||    "),
+		YSI_Print("    |||||||                                                         |||||||    "),
+		YSI_Print("    (oOoOo)                                                         (oOoOo)    "),
+		YSI_Print("    J%%%%%L                                                         J%%%%%L    "),
+		YSI_Print("   ZZZZZZZZZ                                                       ZZZZZZZZZ   "),
+		YSI_Print("  ===========================================================================  ");
+	}
+	}
+}
+
+stock ASCII_Separate(ASCII_BORDER_STYLE:border)
+{
+	switch (border)
+	{
+	case ASCII_BORDER_STYLE_SMALL:
+	{
+		YSI_Print(" ========================================== ");
+	}
+	case ASCII_BORDER_STYLE_LARGE:
+	{
+		YSI_Print("         ==============================================================");
+	}
+	case ASCII_BORDER_STYLE_PILLARS:
+	{
+		YSI_Print(" ||||                                                                     |||| "),
+		YSI_Print(" |---------------------------------------------------------------------------| "),
+		YSI_Print(" |___-----___-----___-----___-----___-----___-----___-----___-----___-----___| "),
+		YSI_Print(" / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\ "),
+		YSI_Print("( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) )"),
+		YSI_Print(" \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/ "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)    "),
+		YSI_Print("    J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L    "),
+		YSI_Print("   ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ   "),
+		YSI_Print("  ===========================================================================  ");
+	}
+	}
+}
+
+stock ASCII_EndDisplay(ASCII_BORDER_STYLE:border)
+{
+	switch (border)
+	{
+	case ASCII_BORDER_STYLE_SMALL:
+	{
+		YSI_Print(" ========================================== ");
+	}
+	case ASCII_BORDER_STYLE_LARGE:
+	{
+		YSI_Print("         ==============================================================");
+	}
+	case ASCII_BORDER_STYLE_PILLARS:
+	{
+		YSI_Print(" ||||                                                                     |||| "),
+		YSI_Print(" |---------------------------------------------------------------------------| "),
+		YSI_Print(" |___-----___-----___-----___-----___-----___-----___-----___-----___-----___| "),
+		YSI_Print(" / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\ "),
+		YSI_Print("( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) )"),
+		YSI_Print(" \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/ "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
+		YSI_Print("    (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)    "),
+		YSI_Print("    J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L    "),
+		YSI_Print("   ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ   "),
+		YSI_Print("  ===========================================================================  "),
+		YSI_Print("  |_________________________________________________________________________|  "),
+		YSI_Print(" |___________________________________________________________________________| "),
+		YSI_Print("|_____________________________________________________________________________|"),
+		YSI_Print("_______________________________________________________________________________");
+	}
+	}
+}
 
 #if defined YSI_TESTS
 	#include "y_ascii_tests"
