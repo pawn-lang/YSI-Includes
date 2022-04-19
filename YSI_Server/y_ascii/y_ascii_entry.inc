@@ -78,6 +78,28 @@ Optional plugins:
 
 #include "..\..\YSI_Core\y_utils"
 
+static stock
+	YSI_gsSmallHeader[] = " ========================================== ",
+	YSI_gsSmallBody[] = " |                                        | ";
+
+static stock
+	YSI_gsLargeHeader[] = "         ==============================================================",
+	YSI_gsLargeBody[] = "         |                                                            |";
+
+static stock
+	YSI_gsPillarsHeader0[] = " ||||                                                                     |||| ",
+	YSI_gsPillarsHeader1[] = " |---------------------------------------------------------------------------| ",
+	YSI_gsPillarsHeader2[] = " |___-----___-----___-----___-----___-----___-----___-----___-----___-----___| ",
+	YSI_gsPillarsHeader3[] = " / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\ ",
+	YSI_gsPillarsHeader4[] = "( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) )",
+	YSI_gsPillarsHeader5[] = " \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/ ",
+	YSI_gsPillarsBody0[] = "    |||||||         |||||||         |||||||         |||||||         |||||||    ",
+	YSI_gsPillarsBody1[] = "    |||||||                                                         |||||||    ",
+	YSI_gsPillarsFooter0[] = "    (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)    ",
+	YSI_gsPillarsFooter1[] = "    J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L    ",
+	YSI_gsPillarsFooter2[] = "   ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ   ",
+	YSI_gsPillarsFooter3[] = "  ===========================================================================  ";
+
 enum ASCII_BORDER_STYLE
 {
 	ASCII_BORDER_STYLE_SMALL,
@@ -172,11 +194,11 @@ stock ASCII_StartDisplay(ASCII_BORDER_STYLE:border)
 	{
 	case ASCII_BORDER_STYLE_SMALL:
 	{
-		YSI_PrintF(" ========================================== ");
+		YSI_PrintF(YSI_gsSmallHeader);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
-		YSI_Print("         ==============================================================");
+		YSI_Print(YSI_gsLargeHeader);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
@@ -188,24 +210,24 @@ stock ASCII_StartDisplay(ASCII_BORDER_STYLE:border)
 		YSI_Print("     ___---___---    __/|  //\\  /|  |\\  /\\  |\\|  |_  __--oj   ---___---___     "),
 		YSI_Print("__---___---_________________________________________________________---___---__"),
 		YSI_Print("==============================================================================="),
-		YSI_Print(" ||||                                                                     |||| "),
-		YSI_Print(" |---------------------------------------------------------------------------| "),
-		YSI_Print(" |___-----___-----___-----___-----___-----___-----___-----___-----___-----___| "),
-		YSI_Print(" / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\ "),
-		YSI_Print("( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) )"),
-		YSI_Print(" \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/ "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)    "),
-		YSI_Print("    J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L    "),
-		YSI_Print("   ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ   "),
-		YSI_Print("  ===========================================================================  ");
+		YSI_Print(YSI_gsPillarsHeader0),
+		YSI_Print(YSI_gsPillarsHeader1),
+		YSI_Print(YSI_gsPillarsHeader2),
+		YSI_Print(YSI_gsPillarsHeader3),
+		YSI_Print(YSI_gsPillarsHeader4),
+		YSI_Print(YSI_gsPillarsHeader5),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsFooter0),
+		YSI_Print(YSI_gsPillarsFooter1),
+		YSI_Print(YSI_gsPillarsFooter2),
+		YSI_Print(YSI_gsPillarsFooter3);
 	}
 	}
 }
@@ -216,25 +238,25 @@ stock ASCII_StartSection(ASCII_BORDER_STYLE:border)
 	{
 	case ASCII_BORDER_STYLE_SMALL:
 	{
-		YSI_Print(" |                                        | ");
+		YSI_Print(YSI_gsSmallBody);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
-		YSI_Print("         |                                                            |"),
-		YSI_Print("         |                                                            |");
+		YSI_Print(YSI_gsLargeBody),
+		YSI_Print(YSI_gsLargeBody);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
-		YSI_Print(" ||||                                                                     |||| ");
-		YSI_Print(" |---------------------------------------------------------------------------| ");
-		YSI_Print(" |___-----___-----___-----___-----___-----___-----___-----___-----___-----___| ");
+		YSI_Print(YSI_gsPillarsHeader0);
+		YSI_Print(YSI_gsPillarsHeader1);
+		YSI_Print(YSI_gsPillarsHeader2);
 		YSI_Print(" / _ \\===/ _ \\                                                   / _ \\===/ _ \\ ");
 		YSI_Print("( (.\\ oOo /.) )                                                 ( (.\\ oOo /.) )");
 		YSI_Print(" \\__/=====\\__/                                                   \\__/=====\\__/ ");
-		YSI_Print("    |||||||                                                         |||||||    ");
-		YSI_Print("    |||||||                                                         |||||||    ");
-		YSI_Print("    |||||||                                                         |||||||    ");
-		YSI_Print("    |||||||                                                         |||||||    ");
+		YSI_Print(YSI_gsPillarsBody1);
+		YSI_Print(YSI_gsPillarsBody1);
+		YSI_Print(YSI_gsPillarsBody1);
+		YSI_Print(YSI_gsPillarsBody1);
 	}
 	}
 }
@@ -245,23 +267,23 @@ stock ASCII_EndSection(ASCII_BORDER_STYLE:border)
 	{
 	case ASCII_BORDER_STYLE_SMALL:
 	{
-		YSI_Print(" |                                        | ");
+		YSI_Print(YSI_gsSmallBody);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
-		YSI_Print("         |                                                            |"),
-		YSI_Print("         |                                                            |");
+		YSI_Print(YSI_gsLargeBody),
+		YSI_Print(YSI_gsLargeBody);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
-		YSI_Print("    |||||||                                                         |||||||    "),
-		YSI_Print("    |||||||                                                         |||||||    "),
-		YSI_Print("    |||||||                                                         |||||||    "),
-		YSI_Print("    |||||||                                                         |||||||    "),
+		YSI_Print(YSI_gsPillarsBody1),
+		YSI_Print(YSI_gsPillarsBody1),
+		YSI_Print(YSI_gsPillarsBody1),
+		YSI_Print(YSI_gsPillarsBody1),
 		YSI_Print("    (oOoOo)                                                         (oOoOo)    "),
 		YSI_Print("    J%%%%%L                                                         J%%%%%L    "),
 		YSI_Print("   ZZZZZZZZZ                                                       ZZZZZZZZZ   "),
-		YSI_Print("  ===========================================================================  ");
+		YSI_Print(YSI_gsPillarsFooter3);
 	}
 	}
 }
@@ -272,32 +294,32 @@ stock ASCII_Separate(ASCII_BORDER_STYLE:border)
 	{
 	case ASCII_BORDER_STYLE_SMALL:
 	{
-		YSI_Print(" ========================================== ");
+		YSI_Print(YSI_gsSmallHeader);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
-		YSI_Print("         ==============================================================");
+		YSI_Print(YSI_gsLargeHeader);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
-		YSI_Print(" ||||                                                                     |||| "),
-		YSI_Print(" |---------------------------------------------------------------------------| "),
-		YSI_Print(" |___-----___-----___-----___-----___-----___-----___-----___-----___-----___| "),
-		YSI_Print(" / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\ "),
-		YSI_Print("( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) )"),
-		YSI_Print(" \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/ "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)    "),
-		YSI_Print("    J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L    "),
-		YSI_Print("   ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ   "),
-		YSI_Print("  ===========================================================================  ");
+		YSI_Print(YSI_gsPillarsHeader0),
+		YSI_Print(YSI_gsPillarsHeader1),
+		YSI_Print(YSI_gsPillarsHeader2),
+		YSI_Print(YSI_gsPillarsHeader3),
+		YSI_Print(YSI_gsPillarsHeader4),
+		YSI_Print(YSI_gsPillarsHeader5),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsFooter0),
+		YSI_Print(YSI_gsPillarsFooter1),
+		YSI_Print(YSI_gsPillarsFooter2),
+		YSI_Print(YSI_gsPillarsFooter3);
 	}
 	}
 }
@@ -308,32 +330,32 @@ stock ASCII_EndDisplay(ASCII_BORDER_STYLE:border)
 	{
 	case ASCII_BORDER_STYLE_SMALL:
 	{
-		YSI_Print(" ========================================== ");
+		YSI_Print(YSI_gsSmallHeader);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
-		YSI_Print("         ==============================================================");
+		YSI_Print(YSI_gsLargeHeader);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
-		YSI_Print(" ||||                                                                     |||| "),
-		YSI_Print(" |---------------------------------------------------------------------------| "),
-		YSI_Print(" |___-----___-----___-----___-----___-----___-----___-----___-----___-----___| "),
-		YSI_Print(" / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\   / _ \\===/ _ \\ "),
-		YSI_Print("( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) ) ( (.\\ oOo /.) )"),
-		YSI_Print(" \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/   \\__/=====\\__/ "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    |||||||         |||||||         |||||||         |||||||         |||||||    "),
-		YSI_Print("    (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)         (oOoOo)    "),
-		YSI_Print("    J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L         J%%%%%L    "),
-		YSI_Print("   ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ       ZZZZZZZZZ   "),
-		YSI_Print("  ===========================================================================  "),
+		YSI_Print(YSI_gsPillarsHeader0),
+		YSI_Print(YSI_gsPillarsHeader1),
+		YSI_Print(YSI_gsPillarsHeader2),
+		YSI_Print(YSI_gsPillarsHeader3),
+		YSI_Print(YSI_gsPillarsHeader4),
+		YSI_Print(YSI_gsPillarsHeader5),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsBody0),
+		YSI_Print(YSI_gsPillarsFooter0),
+		YSI_Print(YSI_gsPillarsFooter1),
+		YSI_Print(YSI_gsPillarsFooter2),
+		YSI_Print(YSI_gsPillarsFooter3),
 		YSI_Print("  |_________________________________________________________________________|  "),
 		YSI_Print(" |___________________________________________________________________________| "),
 		YSI_Print("|_____________________________________________________________________________|"),

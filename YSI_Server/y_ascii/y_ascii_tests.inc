@@ -47,3 +47,4 @@ TEST__ y_ascii_Prints()
 	ASCII_EndSection(ASCII_BORDER_STYLE_PILLARS);
 	ASCII_EndDisplay(ASCII_BORDER_STYLE_PILLARS);
 }
+
