@@ -113,7 +113,7 @@ enum ASCII_ALIGNMENT_STYLE
 	ASCII_ALIGNMENT_STYLE_CENTRE,
 }
 
-stock ASCII_PrintLine(const text[], len, bool:hyphen, ASCII_BORDER_STYLE:border, ASCII_ALIGNMENT_STYLE:alignment, padding = 1)
+_Y_CORE_STATIC stock ASCII_PrintLinePart(const text[], len, bool:hyphen, ASCII_BORDER_STYLE:border, ASCII_ALIGNMENT_STYLE:alignment, padding = 1)
 {
 	new
 		spacer[] = "",
@@ -163,7 +163,7 @@ stock ASCII_PrintLine(const text[], len, bool:hyphen, ASCII_BORDER_STYLE:border,
 	_YSI_ConstMod(text[len], ch1);
 }
 
-stock ASCII_PrintText(const text[], ASCII_BORDER_STYLE:border, ASCII_ALIGNMENT_STYLE:alignment, padding = 1)
+stock ASCII_PrintSection(const text[], ASCII_BORDER_STYLE:border, ASCII_ALIGNMENT_STYLE:alignment, padding = 1)
 {
 	new
 		width;
@@ -182,7 +182,7 @@ stock ASCII_PrintText(const text[], ASCII_BORDER_STYLE:border, ASCII_ALIGNMENT_S
 	do
 	{
 		cont = IterativeTextSplitter(text, width, start, end, next, hyphen),
-		ASCII_PrintLine(text[start], end - start, hyphen, border, alignment, padding),
+		ASCII_PrintLinePart(text[start], end - start, hyphen, border, alignment, padding),
 		start = next;
 	}
 	while (cont);
