@@ -339,7 +339,9 @@ Optional plugins:
 //#endif
 
 // Manually fix earlier versions.
-#undef u@
+#if !defined _INC_code_parse_inc
+	#undef u@
+#endif
 #tryinclude "..\..\code-parse\code-parse"
 #tryinclude <code-parse\code-parse>
 #tryinclude "..\..\code-parse.inc\code-parse"
