@@ -86,6 +86,71 @@ Optional plugins:
 #include "y_va_header"
 #include "y_va_impl"
 
+stock PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return CreatePlayerTextDraw(playerid, x, y, va_return(fmat, ___(4)));
+}
+
+stock Text:va_TextDrawCreate(Float:x, Float:y, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return TextDrawCreate(x, y, va_return(fmat, ___(3)));
+}
+
+stock va_TextDrawSetString(Text:text, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return TextDrawSetString(text, va_return(fmat, ___(2)));
+}
+
+stock va_PlayerTextDrawSetString(playerid, PlayerText:text, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return PlayerTextDrawSetString(playerid, text, va_return(fmat, ___(3)));
+}
+
+stock va_SendClientMessage(playerid, colour, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return SendClientMessage(playerid, colour, va_return(fmat, ___(3)));
+}
+
+stock va_SendClientMessageToAll(colour, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return SendClientMessageToAll(colour, va_return(fmat, ___(2)));
+}
+
+stock va_SendPlayerMessageToPlayer(playerid, senderid, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return SendPlayerMessageToPlayer(playerid, senderid, va_return(fmat, ___(3)));
+}
+
+stock va_SendPlayerMessageToAll(senderid, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return SendPlayerMessageToAll(senderid, va_return(fmat, ___(2)));
+}
+
+stock va_GameTextForPlayer(playerid, const fmat[], time, style, GLOBAL_TAG_TYPES:...)
+{
+	return GameTextForPlayer(playerid, va_return(fmat, ___(4)), time, style);
+}
+
+stock va_GameTextForAll(const fmat[], time, style, GLOBAL_TAG_TYPES:...)
+{
+	return GameTextForAll(va_return(fmat, ___(3)), time, style);
+}
+
+stock va_print(const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return print(va_return(fmat, ___(1)));
+}
+
+stock va_fprintf(File:fhnd, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return fwrite(fhnd, va_return(fmat, ___(2)));
+}
+
+stock va_SendRconCommand(const command[], GLOBAL_TAG_TYPES:...)
+{
+	return SendRconCommand(va_return(command, ___(1)));
+}
+
 #if defined YSI_TESTS
 	#include "y_va_tests"
 #endif
