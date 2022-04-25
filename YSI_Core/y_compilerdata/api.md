@@ -307,7 +307,7 @@ main()
 #define this. THIS__(Entity)
 
 // Code.
-Float:SomeFunction(Entity:this)
+Float:this.SomeFunction()
 {
 	return this.GetAngle();
 }
@@ -320,13 +320,28 @@ Becomes:
 
 ```pawn
 // Code.
-Float:SomeFunction(Entity:this)
+Float:Entity_SomeFunction(Entity:this__)
 {
-	return Entity_GetAngle(this);
+	return Entity_GetAngle(this__);
 }
 ```
 
-`this` must have the tag specified in `THIS__`.
+You could, if you really really really want to do:
+
+```pawn
+// Top.
+#define this. THIS__(Entity)
+#define Entity:: THIS__(Entity)
+
+// Code.
+Float:Entity::SomeFunction()
+{
+	return this.GetAngle();
+}
+
+// End.
+#undef this
+```
 
 While normally there are YSI keywords so you can enable `this` as a short form of `THIS__`, you can't here because `this` is used as the variable operated on.  However, since `THIS__` only really appears once per file it is less in need of shortening.
 

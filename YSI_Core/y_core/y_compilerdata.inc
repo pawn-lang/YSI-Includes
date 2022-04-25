@@ -234,13 +234,6 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 // `__tagof` is added, there's no real need to change this definition - it
 // already works in the special cases for which it is defined.
 //
-// `%0:_:` is a trick in since the earlies days of YSI.  There is a macro:
-//
-//   #define _:%0,) _:%0)
-//
-// Which will remove trailing commas in function parameter lists, so if `%2` is
-// empty this won't cause any problems.
-//
 // I've not yet worked out a way to support both of these at once:
 //
 //   this.Data[ANGLE] = this.GetAngle();
@@ -250,7 +243,8 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 //   Entity_Data[this][ANGLE] = Entity_GetAngle(this);
 //
 // While I can detect `)` or `]`, I can't until after the opening brackets.
-#define THIS__(%0)%1(%2) %0_%1(%0:_:(%1),%2)
+#define THIS__(%0)%1(%2) %0_%1(%0:this__,%2)
+#define this__,) this__)
 #define __COMPILER_THIS (0)
 
 #if (__Pawn & 0x0F) >= 0x0A
