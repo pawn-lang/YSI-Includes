@@ -126,10 +126,68 @@ Examples:
 
 ## Meta-data
 
-* `Args_GetCount()` returns the number of *unique* arguments passed to the script.  So `-o -o -o` will return `1`.
-* `Args_TrueCount()` returns the number any arguments passed to the script.  So `-o -o -o` will return `3`.
+* `Args_UniqueCount()` returns the number of *unique* arguments passed to the script.  So `-o -o -o` will return `1`.  *rest* and positional arguments both count.
+* `Args_TrueCount()` returns the number any arguments passed to the script.  So `-o -o -o` will return `3`.  *rest* and positional arguments both count.
+* `Args_PositionalCount()` returns the number of positional arguments passed.
+* `bool:Args_GetRest(output[], size = sizeof (output))` returns the *rest* data (everything after ` -- `).
+* `bool:Args_GetPositionalBool(index, &bool:output)` tries to get an boolean from the given positional argument index.
+* `bool:Args_GetPositionalInt(index, &output)` tries to get an integer from the given positional argument index.
+* `bool:Args_GetPositionalFloat(index, &Float:output)` tries to get an float from the given positional argument index.
+* `bool:Args_GetPositionalString(index, output[], size = sizeof (output))` tries to get a string from the given positional argument index.
 
 ## Accepted Argument Forms
+
+### Positional arguments
+
+These are arguments that are only data - no name.  For example simply:
+
+```
+Hello
+```
+
+Would be a string positional argument at positional index 0.
+
+What is and isn't a positional argument can be a little tricky to determine.  `--` arguments may have a parameter, so anything after them is assumed to be their parameter:
+
+```
+--help start
+```
+
+Here `start` is *not* a positional argument because it can be attributed to `--help`.
+
+```
+--help= start
+```
+
+Here `start` *is* a positional argument because `--help` has an explicit empty parameter via `=`.
+
+Any non-argument after a short-form argument is always positional:
+
+```
+-a we are always positional
+```
+
+Because short-form arguments don't have parameters separated by spaces (unless you wrap the whole thing in quotes, but that's not an ambiguous situation).
+
+And if there is only one datum passed, or the first datum has no `-` or `/` it must be positional:
+
+```
+first
+```
+
+Note that while this:
+
+```
+--help start
+```
+
+Assumes that `start` is a parameter to `--help`, this:
+
+```
+--help --start
+```
+
+Assumes that `--help` and `--start` are separate arguments, because `-` and `/` override parameters (see below for how to have a parameter with those special characters in).
 
 ### Collated short-form.
 

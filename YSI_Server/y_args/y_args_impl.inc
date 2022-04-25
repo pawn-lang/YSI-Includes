@@ -45,23 +45,46 @@ static stock Args_FindIndexByName(const name[], len)
 	return Args_FindIndexByHash(hash);
 }
 
-static stock Args_FindEnd(const name[], i)
+static stock Args_ScanAndHash(const name[], i, &hash)
 {
+	hash = 5381;
 	new
 		ch = 0;
 	while ((ch = name[i]))
 	{
-		// The only valid end characters.
-		if (ch == ' ' || ch == '=' || ch == ':' || ch == '-' || ch == '+')
+		switch (ch)
 		{
+		// The only valid end characters.
+		case ' ', ':', '=', '-', '+':
 			return i;
 		}
+		hash = hash * 33 ^ ch,
 		++i;
 	}
 	return i;
 }
 
-static stock Args_LazyInit()
+static stock Args_TryAdd(hash, index)
+{
+	if (Args_FindIndexByHash(hash) == -1)
+	{
+		// A new unique argument.
+		++YSI_gsArgCount;
+		if (YSI_gsArgIndex == Y_ARGS_CACHE_SIZE)
+		{
+			// Too many unique arguments.
+			YSI_gsCacheState = E_ARGS_CACHE_STATE_FALLBACK;
+		}
+		else
+		{
+			YSI_gsArgHashes[YSI_gsArgIndex] = hash,
+			YSI_gsArgIndexes[YSI_gsArgIndex] = index,
+			++YSI_gsArgIndex;
+		}
+	}
+}
+
+stock Args_LazyInit()
 {
 	if (YSI_gsCacheState != E_ARGS_CACHE_STATE_UNINIT)
 	{
@@ -70,27 +93,25 @@ static stock Args_LazyInit()
 	}
 	YSI_gsCacheState = E_ARGS_CACHE_STATE_INIT;
 	new
-		name[32].
+		name[32],
 		bool:positional = true,
-		s0, // `=` position.
-		s1, // `:` position.
-		s2, // ` ` position.
-		s2; // length
+		hash,
+		end;
 	YSI_gsArgSeen = argcount();
 	for (new i = 0; i != YSI_gsArgSeen; ++i)
 	{
 		// Get the argument.
 		argindex(i, name);
-		if (i[0] == '/')
+		if (name[0] == '/')
 		{
-			++YSI_gsArgTotal;
-			s0 = strfind(name, "="), // `=` position.
-			s1 = strfind(name, ":"), // `:` position.
-			s2 = strfind(name, " "), // ` ` position.
-			s2 = strlen(name); // length
-			
+			++YSI_gsArgTotal,
+			end = Args_ScanAndHash(name, 1, hash),
+			// If the argument ended there (may) be a following parameter.
+			positional = name[end] != '\0',
+			Args_TryAdd(hash, i);
+			printf("Argument: /%.*s, length: %d, hash: %d", end - 1, name[1], end - 1, hash);
 		}
-		else if (i[0] == '-' && i[1] == '-' && i[2] == '\0')
+		else if (name[0] == '-' && name[1] == '-' && name[2] == '\0')
 		{
 			++YSI_gsArgTotal;
 			// Start of `rest`.  Can end here.
@@ -98,34 +119,60 @@ static stock Args_LazyInit()
 			++YSI_gsArgCount;
 			break;
 		}
-		else if (i[0] == '-' && i[1] == '-')
+		else if (name[0] == '-' && name[1] == '-')
 		{
-			++YSI_gsArgTotal;
-			
+			++YSI_gsArgTotal,
+			end = Args_ScanAndHash(name, 2, hash),
+			// If the argument ended there (may) be a following parameter.
+			positional = name[end] != '\0',
+			Args_TryAdd(hash, i);
+			printf("Argument: --%.*s, length: %d, hash: %d", end - 2, name[2], end - 2, hash);
 		}
-		else if (i[0] == '-')
+		else if (name[0] == '-')
 		{
-			++YSI_gsArgTotal;
-			
+			positional = true;
+			for (end = 1; (hash = 5381 * 33 ^ name[end++]); )
+			{
+				switch (hash)
+				{
+				case 5381 * 33 ^ '\0',
+					 5381 * 33 ^ ' ',
+					 5381 * 33 ^ '=',
+					 5381 * 33 ^ '-',
+					 5381 * 33 ^ '+':
+				{
+					break;
+				}
+				case 5381 * 33 ^ ':':
+				{
+					// Windows seems to treat this as an argument separator
+					// even without a space.  Thus `-a:6` appears as two
+					// separate `argv` entries.
+					positional = false;
+					break;
+				}
+				}
+				Args_TryAdd(hash, i);
+				printf("Argument: -%c, hash: %d", name[end - 1], hash);
+			}
 		}
 		else if (positional)
 		{
 			// Not in a argument parameter.
 			++YSI_gsPositionalCount;
-			YSI_gsLastPositional = i + 1;
+			YSI_gsLastPositional = i;
+			printf("Positional: %s", name);
 			continue;
 		}
 		else
 		{
 			// Parameter.  Don't do anything with it.
 			positional = true;
+			printf("Parameter: %s", name);
 			continue;
 		}
 	}
 }
-
-
-
 
 stock bool:Arg_GetBool(shortForm, const longForm[], &bool:dest)
 {
