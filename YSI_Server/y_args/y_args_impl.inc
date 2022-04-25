@@ -363,7 +363,7 @@ stock bool:Args_GetStringFallback(short, const long[], output[], size)
 						if (end == 2)
 						{
 							output[0] = '\0',
-							strcat(output, "-", size);
+							strcat(output, "+", size);
 						}
 						parameter = false;
 					}
