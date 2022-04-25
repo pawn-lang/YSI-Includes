@@ -359,6 +359,8 @@ Float:Entity_SomeFunction(Entity:this__)
 #undef this
 ```
 
+And only use `this.` and `::` internally.
+
 While normally there are YSI keywords so you can enable `this` as a short form of `THIS__`, you can't here because `this` is used as the variable operated on.  However, since `THIS__` only really appears once per file it is less in need of shortening.
 
 There is currently no support for varaibles like `this.Data[ANGLE]`, but I'm thinking about how to achieve it.
