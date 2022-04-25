@@ -163,19 +163,221 @@ stock Args_LazyInit()
 			++YSI_gsPositionalCount;
 			YSI_gsLastPositional = i;
 			P:6("Args_LazyInit: Positional: %s", name);
-			continue;
 		}
 		else
 		{
 			// Parameter.  Don't do anything with it.
 			positional = true;
 			P:6("Args_LazyInit: Parameter: %s", name);
-			continue;
 		}
 	}
 }
 
-stock bool:Arg_GetBool(shortForm, const longForm[], &bool:dest)
+static stock Args_CheckName(short, const long[], const name[], offset, len)
+{
+	if (name[offset] == '\0')
+	{
+	}
+	else if (short == name[offset])
+	{
+		switch (name[offset + 1])
+		{
+		case '\0', ' ', ':', '=', '-', '+':
+			return offset + 1;
+		}
+	}
+	else if (strcmp(name[offset], long, false, len) == 0)
+	{
+		switch (name[offset + len])
+		{
+		case '\0', ' ', ':', '=', '-', '+':
+			return offset + len;
+		}
+	}
+	// Failure.
+	return 0;
+}
+
+stock bool:Args_GetStringFallback(short, const long[], output[], size)
+{
+	new
+		len = strlen(long),
+		name[32],
+		bool:parameter = false,
+		ch,
+		end;
+	output[0] = '\0';
+	for (new i = 0; i != YSI_gsArgSeen; ++i)
+	{
+		// Get the argument.
+		argindex(i, name);
+		if (name[0] == '/')
+		{
+			if (parameter)
+			{
+				// Found the argument previously, but there's no parameter.
+				return true;
+			}
+			if ((end = Args_CheckName(short, long, name, 1, len)))
+			{
+				switch (name[end])
+				{
+				case '\0':
+				{
+					parameter = true;
+				}
+				case ':':
+				{
+					strcat(output, name[end + 1], size);
+					parameter = true;
+				}
+				case ' ', '=':
+				{
+					strcat(output, name[end + 1], size);
+					return true;
+				}
+				case '-':
+				{
+					strcat(output, "-", size);
+					return true;
+				}
+				case '+':
+				{
+					strcat(output, "+", size);
+					return true;
+				}
+				}
+			}
+		}
+		else if (name[0] == '-' && name[1] == '-' && name[2] == '\0')
+		{
+			// Got to `rest`.  Did we find the argument previously?
+			return parameter;
+		}
+		else if (name[0] == '-' && name[1] == '-')
+		{
+			if (parameter)
+			{
+				// Found the argument previously, but there's no parameter.
+				return true;
+			}
+			if ((end = Args_CheckName('\0', long, name, 2, len)))
+			{
+				switch (name[end])
+				{
+				case '\0':
+				{
+					parameter = true;
+				}
+				case ':':
+				{
+					strcat(output, name[end + 1], size);
+					parameter = true;
+				}
+				case ' ', '=':
+				{
+					strcat(output, name[end + 1], size);
+					return true;
+				}
+				case '-':
+				{
+					strcat(output, "-", size);
+					return true;
+				}
+				case '+':
+				{
+					strcat(output, "+", size);
+					return true;
+				}
+				}
+			}
+		}
+		else if (name[0] == '-')
+		{
+			if (parameter)
+			{
+				// Found the argument previously, but there's no parameter.
+				return true;
+			}
+			end = 0;
+			while ((ch = name[++end]))
+			{
+				if (ch == short)
+				{
+					parameter = true;
+				}
+				else switch (ch)
+				{
+				case '\0':
+				{
+					if (parameter)
+					{
+						return true;
+					}
+					break;
+				}
+				case ':':
+				{
+					// Weird windows behaviour.
+					if (parameter)
+					{
+						if (end != 2)
+						{
+							return true;
+						}
+						strcat(output, name[3], size);
+					}
+					break;
+				}
+				case ' ', '=':
+				{
+					if (parameter)
+					{
+						if (end == 2)
+						{
+							strcat(output, name[3], size);
+						}
+						return true;
+					}
+					break;
+				}
+				case '-':
+				{
+					if (parameter)
+					{
+						if (end == 2)
+						{
+							strcat(output, "-", size);
+						}
+						return true;
+					}
+					break;
+				}
+				case '+':
+				{
+					if (parameter)
+					{
+						if (end == 2)
+						{
+							strcat(output, "+", size);
+						}
+						return true;
+					}
+					break;
+				}
+				}
+			}
+		}
+		else if (parameter)
+		{
+			strcat(output, name, size);
+			return true;
+		}
+	}
+	return false;
+}
+
+stock bool:Args_GetBool(shortForm, const longForm[], &bool:dest)
 {
 }
 
