@@ -20,6 +20,8 @@ if (Arg_GetBool('h', "help", help))
 }
 ```
 
+The first argument (`'h'`) is the short-form argument name (i.e. `-h`).  The second argument is the long-form name (i.e. `--help`).  Either may be omitted by passing `_`.
+
 Examples:
 
 ```
@@ -54,6 +56,14 @@ Examples:
 -i=7 -j:9 --money 42 /count 3 --float 6.6
 ```
 
+If the same argument is given multiple times, only the last one is returned:
+
+```
+-i=7 -i=9
+```
+
+Will return `i = 9`, except for when retrieving arrays.
+
 ### Strings
 
 String arguments may be enclosed in quotes on the command line to include spaces.
@@ -73,6 +83,51 @@ Examples:
 ```
 --owner "your name here" -s=bob "--favourite-arg=--help or --count"
 ```
+
+### Arrays
+
+All the previous types of arguments may also be retrieved as an array.  In these cases the return value is the number of elements *passed* - if the given array size is insufficient to hold all the values this return value will be larger than the array size, to indicate that values were skipped.  If there are no matching arguments the return value is `0`.  Arrays can be passed as arguments either via a comma-separated list, or as multiple arguments with the same name.  String arrays *must* be the latter, and thus the strings may contain commas.
+
+```pawn
+// Explicit array size passed.
+new bool:boolArray[6];
+new boolCount = Arg_GetBoolArray('b', "bools", boolArray, sizeof (boolArray));
+
+// Default argument (`sizeof (array)`) explicitly used.
+new intArray[10];
+new intCount = Arg_GetIntArray('i', "ints", intArray, _);
+
+// Default argument (`sizeof (array)`) implicitly used.
+new floatArray[10];
+new floatCount = Arg_GetFloatArray('f', "floats", floatArray);
+
+// Second default argument (`sizeof (array[])`) implicitly used.
+new stringArray[10][32];
+new stringCount = Arg_GetStringArray('s', "strings", stringArray, 5);
+```
+
+Examples:
+
+```
+-b=true -b- /b+ --bools true --bools 0 /bools
+```
+
+```
+--ints=6,7,8,9,10
+```
+
+```
+-f=6.6 -f=7.7 -f=8.8 -f=9.9
+```
+
+```
+"-s=Hello world!" "/s:This may contain `,`s" --strings "...see?"
+```
+
+## Meta-data
+
+* `Args_GetCount()` returns the number of *unique* arguments passed to the script.  So `-o -o -o` will return `1`.
+* `Args_TrueCount()` returns the number any arguments passed to the script.  So `-o -o -o` will return `3`.
 
 ## Accepted Argument Forms
 
