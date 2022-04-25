@@ -109,7 +109,7 @@ stock Args_LazyInit()
 			// If the argument ended there (may) be a following parameter.
 			positional = name[end] != '\0',
 			Args_TryAdd(hash, i);
-			printf("Argument: /%.*s, length: %d, hash: %d", end - 1, name[1], end - 1, hash);
+			P:6("Args_LazyInit: Argument: /%.*s, length: %d, hash: %d", end - 1, name[1], end - 1, hash);
 		}
 		else if (name[0] == '-' && name[1] == '-' && name[2] == '\0')
 		{
@@ -117,6 +117,7 @@ stock Args_LazyInit()
 			// Start of `rest`.  Can end here.
 			YSI_gsRestStart = i + 1;
 			++YSI_gsArgCount;
+			P:6("Args_LazyInit: Rest: %d", i + 1);
 			break;
 		}
 		else if (name[0] == '-' && name[1] == '-')
@@ -126,7 +127,7 @@ stock Args_LazyInit()
 			// If the argument ended there (may) be a following parameter.
 			positional = name[end] != '\0',
 			Args_TryAdd(hash, i);
-			printf("Argument: --%.*s, length: %d, hash: %d", end - 2, name[2], end - 2, hash);
+			P:6("Args_LazyInit: Argument: --%.*s, length: %d, hash: %d", end - 2, name[2], end - 2, hash);
 		}
 		else if (name[0] == '-')
 		{
@@ -153,7 +154,7 @@ stock Args_LazyInit()
 				}
 				}
 				Args_TryAdd(hash, i);
-				printf("Argument: -%c, hash: %d", name[end - 1], hash);
+				P:6("Args_LazyInit: Argument: -%c, hash: %d", name[end - 1], hash);
 			}
 		}
 		else if (positional)
@@ -161,14 +162,14 @@ stock Args_LazyInit()
 			// Not in a argument parameter.
 			++YSI_gsPositionalCount;
 			YSI_gsLastPositional = i;
-			printf("Positional: %s", name);
+			P:6("Args_LazyInit: Positional: %s", name);
 			continue;
 		}
 		else
 		{
 			// Parameter.  Don't do anything with it.
 			positional = true;
-			printf("Parameter: %s", name);
+			P:6("Args_LazyInit: Parameter: %s", name);
 			continue;
 		}
 	}
