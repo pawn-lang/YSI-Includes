@@ -300,7 +300,7 @@ main()
 
 ## `THIS__`
 
-`THIS__` allows you to use a limited form of OO-like syntax, based on the variable `this`.  You need to define `this` at the top of a file, then undefine it at the end using `THIS__`:
+`THIS__` allows you to use a limited form of OO-like syntax, based on the variable `this`.  You need to define `this` at the top of a file using `THIS__`, then undefine it at the end:
 
 ```pawn
 // Top.
