@@ -203,6 +203,7 @@ stock bool:Args_GetStringFallback(short, const long[], output[], size)
 	new
 		len = strlen(long),
 		name[32],
+		bool:found = false,
 		bool:parameter = false,
 		ch,
 		end;
@@ -213,38 +214,37 @@ stock bool:Args_GetStringFallback(short, const long[], output[], size)
 		argindex(i, name);
 		if (name[0] == '/')
 		{
-			if (parameter)
-			{
-				// Found the argument previously, but there's no parameter.
-				return true;
-			}
+			parameter = false;
 			if ((end = Args_CheckName(short, long, name, 1, len)))
 			{
+				found = true;
 				switch (name[end])
 				{
 				case '\0':
 				{
+					output[0] = '\0',
 					parameter = true;
 				}
 				case ':':
 				{
+					output[0] = '\0',
 					strcat(output, name[end + 1], size);
 					parameter = true;
 				}
 				case ' ', '=':
 				{
+					output[0] = '\0',
 					strcat(output, name[end + 1], size);
-					return true;
 				}
 				case '-':
 				{
+					output[0] = '\0',
 					strcat(output, "-", size);
-					return true;
 				}
 				case '+':
 				{
+					output[0] = '\0',
 					strcat(output, "+", size);
-					return true;
 				}
 				}
 			}
@@ -252,58 +252,54 @@ stock bool:Args_GetStringFallback(short, const long[], output[], size)
 		else if (name[0] == '-' && name[1] == '-' && name[2] == '\0')
 		{
 			// Got to `rest`.  Did we find the argument previously?
-			return parameter;
+			break;
 		}
 		else if (name[0] == '-' && name[1] == '-')
 		{
-			if (parameter)
-			{
-				// Found the argument previously, but there's no parameter.
-				return true;
-			}
+			parameter = false;
 			if ((end = Args_CheckName('\0', long, name, 2, len)))
 			{
+				found = true;
 				switch (name[end])
 				{
 				case '\0':
 				{
+					output[0] = '\0',
 					parameter = true;
 				}
 				case ':':
 				{
+					output[0] = '\0',
 					strcat(output, name[end + 1], size);
 					parameter = true;
 				}
 				case ' ', '=':
 				{
+					output[0] = '\0',
 					strcat(output, name[end + 1], size);
-					return true;
 				}
 				case '-':
 				{
+					output[0] = '\0',
 					strcat(output, "-", size);
-					return true;
 				}
 				case '+':
 				{
+					output[0] = '\0',
 					strcat(output, "+", size);
-					return true;
 				}
 				}
 			}
 		}
 		else if (name[0] == '-')
 		{
-			if (parameter)
-			{
-				// Found the argument previously, but there's no parameter.
-				return true;
-			}
+			parameter = false;
 			end = 0;
 			while ((ch = name[++end]))
 			{
 				if (ch == short)
 				{
+					output[0] = '\0',
 					parameter = true;
 				}
 				else switch (ch)
@@ -312,20 +308,22 @@ stock bool:Args_GetStringFallback(short, const long[], output[], size)
 				{
 					if (parameter)
 					{
-						return true;
+						found = true;
+						parameter = false;
 					}
 					break;
 				}
 				case ':':
 				{
-					// Weird windows behaviour.
 					if (parameter)
 					{
-						if (end != 2)
+						found = true;
+						if (end == 2)
 						{
-							return true;
+							output[0] = '\0',
+							strcat(output, name[3], size);
 						}
-						strcat(output, name[3], size);
+						// Weird windows behaviour.  Don't reset `parameter`.
 					}
 					break;
 				}
@@ -333,11 +331,13 @@ stock bool:Args_GetStringFallback(short, const long[], output[], size)
 				{
 					if (parameter)
 					{
+						found = true;
 						if (end == 2)
 						{
+							output[0] = '\0',
 							strcat(output, name[3], size);
 						}
-						return true;
+						parameter = false;
 					}
 					break;
 				}
@@ -345,11 +345,13 @@ stock bool:Args_GetStringFallback(short, const long[], output[], size)
 				{
 					if (parameter)
 					{
+						found = true;
 						if (end == 2)
 						{
+							output[0] = '\0',
 							strcat(output, "-", size);
 						}
-						return true;
+						parameter = false;
 					}
 					break;
 				}
@@ -357,11 +359,13 @@ stock bool:Args_GetStringFallback(short, const long[], output[], size)
 				{
 					if (parameter)
 					{
+						found = true;
 						if (end == 2)
 						{
-							strcat(output, "+", size);
+							output[0] = '\0',
+							strcat(output, "-", size);
 						}
-						return true;
+						parameter = false;
 					}
 					break;
 				}
@@ -370,11 +374,11 @@ stock bool:Args_GetStringFallback(short, const long[], output[], size)
 		}
 		else if (parameter)
 		{
-			strcat(output, name, size);
-			return true;
+			strcat(output, name, size),
+			parameter = false;
 		}
 	}
-	return false;
+	return found;
 }
 
 stock bool:Args_GetBool(shortForm, const longForm[], &bool:dest)
