@@ -1,9 +1,80 @@
 # Features
 
+## Getting Argument Values
 
+### Bools
 
+Boolean arguments can be parameterless, which defaults to `true`, or provide an argument.  The return value is *not* the argument value, but whether the argument was passed:
 
-## Accepted argument forms
+```pawn
+new bool:help;
+// Look for `-h` or `--help` (or `/h` or `/help`).
+if (Arg_GetBool('h', "help", help))
+{
+	// The argument was given.
+	if (help)
+	{
+		// The argument is true.
+		printf("Your mode help goes here");
+	}
+}
+```
+
+Examples:
+
+```
+-h --yes=1 /param false -ctl -l+
+```
+
+### Integers And Floats
+
+These arguments must provide a value:
+
+```pawn
+new i;
+// Look for `-i` or `/i`.
+if (Arg_GetInt('i', _, i))
+{
+	// The argument was given.
+	printf("-i = %d", i);
+}
+
+new Float:f;
+// Look for `--float` or `/float`.
+if (Arg_GetBool(_, "float", f))
+{
+	// The argument was given.
+	printf("--float = %.2f", f);
+}
+```
+
+Examples:
+
+```
+-i=7 -j:9 --money 42 /count 3 --float 6.6
+```
+
+### Strings
+
+String arguments may be enclosed in quotes on the command line to include spaces.
+
+```pawn
+new name[32];
+// Look for `/owner`.
+if (Arg_GetString(_, "owner", name))
+{
+	// The argument was given.
+	printf("The owner is \"%s\"", name);
+}
+```
+
+Examples:
+
+```
+--owner "your name here" -s=bob "--favourite-arg=--help or --count"
+```
+
+## Accepted Argument Forms
 
 ### Collated short-form.
 
@@ -173,9 +244,13 @@ If you want a parameter to start with `-` (or `/`), which are usually used to de
 -e=--i
 ```
 
-For almost exclusively this corner-case (it is not usually recommended) the entire argument and parameter may be enclosed in double quotes:
+For almost exclusively this corner-case (it is not usually recommended) the entire argument and parameter may be enclosed in double quotes or use `=`:
 
 ```
-"--decrement --i"
+--decrement=--i
+```
+
+```
+"--decrement --i with space"
 ```
 
