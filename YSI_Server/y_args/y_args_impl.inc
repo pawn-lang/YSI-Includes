@@ -84,7 +84,7 @@ static stock Args_TryAdd(hash, index)
 	}
 }
 
-stock Args_LazyInit()
+_Y_CORE_STATIC stock Args_LazyInit()
 {
 	if (YSI_gsCacheState != E_ARGS_CACHE_STATE_UNINIT)
 	{
@@ -173,7 +173,7 @@ stock Args_LazyInit()
 	}
 }
 
-static stock Args_CheckName(short, const long[], const name[], offset, len)
+_Y_CORE_STATIC stock Args_CheckName(short, const long[], const name[], offset, len)
 {
 	if (name[offset] == '\0')
 	{
@@ -198,7 +198,7 @@ static stock Args_CheckName(short, const long[], const name[], offset, len)
 	return 0;
 }
 
-stock bool:Args_GetStringFallback(short, const long[], output[], size)
+_Y_CORE_STATIC stock bool:Args_GetStringFallback(short, const long[], output[], size)
 {
 	new
 		len = strlen(long),
@@ -383,5 +383,37 @@ stock bool:Args_GetStringFallback(short, const long[], output[], size)
 
 stock bool:Args_GetBool(shortForm, const longForm[], &bool:dest)
 {
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
+	{
+		Args_LazyInit();
+	}
+	// Doesn't need to be big to hold `false`.
+	new
+		output[8];
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_INIT)
+	{
+		// TODO:
+	}
+	else
+	{
+		if (!Args_GetStringFallback(shortForm, longForm, output, sizeof (output)))
+		{
+			return (dest = false);
+		}
+	}
+	// Boolean parameters are `true` if they:
+	//
+	//   1) Are given without any value (default).
+	//   2) Are followed by `+`.
+	//   3) Are assigned `1`.
+	//   4) Are assigned `true`.
+	//
+	// Anything else is `true`.  Even seemingly 
+	return
+		dest = output[0] == '\0'
+			|| output[0] == '+'
+			|| output[0] == '1'
+			|| strcmp(output, "true", true) == 0,
+		true;
 }
 
