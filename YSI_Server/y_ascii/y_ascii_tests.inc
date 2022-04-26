@@ -1,4 +1,4 @@
-TEST__ y_ascii_Prints()
+TEST__ y_ascii_Prints0()
 {
 	ASCII_PrintLinePart("Hello World!", 12, false, ASCII_BORDER_STYLE_SMALL, ASCII_ALIGNMENT_STYLE_LEFT);
 	ASCII_PrintLinePart("Hello World!", 12, false, ASCII_BORDER_STYLE_SMALL, ASCII_ALIGNMENT_STYLE_CENTRE);
@@ -13,7 +13,10 @@ TEST__ y_ascii_Prints()
 	ASCII_PrintSection("This is some long text that I hope will wrap.  To that end I am including a variety of relatively verbose verbiage and excessively long words.", ASCII_BORDER_STYLE_LARGE, ASCII_ALIGNMENT_STYLE_LEFT);
 	ASCII_PrintSection("Hello World!\n\n", ASCII_BORDER_STYLE_PILLARS, ASCII_ALIGNMENT_STYLE_CENTRE);
 	ASCII_PrintSection("This is some long text that I hope will wrap.  To that end I am including a variety of relatively verbose verbiage and excessively long words.", ASCII_BORDER_STYLE_PILLARS, ASCII_ALIGNMENT_STYLE_LEFT, 2);
+}
 
+TEST__ y_ascii_Prints1()
+{
 	printf(" ");
 	printf(" ");
 	printf(" ");
@@ -42,6 +45,12 @@ TEST__ y_ascii_Prints()
 	ASCII_PrintSection("This is some long text that I hope will wrap.  To that end I am including a variety of relatively verbose verbiage and excessively long words.", ASCII_BORDER_STYLE_PILLARS, ASCII_ALIGNMENT_STYLE_LEFT, 8);
 	ASCII_EndSection(ASCII_BORDER_STYLE_PILLARS);
 	ASCII_Separate(ASCII_BORDER_STYLE_PILLARS);
+	ASCII_EndDisplay(ASCII_BORDER_STYLE_PILLARS);
+}
+
+TEST__ y_ascii_Prints2()
+{
+	ASCII_StartDisplay(ASCII_BORDER_STYLE_PILLARS);
 	ASCII_StartSection(ASCII_BORDER_STYLE_PILLARS);
 	ASCII_PrintSection("Generating code, this may take a little bit of time.  Note that this code generation works best with the JIT plugin, which you are not currently using.  Get it here:\n\nhttps://git.io/jit-plugin\n\nPlease wait...\n\nDone!", ASCII_BORDER_STYLE_PILLARS, ASCII_ALIGNMENT_STYLE_CENTRE, 8);
 	ASCII_EndSection(ASCII_BORDER_STYLE_PILLARS);
