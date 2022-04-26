@@ -493,7 +493,10 @@ stock bool:Args_GetBool(shortForm, const longForm[], &bool:dest)
 		output[8];
 	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_INIT)
 	{
-		// TODO:
+		if (!Args_GetStringImpl(shortForm, longForm, output, sizeof (output)))
+		{
+			return (dest = false);
+		}
 	}
 	else
 	{
@@ -514,5 +517,78 @@ stock bool:Args_GetBool(shortForm, const longForm[], &bool:dest)
 			&& output[0] != '0'
 			&& strcmp(output, "false", true),
 		true;
+}
+
+stock bool:Args_GetInt(shortForm, const longForm[], &dest)
+{
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
+	{
+		Args_LazyInit();
+	}
+	// Doesn't need to be big to hold `false`.
+	new
+		output[16];
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_INIT)
+	{
+		if (!Args_GetStringImpl(shortForm, longForm, output, sizeof (output)))
+		{
+			return (dest = false);
+		}
+	}
+	else
+	{
+		if (!Args_GetStringFallback(shortForm, longForm, output, sizeof (output)))
+		{
+			return bool:(dest = 0);
+		}
+	}
+	return
+		dest = strval(output),
+		true;
+}
+
+stock bool:Args_GetFloat(shortForm, const longForm[], &Float:dest)
+{
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
+	{
+		Args_LazyInit();
+	}
+	// Doesn't need to be big to hold `false`.
+	new
+		output[16];
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_INIT)
+	{
+		if (!Args_GetStringImpl(shortForm, longForm, output, sizeof (output)))
+		{
+			return (dest = false);
+		}
+	}
+	else
+	{
+		if (!Args_GetStringFallback(shortForm, longForm, output, sizeof (output)))
+		{
+			return bool:(dest = 0.0);
+		}
+	}
+	return
+		dest = floatstr(output),
+		true;
+}
+
+stock bool:Args_GetString(shortForm, const longForm[], output, size)
+{
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
+	{
+		Args_LazyInit();
+	}
+	// Doesn't need to be big to hold `false`.
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_INIT)
+	{
+		return Args_GetStringImpl(shortForm, longForm, output, size))
+	}
+	else
+	{
+		return Args_GetStringFallback(shortForm, longForm, output, size);
+	}
 }
 
