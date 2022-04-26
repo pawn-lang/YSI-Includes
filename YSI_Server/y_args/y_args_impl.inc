@@ -166,6 +166,7 @@ _Y_CORE_STATIC stock Args_LazyInit()
 					break;
 				}
 				}
+				++YSI_gsArgTotal;
 				Args_TryAdd(hash, i);
 				P:6("Args_LazyInit: Argument: -%c, hash: %d", name[end - 1], hash);
 			}
@@ -575,7 +576,7 @@ stock bool:Args_GetFloat(shortForm, const longForm[], &Float:dest)
 		true;
 }
 
-stock bool:Args_GetString(shortForm, const longForm[], output, size)
+stock bool:Args_GetString(shortForm, const longForm[], output[], size = sizeof (output))
 {
 	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
 	{
@@ -590,5 +591,58 @@ stock bool:Args_GetString(shortForm, const longForm[], output, size)
 	{
 		return Args_GetStringFallback(shortForm, longForm, output, size);
 	}
+}
+
+stock bool:Args_GetRest(output[], size = sizeof (output))
+{
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
+	{
+		Args_LazyInit();
+	}
+	output[0] = '\0';
+	if (YSI_gsRestStart == 0)
+	{
+		return false;
+	}
+	for (new arg[YSI_MAX_STRING + 32], i = YSI_gsRestStart; i != YSI_gsArgSeen; )
+	{
+		if (i != YSI_gsRestStart)
+		{
+			strcat(output, " ", size);
+		}
+		argindex(i++, arg),
+		strcat(output, arg, size);
+	}
+	return true;
+}
+
+stock bool:Args_HasRest()
+{
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
+	{
+		Args_LazyInit();
+	}
+	return YSI_gsRestStart != 0;
+}
+
+// returns the number of *unique* arguments passed to the script.  So
+// `-o -o -o` will return `1`.  *rest* and positional arguments both count.
+stock Args_UniqueCount()
+{
+	return YSI_gsArgCount;
+}
+
+// returns the number any arguments passed to the script.  So `-o -o -o` will
+// return `3`.  *rest* and positional arguments both count.  `-ab` will return
+// `2`.
+stock Args_TrueCount()
+{
+	return YSI_gsArgTotal;
+}
+
+// returns the number of positional arguments passed.
+stock Args_PositionalCount()
+{
+	++YSI_gsPositionalCount;
 }
 

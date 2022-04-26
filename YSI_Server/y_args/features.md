@@ -127,8 +127,9 @@ Examples:
 ## Meta-data
 
 * `Args_UniqueCount()` returns the number of *unique* arguments passed to the script.  So `-o -o -o` will return `1`.  *rest* and positional arguments both count.
-* `Args_TrueCount()` returns the number any arguments passed to the script.  So `-o -o -o` will return `3`.  *rest* and positional arguments both count.
+* `Args_TrueCount()` returns the number any arguments passed to the script.  So `-o -o -o` will return `3`.  *rest* and positional arguments both count.  `-ab` will return `2`.
 * `Args_PositionalCount()` returns the number of positional arguments passed.
+* `bool:Args_HasRest()` Was there ` -- `?
 * `bool:Args_GetRest(output[], size = sizeof (output))` returns the *rest* data (everything after ` -- `).
 * `bool:Args_GetPositionalBool(index, &bool:output)` tries to get an boolean from the given positional argument index.
 * `bool:Args_GetPositionalInt(index, &output)` tries to get an integer from the given positional argument index.
