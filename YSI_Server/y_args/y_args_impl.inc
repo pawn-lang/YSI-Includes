@@ -110,11 +110,11 @@ _Y_CORE_STATIC stock Args_LazyInit()
 		bool:positional = true,
 		hash,
 		end;
-	YSI_gsArgSeen = argcount();
+	YSI_gsArgSeen = YSI_ArgCount__();
 	for (new i = 0; i != YSI_gsArgSeen; ++i)
 	{
 		// Get the argument.
-		argindex(i, name);
+		YSI_ArgIndex__(i, name, sizeof (name), false);
 		if (name[0] == '/')
 		{
 			++YSI_gsArgTotal,
@@ -226,7 +226,7 @@ _Y_CORE_STATIC stock bool:Args_GetStringImpl(short, const long[], output[], size
 		// `idxLong == -1`
 		// We need to retrieve the argument, then check if it has `=`, `:`, `-`,
 		// `+`, or other arguments together.
-		argindex(idxShort, arg);
+		YSI_ArgIndex__(idxShort, arg, sizeof (arg), false);
 		P:5("Args_GetStringImpl: short %d = %s", idxShort, arg);
 		switch (arg[2])
 		{
@@ -234,7 +234,7 @@ _Y_CORE_STATIC stock bool:Args_GetStringImpl(short, const long[], output[], size
 		{
 			if (idxShort + 1 < YSI_gsArgSeen)
 			{
-				argindex(idxShort + 1, output, size);
+				YSI_ArgIndex__(idxShort + 1, output, size, false);
 			}
 		}
 		case '=':
@@ -257,7 +257,7 @@ _Y_CORE_STATIC stock bool:Args_GetStringImpl(short, const long[], output[], size
 	{
 		// Get the long-form parameter because it is LAST.  Also true when
 		// `idxShort == -1`
-		argindex(idxLong, arg),
+		YSI_ArgIndex__(idxLong, arg, sizeof (arg), false),
 		idxShort = strlen(long) + (arg[0] == '/' ? 1 : 2);
 		P:5("Args_GetStringImpl: long %d = %s, %d = %d ('%c')", idxLong, arg, idxShort, arg[idxShort], arg[idxShort]);
 		switch (arg[idxShort])
@@ -266,7 +266,7 @@ _Y_CORE_STATIC stock bool:Args_GetStringImpl(short, const long[], output[], size
 		{
 			if (idxLong + 1 < YSI_gsArgSeen)
 			{
-				argindex(idxLong + 1, output, size);
+				YSI_ArgIndex__(idxLong + 1, output, size, false);
 			}
 		}
 		case '=', ' ':
@@ -285,7 +285,7 @@ _Y_CORE_STATIC stock bool:Args_GetStringImpl(short, const long[], output[], size
 		{
 			if (idxLong + 1 < YSI_gsArgSeen)
 			{
-				argindex(idxLong + 1, output, size);
+				YSI_ArgIndex__(idxLong + 1, output, size, false);
 				P:5("Args_GetStringImpl: %s", output);
 				if (output[0] == '-' || output[0] == '/')
 				{
@@ -313,7 +313,7 @@ _Y_CORE_STATIC stock bool:Args_GetStringFallback(short, const long[], output[], 
 	for (new i = 0; i != YSI_gsArgSeen; ++i)
 	{
 		// Get the argument.
-		argindex(i, name);
+		YSI_ArgIndex__(i, name, sizeof (name), false);
 		if (name[0] == '/')
 		{
 			parameter = false;
@@ -610,7 +610,7 @@ stock bool:Args_GetRest(output[], size = sizeof (output))
 		{
 			strcat(output, " ", size);
 		}
-		argindex(i++, arg),
+		YSI_ArgIndex__(i++, arg, sizeof (arg), false),
 		strcat(output, arg, size);
 	}
 	return true;
