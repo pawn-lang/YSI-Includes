@@ -66,7 +66,16 @@ static stock Args_ScanAndHash(const name[], i, &hash)
 
 static stock Args_TryAdd(hash, index)
 {
-	if (Args_FindIndexByHash(hash) == -1)
+	new i;
+	while (i != YSI_gsArgIndex)
+	{
+		if (YSI_gsArgHashes[i] == hash)
+		{
+			break;
+		}
+		++i;
+	}
+	if (i == YSI_gsArgIndex)
 	{
 		// A new unique argument.
 		++YSI_gsArgCount;
@@ -81,6 +90,10 @@ static stock Args_TryAdd(hash, index)
 			YSI_gsArgIndexes[YSI_gsArgIndex] = index,
 			++YSI_gsArgIndex;
 		}
+	}
+	else
+	{
+		YSI_gsArgIndexes[i] = index;
 	}
 }
 
@@ -198,11 +211,99 @@ _Y_CORE_STATIC stock Args_CheckName(short, const long[], const name[], offset, l
 	return 0;
 }
 
+_Y_CORE_STATIC stock bool:Args_GetStringImpl(short, const long[], output[], size)
+{
+	new
+		// Inline single character hash.
+		idxLong = Args_FindIndexByHash(BernsteinHash(long)),
+		idxShort = Args_FindIndexByHash(5381 * 33 ^ short),
+		arg[YSI_MAX_STRING + 32];
+	output[0] = '\0';
+	if (idxShort > idxLong)
+	{
+		// Get the short-form parameter because it is LAST.  Also true when
+		// `idxLong == -1`
+		// We need to retrieve the argument, then check if it has `=`, `:`, `-`,
+		// `+`, or other arguments together.
+		argindex(idxShort, arg);
+		P:5("Args_GetStringImpl: short %d = %s", idxShort, arg);
+		switch (arg[2])
+		{
+		case ':':
+		{
+			if (idxShort + 1 < YSI_gsArgSeen)
+			{
+				argindex(idxShort + 1, output, size);
+			}
+		}
+		case '=':
+		{
+			// We might miss three characters.
+			strcat(output, arg[2], size);
+		}
+		case '-':
+		{
+			strcat(output, "-", size);
+		}
+		case '+':
+		{
+			strcat(output, "+", size);
+		}
+		}
+		return true;
+	}
+	if (idxLong > idxShort)
+	{
+		// Get the long-form parameter because it is LAST.  Also true when
+		// `idxShort == -1`
+		argindex(idxLong, arg),
+		idxShort = strlen(long) + (arg[0] == '/' ? 1 : 2);
+		P:5("Args_GetStringImpl: long %d = %s, %d = %d ('%c')", idxLong, arg, idxShort, arg[idxShort], arg[idxShort]);
+		switch (arg[idxShort])
+		{
+		case ':':
+		{
+			if (idxLong + 1 < YSI_gsArgSeen)
+			{
+				argindex(idxLong + 1, output, size);
+			}
+		}
+		case '=', ' ':
+		{
+			strcat(output, arg[idxShort + 1], size);
+		}
+		case '-':
+		{
+			strcat(output, "-", size);
+		}
+		case '+':
+		{
+			strcat(output, "+", size);
+		}
+		case '\0':
+		{
+			if (idxLong + 1 < YSI_gsArgSeen)
+			{
+				argindex(idxLong + 1, output, size);
+				P:5("Args_GetStringImpl: %s", output);
+				if (output[0] == '-' || output[0] == '/')
+				{
+					output[0] = '\0';
+				}
+			}
+		}
+		}
+		return true;
+	}
+	// Else they are the same, which can only happen when neither exists.
+	return false;
+}
+
 _Y_CORE_STATIC stock bool:Args_GetStringFallback(short, const long[], output[], size)
 {
 	new
 		len = strlen(long),
-		name[32],
+		name[YSI_MAX_STRING + 32],
 		bool:found = false,
 		bool:parameter = false,
 		ch,
