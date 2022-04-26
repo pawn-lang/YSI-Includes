@@ -401,19 +401,17 @@ stock bool:Args_GetBool(shortForm, const longForm[], &bool:dest)
 			return (dest = false);
 		}
 	}
-	// Boolean parameters are `true` if they:
+	// Boolean parameters are `false` if they exactly one of:
 	//
-	//   1) Are given without any value (default).
-	//   2) Are followed by `+`.
-	//   3) Are assigned `1`.
-	//   4) Are assigned `true`.
+	//   1) Followed by `-`.
+	//   2) Assigned `0`.
+	//   3) Assigned `false`.
 	//
-	// Anything else is `true`.  Even seemingly 
+	// Anything else is `true`.  Even seemingly falsey things like `null`.
 	return
-		dest = output[0] == '\0'
-			|| output[0] == '+'
-			|| output[0] == '1'
-			|| strcmp(output, "true", true) == 0,
+		dest = output[0] != '-'
+			&& output[0] != '0'
+			&& strcmp(output, "false", true),
 		true;
 }
 
