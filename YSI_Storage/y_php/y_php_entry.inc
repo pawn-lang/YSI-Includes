@@ -225,7 +225,7 @@ MASTER_TASK__ _PHP_ForceSend[5000]()
 	if (YSI_g_sIndex > PHP_HEADER_LENGTH)
 	{
 		// Send the data.
-		YSI_HTTP(0, HTTP_POST, PHP_SEND, YSI_g_sBuffer, "_PHP_Ignore");
+		YSI_HTTP__(0, HTTP_POST, PHP_SEND, YSI_g_sBuffer, "_PHP_Ignore");
 		YSI_g_sIndex = PHP_HEADER_LENGTH;
 		// I don't think this is actually REQUIRED, but does no harm.
 		YSI_g_sBuffer[PHP_HEADER_LENGTH] = '\0';
@@ -262,7 +262,7 @@ MASTER_HOOK__ OnScriptInit()
 	//YSI_g_sLen = strlen(PHP_RECEIVE) + 4;
 	//SetTimer("_PHP_FireOne", 50, 0);
 	// Send '0' only once at server start to reset PHP.
-	YSI_HTTP(0, HTTP_HEAD, PHP_RECEIVE "?ID=0", YSI_EMPTY, "_PHP_Result");
+	YSI_HTTP__(0, HTTP_HEAD, PHP_RECEIVE "?ID=0", YSI_EMPTY, "_PHP_Result");
 	//new TODO;
 	DEFER__ _PHP_FireOne[500](0, 0);
 	DEFER__ _PHP_FireOne[5500](0, 0);
@@ -283,7 +283,7 @@ timer _PHP_FireOne[10](res, to)
 	//valstr(sAddr[YSI_g_sLen], YSI_g_sID);
 	format(sAddr, sizeof (sAddr), PHP_RECEIVE "?ID=%d&RE=%d&TO=%d", YSI_g_sID, res, to);
 	P:1("_PHP_FireOne request: %s: ", sAddr);
-	YSI_HTTP(YSI_g_sID, HTTP_GET, sAddr, YSI_EMPTY, "_PHP_Result");
+	YSI_HTTP__(YSI_g_sID, HTTP_GET, sAddr, YSI_EMPTY, "_PHP_Result");
 }
 
 static stock PHP_GetNum32(const str[])

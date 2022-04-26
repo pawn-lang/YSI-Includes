@@ -536,7 +536,7 @@ stock Iter_All_Internal(const array[], size, value)
 	
 	HOOK__ OnPlayerDisconnect(playerid, reason)
 	{
-		YSI_SetTimerEx("Iter_OPDCInternal", 0, false, "i", playerid);
+		YSI_SetTimerEx__("Iter_OPDCInternal", 0, false, "i", playerid);
 		return 1;
 	}
 	

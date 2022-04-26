@@ -220,7 +220,7 @@ User_RegisterPassword(playerid, string:password[])
 				// End the string.
 				password[end] = '\0';
 				// Got the start and the end.
-				YSI_SHA256Hash_BAD_DONT_USE(password[start], Y_USERS_FIRST_PASS_SALT, YSI_g_sSHA256FirstPhase);
+				YSI_SHA256Hash_BAD_DONT_USE__(password[start], Y_USERS_FIRST_PASS_SALT, YSI_g_sSHA256FirstPhase);
 				// Now do the full hash on the SHA256 hash of the original password.
 				YSI_g_sRegistrationState[playerid] = e_USER_REGISTRATION_STATE_P1;
 				BCrypt_Hash(playerid, "User_OnFirstRegistration", YSI_g_sSHA256FirstPhase, 12);
@@ -287,7 +287,7 @@ stock User_ConfirmPassword(playerid, string:password[])
 				// End the string.
 				password[end] = '\0';
 				// Got the start and the end.
-				YSI_SHA256Hash_BAD_DONT_USE(password[start], Y_USERS_FIRST_PASS_SALT, YSI_g_sSHA256FirstPhase);
+				YSI_SHA256Hash_BAD_DONT_USE__(password[start], Y_USERS_FIRST_PASS_SALT, YSI_g_sSHA256FirstPhase);
 				// Verify the passwords match.
 				YSI_g_sRegistrationState[playerid] = e_USER_REGISTRATION_STATE_P3;
 				BCrypt_Check(playerid, "User_OnSecondRegistration", YSI_g_sSHA256FirstPhase, YSI_g_sUserPassword[playerid]);
@@ -379,7 +379,7 @@ stock bool:User_ConfirmEmail(playerid, string:email[])
 			}
 			// Defer the call, so it looks like a callback in the same way as
 			// confirming a password.  Check the length first.
-			YSI_SetTimerEx("OnConfirmEmail", 0, false, "ii", playerid, len == end - start && strcmp(YSI_g_sUserEmail[playerid], email[start], false, len) == 0);
+			YSI_SetTimerEx__("OnConfirmEmail", 0, false, "ii", playerid, len == end - start && strcmp(YSI_g_sUserEmail[playerid], email[start], false, len) == 0);
 			return true;
 		}
 	}

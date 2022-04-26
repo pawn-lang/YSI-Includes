@@ -99,7 +99,7 @@ y_rconfix_Load()
 	#if !defined YSI_OPENMP__
 		// Test if the fix has already been loaded.
 		setproperty(27, YSI_gscOnClientCheckResponse, 0);
-		YSI_SendRconCommand(YSI_gscOnClientCheckResponse);
+		YSI_SendRconCommand__(YSI_gscOnClientCheckResponse);
 		if (getproperty(27, YSI_gscOnClientCheckResponse) == 27)
 		{
 			return;
@@ -165,7 +165,7 @@ y_rconfix_Load()
 		}
 		if (fexist(YSI_gscRconFixFS))
 		{
-			YSI_SendRconCommand("loadfs ../scriptfiles/callbackfix");
+			YSI_SendRconCommand__("loadfs ../scriptfiles/callbackfix");
 			state OnClientCheckResponse : OnClientCheckResponse_GM;
 		}
 		else
@@ -179,7 +179,7 @@ y_rconfix_Load()
 stock y_rconfix_Unload()
 {
 	#if !defined YSI_OPENMP__
-		YSI_SendRconCommand("unloadfs ../scriptfiles/callbackfix");
+		YSI_SendRconCommand__("unloadfs ../scriptfiles/callbackfix");
 	#endif
 }
 

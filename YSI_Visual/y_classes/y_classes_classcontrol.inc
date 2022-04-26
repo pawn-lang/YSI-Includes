@@ -252,7 +252,7 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 	// YSI_g_sPlayerFlags[playerid] |= (e_SPAWN_FLAGS_IGNORE_ONCE);
 	// TogglePlayerSpectating(playerid, false);
 	// //SpawnPlayer(playerid);
-	// //YSI_g_sTimer[playerid] = YSI_SetTimerEx("_Class_SpawnPlayer3", 20, false, "i", playerid);
+	// //YSI_g_sTimer[playerid] = YSI_SetTimerEx__("_Class_SpawnPlayer3", 20, false, "i", playerid);
 	// //Class_TK(playerid);
 // }
 
@@ -288,11 +288,11 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 	// Class_Spectate(playerid);
 	// if (YSI_g_sPlayerFlags[playerid] & (e_SPAWN_FLAGS_ENABLED))
 	// {
-		// YSI_g_sTimer[playerid] = YSI_SetTimerEx("_Class_SpawnPlayer1", 10, false, "i", playerid);
+		// YSI_g_sTimer[playerid] = YSI_SetTimerEx__("_Class_SpawnPlayer1", 10, false, "i", playerid);
 	// }
 	// else
 	// {
-		// YSI_g_sTimer[playerid] = YSI_SetTimerEx("_Class_SpawnPlayer2", 10, false, "i", playerid);
+		// YSI_g_sTimer[playerid] = YSI_SetTimerEx__("_Class_SpawnPlayer2", 10, false, "i", playerid);
 	// }
 	// //Class_TK(playerid);
 	// //YSI_g_sPlayerFlags[playerid] |= (e_SPAWN_FLAGS_IGNORE_ONCE);
@@ -307,7 +307,7 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 	// P:1("_Class_Return called: %d", playerid);
 	// Class_ReturnToSelection(playerid);
 	// //Class_TK(playerid);
-	// //YSI_g_sTimer[playerid] = YSI_SetTimerEx("_Class_NotSpawned", 500, false, "i", playerid);
+	// //YSI_g_sTimer[playerid] = YSI_SetTimerEx__("_Class_NotSpawned", 500, false, "i", playerid);
 // }
 
 // forward _Class_NotSpawned(playerid);
@@ -319,7 +319,7 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 	// Class_DisableSelection(playerid);
 	// //SetPlayerCameraPos(playerid, 1958.3783, 1343.1572, 15.3746);
 	// //SetPlayerCameraLookAt(playerid, 1958.3783, 1343.1572, 15.3746);
-	// YSI_SetTimerEx("_Class_Return", 10, false, "i", playerid);
+	// YSI_SetTimerEx__("_Class_Return", 10, false, "i", playerid);
 	// YSI_g_sPlayerFlags[playerid] |= (e_SPAWN_FLAGS_RETURNED | e_SPAWN_FLAGS_INSTANT);
 // }
 

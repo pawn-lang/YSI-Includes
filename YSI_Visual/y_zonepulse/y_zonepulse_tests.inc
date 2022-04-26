@@ -256,7 +256,7 @@ PTEST_INIT__ GangZoneStopPulse2(playerid)
 PTEST__ GangZoneStopPulse2(playerid)
 {
 	GangZonePulseForPlayer(playerid, gZone, 0xFF0000AA, 0x00FF00AA, 1000);
-	YSI_SetTimerEx("GangZoneStopPulse2", 4000, false, "i", playerid);
+	YSI_SetTimerEx__("GangZoneStopPulse2", 4000, false, "i", playerid);
 	ASK("Does the pulsing stop after four seconds?");
 }
 

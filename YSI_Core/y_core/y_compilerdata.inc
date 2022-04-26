@@ -721,7 +721,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 //#if !__COMPILER_CONST_TAGGED
 //	// Fix for bugged const assignments.
 //	#define _yI@%0\32; _yI@
-//	#define const%0:%1[%2]=%3:%4; const _yI@%1[%2]=%4,%0:%1[sizeof(_yI@%1)];PREINIT__ %1()_YSI_ConstCpy(_:(%1),(_yI@%1),0,sizeof(%1)*4,sizeof(%1));
+//	#define const%0:%1[%2]=%3:%4; const _yI@%1[%2]=%4,%0:%1[sizeof(_yI@%1)];PREINIT__ %1()_YSI_ConstCpy__(_:(%1),(_yI@%1),0,sizeof(%1)*4,sizeof(%1));
 //#endif
 
 // Consistent naming of compiler defined values. 

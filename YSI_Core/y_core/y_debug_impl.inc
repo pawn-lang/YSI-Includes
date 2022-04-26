@@ -90,13 +90,13 @@ stock YSI_gDebugLevel = 0;
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code1(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * Debug_Code1(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:1(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * C:1(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -115,13 +115,13 @@ P:D(Debug_Code1(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code2(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * Debug_Code2(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:2(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * C:2(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -140,13 +140,13 @@ P:D(Debug_Code2(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code3(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * Debug_Code3(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:3(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * C:3(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -165,13 +165,13 @@ P:D(Debug_Code3(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code4(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * Debug_Code4(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:4(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * C:4(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -190,13 +190,13 @@ P:D(Debug_Code4(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code5(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * Debug_Code5(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:5(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * C:5(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -215,13 +215,13 @@ P:D(Debug_Code5(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code6(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * Debug_Code6(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:6(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * C:6(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -240,13 +240,13 @@ P:D(Debug_Code6(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code7(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * Debug_Code7(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:7(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
+ * C:7(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -479,52 +479,52 @@ P:D(Debug_Print6(const str[], GLOBAL_TAG_TYPES:...));
 P:D(Debug_Print7(const str[], GLOBAL_TAG_TYPES:...));
 
 #if _DEBUG == -1
-	#define Debug_Print1(%1); { if (YSI_gDebugLevel >= 1) YSI_PrintF(%1); }
-	#define Debug_Print2(%1); { if (YSI_gDebugLevel >= 2) YSI_PrintF(%1); }
-	#define Debug_Print3(%1); { if (YSI_gDebugLevel >= 3) YSI_PrintF(%1); }
-	#define Debug_Print4(%1); { if (YSI_gDebugLevel >= 4) YSI_PrintF(%1); }
-	#define Debug_Print5(%1); { if (YSI_gDebugLevel >= 5) YSI_PrintF(%1); }
-	#define Debug_Print6(%1); { if (YSI_gDebugLevel >= 6) YSI_PrintF(%1); }
-	#define Debug_Print7(%1); { if (YSI_gDebugLevel >= 7) YSI_PrintF(%1); }
+	#define Debug_Print1(%1); { if (YSI_gDebugLevel >= 1) YSI_PrintF__(%1); }
+	#define Debug_Print2(%1); { if (YSI_gDebugLevel >= 2) YSI_PrintF__(%1); }
+	#define Debug_Print3(%1); { if (YSI_gDebugLevel >= 3) YSI_PrintF__(%1); }
+	#define Debug_Print4(%1); { if (YSI_gDebugLevel >= 4) YSI_PrintF__(%1); }
+	#define Debug_Print5(%1); { if (YSI_gDebugLevel >= 5) YSI_PrintF__(%1); }
+	#define Debug_Print6(%1); { if (YSI_gDebugLevel >= 6) YSI_PrintF__(%1); }
+	#define Debug_Print7(%1); { if (YSI_gDebugLevel >= 7) YSI_PrintF__(%1); }
 #else
 	#if _DEBUG >= 1
-		#define Debug_Print1(%1); YSI_PrintF(%1);
+		#define Debug_Print1(%1); YSI_PrintF__(%1);
 	#else
 		#define Debug_Print1(%1);
 	#endif
 	
 	#if _DEBUG >= 2
-		#define Debug_Print2(%1); YSI_PrintF(%1);
+		#define Debug_Print2(%1); YSI_PrintF__(%1);
 	#else
 		#define Debug_Print2(%1);
 	#endif
 	
 	#if _DEBUG >= 3
-		#define Debug_Print3(%1); YSI_PrintF(%1);
+		#define Debug_Print3(%1); YSI_PrintF__(%1);
 	#else
 		#define Debug_Print3(%1);
 	#endif
 	
 	#if _DEBUG >= 4
-		#define Debug_Print4(%1); YSI_PrintF(%1);
+		#define Debug_Print4(%1); YSI_PrintF__(%1);
 	#else
 		#define Debug_Print4(%1);
 	#endif
 	
 	#if _DEBUG >= 5
-		#define Debug_Print5(%1); YSI_PrintF(%1);
+		#define Debug_Print5(%1); YSI_PrintF__(%1);
 	#else
 		#define Debug_Print5(%1);
 	#endif
 	
 	#if _DEBUG >= 6
-		#define Debug_Print6(%1); YSI_PrintF(%1);
+		#define Debug_Print6(%1); YSI_PrintF__(%1);
 	#else
 		#define Debug_Print6(%1);
 	#endif
 	
 	#if _DEBUG >= 7
-		#define Debug_Print7(%1); YSI_PrintF(%1);
+		#define Debug_Print7(%1); YSI_PrintF__(%1);
 	#else
 		#define Debug_Print7(%1);
 	#endif
@@ -551,7 +551,7 @@ stock Debug_Kill_()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="YSI_Format">str.</param>
+ * <param name="YSI_Format__">str.</param>
  * <param name=""></param>
  * <remarks>
  *  This isn't really a function as the first parameter is part of the name:
@@ -603,17 +603,17 @@ stock Debug_PrintArray(arr[], size = sizeof (arr))
 		case 0:
 			str = "<>";
 		case 1:
-			YSI_Format(str, sizeof (str), "<%d>", arr[0]);
+			YSI_Format__(str, sizeof (str), "<%d>", arr[0]);
 		case 2:
-			YSI_Format(str, sizeof (str), "<%d, %d>", arr[0], arr[1]);
+			YSI_Format__(str, sizeof (str), "<%d, %d>", arr[0], arr[1]);
 		case 3:
-			YSI_Format(str, sizeof (str), "<%d, %d, %d>", arr[0], arr[1], arr[2]);
+			YSI_Format__(str, sizeof (str), "<%d, %d, %d>", arr[0], arr[1], arr[2]);
 		case 4:
-			YSI_Format(str, sizeof (str), "<%d, %d, %d, %d>", arr[0], arr[1], arr[2], arr[3]);
+			YSI_Format__(str, sizeof (str), "<%d, %d, %d, %d>", arr[0], arr[1], arr[2], arr[3]);
 		case 5:
-			YSI_Format(str, sizeof (str), "<%d, %d, %d, %d, %d>", arr[0], arr[1], arr[2], arr[3], arr[4]);
+			YSI_Format__(str, sizeof (str), "<%d, %d, %d, %d, %d>", arr[0], arr[1], arr[2], arr[3], arr[4]);
 		default:
-			YSI_Format(str, sizeof (str), "<%d, %d, %d, %d, %d, ... (+ %d)>", arr[0], arr[1], arr[2], arr[3], arr[4], size - 5);
+			YSI_Format__(str, sizeof (str), "<%d, %d, %d, %d, %d, ... (+ %d)>", arr[0], arr[1], arr[2], arr[3], arr[4], size - 5);
 	}
 	return str;
 }
@@ -809,7 +809,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 	// Get the tag name.
 	new name[128];
 	AMX_GetTagByValue(_:tag, name);
-	YSI_PrintF("[P:Q] %s:%d\n", file, line);
+	YSI_PrintF__("[P:Q] %s:%d\n", file, line);
 	if (size <= Debug_PrintQ_SIZEOF:1)
 	{
 		// Normal variable.
@@ -817,13 +817,13 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 		//switch (_:tag)
 		//{
 		if (_:tag == _:tagof (Float:))
-			return YSI_PrintF("    Float:%s = %.3f\n", expr, Float:getarg(5));
+			return YSI_PrintF__("    Float:%s = %.3f\n", expr, Float:getarg(5));
 		if (_:tag == _:tagof (bool:))
-			return YSI_PrintF("    bool:%s = %s\n", expr, getarg(5) ? ("    true") : ("    false"));
+			return YSI_PrintF__("    bool:%s = %s\n", expr, getarg(5) ? ("    true") : ("    false"));
 		if (_:tag == _:tagof (_:))
-			return YSI_PrintF("    %s = %d\n", expr, getarg(5));
+			return YSI_PrintF__("    %s = %d\n", expr, getarg(5));
 		//default:
-		return YSI_PrintF("    %s:%s = %d\n", name, expr, _:tag, getarg(5));
+		return YSI_PrintF__("    %s:%s = %d\n", name, expr, _:tag, getarg(5));
 		//}
 	}
 	
@@ -833,15 +833,15 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 		switch (_:size)
 		{
 		case 2:
-			return YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1));
+			return YSI_PrintF__("    Float:%s[%d] = { %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1));
 		case 3:
-			return YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2));
+			return YSI_PrintF__("    Float:%s[%d] = { %.3f, %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2));
 		case 4:
-			return YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2), Float:getarg(5, 3));
+			return YSI_PrintF__("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2), Float:getarg(5, 3));
 		case 5:
-			return YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2), Float:getarg(5, 3), Float:getarg(5, 4));
+			return YSI_PrintF__("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f, %.3f }\n", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2), Float:getarg(5, 3), Float:getarg(5, 4));
 		default:
-			YSI_PrintF("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f, %.3f, ... }", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2), Float:getarg(5, 3), Float:getarg(5, 4));
+			YSI_PrintF__("    Float:%s[%d] = { %.3f, %.3f, %.3f, %.3f, %.3f, ... }", expr, _:size, Float:getarg(5, 0), Float:getarg(5, 1), Float:getarg(5, 2), Float:getarg(5, 3), Float:getarg(5, 4));
 		}
 	}
 	else if (tag == Debug_PrintQ_TAG:tagof (_:))
@@ -854,15 +854,15 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 		else switch (_:size)
 		{
 		case 2:
-			return YSI_PrintF("    %s[%d] = { %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1));
+			return YSI_PrintF__("    %s[%d] = { %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1));
 		case 3:
-			return YSI_PrintF("    %s[%d] = { %d, %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2));
+			return YSI_PrintF__("    %s[%d] = { %d, %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2));
 		case 4:
-			return YSI_PrintF("    %s[%d] = { %d, %d, %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3));
+			return YSI_PrintF__("    %s[%d] = { %d, %d, %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3));
 		case 5:
-			return YSI_PrintF("    %s[%d] = { %d, %d, %d, %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
+			return YSI_PrintF__("    %s[%d] = { %d, %d, %d, %d, %d }\n", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
 		default:
-			YSI_PrintF("    %s[%d] = { %d, %d, %d, %d, %d, ... }", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
+			YSI_PrintF__("    %s[%d] = { %d, %d, %d, %d, %d, ... }", expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
 		}
 	}
 	else
@@ -870,15 +870,15 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 		switch (_:size)
 		{
 		case 2:
-			return YSI_PrintF("    %s:%s[%d] = { %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1));
+			return YSI_PrintF__("    %s:%s[%d] = { %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1));
 		case 3:
-			return YSI_PrintF("    %s:%s[%d] = { %d, %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2));
+			return YSI_PrintF__("    %s:%s[%d] = { %d, %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2));
 		case 4:
-			return YSI_PrintF("    %s:%s[%d] = { %d, %d, %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3));
+			return YSI_PrintF__("    %s:%s[%d] = { %d, %d, %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3));
 		case 5:
-			return YSI_PrintF("    %s:%s[%d] = { %d, %d, %d, %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
+			return YSI_PrintF__("    %s:%s[%d] = { %d, %d, %d, %d, %d }\n", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
 		default:
-			YSI_PrintF("    %s:%s[%d] = { %d, %d, %d, %d, %d, ... }", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
+			YSI_PrintF__("    %s:%s[%d] = { %d, %d, %d, %d, %d, ... }", name, expr, _:size, getarg(5, 0), getarg(5, 1), getarg(5, 2), getarg(5, 3), getarg(5, 4));
 		}
 	}
     
@@ -886,7 +886,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 	new File:fhnd;
 	if ((fhnd = ftemporary(name, "tmp", 10 + 3 + 3)))
 	{
-		YSI_PrintF("    (full data dumped to: %s)\n", name);
+		YSI_PrintF__("    (full data dumped to: %s)\n", name);
 		// The old compiler didn't like this in a ternary, but honestly moving
 		// it out of the loop is better anyway.
 		tag = Debug_PrintQ_TAG:(tag == Debug_PrintQ_TAG:tagof (Float:));

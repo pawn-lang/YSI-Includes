@@ -134,7 +134,7 @@ _Y_CORE_STATIC stock ASCII_PrintLinePart(const text[], len, bool:hyphen, ASCII_B
 		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (40 - len) / 2;
 		default: {}
 		}
-		YSI_PrintF(" |%*s%*s%*s| ", padding, spacer, 40 - padding - padding, text, padding, spacer);
+		YSI_PrintF__(" |%*s%*s%*s| ", padding, spacer, 40 - padding - padding, text, padding, spacer);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
@@ -143,7 +143,7 @@ _Y_CORE_STATIC stock ASCII_PrintLinePart(const text[], len, bool:hyphen, ASCII_B
 		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (54 - len) / 2;
 		default: {}
 		}
-		YSI_PrintF("         |%*s%*s%*s|", padding, spacer, 54 - padding - padding, text, padding, spacer);
+		YSI_PrintF__("         |%*s%*s%*s|", padding, spacer, 54 - padding - padding, text, padding, spacer);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
@@ -152,7 +152,7 @@ _Y_CORE_STATIC stock ASCII_PrintLinePart(const text[], len, bool:hyphen, ASCII_B
 		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (57 - len) / 2;
 		default: {}
 		}
-		YSI_PrintF("    |||||||%*s%*s%*s|||||||", padding, spacer, 57 - padding - padding, text, padding, spacer);
+		YSI_PrintF__("    |||||||%*s%*s%*s|||||||", padding, spacer, 57 - padding - padding, text, padding, spacer);
 	}
 	}
 	// Reset the string.
@@ -194,40 +194,40 @@ stock ASCII_StartDisplay(ASCII_BORDER_STYLE:border)
 	{
 	case ASCII_BORDER_STYLE_SMALL:
 	{
-		YSI_PrintF(YSI_gsSmallHeader);
+		YSI_PrintF__(YSI_gsSmallHeader);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
-		YSI_Print(YSI_gsLargeHeader);
+		YSI_Print__(YSI_gsLargeHeader);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
-		YSI_Print("                                   ___---___                                   "),
-		YSI_Print("                             ___---___---___---___                             "),
-		YSI_Print("                       ___---___---    *    ---___---___                       "),
-		YSI_Print("                 ___---___---    o/ 0_/  @  o ^   ---___---___                 "),
-		YSI_Print("           ___---___--- @  i_e J-U /|  -+D O|-| (o) /   ---___---___           "),
-		YSI_Print("     ___---___---    __/|  //\\  /|  |\\  /\\  |\\|  |_  __--oj   ---___---___     "),
-		YSI_Print("__---___---_________________________________________________________---___---__"),
-		YSI_Print("==============================================================================="),
-		YSI_Print(YSI_gsPillarsHeader0),
-		YSI_Print(YSI_gsPillarsHeader1),
-		YSI_Print(YSI_gsPillarsHeader2),
-		YSI_Print(YSI_gsPillarsHeader3),
-		YSI_Print(YSI_gsPillarsHeader4),
-		YSI_Print(YSI_gsPillarsHeader5),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsFooter0),
-		YSI_Print(YSI_gsPillarsFooter1),
-		YSI_Print(YSI_gsPillarsFooter2),
-		YSI_Print(YSI_gsPillarsFooter3);
+		YSI_Print__("                                   ___---___                                   "),
+		YSI_Print__("                             ___---___---___---___                             "),
+		YSI_Print__("                       ___---___---    *    ---___---___                       "),
+		YSI_Print__("                 ___---___---    o/ 0_/  @  o ^   ---___---___                 "),
+		YSI_Print__("           ___---___--- @  i_e J-U /|  -+D O|-| (o) /   ---___---___           "),
+		YSI_Print__("     ___---___---    __/|  //\\  /|  |\\  /\\  |\\|  |_  __--oj   ---___---___     "),
+		YSI_Print__("__---___---_________________________________________________________---___---__"),
+		YSI_Print__("==============================================================================="),
+		YSI_Print__(YSI_gsPillarsHeader0),
+		YSI_Print__(YSI_gsPillarsHeader1),
+		YSI_Print__(YSI_gsPillarsHeader2),
+		YSI_Print__(YSI_gsPillarsHeader3),
+		YSI_Print__(YSI_gsPillarsHeader4),
+		YSI_Print__(YSI_gsPillarsHeader5),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsFooter0),
+		YSI_Print__(YSI_gsPillarsFooter1),
+		YSI_Print__(YSI_gsPillarsFooter2),
+		YSI_Print__(YSI_gsPillarsFooter3);
 	}
 	}
 }
@@ -238,25 +238,25 @@ stock ASCII_StartSection(ASCII_BORDER_STYLE:border)
 	{
 	case ASCII_BORDER_STYLE_SMALL:
 	{
-		YSI_Print(YSI_gsSmallBody);
+		YSI_Print__(YSI_gsSmallBody);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
-		YSI_Print(YSI_gsLargeBody),
-		YSI_Print(YSI_gsLargeBody);
+		YSI_Print__(YSI_gsLargeBody),
+		YSI_Print__(YSI_gsLargeBody);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
-		YSI_Print(YSI_gsPillarsHeader0);
-		YSI_Print(YSI_gsPillarsHeader1);
-		YSI_Print(YSI_gsPillarsHeader2);
-		YSI_Print(" / _ \\===/ _ \\                                                   / _ \\===/ _ \\ ");
-		YSI_Print("( (.\\ oOo /.) )                                                 ( (.\\ oOo /.) )");
-		YSI_Print(" \\__/=====\\__/                                                   \\__/=====\\__/ ");
-		YSI_Print(YSI_gsPillarsBody1);
-		YSI_Print(YSI_gsPillarsBody1);
-		YSI_Print(YSI_gsPillarsBody1);
-		YSI_Print(YSI_gsPillarsBody1);
+		YSI_Print__(YSI_gsPillarsHeader0);
+		YSI_Print__(YSI_gsPillarsHeader1);
+		YSI_Print__(YSI_gsPillarsHeader2);
+		YSI_Print__(" / _ \\===/ _ \\                                                   / _ \\===/ _ \\ ");
+		YSI_Print__("( (.\\ oOo /.) )                                                 ( (.\\ oOo /.) )");
+		YSI_Print__(" \\__/=====\\__/                                                   \\__/=====\\__/ ");
+		YSI_Print__(YSI_gsPillarsBody1);
+		YSI_Print__(YSI_gsPillarsBody1);
+		YSI_Print__(YSI_gsPillarsBody1);
+		YSI_Print__(YSI_gsPillarsBody1);
 	}
 	}
 }
@@ -267,23 +267,23 @@ stock ASCII_EndSection(ASCII_BORDER_STYLE:border)
 	{
 	case ASCII_BORDER_STYLE_SMALL:
 	{
-		YSI_Print(YSI_gsSmallBody);
+		YSI_Print__(YSI_gsSmallBody);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
-		YSI_Print(YSI_gsLargeBody),
-		YSI_Print(YSI_gsLargeBody);
+		YSI_Print__(YSI_gsLargeBody),
+		YSI_Print__(YSI_gsLargeBody);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
-		YSI_Print(YSI_gsPillarsBody1),
-		YSI_Print(YSI_gsPillarsBody1),
-		YSI_Print(YSI_gsPillarsBody1),
-		YSI_Print(YSI_gsPillarsBody1),
-		YSI_Print("    (oOoOo)                                                         (oOoOo)    "),
-		YSI_Print("    J%%%%%L                                                         J%%%%%L    "),
-		YSI_Print("   ZZZZZZZZZ                                                       ZZZZZZZZZ   "),
-		YSI_Print(YSI_gsPillarsFooter3);
+		YSI_Print__(YSI_gsPillarsBody1),
+		YSI_Print__(YSI_gsPillarsBody1),
+		YSI_Print__(YSI_gsPillarsBody1),
+		YSI_Print__(YSI_gsPillarsBody1),
+		YSI_Print__("    (oOoOo)                                                         (oOoOo)    "),
+		YSI_Print__("    J%%%%%L                                                         J%%%%%L    "),
+		YSI_Print__("   ZZZZZZZZZ                                                       ZZZZZZZZZ   "),
+		YSI_Print__(YSI_gsPillarsFooter3);
 	}
 	}
 }
@@ -294,32 +294,32 @@ stock ASCII_Separate(ASCII_BORDER_STYLE:border)
 	{
 	case ASCII_BORDER_STYLE_SMALL:
 	{
-		YSI_Print(YSI_gsSmallHeader);
+		YSI_Print__(YSI_gsSmallHeader);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
-		YSI_Print(YSI_gsLargeHeader);
+		YSI_Print__(YSI_gsLargeHeader);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
-		YSI_Print(YSI_gsPillarsHeader0),
-		YSI_Print(YSI_gsPillarsHeader1),
-		YSI_Print(YSI_gsPillarsHeader2),
-		YSI_Print(YSI_gsPillarsHeader3),
-		YSI_Print(YSI_gsPillarsHeader4),
-		YSI_Print(YSI_gsPillarsHeader5),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsFooter0),
-		YSI_Print(YSI_gsPillarsFooter1),
-		YSI_Print(YSI_gsPillarsFooter2),
-		YSI_Print(YSI_gsPillarsFooter3);
+		YSI_Print__(YSI_gsPillarsHeader0),
+		YSI_Print__(YSI_gsPillarsHeader1),
+		YSI_Print__(YSI_gsPillarsHeader2),
+		YSI_Print__(YSI_gsPillarsHeader3),
+		YSI_Print__(YSI_gsPillarsHeader4),
+		YSI_Print__(YSI_gsPillarsHeader5),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsFooter0),
+		YSI_Print__(YSI_gsPillarsFooter1),
+		YSI_Print__(YSI_gsPillarsFooter2),
+		YSI_Print__(YSI_gsPillarsFooter3);
 	}
 	}
 }
@@ -330,36 +330,36 @@ stock ASCII_EndDisplay(ASCII_BORDER_STYLE:border)
 	{
 	case ASCII_BORDER_STYLE_SMALL:
 	{
-		YSI_Print(YSI_gsSmallHeader);
+		YSI_Print__(YSI_gsSmallHeader);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
-		YSI_Print(YSI_gsLargeHeader);
+		YSI_Print__(YSI_gsLargeHeader);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{
-		YSI_Print(YSI_gsPillarsHeader0),
-		YSI_Print(YSI_gsPillarsHeader1),
-		YSI_Print(YSI_gsPillarsHeader2),
-		YSI_Print(YSI_gsPillarsHeader3),
-		YSI_Print(YSI_gsPillarsHeader4),
-		YSI_Print(YSI_gsPillarsHeader5),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsBody0),
-		YSI_Print(YSI_gsPillarsFooter0),
-		YSI_Print(YSI_gsPillarsFooter1),
-		YSI_Print(YSI_gsPillarsFooter2),
-		YSI_Print(YSI_gsPillarsFooter3),
-		YSI_Print("  |_________________________________________________________________________|  "),
-		YSI_Print(" |___________________________________________________________________________| "),
-		YSI_Print("|_____________________________________________________________________________|"),
-		YSI_Print("_______________________________________________________________________________");
+		YSI_Print__(YSI_gsPillarsHeader0),
+		YSI_Print__(YSI_gsPillarsHeader1),
+		YSI_Print__(YSI_gsPillarsHeader2),
+		YSI_Print__(YSI_gsPillarsHeader3),
+		YSI_Print__(YSI_gsPillarsHeader4),
+		YSI_Print__(YSI_gsPillarsHeader5),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsBody0),
+		YSI_Print__(YSI_gsPillarsFooter0),
+		YSI_Print__(YSI_gsPillarsFooter1),
+		YSI_Print__(YSI_gsPillarsFooter2),
+		YSI_Print__(YSI_gsPillarsFooter3),
+		YSI_Print__("  |_________________________________________________________________________|  "),
+		YSI_Print__(" |___________________________________________________________________________| "),
+		YSI_Print__("|_____________________________________________________________________________|"),
+		YSI_Print__("_______________________________________________________________________________");
 	}
 	}
 }

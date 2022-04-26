@@ -549,10 +549,10 @@ stock bool:Server_CrashDetectExists()
 			YSI_gLockData[1] = YSI_gLockData[0] + 7;
 		#endif
 		YVers_PrintHeader();
-		//YSI_Print(" |                                      | ");
-		//YSI_Print(" |  Checking the latest YSI version..   | ");
-		//YSI_Print(YSI_gscSpacer);
-		//YSI_Print(YSI_gscHeader);
+		//YSI_Print__(" |                                      | ");
+		//YSI_Print__(" |  Checking the latest YSI version..   | ");
+		//YSI_Print__(YSI_gscSpacer);
+		//YSI_Print__(YSI_gscHeader);
 		// Call my server to check the current public YSI version.  v is the
 		// current version and c is the version of data response which this code
 		// can parse.  Note that the response data SHOULD be backward compatible
@@ -630,9 +630,9 @@ stock bool:Server_CrashDetectExists()
 						last = pos + 1;
 					}
 				}
-				//YSI_Print(YSI_gscSpacer),
-				//YSI_Print(YSI_gscHeader),
-				//YSI_Print(YSI_gscMiniGap);
+				//YSI_Print__(YSI_gscSpacer),
+				//YSI_Print__(YSI_gscHeader),
+				//YSI_Print__(YSI_gscMiniGap);
 				Server_FinishIntroPart(),
 				Server_FinishIntroMessage();
 			}

@@ -76,7 +76,7 @@ static stock
 
 static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 {
-	if (YSI_FGetChar(bmp, false) != 'B' || YSI_FGetChar(bmp, false) != 'M')
+	if (YSI_FGetChar__(bmp, false) != 'B' || YSI_FGetChar__(bmp, false) != 'M')
 	{
 		return false;
 	}

@@ -78,27 +78,27 @@ Optional plugins:
 //
 // TODO: Figure out what I meant by that `TODO` above...
 //
-native YSI_Print(const string[]) = print;
-native YSI_PrintF(const format[], GLOBAL_TAG_TYPES:...) = printf;
+native YSI_Print__(const string[]) = print;
+native YSI_PrintF__(const format[], GLOBAL_TAG_TYPES:...) = printf;
 
-native YSI_SetTimer(const funcname[], interval, bool:repeating) = SetTimer;
-native YSI_SetTimerEx(const funcname[], interval, bool:repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
+native YSI_SetTimer__(const funcname[], interval, bool:repeating) = SetTimer;
+native YSI_SetTimerEx__(const funcname[], interval, bool:repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
 
-native YSI_HTTP(index, type, const url[], const data[], const callback[]) = HTTP;
-native YSI_Format(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYPES:...) = format;
+native YSI_HTTP__(index, type, const url[], const data[], const callback[]) = HTTP;
+native YSI_Format__(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYPES:...) = format;
 
-native YSI_SendRconCommand(const str[]) = SendRconCommand;
-native YSI_SendClientCheck(playerid, type, memoryAddress, memoryOffset, byteCount) = SendClientCheck;
-native YSI_SHA256Hash_BAD_DONT_USE(const password[], const salt[], output[], size = sizeof (output)) = SHA256_PassHash;
+native YSI_SendRconCommand__(const str[]) = SendRconCommand;
+native YSI_SendClientCheck__(playerid, type, memoryAddress, memoryOffset, byteCount) = SendClientCheck;
+native YSI_SHA256Hash_BAD_DONT_USE__(const password[], const salt[], output[], size = sizeof (output)) = SHA256_PassHash;
 
 // Proper casing.
-native YSI_Random(max) = random;
-native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = memcpy;
+native YSI_Random__(max) = random;
+native _YSI_ConstCpy__(const dst[], const src[], index, numbytes, maxlength) = memcpy;
 
 #define YSI_JOIN(%0,%1,%2) %0And%1And%2
 
-native _YSI_FGetChar(File:handle, value, bool:utf8 = true) = fgetchar;
-#define YSI_FGetChar(%0,%1) _YSI_FGetChar((%0),_:(%1),(%1))
+native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
+#define YSI_FGetChar__(%0,%1) _YSI_FGetChar__((%0),_:(%1),(%1))
 
 // open.mp exclusives.  This file might have to be renamed!
 native YSI_ArgCount__() = argcount;

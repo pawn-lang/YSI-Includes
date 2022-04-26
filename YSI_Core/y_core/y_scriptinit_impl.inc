@@ -358,32 +358,32 @@ static stock ScriptInit_Dump(const filename[], const message[])
 
 static stock Server_PrintYSIHeader()
 {
-	YSI_Print("         ==============================================================");
-	YSI_Print("         |                                                            |");
-	YSI_Print("         |                                                            |");
-	YSI_Print("         |    YYYYYYY       YYYYYYY    SSSSSSSSSSSSSSS  IIIIIIIIII    |");
-	YSI_Print("         |    Y:::::Y       Y:::::Y  SS:::::::::::::::S I::::::::I    |");
-	YSI_Print("         |    Y:::::Y       Y:::::Y S:::::SSSSSS::::::S I::::::::I    |");
-	YSI_Print("         |    Y::::::Y     Y::::::Y S:::::S     SSSSSSS II::::::II    |");
-	YSI_Print("         |    YYY:::::Y   Y:::::YYY S:::::S               I::::I      |");
-	YSI_Print("         |       Y:::::Y Y:::::Y    S:::::S               I::::I      |");
-	YSI_Print("         |        Y:::::Y:::::Y      S::::SSSS            I::::I      |");
-	YSI_Print("         |         Y:::::::::Y        SS::::::SSSSS       I::::I      |");
-	YSI_Print("         |          Y:::::::Y           SSS::::::::SS     I::::I      |");
-	YSI_Print("         |           Y:::::Y               SSSSSS::::S    I::::I      |");
-	YSI_Print("         |           Y:::::Y                    S:::::S   I::::I      |");
-	YSI_Print("         |           Y:::::Y                    S:::::S   I::::I      |");
-	YSI_Print("         |           Y:::::Y        SSSSSSS     S:::::S II::::::II    |");
-	YSI_Print("         |        YYYY:::::YYYY     S::::::SSSSSS:::::S I::::::::I    |");
-	YSI_Print("         |        Y:::::::::::Y     S:::::::::::::::SS  I::::::::I    |");
-	YSI_Print("         |        YYYYYYYYYYYYY      SSSSSSSSSSSSSSS    IIIIIIIIII    |");
-	YSI_Print("         |                                                            |");
-	YSI_Print("         |                                                            |");
-	YSI_Print("         |                      (c) 2021 MPL v1.1                     |");
-	YSI_Print("         |            Alex \"Y_Less\" Cole and contributors.            |");
-	YSI_Print("         |                                                            |");
-	YSI_Print("         |                                                            |");
-	YSI_Print("         ==============================================================");
+	YSI_Print__("         ==============================================================");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         |    YYYYYYY       YYYYYYY    SSSSSSSSSSSSSSS  IIIIIIIIII    |");
+	YSI_Print__("         |    Y:::::Y       Y:::::Y  SS:::::::::::::::S I::::::::I    |");
+	YSI_Print__("         |    Y:::::Y       Y:::::Y S:::::SSSSSS::::::S I::::::::I    |");
+	YSI_Print__("         |    Y::::::Y     Y::::::Y S:::::S     SSSSSSS II::::::II    |");
+	YSI_Print__("         |    YYY:::::Y   Y:::::YYY S:::::S               I::::I      |");
+	YSI_Print__("         |       Y:::::Y Y:::::Y    S:::::S               I::::I      |");
+	YSI_Print__("         |        Y:::::Y:::::Y      S::::SSSS            I::::I      |");
+	YSI_Print__("         |         Y:::::::::Y        SS::::::SSSSS       I::::I      |");
+	YSI_Print__("         |          Y:::::::Y           SSS::::::::SS     I::::I      |");
+	YSI_Print__("         |           Y:::::Y               SSSSSS::::S    I::::I      |");
+	YSI_Print__("         |           Y:::::Y                    S:::::S   I::::I      |");
+	YSI_Print__("         |           Y:::::Y                    S:::::S   I::::I      |");
+	YSI_Print__("         |           Y:::::Y        SSSSSSS     S:::::S II::::::II    |");
+	YSI_Print__("         |        YYYY:::::YYYY     S::::::SSSSSS:::::S I::::::::I    |");
+	YSI_Print__("         |        Y:::::::::::Y     S:::::::::::::::SS  I::::::::I    |");
+	YSI_Print__("         |        YYYYYYYYYYYYY      SSSSSSSSSSSSSSS    IIIIIIIIII    |");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         |                      (c) 2021 MPL v1.1                     |");
+	YSI_Print__("         |            Alex \"Y_Less\" Cole and contributors.            |");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         ==============================================================");
 }
 
 stock Server_PrintIntroMessage(...)
@@ -391,12 +391,12 @@ stock Server_PrintIntroMessage(...)
 	#if _YSI_SAFE_STARTUP
 		if (YSI_gsObnoxiousHeader)
 		{
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_SPACE),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_SPACE),
 			Server_PrintYSIHeader(),
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_gscHeader),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_gscHeader),
 			YSI_gsObnoxiousHeader = false,
 			YSI_gsFirstHeader = false;
 		}
@@ -404,12 +404,12 @@ stock Server_PrintIntroMessage(...)
 	#endif
 		if (YSI_gsFirstHeader)
 		{
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_gscHeader),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_gscHeader),
 			YSI_gsFirstHeader = false;
 		}
 		// Header.
-		YSI_Print(YSI_gscSpacer);
+		YSI_Print__(YSI_gscSpacer);
 		// Body.
 		for (new i = 3 * cellbytes, j = (numargs() << __COMPILER_CELL_SHIFT) + (3 * cellbytes), a = 0; i != j; i += cellbytes)
 		{
@@ -421,8 +421,8 @@ stock Server_PrintIntroMessage(...)
 			YSI_VAPrintF(" | %38s | ", a);
 		}
 		// Footer.
-		YSI_Print(YSI_gscSpacer);
-		YSI_Print(YSI_gscHeader);
+		YSI_Print__(YSI_gscSpacer);
+		YSI_Print__(YSI_gscHeader);
 }
 
 stock Server_PrintIntroPart(...)
@@ -430,12 +430,12 @@ stock Server_PrintIntroPart(...)
 	#if _YSI_SAFE_STARTUP
 		if (YSI_gsObnoxiousHeader)
 		{
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_SPACE),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_SPACE),
 			Server_PrintYSIHeader(),
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_gscHeader),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_gscHeader),
 			YSI_gsObnoxiousHeader = false,
 			YSI_gsFirstHeader = false;
 		}
@@ -443,15 +443,15 @@ stock Server_PrintIntroPart(...)
 	#endif
 		if (YSI_gsFirstHeader)
 		{
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_gscHeader),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_gscHeader),
 			YSI_gsFirstHeader = false;
 		}
 		// Header.
 		if (YSI_gsNewPart)
 		{
 			YSI_gsNewPart = false;
-			YSI_Print(YSI_gscSpacer);
+			YSI_Print__(YSI_gscSpacer);
 		}
 		// Body.
 		for (new i = 3 * cellbytes, j = 3 * cellbytes + (numargs() << __COMPILER_CELL_SHIFT), a = 0; i != j; i += cellbytes)
@@ -468,14 +468,14 @@ stock Server_PrintIntroPart(...)
 stock Server_FinishIntroPart()
 {
 	// Footer.
-	YSI_Print(YSI_gscSpacer);
-	YSI_Print(YSI_gscHeader);
+	YSI_Print__(YSI_gscSpacer);
+	YSI_Print__(YSI_gscHeader);
 	YSI_gsNewPart = true;
 }
 
 stock Server_FinishIntroMessage()
 {
-	YSI_Print(YSI_SPACE),
+	YSI_Print__(YSI_SPACE),
 	YSI_gsFirstHeader = true;
 }
 
@@ -830,7 +830,7 @@ public OnJITCompile()
 #define _@Iy:%8$%3:%0(%1)<_> %8$%0(%1)<%3>
 
 // Detect arrays, on `final` only.
-#define _@yI:_I@y:%8$%0[%4]%9(%1)<%3> %8$@yI_%0();@yI_%0(){new %3:y__[sizeof(%0)];y_@I%0(y__);_YSI_ConstCpy(_:%0,_:y__,0,sizeof y__*4,sizeof y__);}static y_@I%0(%3:y__[sizeof(%0)])y__=
+#define _@yI:_I@y:%8$%0[%4]%9(%1)<%3> %8$@yI_%0();@yI_%0(){new %3:y__[sizeof(%0)];y_@I%0(y__);_YSI_ConstCpy__(_:%0,_:y__,0,sizeof y__*4,sizeof y__);}static y_@I%0(%3:y__[sizeof(%0)])y__=
 
 // Finish inits.
 #define _y@I:%8$%0(%1)<%3>(%2) %8$%3:%2%0(%1);%3:%2%0(%1)
@@ -1053,7 +1053,7 @@ ScriptInit_Purge_clean:
 	fremove(tmp);
 	// Recheck once an hour.
 ScriptInit_Purge_retry:
-	YSI_gsPurgeTimer = YSI_SetTimer("ScriptInit_PurgeTemporaries", 1000 * 60 * 60, false);
+	YSI_gsPurgeTimer = YSI_SetTimer__("ScriptInit_PurgeTemporaries", 1000 * 60 * 60, false);
 }
 
 /*-------------------------------------------------------------------------*//**

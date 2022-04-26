@@ -645,7 +645,7 @@ stock RandomMinMaxExceptMany(min, max, ...)
 			for ( ; ; )
 			{
 				// Get a random number.
-				i = YSI_Random(max - min) + min;
+				i = YSI_Random__(max - min) + min;
 				// Check if it is invalid.
 				j = 1;
 				while (++j != args)
@@ -686,12 +686,12 @@ stock RandomMinMaxExcept(min, max, except)
 	if (min <= except < max)
 	{
 		// Select from one fewer random numbers, and shift the results.
-		return (max = YSI_Random(max - 1 - min) + min) + _:(max >= except);
+		return (max = YSI_Random__(max - 1 - min) + min) + _:(max >= except);
 	}
 	else
 	{
 		// The ignored value is outside the range we care about.
-		return YSI_Random(max - min) + min;
+		return YSI_Random__(max - min) + min;
 	}
 }
 
@@ -706,7 +706,7 @@ stock RandomMinMaxExcept(min, max, except)
 stock RandomMinMax(min, max)
 {
 	assert(min < max);
-	return YSI_Random(max - min) + min;
+	return YSI_Random__(max - min) + min;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -724,9 +724,9 @@ stock RandomMax(max)
 {
 	if (max < 0)
 	{
-		return -YSI_Random(-max);
+		return -YSI_Random__(-max);
 	}
-	return YSI_Random(max);
+	return YSI_Random__(max);
 }
 
 // The macro to detect one parameter.
@@ -3344,7 +3344,7 @@ stock bool:Files_CopyRange(File:i, end, const string:dst[])
 	while (end--)
 	{
 		//printf("trailing char: %d", end);
-		fputchar(o, YSI_FGetChar(i, false), false);
+		fputchar(o, YSI_FGetChar__(i, false), false);
 	}
 	return bool:fclose(o);
 }
