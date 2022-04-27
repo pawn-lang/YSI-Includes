@@ -89,7 +89,7 @@ TEST__ y_malloc_2_100()
 		Alloc:b = malloc(100);
 	ASSERT(bool:b);
 	free(a);
-	ASSERT_EQ(a, b);
+	ASSERT_EQ(_:a, _:b);
 }
 
 TEST__ y_malloc_2000()
@@ -119,7 +119,7 @@ TEST__ y_malloc_Loads()
 	// Allocate slightly more memory than we have room for.
 	new
 		Alloc:a = malloc(MALLOC_MEMORY + 1);
-	ASSERT_EQ(a, NO_ALLOC);
+	ASSERT_EQ(_:a, _:NO_ALLOC);
 	ASSERT(!free(a));
 }
 

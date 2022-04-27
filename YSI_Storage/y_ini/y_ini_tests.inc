@@ -1095,7 +1095,7 @@ TEST__ INI_AddToBuffer0()
 {
 	new
 		INI:i = INI_Open(MakeYINITestPath("test3.ini"));
-	ASSERT_NE(i, INI_NO_FILE);
+	ASSERT_NE(File:i, File:INI_NO_FILE);
 	ASSERT(!INI_AddToBuffer(i, "", "hi"));
 	ASSERT(!INI_AddToBuffer(INI_NO_FILE, "foo", "bar"));
 	ASSERT(INI_AddToBuffer(i, "key", "value"));
@@ -1110,7 +1110,7 @@ TEST__ INI_AddToBuffer0a()
 {
 	new
 		INI:i = INI_Open(MakeYINITestPath("test3.ini"));
-	ASSERT_NE(i, INI_NO_FILE);
+	ASSERT_NE(File:i, File:INI_NO_FILE);
 	ASSERT(!INI_AddToBuffer(i, "", "hi"));
 	ASSERT(!INI_AddToBuffer(INI_NO_FILE, "foo", "bar"));
 	ASSERT(INI_AddToBuffer(i, "key", "value"));
@@ -1160,7 +1160,7 @@ TEST__ INI_Write3()
 	fremove(MakeYINITestPath("test9.ini"));
 	new
 		INI:i = INI_Open(MakeYINITestPath("test9.ini"));
-	ASSERT_NE(i, INI_NO_FILE);
+	ASSERT_NE(File:i, File:INI_NO_FILE);
 	INI_WriteString(i, "hi", "there");
 	INI_SetTag(i, "tag");
 	INI_WriteString(i, "yeah", "yeah");
