@@ -309,46 +309,55 @@ static stock INI_WriteTag(File:file, const tag[], format[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFile[])
+static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFile[]) <y_ini_get:y_ini_get_0>
 {
-	// Count the number of specifiers in `format`.
+	#pragma unused fileOrTag, tagOrFile
 	new
 		cb[FUNCTION_LENGTH],
-		count = 0,
-		pos = 0;
-	while ((pos = strfind(fmt, "%", false, pos) + 1))
+		pos = -1;
+	StrCpy(cb, fmt, sizeof (cb));
+	while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
 	{
-		if (fmt[pos] == '%')
-		{
-			// Ignore it.
-			++pos;
-		}
-		else
-		{
-			++count;
-		}
+		cb[pos] = '_';
 	}
-	switch (count)
-	{
-	case 0:
-		StrCpy(cb, fmt, sizeof (cb));
-	case 1:
-		format(cb, sizeof (cb), fmt, fileOrTag);
-	case 2:
-		format(cb, sizeof (cb), fmt, fileOrTag, tagOrFile);
-	default:
-	{
-		P:W("Invalid `INI_ParseFile` function specifier: %s", fmt);
-		return false;
-	}
-	}
-	// `pos` is `0` already here from the loop above finishing.
-	while ((pos = strfind(cb, YSI_SPACE, false, pos)))
-	{
-		cb[pos++] = '_';
-	}
-	P:5("INI_GetCallback: Find callback %s", cb);
+	P:5("INI_GetCallback<y_ini_get_0>: Find callback %s", cb);
 	return INI_FindCallback(cb);
+}
+
+static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFile[]) <y_ini_get:y_ini_get_1>
+{
+	#pragma unused tagOrFile
+	new
+		cb[FUNCTION_LENGTH],
+		pos = -1;
+	format(cb, sizeof (cb), fmt, fileOrTag);
+	while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
+	{
+		cb[pos] = '_';
+	}
+	P:5("INI_GetCallback<y_ini_get_1>: Find callback %s", cb);
+	return INI_FindCallback(cb);
+}
+
+static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFile[]) <y_ini_get:y_ini_get_2>
+{
+	new
+		cb[FUNCTION_LENGTH],
+		pos = -1;
+	format(cb, sizeof (cb), fmt, fileOrTag, tagOrFile);
+	while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
+	{
+		cb[pos] = '_';
+	}
+	P:5("INI_GetCallback<y_ini_get_2>: Find callback %s", cb);
+	return INI_FindCallback(cb);
+}
+
+static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFile[]) <y_ini_get:y_ini_get_n>
+{
+	P:5("INI_GetCallback<y_ini_get_n>");
+	#pragma unused fmt, fileOrTag, tagOrFile
+	return false;
 }
 
 /*
@@ -566,12 +575,19 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 {
 	P:4("INI_ParseFile called");
 	new
-		File:fhnd = fopen(fname, io_read);
-	if (!fhnd)
-		return false;
-	StrCpy(YSI_g_sFormat, remoteFormat);
-	new
+		File:fhnd = fopen(fname, io_read),
 		start = strlen(fname);
+	if (!fhnd)
+	{
+		return false;
+	}
+	// Set up the initial tag (none).
+	YSI_g_sTag[0] = '\1',
+	YSI_g_sTag[1] = '\0',
+	// Set up the other data.
+	YSI_g_sRemote = !bLocal,
+	YSI_g_sExtra = extra,
+	StrCpy(YSI_g_sFormat, remoteFormat);
 	{
 		while (start && fname[start - 1] != '/' && fname[start - 1] != '\\')
 			--start;
@@ -581,8 +597,38 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 			++end;
 		StrCpy(YSI_g_sFile, fname[start], end - start + 1);
 	}
-	YSI_g_sRemote = !bLocal;
-	YSI_g_sExtra = extra;
+	{
+		// Check for format specifier.
+		new
+			count = 0,
+			pos = 0;
+		while ((pos = strfind(YSI_g_sFormat, "%", false, pos) + 1))
+		{
+			if (YSI_g_sFormat[pos] == '%')
+			{
+				// Ignore it.
+				++pos;
+			}
+			else
+			{
+				++count;
+			}
+		}
+		switch (count)
+		{
+		case 0:
+			state y_ini_get:y_ini_get_0;
+		case 1:
+			state y_ini_get:y_ini_get_1;
+		case 2:
+			state y_ini_get:y_ini_get_2;
+		default:
+		{
+			P:W("Invalid `INI_ParseFile` function specifier: %s", YSI_g_sFormat);
+			state y_ini_get:y_ini_get_n;
+		}
+		}
+	}
 	if (bFileFirst)
 	{
 		if (bExtra)
@@ -623,6 +669,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 					state y_ini:y_ini_reading_ynnn;
 			}
 		}
+		start = INI_GetCallback(YSI_g_sFormat, YSI_g_sFile, YSI_EMPTY);
 	}
 	else
 	{
@@ -664,21 +711,13 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 					state y_ini:y_ini_reading_nnnn;
 			}
 		}
-	}
-	{
-		// Set up the initial callback.
-		YSI_g_sTag[0] = '\1',
-		YSI_g_sTag[1] = '\0';
-		if (bFileFirst)
-			start = INI_GetCallback(YSI_g_sFormat, YSI_g_sFile, YSI_EMPTY);
-		else
-			start = INI_GetCallback(YSI_g_sFormat, YSI_EMPTY, YSI_g_sFile);
+		start = INI_GetCallback(YSI_g_sFormat, YSI_EMPTY, YSI_g_sFile);
 	}
 	{
 		// Read the file.  We have no parent and want to be in read mode.  What we
 		// do with the lines is determined by the state and the current line type.
 		new parent[FUNCTION_LENGTH] = "";
-		INI_ReadFile(fhnd, parent, !!start),
+		INI_ReadFile(fhnd, parent, bool:start),
 		fclose(fhnd);
 	}
 	return true;
