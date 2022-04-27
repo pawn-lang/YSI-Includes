@@ -483,7 +483,7 @@ _Y_CORE_STATIC stock bool:Args_GetStringFallback(short, const long[], output[], 
 	return found;
 }
 
-stock bool:Args_GetBool(shortForm, const longForm[], &bool:dest)
+stock bool:Args_GetBool(shortForm = '\0', const longForm[] = "", &bool:dest)
 {
 	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
 	{
@@ -520,7 +520,7 @@ stock bool:Args_GetBool(shortForm, const longForm[], &bool:dest)
 		true;
 }
 
-stock bool:Args_GetInt(shortForm, const longForm[], &dest)
+stock bool:Args_GetInt(shortForm = '\0', const longForm[] = "", &dest)
 {
 	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
 	{
@@ -533,7 +533,7 @@ stock bool:Args_GetInt(shortForm, const longForm[], &dest)
 	{
 		if (!Args_GetStringImpl(shortForm, longForm, output, sizeof (output)))
 		{
-			return (dest = false);
+			return bool:(dest = 0);
 		}
 	}
 	else
@@ -548,7 +548,7 @@ stock bool:Args_GetInt(shortForm, const longForm[], &dest)
 		true;
 }
 
-stock bool:Args_GetFloat(shortForm, const longForm[], &Float:dest)
+stock bool:Args_GetFloat(shortForm = '\0', const longForm[] = "", &Float:dest)
 {
 	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
 	{
@@ -561,7 +561,7 @@ stock bool:Args_GetFloat(shortForm, const longForm[], &Float:dest)
 	{
 		if (!Args_GetStringImpl(shortForm, longForm, output, sizeof (output)))
 		{
-			return (dest = false);
+			return bool:(dest = 0.0);
 		}
 	}
 	else
@@ -576,7 +576,7 @@ stock bool:Args_GetFloat(shortForm, const longForm[], &Float:dest)
 		true;
 }
 
-stock bool:Args_GetString(shortForm, const longForm[], output[], size = sizeof (output))
+stock bool:Args_GetString(shortForm = '\0', const longForm[] = "", output[], size = sizeof (output))
 {
 	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
 	{
@@ -644,5 +644,313 @@ stock Args_TrueCount()
 stock Args_PositionalCount()
 {
 	++YSI_gsPositionalCount;
+}
+
+_Y_CORE_STATIC stock Args_GetStringLimited(short, const long[], output[], size, lower, upper)
+{
+	new
+		len = strlen(long),
+		name[YSI_MAX_STRING + 32],
+		bool:parameter = false,
+		ch,
+		end;
+	output[0] = '\0';
+	// Allow this to run for one extra step to get a parameter.
+	for (; (lower < upper) || (lower == upper && parameter && lower != YSI_gsArgSeen); ++lower)
+	{
+		// Get the argument.
+		YSI_ArgIndex__(lower, name, sizeof (name), false);
+		if (name[0] == '/')
+		{
+			if (parameter)
+			{
+				return lower;
+			}
+			if ((end = Args_CheckName(short, long, name, 1, len)))
+			{
+				switch (name[end])
+				{
+				case '\0':
+				{
+					output[0] = '\0',
+					parameter = true;
+					continue;
+				}
+				case ':':
+				{
+					output[0] = '\0',
+					strcat(output, name[end + 1], size);
+					parameter = true;
+					continue;
+				}
+				case ' ', '=':
+				{
+					output[0] = '\0',
+					strcat(output, name[end + 1], size);
+				}
+				case '-':
+				{
+					output[0] = '\0',
+					strcat(output, "-", size);
+				}
+				case '+':
+				{
+					output[0] = '\0',
+					strcat(output, "+", size);
+				}
+				}
+				return lower + 1;
+			}
+		}
+		else if (name[0] == '-' && name[1] == '-' && name[2] == '\0')
+		{
+			// Got to `rest`.  Did we find the argument previously?
+			return parameter;
+		}
+		else if (name[0] == '-' && name[1] == '-')
+		{
+			if (parameter)
+			{
+				return lower;
+			}
+			if ((end = Args_CheckName('\0', long, name, 2, len)))
+			{
+				switch (name[end])
+				{
+				case '\0':
+				{
+					output[0] = '\0',
+					parameter = true;
+					continue;
+				}
+				case ':':
+				{
+					output[0] = '\0',
+					strcat(output, name[end + 1], size);
+					parameter = true;
+					continue;
+				}
+				case ' ', '=':
+				{
+					output[0] = '\0',
+					strcat(output, name[end + 1], size);
+				}
+				case '-':
+				{
+					output[0] = '\0',
+					strcat(output, "-", size);
+				}
+				case '+':
+				{
+					output[0] = '\0',
+					strcat(output, "+", size);
+				}
+				}
+				return lower + 1;
+			}
+		}
+		else if (name[0] == '-')
+		{
+			if (parameter)
+			{
+				return lower;
+			}
+			end = 0;
+			while ((ch = name[++end]))
+			{
+				if (ch == short)
+				{
+					output[0] = '\0',
+					parameter = true;
+				}
+				else switch (ch)
+				{
+				case '\0':
+				{
+					if (parameter)
+					{
+						return lower + 1;
+					}
+					break;
+				}
+				case ':':
+				{
+					if (parameter)
+					{
+						if (end == 2)
+						{
+							output[0] = '\0',
+							strcat(output, name[3], size);
+						}
+						// Weird windows behaviour.  Don't reset `parameter`.
+					}
+					break;
+				}
+				case ' ', '=':
+				{
+					if (parameter)
+					{
+						if (end == 2)
+						{
+							output[0] = '\0',
+							strcat(output, name[3], size);
+						}
+						return lower + 1;
+					}
+					break;
+				}
+				case '-':
+				{
+					if (parameter)
+					{
+						if (end == 2)
+						{
+							output[0] = '\0',
+							strcat(output, "-", size);
+						}
+						return lower + 1;
+					}
+					break;
+				}
+				case '+':
+				{
+					if (parameter)
+					{
+						if (end == 2)
+						{
+							output[0] = '\0',
+							strcat(output, "+", size);
+						}
+						return lower + 1;
+					}
+					break;
+				}
+				}
+			}
+		}
+		else if (parameter)
+		{
+			return
+				strcat(output, name, size),
+				lower + 1;
+		}
+	}
+	return 0;
+}
+
+stock Args_GetBoolArray(shortForm = '\0', const longForm[] = "", bool:dest[], size = sizeof (dest))
+{
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
+	{
+		Args_LazyInit();
+	}
+	// Doesn't need to be big to hold `false`.
+	new
+		output[YSI_MAX_STRING],
+		index = -1,
+		lower = 0,
+		upper = (YSI_gsCacheState == E_ARGS_CACHE_STATE_INIT) ? max(Args_FindIndexByHash(BernsteinHash(longForm)), Args_FindIndexByHash(5381 * 33 ^ shortForm)) + 1 : YSI_gsArgSeen;
+	while ((lower = Args_GetStringLimited(shortForm, longForm, output, sizeof (output), lower, upper)))
+	{
+		new
+			pos = 0;
+		while (++index < size)
+		{
+			dest[index] = output[pos] != '-' && output[pos] != '0' && strcmp(output[pos], "false", true, 5);
+			if ((pos = strfind(output, ",", false, pos) + 1) == 0)
+			{
+				break;
+			}
+		}
+	}
+	// Return the true number seen, regardless of the number stored.
+	return index + 1;
+}
+
+stock Args_GetIntArray(shortForm = '\0', const longForm[] = "", dest[], size = sizeof (dest))
+{
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
+	{
+		Args_LazyInit();
+	}
+	new
+		output[YSI_MAX_STRING],
+		index = -1,
+		lower = 0,
+		upper = (YSI_gsCacheState == E_ARGS_CACHE_STATE_INIT) ? max(Args_FindIndexByHash(BernsteinHash(longForm)), Args_FindIndexByHash(5381 * 33 ^ shortForm)) + 1 : YSI_gsArgSeen;
+	while ((lower = Args_GetStringLimited(shortForm, longForm, output, sizeof (output), lower, upper)))
+	{
+		new
+			pos = 0;
+		while (++index < size)
+		{
+			dest[index] = strval(output[pos]);
+			if ((pos = strfind(output, ",", false, pos) + 1) == 0)
+			{
+				break;
+			}
+		}
+	}
+	// Return the true number seen, regardless of the number stored.
+	return index + 1;
+}
+
+stock Args_GetFloatArray(shortForm = '\0', const longForm[] = "", Float:dest[], size = sizeof (dest))
+{
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
+	{
+		Args_LazyInit();
+	}
+	new
+		output[YSI_MAX_STRING],
+		index = -1,
+		lower = 0,
+		upper = (YSI_gsCacheState == E_ARGS_CACHE_STATE_INIT) ? max(Args_FindIndexByHash(BernsteinHash(longForm)), Args_FindIndexByHash(5381 * 33 ^ shortForm)) + 1 : YSI_gsArgSeen;
+	while ((lower = Args_GetStringLimited(shortForm, longForm, output, sizeof (output), lower, upper)))
+	{
+		new
+			pos = 0;
+		while (++index < size)
+		{
+			dest[index] = floatstr(output[pos]);
+			if ((pos = strfind(output, ",", false, pos) + 1) == 0)
+			{
+				break;
+			}
+		}
+	}
+	// Return the true number seen, regardless of the number stored.
+	return index + 1;
+}
+
+stock Args_GetStringArray(shortForm = '\0', const longForm[] = "", output[][], size1 = sizeof (output), size2 = sizeof (output[]))
+{
+	if (YSI_gsCacheState == E_ARGS_CACHE_STATE_UNINIT)
+	{
+		Args_LazyInit();
+	}
+	new
+		index = 0,
+		lower = 0,
+		upper = (YSI_gsCacheState == E_ARGS_CACHE_STATE_INIT) ? max(Args_FindIndexByHash(BernsteinHash(longForm)), Args_FindIndexByHash(5381 * 33 ^ shortForm)) + 1 : YSI_gsArgSeen;
+	while (index < size1)
+	{
+		// NOT a loop, strings can contain `,`s.
+		if ((lower = Args_GetStringLimited(shortForm, longForm, output[index], size2, lower, upper)))
+		{
+			++index;
+		}
+		else
+		{
+			return index;
+		}
+	}
+	new
+		tmp[8];
+	while ((lower = Args_GetStringLimited(shortForm, longForm, tmp, sizeof (tmp), lower, upper)))
+	{
+		++index;
+	}
+	return index;
 }
 
