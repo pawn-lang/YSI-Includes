@@ -112,34 +112,38 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 #endif
 
 // Func:callback<iiiis> | Func:callback<iis>
-stock Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "", tag = tagof (callback))
+stock bool:Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "", tag = tagof (callback))
 {
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID_1);
 	Indirect_Claim(callback),
 	Indirect_SetMeta(callback, tag),
 	// Works tag-safely because the compile-time tag check uses `<iiiis>`.
 	YSI_g_sPlayerCallback[playerid] = callback;
-	return Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_1, style, title, caption, button1, button2);
+	return bool:Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_1, style, title, caption, button1, button2);
 }
 
 #pragma deprecated Use Dialog_ShowCallback
-stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
+stock bool:Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
-	return Dialog_ShowCallback(playerid, F@_@iiiis:callback[E_CALLBACK_DATA:0], style, title, caption, button1, button2);
+	return bool:Dialog_ShowCallback(playerid, F@_@iiiis:callback[E_CALLBACK_DATA:0], style, title, caption, button1, button2);
 }
 
-stock Dialog_Show(playerid, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
+stock bool:Dialog_Show(playerid, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID_2);
 	YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_INVALID;
-	return Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_2, style, title, caption, button1, button2);
+	return bool:Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_2, style, title, caption, button1, button2);
 }
 
-stock Dialog_Hide(playerid)
+stock bool:Dialog_Hide(playerid)
 {
-	// This almost looks like a Windows API function call!
 	broadcastfunc Dialog_Set(playerid, -1);
-	return Dialog_ShowPlayerNative(playerid, -1, DIALOG_STYLE_MSGBOX, NULL, NULL, NULL, NULL);
+	#if defined HidePlayerDialog
+		return bool:HidePlayerDialog(playerid);
+	#else
+		// This almost looks like a Windows API function call!
+		return bool:Dialog_ShowPlayerNative(playerid, -1, DIALOG_STYLE_MSGBOX, NULL, NULL, NULL, NULL);
+	#endif
 }
 
 HOOK__ OnPlayerDisconnect(playerid, reason)
@@ -203,17 +207,17 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	return 0;
 }
 
-stock Dialog_ShowPlayerDialog(playerid, dialog, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[])
+stock bool:Dialog_ShowPlayerDialog(playerid, dialog, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[])
 {
 	// Fail.
 	if (dialog == YSI_DIALOG_ID_1 || dialog == YSI_DIALOG_ID_2)
 	{
 		P:E("Trying to show a dialog with YSI reserved ID %d", dialog);
-		return 0;
+		return false;
 	}
 	broadcastfunc Dialog_Set(playerid, dialog);
 	YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_INVALID;
-	return Dialog_ShowPlayerNative(playerid, dialog, style, title, caption, button1, button2);
+	return bool:Dialog_ShowPlayerNative(playerid, dialog, style, title, caption, button1, button2);
 }
 
 #if defined _ALS_ShowPlayerDialog
