@@ -298,30 +298,58 @@ static stock INI_WriteTag(File:file, const tag[], format[])
 #define INI_KeyListSetKeyValue(%0,%1,%2) (I@ = strlen(%1), msets((%0), 2, (%1)), mset((%0), 1, I@ + 2), msets((%0), I@ + 3, (%2)))
 
 /*-------------------------------------------------------------------------*//**
- * <param name="callback">The callback destination.</param>
- * <param name="format">The function name format.</param>
- * <param name="tag">The tag destination.</param>
- * <param name="input">The tag source.</param>
- * <param name="callbackFormat">The callback parameter specifiers.</param>
- * <param name="remote">Use "CallRemoteFunction".</param>
+ * <param name="fmt">The function name format.</param>
+ * <param name="fileOrTag">The first parameter.</param>
+ * <param name="tagOrFile">The second parameter.</param>
  * <returns>
  *  Was the function found?
  * </returns>
  * <remarks>
- *  Gets a callback given a partial function name and a tag name.  Also saves
- *  the tag elsewhere.  This might not work as a separate function - it will
- *  need to be in the function called by the function with the inlines in.
+ *  Gets a callback given a partial function name and a tag name.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(INI_GetCallback(callback,format,tag,input,callbackFormat,remote));
-#define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
-	( \
-		StrCpy((%2), (%3)), \
-		Inline_Reset((%0)), \
-		format(YSI_g_sCurLine, sizeof (YSI_g_sCurLine), (%1), (%2)), \
-		Callback_Get(callback_tag:YSI_g_sCurLine, (%0), (%4), (%5)) \
-	)
+static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFile[])
+{
+	// Count the number of specifiers in `format`.
+	new
+		cb[FUNCTION_LENGTH],
+		count = 0,
+		pos = 0;
+	while ((pos = strfind(fmt, "%", false, pos) + 1))
+	{
+		if (fmt[pos] == '%')
+		{
+			// Ignore it.
+			++pos;
+		}
+		else
+		{
+			++count;
+		}
+	}
+	switch (count)
+	{
+	case 0:
+		StrCpy(cb, fmt, sizeof (cb));
+	case 1:
+		format(cb, sizeof (cb), fmt, fileOrTag);
+	case 2:
+		format(cb, sizeof (cb), fmt, fileOrTag, tagOrFile);
+	default:
+	{
+		P:W("Invalid `INI_ParseFile` function specifier: %s", fmt);
+		return false;
+	}
+	}
+	// `pos` is `0` already here from the loop above finishing.
+	while ((pos = strfind(cb, YSI_SPACE, false, pos)))
+	{
+		cb[pos++] = '_';
+	}
+	P:5("INI_GetCallback: Find callback %s", cb);
+	return INI_FindCallback(cb);
+}
 
 /*
 
@@ -639,18 +667,12 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 	}
 	{
 		// Set up the initial callback.
-		new
-			pos = -1,
-			cb[FUNCTION_LENGTH];
-		YSI_g_sTag[0] = '\1';
+		YSI_g_sTag[0] = '\1',
 		YSI_g_sTag[1] = '\0';
 		if (bFileFirst)
-			format(cb, sizeof (cb), YSI_g_sFormat, YSI_g_sFile, YSI_EMPTY);
+			start = INI_GetCallback(YSI_g_sFormat, YSI_g_sFile, YSI_EMPTY);
 		else
-			format(cb, sizeof (cb), YSI_g_sFormat, YSI_EMPTY, YSI_g_sFile);
-		while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
-			cb[pos] = '_';
-		start = INI_FindCallback(cb);
+			start = INI_GetCallback(YSI_g_sFormat, YSI_EMPTY, YSI_g_sFile);
 	}
 	{
 		// Read the file.  We have no parent and want to be in read mode.  What we
@@ -1754,15 +1776,9 @@ static stock INI_HandleTag(const tag[]) <
 	y_ini:y_ini_reading_ynny, y_ini:y_ini_reading_ynnn>
 {
 	P:5("INI_HandleTag<y> called: %s", tag);
-	new
-		pos = -1,
-		cb[FUNCTION_LENGTH];
-	StrCpy(YSI_g_sTag, tag),
-	format(cb, sizeof (cb), YSI_g_sFormat, YSI_g_sFile, tag);
-	while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
-		cb[pos] = '_';
-	P:5("INI_HandleTag<y>: Find callback %s", cb);
-	return INI_FindCallback(cb) ? -1 : 0;
+	return
+		StrCpy(YSI_g_sTag, tag),
+		INI_GetCallback(YSI_g_sFormat, YSI_g_sFile, tag) ? -1 : 0;
 }
 
 static stock INI_HandleTag(const tag[]) <
@@ -1772,15 +1788,9 @@ static stock INI_HandleTag(const tag[]) <
 	y_ini:y_ini_reading_nnny, y_ini:y_ini_reading_nnnn>
 {
 	P:5("INI_HandleTag<n> called: %s", tag);
-	new
-		pos = -1,
-		cb[FUNCTION_LENGTH];
-	StrCpy(YSI_g_sTag, tag),
-	format(cb, sizeof (cb), YSI_g_sFormat, tag, YSI_g_sFile);
-	while ((pos = strfind(cb, YSI_SPACE, false, pos + 1)) != -1)
-		cb[pos] = '_';
-	P:5("INI_HandleTag<n>: Find callback %s", cb);
-	return INI_FindCallback(cb) ? -1 : 0;
+	return
+		StrCpy(YSI_g_sTag, tag),
+		INI_GetCallback(YSI_g_sFormat, tag, YSI_g_sFile) ? -1 : 0;
 }
 
 static stock bool:INI_FindCallback(const cb[]) <y_ini:y_ini_reading_yyyy, y_ini:y_ini_reading_nyyy>
