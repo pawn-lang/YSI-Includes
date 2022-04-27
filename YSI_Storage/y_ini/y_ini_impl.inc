@@ -1960,6 +1960,7 @@ static stock INI_HandleEnd() <>
 
 static stock INI_Flush_(INI:file)
 {
+	P:5("INI_Flush_ called: %d", _:file);
 	YSI_g_sNL = false;
 	YSI_g_sTagNeeded = false;
 	YSI_g_sCurrentFile = ftemp();
