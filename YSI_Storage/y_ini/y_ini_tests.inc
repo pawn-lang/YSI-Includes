@@ -1155,6 +1155,24 @@ public INI_WriteOne(tag[], name[], value[])
 	}
 }
 
+TEST__ fseek()
+{
+	fremove(MakeYINITestPath("fseek.ini"));
+	new File:f = fopen(MakeYINITestPath("fseek.ini"), io_write);
+	ASSERT(!!f);
+	if (!f)
+	{
+		return;
+	}
+	fwrite(f, "hello world");
+	fseek(f, 0, seek_start);
+	fwrite(f, "hi");
+	ASSERT_EQ(flength(f), 11);
+	fwrite(f, "hello world");
+	ASSERT_EQ(flength(f), 13);
+	fclose(f);
+}
+
 TEST__ INI_Write3()
 {
 	fremove(MakeYINITestPath("test9.ini"));
