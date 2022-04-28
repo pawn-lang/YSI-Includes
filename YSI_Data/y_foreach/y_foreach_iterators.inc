@@ -91,21 +91,21 @@ Optional plugins:
 #if _FOREACH_PLAYERS
 	new
 		#if _FOREACH_STREAMED
-			Iterator:StreamedPlayer[MAX_PLAYERS]<MAX_PLAYERS>,
+			ITERATOR__ StreamedPlayer[MAX_PLAYERS]<MAX_PLAYERS>,
 		#endif
-		Iterator:Player<MAX_PLAYERS>;
+		ITERATOR__ Player<MAX_PLAYERS>;
 #endif
 
 #if _FOREACH_BOTS
 	new
 		#if _FOREACH_STREAMED
-			Iterator:StreamedBot[MAX_PLAYERS]<MAX_PLAYERS>,
+			ITERATOR__ StreamedBot[MAX_PLAYERS]<MAX_PLAYERS>,
 		#endif
-		Iterator:Bot<MAX_PLAYERS>,
+		ITERATOR__ Bot<MAX_PLAYERS>,
 		#if _FOREACH_STREAMED
-			Iterator:StreamedCharacter[MAX_PLAYERS]<MAX_PLAYERS>,
+			ITERATOR__ StreamedCharacter[MAX_PLAYERS]<MAX_PLAYERS>,
 		#endif
-		Iterator:Character<MAX_PLAYERS>;
+		ITERATOR__ Character<MAX_PLAYERS>;
 	
 	#define Iter_Single@NPC Iter_Single@Bot
 	#define Iterator@NPC Iterator@Bot
@@ -114,23 +114,23 @@ Optional plugins:
 #if _FOREACH_ACTORS
 	new
 		#if _FOREACH_LOCALS
-			Iterator:LocalActor<MAX_ACTORS>,
+			ITERATOR__ LocalActor<MAX_ACTORS>,
 		#endif
 		#if _FOREACH_STREAMED
-			Iterator:StreamedActor[MAX_PLAYERS]<MAX_ACTORS>,
+			ITERATOR__ StreamedActor[MAX_PLAYERS]<MAX_ACTORS>,
 		#endif
-		Iterator:Actor<MAX_ACTORS>;
+		ITERATOR__ Actor<MAX_ACTORS>;
 #endif
 
 #if _FOREACH_VEHICLES
 	new
 		#if _FOREACH_LOCALS
-			Iterator:LocalVehicle<MAX_VEHICLES>,
+			ITERATOR__ LocalVehicle<MAX_VEHICLES>,
 		#endif
 		#if _FOREACH_STREAMED
-			Iterator:StreamedVehicle[MAX_PLAYERS]<MAX_VEHICLES>,
+			ITERATOR__ StreamedVehicle[MAX_PLAYERS]<MAX_VEHICLES>,
 		#endif
-		Iterator:Vehicle<MAX_VEHICLES>;
+		ITERATOR__ Vehicle<MAX_VEHICLES>;
 #endif
 
 iterfunc stock Range[cellmin](cur, min, max, step = 1)
@@ -627,7 +627,7 @@ stock Iter_All_Internal(const array[], size, value)
 */
 
 #if _FOREACH_ACTORS
-	remotefunc stock void:Iter_ActorDo(bool:add, actorid)
+	REMOTE_FUNC__ stock void:Iter_ActorDo(bool:add, actorid)
 	{
 		// Because there may be multiple scripts running, we need to tell all of
 		// them when an actor is created or destroyed.
@@ -710,7 +710,7 @@ stock Iter_All_Internal(const array[], size, value)
 #endif
 
 #if _FOREACH_VEHICLES
-	remotefunc stock void:Iter_VehicleDo(bool:add, vehicleid)
+	REMOTE_FUNC__ stock void:Iter_VehicleDo(bool:add, vehicleid)
 	{
 		// Because there may be multiple scripts running, we need to tell all of
 		// them when a vehicle is created or destroyed.
