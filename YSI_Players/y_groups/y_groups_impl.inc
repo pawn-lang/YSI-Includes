@@ -160,7 +160,7 @@ static stock __declspec(dist_tagged) Bit:YSI_g_sChildGroups[_MAX_GROUPS_G][bits<
 static stock
 	BitArray:YSI_g_sDefaultGroups<_MAX_GROUPS_G>,
 	// Create group hierarchys.
-	Iterator:GroupPlayers[_MAX_GROUPS_G]<MAX_PLAYERS>;
+	ITERATOR__ GroupPlayers[_MAX_GROUPS_G]<MAX_PLAYERS>;
 
 //#define GROUP_BITS<%0> BitArray:%0<_MAX_GROUPS_G>,
 
@@ -229,7 +229,7 @@ HANDOFF()
 
 #define GROUP_ADD<%0> for(J@=_Group_AddInternal(1,(%0));J@;J@=_Group_AddInternal(0,(%0)))
 
-remotefunc static stock void:Group_AddInternal_(a,g)
+REMOTE_FUNC__ static stock void:Group_AddInternal_(a,g)
 {
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(-1, a, g);
 }
@@ -239,7 +239,7 @@ stock _Group_AddInternal(a, Group:g)
 	//printf("_Group_AddInternal %d %d", a, _:g);
 	if (_Group_IsValid(g))
 	{
-		broadcastfunc Group_AddInternal_(a, _:GROUP_TEMP_FIX(g));
+		BROADCAST_FUNC__ Group_AddInternal_(a, _:GROUP_TEMP_FIX(g));
 		return a;
 	}
 	else
@@ -261,7 +261,7 @@ stock _Group_AddInternal(a, Group:g)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-remotefunc static void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
+REMOTE_FUNC__ static void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
 {
 	for (new i = 0; i != sizeof (g); ++i)
 	{
@@ -380,7 +380,7 @@ public OnYSIExit()
  * <param name="group">Group to destroy from the system.</param>
  *//*------------------------------------------------------------------------**/
 
-remotefunc static void:_Group_Destroy(g, const Iterator@gp[MAX_PLAYERS + 1], s)
+REMOTE_FUNC__ static void:_Group_Destroy(g, const Iterator@gp[MAX_PLAYERS + 1], s)
 {
 	#pragma unused s
 	new
@@ -426,7 +426,7 @@ GLOBAL__ void:Group_Destroy(Group:group)
 	if (_Group_IsValid(group) && group != GROUP_GLOBAL)
 	{
 		GROUP_FIX(group);
-		broadcastfunc _Group_Destroy(_:group, Iter_TrueArray(GroupPlayers[_:group]), Iter_TrueSize(GroupPlayers[]));
+		BROADCAST_FUNC__ _Group_Destroy(_:group, Iter_TrueArray(GroupPlayers[_:group]), Iter_TrueSize(GroupPlayers[]));
 		YSI_gGroupData[_:group][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 		YSI_gGroupData[_:group][E_GROUP_DATA_HASH] = 0;
 		Iter_Clear(GroupPlayers[_:group]);
@@ -460,7 +460,7 @@ GLOBAL__ void:_Group_TryRemove()
 		MASTER_EMPTY<i>
 		{
 			//print("removing i");
-			broadcastfunc _Group_Destroy(i, Iter_TrueArray(GroupPlayers[i]), Iter_TrueSize(GroupPlayers[]));
+			BROADCAST_FUNC__ _Group_Destroy(i, Iter_TrueArray(GroupPlayers[i]), Iter_TrueSize(GroupPlayers[]));
 			YSI_gGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 			YSI_gGroupData[i][E_GROUP_DATA_HASH] = 0;
 			Iter_Clear(GroupPlayers[i]);
@@ -532,7 +532,7 @@ HOOK__ OnPlayerConnect@9(playerid)
 				P:6("Group_OnPlayerConnect: Master %d", playerid);
 				// Is master.  ALWAYS reset all players - if they start screwing
 				// around with loading orders then that's their own fault!
-				broadcastfunc _Group_FakePlayer(playerid, YSI_g_sDefaultGroups, bits<_MAX_GROUPS_G>);
+				BROADCAST_FUNC__ _Group_FakePlayer(playerid, YSI_g_sDefaultGroups, bits<_MAX_GROUPS_G>);
 				//print("1");
 			}
 		#if _YSIM_IS_CLOUD
@@ -568,7 +568,7 @@ FOREIGN__ void:_Group_InitPlayer(p, master);
 
 GLOBAL__ void:_Group_InitPlayer(p, master)
 {
-	targetfunc _Group_FakePlayer<master>(p, YSI_gGroupPlayers[p], bits<_MAX_GROUPS_G>);
+	TARGET_FUNC__ _Group_FakePlayer<master>(p, YSI_gGroupPlayers[p], bits<_MAX_GROUPS_G>);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -651,7 +651,7 @@ GLOBAL__ void:Group_SetPlayer(Group:g,p,bool:s)
 				// groups they're in, taking in to account the new groups
 				// hierarchy and pass that new array about.
 				_Group_SetSome(p, _:g);
-				broadcastfunc _Group_SetPlayer(p, YSI_gTempAllowed_, sizeof (YSI_gTempAllowed_));
+				BROADCAST_FUNC__ _Group_SetPlayer(p, YSI_gTempAllowed_, sizeof (YSI_gTempAllowed_));
 				return; //1;
 			}
 		}
@@ -661,7 +661,7 @@ GLOBAL__ void:Group_SetPlayer(Group:g,p,bool:s)
 			{
 				YSI_gTempAllowed_ = YSI_gGroupPlayers[p];
 				Bit_Vet(YSI_gTempAllowed_, _:g);
-				broadcastfunc _Group_SetPlayer(p, YSI_gTempAllowed_, sizeof (YSI_gTempAllowed_));
+				BROADCAST_FUNC__ _Group_SetPlayer(p, YSI_gTempAllowed_, sizeof (YSI_gTempAllowed_));
 				return; //1;
 			}
 		}
@@ -680,7 +680,7 @@ GLOBAL__ void:Group_SetPlayer(Group:g,p,bool:s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
+REMOTE_FUNC__ void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 {
 	#pragma unused s
 	#if !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT))
@@ -1132,7 +1132,7 @@ GLOBAL__ Group_Count(bool:g = false)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-remotefunc static void:_Group_CreateChain(Group:g)
+REMOTE_FUNC__ static void:_Group_CreateChain(Group:g)
 {
 	GROUP_CHAIN?<YSI_g_sNextAddFunc>(g);
 }
@@ -1181,7 +1181,7 @@ GLOBAL__ Group:_Group_Create(const string:name[])
 	// Set the child groups to only this group.
 	//Bit_Let(YSI_g_sChildGroups[i], i);
 	// Add this group to other groups.
-	broadcastfunc _Group_CreateChain(Group:i);
+	BROADCAST_FUNC__ _Group_CreateChain(Group:i);
 	return GROUP_MANGLE(i);
 }
 
@@ -1435,7 +1435,7 @@ GLOBAL__ void:Group_SetGroup(Group:g,Group:el,bool:s)
 				if (!_Group_HasPlayer(el, p))
 				{
 					_Group_SetSome(p, _:el);
-					broadcastfunc _Group_SetPlayer(p, YSI_gTempAllowed_, bits<_MAX_GROUPS_G>);
+					BROADCAST_FUNC__ _Group_SetPlayer(p, YSI_gTempAllowed_, bits<_MAX_GROUPS_G>);
 				}
 			}
 		}

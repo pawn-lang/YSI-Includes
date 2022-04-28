@@ -93,7 +93,7 @@ stock Dialog_Get(playerid)
 	return YSI_g_sPlayerDialog[playerid];
 }
 
-remotefunc void:Dialog_Set(playerid, dialogid)
+REMOTE_FUNC__ void:Dialog_Set(playerid, dialogid)
 {
 	// If they could already see a dialog shown by this script, get rid of the
 	// data from that one.
@@ -114,7 +114,7 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 // Func:callback<iiiis> | Func:callback<iis>
 stock bool:Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "", tag = tagof (callback))
 {
-	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID_1);
+	BROADCAST_FUNC__ Dialog_Set(playerid, YSI_DIALOG_ID_1);
 	Indirect_Claim(callback),
 	Indirect_SetMeta(callback, tag),
 	// Works tag-safely because the compile-time tag check uses `<iiiis>`.
@@ -130,14 +130,14 @@ stock bool:Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], DIALOG_S
 
 stock bool:Dialog_Show(playerid, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
-	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID_2);
+	BROADCAST_FUNC__ Dialog_Set(playerid, YSI_DIALOG_ID_2);
 	YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_INVALID;
 	return bool:Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_2, style, title, caption, button1, button2);
 }
 
 stock bool:Dialog_Hide(playerid)
 {
-	broadcastfunc Dialog_Set(playerid, -1);
+	BROADCAST_FUNC__ Dialog_Set(playerid, -1);
 	#if defined HidePlayerDialog
 		return bool:HidePlayerDialog(playerid);
 	#else
@@ -188,7 +188,7 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			// Totally blank the stored dialog information, after making a local
 			// copy of it for the sake of calling the callback.  This is so that
 			// we don't free the memory for the callback prematurely.
-			broadcastfunc Dialog_Set(playerid, -1);
+			BROADCAST_FUNC__ Dialog_Set(playerid, -1);
 			// Call the callback.
 			if (Indirect_GetMeta(callback) == _:tagof (F@_@iiiis:))
 			{
@@ -215,7 +215,7 @@ stock bool:Dialog_ShowPlayerDialog(playerid, dialog, DIALOG_STYLE:style, const s
 		P:E("Trying to show a dialog with YSI reserved ID %d", dialog);
 		return false;
 	}
-	broadcastfunc Dialog_Set(playerid, dialog);
+	BROADCAST_FUNC__ Dialog_Set(playerid, dialog);
 	YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_INVALID;
 	return bool:Dialog_ShowPlayerNative(playerid, dialog, style, title, caption, button1, button2);
 }

@@ -354,7 +354,7 @@ GGLOBAL__ Group_Set...Default(Group:g,E_GROUP_SET:s)
 			slot = Bit_Slot(g),
 			Bit:mask = Bit_Mask(g),
 			Bit:inv = ~mask,
-			Iterator:GP<MAX_PLAYERS>;
+			ITERATOR__ GP<MAX_PLAYERS>;
 		FOREACH__ (new playerid : Player)
 		{
 			// Do this check here so it is only done once per player.  This is a
