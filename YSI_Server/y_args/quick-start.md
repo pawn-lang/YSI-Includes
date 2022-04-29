@@ -28,3 +28,5 @@ Only parameters after the separate `--` are passed to the script, which can itse
 .\omp-server.exe arg-test-script -- --help -- script "rest" parameters.
 ```
 
+Side note: because of the way quotes are processed on the command-line, the double quotes around `"rest"`in that example will NOT be passed in.
+
