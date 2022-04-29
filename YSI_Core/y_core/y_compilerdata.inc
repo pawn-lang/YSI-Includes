@@ -192,6 +192,7 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 #define __COMPILER_NAMEOF (0)
 #define __COMPILER_PRAGMA (0)
 #define __COMPILER___EMIT_U (0)
+#define __COMPILER_FUNC_DECL_BUG (0)
 
 #define __COMPILER_STATIC_ENUM enum
 #define __COMPILER_CONST_STATIC const
@@ -268,6 +269,11 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 	#if __PawnBuild >= 8
 		#undef __COMPILER_BUG_317
 		#define __COMPILER_BUG_317 (0)
+	#endif
+	// I don't actually know when this was introduced.
+	#if __PawnBuild == 10
+		#undef __COMPILER_FUNC_DECL_BUG
+		#define __COMPILER_FUNC_DECL_BUG (1)
 	#endif
 	#if __PawnBuild >= 10
 		#undef __COMPILER___EMIT_U

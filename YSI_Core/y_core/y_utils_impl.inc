@@ -1190,6 +1190,12 @@ stock bool:isnumeric(const str[])
 	return IsNumeric(str);
 }
 
+// Detect a compiler issue.
+#if __COMPILER_FUNC_DECL_BUG
+	// Try disable the next `IsNumeric` declaration.
+	#define IsNumeric(%0[]) _@IsNumeric(%0[])
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player to mess up</param>
  * <remarks>
