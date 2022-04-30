@@ -730,16 +730,16 @@ stock RandomMax(max)
 }
 
 // The macro to detect one parameter.
-#define Random(%0) RandomMax(%0)
+#define Random(%0) RandomMax(%0)PP_DISCARD$
 
 // The macro to detect two parameters.
-#define RandomMax(%0,%1) RandomMinMax(%0,%1)
+#define RandomMax(%0,%1)PP_DISCARD$ RandomMinMax(%0,%1)PP_DISCARD$
 
 // The macro to detect three parameters.
-#define RandomMinMax(%0,%1,%2) RandomMinMaxExcept(%0,%1,%2)
+#define RandomMinMax(%0,%1,%2)PP_DISCARD$ RandomMinMaxExcept(%0,%1,%2)PP_DISCARD$
 
 // The macro to detect many parameters.
-#define RandomMinMaxExcept(%0,%1,%2,%3) RandomMinMaxExceptMany(%0,%1,%2,%3)
+#define RandomMinMaxExcept(%0,%1,%2,%3)PP_DISCARD$ RandomMinMaxExceptMany(%0,%1,%2,%3)PP_DISCARD$
 
 /*-------------------------------------------------------------------------*//**
  * <param name="minmax">Lower bound, or upper bound when only parameter.</param>
