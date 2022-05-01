@@ -97,68 +97,48 @@ Optional plugins:
 stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 {
 	// Swap adjacent bits.
-	// data = ((data & 0b10101010101010101010101010101010) >>> 1) | ((data & 0b01010101010101010101010101010101) << 1);
+	// data = ((data >>> 1) & 0b01010101010101010101010101010101) | ((data & 0b01010101010101010101010101010101) << 1);
 	#emit LOAD.S.pri           data
 	#emit PUSH.pri
-	#emit CONST.alt            0b10101010101010101010101010101010
-	#emit AND
-	#emit SHR.C.pri            1
-	#emit SWAP.pri
 	#emit CONST.alt            0b01010101010101010101010101010101
+	#emit SHR.C.pri            1
+	#emit AND
+	#emit SWAP.pri
 	#emit AND
 	#emit SHL.C.pri            1
 	#emit POP.alt
 	#emit OR
 	
 	// Swap adjacent pairs.
-	// data = ((data & 0b11001100110011001100110011001100) >>> 2) | ((data & 0b00110011001100110011001100110011) << 2);
+	// data = ((data >>> 2) & 0b00110011001100110011001100110011) | ((data & 0b00110011001100110011001100110011) << 2);
 	#emit PUSH.pri
-	#emit CONST.alt            0b11001100110011001100110011001100
-	#emit AND
-	#emit SHR.C.pri            2
-	#emit SWAP.pri
 	#emit CONST.alt            0b00110011001100110011001100110011
+	#emit SHR.C.pri            2
+	#emit AND
+	#emit SWAP.pri
 	#emit AND
 	#emit SHL.C.pri            2
 	#emit POP.alt
 	#emit OR
 	
 	// Swap adjacent nibbles.
-	// data = ((data & 0b11110000111100001111000011110000) >>> 4) | ((data & 0b00001111000011110000111100001111) << 4);
+	// data = ((data >>> 4) & 0b00001111000011110000111100001111) | ((data & 0b00001111000011110000111100001111) << 4);
 	#emit PUSH.pri
-	#emit CONST.alt            0b11110000111100001111000011110000
-	#emit AND
-	#emit SHR.C.pri            4
-	#emit SWAP.pri
 	#emit CONST.alt            0b00001111000011110000111100001111
+	#emit SHR.C.pri            4
+	#emit AND
+	#emit SWAP.pri
 	#emit AND
 	#emit SHL.C.pri            4
 	#emit POP.alt
 	#emit OR
 
 	// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
-	#emit PUSH.pri
-	#emit CONST.alt            0b11111111000000001111111100000000
-	#emit AND
-	#emit SHR.C.pri            8
-	#emit SWAP.pri
-	#emit CONST.alt            0b00000000111111110000000011111111
-	#emit AND
-	#emit SHL.C.pri            8
-	#emit POP.alt
-	#emit OR
-
 	// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
 	#emit PUSH.pri
-	#emit CONST.alt            0b11111111111111110000000000000000
-	#emit AND
-	#emit SHR.C.pri            16
-	#emit SWAP.pri
-	#emit CONST.alt            0b00000000000000001111111111111111
-	#emit AND
-	#emit SHL.C.pri            16
-	#emit POP.alt
-	#emit OR
+	#emit PUSH.C               4
+	#emit SYSREQ.C             swapchars
+	#emit STACK                8
 
 	// return data;
 	#emit RETN
@@ -194,41 +174,23 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	#emit LOAD.S.pri           data
 	
 	// Swap adjacent nibbles.
-	// data = ((data & 0b11110000111100001111000011110000) >>> 4) | ((data & 0b00001111000011110000111100001111) << 4);
+	// data = ((data >>> 4) & 0b00001111000011110000111100001111) | ((data & 0b00001111000011110000111100001111) << 4);
 	#emit PUSH.pri
-	#emit CONST.alt            0b11110000111100001111000011110000
-	#emit AND
-	#emit SHR.C.pri            4
-	#emit SWAP.pri
 	#emit CONST.alt            0b00001111000011110000111100001111
+	#emit SHR.C.pri            4
+	#emit AND
+	#emit SWAP.pri
 	#emit AND
 	#emit SHL.C.pri            4
 	#emit POP.alt
 	#emit OR
 
 	// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
-	#emit PUSH.pri
-	#emit CONST.alt            0b11111111000000001111111100000000
-	#emit AND
-	#emit SHR.C.pri            8
-	#emit SWAP.pri
-	#emit CONST.alt            0b00000000111111110000000011111111
-	#emit AND
-	#emit SHL.C.pri            8
-	#emit POP.alt
-	#emit OR
-
 	// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
 	#emit PUSH.pri
-	#emit CONST.alt            0b11111111111111110000000000000000
-	#emit AND
-	#emit SHR.C.pri            16
-	#emit SWAP.pri
-	#emit CONST.alt            0b00000000000000001111111111111111
-	#emit AND
-	#emit SHL.C.pri            16
-	#emit POP.alt
-	#emit OR
+	#emit PUSH.C               4
+	#emit SYSREQ.C             swapchars
+	#emit STACK                8
 
 	// return data;
 	#emit RETN
@@ -259,39 +221,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
-{
-	#emit LOAD.S.pri           data
-
-	// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
-	#emit PUSH.pri
-	#emit CONST.alt            0b11111111000000001111111100000000
-	#emit AND
-	#emit SHR.C.pri            8
-	#emit SWAP.pri
-	#emit CONST.alt            0b00000000111111110000000011111111
-	#emit AND
-	#emit SHL.C.pri            8
-	#emit POP.alt
-	#emit OR
-
-	// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
-	#emit PUSH.pri
-	#emit CONST.alt            0b11111111111111110000000000000000
-	#emit AND
-	#emit SHR.C.pri            16
-	#emit SWAP.pri
-	#emit CONST.alt            0b00000000000000001111111111111111
-	#emit AND
-	#emit SHL.C.pri            16
-	#emit POP.alt
-	#emit OR
-
-	// return data;
-	#emit RETN
-	
-	__pragma("naked");
-}
+native Cell_ReverseBytes(GLOBAL_TAG_TYPES:data) = swapchars;
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
