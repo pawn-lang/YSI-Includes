@@ -572,6 +572,96 @@ stock StrToUpper(str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *   Relatively high quality 32-bit PRNG.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock RandomMulberry32()
+{
+	static s = 0;
+
+	// z = (s += 0x6D2B79F5);
+	#emit LOAD.pri s
+	#emit ADD.C 0x6D2B79F5
+	#emit STOR.pri s
+
+	// z = (z ^ z >>> 15) * (1 | z);
+	#emit MOVE.alt
+	#emit SHR.C.pri 15
+	#emit XOR
+	#emit PUSH.pri
+	#emit CONST.pri 1
+	#emit OR
+	#emit POP.alt
+	#emit UMUL
+
+	// z ^= z + (z ^ z >>> 7) * (61 | z);
+	#emit PUSH.pri
+	#emit MOVE.alt
+	#emit SHR.C.pri 7
+	#emit XOR
+	#emit PUSH.pri
+	#emit CONST.pri 61
+	#emit OR
+	#emit POP.alt
+	#emit UMUL
+	#emit POP.alt
+	#emit ADD
+	#emit XOR
+
+	// return z ^ z >>> 14;
+	#emit MOVE.alt
+	#emit SHR.C.pri 14
+	#emit XOR
+	#emit RETN
+
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *   Slightly lower quality 32-bit PRNG.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock RandomSplitMix32()
+{
+	static s = 0;
+
+	// z = (s += 0x9E3779B9);
+	#emit LOAD.pri s
+	#emit ADD.C 0x9E3779B9
+	#emit STOR.pri s
+
+	// z ^= z >> 15;
+	#emit MOVE.alt
+	#emit SHR.C.pri 15
+	#emit XOR
+
+	// z *= 0x85EBCA6B;
+	#emit CONST.alt 0x85EBCA6B
+	#emit UMUL
+
+	// z ^= z >> 13;
+	#emit MOVE.alt
+	#emit SHR.C.pri 13
+	#emit XOR
+
+	// z *= 0xC2B2AE35;
+	#emit CONST.alt 0xC2B2AE35
+	#emit UMUL
+
+	// return z ^= z >> 16;
+	#emit MOVE.alt
+	#emit SHR.C.pri 16
+	#emit XOR
+	#emit RETN
+
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
  * <param name="minOrMax">Upper bound, or lower bound with 2+ parameters or when less than naught.</param>
  * <param name="max">Upper bound.</param>
  * <param>Value(s) to not return.</param>
