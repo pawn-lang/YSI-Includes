@@ -149,8 +149,12 @@ Optional plugins:
 		#define _FIXES_DEFAULT (1)
 	#endif
 
-	#if FIX_OnRconCommand == 0 && FIX_OnClientCheckResponse == 0
+	#if !defined FIX_OnRconCommand || !defined FIX_OnClientCheckResponse
 		#define YSI_FIX_CALLBACKS
+	#else
+		#if FIX_OnRconCommand == 0 && FIX_OnClientCheckResponse == 0
+			#define YSI_FIX_CALLBACKS
+		#endif
 	#endif
 
 	#undef _FIXES_DEFAULT
