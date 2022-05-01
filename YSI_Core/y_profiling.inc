@@ -248,7 +248,11 @@ forward OnProfilingsComplete(profilings, fails);
 		}
 		
 		CHAIN_FORWARD:Profiling_OnScriptInit() = 1;
-		#undef OnScriptInit
+		#if defined _ALS_OnScriptInit
+			#undef OnScriptInit
+		#else
+			#define _ALS_OnScriptInit
+		#endif
 		#define OnScriptInit(%0) CHAIN_PUBLIC:Profiling_OnScriptInit(%0)
 	#endif
 	
