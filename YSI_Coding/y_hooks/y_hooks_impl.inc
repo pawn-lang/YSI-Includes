@@ -153,19 +153,25 @@ stock Hooks_MakeLongName(name[64])
 		i = 0,
 		pos = -1,
 		idx = YSI_g_sReplacementsShortOrder[0];
-	while (i != YSI_g_sReplacePtr)
+	for ( ; ; )
 	{
 		// Allow for multiple replacements of the same string.
 		if ((pos = strfind(name, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT], false, pos + 1)) == -1)
 		{
-			++i,
+			// This code does assume that there's at least 1 replacement.
+			if (++i == YSI_g_sReplacePtr)
+			{
+				break;
+			}
 			idx = YSI_g_sReplacementsShortOrder[i];
 		}
 		// This assumes CamelCase.  If the letter immediately following the end
 		// of the string is lower-case, then the short word found is not a
 		// complete word and should not be replaced.
 		else if ('a' <= name[(end = pos + YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_MIN])] <= 'z')
+		{
 			continue;
+		}
 		else
 		{
 			P:5("Found hook name replacement: %d, %s", pos, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT]);
