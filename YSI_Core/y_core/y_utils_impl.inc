@@ -582,16 +582,16 @@ stock RandomMulberry32()
 	static s = 0;
 
 	// z = (s += 0x6D2B79F5);
-	#emit LOAD.pri s
-	#emit ADD.C 0x6D2B79F5
-	#emit STOR.pri s
+	#emit LOAD.pri     s
+	#emit ADD.C        0x6D2B79F5
+	#emit STOR.pri     s
 
 	// z = (z ^ z >>> 15) * (1 | z);
 	#emit MOVE.alt
-	#emit SHR.C.pri 15
+	#emit SHR.C.pri    15
 	#emit XOR
 	#emit PUSH.pri
-	#emit CONST.pri 1
+	#emit CONST.pri    1
 	#emit OR
 	#emit POP.alt
 	#emit UMUL
@@ -599,10 +599,10 @@ stock RandomMulberry32()
 	// z ^= z + (z ^ z >>> 7) * (61 | z);
 	#emit PUSH.pri
 	#emit MOVE.alt
-	#emit SHR.C.pri 7
+	#emit SHR.C.pri    7
 	#emit XOR
 	#emit PUSH.pri
-	#emit CONST.pri 61
+	#emit CONST.pri    61
 	#emit OR
 	#emit POP.alt
 	#emit UMUL
@@ -612,11 +612,11 @@ stock RandomMulberry32()
 
 	// return z ^ z >>> 14;
 	#emit MOVE.alt
-	#emit SHR.C.pri 14
+	#emit SHR.C.pri    14
 	#emit XOR
 	#emit RETN
 
-	return 0;
+	__pragma("naked");
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -630,35 +630,35 @@ stock RandomSplitMix32()
 	static s = 0;
 
 	// z = (s += 0x9E3779B9);
-	#emit LOAD.pri s
-	#emit ADD.C 0x9E3779B9
-	#emit STOR.pri s
+	#emit LOAD.pri     s
+	#emit ADD.C        0x9E3779B9
+	#emit STOR.pri     s
 
 	// z ^= z >> 15;
 	#emit MOVE.alt
-	#emit SHR.C.pri 15
+	#emit SHR.C.pri    15
 	#emit XOR
 
 	// z *= 0x85EBCA6B;
-	#emit CONST.alt 0x85EBCA6B
+	#emit CONST.alt    0x85EBCA6B
 	#emit UMUL
 
 	// z ^= z >> 13;
 	#emit MOVE.alt
-	#emit SHR.C.pri 13
+	#emit SHR.C.pri    13
 	#emit XOR
 
 	// z *= 0xC2B2AE35;
-	#emit CONST.alt 0xC2B2AE35
+	#emit CONST.alt    0xC2B2AE35
 	#emit UMUL
 
 	// return z ^= z >> 16;
 	#emit MOVE.alt
-	#emit SHR.C.pri 16
+	#emit SHR.C.pri    16
 	#emit XOR
 	#emit RETN
 
-	return 0;
+	__pragma("naked");
 }
 
 /*-------------------------------------------------------------------------*//**
