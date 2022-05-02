@@ -100,13 +100,15 @@ The pre-defined short forms replacements are:
 
 ```pawn
 DEFINE_HOOK_REPLACEMENT__(Checkpoint, CP );
+DEFINE_HOOK_REPLACEMENT__(Collisions, Col);
 DEFINE_HOOK_REPLACEMENT__(Container , Cnt);
 DEFINE_HOOK_REPLACEMENT__(Inventory , Inv);
-DEFINE_HOOK_REPLACEMENT__(Dynamic   , Dyn);
 DEFINE_HOOK_REPLACEMENT__(TextDraw  , TD );
-DEFINE_HOOK_REPLACEMENT__(Update    , Upd);
-DEFINE_HOOK_REPLACEMENT__(Object    , Obj);
 DEFINE_HOOK_REPLACEMENT__(Command   , Cmd);
+DEFINE_HOOK_REPLACEMENT__(Dynamic   , Dyn);
+DEFINE_HOOK_REPLACEMENT__(Action    , Act);
+DEFINE_HOOK_REPLACEMENT__(Object    , Obj);
+DEFINE_HOOK_REPLACEMENT__(Update    , Upd);
 DEFINE_HOOK_REPLACEMENT__(DynamicCP , DynamicCP);
 ```
 
