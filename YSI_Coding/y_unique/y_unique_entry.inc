@@ -425,7 +425,8 @@ static stock const UNIQUE_SYMBOL_DOESNT_EXIST = cellmin;
 	#endif
 #endif
 
-#if defined YSI_TESTS
-	#include "y_unique_tests"
-#endif
+// Included from y_testing for ordering reasons.
+//#if defined YSI_TESTS
+//	#include "y_unique_tests"
+//#endif
 

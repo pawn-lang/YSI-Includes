@@ -1081,5 +1081,6 @@ TEST__ y_testing_Asserts()
 	#include "..\y_core\y_utils_tests"
 	#include "..\y_core\y_als_tests"
 	#include "..\y_core\y_cell_tests"
+	#include "..\..\YSI_Coding\y_unique\y_unique_tests"
 #endif
 
