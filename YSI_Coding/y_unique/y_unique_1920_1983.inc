@@ -10,32 +10,32 @@ static stock const Y_UNIQUE_1920_1983_CALLED = UNIQUE_SYMBOL;
 		#define UNIQUE_SYMBOL (1920)
 		#define UNIQUE_FUNCTION<%0...%1> %0T0%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1920)
+	#elseif UNIQUE_SYMBOL == (1920)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1921)
 		#define UNIQUE_FUNCTION<%0...%1> %0T1%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1921)
+	#elseif UNIQUE_SYMBOL == (1921)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1922)
 		#define UNIQUE_FUNCTION<%0...%1> %0T2%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1922)
+	#elseif UNIQUE_SYMBOL == (1922)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1923)
 		#define UNIQUE_FUNCTION<%0...%1> %0T3%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1923)
+	#elseif UNIQUE_SYMBOL == (1923)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1924)
 		#define UNIQUE_FUNCTION<%0...%1> %0T4%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1924)
+	#elseif UNIQUE_SYMBOL == (1924)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1925)
 		#define UNIQUE_FUNCTION<%0...%1> %0T5%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1925)
+	#elseif UNIQUE_SYMBOL == (1925)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1926)
 		#define UNIQUE_FUNCTION<%0...%1> %0T6%1
@@ -47,7 +47,7 @@ static stock const Y_UNIQUE_1920_1983_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1935)
-	#elseif UNIQUE_SYMBOL == (1927)
+	#if UNIQUE_SYMBOL == (1927)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1928)
 		#define UNIQUE_FUNCTION<%0...%1> %0T8%1
@@ -89,7 +89,7 @@ static stock const Y_UNIQUE_1920_1983_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1943)
-	#elseif UNIQUE_SYMBOL == (1935)
+	#if UNIQUE_SYMBOL == (1935)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1936)
 		#define UNIQUE_FUNCTION<%0...%1> %0TF%1
@@ -131,7 +131,7 @@ static stock const Y_UNIQUE_1920_1983_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1951)
-	#elseif UNIQUE_SYMBOL == (1943)
+	#if UNIQUE_SYMBOL == (1943)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1944)
 		#define UNIQUE_FUNCTION<%0...%1> %0TN%1
@@ -173,7 +173,7 @@ static stock const Y_UNIQUE_1920_1983_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1959)
-	#elseif UNIQUE_SYMBOL == (1951)
+	#if UNIQUE_SYMBOL == (1951)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1952)
 		#define UNIQUE_FUNCTION<%0...%1> %0TV%1
@@ -215,7 +215,7 @@ static stock const Y_UNIQUE_1920_1983_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1967)
-	#elseif UNIQUE_SYMBOL == (1959)
+	#if UNIQUE_SYMBOL == (1959)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1960)
 		#define UNIQUE_FUNCTION<%0...%1> %0Tc%1
@@ -257,7 +257,7 @@ static stock const Y_UNIQUE_1920_1983_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1975)
-	#elseif UNIQUE_SYMBOL == (1967)
+	#if UNIQUE_SYMBOL == (1967)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1968)
 		#define UNIQUE_FUNCTION<%0...%1> %0Tk%1
@@ -299,7 +299,7 @@ static stock const Y_UNIQUE_1920_1983_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #else
-	#elseif UNIQUE_SYMBOL == (1975)
+	#if UNIQUE_SYMBOL == (1975)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1976)
 		#define UNIQUE_FUNCTION<%0...%1> %0Ts%1

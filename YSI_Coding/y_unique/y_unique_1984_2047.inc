@@ -10,32 +10,32 @@ static stock const Y_UNIQUE_1984_2047_CALLED = UNIQUE_SYMBOL;
 		#define UNIQUE_SYMBOL (1984)
 		#define UNIQUE_FUNCTION<%0...%1> %0U0%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1984)
+	#elseif UNIQUE_SYMBOL == (1984)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1985)
 		#define UNIQUE_FUNCTION<%0...%1> %0U1%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1985)
+	#elseif UNIQUE_SYMBOL == (1985)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1986)
 		#define UNIQUE_FUNCTION<%0...%1> %0U2%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1986)
+	#elseif UNIQUE_SYMBOL == (1986)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1987)
 		#define UNIQUE_FUNCTION<%0...%1> %0U3%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1987)
+	#elseif UNIQUE_SYMBOL == (1987)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1988)
 		#define UNIQUE_FUNCTION<%0...%1> %0U4%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1988)
+	#elseif UNIQUE_SYMBOL == (1988)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1989)
 		#define UNIQUE_FUNCTION<%0...%1> %0U5%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1989)
+	#elseif UNIQUE_SYMBOL == (1989)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1990)
 		#define UNIQUE_FUNCTION<%0...%1> %0U6%1
@@ -47,7 +47,7 @@ static stock const Y_UNIQUE_1984_2047_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1999)
-	#elseif UNIQUE_SYMBOL == (1991)
+	#if UNIQUE_SYMBOL == (1991)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1992)
 		#define UNIQUE_FUNCTION<%0...%1> %0U8%1
@@ -89,7 +89,7 @@ static stock const Y_UNIQUE_1984_2047_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (2007)
-	#elseif UNIQUE_SYMBOL == (1999)
+	#if UNIQUE_SYMBOL == (1999)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (2000)
 		#define UNIQUE_FUNCTION<%0...%1> %0UF%1
@@ -131,7 +131,7 @@ static stock const Y_UNIQUE_1984_2047_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (2015)
-	#elseif UNIQUE_SYMBOL == (2007)
+	#if UNIQUE_SYMBOL == (2007)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (2008)
 		#define UNIQUE_FUNCTION<%0...%1> %0UN%1
@@ -173,7 +173,7 @@ static stock const Y_UNIQUE_1984_2047_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (2023)
-	#elseif UNIQUE_SYMBOL == (2015)
+	#if UNIQUE_SYMBOL == (2015)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (2016)
 		#define UNIQUE_FUNCTION<%0...%1> %0UV%1
@@ -215,7 +215,7 @@ static stock const Y_UNIQUE_1984_2047_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (2031)
-	#elseif UNIQUE_SYMBOL == (2023)
+	#if UNIQUE_SYMBOL == (2023)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (2024)
 		#define UNIQUE_FUNCTION<%0...%1> %0Uc%1
@@ -257,7 +257,7 @@ static stock const Y_UNIQUE_1984_2047_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (2039)
-	#elseif UNIQUE_SYMBOL == (2031)
+	#if UNIQUE_SYMBOL == (2031)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (2032)
 		#define UNIQUE_FUNCTION<%0...%1> %0Uk%1
@@ -299,7 +299,7 @@ static stock const Y_UNIQUE_1984_2047_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #else
-	#elseif UNIQUE_SYMBOL == (2039)
+	#if UNIQUE_SYMBOL == (2039)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (2040)
 		#define UNIQUE_FUNCTION<%0...%1> %0Us%1

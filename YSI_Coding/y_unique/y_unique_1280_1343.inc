@@ -10,32 +10,32 @@ static stock const Y_UNIQUE_1280_1343_CALLED = UNIQUE_SYMBOL;
 		#define UNIQUE_SYMBOL (1280)
 		#define UNIQUE_FUNCTION<%0...%1> %0J0%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1280)
+	#elseif UNIQUE_SYMBOL == (1280)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1281)
 		#define UNIQUE_FUNCTION<%0...%1> %0J1%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1281)
+	#elseif UNIQUE_SYMBOL == (1281)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1282)
 		#define UNIQUE_FUNCTION<%0...%1> %0J2%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1282)
+	#elseif UNIQUE_SYMBOL == (1282)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1283)
 		#define UNIQUE_FUNCTION<%0...%1> %0J3%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1283)
+	#elseif UNIQUE_SYMBOL == (1283)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1284)
 		#define UNIQUE_FUNCTION<%0...%1> %0J4%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1284)
+	#elseif UNIQUE_SYMBOL == (1284)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1285)
 		#define UNIQUE_FUNCTION<%0...%1> %0J5%1
 		#endinput
-	#if UNIQUE_SYMBOL == (1285)
+	#elseif UNIQUE_SYMBOL == (1285)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1286)
 		#define UNIQUE_FUNCTION<%0...%1> %0J6%1
@@ -47,7 +47,7 @@ static stock const Y_UNIQUE_1280_1343_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1295)
-	#elseif UNIQUE_SYMBOL == (1287)
+	#if UNIQUE_SYMBOL == (1287)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1288)
 		#define UNIQUE_FUNCTION<%0...%1> %0J8%1
@@ -89,7 +89,7 @@ static stock const Y_UNIQUE_1280_1343_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1303)
-	#elseif UNIQUE_SYMBOL == (1295)
+	#if UNIQUE_SYMBOL == (1295)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1296)
 		#define UNIQUE_FUNCTION<%0...%1> %0JF%1
@@ -131,7 +131,7 @@ static stock const Y_UNIQUE_1280_1343_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1311)
-	#elseif UNIQUE_SYMBOL == (1303)
+	#if UNIQUE_SYMBOL == (1303)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1304)
 		#define UNIQUE_FUNCTION<%0...%1> %0JN%1
@@ -173,7 +173,7 @@ static stock const Y_UNIQUE_1280_1343_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1319)
-	#elseif UNIQUE_SYMBOL == (1311)
+	#if UNIQUE_SYMBOL == (1311)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1312)
 		#define UNIQUE_FUNCTION<%0...%1> %0JV%1
@@ -215,7 +215,7 @@ static stock const Y_UNIQUE_1280_1343_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1327)
-	#elseif UNIQUE_SYMBOL == (1319)
+	#if UNIQUE_SYMBOL == (1319)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1320)
 		#define UNIQUE_FUNCTION<%0...%1> %0Jc%1
@@ -257,7 +257,7 @@ static stock const Y_UNIQUE_1280_1343_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #elseif UNIQUE_SYMBOL < (1335)
-	#elseif UNIQUE_SYMBOL == (1327)
+	#if UNIQUE_SYMBOL == (1327)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1328)
 		#define UNIQUE_FUNCTION<%0...%1> %0Jk%1
@@ -299,7 +299,7 @@ static stock const Y_UNIQUE_1280_1343_CALLED = UNIQUE_SYMBOL;
 		#endinput
 	#endif
 #else
-	#elseif UNIQUE_SYMBOL == (1335)
+	#if UNIQUE_SYMBOL == (1335)
 		#undef UNIQUE_SYMBOL
 		#define UNIQUE_SYMBOL (1336)
 		#define UNIQUE_FUNCTION<%0...%1> %0Js%1

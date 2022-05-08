@@ -109,27 +109,27 @@ Optional plugins:
 			static stock const UNIQUE_SYMBOL_LESS_THAN_0063 = UNIQUE_SYMBOL;
 			#include "y_unique_0000_0063"
 			#endinput
-		#if UNIQUE_SYMBOL < (127)
+		#elseif UNIQUE_SYMBOL < (127)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_0127 = UNIQUE_SYMBOL;
 			#include "y_unique_0064_0127"
 			#endinput
-		#if UNIQUE_SYMBOL < (191)
+		#elseif UNIQUE_SYMBOL < (191)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_0191 = UNIQUE_SYMBOL;
 			#include "y_unique_0128_0191"
 			#endinput
-		#if UNIQUE_SYMBOL < (255)
+		#elseif UNIQUE_SYMBOL < (255)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_0255 = UNIQUE_SYMBOL;
 			#include "y_unique_0192_0255"
 			#endinput
-		#if UNIQUE_SYMBOL < (319)
+		#elseif UNIQUE_SYMBOL < (319)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_0319 = UNIQUE_SYMBOL;
 			#include "y_unique_0256_0319"
 			#endinput
-		#if UNIQUE_SYMBOL < (383)
+		#elseif UNIQUE_SYMBOL < (383)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_0383 = UNIQUE_SYMBOL;
 			#include "y_unique_0320_0383"
 			#endinput
-		#if UNIQUE_SYMBOL < (447)
+		#elseif UNIQUE_SYMBOL < (447)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_0447 = UNIQUE_SYMBOL;
 			#include "y_unique_0384_0447"
 			#endinput
@@ -139,7 +139,7 @@ Optional plugins:
 			#endinput
 		#endif
 	#elseif UNIQUE_SYMBOL < (1023)
-		#elseif UNIQUE_SYMBOL < (575)
+		#if UNIQUE_SYMBOL < (575)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_0575 = UNIQUE_SYMBOL;
 			#include "y_unique_0512_0575"
 			#endinput
@@ -173,7 +173,7 @@ Optional plugins:
 			#endinput
 		#endif
 	#elseif UNIQUE_SYMBOL < (1535)
-		#elseif UNIQUE_SYMBOL < (1087)
+		#if UNIQUE_SYMBOL < (1087)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_1087 = UNIQUE_SYMBOL;
 			#include "y_unique_1024_1087"
 			#endinput
@@ -207,7 +207,7 @@ Optional plugins:
 			#endinput
 		#endif
 	#elseif UNIQUE_SYMBOL < (2047)
-		#elseif UNIQUE_SYMBOL < (1599)
+		#if UNIQUE_SYMBOL < (1599)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_1599 = UNIQUE_SYMBOL;
 			#include "y_unique_1536_1599"
 			#endinput
@@ -241,7 +241,7 @@ Optional plugins:
 			#endinput
 		#endif
 	#elseif UNIQUE_SYMBOL < (2559)
-		#elseif UNIQUE_SYMBOL < (2111)
+		#if UNIQUE_SYMBOL < (2111)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_2111 = UNIQUE_SYMBOL;
 			#include "y_unique_2048_2111"
 			#endinput
@@ -275,7 +275,7 @@ Optional plugins:
 			#endinput
 		#endif
 	#elseif UNIQUE_SYMBOL < (3071)
-		#elseif UNIQUE_SYMBOL < (2623)
+		#if UNIQUE_SYMBOL < (2623)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_2623 = UNIQUE_SYMBOL;
 			#include "y_unique_2560_2623"
 			#endinput
@@ -309,7 +309,7 @@ Optional plugins:
 			#endinput
 		#endif
 	#elseif UNIQUE_SYMBOL < (3583)
-		#elseif UNIQUE_SYMBOL < (3135)
+		#if UNIQUE_SYMBOL < (3135)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_3135 = UNIQUE_SYMBOL;
 			#include "y_unique_3072_3135"
 			#endinput
@@ -343,7 +343,7 @@ Optional plugins:
 			#endinput
 		#endif
 	#else
-		#elseif UNIQUE_SYMBOL < (3647)
+		#if UNIQUE_SYMBOL < (3647)
 			static stock const UNIQUE_SYMBOL_LESS_THAN_3647 = UNIQUE_SYMBOL;
 			#include "y_unique_3584_3647"
 			#endinput
@@ -423,5 +423,9 @@ static stock const UNIQUE_SYMBOL_DOESNT_EXIST = cellmin;
 
 		#include "y_unique_entry"
 	#endif
+#endif
+
+#if defined YSI_TESTS
+	#include "y_unique_tests"
 #endif
 
