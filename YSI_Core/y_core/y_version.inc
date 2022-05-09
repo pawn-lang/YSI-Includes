@@ -341,12 +341,15 @@ stock Server_GetServerVersion()
 	return Script_GetIncludesVersion();
 }
 
-stock Script_GetIncludesString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
+stock Script_GetIncludesString(version[], vlen = sizeof (version))
 {
 	// Not done yet.
 	version[0] = '\0';
 	// SA:MP version determination (from includes only).
-	#if !defined _samp_included
+	#if defined __SAMP_INCLUDES_VERSION
+		// No SA:MP version.
+		format(version, vlen, "samp-stdlib v%06x", __SAMP_INCLUDES_VERSION);
+	#elseif !defined _samp_included
 		// No SA:MP version.
 		strcat(version, "<none>", vlen);
 	#elseif defined StartRecordingPlayback
@@ -413,16 +416,6 @@ stock Script_GetIncludesString(version[], os[], vlen = sizeof (version), olen = 
 			strcat(version, "0.3DL", vlen);
 		#endif
 	#endif
-	if (Server_IsWindowsHost())
-	{
-		os[0] = '\0',
-		strcat(os, YSI_gscWindows, olen);
-	}
-	else
-	{
-		os[0] = '\0',
-		strcat(os, YSI_gscLinux, olen);
-	}
 }
 
 
@@ -462,29 +455,43 @@ stock bool:Server_CrashDetectExists()
 	{
 		new
 			version[38], os[10];
-		Script_GetIncludesString(version, os),
-		format(version, sizeof (version), "Server:      %s - %s", version, os),
+		GetConsoleVarAsString("version", version, sizeof (version));
+		if (version[0])
+		{
+			format(version, sizeof (version), "Server:      %s (%s)", version, Server_IsWindowsHost() ? YSI_gscWindows : YSI_gscLinux);
+		}
+		else
+		{
+			// TODO: Determine the exact SA:MP server version.
+			format(version, sizeof (version), "Server:      SA:MP (%s)", Server_IsWindowsHost() ? YSI_gscWindows : YSI_gscLinux);
+		}
 		Server_PrintIntroPart(version),
+		Script_GetStartString(version),
+		format(version, sizeof (version), "Started:     %s", version),
+		Server_PrintIntroPart(version),
+		Server_PrintIntroPart(""),
 		Script_GetCompilerString(version, os),
-		format(version, sizeof (version), "Compiler:    %s - %s", version, os),
+		format(version, sizeof (version), "Compiler:    %s (%s)", version, os),
+		Server_PrintIntroPart(version),
+		Script_GetIncludesString(version),
+		format(version, sizeof (version), "Includes:    %s", version),
 		Server_PrintIntroPart(version),
 		Script_GetCompilerCodepage(version),
 		format(version, sizeof (version), "Codepage:    %s", version),
-		Server_PrintIntroPart(version),
-		Server_PrintIntroPart("YSI:         " YSI_VERSION);
+		Server_PrintIntroPart(version);
 		#if ((__Pawn & 0x0F) >= 0x0A)
 			format(version, sizeof (version), "Built:       %s - %s", __date, __time),
 			Server_PrintIntroPart(version);
 		#endif
-		Script_GetStartString(version),
-		format(version, sizeof (version), "Started:     %s", version),
-		Server_PrintIntroPart(version);
+		Server_PrintIntroPart(""),
+		Server_PrintIntroPart("YSI:         v" YSI_VERSION);
 		#if defined YSI_NO_MASTER
 			Server_PrintIntroPart("Master:      <none>");
 		#else
 			format(version, sizeof (version), "Master:      %d", @_),
 			Server_PrintIntroPart(version);
 		#endif
+		Server_PrintIntroPart(""),
 		Server_GetJITString(version),
 		format(version, sizeof (version), "JIT:         %s", version),
 		Server_PrintIntroPart(version);
