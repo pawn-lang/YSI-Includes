@@ -576,6 +576,16 @@ stock Server_GetStartTime()
 	return YSI_gsStartTime;
 }
 
+stock Server_GetStartDateTime(&year, &month, &day, &hour, &minute, &second)
+{
+	hour = YSI_gsStartHMS >>> 16,
+	minute = YSI_gsStartHMS >>> 8 & 0xFF,
+	second = YSI_gsStartHMS & 0xFF,
+	year = YSI_gsStartDMY >>> 16,
+	month = YSI_gsStartDMY >>> 8 & 0xFF,
+	day = YSI_gsStartDMY & 0xFF;
+}
+
 stock bool:Server_HasLongCallControl()
 {
 	// This code detects if the `0xFE` long call control register works.  If it

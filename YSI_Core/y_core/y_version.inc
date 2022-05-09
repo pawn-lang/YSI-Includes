@@ -432,6 +432,14 @@ stock Server_GetServerString(version[], os[], vlen = sizeof (version), olen = si
 	return Script_GetIncludesString(version, os, vlen, olen);
 }
 
+stock Script_GetStartString(output[], size = sizeof (output))
+{
+	static months[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	new year, month, day, hour, minute, second;
+	Server_GetStartDateTime(year, month, day, hour, minute, second);
+	format(output, size, "%02d %s %04d - %02d:%02d:%02d", day, months[month - 1], year, hour, minute, second);
+}
+
 stock bool:Server_CrashDetectExists()
 {
 	// 0xFF is roughly flags, but some are mutually exclusive:
@@ -459,17 +467,24 @@ stock bool:Server_CrashDetectExists()
 		Server_PrintIntroPart(version),
 		Script_GetCompilerString(version, os),
 		format(version, sizeof (version), "Compiler:    %s - %s", version, os),
-		Server_PrintIntroPart(version);
+		Server_PrintIntroPart(version),
+		Script_GetCompilerCodepage(version),
+		format(version, sizeof (version), "Codepage:    %s", version),
+		Server_PrintIntroPart(version),
+		Server_PrintIntroPart("YSI:         " YSI_VERSION);
 		#if ((__Pawn & 0x0F) >= 0x0A)
 			format(version, sizeof (version), "Built:       %s - %s", __date, __time),
 			Server_PrintIntroPart(version);
 		#endif
-		Script_GetCompilerCodepage(version),
-		format(version, sizeof (version), "Codepage:    %s", version),
-		Server_PrintIntroPart(version),
-		Server_PrintIntroPart("YSI:         " YSI_VERSION),
-		format(version, sizeof (version), "Started:     %d", Server_GetStartTime()),
-		Server_PrintIntroPart(version),
+		Script_GetStartString(version),
+		format(version, sizeof (version), "Started:     %s", version),
+		Server_PrintIntroPart(version);
+		#if defined YSI_NO_MASTER
+			Server_PrintIntroPart("Master:      <none>");
+		#else
+			format(version, sizeof (version), "Master:      %d", @_),
+			Server_PrintIntroPart(version);
+		#endif
 		Server_GetJITString(version),
 		format(version, sizeof (version), "JIT:         %s", version),
 		Server_PrintIntroPart(version);
