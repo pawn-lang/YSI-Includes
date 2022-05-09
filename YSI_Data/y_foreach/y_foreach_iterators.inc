@@ -830,28 +830,96 @@ stock Iter_All_Internal(const array[], size, value)
 	#endif
 #endif
 
-iterfunc stock VehicleOccupant(vehicleid, bool:exclude_driver = false)
+iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDriver = true, bool:includePassenger = true)
 {
-	FOREACH__ (new i : Player)
+	if (includeDriver && includePassenger)
 	{
-		if (GetPlayerVehicleID(i) == vehicleid)
+		if (vehicleid == INVALID_VEHICLE_ID)
 		{
-			if (exclude_driver && GetPlayerVehicleSeat(i) == 0)
+			FOREACH__ (new i : Player)
 			{
-				continue;
+				if (IsPlayerInAnyVehicle(i))
+				{
+					YIELD__ return i;
+				}
 			}
-			else
+		}
+		else
+		{
+			FOREACH__ (new i : Player)
 			{
-				YIELD__ return i;
+				if (GetPlayerVehicleID(i) == vehicleid)
+				{
+					YIELD__ return i;
+				}
 			}
 		}
 	}
+	else if (includeDriver)
+	{
+		if (vehicleid == INVALID_VEHICLE_ID)
+		{
+			FOREACH__ (new i : Player)
+			{
+				if (GetPlayerState(i) == PLAYER_STATE_DRIVER)
+				{
+					YIELD__ return i;
+					// You can only have one driver.
+					return;
+				}
+			}
+		}
+		else
+		{
+			FOREACH__ (new i : Player)
+			{
+				if (GetPlayerVehicleID(i) == vehicleid && GetPlayerState(i) == PLAYER_STATE_DRIVER)
+				{
+					YIELD__ return i;
+					// You can only have one driver.
+					return;
+				}
+			}
+		}
+	}
+	else if (includePassenger)
+	{
+		if (vehicleid == INVALID_VEHICLE_ID)
+		{
+			FOREACH__ (new i : Player)
+			{
+				if (GetPlayerState(i) == PLAYER_STATE_PASSENGER)
+				{
+					YIELD__ return i;
+				}
+			}
+		}
+		else
+		{
+			FOREACH__ (new i : Player)
+			{
+				if (GetPlayerVehicleID(i) == vehicleid && GetPlayerState(i) == PLAYER_STATE_PASSENGER)
+				{
+					YIELD__ return i;
+				}
+			}
+		}
+	}
+	// Else no loop - we want everyone who is in a vehicle, but not a driver or
+	// a passenger.  I think that limits us to captives in the boot and Sideshow
+	// Bob strapped to the underside.
 }
 #define Iterator@VehicleOccupant iteryield
 
-#pragma deprecated Use VehicleOccupant
-iterfunc stock VehiclePassenger(vehicleid)
+iterfunc stock VehiclePassenger(vehicleid = INVALID_VEHICLE_ID)
 {
-    foreach (new i : VehicleOccupant(vehicleid)) YIELD__ return i;
+	Iter_Func@VehicleOccupant(vehicleid, false, true);
 }
 #define Iterator@VehiclePassenger iteryield
+
+iterfunc stock VehicleDriver(vehicleid = INVALID_VEHICLE_ID)
+{
+	Iter_Func@VehicleOccupant(vehicleid, true, false);
+}
+#define Iterator@VehicleDriver iteryield
+

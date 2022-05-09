@@ -3854,3 +3854,47 @@ TEST__ y_iter_RemoveThenReverse()
 	}
 }
 
+static stock y_iterate_NestedYield(a, b)
+{
+	while (a != b)
+	{
+		YIELD__ return a;
+		++a;
+	}
+}
+
+iterfunc stock y_iterate_NestedYield(a = 10, b = 20)
+{
+	y_iterate_NestedYield(a, b);
+}
+#define Iterator@y_iterate_NestedYield iteryield
+
+iterfunc stock y_iterate_NestedInner(a = 5, b)
+{
+	Iter_Func@y_iterate_NestedYield(a, b);
+}
+#define Iterator@y_iterate_NestedInner iteryield
+
+TEST__ y_iterate_NestedYield()
+{
+	new sum = 0;
+	foreach (new i : y_iterate_NestedYield(30, 40))
+	{
+		sum += i;
+		ASSERT(30 <= i < 40);
+	}
+	ASSERT_EQ(sum, 345);
+	foreach (new i : y_iterate_NestedYield())
+	{
+		sum += i;
+		ASSERT(10 <= i < 20);
+	}
+	ASSERT_EQ(sum, 345 + 145);
+	foreach (new i : y_iterate_NestedInner(_, 15))
+	{
+		sum += i;
+		ASSERT(5 <= i < 15);
+	}
+	ASSERT_EQ(sum, 345 + 145 + 95);
+}
+
