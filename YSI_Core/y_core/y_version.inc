@@ -453,13 +453,17 @@ stock bool:Server_CrashDetectExists()
 	static stock YVers_PrintHeader()
 	{
 		new
-			version[32], os[10];
+			version[38], os[10];
 		Script_GetIncludesString(version, os),
 		format(version, sizeof (version), "Server:      %s - %s", version, os),
 		Server_PrintIntroPart(version),
 		Script_GetCompilerString(version, os),
 		format(version, sizeof (version), "Compiler:    %s - %s", version, os),
-		Server_PrintIntroPart(version),
+		Server_PrintIntroPart(version);
+		#if ((__Pawn & 0x0F) >= 0x0A)
+			format(version, sizeof (version), "Built:       %s - %s", __date, __time),
+			Server_PrintIntroPart(version);
+		#endif
 		Script_GetCompilerCodepage(version),
 		format(version, sizeof (version), "Codepage:    %s", version),
 		Server_PrintIntroPart(version),

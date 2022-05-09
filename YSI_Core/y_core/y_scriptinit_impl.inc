@@ -328,10 +328,22 @@ static stock const
 
 static stock
 	YSI_gsStartTime,
+	YSI_gsStartHMS,
+	YSI_gsStartDMY,
 	bool:YSI_gsObnoxiousHeader = true,
 	bool:YSI_gsFirstHeader = true,
 	bool:YSI_gsNewPart = true,
 	YSI_gsPurgeTimer = 0;
+
+static stock ScriptInit_GetStartTime()
+{
+	new h, m, s, d, y;
+	YSI_gsStartTime = gettime(),
+	gettime(h, m, s),
+	YSI_gsStartHMS = (h << 16) | (m << 8) | s,
+	getdate(y, m, d),
+	YSI_gsStartDMY = (y << 16) | (m << 8) | d;
+}
 
 native YSI_VAPrintF(const fmt[], addr) = printf;
 forward bool:fautocleanup(const name[], maxAge);
@@ -778,7 +790,7 @@ public OnJITCompile()
 	{
 		return 0;
 	}
-	YSI_gsStartTime = gettime();
+	ScriptInit_GetStartTime();
 	#if _YSI_SAFE_STARTUP
 		ResolveYSIScriptfileDirs();
 	#endif
@@ -882,7 +894,7 @@ public OnJITCompile()
 //		// Dump the final assembly of this script so we can inspect it.
 //		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 //		{
-//			YSI_gsStartTime = gettime();
+//			ScriptInit_GetStartTime();
 //			ResolveYSIScriptfileDirs();
 //			DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
 //			if (!ScriptInit_CallOnCodeInit(false, true))
@@ -926,7 +938,7 @@ public OnJITCompile()
 				// Dump the final assembly of this script so we can inspect it.
 				if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 				{
-					YSI_gsStartTime = gettime();
+					ScriptInit_GetStartTime();
 					#if _YSI_SAFE_STARTUP
 						ResolveYSIScriptfileDirs();
 					#endif
@@ -1072,7 +1084,7 @@ ScriptInit_Purge_retry:
 			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		#endif
 			{
-				YSI_gsStartTime = gettime();
+				ScriptInit_GetStartTime();
 				#if _YSI_SAFE_STARTUP
 					ResolveYSIScriptfileDirs();
 				#endif
