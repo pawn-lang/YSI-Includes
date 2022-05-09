@@ -519,6 +519,23 @@ Optional plugins:
 //	#error Re-download `https://github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
 //#endif
 
+//#tryinclude <formatex\formatex>
+//#tryinclude <formatex-master\formatex>
+//#tryinclude <formatex-master\formatex-master\formatex>
+//#tryinclude "..\..\formatex\formatex"
+//#tryinclude "..\..\formatex-master\formatex"
+//#tryinclude "..\..\formatex-master\formatex-master\formatex"
+//#tryinclude "..\..\..\formatex\formatex"
+//#tryinclude "..\..\..\formatex-master\formatex"
+//#tryinclude "..\..\..\formatex-master\formatex-master\formatex"
+//#tryinclude "formatex"
+//#tryinclude <formatex>
+//#if !defined _INC_md_sort
+//	#error Download `https://github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
+//#elseif !defined FormatFlags
+//	#error Re-download `https://github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
+//#endif
+
 // Manually fix earlier versions.
 #if !defined _INC_code_parse_inc
 	#undef u@
