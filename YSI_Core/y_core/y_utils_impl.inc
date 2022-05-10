@@ -4031,15 +4031,15 @@ Float:BiGramSimmilarity(const string1[], const string2[])
 		// This code only looks at numbers and letters, and ignores case.
 		if ('0' <= ch <= '9')
 		{
-			pair = (pair >>> 8) | ((ch - '0') << 8);
+			pair = (pair / 36) | ((ch - '0') * 36);
 		}
 		else if ('a' <= ch <= 'z')
 		{
-			pair = (pair >>> 8) | ((ch - ('a' - 10)) << 8);
+			pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
 		}
 		else if ('A' <= ch <= 'Z')
 		{
-			pair = (pair >>> 8) | ((ch - ('A' - 10)) << 8);
+			pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
 		}
 		else
 		{
@@ -4058,15 +4058,15 @@ Float:BiGramSimmilarity(const string1[], const string2[])
 		// This code only looks at numbers and letters, and ignores case.
 		if ('0' <= ch <= '9')
 		{
-			pair = (pair >>> 8) | ((ch - '0') << 8);
+			pair = (pair / 36) | ((ch - '0') * 36);
 		}
 		else if ('a' <= ch <= 'z')
 		{
-			pair = (pair >>> 8) | ((ch - ('a' - 10)) << 8);
+			pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
 		}
 		else if ('A' <= ch <= 'Z')
 		{
-			pair = (pair >>> 8) | ((ch - ('A' - 10)) << 8);
+			pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
 		}
 		else
 		{
