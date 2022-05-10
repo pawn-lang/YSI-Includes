@@ -4014,7 +4014,7 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  BiGramSimmilarity(const string1[], const string2[]);
+ *  BiGramSimilarity(const string1[], const string2[]);
  * </summary>
  * <param name="string1">The first string to compare.</param>
  * <param name="string1">The second string to compare.</param>
@@ -4028,7 +4028,7 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-Float:BiGramSimmilarity(const string1[], const string2[])
+Float:BiGramSimilarity(const string1[], const string2[])
 {
 	// 2-dimensional comparison of lower-case letters.
 	new
