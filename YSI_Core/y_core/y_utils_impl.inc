@@ -4012,7 +4012,21 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
 		false;
 }
 
-forward y_utils_end();
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  BiGramSimmilarity(const string1[], const string2[]);
+ * </summary>
+ * <param name="string1">The first string to compare.</param>
+ * <param name="string1">The second string to compare.</param>
+ * <returns>
+ *  The normalised similarity between the strings.
+ * </returns>
+ * <remarks>
+ *  Compares the pairs of letters and numbers in each string with each other to
+ *  find a measure of how much of one ordered string is in the other.  Useful
+ *  for seeing if two strings are similar to humans.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 Float:BiGramSimmilarity(const string1[], const string2[])
 {
@@ -4101,6 +4115,8 @@ Float:BiGramSimmilarity(const string1[], const string2[])
 	// Normalise the number of matching pairs and multiply.
 	return (1.0 - floatdiv(unique1, ngrams1)) * (1.0 - floatdiv(unique2, ngrams2));
 }
+
+forward y_utils_end();
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
