@@ -158,7 +158,7 @@ Optional plugins:
 #define Vehicle_IsTank(%0)       (_Vehicle_Is(Tank      , %0))
 #define Vehicle_IsFlowerpot(%0)  (_Vehicle_Is(Flowerpot , %0))
 #define Vehicle_IsTransport(%0)  (_Vehicle_Is(Transport , %0))
-#define Vehicle_IsArmed(%0) 		 (_Vehicle_Is(Armed      , %0))
+#define Vehicle_IsArmed(%0)      (_Vehicle_Is(Armed      , %0))
 
 #define Model_GetCategory(%0)  VIM_GetCategory(Model_ToVIM((%0)))
 #define Model_IsValid(%0)      VIM_IsValid(Model_ToVIM((%0)))
@@ -188,7 +188,7 @@ Optional plugins:
 #define Model_IsTank(%0)       (_Model_Is(Tank      , %0))
 #define Model_IsFlowerpot(%0)  (_Model_Is(Flowerpot , %0))
 #define Model_IsTransport(%0)  (_Model_Is(Transport , %0))
-#define Model_IsArmed(%0)       (_Model_Is(Armed      , %0))
+#define Model_IsArmed(%0)      (_Model_Is(Armed      , %0))
 
 #define VIM_GetCategory(%0)  (YSI_gVehicleFlags[(%0)] & e_VEHICLE_FLAGS_CATEGORY)
 #define VIM_IsValid(%0)      (YSI_gVehicleFlags[(%0)] != e_VEHICLE_FLAGS_NONE)
@@ -218,7 +218,7 @@ Optional plugins:
 #define VIM_IsTank(%0)       (_VIM_Is(Tank      , %0))
 #define VIM_IsFlowerpot(%0)  (_VIM_Is(Flowerpot , %0))
 #define VIM_IsTransport(%0)  (_VIM_Is(Transport , %0))
-#define VIM_IsArmed(%0)       (_VIM_Is(Armed      , %0))
+#define VIM_IsArmed(%0)      (_VIM_Is(Armed      , %0))
 
 #define Vehicle_GetVIM(%0) (Model_ToVIM(GetVehicleModel((%0))))
 #define Model_ToVIM(%0) (VIM:(_Model_Validate(%0)))
