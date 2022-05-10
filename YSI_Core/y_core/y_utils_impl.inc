@@ -4014,6 +4014,94 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
 
 forward y_utils_end();
 
+Float:BiGramSimmilarity(const string1[], const string2[])
+{
+	// 2-dimensional comparison of lower-case letters.
+	new
+		matrix[36 * 36],
+		pair,
+		ch,
+		unique1 = 0,
+		unique2 = 0,
+		ngrams1 = -1,
+		ngrams2 = -1;
+	// We can also "improve" the comparison by making all numbers the same.
+	for (new i = 0; (ch = string1[i]); ++i)
+	{
+		// This code only looks at numbers and letters, and ignores case.
+		if ('0' <= ch <= '9')
+		{
+			pair = (pair >>> 8) | ((ch - '0') << 8);
+		}
+		else if ('a' <= ch <= 'z')
+		{
+			pair = (pair >>> 8) | ((ch - ('a' - 10)) << 8);
+		}
+		else if ('A' <= ch <= 'Z')
+		{
+			pair = (pair >>> 8) | ((ch - ('A' - 10)) << 8);
+		}
+		else
+		{
+			// Not a character we are interested in.
+			continue;
+		}
+		if (++ngrams1)
+		{
+			// Got at least TWO characters.
+			++matrix[pair],
+			++unique1;
+		}
+	}
+	for (new i = 0; (ch = string2[i]); ++i)
+	{
+		// This code only looks at numbers and letters, and ignores case.
+		if ('0' <= ch <= '9')
+		{
+			pair = (pair >>> 8) | ((ch - '0') << 8);
+		}
+		else if ('a' <= ch <= 'z')
+		{
+			pair = (pair >>> 8) | ((ch - ('a' - 10)) << 8);
+		}
+		else if ('A' <= ch <= 'Z')
+		{
+			pair = (pair >>> 8) | ((ch - ('A' - 10)) << 8);
+		}
+		else
+		{
+			// Not a character we are interested in.
+			continue;
+		}
+		// The original version had positive numbers as pairs in `string1` but
+		// not `string2`, and vice-versa, but I already optimised it.
+		if (!++ngrams2)
+		{
+		}
+		else if (matrix[pair])
+		{
+			--matrix[pair],
+			--unique1;
+		}
+		else
+		{
+			++unique2;
+		}
+		/*if (++ngrams2)
+		{
+			// Got at least TWO characters.
+			--matrix[pair];
+		}*/
+	}
+	if (ngrams1 < 1 || ngrams2 < 1)
+	{
+		// There just aren't enough letters to compare.
+		return 0.0;
+	}
+	// Normalise the number of matching pairs and multiply.
+	return (1.0 - floatdiv(unique1, ngrams1)) * (1.0 - floatdiv(unique2, ngrams2));
+}
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  Float:FloatAbs(Float:number);
