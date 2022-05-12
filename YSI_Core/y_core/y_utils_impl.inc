@@ -4033,7 +4033,7 @@ stock Float:BiGramSimilarity(const string1[], const string2[])
 	// 2-dimensional comparison of lower-case letters.
 	new
 		matrix[36 * 36],
-		pair,
+		pair = 0,
 		ch,
 		unique1 = 0,
 		unique2 = 0,
