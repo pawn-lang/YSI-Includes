@@ -4028,7 +4028,7 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-Float:BiGramSimilarity(const string1[], const string2[])
+stock Float:BiGramSimilarity(const string1[], const string2[])
 {
 	// 2-dimensional comparison of lower-case letters.
 	new
