@@ -163,7 +163,12 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 			Indirect_Release(YSI_g_sPlayerCallback[playerid]);
 		}
 		YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_NONE,
-		Dialog_ShowPlayerNative(playerid, -1, DIALOG_STYLE_MSGBOX, NULL, NULL, NULL, NULL);
+		
+		#if defined HidePlayerDialog
+            HidePlayerDialog(playerid);
+        #else
+            Dialog_ShowPlayerNative(playerid, -1, DIALOG_STYLE_MSGBOX, NULL, NULL, NULL, NULL);
+	    #endif
 	}
 	return 1;
 }
