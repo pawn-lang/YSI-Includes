@@ -165,10 +165,10 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 		YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_NONE,
 		
 		#if defined HidePlayerDialog
-            HidePlayerDialog(playerid);
-        #else
-            Dialog_ShowPlayerNative(playerid, -1, DIALOG_STYLE_MSGBOX, NULL, NULL, NULL, NULL);
-	    #endif
+			HidePlayerDialog(playerid);
+		#else
+			Dialog_ShowPlayerNative(playerid, -1, DIALOG_STYLE_MSGBOX, NULL, NULL, NULL, NULL);
+		#endif
 	}
 	return 1;
 }
