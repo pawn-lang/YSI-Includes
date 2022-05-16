@@ -1077,7 +1077,7 @@ stock Vehicle_Speed(vehicleid)
 		Float:Vz = 0.0
 	;
 	GetVehicleVelocity(vehicleid, Vx, Vy, Vz);
-	return floatround((floatsqroot((Vx * Vx) + (Vy * Vy) + (Vz * Vz)) * 136.666667));
+	return floatround(VectorSize(Vx, Vy, Vz) * 136.666667);
 }
 
 #undef _VEHICLE_FLAGS
