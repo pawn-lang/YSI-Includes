@@ -162,7 +162,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 		{
 			Indirect_Release(YSI_g_sPlayerCallback[playerid]);
 		}
-		YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_NONE,
+		YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_NONE;
 		
 		#if defined HidePlayerDialog
 			HidePlayerDialog(playerid);
