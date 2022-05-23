@@ -156,6 +156,9 @@ public _@_y_cgen_@_0()
 	#if CGEN_MEMORY >= 90000
 		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
 	#endif
+	#if CGEN_MEMORY >= 100000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
 	#if CGEN_MEMORY >= 110000
 		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
 	#endif
