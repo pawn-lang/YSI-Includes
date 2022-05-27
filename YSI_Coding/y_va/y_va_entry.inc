@@ -237,6 +237,13 @@ stock bool:va_SetObjectMaterialText(objectid, const fmat[], materialIndex = 0, O
 		bool:SetObjectMaterialText(objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
 }
 
+stock bool:va_SetPlayerObjectMaterialText(playerid, objectid, const text[], materialIndex = 0, OBJECT_MATERIAL_SIZE:materialSize = OBJECT_MATERIAL_SIZE:90, const fontFace[] = "Arial", fontSize = 24, bool:bold = true, fontColour = 0xFFFFFFFF, backgroundColour = 0, OBJECT_MATERIAL_TEXT_ALIGN:textalignment = OBJECT_MATERIAL_TEXT_ALIGN:0)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(11)),
+		bool:SetPlayerObjectMaterialText(playerid, objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
+}
+
 // YSF
 
 stock bool:va_AddServerRule(const name[], const fmat[], E_SERVER_RULE_FLAGS:flags = E_SERVER_RULE_FLAGS:4, GLOBAL_TAG_TYPES:...)
