@@ -224,6 +224,19 @@ stock bool:va_SetMenuColumnHeader(Menu:menuid, column, const fmat[], GLOBAL_TAG_
 		bool:SetMenuColumnHeader(menuid, column, YSI_UNSAFE_HUGE_STRING);
 }
 
+#if !defined OBJECT_MATERIAL_SIZE
+	#define OBJECT_MATERIAL_SIZE: _:
+#endif
+#if !defined OBJECT_MATERIAL_TEXT_ALIGN
+	#define OBJECT_MATERIAL_TEXT_ALIGN: _:
+#endif
+stock bool:va_SetObjectMaterialText(objectid, const fmat[], materialIndex = 0, OBJECT_MATERIAL_SIZE:materialSize = OBJECT_MATERIAL_SIZE:90, const fontFace[] = "Arial", fontSize = 24, bool:bold = true, fontColour = 0xFFFFFFFF, backgroundColour = 0, OBJECT_MATERIAL_TEXT_ALIGN:textalignment = OBJECT_MATERIAL_TEXT_ALIGN:0)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(10)),
+		bool:SetObjectMaterialText(objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
+}
+
 // YSF
 
 stock bool:va_AddServerRule(const name[], const fmat[], E_SERVER_RULE_FLAGS:flags = E_SERVER_RULE_FLAGS:4, GLOBAL_TAG_TYPES:...)
