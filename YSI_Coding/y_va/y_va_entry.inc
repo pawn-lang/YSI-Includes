@@ -237,11 +237,53 @@ stock bool:va_SetObjectMaterialText(objectid, const fmat[], materialIndex = 0, O
 		bool:SetObjectMaterialText(objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
 }
 
-stock bool:va_SetPlayerObjectMaterialText(playerid, objectid, const text[], materialIndex = 0, OBJECT_MATERIAL_SIZE:materialSize = OBJECT_MATERIAL_SIZE:90, const fontFace[] = "Arial", fontSize = 24, bool:bold = true, fontColour = 0xFFFFFFFF, backgroundColour = 0, OBJECT_MATERIAL_TEXT_ALIGN:textalignment = OBJECT_MATERIAL_TEXT_ALIGN:0)
+stock bool:va_SetPlayerObjectMaterialText(playerid, objectid, const fmat[], materialIndex = 0, OBJECT_MATERIAL_SIZE:materialSize = OBJECT_MATERIAL_SIZE:90, const fontFace[] = "Arial", fontSize = 24, bool:bold = true, fontColour = 0xFFFFFFFF, backgroundColour = 0, OBJECT_MATERIAL_TEXT_ALIGN:textalignment = OBJECT_MATERIAL_TEXT_ALIGN:0)
 {
 	return
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(11)),
 		bool:SetPlayerObjectMaterialText(playerid, objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
+}
+
+stock Text3D:va_Create3DTextLabel(const fmat[], colour, Float:x, Float:y, Float:z, Float:drawDistance, virtualWorld, bool:testLOS = false, GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(8)),
+		Create3DTextLabel(YSI_UNSAFE_HUGE_STRING, colour, x, y, z, drawDistance, virtualWorld, testLOS);
+}
+
+stock bool:va_Update3DTextLabelText(Text3D:textid, colour, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
+		Update3DTextLabelText(textid, colour, YSI_UNSAFE_HUGE_STRING);
+}
+
+stock PlayerText3D:va_CreatePlayer3DTextLabel(playerid, const fmat[], colour, Float:x, Float:y, Float:z, Float:drawDistance, parentPlayerid = INVALID_PLAYER_ID, parentVehicleid = INVALID_VEHICLE_ID, bool:testLOS = false, GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(10)),
+		CreatePlayer3DTextLabel(playerid, YSI_UNSAFE_HUGE_STRING, colour, x, y, z, drawDistance, parentPlayerid, parentVehicleid, testLOS);
+}
+
+stock bool:va_UpdatePlayer3DTextLabelText(playerid, PlayerText3D:textid, colour, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(4)),
+		UpdatePlayer3DTextLabelText(playerid, textid, colour, YSI_UNSAFE_HUGE_STRING);
+}
+
+stock bool:va_SetSVarString(const svar[], const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(2)),
+		bool:SetSVarString(svar, YSI_UNSAFE_HUGE_STRING);
+}
+
+stock bool:va_SetPVarString(playerid, const svar[], const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
+		bool:SetPVarString(playerid, svar, YSI_UNSAFE_HUGE_STRING);
 }
 
 // YSF
@@ -259,6 +301,8 @@ stock bool:va_SetServerRule(const name[], const fmat[], GLOBAL_TAG_TYPES:...)
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(2)),
 		bool:SetServerRule(name, YSI_UNSAFE_HUGE_STRING);
 }
+
+native bool:va_TextDrawSetStringForPlayer(Text:text, playerid, const fmat[], GLOBAL_TAG_TYPES:...) = TextDrawSetStringForPlayer;
 
 #if defined YSI_TESTS
 	#include "y_va_tests"
