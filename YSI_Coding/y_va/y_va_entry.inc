@@ -203,6 +203,27 @@ stock bool:va_ShowPlayerDialog(playerid, dialogid, DIALOG_STYLE:style, const tit
 		bool:ShowPlayerDialog(playerid, dialogid, style, title, YSI_UNSAFE_HUGE_STRING, button1, button2);
 }
 
+stock Menu:va_CreateMenu(const fmat[], columns, Float:x, Float:y, Float:col1width, Float:col2width = 0.0, GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(6)),
+		CreateMenu(YSI_UNSAFE_HUGE_STRING, columns, x, y, col1width, col2width);
+}
+
+stock va_AddMenuItem(Menu:menuid, column, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
+		AddMenuItem(menuid, column, YSI_UNSAFE_HUGE_STRING);
+}
+
+stock bool:va_SetMenuColumnHeader(Menu:menuid, column, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
+		bool:SetMenuColumnHeader(menuid, column, YSI_UNSAFE_HUGE_STRING);
+}
+
 // YSF
 
 stock bool:va_AddServerRule(const name[], const fmat[], E_SERVER_RULE_FLAGS:flags = E_SERVER_RULE_FLAGS:4, GLOBAL_TAG_TYPES:...)
