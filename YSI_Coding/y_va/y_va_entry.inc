@@ -88,67 +88,135 @@ Optional plugins:
 
 stock PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	return CreatePlayerTextDraw(playerid, x, y, va_return(fmat, ___(4)));
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(4)),
+		CreatePlayerTextDraw(playerid, x, y, YSI_UNSAFE_HUGE_STRING);
 }
 
 stock Text:va_TextDrawCreate(Float:x, Float:y, const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	return TextDrawCreate(x, y, va_return(fmat, ___(3)));
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
+		TextDrawCreate(x, y, YSI_UNSAFE_HUGE_STRING);
 }
 
-stock va_TextDrawSetString(Text:text, const fmat[], GLOBAL_TAG_TYPES:...)
+stock bool:va_TextDrawSetString(Text:text, const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	return TextDrawSetString(text, va_return(fmat, ___(2)));
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(2)),
+		bool:TextDrawSetString(text, YSI_UNSAFE_HUGE_STRING);
 }
 
-stock va_PlayerTextDrawSetString(playerid, PlayerText:text, const fmat[], GLOBAL_TAG_TYPES:...)
+stock bool:va_PlayerTextDrawSetString(playerid, PlayerText:text, const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	return PlayerTextDrawSetString(playerid, text, va_return(fmat, ___(3)));
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
+		bool:PlayerTextDrawSetString(playerid, text, YSI_UNSAFE_HUGE_STRING);
 }
 
-stock va_SendClientMessage(playerid, colour, const fmat[], GLOBAL_TAG_TYPES:...)
+stock bool:va_SendClientMessage(playerid, colour, const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	return SendClientMessage(playerid, colour, va_return(fmat, ___(3)));
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
+		bool:SendClientMessage(playerid, colour, YSI_UNSAFE_HUGE_STRING);
 }
 
-stock va_SendClientMessageToAll(colour, const fmat[], GLOBAL_TAG_TYPES:...)
+stock bool:va_SendClientMessageToAll(colour, const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	return SendClientMessageToAll(colour, va_return(fmat, ___(2)));
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(2)),
+		bool:SendClientMessageToAll(colour, YSI_UNSAFE_HUGE_STRING);
 }
 
-stock va_SendPlayerMessageToPlayer(playerid, senderid, const fmat[], GLOBAL_TAG_TYPES:...)
+stock bool:va_SendPlayerMessageToPlayer(playerid, senderid, const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	return SendPlayerMessageToPlayer(playerid, senderid, va_return(fmat, ___(3)));
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
+		bool:SendPlayerMessageToPlayer(playerid, senderid, YSI_UNSAFE_HUGE_STRING);
 }
 
-stock va_SendPlayerMessageToAll(senderid, const fmat[], GLOBAL_TAG_TYPES:...)
+stock bool:va_SendPlayerMessageToAll(senderid, const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	return SendPlayerMessageToAll(senderid, va_return(fmat, ___(2)));
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(2)),
+		bool:SendPlayerMessageToAll(senderid, YSI_UNSAFE_HUGE_STRING);
 }
 
-stock va_GameTextForPlayer(playerid, const fmat[], time, style, GLOBAL_TAG_TYPES:...)
+stock bool:va_GameTextForPlayer(playerid, const fmat[], time, style, GLOBAL_TAG_TYPES:...)
 {
-	return GameTextForPlayer(playerid, va_return(fmat, ___(4)), time, style);
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(4)),
+		bool:GameTextForPlayer(playerid, YSI_UNSAFE_HUGE_STRING, time, style);
 }
 
-stock va_GameTextForAll(const fmat[], time, style, GLOBAL_TAG_TYPES:...)
+stock bool:va_GameTextForAll(const fmat[], time, style, GLOBAL_TAG_TYPES:...)
 {
-	return GameTextForAll(va_return(fmat, ___(3)), time, style);
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
+		bool:GameTextForAll(YSI_UNSAFE_HUGE_STRING, time, style);
 }
 
-stock va_print(const fmat[], GLOBAL_TAG_TYPES:...)
-{
-	return print(va_return(fmat, ___(1)));
-}
+native va_print(const fmat[], GLOBAL_TAG_TYPES:...) = printf;
 
 stock va_fprintf(File:fhnd, const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	return fwrite(fhnd, va_return(fmat, ___(2)));
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(2)),
+		fwrite(fhnd, YSI_UNSAFE_HUGE_STRING);
 }
 
-stock va_SendRconCommand(const command[], GLOBAL_TAG_TYPES:...)
+#define va_fwrite va_fprintf
+
+stock bool:va_SendRconCommand(const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	return SendRconCommand(va_return(command, ___(1)));
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(1)),
+		bool:SendRconCommand(YSI_UNSAFE_HUGE_STRING);
+}
+
+stock bool:va_SetGameModeText(const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(1)),
+		bool:SetGameModeText(YSI_UNSAFE_HUGE_STRING);
+}
+
+// In case the lower-case version is rightfully deprecated.
+native DBResult:YSI_DB_Query__(DB:db, const query[]) = db_query;
+
+stock DBResult:va_DBQuery(DB:db, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(2)),
+		YSI_DB_Query__(db, YSI_UNSAFE_HUGE_STRING);
+}
+
+#define YSI_DB_Query__
+
+#if !defined DIALOG_STYLE
+	#define DIALOG_STYLE: _:
+#endif
+stock bool:va_ShowPlayerDialog(playerid, dialogid, DIALOG_STYLE:style, const title[], const fmat[], const button1[], const button2[], GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(7)),
+		bool:ShowPlayerDialog(playerid, dialogid, style, title, YSI_UNSAFE_HUGE_STRING, button1, button2);
+}
+
+// YSF
+
+stock bool:va_AddServerRule(const name[], const fmat[], E_SERVER_RULE_FLAGS:flags = E_SERVER_RULE_FLAGS:4, GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
+		bool:AddServerRule(name, YSI_UNSAFE_HUGE_STRING, flags);
+}
+
+stock bool:va_SetServerRule(const name[], const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(2)),
+		bool:SetServerRule(name, YSI_UNSAFE_HUGE_STRING);
 }
 
 #if defined YSI_TESTS
