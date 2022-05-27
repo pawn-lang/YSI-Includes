@@ -200,7 +200,7 @@ stock bool:va_ShowPlayerDialog(playerid, dialogid, DIALOG_STYLE:style, const tit
 {
 	return
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(7)),
-		bool:ShowPlayerDialog(playerid, dialogid, style, title, YSI_UNSAFE_HUGE_STRING, button1, button2);
+		Dialog_ShowPlayerNative(playerid, dialogid, style, title, YSI_UNSAFE_HUGE_STRING, button1, button2);
 }
 
 stock Menu:va_CreateMenu(const fmat[], columns, Float:x, Float:y, Float:col1width, Float:col2width = 0.0, GLOBAL_TAG_TYPES:...)
@@ -232,6 +232,7 @@ stock bool:va_SetMenuColumnHeader(Menu:menuid, column, const fmat[], GLOBAL_TAG_
 #endif
 stock bool:va_SetObjectMaterialText(objectid, const fmat[], materialIndex = 0, OBJECT_MATERIAL_SIZE:materialSize = OBJECT_MATERIAL_SIZE:90, const fontFace[] = "Arial", fontSize = 24, bool:bold = true, fontColour = 0xFFFFFFFF, backgroundColour = 0, OBJECT_MATERIAL_TEXT_ALIGN:textalignment = OBJECT_MATERIAL_TEXT_ALIGN:0)
 {
+	// If you get an error here, update your includes!
 	return
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(10)),
 		bool:SetObjectMaterialText(objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
@@ -239,6 +240,7 @@ stock bool:va_SetObjectMaterialText(objectid, const fmat[], materialIndex = 0, O
 
 stock bool:va_SetPlayerObjectMaterialText(playerid, objectid, const fmat[], materialIndex = 0, OBJECT_MATERIAL_SIZE:materialSize = OBJECT_MATERIAL_SIZE:90, const fontFace[] = "Arial", fontSize = 24, bool:bold = true, fontColour = 0xFFFFFFFF, backgroundColour = 0, OBJECT_MATERIAL_TEXT_ALIGN:textalignment = OBJECT_MATERIAL_TEXT_ALIGN:0)
 {
+	// If you get an error here, update your includes!
 	return
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(11)),
 		bool:SetPlayerObjectMaterialText(playerid, objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
@@ -274,6 +276,7 @@ stock bool:va_UpdatePlayer3DTextLabelText(playerid, PlayerText3D:textid, colour,
 
 stock bool:va_SetSVarString(const svar[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
+	// If you get an error here, update your includes!
 	return
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(2)),
 		bool:SetSVarString(svar, YSI_UNSAFE_HUGE_STRING);
@@ -281,6 +284,7 @@ stock bool:va_SetSVarString(const svar[], const fmat[], GLOBAL_TAG_TYPES:...)
 
 stock bool:va_SetPVarString(playerid, const svar[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
+	// If you get an error here, update your includes!
 	return
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
 		bool:SetPVarString(playerid, svar, YSI_UNSAFE_HUGE_STRING);

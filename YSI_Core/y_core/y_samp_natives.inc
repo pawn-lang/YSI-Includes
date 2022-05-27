@@ -104,3 +104,9 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 native YSI_ArgCount__() = argcount;
 native bool:YSI_ArgIndex__(index, output[], size = sizeof (output), bool:pack = false) = argindex;
 
+#if defined _ALS_ShowPlayerDialog
+	#define Dialog_ShowPlayerNative ShowPlayerDialog
+#else
+	native bool:Dialog_ShowPlayerNative(playerid, dialogid, DIALOG_STYLE:style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
+#endif
+

@@ -105,12 +105,6 @@ REMOTE_FUNC__ void:Dialog_Set(playerid, dialogid)
 	YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_NONE;
 }
 
-#if defined _ALS_ShowPlayerDialog
-	#define Dialog_ShowPlayerNative ShowPlayerDialog
-#else
-	native Dialog_ShowPlayerNative(playerid, dialogid, DIALOG_STYLE:style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
-#endif
-
 // Func:callback<iiiis> | Func:callback<iis>
 stock bool:Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "", tag = tagof (callback))
 {
@@ -119,7 +113,7 @@ stock bool:Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, DIALOG_S
 	Indirect_SetMeta(callback, tag),
 	// Works tag-safely because the compile-time tag check uses `<iiiis>`.
 	YSI_g_sPlayerCallback[playerid] = callback;
-	return bool:Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_1, style, title, caption, button1, button2);
+	return Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_1, style, title, caption, button1, button2);
 }
 
 #pragma deprecated Use Dialog_ShowCallback
@@ -132,7 +126,7 @@ stock bool:Dialog_Show(playerid, DIALOG_STYLE:style, const string:title[], const
 {
 	BROADCAST_FUNC__ Dialog_Set(playerid, YSI_DIALOG_ID_2);
 	YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_INVALID;
-	return bool:Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_2, style, title, caption, button1, button2);
+	return Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_2, style, title, caption, button1, button2);
 }
 
 stock bool:Dialog_Hide(playerid)
@@ -142,7 +136,7 @@ stock bool:Dialog_Hide(playerid)
 		return bool:HidePlayerDialog(playerid);
 	#else
 		// This almost looks like a Windows API function call!
-		return bool:Dialog_ShowPlayerNative(playerid, -1, DIALOG_STYLE_MSGBOX, NULL, NULL, NULL, NULL);
+		return Dialog_ShowPlayerNative(playerid, -1, DIALOG_STYLE_MSGBOX, NULL, NULL, NULL, NULL);
 	#endif
 }
 
@@ -222,7 +216,7 @@ stock bool:Dialog_ShowPlayerDialog(playerid, dialog, DIALOG_STYLE:style, const s
 	}
 	BROADCAST_FUNC__ Dialog_Set(playerid, dialog);
 	YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_INVALID;
-	return bool:Dialog_ShowPlayerNative(playerid, dialog, style, title, caption, button1, button2);
+	return Dialog_ShowPlayerNative(playerid, dialog, style, title, caption, button1, button2);
 }
 
 #if defined _ALS_ShowPlayerDialog
