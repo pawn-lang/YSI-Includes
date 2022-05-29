@@ -295,11 +295,11 @@ TEST__ y_commands_Hashing()
 		hash1 = 0;
 	// CASE INSENSITIVE.
 	// V1.
-	Puny_Encode(dst0, "hello\x102;you", .delimiter = '@');
+	Puny_Encode(dst0, __COMPILER_UNPACK"hello\x102;you", .delimiter = '@');
 	HashMap_Hash(dst0, hash0);
 	// V2.
 	new
-		len = Puny_EncodeHash(dst1, "Hello\x102;you there", hash1, .delimiter = '@');
+		len = Puny_EncodeHash(dst1, __COMPILER_UNPACK"Hello\x102;you there", hash1, .delimiter = '@');
 	// Same.
 	//printf("%s %s", dst0, dst1);
 	ASSERT(!strcmp(dst0, dst1));
@@ -307,10 +307,10 @@ TEST__ y_commands_Hashing()
 	//ASSERT_EQ(len, strlen(dst1));
 	ASSERT_EQ(len, 9);
 	// CASE SENSITIVE.
-	Puny_Encode(dst0, "Hello\x102;there", .delimiter = '@');
+	Puny_Encode(dst0, __COMPILER_UNPACK"Hello\x102;there", .delimiter = '@');
 	HashMap_Hash(dst0, hash0);
 	// V2.
-	len = Puny_EncodeHash(dst1, "Hello\x102;there you", hash1, .delimiter = '@');
+	len = Puny_EncodeHash(dst1, __COMPILER_UNPACK"Hello\x102;there you", hash1, .delimiter = '@');
 	ASSERT_DIFF(dst0, dst1);
 	ASSERT_NE(hash0, hash1);
 	ASSERT_EQ(len, 11);
