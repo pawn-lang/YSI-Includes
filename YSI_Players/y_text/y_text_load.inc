@@ -200,162 +200,162 @@ stock e_GAME_TEXT_KEYS:Format_GetKeys(const input[], &idx)
 	}
 	if (input[++idx])
 	{
-		if (!strcmp(input[idx], !"PED_ANSWER_PHONE~", true, 17))
+		if (!strcmp(input[idx], __COMPILER_PACK"PED_ANSWER_PHONE~", true, 17))
 		{
 			idx += 17;
 			return e_PED_ANSWER_PHONE;
 		}
-		else if (!strcmp(input[idx], !"PED_DUCK~", true, 9))
+		else if (!strcmp(input[idx], __COMPILER_PACK"PED_DUCK~", true, 9))
 		{
 			idx += 9;
 			return e_PED_DUCK;
 		}
-		else if (!strcmp(input[idx], !"PED_FIREWEAPON~", true, 15))
+		else if (!strcmp(input[idx], __COMPILER_PACK"PED_FIREWEAPON~", true, 15))
 		{
 			idx += 15;
 			return e_PED_FIREWEAPON;
 		}
-		else if (!strcmp(input[idx], !"PED_FIREWEAPON_ALT~", true, 29))
+		else if (!strcmp(input[idx], __COMPILER_PACK"PED_FIREWEAPON_ALT~", true, 29))
 		{
 			idx += 29;
 			return e_PED_FIREWEAPON_ALT;
 		}
-		else if (!strcmp(input[idx], !"PED_SPRINT~", true, 11))
+		else if (!strcmp(input[idx], __COMPILER_PACK"PED_SPRINT~", true, 11))
 		{
 			idx += 11;
 			return e_PED_SPRINT;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_ENTER_EXIT~", true, 19))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_ENTER_EXIT~", true, 19))
 		{
 			idx += 19;
 			return e_VEHICLE_ENTER_EXIT;
 		}
-		else if (!strcmp(input[idx], !"PED_JUMPING~", true, 12))
+		else if (!strcmp(input[idx], __COMPILER_PACK"PED_JUMPING~", true, 12))
 		{
 			idx += 12;
 			return e_PED_JUMPING;
 		}
-		else if (!strcmp(input[idx], !"PED_LOCK_TARGET~", true, 16))
+		else if (!strcmp(input[idx], __COMPILER_PACK"PED_LOCK_TARGET~", true, 16))
 		{
 			idx += 16;
 			return e_PED_LOCK_TARGET;
 		}
-		else if (!strcmp(input[idx], !"PED_LOOKBEHIND~", true, 15))
+		else if (!strcmp(input[idx], __COMPILER_PACK"PED_LOOKBEHIND~", true, 15))
 		{
 			idx += 15;
 			return e_PED_LOOKBEHIND;
 		}
-		else if (!strcmp(input[idx], !"SNEAK_ABOUT~", true, 12))
+		else if (!strcmp(input[idx], __COMPILER_PACK"SNEAK_ABOUT~", true, 12))
 		{
 			idx += 12;
 			return e_SNEAK_ABOUT;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_LOOKLEFT~", true, 17))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_LOOKLEFT~", true, 17))
 		{
 			idx += 17;
 			return e_VEHICLE_LOOKLEFT;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_LOOKRIGHT~", true, 18))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_LOOKRIGHT~", true, 18))
 		{
 			idx += 18;
 			return e_VEHICLE_LOOKRIGHT;
 		}
-		else if (!strcmp(input[idx], !"GO_FORWARD~", true, 11))
+		else if (!strcmp(input[idx], __COMPILER_PACK"GO_FORWARD~", true, 11))
 		{
 			idx += 11;
 			return e_GO_FORWARD;
 		}
-		else if (!strcmp(input[idx], !"GO_BACK~", true, 8))
+		else if (!strcmp(input[idx], __COMPILER_PACK"GO_BACK~", true, 8))
 		{
 			idx += 8;
 			return e_GO_BACK;
 		}
-		else if (!strcmp(input[idx], !"GO_LEFT~", true, 8))
+		else if (!strcmp(input[idx], __COMPILER_PACK"GO_LEFT~", true, 8))
 		{
 			idx += 8;
 			return e_GO_LEFT;
 		}
-		else if (!strcmp(input[idx], !"GO_RIGHT~", true, 9))
+		else if (!strcmp(input[idx], __COMPILER_PACK"GO_RIGHT~", true, 9))
 		{
 			idx += 9;
 			return e_GO_RIGHT;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_FIREWEAPON~", true, 19))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_FIREWEAPON~", true, 19))
 		{
 			idx += 19;
 			return e_VEHICLE_FIREWEAPON;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_HORN~", true, 13))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_HORN~", true, 13))
 		{
 			idx += 13;
 			return e_VEHICLE_HORN;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_FIREWEAPON_ALT~", true, 23))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_FIREWEAPON_ALT~", true, 23))
 		{
 			idx += 23;
 			return e_VEHICLE_FIREWEAPON_ALT;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_ACCELERATE~", true, 19))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_ACCELERATE~", true, 19))
 		{
 			idx += 19;
 			return e_VEHICLE_ACCELERATE;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_BRAKE~", true, 14))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_BRAKE~", true, 14))
 		{
 			idx += 14;
 			return e_VEHICLE_BRAKE;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_HANDBRAKE~", true, 18))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_HANDBRAKE~", true, 18))
 		{
 			idx += 18;
 			return e_VEHICLE_HANDBRAKE;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_SUBMISSIONS~", true, 20))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_SUBMISSIONS~", true, 20))
 		{
 			idx += 20;
 			return e_VEHICLE_SUBMISSIONS;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_LOOKBEHIND~" , true, 19))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_LOOKBEHIND~" , true, 19))
 		{
 			idx += 19;
 			return e_VEHICLE_LOOKBEHIND;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_TURRETUP~", true, 17))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_TURRETUP~", true, 17))
 		{
 			idx += 17;
 			return e_VEHICLE_TURRETUP;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_TURRETDOWN~", true, 19))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_TURRETDOWN~", true, 19))
 		{
 			idx += 19;
 			return e_VEHICLE_TURRETDOWN;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_TURRETLEFT~", true, 19))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_TURRETLEFT~", true, 19))
 		{
 			idx += 19;
 			return e_VEHICLE_TURRETLEFT;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_TURRETRIGHT~", true, 20))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_TURRETRIGHT~", true, 20))
 		{
 			idx += 20;
 			return e_VEHICLE_TURRETRIGHT;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_STEERUP~", true, 16))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_STEERUP~", true, 16))
 		{
 			idx += 16;
 			return e_VEHICLE_STEERUP;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_STEERDOWN~", true, 18))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_STEERDOWN~", true, 18))
 		{
 			idx += 18;
 			return e_VEHICLE_STEERDOWN;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_STEERLEFT~", true, 18))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_STEERLEFT~", true, 18))
 		{
 			idx += 18;
 			return e_VEHICLE_STEERLEFT;
 		}
-		else if (!strcmp(input[idx], !"VEHICLE_STEERRIGHT~", true, 19))
+		else if (!strcmp(input[idx], __COMPILER_PACK"VEHICLE_STEERRIGHT~", true, 19))
 		{
 			idx += 19;
 			return e_VEHICLE_STEERRIGHT;
@@ -616,7 +616,7 @@ stock Format_Standardise(input[], output[], len = sizeof (output), pt = false)
 											output[iOut++] = Y_FORMAT_IS_INSERT;
 											output[iOut++] = ch;
 											static
-												sFullName[4 char] = !"F@_";
+												sFullName[4 char] = __COMPILER_PACK"F@_";
 											sFullName{2} = input[iIn];
 											output[iOut++] = sFullName[0];
 										}
@@ -1148,7 +1148,7 @@ static stock Format_GetSpecifier(input[], &iIn)
 				// somehow, like make the "%XYZ%" format an option AND the "%q"
 				// format an option - maybe default to mine and fall back on the
 				// short version if a function isn't found.
-				/*if (!strcmp(input, !"DATE%", true, 5))
+				/*if (!strcmp(input, __COMPILER_PACK"DATE%", true, 5))
 				{
 					iIn += 5;
 					return ret | e_COMPRESS_FORMAT_DATA_DATE | (e_COMPRESS_FORMAT_DATA:((width & 0xFFF) | ((prec & 0xFFF) << 12)));

@@ -1497,7 +1497,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
 		// representation in memory look like a C string, not a PAWN packed
 		// string.
 		//sEncoding[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98",
+		sEncoding[65 char] = __COMPILER_PACK"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98",
 		//tmp,
 		ret = 0;
 	num = num << __COMPILER_CELL_SHIFT;

@@ -277,12 +277,12 @@ TEST__ y_malloc_NewS_0()
 TEST__ y_malloc_NewS_1()
 {
 	new
-		Alloc:a = Malloc_NewS("Hello There", true);
+		Alloc:a = Malloc_NewS(__COMPILER_UNPACK"Hello There", true);
 	ASSERT(bool:a);
 	if (a)
 	{
 		static const
-			b[12 char] = !"Hello There";
+			b[12 char] = __COMPILER_PACK"Hello There";
 		ASSERT_EQ(mget(a, 0), b[0]);
 		ASSERT_EQ(mget(a, 1), b[1]);
 		ASSERT_EQ(mget(a, 2), b[2]);

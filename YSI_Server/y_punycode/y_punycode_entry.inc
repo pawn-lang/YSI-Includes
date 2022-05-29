@@ -490,7 +490,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 			sPart[64], // Maximum legal domain part length.
 			sEncoded[256]; // Maximum legal hostname length.
 		new
-			idx = strfind(url, !"://");
+			idx = strfind(url, __COMPILER_PACK"://");
 		// Skip any prefix.
 		if (idx != -1) idx += 2;
 		// Add the protocol.
@@ -499,12 +499,12 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 		// Encode all parts.
 		new
 			prev = idx + 1,
-			end = strfind(url, !"/", false, prev);
+			end = strfind(url, __COMPILER_PACK"/", false, prev);
 		if (end == -1) end = strlen(url); // Nothing after the main domain.
 		do
 		{
 			// Find the size of one part.
-			idx = strfind(url, !".", false, prev);
+			idx = strfind(url, __COMPILER_PACK".", false, prev);
 			// Only encode the domain part.
 			if (!(-1 < idx < end)) idx = end;
 			static
@@ -520,7 +520,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 				case 1:
 				{
 					// The hyphen at the start is the only one - no latin chars.
-					if (sPart[0] == '-' && strfind(sPart, !"-", false, 1) == -1) format(sEncoded, sizeof (sEncoded), "%sxn-%s%c", sEncoded, sPart, ch);
+					if (sPart[0] == '-' && strfind(sPart, __COMPILER_PACK"-", false, 1) == -1) format(sEncoded, sizeof (sEncoded), "%sxn-%s%c", sEncoded, sPart, ch);
 					else format(sEncoded, sizeof (sEncoded), "%sxn--%s%c", sEncoded, sPart, ch);
 					#if defined _DEBUG
 						#if _DEBUG >= 1
