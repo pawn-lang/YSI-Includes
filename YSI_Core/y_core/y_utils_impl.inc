@@ -3643,7 +3643,8 @@ stock File:ftemporary_(string:name[], const string:ext[] = "tmp", const string:p
 		strcat(name, path, len),
 		name{pathLen} = '_',
 		name{pathLen + YSI_TEMP_FILE_LENGTH + 1} = '.',
-		strcat(name{pathLen + YSI_TEMP_FILE_LENGTH + 2}, ext, len);
+		name{pathLen + YSI_TEMP_FILE_LENGTH + 1} = '\0',
+		strcat(name, ext, len);
 		// Generate a random filename, with an equal distribution of letters and
 		// numbers.
 		do
@@ -4042,7 +4043,7 @@ stock bool:TryPPM(ppm)
 	return random(1000000) < ppm;
 }
 
-_Y_CORE_STATIC stock IterativeColouredSkipWhitespace(const text[], start, &colour)
+_Y_CORE_STATIC stock IterativeColouredSkipSUnpacked(const string:text[], start, &colour)
 {
 	new
 		ch = 0,
@@ -4104,7 +4105,7 @@ _Y_CORE_STATIC stock IterativeColouredSkipWhitespace(const text[], start, &colou
 	return start;
 }
 
-_Y_CORE_STATIC stock IterativeColouredSkipWords(const text[], lastIndex, start, &bool:hyphen, &colour, bool:useHyphen = true)
+_Y_CORE_STATIC stock IterativeColouredSkipWUnpacked(const string:text[], lastIndex, start, &bool:hyphen, &colour, bool:useHyphen = true)
 {
 	// Offset.
 	new
@@ -4138,6 +4139,199 @@ _Y_CORE_STATIC stock IterativeColouredSkipWords(const text[], lastIndex, start, 
 			for (j = 1, cc = 0; ; ++j)
 			{
 				ch = text[i + j];
+				if (ch <= ' ')
+				{
+					useHyphen = false,
+					i += j;
+					break;
+				}
+				else if (j == 7)
+				{
+					i += 8;
+					if (ch != '}')
+					{
+						useHyphen = false;
+					}
+					else if (i <= lastIndex)
+					{
+						// Only propagate the colour if it is complete in the line.
+						colour = cc;
+					}
+					break;
+				}
+				else if (IS_IN_RANGE(ch, '0', '9' + 1))
+				{
+					cc = (cc << 4) | (ch - '0');
+				}
+				else if (IS_IN_RANGE(ch, 'a', 'f' + 1))
+				{
+					cc = (cc << 4) | (ch - ('a' - 10));
+				}
+				else if (IS_IN_RANGE(ch, 'A', 'F' + 1))
+				{
+					cc = (cc << 4) | (ch - ('A' - 10));
+				}
+				else
+				{
+					// Bad HEX.
+					useHyphen = false,
+					// NOT an OBOE, rechecks one character.
+					i += j;
+					break;
+				}
+			}
+			// Don't re-increment.
+			continue;
+		}
+		case '.', ',', '?', '!', '\'':
+		{
+			// Allow these in normal text.  Thus do nothing.
+		}
+		default:
+		{
+			// Not a real word.  Can't be hyphenated.
+			useHyphen = false;
+		}
+		}
+		++i;
+	}
+	// End of the word.
+	if (i <= lastIndex)
+	{
+		// Enough space.
+		return
+			hyphen = false,
+			i;
+	}
+	else if (useHyphen && truLen > 6 && preLen > 3)
+	{
+		// Can and should be hyphenated.
+		switch (truLen - preLen)
+		{
+		case 1:
+		{
+			// Only 1 character after the split.
+			return
+				hyphen = true,
+				g1;
+		}
+		case 2:
+		{
+			// Only 1 character after the split.
+			return
+				hyphen = true,
+				g2;
+		}
+		default:
+		{
+			return
+				hyphen = true,
+				g2 + 1 == lastIndex ? g2 : g2 + 1;
+		}
+		}
+	}
+	// Move the whole thing to the next line.
+	return
+		hyphen = false,
+		start;
+}
+
+_Y_CORE_STATIC stock IterativeColouredSkipSPacked(const string:text[], start, &colour)
+{
+	new
+		ch = 0,
+		i = 0,
+		cc = 0;
+	while ((ch = text{start}))
+	{
+		if (ch == '\r' || ch == '\n')
+		{
+			// Instantly end.  We don't skip this whitespace.
+			return start;
+		}
+		else if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
+		{
+			// Interesting whitespace.  Will exclude `'\r'` and `'\n'` thanks to
+			// the `else`.
+			++start;
+		}
+		else if (ch == '{')
+		{
+			for (i = 1, cc = 0; i != 7; ++i)
+			{
+				ch = text{start + i};
+				if (IS_IN_RANGE(ch, '0', '9' + 1))
+				{
+					cc = (cc << 4) | (ch - '0');
+				}
+				else if (IS_IN_RANGE(ch, 'a', 'f' + 1))
+				{
+					cc = (cc << 4) | (ch - ('a' - 10));
+				}
+				else if (IS_IN_RANGE(ch, 'A', 'F' + 1))
+				{
+					cc = (cc << 4) | (ch - ('A' - 10));
+				}
+				else
+				{
+					// Bad HEX.
+					return start;
+				}
+			}
+			if (text{start + 7} == '}')
+			{
+				colour = cc,
+				start += 8;
+			}
+			else
+			{
+				// Not valid whitespace.
+				return start;
+			}
+		}
+		else
+		{
+			// Not valid whitespace.
+			return start;
+		}
+	}
+	return start;
+}
+
+_Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex, start, &bool:hyphen, &colour, bool:useHyphen = true)
+{
+	// Offset.
+	new
+		// How many real letters appear within the width.
+		preLen = 0,
+		// How many real letters appear in the whole word?
+		truLen = 0,
+		g1 = 0,
+		g2 = 0,
+		ch = 0,
+		i = start,
+		j = 0,
+		cc = 0;
+	while ((ch = text{i}) > ' ')
+	{
+		if (IS_IN_RANGE(ch, 'a', 'z' + 1) || IS_IN_RANGE(ch, 'A', 'Z' + 1))
+		{
+			// Real letter.
+			if (i < lastIndex)
+			{
+				g1 = g2,
+				g2 = i,
+				++preLen;
+			}
+			++truLen;
+		}
+		else switch (ch)
+		{
+		case '{':
+		{
+			for (j = 1, cc = 0; ; ++j)
+			{
+				ch = text{i + j};
 				if (ch <= ' ')
 				{
 					useHyphen = false,
@@ -4430,67 +4624,134 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 
 stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, &colour, bool:useHyphen = true)
 {
-	new
-		ch;
-	hyphen = false,
-	width += start,
-	end = start;
-	while ((ch = text[start]))
+	if (ispacked(text))
 	{
-		if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
+		new
+			ch;
+		hyphen = false,
+		width += start,
+		end = start;
+		while ((ch = text{start}))
 		{
-			// Skip whitespace.
-			start = IterativeColouredSkipWhitespace(text, start, colour);
-			switch (text[start])
+			if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
 			{
-			case '\r':
-			{
-				return
-					next = text[start + 1] == '\n' ? start + 2 : start + 1,
-					true;
+				// Skip whitespace.
+				start = IterativeColouredSkipSPacked(text, start, colour);
+				switch (text{start})
+				{
+				case '\r':
+				{
+					return
+						next = text{start + 1} == '\n' ? start + 2 : start + 1,
+						true;
+				}
+				case '\n':
+				{
+					return
+						next = start + 1,
+						true;
+				}
+				case '\0':
+				{
+					return
+						next = start,
+						false;
+				}
+				}
+				if (start > width)
+				{
+					return
+						next = start,
+						true;
+				}
 			}
-			case '\n':
+			else
 			{
-				return
-					next = start + 1,
-					true;
-			}
-			case '\0':
-			{
-				return
-					next = start,
-					false;
-			}
-			}
-			if (start > width)
-			{
-				return
-					next = start,
-					true;
+				ch = IterativeColouredSkipWPacked(text, width, start, hyphen, colour, useHyphen);
+				if (ch == start)
+				{
+					// Either showed nothing of this word, or parts.
+					return
+						next = ch,
+						true;
+				}
+				else if (hyphen)
+				{
+					return
+						next = end = ch,
+						true;
+				}
+				start = end = ch;
 			}
 		}
-		else
-		{
-			ch = IterativeColouredSkipWords(text, width, start, hyphen, colour, useHyphen);
-			if (ch == start)
-			{
-				// Either showed nothing of this word, or parts.
-				return
-					next = ch,
-					true;
-			}
-			else if (hyphen)
-			{
-				return
-					next = end = ch,
-					true;
-			}
-			start = end = ch;
-		}
+		return
+			next = start,
+			false;
 	}
-	return
-		next = start,
-		false;
+	else
+	{
+		new
+			ch;
+		hyphen = false,
+		width += start,
+		end = start;
+		while ((ch = text[start]))
+		{
+			if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
+			{
+				// Skip whitespace.
+				start = IterativeColouredSkipSUnpacked(text, start, colour);
+				switch (text[start])
+				{
+				case '\r':
+				{
+					return
+						next = text[start + 1] == '\n' ? start + 2 : start + 1,
+						true;
+				}
+				case '\n':
+				{
+					return
+						next = start + 1,
+						true;
+				}
+				case '\0':
+				{
+					return
+						next = start,
+						false;
+				}
+				}
+				if (start > width)
+				{
+					return
+						next = start,
+						true;
+				}
+			}
+			else
+			{
+				ch = IterativeColouredSkipWUnpacked(text, width, start, hyphen, colour, useHyphen);
+				if (ch == start)
+				{
+					// Either showed nothing of this word, or parts.
+					return
+						next = ch,
+						true;
+				}
+				else if (hyphen)
+				{
+					return
+						next = end = ch,
+						true;
+				}
+				start = end = ch;
+			}
+		}
+		return
+			next = start,
+			false;
+	}
 }
 
 /*-------------------------------------------------------------------------*//**

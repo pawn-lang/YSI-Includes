@@ -461,84 +461,84 @@ TEST__ IterativeTextSplitter7()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeColouredSkipWords1()
+TEST__ IterativeColouredSkipWUnpacked1()
 {
 	new end, bool:hyphen, colour = 8;
-	end = IterativeColouredSkipWords("alongwordwithnosymbols", 10, 0, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"alongwordwithnosymbols", 10, 0, hyphen, colour);
 	ASSERT_EQ(end, 9);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 8);
-	end = IterativeColouredSkipWords("alongwordw", 10, 0, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"alongwordw", 10, 0, hyphen, colour);
 	ASSERT_EQ(end, 10);
 	ASSERT_EQ(hyphen, false);
 	ASSERT_EQ(colour, 8);
-	end = IterativeColouredSkipWords("alongwordwi", 10, 0, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"alongwordwi", 10, 0, hyphen, colour);
 	ASSERT_EQ(end, 8);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 8);
-	end = IterativeColouredSkipWords("alongwordwit", 10, 0, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"alongwordwit", 10, 0, hyphen, colour);
 	ASSERT_EQ(end, 9);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 8);
-	end = IterativeColouredSkipWords("alongwordwith", 10, 0, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"alongwordwith", 10, 0, hyphen, colour);
 	ASSERT_EQ(end, 9);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 8);
 }
 
-TEST__ IterativeColouredSkipWords2()
+TEST__ IterativeColouredSkipWUnpacked2()
 {
 	new end, bool:hyphen, colour = 8;
-	end = IterativeColouredSkipWords("{000000}longword", 10, 0, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"{000000}longword", 10, 0, hyphen, colour);
 	ASSERT_EQ(end, 0);
 	ASSERT_EQ(hyphen, false);
 	ASSERT_EQ(colour, 0);
 	colour = 9;
-	end = IterativeColouredSkipWords("long{000000}word", 10, 0, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"long{000000}word", 10, 0, hyphen, colour);
 	ASSERT_EQ(end, 4);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 9);
 	colour = 7;
-	end = IterativeColouredSkipWords("longg{000000}word", 10, 0, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"longg{000000}word", 10, 0, hyphen, colour);
 	ASSERT_EQ(end, 5);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 7);
 	colour = 6;
-	end = IterativeColouredSkipWords("longg{000000}wo", 10, 0, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"longg{000000}wo", 10, 0, hyphen, colour);
 	ASSERT_EQ(end, 4);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 6);
 	colour = 5;
-	end = IterativeColouredSkipWords("longgg{000000}w", 10, 0, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"longgg{000000}w", 10, 0, hyphen, colour);
 	ASSERT_EQ(end, 4);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 5);
 }
 
-TEST__ IterativeColouredSkipWords3()
+TEST__ IterativeColouredSkipWUnpacked3()
 {
 	new end, bool:hyphen, colour = 8;
-	end = IterativeColouredSkipWords("abcdefg   {000000}longword", 20, 10, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"abcdefg   {000000}longword", 20, 10, hyphen, colour);
 	ASSERT_EQ(end, 10);
 	ASSERT_EQ(hyphen, false);
 	ASSERT_EQ(colour, 0);
 	colour = 9;
-	end = IterativeColouredSkipWords("abcdefg   long{000000}word", 20, 10, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"abcdefg   long{000000}word", 20, 10, hyphen, colour);
 	ASSERT_EQ(end, 14);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 9);
 	colour = 7;
-	end = IterativeColouredSkipWords("abcdefg   longg{000000}word", 20, 10, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"abcdefg   longg{000000}word", 20, 10, hyphen, colour);
 	ASSERT_EQ(end, 15);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 7);
 	colour = 6;
-	end = IterativeColouredSkipWords("abcdefg   longg{000000}wo", 20, 10, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"abcdefg   longg{000000}wo", 20, 10, hyphen, colour);
 	ASSERT_EQ(end, 14);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 6);
 	colour = 5;
-	end = IterativeColouredSkipWords("abcdefg   longgg{000000}w", 20, 10, hyphen, colour);
+	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACKED"abcdefg   longgg{000000}w", 20, 10, hyphen, colour);
 	ASSERT_EQ(end, 14);
 	ASSERT_EQ(hyphen, true);
 	ASSERT_EQ(colour, 5);
@@ -547,19 +547,122 @@ TEST__ IterativeColouredSkipWords3()
 TEST__ IterativeColouredSkipWS1()
 {
 	new end, colour = 8;
-	end = IterativeColouredSkipWhitespace("    hi", 0, colour);
+	end = IterativeColouredSkipSUnpacked(__COMPILER_UNPACKED"    hi", 0, colour);
 	ASSERT_EQ(end, 4);
 	ASSERT_EQ(colour, 8);
 	colour = 9;
-	end = IterativeColouredSkipWhitespace("  \n  hi", 0, colour);
+	end = IterativeColouredSkipSUnpacked(__COMPILER_UNPACKED"  \n  hi", 0, colour);
 	ASSERT_EQ(end, 2);
 	ASSERT_EQ(colour, 9);
 	colour = 7;
-	end = IterativeColouredSkipWhitespace("    hi", 0, colour);
+	end = IterativeColouredSkipSUnpacked(__COMPILER_UNPACKED"    hi", 0, colour);
 	ASSERT_EQ(end, 4);
 	ASSERT_EQ(colour, 7);
 	colour = 5;
-	end = IterativeColouredSkipWhitespace(" {112233}   hi", 0, colour);
+	end = IterativeColouredSkipSUnpacked(__COMPILER_UNPACKED" {112233}   hi", 0, colour);
+	ASSERT_EQ(end, 12);
+	ASSERT_EQ(colour, 0x112233);
+}
+
+TEST__ IterativeColouredSkipWPacked1()
+{
+	new end, bool:hyphen, colour = 8;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"alongwordwithnosymbols", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 9);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 8);
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"alongwordw", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 10);
+	ASSERT_EQ(hyphen, false);
+	ASSERT_EQ(colour, 8);
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"alongwordwi", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 8);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 8);
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"alongwordwit", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 9);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 8);
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"alongwordwith", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 9);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 8);
+}
+
+TEST__ IterativeColouredSkipWPacked2()
+{
+	new end, bool:hyphen, colour = 8;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"{000000}longword", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 0);
+	ASSERT_EQ(hyphen, false);
+	ASSERT_EQ(colour, 0);
+	colour = 9;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"long{000000}word", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 4);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 9);
+	colour = 7;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"longg{000000}word", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 5);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 7);
+	colour = 6;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"longg{000000}wo", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 4);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 6);
+	colour = 5;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"longgg{000000}w", 10, 0, hyphen, colour);
+	ASSERT_EQ(end, 4);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 5);
+}
+
+TEST__ IterativeColouredSkipWPacked3()
+{
+	new end, bool:hyphen, colour = 8;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"abcdefg   {000000}longword", 20, 10, hyphen, colour);
+	ASSERT_EQ(end, 10);
+	ASSERT_EQ(hyphen, false);
+	ASSERT_EQ(colour, 0);
+	colour = 9;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"abcdefg   long{000000}word", 20, 10, hyphen, colour);
+	ASSERT_EQ(end, 14);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 9);
+	colour = 7;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"abcdefg   longg{000000}word", 20, 10, hyphen, colour);
+	ASSERT_EQ(end, 15);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 7);
+	colour = 6;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"abcdefg   longg{000000}wo", 20, 10, hyphen, colour);
+	ASSERT_EQ(end, 14);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 6);
+	colour = 5;
+	end = IterativeColouredSkipWPacked(__COMPILER_PACKED"abcdefg   longgg{000000}w", 20, 10, hyphen, colour);
+	ASSERT_EQ(end, 14);
+	ASSERT_EQ(hyphen, true);
+	ASSERT_EQ(colour, 5);
+}
+
+TEST__ IterativeColouredSkipWS2()
+{
+	new end, colour = 8;
+	end = IterativeColouredSkipSPacked(__COMPILER_PACKED"    hi", 0, colour);
+	ASSERT_EQ(end, 4);
+	ASSERT_EQ(colour, 8);
+	colour = 9;
+	end = IterativeColouredSkipSPacked(__COMPILER_PACKED"  \n  hi", 0, colour);
+	ASSERT_EQ(end, 2);
+	ASSERT_EQ(colour, 9);
+	colour = 7;
+	end = IterativeColouredSkipSPacked(__COMPILER_PACKED"    hi", 0, colour);
+	ASSERT_EQ(end, 4);
+	ASSERT_EQ(colour, 7);
+	colour = 5;
+	end = IterativeColouredSkipSPacked(__COMPILER_PACKED" {112233}   hi", 0, colour);
 	ASSERT_EQ(end, 12);
 	ASSERT_EQ(colour, 0x112233);
 }
@@ -567,7 +670,7 @@ TEST__ IterativeColouredSkipWS1()
 TEST__ IterativeColouredText1()
 {
 	new end, next, bool:hyphen, colour;
-	new str[] = "Hello, I'm just splitting a string normally.";
+	new str[] = __COMPILER_UNPACKED"Hello, I'm just splitting a string normally.";
 	colour = 33;
 	IterativeColouredTextSplitter(str, 20, 0, end, next, hyphen, colour);
 	ASSERT_EQ(end, 19);
@@ -591,7 +694,7 @@ TEST__ IterativeColouredText1()
 TEST__ IterativeColouredText2()
 {
 	new end, next, bool:hyphen, colour;
-	new str[] = "Hello, {FFAA11}I'm just splitting a string normally.";
+	new str[] = __COMPILER_UNPACKED"Hello, {FFAA11}I'm just splitting a string normally.";
 	colour = 33;
 	IterativeColouredTextSplitter(str, 20, 0, end, next, hyphen, colour);
 	ASSERT_EQ(end, 18);
@@ -615,7 +718,85 @@ TEST__ IterativeColouredText2()
 TEST__ IterativeColouredText3()
 {
 	new end, next, bool:hyphen, colour;
-	new str[] = "Hello, {FFAA11}I'm      just {123456}splitting a string normally.";
+	new str[] = __COMPILER_UNPACKED"Hello, {FFAA11}I'm      just {123456}splitting a string normally.";
+	colour = 33;
+	IterativeColouredTextSplitter(str, 20, 0, end, next, hyphen, colour);
+	ASSERT_EQ(end, 18);
+	ASSERT_EQ(next, 24);
+	ASSERT_EQ(colour, 0xFFAA11);
+	ASSERT(!hyphen);
+	colour = 32;
+	IterativeColouredTextSplitter(str, 20, 24, end, next, hyphen, colour);
+	ASSERT_EQ(end, 43);
+	ASSERT_EQ(next, 43);
+	ASSERT_EQ(colour, 0x123456);
+	ASSERT(hyphen);
+	colour = 31;
+	IterativeColouredTextSplitter(str, 20, 43, end, next, hyphen, colour);
+	ASSERT_EQ(end, 61);
+	ASSERT_EQ(next, 61);
+	ASSERT_EQ(colour, 31);
+	ASSERT(hyphen);
+	colour = 30;
+	IterativeColouredTextSplitter(str, 20, 61, end, next, hyphen, colour);
+	ASSERT_EQ(end, 65);
+	ASSERT_EQ(next, 65);
+	ASSERT_EQ(colour, 30);
+	ASSERT(!hyphen);
+}
+
+TEST__ IterativeColouredText4()
+{
+	new end, next, bool:hyphen, colour;
+	new str[] = __COMPILER_PACKED"Hello, I'm just splitting a string normally.";
+	colour = 33;
+	IterativeColouredTextSplitter(str, 20, 0, end, next, hyphen, colour);
+	ASSERT_EQ(end, 19);
+	ASSERT_EQ(next, 19);
+	ASSERT_EQ(colour, 33);
+	ASSERT(hyphen);
+	colour = 32;
+	IterativeColouredTextSplitter(str, 20, 19, end, next, hyphen, colour);
+	ASSERT_EQ(end, 38);
+	ASSERT_EQ(next, 38);
+	ASSERT_EQ(colour, 32);
+	ASSERT(hyphen);
+	colour = 31;
+	IterativeColouredTextSplitter(str, 20, 38, end, next, hyphen, colour);
+	ASSERT_EQ(end, 44);
+	ASSERT_EQ(next, 44);
+	ASSERT_EQ(colour, 31);
+	ASSERT(!hyphen);
+}
+
+TEST__ IterativeColouredText5()
+{
+	new end, next, bool:hyphen, colour;
+	new str[] = __COMPILER_PACKED"Hello, {FFAA11}I'm just splitting a string normally.";
+	colour = 33;
+	IterativeColouredTextSplitter(str, 20, 0, end, next, hyphen, colour);
+	ASSERT_EQ(end, 18);
+	ASSERT_EQ(next, 19);
+	ASSERT_EQ(colour, 0xFFAA11);
+	ASSERT(!hyphen);
+	colour = 32;
+	IterativeColouredTextSplitter(str, 20, 19, end, next, hyphen, colour);
+	ASSERT_EQ(end, 35);
+	ASSERT_EQ(next, 36);
+	ASSERT_EQ(colour, 32);
+	ASSERT(!hyphen);
+	colour = 31;
+	IterativeColouredTextSplitter(str, 20, 36, end, next, hyphen, colour);
+	ASSERT_EQ(end, 52);
+	ASSERT_EQ(next, 52);
+	ASSERT_EQ(colour, 31);
+	ASSERT(!hyphen);
+}
+
+TEST__ IterativeColouredText6()
+{
+	new end, next, bool:hyphen, colour;
+	new str[] = __COMPILER_PACKED"Hello, {FFAA11}I'm      just {123456}splitting a string normally.";
 	colour = 33;
 	IterativeColouredTextSplitter(str, 20, 0, end, next, hyphen, colour);
 	ASSERT_EQ(end, 18);
