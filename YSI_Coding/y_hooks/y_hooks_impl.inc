@@ -397,7 +397,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 		P:5("Hooks_GetPreHooks: search = %s", Unpack(lfunc));
 		P:C(new oc = count;);
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
-		P:C(if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[count] + 4) + AMX_BASE_ADDRESS, buffer); P:5("Hooks_GetPreHooks: found = %s", Unpack(buffer)); });
+		P:C(if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[oc] + 4) + AMX_BASE_ADDRESS, buffer); strunpack(buffer, buffer); P:5("Hooks_GetPreHooks: found = %s", buffer); });
 		StrCpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
 		strcat(lfunc, "_");
 	}
