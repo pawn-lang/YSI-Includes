@@ -553,7 +553,7 @@ stock StrToLower(string:str[], len = sizeof (str))
 	new
 		i = -1,
 		ch = 0;
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		while ((ch = str{++i}) && len--)
 			str{i} = tolower(ch);
@@ -575,7 +575,7 @@ stock StrToUpper(string:str[], len = sizeof (str))
 	new
 		i = -1,
 		ch = 0;
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		while ((ch = str{++i}) && len--)
 			str{i} = toupper(ch);
@@ -893,7 +893,7 @@ stock StripNL(string:str[])
 	P:7("StripNL called: \"%s\"", str);
 	new
 		i = strlen(str);
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		while (i-- && str{i} <= ' ') str{i} = '\0';
 	}
@@ -923,7 +923,7 @@ stock StripL(string:str[])
 	new
 		len = strlen(str),
 		i = 0;
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		while (IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1)) ++i;
 		// The byte offsets in `memcpy` are broken, and packed strings aren't
@@ -955,7 +955,7 @@ stock Strip(string:str[])
 	new
 		len = strlen(str),
 		i = len;
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		while (i-- && str{i} <= ' ') str{i} = '\0';
 		for (i = 0; IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1); ++i) {}
@@ -987,7 +987,7 @@ stock bool:EndOfLine(const string:line[], pos)
 {
 	P:7("EndOfLine called: \"%s\", %i", line, pos);
 	if (NOT_IN_RANGE(pos, 0, strlen(line))) return false;
-	if (ispacked(line))
+	if (IsPacked(line))
 	{
 		while (IS_IN_RANGE(line{pos}, '\0' + 1, ' ' + 1)) ++pos;
 		return !line{pos};
@@ -1053,7 +1053,7 @@ stock chrfindp(needle, const string:haystack[], start = 0)
 
 stock IPToInt(const string:ip[])
 {
-	if (ispacked(ip))
+	if (IsPacked(ip))
 	{
 		new
 			ipv = strval(ip) << 24,
@@ -1118,7 +1118,7 @@ stock IPToInt(const string:ip[])
 
 stock BernsteinHash(const string:str[] /* 12 */)
 {
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		new h = 5381, i = 0, j = 0;
 		while ((j = str{i++}))
@@ -1137,7 +1137,7 @@ stock BernsteinHash(const string:str[] /* 12 */)
 #pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
 stock bernstein(const string:str[] /* 12 */)
 {
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		new h = 5381, i = 0, j = 0;
 		while ((j = str{i++}))
@@ -1167,7 +1167,7 @@ stock bernstein(const string:str[] /* 12 */)
 
 stock JenkinsHash(const string:str[] /* 12 */)
 {
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		new h = 0, i = 0, j = 0;
 		while ((j = str{i++}))
@@ -1202,7 +1202,7 @@ stock bool:IsHex(const string:str[])
 	new
 		i = 0,
 		cur = 0;
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		if (str{0} == '0' && (str{1} | 0x20) == 'x') i = 2;
 		do
@@ -1398,7 +1398,7 @@ stock bool:IsNumeric(const string:str[])
 	P:4("IsNumeric called: \"%s\"", str);
 	new
 		i = -1;
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		if (str{0} == '-') ++i;
 		while (IS_IN_RANGE(str{++i}, '0', '9' + 1)) {}
@@ -1502,7 +1502,7 @@ stock HexStr(const string:str[])
 		ret = 0,
 		val = 0,
 		i = 0;
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		if (str{0} == '0' && str{1} | 0x20 == 'x') i = 2;
 		for ( ; ; )
@@ -1574,7 +1574,7 @@ stock hexstr(const string:str[])
 stock bool:BoolStr(const string:str[])
 {
 	// Hooray for De Morgan's rules!
-	return str[0] && ((ispacked(str) ? str{0} : str[0]) != '0') && strcmp(str, "false", true);
+	return str[0] && ((IsPacked(str) ? str{0} : str[0]) != '0') && strcmp(str, "false", true);
 }
 
 #pragma deprecated Use `BoolStr` (i.e. use proper capitalisation).
@@ -1596,7 +1596,7 @@ stock bool:boolstr(const string:str[])
 
 stock BinStr(const string:str[])
 {
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		new
 			pos = 0;
@@ -2303,7 +2303,7 @@ stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 	{
 		// Replace `_` with ` `.
 		len = -1;
-		if (ispacked(name))
+		if (IsPacked(name))
 		{
 			while ((len = strfind(name, __COMPILER_PACK"_", false, len + 1)) != -1)
 			{
@@ -2337,7 +2337,7 @@ stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 
 stock bool:IsRPName(const string:name[], bool:casing = false, bool:longNames = false)
 {
-	if (ispacked(name))
+	if (IsPacked(name))
 	{
 		new
 			parts = 0,
@@ -3172,7 +3172,7 @@ stock GetNearestColourSRGBCached(colour, const Float:options[][3], count = sizeo
 
 stock SkipWhitespace(const string:str[], pos)
 {
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		while (IS_IN_RANGE(str{pos}, '\0' + 1, ' ' + 1)) ++pos;
 	}
@@ -3197,7 +3197,7 @@ stock SkipWhitespace(const string:str[], pos)
 
 stock Trim(const string:str[], &start, &end)
 {
-	if (ispacked(str))
+	if (IsPacked(str))
 	{
 		while (IS_IN_RANGE(str{start}, '\0' + 1, ' ' + 1)) ++start;
 		//while ('\0' < str[start] <= ' ') ++start;
@@ -3532,16 +3532,16 @@ stock LevenshteinDistance(const a[], const b[])
 		}
 		// The calls below are NOT wrong, the parameters are swapped so the A/B
 		// packing calls are also swapped.
-		if (ispacked(a))
+		if (IsPacked(a))
 		{
-			if (ispacked(b))
+			if (IsPacked(b))
 				return DoLevenshteinDistancePackAB(b, lenB, a, lenA);
 			else
 				return DoLevenshteinDistancePackB(b, lenB, a, lenA);
 		}
 		else
 		{
-			if (ispacked(b))
+			if (IsPacked(b))
 				return DoLevenshteinDistancePackA(b, lenB, a, lenA);
 			else
 				return DoLevenshteinDistance(b, lenB, a, lenA);
@@ -3557,16 +3557,16 @@ stock LevenshteinDistance(const a[], const b[])
 		P:E("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
 		return 1;
 	}
-	if (ispacked(a))
+	if (IsPacked(a))
 	{
-		if (ispacked(b))
+		if (IsPacked(b))
 			return DoLevenshteinDistancePackAB(a, lenA, b, lenB);
 		else
 			return DoLevenshteinDistancePackA(a, lenA, b, lenB);
 	}
 	else
 	{
-		if (ispacked(b))
+		if (IsPacked(b))
 			return DoLevenshteinDistancePackB(a, lenA, b, lenB);
 		else
 			return DoLevenshteinDistance(a, lenA, b, lenB);
@@ -3639,7 +3639,7 @@ stock File:ftemporary_(string:name[], const string:ext[] = "tmp", const string:p
 	{
 		return File:0;
 	}
-	if (ispacked(name))
+	if (IsPacked(name))
 	{
 		// These parts of the filename never change, so only do them once.
 		strcat(name, path, len),
@@ -4453,7 +4453,7 @@ _Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex
 
 stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, bool:useHyphen = true)
 {
-	if (ispacked(text))
+	if (IsPacked(text))
 	{
 		// Returns `true` if there is more text to come.
 		new
@@ -4778,7 +4778,7 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 
 stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, &colour, bool:useHyphen = true)
 {
-	if (ispacked(text))
+	if (IsPacked(text))
 	{
 		new
 			ch;

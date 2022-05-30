@@ -468,3 +468,50 @@ stock G@(GLOBAL_TAG_TYPES:...)
 // This is for getting excess parameters on non-strings.  Now safely recursive.
 #define _:%0,) _:%0)
 
+#if __COMPILER___EMIT_U
+	#if cellbytes == 4
+		#define IsPacked(%0) \
+			__emit(                         \
+				LREF.S.pri  %0             ,\
+				CONST.alt   0x01000000     ,\
+				GEQ                         \
+			)
+		#endinput
+	#elseif cellbytes == 8
+		#define IsPacked(%0) \
+			__emit(                         \
+				LREF.S.pri  %0             ,\
+				CONST.alt   0x0100000000000000,\
+				GEQ                         \
+			)
+		#endinput
+	#else
+		#error Unsupported packed string size.
+	#endif
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  IsPacked(str[]);
+ * </summary>
+ * <param name="str">The string to test the packing of.</param>
+ * <remarks>
+ *   There is a bug in the SA:MP implementation of <c>ispacked</c>, it doesn't
+ *   work with high unicode values.  This is fixed in open.mp, and the same fix
+ *   is used here.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#if cellbytes != 4
+	#error Unsupported packed string size.
+#endif
+stock bool:IsPacked(const string:str[])
+{
+	#emit LREF.S.pri           str
+	#emit CONST.alt            0x01000000
+	#emit GEQ
+	#emit RETN
+
+	return false;
+}
+
