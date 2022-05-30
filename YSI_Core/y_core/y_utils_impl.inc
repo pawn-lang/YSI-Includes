@@ -190,7 +190,7 @@ stock BeautifyProfilingTime(t, iters)
  *//*------------------------------------------------------------------------**/
 
 // "Write To File", not another "WTF" meaning...
-stock DumpProfilingTime(const name[], const timings[], iters, size = sizeof (timings))
+stock DumpProfilingTime(const string:name[], const timings[], iters, size = sizeof (timings))
 {
 	new File:fhnd = File:0;
 	if (fexist(name))
@@ -469,7 +469,7 @@ P:D(floordiv(numerator, denominator));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsNull(const str[]));
+P:D(bool:IsNull(const string:str[]));
 #define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
 
 #if defined isnull
@@ -479,7 +479,7 @@ P:D(bool:IsNull(const str[]));
 #define _ALS_isnull
 
 //#pragma deprecated Use `IsNull` (i.e. use proper capitalisation).
-//stock bool:isnull(const str[])
+//stock bool:isnull(const string:str[])
 //{
 //	return IsNull(str);
 //}
@@ -528,7 +528,7 @@ P:D(bool:IsEven(value));
  * <param name="len">(Implicit) maximum length of the destination.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(StrCpy(dest[], const src[], len = sizeof (dest)));
+P:D(StrCpy(string:dest[], const string:src[], len = sizeof (dest)));
 #define StrCpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
 
 #if defined strcpy
@@ -548,13 +548,21 @@ P:D(StrCpy(dest[], const src[], len = sizeof (dest)));
  * <param name="len">How much of the string to convert.</param>
  *//*------------------------------------------------------------------------**/
 
-stock StrToLower(str[], len = sizeof (str))
+stock StrToLower(string:str[], len = sizeof (str))
 {
 	new
 		i = -1,
 		ch = 0;
-	while ((ch = str[++i]) && len--)
-		str[i] = tolower(ch);
+	if (ispacked(str))
+	{
+		while ((ch = str{++i}) && len--)
+			str{i} = tolower(ch);
+	}
+	else
+	{
+		while ((ch = str[++i]) && len--)
+			str[i] = tolower(ch);
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -562,13 +570,21 @@ stock StrToLower(str[], len = sizeof (str))
  * <param name="len">How much of the string to convert.</param>
  *//*------------------------------------------------------------------------**/
 
-stock StrToUpper(str[], len = sizeof (str))
+stock StrToUpper(string:str[], len = sizeof (str))
 {
 	new
 		i = -1,
 		ch = 0;
-	while ((ch = str[++i]) && len--)
-		str[i] = toupper(ch);
+	if (ispacked(str))
+	{
+		while ((ch = str{++i}) && len--)
+			str{i} = toupper(ch);
+	}
+	else
+	{
+		while ((ch = str[++i]) && len--)
+			str[i] = toupper(ch);
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -872,12 +888,19 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock StripNL(str[])
+stock StripNL(string:str[])
 {
 	P:7("StripNL called: \"%s\"", str);
 	new
 		i = strlen(str);
-	while (i-- && str[i] <= ' ') str[i] = '\0';
+	if (ispacked(str))
+	{
+		while (i-- && str{i} <= ' ') str{i} = '\0';
+	}
+	else
+	{
+		while (i-- && str[i] <= ' ') str[i] = '\0';
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -887,37 +910,69 @@ stock StripNL(str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(StripR(str[]));
+P:D(StripR(string:str[]));
 #define StripR StripNL
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">The string to remove whitespace from the start of.</param>
  *//*------------------------------------------------------------------------**/
 
-stock StripL(str[])
+stock StripL(string:str[])
 {
 	P:7("StripL called: \"%s\"", str);
 	new
 		len = strlen(str),
 		i = 0;
-	while ('\0' < str[i] <= ' ') ++i;
-	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
+	if (ispacked(str))
+	{
+		while (IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1)) ++i;
+		// The byte offsets in `memcpy` are broken, and packed strings aren't
+		// even in order.  Thus we do it the slow way.
+		//if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
+		//P:E("Cannot use `StripL` on a packed string");
+		if (i)
+		{
+			for (new j = 0; (str{j} = str{i}); ++i, ++j) {}
+		}
+	}
+	else
+	{
+		while (IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1)) ++i;
+		if (i)
+		{
+			memcpy(str[0], str[i], 0, (len - i) * 4, len);
+		}
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">The string to remove whitespace from the start and end of.</param>
  *//*------------------------------------------------------------------------**/
 
-stock Strip(str[])
+stock Strip(string:str[])
 {
 	P:7("Strip called: \"%s\"", str);
 	new
 		len = strlen(str),
 		i = len;
-	while (i-- && str[i] <= ' ') str[i] = '\0';
-	i = 0;
-	while ('\0' < str[i] <= ' ') ++i;
-	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
+	if (ispacked(str))
+	{
+		while (i-- && str{i} <= ' ') str[i] = '\0';
+		for (i = 0; IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1); ++i) {}
+		if (i)
+		{
+			for (new j = 0; (str{j} = str{i}); ++i, ++j) {}
+		}
+	}
+	else
+	{
+		while (i-- && str[i] <= ' ') str[i] = '\0';
+		for (i = 0; IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1); ++i) {}
+		if (i)
+		{
+			memcpy(str[0], str[i], 0, (len - i) * 4, len);
+		}
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -928,16 +983,24 @@ stock Strip(str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:EndOfLine(const line[], pos)
+stock bool:EndOfLine(const string:line[], pos)
 {
 	P:7("EndOfLine called: \"%s\", %i", line, pos);
 	if (NOT_IN_RANGE(pos, 0, strlen(line))) return false;
-	while (IS_IN_RANGE(line[pos], '\0' + 1, ' ' + 1)) ++pos;
-	return !line[pos];
+	if (ispacked(line))
+	{
+		while (IS_IN_RANGE(line{pos}, '\0' + 1, ' ' + 1)) ++pos;
+		return !line{pos};
+	}
+	else
+	{
+		while (IS_IN_RANGE(line[pos], '\0' + 1, ' ' + 1)) ++pos;
+		return !line[pos];
+	}
 }
 
 #pragma deprecated Use `EndOfLine` (i.e. use proper capitalisation).
-stock bool:endofline(const line[], pos)
+stock bool:endofline(const string:line[], pos)
 {
 	return EndOfLine(line, pos);
 }
@@ -951,7 +1014,7 @@ stock bool:endofline(const line[], pos)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock ChrFind(needle, const haystack[], start = 0)
+stock ChrFind(needle, const string:haystack[], start = 0)
 {
 	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
 	new search[2];
@@ -960,7 +1023,7 @@ stock ChrFind(needle, const haystack[], start = 0)
 }
 
 #pragma deprecated Use `ChrFind` (i.e. use proper capitalisation).
-stock chrfind(needle, const haystack[], start = 0)
+stock chrfind(needle, const string:haystack[], start = 0)
 {
 	return ChrFind(needle, haystack, start);
 }
@@ -979,7 +1042,7 @@ stock chrfind(needle, const haystack[], start = 0)
  *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `ChrFind` (i.e. use proper capitalisation, and bounds checks).
-stock chrfindp(needle, const haystack[], start = 0)
+stock chrfindp(needle, const string:haystack[], start = 0)
 {
 	return ChrFind(needle, haystack, start);
 }
@@ -988,17 +1051,37 @@ stock chrfindp(needle, const haystack[], start = 0)
  * <param name="ip">Dot notation IP to convert to an integer.</param>
  *//*------------------------------------------------------------------------**/
 
-stock IPToInt(const ip[])
+stock IPToInt(const string:ip[])
 {
-	new
-		ipv = strval(ip) << 24,
-		pos = 0;
-	while (pos < 15 && ip[pos++] != '.') {}
-	ipv += strval(ip[pos]) << 16;
-	while (pos < 15 && ip[pos++] != '.') {}
-	ipv += strval(ip[pos]) << 8;
-	while (pos < 15 && ip[pos++] != '.') {}
-	return ipv + strval(ip[pos]);
+	if (ispacked(ip))
+	{
+		new
+			ipv = strval(ip) << 24,
+			pos = 0,
+			tmp[4];
+		while (pos < 15 && ip{pos++} != '.') {}
+		// This is the only way to extract part of a packed string.
+		strmid(tmp, ip, pos, cellmax);
+		ipv += strval(tmp) << 16;
+		while (pos < 15 && ip{pos++} != '.') {}
+		strmid(tmp, ip, pos, cellmax);
+		ipv += strval(tmp) << 8;
+		while (pos < 15 && ip{pos++} != '.') {}
+		strmid(tmp, ip, pos, cellmax);
+		return ipv + strval(tmp);
+	}
+	else
+	{
+		new
+			ipv = strval(ip) << 24,
+			pos = 0;
+		while (pos < 15 && ip[pos++] != '.') {}
+		ipv += strval(ip[pos]) << 16;
+		while (pos < 15 && ip[pos++] != '.') {}
+		ipv += strval(ip[pos]) << 8;
+		while (pos < 15 && ip[pos++] != '.') {}
+		return ipv + strval(ip[pos]);
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1033,21 +1116,41 @@ stock IPToInt(const ip[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock BernsteinHash(const string[] /* 12 */)
+stock BernsteinHash(const string:string[] /* 12 */)
 {
-	new h = 5381, i = 0, j = 0;
-	while ((j = string[i++]))
-		h = h * 33 ^ j;
-	return h;
+	if (ispacked(string))
+	{
+		new h = 5381, i = 0, j = 0;
+		while ((j = string{i++}))
+			h = h * 33 ^ j;
+		return h;
+	}
+	else
+	{
+		new h = 5381, i = 0, j = 0;
+		while ((j = string[i++]))
+			h = h * 33 ^ j;
+		return h;
+	}
 }
 
 #pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
-stock bernstein(const string[] /* 12 */)
+stock bernstein(const string:string[] /* 12 */)
 {
-	new h = 5381, i = 0, j = 0;
-	while ((j = string[i++]))
-		h = h * 33 ^ j;
-	return h;
+	if (ispacked(string))
+	{
+		new h = 5381, i = 0, j = 0;
+		while ((j = string{i++}))
+			h = h * 33 ^ j;
+		return h;
+	}
+	else
+	{
+		new h = 5381, i = 0, j = 0;
+		while ((j = string[i++]))
+			h = h * 33 ^ j;
+		return h;
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1062,15 +1165,28 @@ stock bernstein(const string[] /* 12 */)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock JenkinsHash(const string[] /* 12 */)
+stock JenkinsHash(const string:string[] /* 12 */)
 {
-	new h = 0, i = 0, j = 0;
-	while ((j = string[i++]))
-		h += j, h += h << 10, h ^= h >> 6;
-	return
-		h += h << 3,
-		h ^= h >> 1,
-		h + (h << 15);
+	if (ispacked(string))
+	{
+		new h = 0, i = 0, j = 0;
+		while ((j = string{i++}))
+			h += j, h += h << 10, h ^= h >> 6;
+		return
+			h += h << 3,
+			h ^= h >> 1,
+			h + (h << 15);
+	}
+	else
+	{
+		new h = 0, i = 0, j = 0;
+		while ((j = string[i++]))
+			h += j, h += h << 10, h ^= h >> 6;
+		return
+			h += h << 3,
+			h ^= h >> 1,
+			h + (h << 15);
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1080,24 +1196,36 @@ stock JenkinsHash(const string[] /* 12 */)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock bool:IsHex(const str[])
+stock bool:IsHex(const string:str[])
 {
 	P:3("ishex called: \"%s\"", str);
 	new
 		i = 0,
 		cur = 0;
-	if (str[0] == '0' && (str[1] | 0x20) == 'x') i = 2;
-	do
+	if (ispacked(str))
 	{
-		cur = str[i++];
+		if (str{0} == '0' && (str{1} | 0x20) == 'x') i = 2;
+		do
+		{
+			cur = str{i++};
+		}
+		while (IS_IN_RANGE(cur, '0', '9' + 1) || IS_IN_RANGE(cur | 0x20, 'a', 'f' + 1));
 	}
-	while (IS_IN_RANGE(cur, '0', '9' + 1) || IS_IN_RANGE(cur | 0x20, 'a', 'f' + 1));
+	else
+	{
+		if (str[0] == '0' && (str[1] | 0x20) == 'x') i = 2;
+		do
+		{
+			cur = str[i++];
+		}
+		while (IS_IN_RANGE(cur, '0', '9' + 1) || IS_IN_RANGE(cur | 0x20, 'a', 'f' + 1));
+	}
 	//while (('0' <= cur <= '9') || ('a' <= (cur | 0x20) <= 'f'));
 	return !cur; // Valid if this is the end of the string.
 }
 
 #pragma deprecated Use `IsHex` (i.e. use proper capitalisation).
-stock bool:ishex(const str[])
+stock bool:ishex(const string:str[])
 {
 	return IsHex(str);
 }
@@ -1112,7 +1240,7 @@ stock bool:ishex(const str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Unpack(const str[])
+stock Unpack(const string:str[])
 {
 	P:3("Unpack called: \"%s\"", str);
 	new
@@ -1125,7 +1253,7 @@ stock Unpack(const str[])
 }
 
 #pragma deprecated Use `Unpack` (i.e. use proper capitalisation).
-stock unpack(const str[])
+stock unpack(const string:str[])
 {
 	// Doesn't call the original, instead inlines the code because it returns a
 	// string, and the compiler doesn't like nested string returning functions.
@@ -1216,7 +1344,7 @@ stock ReturnStringArg(idx)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
+stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused fmat
 	
@@ -1265,17 +1393,25 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:IsNumeric(const str[])
+stock bool:IsNumeric(const string:str[])
 {
 	P:4("IsNumeric called: \"%s\"", str);
 	new
 		i = -1;
-	while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
-	return !str[i];
+	if (ispacked(str))
+	{
+		while (IS_IN_RANGE(str{++i}, '0', '9' + 1)) {}
+		return !str{i};
+	}
+	else
+	{
+		while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
+		return !str[i];
+	}
 }
 
 #pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
-stock bool:isnumeric(const str[])
+stock bool:isnumeric(const string:str[])
 {
 	return IsNumeric(str);
 }
@@ -1358,38 +1494,65 @@ stock Utils_ChaosMod(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock HexStr(const string[])
+stock HexStr(const string:string[])
 {
 	new
 		ret = 0,
 		val = 0,
 		i = 0;
-	if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
-	for ( ; ; )
+	if (ispacked(string))
 	{
-		switch ((val = string[i++]))
+		if (string{0} == '0' && string{1} | 0x20 == 'x') i = 2;
+		for ( ; ; )
 		{
-			case '0' .. '9':
+			switch ((val = string{i++}))
 			{
-				val -= '0';
+				case '0' .. '9':
+				{
+					val -= '0';
+				}
+				case 'a' .. 'f':
+				{
+					val -= 'a' - 10;
+				}
+				case 'A' .. 'F':
+				{
+					val -= 'A' - 10;
+				}
+				default: break;
 			}
-			case 'a' .. 'f':
-			{
-				val -= 'a' - 10;
-			}
-			case 'A' .. 'F':
-			{
-				val -= 'A' - 10;
-			}
-			default: break;
+			ret = ret << 4 | val;
 		}
-		ret = ret << 4 | val;
+	}
+	else
+	{
+		if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
+		for ( ; ; )
+		{
+			switch ((val = string[i++]))
+			{
+				case '0' .. '9':
+				{
+					val -= '0';
+				}
+				case 'a' .. 'f':
+				{
+					val -= 'a' - 10;
+				}
+				case 'A' .. 'F':
+				{
+					val -= 'A' - 10;
+				}
+				default: break;
+			}
+			ret = ret << 4 | val;
+		}
 	}
 	return ret;
 }
 
 #pragma deprecated Use `HexStr` (i.e. use proper capitalisation).
-stock hexstr(const string[])
+stock hexstr(const string:string[])
 {
 	return HexStr(string);
 }
@@ -1406,14 +1569,14 @@ stock hexstr(const string[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:BoolStr(const string[])
+stock bool:BoolStr(const string:string[])
 {
 	// Hooray for De Morgan's rules!
-	return string[0] && string[0] != '0' && strcmp(string, "false", true);
+	return string[0] && ((ispacked(string) ? string{0} : string[0]) != '0') && strcmp(string, "false", true);
 }
 
 #pragma deprecated Use `BoolStr` (i.e. use proper capitalisation).
-stock bool:boolstr(const string[])
+stock bool:boolstr(const string:string[])
 {
 	return BoolStr(string);
 }
@@ -1429,52 +1592,98 @@ stock bool:boolstr(const string[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock BinStr(const string[])
+stock BinStr(const string:string[])
 {
-	new
-		pos = 0;
-	switch (string[0])
+	if (ispacked(string))
 	{
-		case '0':
-		{
-			if (string[1] | 0x20 == 'b')
-			{
-				pos = 2;
-			}
-		}
-		case '1':
-		{
-		}
-		default:
-		{
-			return 0;
-		}
-	}
-	new
-		value = 0;
-	for ( ; ; )
-	{
-		switch (string[pos++])
+		new
+			pos = 0;
+		switch (string{0})
 		{
 			case '0':
 			{
-				value <<= 1;
+				if (string{1} | 0x20 == 'b')
+				{
+					pos = 2;
+				}
 			}
 			case '1':
 			{
-				value = (value << 1) | 1;
 			}
 			default:
 			{
-				break;
+				return 0;
 			}
 		}
+		new
+			value = 0;
+		for ( ; ; )
+		{
+			switch (string{pos++})
+			{
+				case '0':
+				{
+					value <<= 1;
+				}
+				case '1':
+				{
+					value = (value << 1) | 1;
+				}
+				default:
+				{
+					break;
+				}
+			}
+		}
+		return value;
 	}
-	return value;
+	else
+	{
+		new
+			pos = 0;
+		switch (string[0])
+		{
+			case '0':
+			{
+				if (string[1] | 0x20 == 'b')
+				{
+					pos = 2;
+				}
+			}
+			case '1':
+			{
+			}
+			default:
+			{
+				return 0;
+			}
+		}
+		new
+			value = 0;
+		for ( ; ; )
+		{
+			switch (string[pos++])
+			{
+				case '0':
+				{
+					value <<= 1;
+				}
+				case '1':
+				{
+					value = (value << 1) | 1;
+				}
+				default:
+				{
+					break;
+				}
+			}
+		}
+		return value;
+	}
 }
 
 #pragma deprecated Use `BinStr` (i.e. use proper capitalisation).
-stock binstr(const string[])
+stock binstr(const string:string[])
 {
 	return BinStr(string);
 }
@@ -1490,7 +1699,7 @@ stock binstr(const string[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest), offset = 0)
+stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof (dest), offset = 0)
 {
 	static
 		// This is what the encoding should look like.  We mangle it to make the
@@ -1677,7 +1886,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
+stock Base64Decode(dest[], const string:src[], len = sizeof (dest), offset = 0)
 {
 	static
 		// Again, the encoding looks slightly mangled as we want the bytes in
@@ -2085,15 +2294,26 @@ stock ReturnPlayerName(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:GetPlayerRPName(playerid, name[], len = sizeof (name))
+stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 {
+	// Returns an unpacked string.
 	if (GetPlayerName(playerid, name, len - 1))
 	{
 		// Replace `_` with ` `.
 		len = -1;
-		while ((len = strfind(name, "_", false, len + 1)) != -1)
+		if (ispacked(name))
 		{
-			name[len] = ' ';
+			while ((len = strfind(name, __COMPILER_PACK"_", false, len + 1)) != -1)
+			{
+				name{len} = ' ';
+			}
+		}
+		else
+		{
+			while ((len = strfind(name, __COMPILER_PACK"_", false, len + 1)) != -1)
+			{
+				name[len] = ' ';
+			}
 		}
 		return true;
 	}
@@ -2113,87 +2333,172 @@ stock bool:GetPlayerRPName(playerid, name[], len = sizeof (name))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:IsRPName(const name[], bool:casing = false, bool:longNames = false)
+stock bool:IsRPName(const string:name[], bool:casing = false, bool:longNames = false)
 {
-	new
-		parts = 0,
-		ch = name[0],
-		pos = -1;
-	if (ch == ' ' || ch == '_' || ch == '\0')
+	if (ispacked(name))
 	{
-		// Leading bad characters.
-		return false;
-	}
-	if (casing)
-	{
-		do
+		new
+			parts = 0,
+			ch = name{0},
+			pos = -1;
+		if (ch == ' ' || ch == '_' || ch == '\0')
 		{
-			if (NOT_IN_RANGE((ch = name[++pos]), 'A', 'Z' + 1))
+			// Leading bad characters.
+			return false;
+		}
+		if (casing)
+		{
+			do
 			{
-				// Not a capital letter.
-				return false;
-			}
-			while ((ch = name[++pos]))
-			{
-				// Allow real spaces, YSF can enable that.
-				if (ch == '_' || ch == ' ')
+				if (NOT_IN_RANGE((ch = name{++pos}), 'A', 'Z' + 1))
 				{
-					if (name[pos + 1] == '\0')
-					{
-						// Ends with `_`.
-						return false;
-					}
-					break;
-				}
-				if (NOT_IN_RANGE(ch, 'a', 'z' + 1))
-				{
-					// Not a lower-case letter.
+					// Not a capital letter.
 					return false;
 				}
+				while ((ch = name{++pos}))
+				{
+					// Allow real spaces, YSF can enable that.
+					if (ch == '_' || ch == ' ')
+					{
+						if (name{pos + 1} == '\0')
+						{
+							// Ends with `_`.
+							return false;
+						}
+						break;
+					}
+					if (NOT_IN_RANGE(ch, 'a', 'z' + 1))
+					{
+						// Not a lower-case letter.
+						return false;
+					}
+				}
+				// Found a name part.
+				++parts;
 			}
-			// Found a name part.
-			++parts;
+			while (ch);
 		}
-		while (ch);
+		else
+		{
+			do
+			{
+				while ((ch = name{++pos}))
+				{
+					// Allow real spaces, YSF can enable that.
+					if (ch == '_' || ch == ' ')
+					{
+						if (name{pos + 1} == '\0')
+						{
+							// Ends with `_`.
+							return false;
+						}
+						break;
+					}
+					if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
+					{
+						// Not a valid name letter.
+						return false;
+					}
+				}
+				// Found a name part.
+				++parts;
+			}
+			while (ch);
+		}
+		switch (parts)
+		{
+		case 1:
+			// Not enough parts.
+			return false;
+		case 2:
+			// Exactly two parts.
+			return true;
+		}
+		// More parts.  Is this allowed?
+		return longNames;
 	}
 	else
 	{
-		do
+		new
+			parts = 0,
+			ch = name[0],
+			pos = -1;
+		if (ch == ' ' || ch == '_' || ch == '\0')
 		{
-			while ((ch = name[++pos]))
+			// Leading bad characters.
+			return false;
+		}
+		if (casing)
+		{
+			do
 			{
-				// Allow real spaces, YSF can enable that.
-				if (ch == '_' || ch == ' ')
+				if (NOT_IN_RANGE((ch = name[++pos]), 'A', 'Z' + 1))
 				{
-					if (name[pos + 1] == '\0')
-					{
-						// Ends with `_`.
-						return false;
-					}
-					break;
-				}
-				if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
-				{
-					// Not a valid name letter.
+					// Not a capital letter.
 					return false;
 				}
+				while ((ch = name[++pos]))
+				{
+					// Allow real spaces, YSF can enable that.
+					if (ch == '_' || ch == ' ')
+					{
+						if (name[pos + 1] == '\0')
+						{
+							// Ends with `_`.
+							return false;
+						}
+						break;
+					}
+					if (NOT_IN_RANGE(ch, 'a', 'z' + 1))
+					{
+						// Not a lower-case letter.
+						return false;
+					}
+				}
+				// Found a name part.
+				++parts;
 			}
-			// Found a name part.
-			++parts;
+			while (ch);
 		}
-		while (ch);
+		else
+		{
+			do
+			{
+				while ((ch = name[++pos]))
+				{
+					// Allow real spaces, YSF can enable that.
+					if (ch == '_' || ch == ' ')
+					{
+						if (name[pos + 1] == '\0')
+						{
+							// Ends with `_`.
+							return false;
+						}
+						break;
+					}
+					if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
+					{
+						// Not a valid name letter.
+						return false;
+					}
+				}
+				// Found a name part.
+				++parts;
+			}
+			while (ch);
+		}
+		switch (parts)
+		{
+		case 1:
+			// Not enough parts.
+			return false;
+		case 2:
+			// Exactly two parts.
+			return true;
+		}
+		// More parts.  Is this allowed?
+		return longNames;
 	}
-	switch (parts)
-	{
-	case 1:
-		// Not enough parts.
-		return false;
-	case 2:
-		// Exactly two parts.
-		return true;
-	}
-	// More parts.  Is this allowed?
-	return longNames;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2251,7 +2556,7 @@ stock ReturnPlayerRPName(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock ftouch(const filename[])
+stock ftouch(const string:filename[])
 {
 	if (fexist(filename))
 	{
@@ -2863,9 +3168,16 @@ stock GetNearestColourSRGBCached(colour, const Float:options[][3], count = sizeo
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock SkipWhitespace(const str[], pos)
+stock SkipWhitespace(const string:str[], pos)
 {
-	while (IS_IN_RANGE(str[pos], '\0' + 1, ' ' + 1)) ++pos;
+	if (ispacked(str))
+	{
+		while (IS_IN_RANGE(str{pos}, '\0' + 1, ' ' + 1)) ++pos;
+	}
+	else
+	{
+		while (IS_IN_RANGE(str[pos], '\0' + 1, ' ' + 1)) ++pos;
+	}
 	//while ('\0' < str[pos] <= ' ') ++pos;
 	return pos;
 }
@@ -2881,18 +3193,35 @@ stock SkipWhitespace(const str[], pos)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Trim(const str[], &start, &end)
+stock Trim(const string:str[], &start, &end)
 {
-	while (IS_IN_RANGE(str[start], '\0' + 1, ' ' + 1)) ++start;
-	//while ('\0' < str[start] <= ' ') ++start;
-	if (str[start])
+	if (ispacked(str))
 	{
-		while (end-- > start && str[end] <= ' ') {}
-		++end;
+		while (IS_IN_RANGE(str{start}, '\0' + 1, ' ' + 1)) ++start;
+		//while ('\0' < str[start] <= ' ') ++start;
+		if (str{start})
+		{
+			while (end-- > start && str{end} <= ' ') {}
+			++end;
+		}
+		else
+		{
+			end = start;
+		}
 	}
 	else
 	{
-		end = start;
+		while (IS_IN_RANGE(str[start], '\0' + 1, ' ' + 1)) ++start;
+		//while ('\0' < str[start] <= ' ') ++start;
+		if (str[start])
+		{
+			while (end-- > start && str[end] <= ' ') {}
+			++end;
+		}
+		else
+		{
+			end = start;
+		}
 	}
 }
 
@@ -3054,7 +3383,7 @@ stock memcmp(arr1[], arr2[], count)
 
 #define MAX_LEVENSHTEIN_STRING (YSI_MAX_STRING)
 
-static stock DoLevenshteinDistance(const a[], lenA, const b[], lenB)
+static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], lenB)
 {
 	// "a" is the shorter string in this call.
 	new
@@ -3076,6 +3405,96 @@ static stock DoLevenshteinDistance(const a[], lenA, const b[], lenB)
 					matrix[j + 1] + 1     , /* Insertion cost.    */ min(
 					matrix[j] + 1         , /* Deletion cost.     */
 					prev + _:(b[i] != a[j]) /* Substitution cost. */ )
+				);
+			prev = matrix[j + 1];
+			matrix[j + 1] = distance;
+		}
+	}
+	return matrix[lenA];
+}
+
+static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[], lenB)
+{
+	// "a" is the shorter string in this call.
+	new
+		// Can only compare strings up to this length.
+		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
+	// Initial subsequence equal.
+	//if (!strcmp(a, b, false, lenA))
+	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		// Loop over the characters in the longer string, and use the matrix for the shorter string.
+		new
+			prev = matrix[0];
+		matrix[0] = i + 1;
+		for (new j = 0; j != lenA; ++j)
+		{
+			new
+				distance = min(
+					matrix[j + 1] + 1     , /* Insertion cost.    */ min(
+					matrix[j] + 1         , /* Deletion cost.     */
+					prev + _:(b[i] != a{j}) /* Substitution cost. */ )
+				);
+			prev = matrix[j + 1];
+			matrix[j + 1] = distance;
+		}
+	}
+	return matrix[lenA];
+}
+
+static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[], lenB)
+{
+	// "a" is the shorter string in this call.
+	new
+		// Can only compare strings up to this length.
+		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
+	// Initial subsequence equal.
+	//if (!strcmp(a, b, false, lenA))
+	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		// Loop over the characters in the longer string, and use the matrix for the shorter string.
+		new
+			prev = matrix[0];
+		matrix[0] = i + 1;
+		for (new j = 0; j != lenA; ++j)
+		{
+			new
+				distance = min(
+					matrix[j + 1] + 1     , /* Insertion cost.    */ min(
+					matrix[j] + 1         , /* Deletion cost.     */
+					prev + _:(b{i} != a[j]) /* Substitution cost. */ )
+				);
+			prev = matrix[j + 1];
+			matrix[j + 1] = distance;
+		}
+	}
+	return matrix[lenA];
+}
+
+static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[], lenB)
+{
+	// "a" is the shorter string in this call.
+	new
+		// Can only compare strings up to this length.
+		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
+	// Initial subsequence equal.
+	//if (!strcmp(a, b, false, lenA))
+	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		// Loop over the characters in the longer string, and use the matrix for the shorter string.
+		new
+			prev = matrix[0];
+		matrix[0] = i + 1;
+		for (new j = 0; j != lenA; ++j)
+		{
+			new
+				distance = min(
+					matrix[j + 1] + 1     , /* Insertion cost.    */ min(
+					matrix[j] + 1         , /* Deletion cost.     */
+					prev + _:(b{i} != a{j}) /* Substitution cost. */ )
 				);
 			prev = matrix[j + 1];
 			matrix[j + 1] = distance;
@@ -3109,7 +3528,22 @@ stock LevenshteinDistance(const a[], const b[])
 			P:E("`LevenshteinDistance` can currenly only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
 			return 1;
 		}
-		return DoLevenshteinDistance(b, lenB, a, lenA);
+		// The calls below are NOT wrong, the parameters are swapped so the A/B
+		// packing calls are also swapped.
+		if (ispacked(a))
+		{
+			if (ispacked(b))
+				return DoLevenshteinDistancePackAB(b, lenB, a, lenA);
+			else
+				return DoLevenshteinDistancePackB(b, lenB, a, lenA);
+		}
+		else
+		{
+			if (ispacked(b))
+				return DoLevenshteinDistancePackA(b, lenB, a, lenA);
+			else
+				return DoLevenshteinDistance(b, lenB, a, lenA);
+		}
 	}
 	else if (lenA == lenB && strcmp(a, b) == 0)
 	{
@@ -3121,7 +3555,20 @@ stock LevenshteinDistance(const a[], const b[])
 		P:E("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
 		return 1;
 	}
-	return DoLevenshteinDistance(a, lenA, b, lenB);
+	if (ispacked(a))
+	{
+		if (ispacked(b))
+			return DoLevenshteinDistancePackAB(a, lenA, b, lenB);
+		else
+			return DoLevenshteinDistancePackA(a, lenA, b, lenB);
+	}
+	else
+	{
+		if (ispacked(b))
+			return DoLevenshteinDistancePackB(a, lenA, b, lenB);
+		else
+			return DoLevenshteinDistance(a, lenA, b, lenB);
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -3178,7 +3625,7 @@ stock PrintArg(n)
 
 #define printarg PrintArg
 
-stock File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = sizeof (name))
+stock File:ftemporary_(string:name[], const string:ext[] = "tmp", const string:path[] = "", len = sizeof (name))
 {
 	new
 		pathLen = strlen(path);
@@ -3190,34 +3637,68 @@ stock File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = siz
 	{
 		return File:0;
 	}
-	// These parts of the filename never change, so only do them once.
-	strcat(name, path, len),
-	name[pathLen] = '_',
-	name[pathLen + YSI_TEMP_FILE_LENGTH + 1] = '.',
-	strcat(name[pathLen + YSI_TEMP_FILE_LENGTH + 2], ext, len);
-	// Generate a random filename, with an equal distribution of letters and
-	// numbers.
-	do
+	if (ispacked(name))
 	{
-		// The post-increment here skips the `_` filename prefix.
-		for (new i = pathLen; i++ < YSI_TEMP_FILE_LENGTH + pathLen; )
+		// These parts of the filename never change, so only do them once.
+		strcat(name, path, len),
+		name{pathLen} = '_',
+		name{pathLen + YSI_TEMP_FILE_LENGTH + 1} = '.',
+		strcat(name{pathLen + YSI_TEMP_FILE_LENGTH + 2}, ext, len);
+		// Generate a random filename, with an equal distribution of letters and
+		// numbers.
+		do
 		{
-			new ch = random(62);
-			if (ch < 26)
+			// The post-increment here skips the `_` filename prefix.
+			for (new i = pathLen; i++ < YSI_TEMP_FILE_LENGTH + pathLen; )
 			{
-				name[i] = ch + 'a';
-			}
-			else if (ch < 52)
-			{
-				name[i] = ch + ('A' - 26);
-			}
-			else
-			{
-				name[i] = ch + ('0' - 52);
+				new ch = random(62);
+				if (ch < 26)
+				{
+					name{i} = ch + 'a';
+				}
+				else if (ch < 52)
+				{
+					name{i} = ch + ('A' - 26);
+				}
+				else
+				{
+					name{i} = ch + ('0' - 52);
+				}
 			}
 		}
+		while (fexist(name));
 	}
-	while (fexist(name));
+	else
+	{
+		// These parts of the filename never change, so only do them once.
+		strcat(name, path, len),
+		name[pathLen] = '_',
+		name[pathLen + YSI_TEMP_FILE_LENGTH + 1] = '.',
+		strcat(name[pathLen + YSI_TEMP_FILE_LENGTH + 2], ext, len);
+		// Generate a random filename, with an equal distribution of letters and
+		// numbers.
+		do
+		{
+			// The post-increment here skips the `_` filename prefix.
+			for (new i = pathLen; i++ < YSI_TEMP_FILE_LENGTH + pathLen; )
+			{
+				new ch = random(62);
+				if (ch < 26)
+				{
+					name[i] = ch + 'a';
+				}
+				else if (ch < 52)
+				{
+					name[i] = ch + ('A' - 26);
+				}
+				else
+				{
+					name[i] = ch + ('0' - 52);
+				}
+			}
+		}
+		while (fexist(name));
+	}
 	// Open the file, to ensure it is created.
 	return fopen(name, io_readwrite);
 }
@@ -3230,7 +3711,7 @@ stock File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = siz
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:fautocleanup(const name[], maxAge)
+stock bool:fautocleanup(const string:name[], maxAge)
 {
 	// Add the file to `.tempfiles`.
 	new
@@ -3266,7 +3747,7 @@ stock bool:fautocleanup(const name[], maxAge)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAge = YSI_TEMP_FILE_AGE)
+stock File:ftemporary(string:ret[] = "", const string:ext[] = "tmp", len = sizeof (ret), maxAge = YSI_TEMP_FILE_AGE)
 {
 	// Open the file, to ensure it is created.
 	if (len < 32)

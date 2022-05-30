@@ -790,6 +790,8 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#error Unknown cellbits size.
 #endif
 
+#define __COMPILER_UNPACKEDMAX ((1<<cellbits)-1)
+
 #define FUNCTION_LENGTH (__COMPILER_sNAMEMAX + 1)
 
 // Core tags.
