@@ -4930,7 +4930,7 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Float:BiGramSimilarity(const string1[], const string2[])
+stock Float:BiGramSimilarity(const string:string1[], const string:string2[])
 {
 	// 2-dimensional comparison of lower-case letters.
 	new
@@ -4942,72 +4942,151 @@ stock Float:BiGramSimilarity(const string1[], const string2[])
 		ngrams1 = -1,
 		ngrams2 = -1;
 	// We can also "improve" the comparison by making all numbers the same.
-	for (new i = 0; (ch = string1[i]); ++i)
+	if (YSI_IsPacked__(string1))
 	{
-		// This code only looks at numbers and letters, and ignores case.
-		if ('0' <= ch <= '9')
+		for (new i = 0; (ch = string1{i}); ++i)
 		{
-			pair = (pair / 36) | ((ch - '0') * 36);
-		}
-		else if ('a' <= ch <= 'z')
-		{
-			pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
-		}
-		else if ('A' <= ch <= 'Z')
-		{
-			pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
-		}
-		else
-		{
-			// Not a character we are interested in.
-			continue;
-		}
-		if (++ngrams1)
-		{
-			// Got at least TWO characters.
-			++matrix[pair],
-			++unique1;
+			// This code only looks at numbers and letters, and ignores case.
+			if ('0' <= ch <= '9')
+			{
+				pair = (pair / 36) | ((ch - '0') * 36);
+			}
+			else if ('a' <= ch <= 'z')
+			{
+				pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
+			}
+			else if ('A' <= ch <= 'Z')
+			{
+				pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
+			}
+			else
+			{
+				// Not a character we are interested in.
+				continue;
+			}
+			if (++ngrams1)
+			{
+				// Got at least TWO characters.
+				++matrix[pair],
+				++unique1;
+			}
 		}
 	}
-	for (new i = 0; (ch = string2[i]); ++i)
+	else
 	{
-		// This code only looks at numbers and letters, and ignores case.
-		if ('0' <= ch <= '9')
+		for (new i = 0; (ch = string1[i]); ++i)
 		{
-			pair = (pair / 36) | ((ch - '0') * 36);
+			// This code only looks at numbers and letters, and ignores case.
+			if ('0' <= ch <= '9')
+			{
+				pair = (pair / 36) | ((ch - '0') * 36);
+			}
+			else if ('a' <= ch <= 'z')
+			{
+				pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
+			}
+			else if ('A' <= ch <= 'Z')
+			{
+				pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
+			}
+			else
+			{
+				// Not a character we are interested in.
+				continue;
+			}
+			if (++ngrams1)
+			{
+				// Got at least TWO characters.
+				++matrix[pair],
+				++unique1;
+			}
 		}
-		else if ('a' <= ch <= 'z')
+	}
+	if (YSI_IsPacked__(string2))
+	{
+		for (new i = 0; (ch = string2{i}); ++i)
 		{
-			pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
+			// This code only looks at numbers and letters, and ignores case.
+			if ('0' <= ch <= '9')
+			{
+				pair = (pair / 36) | ((ch - '0') * 36);
+			}
+			else if ('a' <= ch <= 'z')
+			{
+				pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
+			}
+			else if ('A' <= ch <= 'Z')
+			{
+				pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
+			}
+			else
+			{
+				// Not a character we are interested in.
+				continue;
+			}
+			// The original version had positive numbers as pairs in `string1` but
+			// not `string2`, and vice-versa, but I already optimised it.
+			if (!++ngrams2)
+			{
+			}
+			else if (matrix[pair])
+			{
+				--matrix[pair],
+				--unique1;
+			}
+			else
+			{
+				++unique2;
+			}
+			/*if (++ngrams2)
+			{
+				// Got at least TWO characters.
+				--matrix[pair];
+			}*/
 		}
-		else if ('A' <= ch <= 'Z')
+	}
+	else
+	{
+		for (new i = 0; (ch = string2[i]); ++i)
 		{
-			pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
+			// This code only looks at numbers and letters, and ignores case.
+			if ('0' <= ch <= '9')
+			{
+				pair = (pair / 36) | ((ch - '0') * 36);
+			}
+			else if ('a' <= ch <= 'z')
+			{
+				pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
+			}
+			else if ('A' <= ch <= 'Z')
+			{
+				pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
+			}
+			else
+			{
+				// Not a character we are interested in.
+				continue;
+			}
+			// The original version had positive numbers as pairs in `string1` but
+			// not `string2`, and vice-versa, but I already optimised it.
+			if (!++ngrams2)
+			{
+			}
+			else if (matrix[pair])
+			{
+				--matrix[pair],
+				--unique1;
+			}
+			else
+			{
+				++unique2;
+			}
+			/*if (++ngrams2)
+			{
+				// Got at least TWO characters.
+				--matrix[pair];
+			}*/
 		}
-		else
-		{
-			// Not a character we are interested in.
-			continue;
-		}
-		// The original version had positive numbers as pairs in `string1` but
-		// not `string2`, and vice-versa, but I already optimised it.
-		if (!++ngrams2)
-		{
-		}
-		else if (matrix[pair])
-		{
-			--matrix[pair],
-			--unique1;
-		}
-		else
-		{
-			++unique2;
-		}
-		/*if (++ngrams2)
-		{
-			// Got at least TWO characters.
-			--matrix[pair];
-		}*/
 	}
 	if (ngrams1 < 1 || ngrams2 < 1)
 	{
