@@ -85,6 +85,14 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if !defined UNIQUE_FUNCTION
+	#define UNIQUE_FUNCTION<%0...%1> %0000%1
+#endif
+
+#if !defined UNIQUE_SYMBOL
+	#define UNIQUE_SYMBOL (0)
+#endif
+
 // This slightly hacks the numbers by relying on `else`.
 #undef UNIQUE_FUNCTION
 #include "y_unique_1024_1087"
