@@ -244,13 +244,31 @@ static stock const
 
 #if defined RUN_TESTS
 	#define TEST_INIT__%1() forward @y_Q%1(); public @y_Q%1()
-	#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+	#if !__COMPILER_STRING_PACKING
+		#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("  "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+	#elseif cellbytes == 4
+		// Ensure there is always sufficient space for the failures linked list.
+		#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("        "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+	#elseif cellbytes == 8
+		#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("                "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+	#else
+		#error Unsupported packed string size.
+	#endif
 	#define TEST_CLOSE__%1() forward @Qy_%1(); public @Qy_%1()
 	#define TEST_BEFORE_EACH__%1() forward y@Q_%1(); public y@Q_%1()
 	#define TEST_AFTER_EACH__%1() forward y@_Q%1(); public y@_Q%1()
 	
 	#define PTEST_INIT__%1(%2) forward @Q_y%1(%2); public @Q_y%1(%2)
-	#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#if !__COMPILER_STRING_PACKING
+		#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("  "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#elseif cellbytes == 4
+		// Ensure there is always sufficient space for the failures linked list.
+		#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("        "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#elseif cellbytes == 8
+		#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("                "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#else
+		#error Unsupported packed string size.
+	#endif
 	#define PTEST_CLOSE__%1(%2) forward @_yQ%1(%2); public @_yQ%1(%2)
 	
 	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();P:W("Compile test " #%1 " called.");}static stock Q@_y%1()
