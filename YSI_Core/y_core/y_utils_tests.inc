@@ -260,7 +260,7 @@ TEST__ RandomN()
 	}
 }
 
-TEST__ IterativeTextSplitter1()
+TEST__ IterativeTextSplitter1A()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter("This is the first line with short words", 20, 0, end, next, hyphen);
@@ -285,7 +285,7 @@ TEST__ IterativeTextSplitter1()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter2()
+TEST__ IterativeTextSplitter2A()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter("This is the secondlinewithlongwords", 20, 0, end, next, hyphen);
@@ -306,7 +306,7 @@ TEST__ IterativeTextSplitter2()
 	ASSERT_EQ(hyphen, true);
 }
 
-TEST__ IterativeTextSplitter3()
+TEST__ IterativeTextSplitter3A()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter("This is the thirdline", 15, 0, end, next, hyphen);
@@ -327,7 +327,7 @@ TEST__ IterativeTextSplitter3()
 	ASSERT_EQ(hyphen, true);
 }
 
-TEST__ IterativeTextSplitter4()
+TEST__ IterativeTextSplitter4A()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter("This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 0, end, next, hyphen);
@@ -364,7 +364,7 @@ TEST__ IterativeTextSplitter4()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter5()
+TEST__ IterativeTextSplitter5A()
 {
 	new end, next, bool:hyphen;
 	ASSERT(IterativeTextSplitter("Trying to find some worst cases       \r\n", 31, 0, end, next, hyphen));
@@ -377,7 +377,7 @@ TEST__ IterativeTextSplitter5()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter6()
+TEST__ IterativeTextSplitter6A()
 {
 	new end, next, bool:hyphen;
 	new str[] = "Generating code, this may take a little bit of time.  Note that this code generation works best with the JIT plugin, which you are not currently using.  Get it here:\n\nhttps://git.io/jit-plugin\n\nPlease wait...";
@@ -419,10 +419,211 @@ TEST__ IterativeTextSplitter6()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter7()
+TEST__ IterativeTextSplitter7A()
 {
 	new end, next, bool:hyphen;
 	new str[] = "Generating code, this may take a little bit of time.  Note that this code generation works best with the JIT plugin, which you are not currently using.  Get it here:\n\nhttps://git.io/jit-plugin\n\nPlease wait...";
+	IterativeTextSplitter(str, 38, 0, end, next, hyphen);
+	ASSERT_EQ(end, 32);
+	ASSERT_EQ(next, 33);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 33, end, next, hyphen);
+	ASSERT_EQ(end, 68);
+	ASSERT_EQ(next, 69);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 69, end, next, hyphen);
+	ASSERT_EQ(end, 104);
+	ASSERT_EQ(next, 105);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 105, end, next, hyphen);
+	ASSERT_EQ(end, 141);
+	ASSERT_EQ(next, 141);
+	ASSERT_EQ(hyphen, true);
+	IterativeTextSplitter(str, 38, 141, end, next, hyphen);
+	ASSERT_EQ(end, 165);
+	ASSERT_EQ(next, 166);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 166, end, next, hyphen);
+	ASSERT_EQ(end, 166);
+	ASSERT_EQ(next, 167);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 167, end, next, hyphen);
+	ASSERT_EQ(end, 192);
+	ASSERT_EQ(next, 193);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 193, end, next, hyphen);
+	ASSERT_EQ(end, 193);
+	ASSERT_EQ(next, 194);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 194, end, next, hyphen);
+	ASSERT_EQ(end, 208);
+	ASSERT_EQ(next, 208);
+	ASSERT_EQ(hyphen, false);
+}
+
+TEST__ IterativeTextSplitter1B()
+{
+	new end, next, bool:hyphen;
+	IterativeTextSplitter(!"This is the first line with short words", 20, 0, end, next, hyphen);
+	ASSERT_EQ(end, 17);
+	ASSERT_EQ(next, 18);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the first line with short words", 21, 0, end, next, hyphen);
+	ASSERT_EQ(end, 17);
+	ASSERT_EQ(next, 18);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the first line with short words", 22, 0, end, next, hyphen);
+	ASSERT_EQ(end, 22);
+	ASSERT_EQ(next, 23);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the first  line with short words", 22, 0, end, next, hyphen);
+	ASSERT_EQ(end, 17);
+	ASSERT_EQ(next, 19);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the first  line with short words", 22, 19, end, next, hyphen);
+	ASSERT_EQ(end, 40);
+	ASSERT_EQ(next, 40);
+	ASSERT_EQ(hyphen, false);
+}
+
+TEST__ IterativeTextSplitter2B()
+{
+	new end, next, bool:hyphen;
+	IterativeTextSplitter(!"This is the secondlinewithlongwords", 20, 0, end, next, hyphen);
+	ASSERT_EQ(end, 19);
+	ASSERT_EQ(next, 19);
+	ASSERT_EQ(hyphen, true);
+	IterativeTextSplitter(!"This is the secondlinewithlongwords", 34, 0, end, next, hyphen);
+	ASSERT_EQ(end, 32);
+	ASSERT_EQ(next, 32);
+	ASSERT_EQ(hyphen, true);
+	IterativeTextSplitter(!"This is the secondlinewithlongwords", 15, 0, end, next, hyphen);
+	ASSERT_EQ(end, 11);
+	ASSERT_EQ(next, 12);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the secondlinewithlongwords", 15, 12, end, next, hyphen);
+	ASSERT_EQ(end, 26);
+	ASSERT_EQ(next, 26);
+	ASSERT_EQ(hyphen, true);
+}
+
+TEST__ IterativeTextSplitter3B()
+{
+	new end, next, bool:hyphen;
+	IterativeTextSplitter(!"This is the thirdline", 15, 0, end, next, hyphen);
+	ASSERT_EQ(end, 11);
+	ASSERT_EQ(next, 12);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the thirdline", 15, 12, end, next, hyphen);
+	ASSERT_EQ(end, 21);
+	ASSERT_EQ(next, 21);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the fourthlineisnice", 15, 0, end, next, hyphen);
+	ASSERT_EQ(end, 11);
+	ASSERT_EQ(next, 12);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the fourthlineisnice", 15, 12, end, next, hyphen);
+	ASSERT_EQ(end, 25);
+	ASSERT_EQ(next, 25);
+	ASSERT_EQ(hyphen, true);
+}
+
+TEST__ IterativeTextSplitter4B()
+{
+	new end, next, bool:hyphen;
+	IterativeTextSplitter(!"This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 0, end, next, hyphen);
+	ASSERT_EQ(end, 11);
+	ASSERT_EQ(next, 12);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 12, end, next, hyphen);
+	ASSERT_EQ(end, 17);
+	ASSERT_EQ(next, 19);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 19, end, next, hyphen);
+	ASSERT_EQ(end, 28);
+	ASSERT_EQ(next, 30);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 30, end, next, hyphen);
+	ASSERT_EQ(end, 30);
+	ASSERT_EQ(next, 31);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 31, end, next, hyphen);
+	ASSERT_EQ(end, 31);
+	ASSERT_EQ(next, 32);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 32, end, next, hyphen);
+	ASSERT_EQ(end, 32);
+	ASSERT_EQ(next, 33);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 33, end, next, hyphen);
+	ASSERT_EQ(end, 44);
+	ASSERT_EQ(next, 56);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(!"This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 56, end, next, hyphen);
+	ASSERT_EQ(end, 66);
+	ASSERT_EQ(next, 66);
+	ASSERT_EQ(hyphen, false);
+}
+
+TEST__ IterativeTextSplitter5B()
+{
+	new end, next, bool:hyphen;
+	ASSERT(IterativeTextSplitter(!"Trying to find some worst cases       \r\n", 31, 0, end, next, hyphen));
+	ASSERT_EQ(end, 31);
+	ASSERT_EQ(next, 40);
+	ASSERT_EQ(hyphen, false);
+	ASSERT(!IterativeTextSplitter(!"Trying to find some worst cases       \r\n", 31, 40, end, next, hyphen));
+	ASSERT_EQ(end, 40);
+	ASSERT_EQ(next, 40);
+	ASSERT_EQ(hyphen, false);
+}
+
+TEST__ IterativeTextSplitter6B()
+{
+	new end, next, bool:hyphen;
+	new str[] = !"Generating code, this may take a little bit of time.  Note that this code generation works best with the JIT plugin, which you are not currently using.  Get it here:\n\nhttps://git.io/jit-plugin\n\nPlease wait...";
+	IterativeTextSplitter(str, 38, 0, end, next, hyphen, false);
+	ASSERT_EQ(end, 32);
+	ASSERT_EQ(next, 33);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 33, end, next, hyphen, false);
+	ASSERT_EQ(end, 68);
+	ASSERT_EQ(next, 69);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 69, end, next, hyphen, false);
+	ASSERT_EQ(end, 104);
+	ASSERT_EQ(next, 105);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 105, end, next, hyphen, false);
+	ASSERT_EQ(end, 134);
+	ASSERT_EQ(next, 135);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 135, end, next, hyphen, false);
+	ASSERT_EQ(end, 165);
+	ASSERT_EQ(next, 166);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 166, end, next, hyphen, false);
+	ASSERT_EQ(end, 166);
+	ASSERT_EQ(next, 167);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 167, end, next, hyphen, false);
+	ASSERT_EQ(end, 192);
+	ASSERT_EQ(next, 193);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 193, end, next, hyphen, false);
+	ASSERT_EQ(end, 193);
+	ASSERT_EQ(next, 194);
+	ASSERT_EQ(hyphen, false);
+	IterativeTextSplitter(str, 38, 194, end, next, hyphen, false);
+	ASSERT_EQ(end, 208);
+	ASSERT_EQ(next, 208);
+	ASSERT_EQ(hyphen, false);
+}
+
+TEST__ IterativeTextSplitter7B()
+{
+	new end, next, bool:hyphen;
+	new str[] = !"Generating code, this may take a little bit of time.  Note that this code generation works best with the JIT plugin, which you are not currently using.  Get it here:\n\nhttps://git.io/jit-plugin\n\nPlease wait...";
 	IterativeTextSplitter(str, 38, 0, end, next, hyphen);
 	ASSERT_EQ(end, 32);
 	ASSERT_EQ(next, 33);

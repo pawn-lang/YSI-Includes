@@ -4453,69 +4453,283 @@ _Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex
 
 stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, bool:useHyphen = true)
 {
-	// Returns `true` if there is more text to come.
-	new
-		lastSpace = start,
-		wordLen = 0,
-		i = start,
-		ch;
-	for (new j = 0; j != width; ++i, ++j)
+	if (ispacked(text))
 	{
-		switch ((ch = text[i]))
+		// Returns `true` if there is more text to come.
+		new
+			lastSpace = start,
+			wordLen = 0,
+			i = start,
+			ch;
+		for (new j = 0; j != width; ++i, ++j)
 		{
-		case '\0':
-		{
-			// End of the string.  Quite easy.
-			return
-				end = wordLen ? i : lastSpace,
-				// Just initialise this, the value shouldn't be used.
-				next = i,
-				// No hyphen, obviously.
-				hyphen = false,
-				// No more calls after this.
-				false;
-		}
-		case '\r':
-		{
-			// New line.  Quite easy.
-			return
-				end = wordLen ? i : lastSpace,
-				next = text[i + 1] == '\n' ? i + 2 : i + 1,
-				hyphen = false,
-				true;
-		}
-		case '\n':
-		{
-			// New line.  Very easy.
-			return
-				end = wordLen ? i : lastSpace,
-				next = i + 1,
-				hyphen = false,
-				true;
-		}
-		case 1 .. 9, 11 .. 12, 14 .. 32:
-		{
-			// Spacing.
-			if (wordLen)
+			switch ((ch = text{i}))
 			{
-				// Was in a word, now aren't.
-				lastSpace = i,
-				wordLen = 0;
+			case '\0':
+			{
+				// End of the string.  Quite easy.
+				return
+					end = wordLen ? i : lastSpace,
+					// Just initialise this, the value shouldn't be used.
+					next = i,
+					// No hyphen, obviously.
+					hyphen = false,
+					// No more calls after this.
+					false;
 			}
-			// Else do nothing, we're just skipping an extended space.
+			case '\r':
+			{
+				// New line.  Quite easy.
+				return
+					end = wordLen ? i : lastSpace,
+					next = text{i + 1} == '\n' ? i + 2 : i + 1,
+					hyphen = false,
+					true;
+			}
+			case '\n':
+			{
+				// New line.  Very easy.
+				return
+					end = wordLen ? i : lastSpace,
+					next = i + 1,
+					hyphen = false,
+					true;
+			}
+			case 1 .. 9, 11 .. 12, 14 .. 32:
+			{
+				// Spacing.
+				if (wordLen)
+				{
+					// Was in a word, now aren't.
+					lastSpace = i,
+					wordLen = 0;
+				}
+				// Else do nothing, we're just skipping an extended space.
+			}
+			default:
+			{
+				// Text.
+				++wordLen;
+			}
+			}
 		}
-		default:
+		// If we reach the end of the loop we've found the full width of text.
+		if (wordLen == 0)
 		{
-			// Text.
-			++wordLen;
+			// In space.  Good.  Skip the rest of the space.
+			end = lastSpace,
+			hyphen = false;
+			while ('\0' < (ch = text{i}) <= ' ')
+			{
+				if (ch == '\r')
+				{
+					return
+						next = text{i + 1} == '\n' ? i + 2 : i + 1,
+						true;
+				}
+				else if (ch == '\n')
+				{
+					return
+						next = i + 1,
+						true;
+				}
+				++i;
+			}
+			return
+				next = i,
+				ch != '\0';
 		}
+		// In the middle of a string.  Work out if we should split the text with a
+		// hyphen or move it down to the next line.
+		if (text{i} > ' ')
+		{
+			if (!useHyphen || wordLen < 4)
+			{
+				// Not enough space for three characters plus a hyphen on the
+				// current line.  Move it down to the next line.
+				return
+					end = lastSpace,
+					next = i - wordLen,
+					hyphen = false,
+					true;
+			}
+			if (text{i + 1} > ' ')
+			{
+				// There will be at least three characters on the next line (the new
+				// two plus the one replaced by the hyphen).
+				return
+					end = i - 1,
+					next = i - 1,
+					hyphen = true,
+					true;
+			}
+			if (wordLen >= 6)
+			{
+				// There are at least six characters total.
+				return
+					end = i - 2,
+					next = i - 2,
+					hyphen = true,
+					true;
+			}
+			// Five or six characters long.  Move to the next line.
+			return
+				end = lastSpace,
+				next = i - wordLen,
+				hyphen = false,
+				true;
 		}
+		// The word fits precisely.
+		end = i,
+		hyphen = false;
+		while ('\0' < (ch = text{i}) <= ' ')
+		{
+			if (ch == '\r')
+			{
+				return
+					next = text{i + 1} == '\n' ? i + 2 : i + 1,
+					true;
+			}
+			else if (ch == '\n')
+			{
+				return
+					next = i + 1,
+					true;
+			}
+			++i;
+		}
+		return
+			next = i,
+			ch != '\0';
 	}
-	// If we reach the end of the loop we've found the full width of text.
-	if (wordLen == 0)
+	else
 	{
-		// In space.  Good.  Skip the rest of the space.
-		end = lastSpace,
+		// Returns `true` if there is more text to come.
+		new
+			lastSpace = start,
+			wordLen = 0,
+			i = start,
+			ch;
+		for (new j = 0; j != width; ++i, ++j)
+		{
+			switch ((ch = text[i]))
+			{
+			case '\0':
+			{
+				// End of the string.  Quite easy.
+				return
+					end = wordLen ? i : lastSpace,
+					// Just initialise this, the value shouldn't be used.
+					next = i,
+					// No hyphen, obviously.
+					hyphen = false,
+					// No more calls after this.
+					false;
+			}
+			case '\r':
+			{
+				// New line.  Quite easy.
+				return
+					end = wordLen ? i : lastSpace,
+					next = text[i + 1] == '\n' ? i + 2 : i + 1,
+					hyphen = false,
+					true;
+			}
+			case '\n':
+			{
+				// New line.  Very easy.
+				return
+					end = wordLen ? i : lastSpace,
+					next = i + 1,
+					hyphen = false,
+					true;
+			}
+			case 1 .. 9, 11 .. 12, 14 .. 32:
+			{
+				// Spacing.
+				if (wordLen)
+				{
+					// Was in a word, now aren't.
+					lastSpace = i,
+					wordLen = 0;
+				}
+				// Else do nothing, we're just skipping an extended space.
+			}
+			default:
+			{
+				// Text.
+				++wordLen;
+			}
+			}
+		}
+		// If we reach the end of the loop we've found the full width of text.
+		if (wordLen == 0)
+		{
+			// In space.  Good.  Skip the rest of the space.
+			end = lastSpace,
+			hyphen = false;
+			while ('\0' < (ch = text[i]) <= ' ')
+			{
+				if (ch == '\r')
+				{
+					return
+						next = text[i + 1] == '\n' ? i + 2 : i + 1,
+						true;
+				}
+				else if (ch == '\n')
+				{
+					return
+						next = i + 1,
+						true;
+				}
+				++i;
+			}
+			return
+				next = i,
+				ch != '\0';
+		}
+		// In the middle of a string.  Work out if we should split the text with a
+		// hyphen or move it down to the next line.
+		if (text[i] > ' ')
+		{
+			if (!useHyphen || wordLen < 4)
+			{
+				// Not enough space for three characters plus a hyphen on the
+				// current line.  Move it down to the next line.
+				return
+					end = lastSpace,
+					next = i - wordLen,
+					hyphen = false,
+					true;
+			}
+			if (text[i + 1] > ' ')
+			{
+				// There will be at least three characters on the next line (the new
+				// two plus the one replaced by the hyphen).
+				return
+					end = i - 1,
+					next = i - 1,
+					hyphen = true,
+					true;
+			}
+			if (wordLen >= 6)
+			{
+				// There are at least six characters total.
+				return
+					end = i - 2,
+					next = i - 2,
+					hyphen = true,
+					true;
+			}
+			// Five or six characters long.  Move to the next line.
+			return
+				end = lastSpace,
+				next = i - wordLen,
+				hyphen = false,
+				true;
+		}
+		// The word fits precisely.
+		end = i,
 		hyphen = false;
 		while ('\0' < (ch = text[i]) <= ' ')
 		{
@@ -4537,68 +4751,6 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 			next = i,
 			ch != '\0';
 	}
-	// In the middle of a string.  Work out if we should split the text with a
-	// hyphen or move it down to the next line.
-	if (text[i] > ' ')
-	{
-		if (!useHyphen || wordLen < 4)
-		{
-			// Not enough space for three characters plus a hyphen on the
-			// current line.  Move it down to the next line.
-			return
-				end = lastSpace,
-				next = i - wordLen,
-				hyphen = false,
-				true;
-		}
-		if (text[i + 1] > ' ')
-		{
-			// There will be at least three characters on the next line (the new
-			// two plus the one replaced by the hyphen).
-			return
-				end = i - 1,
-				next = i - 1,
-				hyphen = true,
-				true;
-		}
-		if (wordLen >= 6)
-		{
-			// There are at least six characters total.
-			return
-				end = i - 2,
-				next = i - 2,
-				hyphen = true,
-				true;
-		}
-		// Five or six characters long.  Move to the next line.
-		return
-			end = lastSpace,
-			next = i - wordLen,
-			hyphen = false,
-			true;
-	}
-	// The word fits precisely.
-	end = i,
-	hyphen = false;
-	while ('\0' < (ch = text[i]) <= ' ')
-	{
-		if (ch == '\r')
-		{
-			return
-				next = text[i + 1] == '\n' ? i + 2 : i + 1,
-				true;
-		}
-		else if (ch == '\n')
-		{
-			return
-				next = i + 1,
-				true;
-		}
-		++i;
-	}
-	return
-		next = i,
-		ch != '\0';
 }
 
 /*-------------------------------------------------------------------------*//**
