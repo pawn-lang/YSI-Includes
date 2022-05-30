@@ -3809,16 +3809,16 @@ stock File:ftemporary(string:ret[] = "", const string:ext[] = "tmp", len = sizeo
 static stock
 	YSI_gsDefaultDirs[E_YSI_DIR][YSI_DIR_LENGTH] = {
 #if _DEBUG
-		_YSI_DEFAULT_DIR_PREFIX "/debug/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/debug/",
 #endif
 #if defined YSI_TESTS
-		_YSI_DEFAULT_DIR_PREFIX "/tests/",
-		_YSI_DEFAULT_DIR_PREFIX "/YDBG/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/tests/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/YDBG/",
 #endif
 		//"/text/",
 		//"/users/",
-		_YSI_DEFAULT_DIR_PREFIX "/fixes/",
-		_YSI_DEFAULT_DIR_PREFIX "/temp/"
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/fixes/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/temp/"
 	};
 
 #undef _YSI_DEFAULT_DIR_PREFIX
@@ -3850,18 +3850,18 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 	{
 		new
 			bool:first = true,
-			path[38] = "     /scriptfiles/", // The `18`s below are this length.
+			path[38] = __COMPILER_UNPACK"     /scriptfiles/", // The `18`s below are this length.
 			test[YSI_DIR_LENGTH + 8],
 			File:file;
 		for (new E_YSI_DIR:dir = E_YSI_DIR:0; dir != E_YSI_DIR; ++dir)
 		{
-			if (YSI_gsDefaultDirs[dir][0] == '/')
+			if (YSI_gsDefaultDirs[dir]{0} == '/')
 			{
 				path[18] = '\0',
-				strcat(path, "YSI"),
+				strcat(path, __COMPILER_PACK"YSI"),
 				strcat(path, YSI_gsDefaultDirs[dir]),
 				StrCpy(test, path[18]),
-				strcat(test, ".gitkeep");
+				strcat(test, __COMPILER_PACK".gitkeep");
 				if ((file = fopen(test, io_write)))
 				{
 					// Found `YSI/dir/`.
