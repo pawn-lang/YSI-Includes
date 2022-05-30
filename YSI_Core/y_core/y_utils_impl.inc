@@ -470,7 +470,13 @@ P:D(floordiv(numerator, denominator));
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:IsNull(const string:str[]));
-#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x01000000)
+#if cellbytes == 4
+	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x01000000)
+#elseif cellbytes == 8
+	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x0100000000000000)
+#else
+	#error Unsupported packed string size.
+#endif
 
 #if defined isnull
 	#undef isnull
