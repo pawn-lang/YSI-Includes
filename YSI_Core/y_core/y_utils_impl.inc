@@ -1116,45 +1116,45 @@ stock IPToInt(const string:ip[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock BernsteinHash(const string:string[] /* 12 */)
+stock BernsteinHash(const string:str[] /* 12 */)
 {
-	if (ispacked(string))
+	if (ispacked(str))
 	{
 		new h = 5381, i = 0, j = 0;
-		while ((j = string{i++}))
+		while ((j = str{i++}))
 			h = h * 33 ^ j;
 		return h;
 	}
 	else
 	{
 		new h = 5381, i = 0, j = 0;
-		while ((j = string[i++]))
+		while ((j = str[i++]))
 			h = h * 33 ^ j;
 		return h;
 	}
 }
 
 #pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
-stock bernstein(const string:string[] /* 12 */)
+stock bernstein(const string:str[] /* 12 */)
 {
-	if (ispacked(string))
+	if (ispacked(str))
 	{
 		new h = 5381, i = 0, j = 0;
-		while ((j = string{i++}))
+		while ((j = str{i++}))
 			h = h * 33 ^ j;
 		return h;
 	}
 	else
 	{
 		new h = 5381, i = 0, j = 0;
-		while ((j = string[i++]))
+		while ((j = str[i++]))
 			h = h * 33 ^ j;
 		return h;
 	}
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="string">the string to hash.</param>
+ * <param name="str">the string to hash.</param>
  * <returns>
  *   the Jenkins hash of the input string
  * </returns>
@@ -1165,12 +1165,12 @@ stock bernstein(const string:string[] /* 12 */)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock JenkinsHash(const string:string[] /* 12 */)
+stock JenkinsHash(const string:str[] /* 12 */)
 {
-	if (ispacked(string))
+	if (ispacked(str))
 	{
 		new h = 0, i = 0, j = 0;
-		while ((j = string{i++}))
+		while ((j = str{i++}))
 			h += j, h += h << 10, h ^= h >> 6;
 		return
 			h += h << 3,
@@ -1180,7 +1180,7 @@ stock JenkinsHash(const string:string[] /* 12 */)
 	else
 	{
 		new h = 0, i = 0, j = 0;
-		while ((j = string[i++]))
+		while ((j = str[i++]))
 			h += j, h += h << 10, h ^= h >> 6;
 		return
 			h += h << 3,
@@ -1400,11 +1400,13 @@ stock bool:IsNumeric(const string:str[])
 		i = -1;
 	if (ispacked(str))
 	{
+		if (str{0} == '-') ++i;
 		while (IS_IN_RANGE(str{++i}, '0', '9' + 1)) {}
 		return !str{i};
 	}
 	else
 	{
+		if (str[0] == '-') ++i;
 		while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
 		return !str[i];
 	}
@@ -1494,18 +1496,18 @@ stock Utils_ChaosMod(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock HexStr(const string:string[])
+stock HexStr(const string:str[])
 {
 	new
 		ret = 0,
 		val = 0,
 		i = 0;
-	if (ispacked(string))
+	if (ispacked(str))
 	{
-		if (string{0} == '0' && string{1} | 0x20 == 'x') i = 2;
+		if (str{0} == '0' && str{1} | 0x20 == 'x') i = 2;
 		for ( ; ; )
 		{
-			switch ((val = string{i++}))
+			switch ((val = str{i++}))
 			{
 				case '0' .. '9':
 				{
@@ -1526,10 +1528,10 @@ stock HexStr(const string:string[])
 	}
 	else
 	{
-		if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
+		if (str[0] == '0' && str[1] | 0x20 == 'x') i = 2;
 		for ( ; ; )
 		{
-			switch ((val = string[i++]))
+			switch ((val = str[i++]))
 			{
 				case '0' .. '9':
 				{
@@ -1552,9 +1554,9 @@ stock HexStr(const string:string[])
 }
 
 #pragma deprecated Use `HexStr` (i.e. use proper capitalisation).
-stock hexstr(const string:string[])
+stock hexstr(const string:str[])
 {
-	return HexStr(string);
+	return HexStr(str);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1569,16 +1571,16 @@ stock hexstr(const string:string[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:BoolStr(const string:string[])
+stock bool:BoolStr(const string:str[])
 {
 	// Hooray for De Morgan's rules!
-	return string[0] && ((ispacked(string) ? string{0} : string[0]) != '0') && strcmp(string, "false", true);
+	return str[0] && ((ispacked(str) ? str{0} : str[0]) != '0') && strcmp(str, "false", true);
 }
 
 #pragma deprecated Use `BoolStr` (i.e. use proper capitalisation).
-stock bool:boolstr(const string:string[])
+stock bool:boolstr(const string:str[])
 {
-	return BoolStr(string);
+	return BoolStr(str);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1592,17 +1594,17 @@ stock bool:boolstr(const string:string[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock BinStr(const string:string[])
+stock BinStr(const string:str[])
 {
-	if (ispacked(string))
+	if (ispacked(str))
 	{
 		new
 			pos = 0;
-		switch (string{0})
+		switch (str{0})
 		{
 			case '0':
 			{
-				if (string{1} | 0x20 == 'b')
+				if (str{1} | 0x20 == 'b')
 				{
 					pos = 2;
 				}
@@ -1619,7 +1621,7 @@ stock BinStr(const string:string[])
 			value = 0;
 		for ( ; ; )
 		{
-			switch (string{pos++})
+			switch (str{pos++})
 			{
 				case '0':
 				{
@@ -1641,11 +1643,11 @@ stock BinStr(const string:string[])
 	{
 		new
 			pos = 0;
-		switch (string[0])
+		switch (str[0])
 		{
 			case '0':
 			{
-				if (string[1] | 0x20 == 'b')
+				if (str[1] | 0x20 == 'b')
 				{
 					pos = 2;
 				}
@@ -1662,7 +1664,7 @@ stock BinStr(const string:string[])
 			value = 0;
 		for ( ; ; )
 		{
-			switch (string[pos++])
+			switch (str[pos++])
 			{
 				case '0':
 				{
@@ -1683,9 +1685,9 @@ stock BinStr(const string:string[])
 }
 
 #pragma deprecated Use `BinStr` (i.e. use proper capitalisation).
-stock binstr(const string:string[])
+stock binstr(const string:str[])
 {
-	return BinStr(string);
+	return BinStr(str);
 }
 
 /*-------------------------------------------------------------------------*//**

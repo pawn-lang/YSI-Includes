@@ -33,7 +33,7 @@ TEST_COMPILE__ y_utils()
 #endif
 	new str[32];
 	ASSERT(IsNull(str));
-	StrToLower(str);
+	StrToUpper(str);
 	StrToUpper(str);
 	Random(0);
 	RandomFloat(0.0);
@@ -821,5 +821,148 @@ TEST__ IterativeColouredText6()
 	ASSERT_EQ(next, 65);
 	ASSERT_EQ(colour, 30);
 	ASSERT(!hyphen);
+}
+
+TEST__ y_utils_1()
+{
+	new dest[32];
+
+	dest = "";
+	ASSERT(IsNull(dest));
+	dest = "\1";
+	ASSERT(IsNull(dest));
+	dest = !"";
+	ASSERT(IsNull(dest));
+	dest = !"\1";
+	ASSERT(IsNull(dest));
+
+	StrCpy(dest, "hello 1");
+	ASSERT_SAME(dest, "hello 1");
+	StrCpy(dest, "hello 2");
+	ASSERT_SAME(dest, !"hello 2");
+	StrCpy(dest, !"hello 3");
+	ASSERT_SAME(dest, "hello 3");
+	StrCpy(dest, !"hello 4");
+	ASSERT_SAME(dest, !"hello 4");
+
+	StrToUpper(dest, "HEllO 1");
+	ASSERT_SAME(dest, "hello 1");
+	StrToUpper(dest, "HEllO 2");
+	ASSERT_SAME(dest, !"hello 2");
+	StrToUpper(dest, !"HEllO 3");
+	ASSERT_SAME(dest, "hello 3");
+	StrToUpper(dest, !"HEllO 4");
+	ASSERT_SAME(dest, !"hello 4");
+
+	StrToUpper(dest, "HEllO 1");
+	ASSERT_SAME(dest, "HELLO 1");
+	StrToUpper(dest, "HEllO 2");
+	ASSERT_SAME(dest, !"HELLO 2");
+	StrToUpper(dest, !"HEllO 3");
+	ASSERT_SAME(dest, "HELLO 3");
+	StrToUpper(dest, !"HEllO 4");
+	ASSERT_SAME(dest, !"HELLO 4");
+
+	dest = "   World 1 \r\n";
+	StripNL(dest);
+	ASSERT_SAME(dest, "   World 1");
+	dest = !"   World 2 \r\n";
+	StripNL(dest);
+	ASSERT_SAME(dest, "   World 2");
+
+	dest = "   World 1 \r\n";
+	StripR(dest);
+	ASSERT_SAME(dest, "   World 1");
+	dest = !"   World 2 \r\n";
+	StripR(dest);
+	ASSERT_SAME(dest, "   World 2");
+
+	dest = "   World 1 \r\n";
+	StripL(dest);
+	ASSERT_SAME(dest, "World 1 \r\n");
+	dest = !"   World 2 \r\n";
+	StripL(dest);
+	ASSERT_SAME(dest, "World 2 \r\n");
+
+	dest = "   World 1 \r\n";
+	Strip(dest);
+	ASSERT_SAME(dest, "World 1");
+	dest = !"   World 2 \r\n";
+	Strip(dest);
+	ASSERT_SAME(dest, "World 2");
+
+	dest = "   World 1 \r\n";
+	ASSERT_EQ(EndOfLine(dest), 10);
+	dest = !"   World 2 \r\n";
+	ASSERT_EQ(EndOfLine(dest), 10);
+
+	dest = "   World 1 \r\n";
+	ASSERT_EQ(ChrFind('l', dest), 6);
+	dest = !"   World 2 \r\n";
+	ASSERT_EQ(ChrFind('o', dest), 4);
+}
+
+TEST__ y_utils_2()
+{
+	ASSERT_EQ(IPToInt("5.6.7.8"), 0x05060708);
+	ASSERT_EQ(IPToInt(!"1.2.3.4"), 0x01020304);
+	ASSERT_EQ(IPToInt("115.116.17.0"), 0x73741100);
+	ASSERT_EQ(IPToInt(!"1.255.113.114"), 0x01FF7172);
+
+	ASSERT_EQ(BernsteinHash("Hello World"), BernsteinHash(!"Hello World"));
+	ASSERT_EQ(JenkinsHash("Hello World"), JenkinsHash(!"Hello World"));
+	ASSERT_EQ(BernsteinHash("gamemode10"), 0xBA256409);
+	ASSERT_EQ(BernsteinHash(!"logtimeformat"), 0x19BECDF7);
+}
+
+TEST__ y_utils_3()
+{
+	ASSERT(IsHex("0xFFAA"));
+	ASSERT(IsHex(!"0x1001123"));
+	ASSERT(IsHex("000000"));
+	ASSERT(IsHex(!"DEAD111"));
+	ASSERT(IsHex(!"0xFFAA"));
+
+	ASSERT(!IsHex("0xG"));
+	ASSERT(!IsHex(!"-7"));
+	ASSERT(!IsHex(!"0xG"));
+	ASSERT(!IsHex("-7"));
+	ASSERT(!IsHex("wow"));
+
+	ASSERT(IsNumeric("-7"));
+	ASSERT(IsNumeric(!"1000"));
+	ASSERT(IsNumeric("000000"));
+	ASSERT(IsNumeric(!"111"));
+	ASSERT(IsNumeric("0"));
+
+	ASSERT(!IsNumeric("0xG"));
+	ASSERT(!IsNumeric(!"+7"));
+	ASSERT(!IsNumeric(!"0xG"));
+	ASSERT(!IsNumeric("hi"));
+
+	ASSERT_EQ(HexStr("0xFFAA"), 0xFFAA);
+	ASSERT_EQ(HexStr(!"0x1001123"), 0x1001123);
+	ASSERT_EQ(HexStr("000000"), 0);
+	ASSERT_EQ(HexStr(!"DEAD111"), 0xDEAD111);
+	ASSERT_EQ(HexStr(!"0xFFAA"), 0xFFAA);
+
+	ASSERT(BoolStr("true"));
+	ASSERT(BoolStr(!"true"));
+	ASSERT(BoolStr("1"));
+	ASSERT(BoolStr(!"1"));
+	ASSERT(BoolStr("y"));
+	ASSERT(BoolStr(!"y"));
+
+	ASSERT(!BoolStr("false"));
+	ASSERT(!BoolStr(!"false"));
+	ASSERT(!BoolStr("0"));
+	ASSERT(!BoolStr(!"0"));
+	ASSERT(!BoolStr(""));
+	ASSERT(!BoolStr(!""));
+
+	ASSERT_EQ(BinStr("0101010"), 0b0101010);
+	ASSERT_EQ(BinStr(!"0101010"), 0b0101010);
+	ASSERT_EQ(BinStr("0b1010"), 0b1010);
+	ASSERT_EQ(BinStr(!"0b1010"), 0b1010);
 }
 
