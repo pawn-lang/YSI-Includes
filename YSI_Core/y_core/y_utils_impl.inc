@@ -940,7 +940,7 @@ stock StripL(string:str[])
 		while (IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1)) ++i;
 		if (i)
 		{
-			memcpy(str[0], str[i], 0, (len - i) * 4, len);
+			memcpy(str[0], str[i], 0, (len - i + 1) * 4, len);
 		}
 	}
 }
@@ -957,7 +957,7 @@ stock Strip(string:str[])
 		i = len;
 	if (ispacked(str))
 	{
-		while (i-- && str{i} <= ' ') str[i] = '\0';
+		while (i-- && str{i} <= ' ') str{i} = '\0';
 		for (i = 0; IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1); ++i) {}
 		if (i)
 		{
@@ -970,7 +970,7 @@ stock Strip(string:str[])
 		for (i = 0; IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1); ++i) {}
 		if (i)
 		{
-			memcpy(str[0], str[i], 0, (len - i) * 4, len);
+			memcpy(str[0], str[i], 0, (len - i + 1) * 4, len);
 		}
 	}
 }

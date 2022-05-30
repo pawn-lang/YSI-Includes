@@ -823,7 +823,7 @@ TEST__ IterativeColouredText6()
 	ASSERT(!hyphen);
 }
 
-TEST__ y_utils_1()
+TEST__ y_utils_IsNull()
 {
 	new dest[32];
 
@@ -835,6 +835,11 @@ TEST__ y_utils_1()
 	ASSERT(IsNull(dest));
 	dest = !"\1";
 	ASSERT(IsNull(dest));
+}
+
+TEST__ y_utils_StrCpy()
+{
+	new dest[32];
 
 	StrCpy(dest, "hello 1");
 	ASSERT_SAME(dest, "hello 1");
@@ -844,6 +849,11 @@ TEST__ y_utils_1()
 	ASSERT_SAME(dest, "hello 3");
 	StrCpy(dest, !"hello 4");
 	ASSERT_SAME(dest, !"hello 4");
+}
+
+TEST__ y_utils_StrToLower()
+{
+	new dest[32];
 
 	dest = "HEllO 1";
 	StrToLower(dest);
@@ -857,6 +867,11 @@ TEST__ y_utils_1()
 	dest = !"HEllO 4";
 	StrToLower(dest);
 	ASSERT_SAME(dest, !"hello 4");
+}
+
+TEST__ y_utils_StrToUpper()
+{
+	new dest[32];
 
 	dest = "HEllO 1";
 	StrToUpper(dest);
@@ -870,6 +885,11 @@ TEST__ y_utils_1()
 	dest = !"HEllO 4";
 	StrToUpper(dest);
 	ASSERT_SAME(dest, !"HELLO 4");
+}
+
+TEST__ y_utils_StripNL()
+{
+	new dest[32];
 
 	dest = "   World 1 \r\n";
 	StripNL(dest);
@@ -877,6 +897,11 @@ TEST__ y_utils_1()
 	dest = !"   World 2 \r\n";
 	StripNL(dest);
 	ASSERT_SAME(dest, "   World 2");
+}
+
+TEST__ y_utils_StripR()
+{
+	new dest[32];
 
 	dest = "   World 1 \r\n";
 	StripR(dest);
@@ -884,6 +909,11 @@ TEST__ y_utils_1()
 	dest = !"   World 2 \r\n";
 	StripR(dest);
 	ASSERT_SAME(dest, "   World 2");
+}
+
+TEST__ y_utils_StripL()
+{
+	new dest[32];
 
 	dest = "   World 1 \r\n";
 	StripL(dest);
@@ -891,6 +921,11 @@ TEST__ y_utils_1()
 	dest = !"   World 2 \r\n";
 	StripL(dest);
 	ASSERT_SAME(dest, "World 2 \r\n");
+}
+
+TEST__ y_utils_Strip()
+{
+	new dest[32];
 
 	dest = "   World 1 \r\n";
 	Strip(dest);
@@ -898,11 +933,21 @@ TEST__ y_utils_1()
 	dest = !"   World 2 \r\n";
 	Strip(dest);
 	ASSERT_SAME(dest, "World 2");
+}
+
+TEST__ y_utils_EndOfLine()
+{
+	new dest[32];
 
 	dest = "   World 1 \r\n";
 	ASSERT(EndOfLine(dest, 10));
 	dest = !"   World 2 \r\n";
 	ASSERT(EndOfLine(dest, 10));
+}
+
+TEST__ y_utils_ChrFind()
+{
+	new dest[32];
 
 	dest = "   World 1 \r\n";
 	ASSERT_EQ(ChrFind('l', dest), 6);
@@ -910,20 +955,27 @@ TEST__ y_utils_1()
 	ASSERT_EQ(ChrFind('o', dest), 4);
 }
 
-TEST__ y_utils_2()
+TEST__ y_utils_IPToInt()
 {
 	ASSERT_EQ(IPToInt("5.6.7.8"), 0x05060708);
 	ASSERT_EQ(IPToInt(!"1.2.3.4"), 0x01020304);
 	ASSERT_EQ(IPToInt("115.116.17.0"), 0x73741100);
 	ASSERT_EQ(IPToInt(!"1.255.113.114"), 0x01FF7172);
+}
 
+TEST__ y_utils_BernsteinHash()
+{
 	ASSERT_EQ(BernsteinHash("Hello World"), BernsteinHash(!"Hello World"));
-	ASSERT_EQ(JenkinsHash("Hello World"), JenkinsHash(!"Hello World"));
 	ASSERT_EQ(BernsteinHash("gamemode10"), 0xBA256409);
 	ASSERT_EQ(BernsteinHash(!"logtimeformat"), 0x19BECDF7);
 }
 
-TEST__ y_utils_3()
+TEST__ y_utils_JenkinsHash()
+{
+	ASSERT_EQ(JenkinsHash("Hello World"), JenkinsHash(!"Hello World"));
+}
+
+TEST__ y_utils_IsHex()
 {
 	ASSERT(IsHex("0xFFAA"));
 	ASSERT(IsHex(!"0x1001123"));
@@ -936,7 +988,10 @@ TEST__ y_utils_3()
 	ASSERT(!IsHex(!"0xG"));
 	ASSERT(!IsHex("-7"));
 	ASSERT(!IsHex("wow"));
+}
 
+TEST__ y_utils_IsNumeric()
+{
 	ASSERT(IsNumeric("-7"));
 	ASSERT(IsNumeric(!"1000"));
 	ASSERT(IsNumeric("000000"));
@@ -947,13 +1002,19 @@ TEST__ y_utils_3()
 	ASSERT(!IsNumeric(!"+7"));
 	ASSERT(!IsNumeric(!"0xG"));
 	ASSERT(!IsNumeric("hi"));
+}
 
+TEST__ y_utils_HexStr()
+{
 	ASSERT_EQ(HexStr("0xFFAA"), 0xFFAA);
 	ASSERT_EQ(HexStr(!"0x1001123"), 0x1001123);
 	ASSERT_EQ(HexStr("000000"), 0);
 	ASSERT_EQ(HexStr(!"DEAD111"), 0xDEAD111);
 	ASSERT_EQ(HexStr(!"0xFFAA"), 0xFFAA);
+}
 
+TEST__ y_utils_BoolStr()
+{
 	ASSERT(BoolStr("true"));
 	ASSERT(BoolStr(!"true"));
 	ASSERT(BoolStr("1"));
@@ -967,7 +1028,10 @@ TEST__ y_utils_3()
 	ASSERT(!BoolStr(!"0"));
 	ASSERT(!BoolStr(""));
 	ASSERT(!BoolStr(!""));
+}
 
+TEST__ y_utils_BinStr()
+{
 	ASSERT_EQ(BinStr("0101010"), 0b0101010);
 	ASSERT_EQ(BinStr(!"0101010"), 0b0101010);
 	ASSERT_EQ(BinStr("0b1010"), 0b1010);
