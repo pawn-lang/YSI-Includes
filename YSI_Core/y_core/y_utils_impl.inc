@@ -3801,24 +3801,24 @@ stock File:ftemporary(string:ret[] = "", const string:ext[] = "tmp", len = sizeo
 #define _ALS_ftemporary
 
 #if _YSI_SAFE_STARTUP
-	#define _YSI_DEFAULT_DIR_PREFIX __COMPILER_PACK""
+	#define _YSI_DEFAULT_DIR_PREFIX ""
 #else
-	#define _YSI_DEFAULT_DIR_PREFIX __COMPILER_PACK"YSI"
+	#define _YSI_DEFAULT_DIR_PREFIX "YSI"
 #endif
 
 static stock
 	YSI_gsDefaultDirs[E_YSI_DIR][YSI_DIR_LENGTH] = {
 #if _DEBUG
-		_YSI_DEFAULT_DIR_PREFIX "/debug/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/debug/",
 #endif
 #if defined YSI_TESTS
-		_YSI_DEFAULT_DIR_PREFIX "/tests/",
-		_YSI_DEFAULT_DIR_PREFIX "/YDBG/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/tests/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/YDBG/",
 #endif
 		//"/text/",
 		//"/users/",
-		_YSI_DEFAULT_DIR_PREFIX "/fixes/",
-		_YSI_DEFAULT_DIR_PREFIX "/temp/"
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/fixes/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/temp/"
 	};
 
 #undef _YSI_DEFAULT_DIR_PREFIX

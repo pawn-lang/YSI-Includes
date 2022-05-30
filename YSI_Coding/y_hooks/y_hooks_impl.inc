@@ -416,7 +416,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, const name[], nlen)
 {
 	P:4("Hooks_GetPointerRewrite called");
-	P:5("Hooks_GetPointerRewrite: (%s), num: %d, hoks: %08x, %08x, %08x, %08x", name, num, AMX_Read(hooks[0]), AMX_Read(hooks[1]), AMX_Read(hooks[2]), AMX_Read(hooks[3]));
+	P:5("Hooks_GetPointerRewrite: (%s), num: %d, hooks: %08x, %08x, %08x, %08x", name, num, AMX_Read(hooks[0]), AMX_Read(hooks[1]), AMX_Read(hooks[2]), AMX_Read(hooks[3]));
 	switch (num)
 	{
 		case 0:
@@ -723,7 +723,7 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, 
 	// absolutely simpler!
 	new
 		size = Hooks_WriteFunction(hooks, count, Hooks_GetDefaultReturn(name));
-	P:4("Hooks_GenerateCode %32s called: %6d %6d %08x %d", name[4], hasprehooks, size, hasprehooks ? (write - AMX_HEADER_COD) : (write - AMX_BASE_ADDRESS), CGen_GetCodeSpace());
+	P:4("Hooks_GenerateCode %32s called: %6d %6d %08x %d", name, hasprehooks, size, hasprehooks ? (write - AMX_HEADER_COD) : (write - AMX_BASE_ADDRESS), CGen_GetCodeSpace());
 	if (size)
 	{
 		//AMX_Write(write, 40);
@@ -1180,8 +1180,8 @@ stock _Hooks_AddReplacement(const longName[], const shortName[])
 		P:E("Insufficient space in the replacements table.");
 		return;
 	}
-	StrCpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 16),
-	StrCpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LONG] , longName , 16),
+	strunpack(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 16),
+	strunpack(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LONG], longName, 16),
 	YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MIN] = strlen(shortName),
 	YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MAX] = strlen(longName),
 	YSI_g_sReplacementsLongOrder[YSI_g_sReplacePtr] = YSI_g_sReplacePtr,

@@ -107,8 +107,8 @@ Optional plugins:
 #endif
 
 // Generate a function name using only ONE of the parts, so two replacements for
-// the same long name will collide at compile-time
-#define DEFINE_HOOK_REPLACEMENT__(%0,%1); forward @_yH%0(); public @_yH%0() { _Hooks_AddReplacement(#%0, #%1); }
+// the same long name will collide at compile-time.  Always packed.
+#define DEFINE_HOOK_REPLACEMENT__(%0,%1); forward @_yH%0(); public @_yH%0() { _Hooks_AddReplacement(__COMPILER_PACK#%0, __COMPILER_PACK#%1); }
 
 // Strip spaces from the generated function names.
 #define @yH_%0\32; @yH_ // hook

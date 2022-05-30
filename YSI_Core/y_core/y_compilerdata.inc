@@ -179,10 +179,10 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 #if sizeof (__COMPILER_PACKED_TEST) == 1
 	#define __COMPILER_STRING_PACKING (1)
 	#define __COMPILER_PACK
-	#define __COMPILER_UNPACK !
+	#define __COMPILER_UNPACK !""
 #else
 	#define __COMPILER_STRING_PACKING (0)
-	#define __COMPILER_PACK !
+	#define __COMPILER_PACK !""
 	#define __COMPILER_UNPACK
 #endif
 
