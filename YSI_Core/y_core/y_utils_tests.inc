@@ -845,22 +845,30 @@ TEST__ y_utils_1()
 	StrCpy(dest, !"hello 4");
 	ASSERT_SAME(dest, !"hello 4");
 
-	StrToUpper(dest, "HEllO 1");
+	dest = "HEllO 1";
+	StrToLower(dest);
 	ASSERT_SAME(dest, "hello 1");
-	StrToUpper(dest, "HEllO 2");
+	dest = "HEllO 2";
+	StrToLower(dest);
 	ASSERT_SAME(dest, !"hello 2");
-	StrToUpper(dest, !"HEllO 3");
+	dest = !"HEllO 3";
+	StrToLower(dest);
 	ASSERT_SAME(dest, "hello 3");
-	StrToUpper(dest, !"HEllO 4");
+	dest = !"HEllO 4";
+	StrToLower(dest);
 	ASSERT_SAME(dest, !"hello 4");
 
-	StrToUpper(dest, "HEllO 1");
+	dest = "HEllO 1";
+	StrToUpper(dest);
 	ASSERT_SAME(dest, "HELLO 1");
-	StrToUpper(dest, "HEllO 2");
+	dest = "HEllO 2";
+	StrToUpper(dest);
 	ASSERT_SAME(dest, !"HELLO 2");
-	StrToUpper(dest, !"HEllO 3");
+	dest = !"HEllO 3";
+	StrToUpper(dest);
 	ASSERT_SAME(dest, "HELLO 3");
-	StrToUpper(dest, !"HEllO 4");
+	dest = !"HEllO 4";
+	StrToUpper(dest);
 	ASSERT_SAME(dest, !"HELLO 4");
 
 	dest = "   World 1 \r\n";
@@ -892,9 +900,9 @@ TEST__ y_utils_1()
 	ASSERT_SAME(dest, "World 2");
 
 	dest = "   World 1 \r\n";
-	ASSERT_EQ(EndOfLine(dest), 10);
+	ASSERT(EndOfLine(dest, 10));
 	dest = !"   World 2 \r\n";
-	ASSERT_EQ(EndOfLine(dest), 10);
+	ASSERT(EndOfLine(dest, 10));
 
 	dest = "   World 1 \r\n";
 	ASSERT_EQ(ChrFind('l', dest), 6);

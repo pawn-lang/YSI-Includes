@@ -76,13 +76,13 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#define SZB_:%9```%0(%1)%2``` SZB_:%9```%0\x28;%1\x29;%2```
-#define SZQ_:%9```%0"%1"%2``` SZQ_:%9```%0\x60;%1\x60;%2```
-#define SZP_:%9```%0!"%1"%2``` SZP_:%9```%0!\x60;%1\x60;%2```
-#define SZC_:%9```%0,%2``` SZC_:%9```%0\x2C;%2```
-#define SZN_:%9```%0:%2``` SZN_:%9```%0\x3A;%2```
+#define SZB_:%9```%0(%1)%2``` SZB_:%9```%0\40;%1\41;%2```
+#define SZQ_:%9```%0"%1"%2``` SZQ_:%9```%0\96;%1\96;%2```
+#define SZP_:%9```%0!%2``` SZP_:%9```%0\33;%2```
+#define SZC_:%9```%0,%2``` SZC_:%9```%0\44;%2```
+#define SZN_:%9```%0:%2``` SZN_:%9```%0\58;%2```
 #define SZE_:%9```%0``` "\"%0\""
 
-#define STRINGISE__(%0) (_:SZB_:SZQ_:SZP_:SZC_:SZN_:SZE_:```%0```)
+#define STRINGISE__(%0) (_:SZB_:SZP_:SZQ_:SZC_:SZN_:SZE_:```%0```)
 #define STRINGIZE__ STRINGISE__
 
