@@ -186,6 +186,8 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 	#define __COMPILER_UNPACK
 #endif
 
+#define __COMPILER_UNPACKEDMAX ((1<<cellbits)-1)
+
 #include "y_compilerdata_codepage"
 
 #define __COMPILER_BUG_317 (1)
@@ -789,8 +791,6 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #else
 	#error Unknown cellbits size.
 #endif
-
-#define __COMPILER_UNPACKEDMAX ((1<<cellbits)-1)
 
 #define FUNCTION_LENGTH (__COMPILER_sNAMEMAX + 1)
 
