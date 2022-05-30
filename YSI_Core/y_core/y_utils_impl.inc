@@ -470,7 +470,7 @@ P:D(floordiv(numerator, denominator));
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:IsNull(const string:str[]));
-#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
+#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x01000000)
 
 #if defined isnull
 	#undef isnull
