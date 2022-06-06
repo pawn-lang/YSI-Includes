@@ -80,10 +80,6 @@ Optional plugins:
 #define YSI_DIALOG_MASK (Func:cellmax<iiiis>)
 #define YSI_DIALOG_INVALID (Func:cellmin<iiiis>)
 
-#if !defined DIALOG_STYLE
-	#define DIALOG_STYLE: _:
-#endif
-
 static stock
 	YSI_g_sPlayerDialog[MAX_PLAYERS] = {-1, ...},
 	Func:YSI_g_sPlayerCallback[MAX_PLAYERS]<iiiis>;
