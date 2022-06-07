@@ -41,7 +41,8 @@ REMOTE_FUNC__ static void:yrt_7(&a, &b, c, &d)
 	b = a;
 	c += d;
 	d -= 4;
-	#pragma unused c
+	#pragma unused c // Try to ignore the warning, but fail.
+	#emit LOAD.S.pri c // Mark the variable as used.
 }
 
 REMOTE_FUNC__ stock string:yrt_8();
