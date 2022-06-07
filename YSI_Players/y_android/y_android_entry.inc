@@ -100,7 +100,7 @@ stock bool:IsPCPlayer(playerid)
 {
 	if (!IsPlayerConnected(playerid))
 	{
-		return false;
+		return bool:-1;
 	}
 	return YSI_g_sIsAndroid[playerid] == false;
 }
@@ -109,7 +109,7 @@ stock bool:IsAndroidPlayer(playerid)
 {
 	if (!IsPlayerConnected(playerid))
 	{
-		return false;
+		return bool:-1;
 	}
 	return YSI_g_sIsAndroid[playerid] == true;
 }
