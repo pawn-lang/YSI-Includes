@@ -41,6 +41,7 @@ REMOTE_FUNC__ static void:yrt_7(&a, &b, c, &d)
 	b = a;
 	c += d;
 	d -= 4;
+	#pragma unused c
 }
 
 REMOTE_FUNC__ stock string:yrt_8();
