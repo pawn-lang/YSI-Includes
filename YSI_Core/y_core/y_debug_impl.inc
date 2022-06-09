@@ -90,13 +90,13 @@ stock YSI_gDebugLevel = 0;
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code1(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
+ * Debug_Code1{if (bla == 2) { bla++; YSI_PrintF__("%d", bla); }}
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:1(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
+ * C:1{if (bla == 2) { bla++; YSI_PrintF__("%d", bla); }}
  *  </code>
  *
  *  The code must all be on one line to avoid errors.

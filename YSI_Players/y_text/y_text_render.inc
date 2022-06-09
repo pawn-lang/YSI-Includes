@@ -1725,7 +1725,7 @@ Format_Render_start:
 		++one;
 	}
 	Debug_Print5("Text_Render: p = %d, output = \"%s\"", p, output);
-	Debug_Code1(idx=0;while ((ch = output[idx++]))printf("%04x%04x = %c", ch >>> 16, ch & 0xFFFF, ch););
+	Debug_Code1{idx=0;while ((ch = output[idx++]))printf("%04x%04x = %c", ch >>> 16, ch & 0xFFFF, ch);}
 	Debug_Print5("Text_Render end");
 	return one;
 }

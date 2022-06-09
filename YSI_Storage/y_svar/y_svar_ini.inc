@@ -167,7 +167,7 @@ public _Config_Load_y_svar(name[], value[])
 			return;
 		}
 		// Check that the data is the right size.
-		Debug_Code1(if (strval(value) != YSI_g_sLastSize) Debug_Error("uvar data changed in %s", YSI_g_sLastName););
+		Debug_Code1{if (strval(value) != YSI_g_sLastSize) Debug_Error("uvar data changed in %s", YSI_g_sLastName);}
 	}
 	else
 	{

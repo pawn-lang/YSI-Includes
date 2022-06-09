@@ -182,7 +182,7 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 		// Do nothing if they're the same.
 		return true;
 	}
-	Debug_Code1(else if (slot == size1) print("Cannot alter the last slot in an array."););
+	Debug_Code1{else if (slot == size1) print("Cannot alter the last slot in an array.");}
 	return false;
 }
 #define Jagged_ResizeOne(%0,%1) _Jagged_ResizeOne(_Jagged(%0),%1)
@@ -361,7 +361,7 @@ stock bool:Jagged_MoveOne(array[][], size1, size2, slot, newSize)
 		// Do nothing if they're the same.
 		return true;
 	}
-	Debug_Code1(else if (slot == size1) print("Cannot alter the last slot in an array."););
+	Debug_Code1{else if (slot == size1) print("Cannot alter the last slot in an array.");}
 	return false;
 }
 

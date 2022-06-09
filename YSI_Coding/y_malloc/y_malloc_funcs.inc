@@ -331,7 +331,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
 		{
 			return Malloc_GetData(_:array, index);
 		}
-		Debug_Code1(else Debug_Error("Array read index out of bounds: %d[%d]", _:array, index););
+		Debug_Code1{else Debug_Error("Array read index out of bounds: %d[%d]", _:array, index);}
 		return 0;
 	}
 
@@ -360,7 +360,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
 		{
 			return Malloc_SetData(_:array, index, value);
 		}
-		Debug_Code1(else Debug_Error("Array write index out of bounds: %d[%d]", _:array, index););
+		Debug_Code1{else Debug_Error("Array write index out of bounds: %d[%d]", _:array, index);}
 		return 0;
 	}
 
@@ -545,7 +545,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 		//strcat(YSI_gMallocMemory[index], str, cellmax);
 	}
 	#if defined YSI_MALLOC_SECURE
-		Debug_Code1(else Debug_Error("String copy failed (%s)", str););
+		Debug_Code1{else Debug_Error("String copy failed (%s)", str);}
 	#endif
 }
 
@@ -569,7 +569,7 @@ stock Malloc_GetA(dest[], length, Alloc:array, index)
 		Debug_Print5("Malloc_GetA: size = %d, %d.", size, size - index);
 		memcpy(dest, YSI_gMallocMemory[index + _:array], 0, min(size - index, length) * 4, length);
 		#if defined YSI_MALLOC_SECURE
-			Debug_Code1(if(length > size)Debug_Error("Out of buffer space."););
+			Debug_Code1{if(length > size)Debug_Error("Out of buffer space.");}
 		#endif
 		return 1;
 	}
@@ -596,7 +596,7 @@ stock Malloc_SetA(Alloc:array, index, const source[], length)
 		Debug_Print5("Malloc_SetA: size = %d.", size);
 		memcpy(YSI_gMallocMemory[index + _:array], source, 0, min(size - index, length) * 4, size - index);
 		#if defined YSI_MALLOC_SECURE
-			Debug_Code1(if(length > size - index)Debug_Error("Out of buffer space."););
+			Debug_Code1{if(length > size - index)Debug_Error("Out of buffer space.");}
 		#endif
 	}
 }
@@ -658,7 +658,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 		#emit STACK      24
 	}
 	#if defined YSI_MALLOC_SECURE
-		Debug_Code1(else Debug_Error("Array copy out of memory."););
+		Debug_Code1{else Debug_Error("Array copy out of memory.");}
 	#endif
 }
 
@@ -678,7 +678,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 	{
 		new
 			Alloc:slot = Malloc_Allocate(size, false);
-		Debug_Code1(if(!slot)Debug_Error("Allocation failed (%d)", size););
+		Debug_Code1{if(!slot)Debug_Error("Allocation failed (%d)", size);}
 		return slot;
 	}
 
@@ -714,7 +714,7 @@ stock Alloc:calloc(size)
 	//	}
 	//}
 	//#if defined YSI_MALLOC_SECURE
-	Debug_Code1(if(!slot)Debug_Error("Allocation failed (%d)", size););
+	Debug_Code1{if(!slot)Debug_Error("Allocation failed (%d)", size);}
 	//#endif
 	return slot;
 }

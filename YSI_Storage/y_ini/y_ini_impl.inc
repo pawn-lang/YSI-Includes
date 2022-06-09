@@ -1522,7 +1522,7 @@ static stock INI_ReadFile(File:fhnd, parent[FUNCTION_LENGTH], bool:handle = true
 					fseek(fhnd, pos, seek_start);
 					parent[0] = '\0';
 				}
-				Debug_Code1(else { print("INI_ReadFile: tag has no parent"); });
+				Debug_Code1{else { print("INI_ReadFile: tag has no parent"); }}
 				// https://github.com/pawn-lang/compiler/issues/669
 				#pragma unused handle
 				handle = true;

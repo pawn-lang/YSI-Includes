@@ -125,7 +125,7 @@ Optional plugins:
 	#include "y_master__pop_master"
 	
 	// Useful debug information (isn't compiled, but shows up with "-l").
-	Debug_Code1(static stock const _POPPED_MASTER = MASTER;);
+	Debug_Code1{static stock const _POPPED_MASTER = MASTER;}
 #endif
 
 #if MASTER < 0 || MASTER >= MAX_MASTERS

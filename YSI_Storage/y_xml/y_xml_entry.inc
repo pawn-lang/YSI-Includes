@@ -615,7 +615,7 @@ stock XML_GetParentValue(const key[], value[])
 	value[0] = 1;
 	value[1] = 0;
 	Debug_Print7("XML_GetParentValue: first");
-	//Debug_Code1(for (new i = 0; i != YSI_g_sCurBuffer; ++i) Debug_Print0("XML_GetParentValue: buffer[%d] = %s", i, YSI_g_sParameters[i][E_XML_PARA_NAME]););
+	//Debug_Code1{for (new i = 0; i != YSI_g_sCurBuffer; ++i) Debug_Print0("XML_GetParentValue: buffer[%d] = %s", i, YSI_g_sParameters[i][E_XML_PARA_NAME]);}
 	for (new i = 0; i != YSI_g_sCurBuffer; ++i)
 	{
 		Debug_Print7("XML_GetParentValue: second %d %d %d", i, YSI_g_sParameters[i][E_XML_PARA_LEVEL], YSI_g_sEndTag);

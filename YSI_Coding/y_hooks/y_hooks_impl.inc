@@ -395,9 +395,9 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 		strcat(lfunc, name),
 		Hooks_MakeShortName(lfunc);
 		Debug_Print5("Hooks_GetPreHooks: search = %s", Unpack(lfunc));
-		Debug_Code1(new oc = count;);
+		Debug_Code1{new oc = count;}
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
-		Debug_Code1(if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[oc] + 4) + AMX_BASE_ADDRESS, buffer); strunpack(buffer, buffer); Debug_Print5("Hooks_GetPreHooks: found = %s", buffer); });
+		Debug_Code1{if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[oc] + 4) + AMX_BASE_ADDRESS, buffer); strunpack(buffer, buffer); Debug_Print5("Hooks_GetPreHooks: found = %s", buffer); }}
 		StrCpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
 		strcat(lfunc, "_");
 	}
@@ -1227,7 +1227,7 @@ static stock Hooks_SortReplacements()
 			}
 		}
 	}
-	Debug_Code1(for (new i = 0 ; i != YSI_g_sReplacePtr; ++i) Debug_Print0("Hook Replacement: %d, %d, %s, %s", YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MIN], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG]););
+	Debug_Code1{for (new i = 0 ; i != YSI_g_sReplacePtr; ++i) Debug_Print0("Hook Replacement: %d, %d, %s, %s", YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MIN], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG]);}
 }
 
 /*-------------------------------------------------------------------------*//**
