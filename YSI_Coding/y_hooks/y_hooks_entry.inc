@@ -89,6 +89,8 @@ Optional plugins:
 	#define MAX_Y_HOOKS (128)
 #endif
 
+#define Y_HOOKS_MAX_NAME (__COMPILER_sNAMEMAX * 2 + 1)
+
 #include "y_hooks_macros"
 #include "y_hooks_impl"
 #include "y_hooks_nps"

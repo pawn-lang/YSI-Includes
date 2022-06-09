@@ -146,7 +146,7 @@ static stock
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Hooks_MakeLongName(name[64])
+stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 {
 	new
 		end = 0,
@@ -233,7 +233,7 @@ stock Hooks_MakeLongName(name[64])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Hooks_MakeShortName(name[64])
+stock Hooks_MakeShortName(name[Y_HOOKS_MAX_NAME])
 {
 	// Easy one.
 	new
@@ -382,12 +382,12 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount, const name[64], hooks[], &count)
+_Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount, const name[Y_HOOKS_MAX_NAME], hooks[], &count)
 {
 	P:4("Hooks_GetPreHooks called");
 	new
 		idx = 0,
-		lfunc[64];
+		lfunc[Y_HOOKS_MAX_NAME];
 	// Collect all the functions with something like this name.
 	P:2("Hooks_GetPreHooks start: %s", Unpack(name));
 	do
@@ -589,7 +589,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 	new
 		len = strlen(name) + 1,
 		count = 0,
-		tmpName[64];
+		tmpName[Y_HOOKS_MAX_NAME];
 	while ((idx = AMX_GetPublicEntryPrefix(idx, hooks[count], _A<@yH_>)))
 	{
 		AMX_GetStringFromEntry(hooks[count], tmpName),
@@ -662,7 +662,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	// Where "XXX" is some unique number (the exact value is irrelevant, it just
 	// means that multiple hooks of the same function have different names).
 	static
-		sName[64],
+		sName[Y_HOOKS_MAX_NAME],
 		sHooks[MAX_Y_HOOKS];
 	// The above now becomes:
 	//   
@@ -709,7 +709,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
  * <param name="hasprehooks">Needs to call other stuff first.</param>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, bool:hasprehooks)
+_Y_HOOKS_STATIC Hooks_GenerateCode(const name[Y_HOOKS_MAX_NAME], const hooks[], count, write, bool:hasprehooks)
 {
 	P:4("Hooks_GenerateCode called");
 	// We now have:
@@ -789,11 +789,11 @@ _Y_HOOKS_STATIC stock Hooks_GetFunctionWritePoint(const name[], &write)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[64])
+_Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
 {
 	P:4("Hooks_GetDefaultReturn called");
 	new
-		dest[64] = "@y_H";
+		dest[Y_HOOKS_MAX_NAME] = "@y_H";
 	strcat(dest, name);
 	Hooks_MakeShortName(dest);
 	new
