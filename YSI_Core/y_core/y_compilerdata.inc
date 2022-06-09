@@ -199,6 +199,9 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 #define __COMPILER_STATIC_ENUM enum
 #define __COMPILER_CONST_STATIC const
 
+// Generate macro opcodes?
+#define __COMPILER_O2 (0)
+
 // Has `#pragma option`
 #define __COMPILER_OPTION (0)
 
@@ -290,6 +293,13 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 		//#define __COMPILER_PRAGMA (1)
 		#undef __COMPILER_CONST_STATIC
 		#define __COMPILER_CONST_STATIC const static
+	#endif
+
+	#if defined __optimisation
+		#if __optimisation == 2
+			#undef __COMPILER_O2
+			#define __COMPILER_O2 (1)
+		#endif
 	#endif
 #else
 	#define __COMPILER_USER_WARNING (0)
