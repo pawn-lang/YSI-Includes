@@ -113,10 +113,10 @@ Optional plugins:
 // Chain init functions.
 #define GROUP_CHAIN%9<%0>(%1) (J@=_:(_Y_G@C_YES:_Y_G@C_NO:%0%9|||(_:_Y_G@C3:_Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1))))
 
-#define _Y_G@C3:_Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1,%2,%3) _Y_G@C_3(%0,_:_Y_G@Debug_Print_Y_G@Q:_Y_G@R:%1,_:%2,_:%3|||)
-#define _Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1,%2) _Y_G@C_2(%0,_:_Y_G@Debug_Print_Y_G@Q:_Y_G@R:%1,_:%2|||)
+#define _Y_G@C3:_Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1,%2,%3) _Y_G@C_3(%0,_:_Y_G@P:_Y_G@Q:_Y_G@R:%1,_:%2,_:%3|||)
+#define _Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1,%2) _Y_G@C_2(%0,_:_Y_G@P:_Y_G@Q:_Y_G@R:%1,_:%2|||)
 #define _Y_G@C0:_Y_G@C1:%0() _Y_G@C_0(%0)
-#define _Y_G@C1:%0(%1) _Y_G@C_1(%0,_:_Y_G@Debug_Print_Y_G@Q:_Y_G@R:%1|||)
+#define _Y_G@C1:%0(%1) _Y_G@C_1(%0,_:_Y_G@P:_Y_G@Q:_Y_G@R:%1|||)
 #define _Y_G@C_YES:_Y_G@C_NO:%0?||| (!(%0))?(0):
 #define _Y_G@C_NO:%0|||
 // Can strip out multiple brackets in one go.

@@ -162,7 +162,7 @@ FUNC_PAWNDOC(iterfunc(params));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Iterator@Reverse(Iterator:iter<>));
-#define Iterator@Reverse%9;_:(%1=%9(%0)%9)%9; F@o)+_:F@Debug_Fatal@q:$%1,%0$
+#define Iterator@Reverse%9;_:(%1=%9(%0)%9)%9; F@o)+_:F@p:F@q:$%1,%0$
 
 /*
 
