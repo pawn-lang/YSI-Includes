@@ -107,7 +107,7 @@ Optional plugins:
 #if defined _Y_UNIQUE_INCLUDED
 	#undef _Y_UNIQUE_INCLUDED
 #else
-	#error Did you use `YSI/y_hooks` instead of `YSI\y_hooks`?
+	#error Did you use `YSI_Coding/y_hooks` instead of `YSI_Coding\y_hooks`?
 #endif
 
 #if !defined _INC_y_hooks
