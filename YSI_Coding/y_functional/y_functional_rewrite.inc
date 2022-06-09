@@ -130,11 +130,11 @@ static stock Functional_FoundStart(const scanner[CodeScanner])
 {
 	if (YSI_g_sFunctionalStartPos != 0)
 		return -1;
-	P:4("Functional_FoundStart called");
+	Debug_Print4("Functional_FoundStart called");
 	YSI_g_sFunctionalStartPos = CodeScanGetMatchAddressData(scanner);
 	// NOP the call out.
 	CodeScanNOPMatch(scanner);
-	P:5("Functional_FoundStart done");
+	Debug_Print5("Functional_FoundStart done");
 	if (YSI_g_sFunctionalExpectedDepth < 0)
 	{
 		YSI_g_sFunctionalExpectedDepth = CodeScanGetMatchStack(scanner);
@@ -150,10 +150,10 @@ static stock Functional_FoundEnd(const scanner[CodeScanner])
 		return -1;
 	if (YSI_g_sFunctionalEndPos != 0)
 		return -1;
-	P:4("Functional_FoundEnd called");
+	Debug_Print4("Functional_FoundEnd called");
 	YSI_g_sFunctionalEndPos = CodeScanGetMatchAddressData(scanner);
 	CodeScanNOPMatch(scanner);
-	P:5("Functional_FoundEnd done");
+	Debug_Print5("Functional_FoundEnd done");
 	return 0;
 }
 
@@ -161,10 +161,10 @@ static stock Functional_FoundAfter(const scanner[CodeScanner])
 {
 	if (YSI_g_sFunctionalAfterPos != 0)
 		return -1;
-	P:4("Functional_FoundAfter called");
+	Debug_Print4("Functional_FoundAfter called");
 	YSI_g_sFunctionalAfterPos = CodeScanGetMatchAddressData(scanner);
 	CodeScanNOPMatch(scanner);
-	P:5("Functional_FoundAfter done");
+	Debug_Print5("Functional_FoundAfter done");
 	// Immediately end the scanner.
 	if (YSI_g_sFunctionalAfterPos > YSI_g_sFunctionalLastEnd)
 		YSI_g_sFunctionalLastEnd = YSI_g_sFunctionalAfterPos;
@@ -182,7 +182,7 @@ static stock Functional_FoundCall2(const scanner[CodeScanner])
 
 static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 {
-	P:4("Functional_FoundCall called: %d", nestingLevel);
+	Debug_Print4("Functional_FoundCall called: %d", nestingLevel);
 	
 	// Found the code scanner itself - ignore this one.
 	if (nestingLevel > 0)
@@ -318,7 +318,7 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	// to a jump back to `callPos + 8`, and `YSI_g_sFunctionalStartPos` in to a jump to
 	// `YSI_g_sFunctionalAfterPos`.
 	
-	P:5("Functional_FoundCall: generating %d %d %d %d", callPos, YSI_g_sFunctionalStartPos, YSI_g_sFunctionalEndPos, YSI_g_sFunctionalAfterPos);
+	Debug_Print5("Functional_FoundCall: generating %d %d %d %d", callPos, YSI_g_sFunctionalStartPos, YSI_g_sFunctionalEndPos, YSI_g_sFunctionalAfterPos);
 	new
 		ctx[AsmContext],
 		excess = CodeScanGetMatchStack(scanner) - YSI_g_sFunctionalExpectedDepth;
@@ -374,7 +374,7 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 
 public OnCodeInit()
 {
-	P:2("Functional_OnCodeInit called");
+	Debug_Print2("Functional_OnCodeInit called");
 	// Look for any calls to `LAM@0`, then find the next call to `LAM@1` with a matching parameter
 	// number (the exact value is unimportant; however, for now we know that it is always `<= 0`, so
 	// if the parameter is `> 0` ignore it - it's the code scanner itself).  Get rid of all the

@@ -158,11 +158,11 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 {
 	if (cur == -1)
 	{
-		P:3("__PS_S called: %i", _:addr);
+		Debug_Print3("__PS_S called: %i", _:addr);
 		// Increment the "stack" pointer.
 		if (__ps_pointer == MAX_PLAYER_SET_STACK - 1)
 		{
-			P:E("y_playerset stack overflow - increase \"MAX_PLAYER_SET_STACK\"");
+			Debug_Error("y_playerset stack overflow - increase \"MAX_PLAYER_SET_STACK\"");
 			return -1;
 		}
 		++__ps_pointer;
@@ -344,7 +344,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 		}
 		// Will have returned by this point.
 	}
-	P:3("__PS_N called: %i, %i", _:addr, cur);
+	Debug_Print3("__PS_N called: %i, %i", _:addr, cur);
 	// Each mode has a different end condition.
 	switch (__ps_type{__ps_pointer})
 	{

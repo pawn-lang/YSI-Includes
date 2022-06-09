@@ -171,7 +171,7 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	// Apparently there's a hack to alter this.
 	dialogid = YSI_g_sPlayerDialog[playerid];
-	P:1("Dialog_OnDialogResponse called: %d %d %d %d %s", playerid, dialogid, response, listitem, inputtext);
+	Debug_Print1("Dialog_OnDialogResponse called: %d %d %d %d %s", playerid, dialogid, response, listitem, inputtext);
 	if (dialogid == YSI_DIALOG_ID_1)
 	{
 		// Can't be `YSI_DIALOG_INVALID`, because `dialogid == YSI_DIALOG_ID_1.
@@ -207,7 +207,7 @@ stock bool:Dialog_ShowPlayerDialog(playerid, dialog, DIALOG_STYLE:style, const s
 	// Fail.
 	if (dialog == YSI_DIALOG_ID_1 || dialog == YSI_DIALOG_ID_2)
 	{
-		P:E("Trying to show a dialog with YSI reserved ID %d", dialog);
+		Debug_Error("Trying to show a dialog with YSI reserved ID %d", dialog);
 		return false;
 	}
 	BROADCAST_FUNC__ Dialog_Set(playerid, dialog);

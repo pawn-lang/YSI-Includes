@@ -107,8 +107,14 @@ Optional plugins:
 //   P:D(bool:MyFunc(playerid));
 //   #define MyFunc(%0) ((%0) < MAX_PLAYERS)
 //   
-#define P:%1(%2); Debug_Print%1(%2);
-#define C:%1(%2); Debug_Code%1(%2);
+
+#if YSI_OPTIONAL(P)
+	#define P:%1(%2); Debug_Print%1(%2);
+#endif
+
+#if YSI_OPTIONAL(C)
+	#define C:%1{%2} Debug_Code%1{%2}
+#endif
 
 // This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
 // or `__COMPILER_WINDOWS` depending on where the code is being built.  It does
@@ -317,7 +323,7 @@ const __COMPILER_DETERMINE_SEMICOLON = 1;
 	// `-;-`
 	#define __COMPILER_SEMICOLON (0)
 
-	// The macros `P:C` and `P:#` don't work without this.
+	// The macros `Debug_Code1` and `P:#` don't work without this.
 	#pragma semicolon 1
 
 	#if __COMPILER_USER_WARNING

@@ -219,7 +219,7 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:_Command_IsEmptySlot(idx));
+FUNC_PAWNDOC(bool:_Command_IsEmptySlot(idx));
 #define _Command_IsEmptySlot(%0) (!YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
 /*-------------------------------------------------------------------------*//**
@@ -229,7 +229,7 @@ P:D(bool:_Command_IsEmptySlot(idx));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:_Command_IsAlt(idx));
+FUNC_PAWNDOC(bool:_Command_IsAlt(idx));
 #define _Command_IsAlt(%0) (YSI_g_sCommands[(%0)][E_COMMAND_POINTER] & cellmin)
 
 /*-------------------------------------------------------------------------*//**
@@ -242,7 +242,7 @@ P:D(bool:_Command_IsAlt(idx));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(_Command_GetReal(&ptr,&idx,name[]));
+FUNC_PAWNDOC(_Command_GetReal(&ptr,&idx,name[]));
 #define _Command_GetReal(%0,%1,%2)                              \
 	if((%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER])&cellmin)   \
 			%1=(%0)&~cellmin,									\
@@ -288,7 +288,7 @@ P:D(_Command_GetReal(&ptr,&idx,name[]));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:_Command_IsActive(command));
+FUNC_PAWNDOC(bool:_Command_IsActive(command));
 #define _Command_IsActive(%0) (YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
 /*-------------------------------------------------------------------------*//**
@@ -325,14 +325,14 @@ P:D(bool:_Command_IsActive(command));
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(_Command_GetPrefix(c));
+FUNC_PAWNDOC(_Command_GetPrefix(c));
 #define _Command_GetPrefix(%0) (YSI_g_sCommands[(%0)][E_COMMAND_PREFIX])
 
 /*-------------------------------------------------------------------------*//**
  * <param name="f">Command to get the name of.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(Command_Name(f));
+FUNC_PAWNDOC(Command_Name(f));
 #define Command_Name(%0) (YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
 /*
@@ -365,7 +365,7 @@ FOREIGN__ Command_GetID(const string:function[]);
 
 GLOBAL__ Command_GetID(const string:function[])
 {
-	P:2("Command_GetID called: \"%s\"", function);
+	Debug_Print2("Command_GetID called: \"%s\"", function);
 	return Command_Find(function);
 }
 
@@ -402,7 +402,7 @@ GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
 		// Command doesn't already exist, add it.
 		if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
 		{
-			P:E("Could not add alt command to array.");
+			Debug_Error("Could not add alt command to array.");
 			return COMMAND_NOT_FOUND;
 		}
 		#if defined Y_COMMANDS_USE_CHARS
@@ -448,7 +448,7 @@ GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-//P:D(Command_ReProcess(playerid,cmdtext,help,force));
+//FUNC_PAWNDOC(Command_ReProcess(playerid,cmdtext,help,force));
 #define Command_ReProcess(%0,%1,%2,%3) Command_ReProcess(%0,%1, _:(%2)|(_:(%3)<<1))
 
 FOREIGN__ Command_ReProcess(p,string:c[],h);
@@ -478,7 +478,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 		if (!IsPlayerConnected(p))
 			return Command_OnReceived(NO_PLAYER, p, c);
 	#endif
-	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
+	Debug_Print1("Commands_OnPlayerCommandText called: %d %s", p, c);
 	if (PA_Get(YSI_g_sDisabledPlayers, p))
 	{
 		sRet = Command_OnReceived(DISABLED, p, c);
@@ -490,7 +490,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	while (c[sPos] == ' ') ++sPos; // Better/slower: ('\0' < c[sPos] <= ' ').
 	// Find the command in the array.
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
-	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, YSI_g_sCurrentID);
+	Debug_Print5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, YSI_g_sCurrentID);
 	if (YSI_g_sCurrentID == COMMAND_NOT_FOUND)
 		return Command_OnReceived(UNDEFINED, p, c);
 	#if defined Y_COMMANDS_USE_CHARS
@@ -499,7 +499,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 		if (sRet && _Command_GetPrefix(YSI_g_sCurrentID) != c[0])
 			return Command_OnReceived(BAD_PREFIX, p, c);
 	#endif
-	P:5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
+	Debug_Print5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
 	// Can the player use this command?  `Command_OnReceived` sets "sErr".
 	if ((h&2) || _Command_GetPlayer(YSI_g_sCurrentID, p))
 		sRet = Command_OnReceived(OK, p, c);
@@ -509,13 +509,13 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 		return sRet;
 	// Find the true version of the command (alts etc).
 	_Command_GetReal(sHash, YSI_g_sCurrentID, sCmd[4]);
-	P:5("Commands_OnPlayerCommandText: Read %d", YSI_g_sCurrentID);
-	P:5("Commands_OnPlayerCommandText: Master %d %d", Master_ID(), _:MASTER_GET<YSI_g_sCurrentID>);
+	Debug_Print5("Commands_OnPlayerCommandText: Read %d", YSI_g_sCurrentID);
+	Debug_Print5("Commands_OnPlayerCommandText: Master %d %d", Master_ID(), _:MASTER_GET<YSI_g_sCurrentID>);
 	#if YSIM_HAS_MASTER
 		if (MASTER_EXCLUSIVE<YSI_g_sCurrentID>)
 	#endif
 		{
-			P:5("Commands_OnPlayerCommandText: Local %08x (%d, \"%s\", %d)", sHash, p, c[sPos], h & 1);
+			Debug_Print5("Commands_OnPlayerCommandText: Local %08x (%d, \"%s\", %d)", sHash, p, c[sPos], h & 1);
 			// In this script.  More to the point, in ONLY this script, so
 			// we can't have another script as the master.  I tried updating
 			// this code but then realised that the update would ignore the
@@ -539,7 +539,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 			#emit SCTRL       8
 			#emit SCTRL       6
 			#emit STOR.pri    sRet
-			P:5("Command_ReProces: Result = %d %d %d", sRet, Command_Error(p, e_COMMAND_ERRORS:sRet), _:COMMAND_OK);
+			Debug_Print5("Command_ReProces: Result = %d %d %d", sRet, Command_Error(p, e_COMMAND_ERRORS:sRet), _:COMMAND_OK);
 		}
 	#if YSIM_HAS_MASTER
 		else
@@ -659,7 +659,7 @@ FOREIGN__ void:Command_SetPlayer(c, p, bool:s);
 
 GLOBAL__ void:Command_SetPlayer(c, p, bool:s)
 {
-	P:2("Command_SetPlayer called: %i, %i, %i", c, p, s);
+	Debug_Print2("Command_SetPlayer called: %i, %i, %i", c, p, s);
 	if (_Command_IsValid(c) && VALID_PLAYERID(p)) PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
 }
 
@@ -975,7 +975,7 @@ FOREIGN__ YCMD_GetPlayerCommandCount(playerid);
 
 GLOBAL__ YCMD_GetPlayerCommandCount(playerid)
 {
-	P:2("Command_GetPlayerCommandCount called: %i", playerid);
+	Debug_Print2("Command_GetPlayerCommandCount called: %i", playerid);
 	new
 		slot = PA_Slot(playerid),
 		Bit:mask = PA_Mask(playerid),
@@ -1090,7 +1090,7 @@ FOREIGN__ string:Command_GetNext(index, playerid);
 
 GLOBAL__ string:Command_GetNext(index, playerid)
 {
-	P:2("Command_GetNext called: %i, %i", index, playerid);
+	Debug_Print2("Command_GetNext called: %i, %i", index, playerid);
 	YSI_g_sReturnBuffer[0] = '\0';
 	if (0 <= index < YSI_g_sHighestID)
 	{
@@ -1405,7 +1405,7 @@ MASTER_HOOK__ OnPlayerCommandText(playerid, cmdtext[])
 
 HOOK__ OnYSIInit()
 {
-	P:1("Command_OnYSIInit called");
+	Debug_Print1("Command_OnYSIInit called");
 	YSI_g_sCommandFlags = e_COMMAND_FLAGS_OK | e_COMMAND_FLAGS_SILENT;
 	#if YSIM_NOT_CLIENT
 		#if defined Y_COMMANDS_USE_CHARS
@@ -1418,17 +1418,17 @@ HOOK__ OnYSIInit()
 			YSI_g_sCommands[func][E_COMMAND_POINTER] = -1;
 		}
 	#endif
-	P:2("_Command_DoInit <> called");
+	Debug_Print2("_Command_DoInit <> called");
 	new
 		entryPublic = 0,
 		buffer[FUNCTION_LENGTH char],
 		idx = 0,
 		id2 = 0;
-	P:5("Command_OnYSIInit: Pre-loop");
+	Debug_Print5("Command_OnYSIInit: Pre-loop");
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entryPublic, _A<@yC_>)))
 	{
 		// Add the command name and pointer, but skip the leading "@yC_".
-		P:6("Command_OnYSIInit: Adding %d", entryPublic);
+		Debug_Print6("Command_OnYSIInit: Adding %d", entryPublic);
 		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entryPublic + 4), buffer),
 		// buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00),
 		buffer[0] = _C<@_yC>,
@@ -1437,11 +1437,11 @@ HOOK__ OnYSIInit()
 		// Check that the function name is all lower-case.
 		for (id2 = 4; buffer{id2}; ++id2)
 		{
-			if (buffer{id2} != tolower(buffer{id2})) P:E("Commands must be in lower-case in your source code.");
+			if (buffer{id2} != tolower(buffer{id2})) Debug_Error("Commands must be in lower-case in your source code.");
 		}
 		// Add the command regardless.
 		Command_Add(buffer[1], ResolveJITAddress(AMX_Read(entryPublic)));
-		P:6("Command_OnYSIInit: Name %s", Unpack(buffer[1]));
+		Debug_Print6("Command_OnYSIInit: Name %s", Unpack(buffer[1]));
 	}
 	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
@@ -1455,7 +1455,7 @@ HOOK__ OnYSIInit()
 
 HANDOFF()
 {
-	P:1("Commands_OnScriptExit <_YCM:p> called");
+	Debug_Print1("Commands_OnScriptExit <_YCM:p> called");
 	// Copy settings.
 	DISTRIBUTE(YSI_g_sCommandFlags);
 	DISTRIBUTE(YSI_g_sErrorMessages);
@@ -1474,7 +1474,7 @@ HANDOFF()
 
 HOOK__ OnScriptExit()
 {
-	P:1("Commands_OnScriptExit <> called");
+	Debug_Print1("Commands_OnScriptExit <> called");
 	if (funcidx(YSI_gscOPCR) != -1) Command_DecOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_DecOPCP();
 }
@@ -1505,7 +1505,7 @@ HOOK__ OnScriptExit()
 						id2 = funcidx(cmdname);
 					if (id2 == -1)
 					{
-						P:W("Command marked EXCLUSIVE, but doesn't exist");
+						Debug_Warning("Command marked EXCLUSIVE, but doesn't exist");
 						Command_Remove(i);
 						continue;
 					}
@@ -1574,7 +1574,7 @@ FOREIGN__ void:Command_IncOPCR();
 
 GLOBAL__ void:Command_IncOPCR()
 {
-	P:2("Command_IncOPCR called");
+	Debug_Print2("Command_IncOPCR called");
 	YSI_g_sCommandFlags += e_COMM_FLAG_OPCR_ADD;
 }
 
@@ -1582,7 +1582,7 @@ FOREIGN__ void:Command_DecOPCR();
 
 GLOBAL__ void:Command_DecOPCR()
 {
-	P:2("Command_DecOPCR called");
+	Debug_Print2("Command_DecOPCR called");
 	YSI_g_sCommandFlags -= e_COMM_FLAG_OPCR_ADD;
 }
 
@@ -1590,7 +1590,7 @@ FOREIGN__ void:Command_IncOPCP();
 
 GLOBAL__ void:Command_IncOPCP()
 {
-	P:2("Command_IncOPCP called");
+	Debug_Print2("Command_IncOPCP called");
 	YSI_g_sCommandFlags += e_COMM_FLAG_OPCP_ADD;
 }
 
@@ -1598,7 +1598,7 @@ FOREIGN__ void:Command_DecOPCP();
 
 GLOBAL__ void:Command_DecOPCP()
 {
-	P:2("Command_DecOPCP called");
+	Debug_Print2("Command_DecOPCP called");
 	YSI_g_sCommandFlags -= e_COMM_FLAG_OPCP_ADD;
 }
 
@@ -1637,16 +1637,16 @@ GLOBAL__ Command_Add(string:cmd[], ptr)
 {
 	// The commands all need to be stored packed.
 	strpack(cmd, cmd, cellmax);
-	P:2("Command_Add: %s, %d", Unpack(cmd), ptr);
+	Debug_Print2("Command_Add: %s, %d", Unpack(cmd), ptr);
 	new
 		id = Command_Find(cmd);
-	P:5("Command_Add: found %d", id);
+	Debug_Print5("Command_Add: found %d", id);
 	if (id == COMMAND_NOT_FOUND)
 	{
 		// Command doesn't already exist, add it.
 		if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
 		{
-			P:E("Could not add command to array.");
+			Debug_Error("Could not add command to array.");
 			return COMMAND_NOT_FOUND;
 		}
 		#if defined Y_COMMANDS_USE_CHARS

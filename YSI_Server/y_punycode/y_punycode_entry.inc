@@ -369,7 +369,7 @@ stock Puny_EncodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (ds
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(_Puny_Basic(num));
+FUNC_PAWNDOC(_Puny_Basic(num));
 #define _Puny_Basic(%0) (((%0) > 25) ? ((%0) + ('0' - 25)) : ((%0) + 'a'))
 
 /*-------------------------------------------------------------------------*//**
@@ -527,8 +527,8 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 							static
 								sDecoded[64];
 							Puny_Decode(sDecoded, sPart);
-							P:5("Puny_HTTP Original: \"%s\", Encoded: \"%s\", Decoded: \"%s\"", url[prev], sPart, sDecoded);
-							if (strcmp(url[prev], sDecoded)) P:E("Puny_Decode did not match Puny_Encode");
+							Debug_Print5("Puny_HTTP Original: \"%s\", Encoded: \"%s\", Decoded: \"%s\"", url[prev], sPart, sDecoded);
+							if (strcmp(url[prev], sDecoded)) Debug_Error("Puny_Decode did not match Puny_Encode");
 						#endif
 					#endif
 				}
@@ -543,7 +543,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 		// Add the remainder of the domain.
 		if (url[end]) strcat(sEncoded, url[end + 1]);
 		#if defined _DEBUG
-			P:2("Puny_HTTP Domain: \"%s\" -> \"%s\"", url, sEncoded);
+			Debug_Print2("Puny_HTTP Domain: \"%s\" -> \"%s\"", url, sEncoded);
 		#endif
 		// Call the original "HTTP".
 		return YSI_HTTP__(index, type, sEncoded, data, callback);

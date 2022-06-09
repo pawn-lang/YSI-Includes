@@ -255,26 +255,26 @@ public CGen_OOM(ctx[AsmContext])
 	{
 	case ASM_ERROR_OPCODE:
 	{
-		P:E("Unknown opcode written to code generation (CGen) space.");
+		Debug_Error("Unknown opcode written to code generation (CGen) space.");
 	}
 	case ASM_ERROR_OPERAND:
 	{
-		P:E("Invalid operand written to code generation (CGen) space.");
+		Debug_Error("Invalid operand written to code generation (CGen) space.");
 	}
 	case ASM_ERROR_SPACE:
 	{
 		// Just jump straight to the next CGEN step in the error.
-		P:F("Out of code generation (CGen) space.  The current value of `CGEN_MEMORY` is `%d`, please recompile with a higher value (approximately %d).", CGEN_MEMORY, ((CGEN_MEMORY / 10000) + 1) * CGEN_MEMORY);
-		P:I("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
+		Debug_Fatal("Out of code generation (CGen) space.  The current value of `CGEN_MEMORY` is `%d`, please recompile with a higher value (approximately %d).", CGEN_MEMORY, ((CGEN_MEMORY / 10000) + 1) * CGEN_MEMORY);
+		Debug_Info("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
 	}
 	case ASM_ERROR_LABEL_OVERFLOW:
 	{
-		P:F("Out of label space.  The current value of `ASM_MAX_LABELS` is `%d`, please recompile with a higher value.", ASM_MAX_LABELS);
-		P:I("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
+		Debug_Fatal("Out of label space.  The current value of `ASM_MAX_LABELS` is `%d`, please recompile with a higher value.", ASM_MAX_LABELS);
+		Debug_Info("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
 	}
 	case ASM_ERROR_LABEL_DUPLICATE:
 	{
-		P:F("Duplicate label in code generation.");
+		Debug_Fatal("Duplicate label in code generation.");
 	}
 	case ASM_ERROR_NONE:
 	{
@@ -297,7 +297,7 @@ stock CGen_GetCodeSpace()
 
 stock CGen_AddCodeSpace(num)
 {
-	if (YSI_g_sCodeSpace == -1) P:E("YSI_g_sCodeSpace is -1 in \"CGen_AddCodeSpace\"");
+	if (YSI_g_sCodeSpace == -1) Debug_Error("YSI_g_sCodeSpace is -1 in \"CGen_AddCodeSpace\"");
 	else YSI_g_sCodeSpace += num;
 }
 

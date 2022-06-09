@@ -107,7 +107,7 @@ public @y_inlineTimerCount(Func:func<>, time, count, due)
 	if (count == 0)
 	{
 		Indirect_Release(func);
-		P:7("y_inlineTimerCount ending: %d (%d)", _:func, ++YSI_gsCalls);
+		Debug_Print7("y_inlineTimerCount ending: %d (%d)", _:func, ++YSI_gsCalls);
 	}
 	else
 	{
@@ -117,7 +117,7 @@ public @y_inlineTimerCount(Func:func<>, time, count, due)
 		//printf("delay = %d", timer);
 		timer = YSI_SetTimerEx__("@y_inlineTimerCount", timer < 0 ? 0 : timer, false, "iiii", _:func, time, count, due + time);
 		Indirect_SetMeta(func, timer);
-		P:7("y_inlineTimerCount calls: %d (%d), %d", _:func, ++YSI_gsCalls, timer);
+		Debug_Print7("y_inlineTimerCount calls: %d (%d), %d", _:func, ++YSI_gsCalls, timer);
 	}
 }
 

@@ -678,7 +678,7 @@ static
 
 Test_SetPlayer(el, playerid, bool:s)
 {
-	P:1("Test_SetPlayer called: %d %d %d", el, playerid, s);
+	Debug_Print1("Test_SetPlayer called: %d %d %d", el, playerid, s);
 	gPl = playerid;
 	gEl = el;
 	gS = s;

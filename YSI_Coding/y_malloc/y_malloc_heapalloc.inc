@@ -91,10 +91,10 @@ forward Alloc:Malloc_Allocate(size, const bool:clear = false);
 
 public OnCodeInit()
 {
-	P:1("Malloc_OnCodeInit called");
+	Debug_Print1("Malloc_OnCodeInit called");
 	if (heapspace() < MALLOC_MEMORY + 4 * 1024)
 	{
-		P:E("heapspace too low for y_malloc: Did you use \"#pragma dynamic\"?");
+		Debug_Error("heapspace too low for y_malloc: Did you use \"#pragma dynamic\"?");
 	}
 	new
 		Opcode:bounds = RelocateOpcode(OP_BOUNDS),
@@ -125,12 +125,12 @@ public OnCodeInit()
 	{
 		// Some heap allocation ocurred somewhere in this call chain and hasn't
 		// been freed yet.
-		P:F("Unexpected heap allocations in y_malloc.  Try changing include orders");
+		Debug_Fatal("Unexpected heap allocations in y_malloc.  Try changing include orders");
 	}
 	{}
 	// Allocate the heap space initially.
 	heap = MALLOC_MEMORY * 4;
-	P:6("Malloc_OnCodeInit: allocate %d", heap);
+	Debug_Print6("Malloc_OnCodeInit: allocate %d", heap);
 	#emit LCTRL        2
 	#emit LOAD.S.alt   heap
 	#emit ADD
@@ -166,12 +166,12 @@ public OnCodeInit()
 	#emit LCTRL                     1
 	#emit STOR.S.pri                addr
 	entry = -addr + 28;
-	P:6("Malloc_OnCodeInit: main = %d", entry);
+	Debug_Print6("Malloc_OnCodeInit: main = %d", entry);
 	new offset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
 	do
 	{
 		addr = AMX_Read(entry);
-		P:7("Malloc_OnCodeInit: addr = %08x, new = %08x", addr, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_HEADER_COD);
+		Debug_Print7("Malloc_OnCodeInit: addr = %08x, new = %08x", addr, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_HEADER_COD);
 		// Move the pointer in the header to our stub.
 		AMX_Write(entry, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_HEADER_COD);
 		// Check if the heap has already been modified in the current stack.
@@ -187,7 +187,7 @@ public OnCodeInit()
 	// memory from the allocation system, and allows it to be safely clobbered by those calls.
 	Malloc_Allocate(YSI_DEFAULT_MALLOC);
 	CGen_AddCodeSpace(AsmGetCodeSize(ctx));
-	P:6("Malloc_OnCodeInit done");
+	Debug_Print6("Malloc_OnCodeInit done");
 	return 1;
 }
 

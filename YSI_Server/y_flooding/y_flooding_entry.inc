@@ -121,7 +121,7 @@ new
 
 stock SetMaxConnections(max = -1, e_FLOOD_ACTION:action = e_FLOOD_ACTION_BLOCK)
 {
-	P:3("SetMaxConnections called: %i, %i", max, _:action);
+	Debug_Print3("SetMaxConnections called: %i, %i", max, _:action);
 	YSI_g_sMaxConnections = max;
 	YSI_g_sConnectionAction = action;
 }
@@ -197,7 +197,7 @@ static Flooding_CheckIP(playerid, ip[])
 		}
 		if (Iter_Count(FloodingPlayer) > YSI_g_sMaxConnections)
 		{
-			P:I("Max Connections exceeded");
+			Debug_Info("Max Connections exceeded");
 			switch (YSI_g_sConnectionAction)
 			{
 				case e_FLOOD_ACTION_BLOCK:

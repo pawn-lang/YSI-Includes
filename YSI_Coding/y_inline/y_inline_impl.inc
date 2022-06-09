@@ -368,10 +368,10 @@ public Inline_MaybeConst_(ResolvedAlloc:slot)
 
 static stock Inline_FoundStart(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundStart called");
+	Debug_Print4("Inline_FoundStart called");
 	if (data[E_INLINE_DATA_STATE] != 0)
 		return 0;
-	P:5("Inline_FoundStart OK");
+	Debug_Print5("Inline_FoundStart OK");
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
 	data[E_INLINE_DATA_NAME] = CodeScanGetMatchHole(scanner, 0);
@@ -382,10 +382,10 @@ static stock Inline_FoundStart(const scanner[CodeScanner], data[E_INLINE_DATA] =
 
 static stock Inline_FoundMid(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundMid called");
+	Debug_Print4("Inline_FoundMid called");
 	if (data[E_INLINE_DATA_STATE] != 1)
 		return 0;
-	P:5("Inline_FoundMid OK");
+	Debug_Print5("Inline_FoundMid OK");
 	data[E_INLINE_DATA_STACK] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_STATE] = 2;
 	data[E_INLINE_DATA_CLEANUP] = CodeScanGetMatchHole(scanner, 0);
@@ -395,7 +395,7 @@ static stock Inline_FoundMid(const scanner[CodeScanner], data[E_INLINE_DATA] = "
 static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 {
 	if (data[E_INLINE_DATA_PARAMETER_COUNT] == MAX_INLINE_PARAMETERS)
-		P:F("y_inline: Max inline parameter count exceeded (%d).", MAX_INLINE_PARAMETERS);
+		Debug_Fatal("y_inline: Max inline parameter count exceeded (%d).", MAX_INLINE_PARAMETERS);
 	else switch (size)
 	{
 		case INLINE_DESCRIPTOR_VAR:
@@ -422,54 +422,54 @@ static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 
 static stock Inline_FoundConst(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundConst called");
+	Debug_Print4("Inline_FoundConst called");
 	if (data[E_INLINE_DATA_STATE] != 2)
 		return 0;
-	P:5("Inline_FoundConst OK");
+	Debug_Print5("Inline_FoundConst OK");
 	data[E_INLINE_DATA_STATE] = 3 + CodeScanGetMatchHole(scanner, 0);
 	return 0;
 }
 
 static stock Inline_FoundConst2(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundConst2 called");
+	Debug_Print4("Inline_FoundConst2 called");
 	#pragma unused scanner
 	// Can't use size to determine this match as two pieces of code are the same
 	// size in the same place, but mean very different things.
 	if (data[E_INLINE_DATA_STATE] != 2)
 		return 0;
-	P:5("Inline_FoundConst2 OK");
+	Debug_Print5("Inline_FoundConst2 OK");
 	data[E_INLINE_DATA_STATE] = 3;
 	return 0;
 }
 
 static stock Inline_FoundVar(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundVar called");
+	Debug_Print4("Inline_FoundVar called");
 	#pragma unused scanner
 	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	P:5("Inline_FoundVar OK");
+	Debug_Print5("Inline_FoundVar OK");
 	Inline_FoundDescriptor(0, data);
 	return 0;
 }
 
 static stock Inline_FoundRef(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundRef called");
+	Debug_Print4("Inline_FoundRef called");
 	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	P:5("Inline_FoundRef OK");
+	Debug_Print5("Inline_FoundRef OK");
 	Inline_FoundDescriptor(CodeScanGetMatchHole(scanner, 0), data);
 	return 0;
 }
 
 static stock Inline_FoundEnd(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundEnd called");
+	Debug_Print4("Inline_FoundEnd called");
 	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	P:5("Inline_FoundEnd OK");
+	Debug_Print5("Inline_FoundEnd OK");
 	data[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
 	// Do the actual codegen here.
 	Inline_DoCodeGen(scanner, data);
@@ -607,7 +607,7 @@ CHAIN_FORWARD:Inline_OnRuntimeError(code, &bool:suppress) = 1;
 
 public OnCodeInit()
 {
-	P:2("Inline_OnCodeInit called");
+	Debug_Print2("Inline_OnCodeInit called");
 	YSI_g_sJumpOffset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
 	YSI_g_sCallbackCallAddress = addressof(Callback_CallHandler_) + YSI_g_sJumpOffset;
 	if (FALSE)
@@ -1072,15 +1072,15 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 
 stock Function:GetLocalFunction(const func[], const spec[])
 {
-	P:4("GetLocalFunction called: %s, %s", func, spec);
+	Debug_Print4("GetLocalFunction called: %s, %s", func, spec);
 	if (funcidx(func) == -1)
 		return Function:0;
-	P:6("GetLocalFunction: 0");
+	Debug_Print6("GetLocalFunction: 0");
 	new
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
 	if (!closure)
 		return Function:0;
-	P:6("GetLocalFunction: 1");
+	Debug_Print6("GetLocalFunction: 1");
 	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_LocalHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
@@ -1213,13 +1213,13 @@ static stock Callback_InlineByName(const name[], tag)
 
 stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 {
-	P:4("Callback_Find_ 0");
+	Debug_Print4("Callback_Find_ 0");
 	// Remote calls must always be publics.  Indirection handles publics
 	// natively.  However, it doesn't handle it amazingly since it needs to
 	// handle it very generically.
 	if (remote)
 	{
-		P:6("Callback_Find_ 1");
+		Debug_Print6("Callback_Find_ 1");
 		new
 			tagname[FUNCTION_LENGTH];
 		GetTagNameFromID(tag, tagname);
@@ -1231,7 +1231,7 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 		// this name.
 		return !!(dest = Callback_InlineByName(name, tag));
 	}
-	P:6("Callback_Find_ 3");
+	Debug_Print6("Callback_Find_ 3");
 	new
 		tagname[FUNCTION_LENGTH];
 	GetTagNameFromID(tag, tagname);
@@ -1327,7 +1327,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			if (numArgs == 4 + __COMPILER_BUG_317)
 				remote = bool:getarg(3 + __COMPILER_BUG_317);
 		}
-		P:2("Callback_Get called: %d %s %s", numArgs, name, expect);
+		Debug_Print2("Callback_Get called: %d %s %s", numArgs, name, expect);
 		// Check that the assumption made here is valid.  I can't imagine a
 		// case, given the number of libraries in use here, where it couldn't
 		// be!  We check this since any inline data pointer will point in to the
@@ -1343,7 +1343,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 		if (!(0 < ret < 128))
 		{
 			// Resolved inline.
-			P:3("Callback_Get: Found resolved callback: %08x", ret);
+			Debug_Print3("Callback_Get: Found resolved callback: %08x", ret);
 			setarg(1 + __COMPILER_BUG_317, 0, ret);
 			// Direct function pointer.
 			Indirect_Claim(ret);
@@ -1888,13 +1888,13 @@ static stock Inline_OnAsmError(const ctx[AsmContext], AsmError:error)
 {
 	switch (numargs() == 1 ? AsmGetError(ctx) : error)
 	{
-	case ASM_ERROR_OPCODE:          P:E("ASM_ERROR_OPCODE in Inline_Main.");
-	case ASM_ERROR_OPERAND:         P:E("ASM_ERROR_OPERAND in Inline_Main.");
-	case ASM_ERROR_SPACE:           P:E("ASM_ERROR_SPACE in Inline_Main.");
-	case ASM_ERROR_LABEL_OVERFLOW:  P:E("ASM_ERROR_LABEL_OVERFLOW in Inline_Main.");
-	case ASM_ERROR_LABEL_DUPLICATE: P:E("ASM_ERROR_LABEL_DUPLICATE in Inline_Main.");
+	case ASM_ERROR_OPCODE:          Debug_Error("ASM_ERROR_OPCODE in Inline_Main.");
+	case ASM_ERROR_OPERAND:         Debug_Error("ASM_ERROR_OPERAND in Inline_Main.");
+	case ASM_ERROR_SPACE:           Debug_Error("ASM_ERROR_SPACE in Inline_Main.");
+	case ASM_ERROR_LABEL_OVERFLOW:  Debug_Error("ASM_ERROR_LABEL_OVERFLOW in Inline_Main.");
+	case ASM_ERROR_LABEL_DUPLICATE: Debug_Error("ASM_ERROR_LABEL_DUPLICATE in Inline_Main.");
 	case ASM_ERROR_NONE: return;
-	default: P:E("Unknown error in Inline_Main.");
+	default: Debug_Error("Unknown error in Inline_Main.");
 	}
 	// TODO: Abort codegen.
 }
@@ -1951,7 +1951,7 @@ stock Inline_UI_(const &header)
 	// We can't use `AMX_Ref()` here because passing a `const &` to a `...` function
 	// gets the address of a heap temporary, instead of the original.  Even
 	// `const ...` doesn't solve this.
-	P:3("Inline_UI_ called: %d", header);
+	Debug_Print3("Inline_UI_ called: %d", header);
 	new
 		ptr = Inline_Ref(header),
 		frm = AMX_Read(header + cellbytes),
@@ -1963,7 +1963,7 @@ stock Inline_UI_(const &header)
 		// when we determine it is needed, but that would be no faster in the
 		// common case, and slower in the uncommon case, so just do it together.
 		Alloc:closure = malloc((size >>> __COMPILER_CELL_SHIFT) + (_:E_INLINE_CALL - 1));
-	P:5("Inline_UI_: %d %d %d %d %d", ptr, frm, size, _:closure, AMX_Read(header));
+	Debug_Print5("Inline_UI_: %d %d %d %d %d", ptr, frm, size, _:closure, AMX_Read(header));
 	if (!closure)
 		return 0;
 	mset(closure, _:E_INLINE_CALL_NULL, 0);

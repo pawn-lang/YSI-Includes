@@ -685,7 +685,7 @@ static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fak
 
 static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fakepos) <y_render_fade : y_render_fade_real>
 {
-	P:4("Format_DoAddString <y_render_fade : render_real> called: \"%s\", \"%s\", %i, %i, %i, %i", out, in, oidx, len, orem, fakepos);
+	Debug_Print4("Format_DoAddString <y_render_fade : render_real> called: \"%s\", \"%s\", %i, %i, %i, %i", out, in, oidx, len, orem, fakepos);
 	// For now don't worry about fades over boundaries - they're just too hard
 	// to get the code working on to start with, maybe later once this is all
 	// working they can be added in.  It is a shame though as it will mean fades
@@ -700,7 +700,7 @@ static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fak
 	fakepos += len;
 	if (len <= orem)
 	{
-		P:5("Format_DoStringSCM: p0.");
+		Debug_Print5("Format_DoStringSCM: p0.");
 		memcpy(out[oidx], in, 0, len * 4, orem);
 		orem -= len;
 		oidx += len;
@@ -711,7 +711,7 @@ static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fak
 	{
 		// Not the end of the string, but the end is required.
 		// Change state to ignore future inputs.
-		P:5("Format_DoStringSCM: p1.");
+		Debug_Print5("Format_DoStringSCM: p1.");
 		// Copy as much data as possible.
 		memcpy(out[oidx], in, 0, orem * 4, orem);
 		//orem -= orem;
@@ -750,7 +750,7 @@ static stock bool:Format_DoAddChar(out[], const in, &oidx, &orem, &fakepos) <y_r
 
 static stock bool:Format_DoAddChar(out[], const in, &oidx, &orem, &fakepos) <y_render_fade : y_render_fade_real>
 {
-	P:4("Format_DoAddChar: %c %d %d", in, oidx, orem);
+	Debug_Print4("Format_DoAddChar: %c %d %d", in, oidx, orem);
 	if (!orem) return false;
 	--orem;
 	out[oidx++] = in;
@@ -760,7 +760,7 @@ static stock bool:Format_DoAddChar(out[], const in, &oidx, &orem, &fakepos) <y_r
 
 static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render_show_scm>
 {
-	P:2("Format_DoDisplay a: %d, %06x, \"%s\"", playerid, colour >>> 8, out);
+	Debug_Print2("Format_DoDisplay a: %d, %06x, \"%s\"", playerid, colour >>> 8, out);
 	SendClientMessage(playerid, (colour << 8) | ((YSI_g_sTempStyle[E_STYLE_DATA_COLOUR] & 0x0F) * 0x11), out);
 	//idx = 0;
 	//out[0] = '\0';
@@ -768,7 +768,7 @@ static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render
 
 static stock Format_DoDisplay(playerid, colour, out[]) <> //y_render_show : y_render_show_print>
 {
-	P:0("Format_DoDisplay b: %d, %06x, \"%s\"", playerid, colour >>> 8, out);
+	Debug_Print0("Format_DoDisplay b: %d, %06x, \"%s\"", playerid, colour >>> 8, out);
 	//idx = 0;
 	//out[0] = '\0';
 }
@@ -776,7 +776,7 @@ static stock Format_DoDisplay(playerid, colour, out[]) <> //y_render_show : y_re
 static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render_show_gt>
 {
 	#pragma unused colour
-	P:2("Format_DoDisplay c: %d, %06x, \"%s\"", playerid, colour >>> 8, out);
+	Debug_Print2("Format_DoDisplay c: %d, %06x, \"%s\"", playerid, colour >>> 8, out);
 	GameTextForPlayer(playerid, out, YSI_g_sTempStyle[E_STYLE_DATA_TIME], YSI_g_sTempStyle[E_STYLE_DATA_STYLE]);
 	//SendClientMessage(playerid, (colour << 8) | ((YSI_g_sTempStyle[E_STYLE_DATA_COLOUR] & 0x0F) * 0x11), out);
 	//GameTextForPlayer(playerid, out, 
@@ -788,7 +788,7 @@ static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render
 static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render_show_td>
 {
 	#pragma unused colour
-	P:2("Format_DoDisplay d: %d, %06x, \"%s\"", playerid, colour >>> 8, out);
+	Debug_Print2("Format_DoDisplay d: %d, %06x, \"%s\"", playerid, colour >>> 8, out);
 	new
 		Text:tmp = TD_Display(out, YSI_g_sTempStyle[E_STYLE_DATA_TD_ID]);
 	out[0] = _:tmp;
@@ -823,7 +823,7 @@ stock Format_JustShow(playerid, const out[]) <y_render_show : y_render_show_scm>
 
 stock Format_JustShow(playerid, const out[]) <y_render_show : y_render_show_print>
 {
-	P:0("Format_DoDisplay: %d, \"%s\"", playerid, out);
+	Debug_Print0("Format_DoDisplay: %d, \"%s\"", playerid, out);
 }
 
 stock Format_JustShow(playerid, const out[]) <y_render_show : y_render_show_gt>
@@ -873,7 +873,7 @@ stock Text_GetLastID() <>
 //stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], {Float,_}:...)
 stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], GLOBAL_TAG_TYPES:...)
 {
-	P:3("Format_Render called: %i, %i, %s, %i, %i, %i, %s (+%i)", pid, _:l, output, maxlen, idx, target, numargs() - 7);
+	Debug_Print3("Format_Render called: %i, %i, %s, %i, %i, %i, %s (+%i)", pid, _:l, output, maxlen, idx, target, numargs() - 7);
 	gInitialColour = (YSI_g_sTempStyle[E_STYLE_DATA_COLOUR] >>> 4) & 0x00FFFFFF;
 	new
 		colour = gInitialColour;
@@ -968,11 +968,11 @@ Format_Render_start:
 			}
 			case '\02':
 			{
-				P:6("Text_Render: Format specifier %d", curArg);
+				Debug_Print6("Text_Render: Format specifier %d", curArg);
 				if (curArg == numArgs)
 				{
 					// Skip.
-					P:W("Insufficient parameters to YSI format.");
+					Debug_Warning("Insufficient parameters to YSI format.");
 					ts = "(null)";
 					Y_RENDER_ADD(ts)
 					continue;
@@ -1000,7 +1000,7 @@ Format_Render_start:
 				{
 					case e_COMPRESS_FORMAT_DATA_DEC:
 					{
-						P:6("Text_Render: Add d");
+						Debug_Print6("Text_Render: Add d");
 						scSpecifier = Y_RENDER_SPECIFIER(d);
 						Y_RENDER_ARG
 						{
@@ -1013,7 +1013,7 @@ Format_Render_start:
 					{
 						// This completely fixes (I hope) the problems with
 						// displaying negative numbers as %h/%x numbers.
-						P:6("Text_Render: Add h");
+						Debug_Print6("Text_Render: Add h");
 						scSpecifier = Y_RENDER_SPECIFIER(x);
 						Y_RENDER_ARG
 						{
@@ -1030,7 +1030,7 @@ Format_Render_start:
 					}
 					case e_COMPRESS_FORMAT_DATA_BIN:
 					{
-						P:6("Text_Render: Add b");
+						Debug_Print6("Text_Render: Add b");
 						scSpecifier = Y_RENDER_SPECIFIER(b);
 						Y_RENDER_ARG
 						{
@@ -1497,7 +1497,7 @@ Format_Render_start:
 			}
 			case '\03', -1:
 			{
-				P:6("Text_Render: Colour %d %d %d %d %d %06x %s", p, llen, fadeStart, fakePos, idx, colour & 0xFFFFFF, string);
+				Debug_Print6("Text_Render: Colour %d %d %d %d %d %06x %s", p, llen, fadeStart, fakePos, idx, colour & 0xFFFFFF, string);
 				if (fade) //flags & 4)
 				{
 					p = fadeStart;
@@ -1508,7 +1508,7 @@ Format_Render_start:
 						// "rem" is the number of characters not processed.
 						YSI_g_sFadeColour = colour;
 						Y_RENDER_DO_DISPLAY()
-						P:6("Format_Render: one stage: \"%s\"", output);
+						Debug_Print6("Format_Render: one stage: \"%s\"", output);
 						// Subtract 2 to get the index in to the fade where the
 						// letters start.  This is not as easy as it used to be
 						// as we need to manipulate the stack to push the extra
@@ -1597,7 +1597,7 @@ Format_Render_start:
 			}
 			case '\04':
 			{
-				P:6("Text_Render: Key");
+				Debug_Print6("Text_Render: Key");
 				Format_GetKeyString(ts, string[idx++] >>> 8);
 				new __len=strlen(ts);
 				if (llen < __len)
@@ -1609,7 +1609,7 @@ Format_Render_start:
 			}
 			case '\n':
 			{
-				P:6("Text_Render: NL");
+				Debug_Print6("Text_Render: NL");
 				// Check for 2 character new lines (\n\r).
 				if (string[idx] == '\r') ++idx;
 				// Output the last string.
@@ -1639,7 +1639,7 @@ Format_Render_start:
 			}
 			case '\r':
 			{
-				P:6("Text_Render: NL");
+				Debug_Print6("Text_Render: NL");
 				// Check for 2 character new lines (\r\n).
 				if (string[idx] == '\n') ++idx;
 				// Output the last string.
@@ -1697,12 +1697,12 @@ Format_Render_start:
 			{
 				// Whitespace.  Just show a space, not the fancy character, no
 				// idea what it could do.  Note that this range includes spaces.
-				P:6("Text_Render: Space");
+				Debug_Print6("Text_Render: Space");
 				Y_RENDER_CHAR(' ')
 			}
 			default:
 			{
-				P:6("Text_Render: Char");
+				Debug_Print6("Text_Render: Char");
 				Y_RENDER_CHAR(ch)
 			}
 		}
@@ -1714,19 +1714,19 @@ Format_Render_start:
 		++idx;
 		Y_RENDER_ADD_EX(string, idx, ch - idx)
 		idx = ch;*/
-		P:6("Text_Render: Loop: p = %d, llen = %d, output = \"%s\"", p, llen, (output[p] = '\0', output));
+		Debug_Print6("Text_Render: Loop: p = %d, llen = %d, output = \"%s\"", p, llen, (output[p] = '\0', output));
 	}
-	P:5("Text_Render: Final render?");
+	Debug_Print5("Text_Render: Final render?");
 	if (p)
 	{
-		P:5("Text_Render: Yes!");
+		Debug_Print5("Text_Render: Yes!");
 		output[p] = '\0';
 		if (!none) Format_DoDisplay(pid, gInitialColour, output);
 		++one;
 	}
-	P:5("Text_Render: p = %d, output = \"%s\"", p, output);
-	P:C(idx=0;while ((ch = output[idx++]))printf("%04x%04x = %c", ch >>> 16, ch & 0xFFFF, ch););
-	P:5("Text_Render end");
+	Debug_Print5("Text_Render: p = %d, output = \"%s\"", p, output);
+	Debug_Code1(idx=0;while ((ch = output[idx++]))printf("%04x%04x = %c", ch >>> 16, ch & 0xFFFF, ch););
+	Debug_Print5("Text_Render end");
 	return one;
 }
 

@@ -196,7 +196,7 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 // PARAMETER BYTE COUNT IN THE SCANNER!  ONLY DONE IT EVERY TIME SO FAR...
 stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0, const dummy4 = 0, const dummy5 = 0)
 {
-	P:3("YVA2_DummyPush start");
+	Debug_Print3("YVA2_DummyPush start");
 	#pragma unused dummy0, dummy1, dummy2, dummy3, dummy4, dummy5
 	// This function serves four purposes:
 	//   
@@ -215,7 +215,7 @@ stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRe
 	//   
 	if (YSI_g_sInitialised)
 	{
-		P:W("Bare `___` usage found - make sure it is a function parameter.");
+		Debug_Warning("Bare `___` usage found - make sure it is a function parameter.");
 	}
 	else if (TRUE)
 	{
@@ -366,7 +366,7 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 						returningString = 0;
 				}
 				if (!returningString)
-					P:F("Found string return preamble without postamble - Y_Less needs to fix this!");
+					Debug_Fatal("Found string return preamble without postamble - Y_Less needs to fix this!");
 			}
 			if (returningString)
 			{
@@ -427,7 +427,7 @@ static stock YVA2_FoundPush(const m[CodeScanner])
 		addr = CodeScanGetMatchAddress(m);
 	if (YSI_g_sPassthroughNestings >= MAX_NESTED_PASSTHROUGHS)
 	{
-		P:F("`___` nested too deeply - increase `MAX_NESTED_PASSTHROUGHS`.");
+		Debug_Fatal("`___` nested too deeply - increase `MAX_NESTED_PASSTHROUGHS`.");
 		return;
 	}
 	YSI_g_sMaxNesting = max(YSI_g_sMaxNesting, YSI_g_sPassthroughNestings),
@@ -457,11 +457,11 @@ static stock YVA2_FoundPush(const m[CodeScanner])
 		}
 	}
 	++YSI_g_sPassthroughNestings;
-	P:3("YVA2_FoundPush: %d", CodeScanGetMatchStack(m));
-	P:5("YVA2_FoundPush: %d %d", addr, YSI_g_sInitialised);
+	Debug_Print3("YVA2_FoundPush: %d", CodeScanGetMatchStack(m));
+	Debug_Print5("YVA2_FoundPush: %d %d", addr, YSI_g_sInitialised);
 	if (addr < YSI_g_sInitialised < addr + 100)
 	{
-		P:5("YVA2_FoundPush: Found match");
+		Debug_Print5("YVA2_FoundPush: Found match");
 		YSI_g_sInitialised = addr;
 	}
 }
@@ -480,7 +480,7 @@ static stock YVA2_FoundPush(const m[CodeScanner])
 
 static stock YVA2_Initalise()
 {
-	P:3("YVA2_Initalise start");
+	Debug_Print3("YVA2_Initalise start");
 	new
 		scanner[CodeScanner],
 		csmO0A[CodeScanMatcher],

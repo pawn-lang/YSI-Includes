@@ -175,7 +175,7 @@ forward Styles_EntryTag();
 
 public Styles_EntryTag()
 {
-	P:2("Styles_EntryTag called");
+	Debug_Print2("Styles_EntryTag called");
 	static
 		name[MAX_XML_ENTRY_NAME],
 		val[MAX_XML_ENTRY_TEXT],
@@ -191,7 +191,7 @@ public Styles_EntryTag()
 	// "_Text_CheckOwnership" MUST be called before "_Text_LookupName".
 	if (!_Text_CheckOwnership(YSI_g_sCurFile, val))
 	{
-		P:5("Styles_EntryTag: Don't own %s", val);
+		Debug_Print5("Styles_EntryTag: Don't own %s", val);
 		// This script doesn't own this text group.
 		return 0;
 	}
@@ -207,7 +207,7 @@ public Styles_EntryTag()
 			// This means we MUST call a style file parse function from inside
 			// y_textint.
 			id = _Text_LookupName(val);
-			P:5("Styles_EntryTag: %s = %d", val, id);
+			Debug_Print5("Styles_EntryTag: %s = %d", val, id);
 		}
 		else if (!strcmp(name, "type", true) || !strcmp(name, "style", true))
 		{
@@ -322,7 +322,7 @@ forward Styles_3DTag();
 
 public Styles_3DTag()
 {
-	P:2("Styles_EntryTag called");
+	Debug_Print2("Styles_EntryTag called");
 	static
 		name[MAX_XML_ENTRY_NAME],
 		val[MAX_XML_ENTRY_TEXT],

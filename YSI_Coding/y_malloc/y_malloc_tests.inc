@@ -304,7 +304,7 @@ public y_malloc_Deferred(Alloc:alloc)
 	{
 		if (mget(alloc, i) != i * 2)
 		{
-			P:E("y_malloc_Deferred test error");
+			Debug_Error("y_malloc_Deferred test error");
 		}
 	}
 	free(clobber);

@@ -97,7 +97,7 @@ Optional plugins:
  *//*------------------------------------------------------------------------**/
 
 // If this ever changes, update the size reference in y_users.
-P:D(Bit_Bits(size));
+FUNC_PAWNDOC(Bit_Bits(size));
 #define Bit_Bits(%1) (((%1)+cellbits-1)/cellbits)
 
 /*-------------------------------------------------------------------------*//**
@@ -107,7 +107,7 @@ P:D(Bit_Bits(size));
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(Bit_Slot(value));
+FUNC_PAWNDOC(Bit_Slot(value));
 #define Bit_Slot(%1) ((_:%1)>>>CELLSHIFT)
 
 /*-------------------------------------------------------------------------*//**
@@ -117,7 +117,7 @@ P:D(Bit_Slot(value));
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(Bit_Mask(value));
+FUNC_PAWNDOC(Bit_Mask(value));
 #define Bit_Mask(%1) (Bit:(1<<((_:%1)&cellbits-1)))
 
 /*-------------------------------------------------------------------------*//**
@@ -131,7 +131,7 @@ P:D(Bit_Mask(value));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Bit_GetBit(BitArray:array<>,slot));
+FUNC_PAWNDOC(bool:Bit_GetBit(BitArray:array<>,slot));
 #define Bit_GetBit(%1,%2) (%1[(%2)>>>CELLSHIFT]>>>Bit:((%2)&cellbits-1)&Bit:1)
 
 /*-------------------------------------------------------------------------*//**
@@ -149,7 +149,7 @@ P:D(bool:Bit_GetBit(BitArray:array<>,slot));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Bit_Get(BitArray:array<>,slot));
+FUNC_PAWNDOC(bool:Bit_Get(BitArray:array<>,slot));
 #define Bit_Get(%1,%2) bool:Bit_GetBit(%1,_:%2)
 
 /*-------------------------------------------------------------------------*//**
@@ -160,7 +160,7 @@ P:D(bool:Bit_Get(BitArray:array<>,slot));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Bit_Let(BitArray:array<>,slot));
+FUNC_PAWNDOC(Bit_Let(BitArray:array<>,slot));
 #define Bit_Let(%1,%2) (%1[(%2)>>>CELLSHIFT]|=Bit:(1<<((%2)&cellbits-1)))
 
 /*-------------------------------------------------------------------------*//**
@@ -171,7 +171,7 @@ P:D(Bit_Let(BitArray:array<>,slot));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Bit_Vet(BitArray:array<>,slot));
+FUNC_PAWNDOC(Bit_Vet(BitArray:array<>,slot));
 #define Bit_Vet(%1,%2) (%1[(%2)>>>CELLSHIFT]&=Bit:~(1<<((%2)&cellbits-1)))
 
 /*-------------------------------------------------------------------------*//**
@@ -182,7 +182,7 @@ P:D(Bit_Vet(BitArray:array<>,slot));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Bit_Toggle(BitArray:array<>,slot));
+FUNC_PAWNDOC(Bit_Toggle(BitArray:array<>,slot));
 #define Bit_Toggle(%1,%2) (%1[(%2)>>>CELLSHIFT]^=Bit:(1<<((%2)&cellbits-1)))
 
 /*-------------------------------------------------------------------------*//**
@@ -212,7 +212,7 @@ stock Bit_Set(BitArray:array<>, slot, bool:set)//, size = sizeof (array))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Bit_FastSet(BitArray:array<>,slot,bool:set,size = sizeof (array)));
+FUNC_PAWNDOC(Bit_FastSet(BitArray:array<>,slot,bool:set,size = sizeof (array)));
 #define Bit_FastSet(%0,%1,%2) ((%2)?(Bit_Let(%0,(%1))):(Bit_Vet(%0,(%1))))
 
 /*-------------------------------------------------------------------------*//**
@@ -263,7 +263,7 @@ stock Bit_Display(const BitArray:array<>, size = sizeof (array))
 		val = _:array[size];
 		format(ret, sizeof (ret), "%s%016b%016b", ret, val >>> 16, val & 0xFFFF);
 	}
-	//P:7("Bit_Display called: %s, %i", ret, size);
+	//Debug_Print7("Bit_Display called: %s, %i", ret, size);
 	return ret;
 }
 
@@ -271,7 +271,7 @@ stock Bit_Display(const BitArray:array<>, size = sizeof (array))
 
 stock Iter_Func@Bits(start, const BitArray:data<>, size = sizeof (data))
 {
-	P:3("Iter_Func@Bits called: %s, %i", Bit_Display(data, size), start);
+	Debug_Print3("Iter_Func@Bits called: %s, %i", Bit_Display(data, size), start);
 	new
 		cur = 0,
 		i = Bit_Slot(++start);
@@ -282,7 +282,7 @@ stock Iter_Func@Bits(start, const BitArray:data<>, size = sizeof (data))
 	// Blank out the lowest bits to get the lowest bit not yet used.
 	if ((cur = _:(data[i] & ~(Bit_Mask(start) - Bit:1))))
 	{
-		P:7("Iter_Func@Bits: %d %d %d %d", cur, _:data[i], start, _:~(Bit_Mask(start) - Bit:1));
+		Debug_Print7("Iter_Func@Bits: %d %d %d %d", cur, _:data[i], start, _:~(Bit_Mask(start) - Bit:1));
 		// Bits left in the current cell.
 		return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
 	}
@@ -300,7 +300,7 @@ stock Iter_Func@Bits(start, const BitArray:data<>, size = sizeof (data))
 
 stock Iter_Func@Blanks(start, const BitArray:data<>, size = sizeof (data))
 {
-	P:3("Iter_Func@Blanks called: %s, %i", Bit_Display(data, size), start);
+	Debug_Print3("Iter_Func@Blanks called: %s, %i", Bit_Display(data, size), start);
 	new
 		cur = 0,
 		i = Bit_Slot(++start);

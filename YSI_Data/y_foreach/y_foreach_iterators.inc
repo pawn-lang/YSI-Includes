@@ -505,7 +505,7 @@ stock Iter_All_Internal(const array[], size, value)
 #if _FOREACH_CHARACTERS
 	HOOK__ OnPlayerConnect(playerid)
 	{
-		P:1("Iter_OnPlayerConnect called: %d, %d", playerid, IsPlayerNPC(playerid));
+		Debug_Print1("Iter_OnPlayerConnect called: %d, %d", playerid, IsPlayerNPC(playerid));
 		#if _FOREACH_BOTS
 			Iter_Add(Character, playerid);
 			if (IsPlayerNPC(playerid))
@@ -519,7 +519,7 @@ stock Iter_All_Internal(const array[], size, value)
 				Iter_Add(Player, playerid);
 		#endif
 			}
-		P:2("Iter_OnPlayerConnect end");
+		Debug_Print2("Iter_OnPlayerConnect end");
 		return 1;
 	}
 	
@@ -573,7 +573,7 @@ stock Iter_All_Internal(const array[], size, value)
 	#if _FOREACH_STREAMED
 		HOOK__ OnPlayerStreamIn(playerid, forplayerid)
 		{
-			P:1("Iter_OnPlayerStreamIn called: %d, %d", playerid, forplayerid);
+			Debug_Print1("Iter_OnPlayerStreamIn called: %d, %d", playerid, forplayerid);
 			#if _FOREACH_BOTS
 				Iter_Add(StreamedCharacter[forplayerid], playerid);
 				if (IsPlayerNPC(playerid))
@@ -587,13 +587,13 @@ stock Iter_All_Internal(const array[], size, value)
 					Iter_Add(StreamedPlayer[forplayerid], playerid);
 			#endif
 				}
-			P:2("Iter_OnPlayerStreamIn end");
+			Debug_Print2("Iter_OnPlayerStreamIn end");
 			return 1;
 		}
 
 		HOOK__ OnPlayerStreamOut(playerid, forplayerid)
 		{
-			P:1("Iter_OnPlayerStreamOut called: %d, %d", playerid, forplayerid);
+			Debug_Print1("Iter_OnPlayerStreamOut called: %d, %d", playerid, forplayerid);
 			#if _FOREACH_BOTS
 				Iter_Remove(StreamedCharacter[forplayerid], playerid);
 				if (IsPlayerNPC(playerid))
@@ -607,7 +607,7 @@ stock Iter_All_Internal(const array[], size, value)
 					Iter_Remove(StreamedPlayer[forplayerid], playerid);
 			#endif
 				}
-			P:2("Iter_OnPlayerStreamOut end");
+			Debug_Print2("Iter_OnPlayerStreamOut end");
 			return 1;
 		}
 	#endif
@@ -674,17 +674,17 @@ stock Iter_All_Internal(const array[], size, value)
 	#if _FOREACH_STREAMED
 		HOOK__ OnActorStreamIn(actorid, forplayerid)
 		{
-			P:1("Iter_OnActorStreamIn called: %d, %d", actorid, forplayerid);
+			Debug_Print1("Iter_OnActorStreamIn called: %d, %d", actorid, forplayerid);
 			Iter_Add(StreamedActor[forplayerid], actorid);
-			P:2("Iter_OnActorStreamIn end");
+			Debug_Print2("Iter_OnActorStreamIn end");
 			return 1;
 		}
 
 		HOOK__ OnActorStreamOut(actorid, forplayerid)
 		{
-			P:1("Iter_OnActorStreamOut called: %d, %d", actorid, forplayerid);
+			Debug_Print1("Iter_OnActorStreamOut called: %d, %d", actorid, forplayerid);
 			Iter_Remove(StreamedActor[forplayerid], actorid);
-			P:2("Iter_OnActorStreamOut end");
+			Debug_Print2("Iter_OnActorStreamOut end");
 			return 1;
 		}
 	#endif
@@ -814,17 +814,17 @@ stock Iter_All_Internal(const array[], size, value)
 	#if _FOREACH_STREAMED
 		HOOK__ OnVehicleStreamIn(vehicleid, forplayerid)
 		{
-			P:1("Iter_OnVehicleStreamIn called: %d, %d", vehicleid, forplayerid);
+			Debug_Print1("Iter_OnVehicleStreamIn called: %d, %d", vehicleid, forplayerid);
 			Iter_Add(StreamedVehicle[forplayerid], vehicleid);
-			P:2("Iter_OnVehicleStreamIn end");
+			Debug_Print2("Iter_OnVehicleStreamIn end");
 			return 1;
 		}
 
 		HOOK__ OnVehicleStreamOut(vehicleid, forplayerid)
 		{
-			P:1("Iter_OnVehicleStreamOut called: %d, %d", vehicleid, forplayerid);
+			Debug_Print1("Iter_OnVehicleStreamOut called: %d, %d", vehicleid, forplayerid);
 			Iter_Remove(StreamedVehicle[forplayerid], vehicleid);
-			P:2("Iter_OnVehicleStreamOut end");
+			Debug_Print2("Iter_OnVehicleStreamOut end");
 			return 1;
 		}
 	#endif

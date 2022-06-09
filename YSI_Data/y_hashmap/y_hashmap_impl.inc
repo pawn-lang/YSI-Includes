@@ -101,7 +101,7 @@ Optional plugins:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(HashMap_Hash(str[],&hash));
+FUNC_PAWNDOC(HashMap_Hash(str[],&hash));
 #define HashMap_Hash(%0,%1) (%1=YHash(%0))
 
 /*-------------------------------------------------------------------------*//**
@@ -116,7 +116,7 @@ P:D(HashMap_Hash(str[],&hash));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(HashMap_Init(HashMap:m<>, target[][], slot));
+FUNC_PAWNDOC(HashMap_Init(HashMap:m<>, target[][], slot));
 
 /*-------------------------------------------------------------------------*//**
  * <param name="m">Hash map to initialise.</param>
@@ -242,7 +242,7 @@ stock HashMap_AddUnused(HashMap:m<>, value)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(HashMap_ByteLen(str[]));
+FUNC_PAWNDOC(HashMap_ByteLen(str[]));
 #define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (2 * _:!ispacked((%0))))
 
 /*-------------------------------------------------------------------------*//**
@@ -260,7 +260,7 @@ P:D(HashMap_ByteLen(str[]));
 
 stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignorecase = false)
 {
-	P:3("HashMap_Add called: %d <= %d < %d", 0, value, m[HASH_MAP_SIZE_1]);
+	Debug_Print3("HashMap_Add called: %d <= %d < %d", 0, value, m[HASH_MAP_SIZE_1]);
 	if (0 <= value < m[HASH_MAP_SIZE_1])
 	{
 		// Check if the index is already in a hash map.  Doesn't work if the
@@ -271,7 +271,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 			ptr = 0,
 			res = 0;
 		// Add this entry to the correct binary tree.
-		P:5("HashMap_Add: mask = %d", hash & 0xFF);
+		Debug_Print5("HashMap_Add: mask = %d", hash & 0xFF);
 		new
 			prev = AMX_Ref(m[hash & 0xFF]),
 			next = 0;
@@ -303,7 +303,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 				#emit STOR.pri    ptr
 				if (ptr == 0)
 				{
-					P:E("Trying to add two copies of a string to a hashmap: \"%s\", %d", str, value);
+					Debug_Error("Trying to add two copies of a string to a hashmap: \"%s\", %d", str, value);
 					return false;
 				}
 				else if (ptr < 0) // Lower, move left.
@@ -316,7 +316,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 			else // Higher, move right.
 				prev = next + HASH_MAP_DIR_RIGHT;
 		}
-		P:6("HashMap_Add: used = %d", AMX_Read(m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2]));
+		Debug_Print6("HashMap_Add: used = %d", AMX_Read(m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2]));
 		// Get the address of this structure.
 		ptr = m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2],
 		// Copy the hashed value.
@@ -401,7 +401,7 @@ stock HashMap_Get(HashMap:m<>, const str[], bool:ignorecase = false)
 
 stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = false)
 {
-	P:3("HashMap_Get called: mask = %d (%d)", hash, hash & 0xFF);
+	Debug_Print3("HashMap_Get called: mask = %d (%d)", hash, hash & 0xFF);
 	new
 		prev = AMX_Ref(m[hash & 0xFF]),
 		next = 0;

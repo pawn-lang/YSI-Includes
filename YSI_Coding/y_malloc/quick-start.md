@@ -19,7 +19,7 @@ new Alloc:arr = malloc(16); // Create an array with 16 slots.
 
 if (arr == NO_ALLOC) // Or just `if (!arr)`
 {
-	P:E("`malloc` failed.  Remember to free memory when you are finished with it.");
+	Debug_Error("`malloc` failed.  Remember to free memory when you are finished with it.");
 }
 ```
 

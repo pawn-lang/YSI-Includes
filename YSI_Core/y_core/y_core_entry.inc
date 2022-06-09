@@ -103,6 +103,9 @@ Optional plugins:
 // as most macros are.
 #define YSI_KEYWORD(%0) ((defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_%0) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_%0))
 
+// Similar to `YSI_KEYWORD`, but disabled by default.
+#define YSI_OPTIONAL(%0) (defined YSI_KEYWORD_%0 && !defined YSI_NO_KEYWORD_%0)
+
 // Define `cellbytes` as a symbol that really should exist already!
 #if !defined cellbytes
 	#define cellbytes (cellbits / charbits)

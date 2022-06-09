@@ -170,8 +170,8 @@ y_rconfix_Load()
 		}
 		else
 		{
-			P:W("Could not load RconCommand/ClientCheckResponse fix FS.");
-			P:I("Ignore this error if the FS already loaded.");
+			Debug_Warning("Could not load RconCommand/ClientCheckResponse fix FS.");
+			Debug_Info("Ignore this error if the FS already loaded.");
 		}
 	#endif
 }

@@ -205,7 +205,7 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 	}
 	if (!fhnd)
 	{
-		P:W("Could not write to profiling results file \"%s\".", name);
+		Debug_Warning("Could not write to profiling results file \"%s\".", name);
 		return;
 	}
 	va_fprintf(fhnd, "%d,%d,%d", gettime(), size, iters);
@@ -281,7 +281,7 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 	 *//*------------------------------------------------------------------------**/
 
 	// Cunning macro only uses "%0" once, yet is still safe.
-	P:D(GetIP(playerid));
+	FUNC_PAWNDOC(GetIP(playerid));
 	#define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 #endif
 
@@ -347,7 +347,7 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:UCMP(value, upper));
+FUNC_PAWNDOC(bool:UCMP(value, upper));
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
 
 /*-------------------------------------------------------------------------*//**
@@ -360,7 +360,7 @@ P:D(bool:UCMP(value, upper));
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsNaN(Float:value));
+FUNC_PAWNDOC(bool:IsNaN(Float:value));
 #define IsNaN(%0) IS_NAN(%0)
 
 /*-------------------------------------------------------------------------*//**
@@ -370,7 +370,7 @@ P:D(bool:IsNaN(Float:value));
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:VALID_PLAYERID(playerid));
+FUNC_PAWNDOC(bool:VALID_PLAYERID(playerid));
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
 /*-------------------------------------------------------------------------*//**
@@ -388,7 +388,7 @@ P:D(bool:VALID_PLAYERID(playerid));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IS_IN_RANGE(value, lower, upper));
+FUNC_PAWNDOC(bool:IS_IN_RANGE(value, lower, upper));
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
@@ -406,7 +406,7 @@ P:D(bool:IS_IN_RANGE(value, lower, upper));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:NOT_IN_RANGE(value, lower, upper));
+FUNC_PAWNDOC(bool:NOT_IN_RANGE(value, lower, upper));
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
@@ -420,7 +420,7 @@ P:D(bool:NOT_IN_RANGE(value, lower, upper));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(ceildiv(numerator, denominator));
+FUNC_PAWNDOC(ceildiv(numerator, denominator));
 #if defined ceildiv
 	#undef ceildiv
 #endif
@@ -446,7 +446,7 @@ P:D(ceildiv(numerator, denominator));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(floordiv(numerator, denominator));
+FUNC_PAWNDOC(floordiv(numerator, denominator));
 #if defined floordiv
 	#undef floordiv
 #endif
@@ -469,7 +469,7 @@ P:D(floordiv(numerator, denominator));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsNull(const string:str[]));
+FUNC_PAWNDOC(bool:IsNull(const string:str[]));
 #if cellbytes == 4
 	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x01000000)
 #elseif cellbytes == 8
@@ -494,7 +494,7 @@ P:D(bool:IsNull(const string:str[]));
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsOdd(value));
+FUNC_PAWNDOC(bool:IsOdd(value));
 #define IsOdd(%0) ((%0)&1)
 
 #if defined isodd
@@ -513,7 +513,7 @@ P:D(bool:IsOdd(value));
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsEven(value));
+FUNC_PAWNDOC(bool:IsEven(value));
 #define IsEven(%0) (~(%0)&1)
 
 #if defined iseven
@@ -534,7 +534,7 @@ P:D(bool:IsEven(value));
  * <param name="len">(Implicit) maximum length of the destination.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(StrCpy(string:dest[], const string:src[], len = sizeof (dest)));
+FUNC_PAWNDOC(StrCpy(string:dest[], const string:src[], len = sizeof (dest)));
 #define StrCpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
 
 #if defined strcpy
@@ -896,7 +896,7 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 
 stock StripNL(string:str[])
 {
-	P:7("StripNL called: \"%s\"", str);
+	Debug_Print7("StripNL called: \"%s\"", str);
 	new
 		i = strlen(str);
 	if (YSI_IsPacked__(str))
@@ -916,7 +916,7 @@ stock StripNL(string:str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(StripR(string:str[]));
+FUNC_PAWNDOC(StripR(string:str[]));
 #define StripR StripNL
 
 /*-------------------------------------------------------------------------*//**
@@ -925,7 +925,7 @@ P:D(StripR(string:str[]));
 
 stock StripL(string:str[])
 {
-	P:7("StripL called: \"%s\"", str);
+	Debug_Print7("StripL called: \"%s\"", str);
 	new
 		len = strlen(str),
 		i = 0;
@@ -935,7 +935,7 @@ stock StripL(string:str[])
 		// The byte offsets in `memcpy` are broken, and packed strings aren't
 		// even in order.  Thus we do it the slow way.
 		//if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
-		//P:E("Cannot use `StripL` on a packed string");
+		//Debug_Error("Cannot use `StripL` on a packed string");
 		if (i)
 		{
 			for (new j = 0; (str{j} = str{i}); ++i, ++j) {}
@@ -957,7 +957,7 @@ stock StripL(string:str[])
 
 stock Strip(string:str[])
 {
-	P:7("Strip called: \"%s\"", str);
+	Debug_Print7("Strip called: \"%s\"", str);
 	new
 		len = strlen(str),
 		i = len;
@@ -991,7 +991,7 @@ stock Strip(string:str[])
 
 stock bool:EndOfLine(const string:line[], pos)
 {
-	P:7("EndOfLine called: \"%s\", %i", line, pos);
+	Debug_Print7("EndOfLine called: \"%s\", %i", line, pos);
 	if (NOT_IN_RANGE(pos, 0, strlen(line))) return false;
 	if (YSI_IsPacked__(line))
 	{
@@ -1022,7 +1022,7 @@ stock bool:endofline(const string:line[], pos)
 
 stock ChrFind(needle, const string:haystack[], start = 0)
 {
-	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
+	Debug_Print3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
 	new search[2];
 	search[0] = needle;
 	return strfind(haystack, search, false, start);
@@ -1204,7 +1204,7 @@ stock JenkinsHash(const string:str[] /* 12 */)
 
 stock bool:IsHex(const string:str[])
 {
-	P:3("ishex called: \"%s\"", str);
+	Debug_Print3("ishex called: \"%s\"", str);
 	new
 		i = 0,
 		cur = 0;
@@ -1248,7 +1248,7 @@ stock bool:ishex(const string:str[])
 
 stock Unpack(const string:str[])
 {
-	P:3("Unpack called: \"%s\"", str);
+	Debug_Print3("Unpack called: \"%s\"", str);
 	new
 		ret[YSI_MAX_STRING] = {0};
 	if (strlen(str) <= YSI_MAX_STRING)
@@ -1263,7 +1263,7 @@ stock unpack(const string:str[])
 {
 	// Doesn't call the original, instead inlines the code because it returns a
 	// string, and the compiler doesn't like nested string returning functions.
-	P:3("unpack called: \"%s\"", str);
+	Debug_Print3("unpack called: \"%s\"", str);
 	new
 		ret[YSI_MAX_STRING] = {0};
 	if (strlen(str) <= YSI_MAX_STRING)
@@ -1401,7 +1401,7 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 
 stock bool:IsNumeric(const string:str[])
 {
-	P:4("IsNumeric called: \"%s\"", str);
+	Debug_Print4("IsNumeric called: \"%s\"", str);
 	new
 		i = -1;
 	if (YSI_IsPacked__(str))
@@ -2659,7 +2659,7 @@ stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN
 #pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 {
-	P:W("`InterpolateColorLinear()` called, please use `InterpolateColourLinear()` isntead,");
+	Debug_Warning("`InterpolateColorLinear()` called, please use `InterpolateColourLinear()` isntead,");
 	return InterpolateColourLinear(startColour, endColour, value, maxvalue, minvalue);
 }
 
@@ -2751,7 +2751,7 @@ stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 #pragma deprecated Use `InterpolateColourGamma` instead.
 stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-	P:W("`InterpolateColorGamma()` called, please use `InterpolateColourGamma()` isntead,");
+	Debug_Warning("`InterpolateColorGamma()` called, please use `InterpolateColourGamma()` isntead,");
 	return InterpolateColourGamma(startColour, endColour, fraction);
 }
 
@@ -2912,7 +2912,7 @@ stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 #pragma deprecated Use `InterpolateColourSRGB` instead.
 stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-	P:W("`InterpolateColorSRGB()` called, please use `InterpolateColourSRGB()` isntead,");
+	Debug_Warning("`InterpolateColorSRGB()` called, please use `InterpolateColourSRGB()` isntead,");
 	return InterpolateColourSRGB(startColour, endColour, fraction);
 }
 
@@ -3533,7 +3533,7 @@ stock LevenshteinDistance(const a[], const b[])
 	{
 		if (lenB > MAX_LEVENSHTEIN_STRING)
 		{
-			P:E("`LevenshteinDistance` can currenly only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+			Debug_Error("`LevenshteinDistance` can currenly only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
 			return 1;
 		}
 		// The calls below are NOT wrong, the parameters are swapped so the A/B
@@ -3560,7 +3560,7 @@ stock LevenshteinDistance(const a[], const b[])
 	}
 	if (lenA > MAX_LEVENSHTEIN_STRING)
 	{
-		P:E("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+		Debug_Error("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
 		return 1;
 	}
 	if (YSI_IsPacked__(a))
@@ -5112,7 +5112,7 @@ forward y_utils_end();
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Float:FloatAbs(Float:value));
+FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 #define FloatAbs(%0) ((%0) & (Float:0x7FFFFFFF))
 #define _ALS_FloatAbs
 

@@ -117,7 +117,7 @@ enum E_SCRIPTINIT_STATE (<<= 1)
 static
 	E_SCRIPTINIT_STATE:YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_NONE;
 
-#define Debug_PrintE(%1); \
+#define Debug_Error(%1); \
 	Debug_Print0("\7\7\7*** YSI Error: " #%1);
 
 #if defined _DEBUG
@@ -668,12 +668,12 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				{
 					if (jit)
 					{
-						P:W("Could not auto-load YSI cache - script type (GM/FS) cannot be determined with JIT.");
+						Debug_Warning("Could not auto-load YSI cache - script type (GM/FS) cannot be determined with JIT.");
 						strcat(name, ".amx");
 					}
 					else if (fs)
 					{
-						P:W("Could not auto-load YSI cache - current filterscript cannot be unloaded.");
+						Debug_Warning("Could not auto-load YSI cache - current filterscript cannot be unloaded.");
 						strcat(name, ".amx");
 					}
 					else
@@ -778,7 +778,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					Server_FinishIntroPart();
 				#endif
 					YSI_g_sScriptInitState = tmp;
-					P:E("YSI code cache write failed");
+					Debug_Error("YSI code cache write failed");
 			}
 		#endif
 			Server_EnableLongCall();
