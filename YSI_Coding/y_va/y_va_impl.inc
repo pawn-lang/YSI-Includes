@@ -439,7 +439,8 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 			}
 			else
 			{
-				// Not `-O2`, emit the new push and skip the existing `SYSREQ`.
+				// Not `-O2`, emit the new push and skip the existing `SYSREQ.C`
+				// or `CALL`, thus this path can be used with `-O2` too.
 				AsmEmitPushS(YSI_g_sContexts[pos], dest),
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
 			}
