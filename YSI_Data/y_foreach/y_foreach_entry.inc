@@ -154,7 +154,7 @@ Optional plugins:
 	#define _FOREACH_INC_TEST
 	// Ignore the broken stand-alone version.
 	#define _foreach_included
-	#tryinclude <foreach>
+	#tryinclude <foreach.inc>
 	#undef _FOREACH_INC_TEST
 	// <foreach> exists - test which is newer.
 	#if defined _FOREACH_LOCAL_VERSION

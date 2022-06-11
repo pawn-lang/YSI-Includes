@@ -76,8 +76,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 *//** */
 
-#tryinclude <sscanf2>
-#tryinclude <sscanf3>
+#tryinclude <sscanf2.inc>
+#tryinclude <sscanf3.inc>
 
 #if !defined sscanf || !defined WP_Hash
 	#error y_extra requires plugins - please install sscanf and whirlpool.

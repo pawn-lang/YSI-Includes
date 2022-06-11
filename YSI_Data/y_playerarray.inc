@@ -90,19 +90,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_playerarray
-	#tryinclude "y_playerarray\y_playerarray_entry"
+	#tryinclude "y_playerarray\y_playerarray_entry.inc"
 #endif
 #if !defined _INC_y_playerarray
-	#tryinclude "YSI_Data\y_playerarray\y_playerarray_entry"
+	#tryinclude "YSI_Data\y_playerarray\y_playerarray_entry.inc"
 #endif
 #if !defined _INC_y_playerarray
-	#tryinclude "YSI\YSI_Data\y_playerarray\y_playerarray_entry"
+	#tryinclude "YSI\YSI_Data\y_playerarray\y_playerarray_entry.inc"
 #endif
 #if !defined _INC_y_playerarray
-	#tryinclude <YSI_Data\y_playerarray\y_playerarray_entry>
+	#tryinclude <YSI_Data\y_playerarray\y_playerarray_entry.inc>
 #endif
 #if !defined _INC_y_playerarray
-	#tryinclude <YSI\YSI_Data\y_playerarray\y_playerarray_entry>
+	#tryinclude <YSI\YSI_Data\y_playerarray\y_playerarray_entry.inc>
 #endif
 #if !defined _INC_y_playerarray
 	#error Could not find y_playerarray

@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_users
-	#tryinclude "y_users\y_users_entry"
+	#tryinclude "y_users\y_users_entry.inc"
 #endif
 #if !defined _INC_y_users
-	#tryinclude "YSI_Players\y_users\y_users_entry"
+	#tryinclude "YSI_Players\y_users\y_users_entry.inc"
 #endif
 #if !defined _INC_y_users
-	#tryinclude "YSI\YSI_Players\y_users\y_users_entry"
+	#tryinclude "YSI\YSI_Players\y_users\y_users_entry.inc"
 #endif
 #if !defined _INC_y_users
-	#tryinclude <YSI_Players\y_users\y_users_entry>
+	#tryinclude <YSI_Players\y_users\y_users_entry.inc>
 #endif
 #if !defined _INC_y_users
-	#tryinclude <YSI\YSI_Players\y_users\y_users_entry>
+	#tryinclude <YSI\YSI_Players\y_users\y_users_entry.inc>
 #endif
 #if !defined _INC_y_users
 	#error Could not find y_users

@@ -220,19 +220,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_properties
-	#tryinclude "y_properties\y_properties_entry"
+	#tryinclude "y_properties\y_properties_entry.inc"
 #endif
 #if !defined _INC_y_properties
-	#tryinclude "YSI_Visual\y_properties\y_properties_entry"
+	#tryinclude "YSI_Visual\y_properties\y_properties_entry.inc"
 #endif
 #if !defined _INC_y_properties
-	#tryinclude "YSI\YSI_Visual\y_properties\y_properties_entry"
+	#tryinclude "YSI\YSI_Visual\y_properties\y_properties_entry.inc"
 #endif
 #if !defined _INC_y_properties
-	#tryinclude <YSI_Visual\y_properties\y_properties_entry>
+	#tryinclude <YSI_Visual\y_properties\y_properties_entry.inc>
 #endif
 #if !defined _INC_y_properties
-	#tryinclude <YSI\YSI_Visual\y_properties\y_properties_entry>
+	#tryinclude <YSI\YSI_Visual\y_properties\y_properties_entry.inc>
 #endif
 #if !defined _INC_y_properties
 	#error Could not find y_properties

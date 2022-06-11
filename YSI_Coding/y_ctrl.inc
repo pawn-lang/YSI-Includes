@@ -90,19 +90,19 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_ctrl
-	#tryinclude "y_ctrl\y_ctrl_entry"
+	#tryinclude "y_ctrl\y_ctrl_entry.inc"
 #endif
 #if !defined _INC_y_ctrl
-	#tryinclude "YSI_Coding\y_ctrl\y_ctrl_entry"
+	#tryinclude "YSI_Coding\y_ctrl\y_ctrl_entry.inc"
 #endif
 #if !defined _INC_y_ctrl
-	#tryinclude "YSI\YSI_Coding\y_ctrl\y_ctrl_entry"
+	#tryinclude "YSI\YSI_Coding\y_ctrl\y_ctrl_entry.inc"
 #endif
 #if !defined _INC_y_ctrl
-	#tryinclude <YSI_Coding\y_ctrl\y_ctrl_entry>
+	#tryinclude <YSI_Coding\y_ctrl\y_ctrl_entry.inc>
 #endif
 #if !defined _INC_y_ctrl
-	#tryinclude <YSI\YSI_Coding\y_ctrl\y_ctrl_entry>
+	#tryinclude <YSI\YSI_Coding\y_ctrl\y_ctrl_entry.inc>
 #endif
 #if !defined _INC_y_ctrl
 	#error Could not find y_ctrl

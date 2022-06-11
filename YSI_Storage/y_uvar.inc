@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_uvar
-	#tryinclude "y_uvar\y_uvar_entry"
+	#tryinclude "y_uvar\y_uvar_entry.inc"
 #endif
 #if !defined _INC_y_uvar
-	#tryinclude "YSI_Storage\y_uvar\y_uvar_entry"
+	#tryinclude "YSI_Storage\y_uvar\y_uvar_entry.inc"
 #endif
 #if !defined _INC_y_uvar
-	#tryinclude "YSI\YSI_Storage\y_uvar\y_uvar_entry"
+	#tryinclude "YSI\YSI_Storage\y_uvar\y_uvar_entry.inc"
 #endif
 #if !defined _INC_y_uvar
-	#tryinclude <YSI_Storage\y_uvar\y_uvar_entry>
+	#tryinclude <YSI_Storage\y_uvar\y_uvar_entry.inc>
 #endif
 #if !defined _INC_y_uvar
-	#tryinclude <YSI\YSI_Storage\y_uvar\y_uvar_entry>
+	#tryinclude <YSI\YSI_Storage\y_uvar\y_uvar_entry.inc>
 #endif
 #if !defined _INC_y_uvar
 	#error Could not find y_uvar

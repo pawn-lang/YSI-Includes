@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_args
-	#tryinclude "y_args\y_args_entry"
+	#tryinclude "y_args\y_args_entry.inc"
 #endif
 #if !defined _INC_y_args
-	#tryinclude "YSI_Server\y_args\y_args_entry"
+	#tryinclude "YSI_Server\y_args\y_args_entry.inc"
 #endif
 #if !defined _INC_y_args
-	#tryinclude "YSI\YSI_Server\y_args\y_args_entry"
+	#tryinclude "YSI\YSI_Server\y_args\y_args_entry.inc"
 #endif
 #if !defined _INC_y_args
-	#tryinclude <YSI_Server\y_args\y_args_entry>
+	#tryinclude <YSI_Server\y_args\y_args_entry.inc>
 #endif
 #if !defined _INC_y_args
-	#tryinclude <YSI\YSI_Server\y_args\y_args_entry>
+	#tryinclude <YSI\YSI_Server\y_args\y_args_entry.inc>
 #endif
 #if !defined _INC_y_args
 	#error Could not find y_args

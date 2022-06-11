@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_jaggedarray
-	#tryinclude "y_jaggedarray\y_jaggedarray_entry"
+	#tryinclude "y_jaggedarray\y_jaggedarray_entry.inc"
 #endif
 #if !defined _INC_y_jaggedarray
-	#tryinclude "YSI_Data\y_jaggedarray\y_jaggedarray_entry"
+	#tryinclude "YSI_Data\y_jaggedarray\y_jaggedarray_entry.inc"
 #endif
 #if !defined _INC_y_jaggedarray
-	#tryinclude "YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry"
+	#tryinclude "YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry.inc"
 #endif
 #if !defined _INC_y_jaggedarray
-	#tryinclude <YSI_Data\y_jaggedarray\y_jaggedarray_entry>
+	#tryinclude <YSI_Data\y_jaggedarray\y_jaggedarray_entry.inc>
 #endif
 #if !defined _INC_y_jaggedarray
-	#tryinclude <YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry>
+	#tryinclude <YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry.inc>
 #endif
 #if !defined _INC_y_jaggedarray
 	#error Could not find y_jaggedarray

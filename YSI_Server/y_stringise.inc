@@ -99,19 +99,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_stringise
-	#tryinclude "y_stringise\y_stringise_entry"
+	#tryinclude "y_stringise\y_stringise_entry.inc"
 #endif
 #if !defined _INC_y_stringise
-	#tryinclude "YSI_Data\y_stringise\y_stringise_entry"
+	#tryinclude "YSI_Data\y_stringise\y_stringise_entry.inc"
 #endif
 #if !defined _INC_y_stringise
-	#tryinclude "YSI\YSI_Data\y_stringise\y_stringise_entry"
+	#tryinclude "YSI\YSI_Data\y_stringise\y_stringise_entry.inc"
 #endif
 #if !defined _INC_y_stringise
-	#tryinclude <YSI_Data\y_stringise\y_stringise_entry>
+	#tryinclude <YSI_Data\y_stringise\y_stringise_entry.inc>
 #endif
 #if !defined _INC_y_stringise
-	#tryinclude <YSI\YSI_Data\y_stringise\y_stringise_entry>
+	#tryinclude <YSI\YSI_Data\y_stringise\y_stringise_entry.inc>
 #endif
 #if !defined _INC_y_stringise
 	#error Could not find y_stringise

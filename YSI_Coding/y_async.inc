@@ -89,19 +89,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_async
-	#tryinclude "y_async\y_async_entry"
+	#tryinclude "y_async\y_async_entry.inc"
 #endif
 #if !defined _INC_y_async
-	#tryinclude "YSI_Coding\y_async\y_async_entry"
+	#tryinclude "YSI_Coding\y_async\y_async_entry.inc"
 #endif
 #if !defined _INC_y_async
-	#tryinclude "YSI\YSI_Coding\y_async\y_async_entry"
+	#tryinclude "YSI\YSI_Coding\y_async\y_async_entry.inc"
 #endif
 #if !defined _INC_y_async
-	#tryinclude <YSI_Coding\y_async\y_async_entry>
+	#tryinclude <YSI_Coding\y_async\y_async_entry.inc>
 #endif
 #if !defined _INC_y_async
-	#tryinclude <YSI\YSI_Coding\y_async\y_async_entry>
+	#tryinclude <YSI\YSI_Coding\y_async\y_async_entry.inc>
 #endif
 #if !defined _INC_y_async
 	#error Could not find y_async

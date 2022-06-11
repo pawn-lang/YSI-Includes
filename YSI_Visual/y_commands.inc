@@ -160,19 +160,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_commands
-	#tryinclude "y_commands\y_commands_entry"
+	#tryinclude "y_commands\y_commands_entry.inc"
 #endif
 #if !defined _INC_y_commands
-	#tryinclude "YSI_Visual\y_commands\y_commands_entry"
+	#tryinclude "YSI_Visual\y_commands\y_commands_entry.inc"
 #endif
 #if !defined _INC_y_commands
-	#tryinclude "YSI\YSI_Visual\y_commands\y_commands_entry"
+	#tryinclude "YSI\YSI_Visual\y_commands\y_commands_entry.inc"
 #endif
 #if !defined _INC_y_commands
-	#tryinclude <YSI_Visual\y_commands\y_commands_entry>
+	#tryinclude <YSI_Visual\y_commands\y_commands_entry.inc>
 #endif
 #if !defined _INC_y_commands
-	#tryinclude <YSI\YSI_Visual\y_commands\y_commands_entry>
+	#tryinclude <YSI\YSI_Visual\y_commands\y_commands_entry.inc>
 #endif
 #if !defined _INC_y_commands
 	#error Could not find y_commands

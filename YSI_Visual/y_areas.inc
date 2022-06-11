@@ -165,19 +165,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_areas
-	#tryinclude "y_areas\y_areas_entry"
+	#tryinclude "y_areas\y_areas_entry.inc"
 #endif
 #if !defined _INC_y_areas
-	#tryinclude "YSI_Visual\y_areas\y_areas_entry"
+	#tryinclude "YSI_Visual\y_areas\y_areas_entry.inc"
 #endif
 #if !defined _INC_y_areas
-	#tryinclude "YSI\YSI_Visual\y_areas\y_areas_entry"
+	#tryinclude "YSI\YSI_Visual\y_areas\y_areas_entry.inc"
 #endif
 #if !defined _INC_y_areas
-	#tryinclude <YSI_Visual\y_areas\y_areas_entry>
+	#tryinclude <YSI_Visual\y_areas\y_areas_entry.inc>
 #endif
 #if !defined _INC_y_areas
-	#tryinclude <YSI\YSI_Visual\y_areas\y_areas_entry>
+	#tryinclude <YSI\YSI_Visual\y_areas\y_areas_entry.inc>
 #endif
 #if !defined _INC_y_areas
 	#error Could not find y_areas

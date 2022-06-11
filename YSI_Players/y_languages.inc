@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_languages
-	#tryinclude "y_languages\y_languages_entry"
+	#tryinclude "y_languages\y_languages_entry.inc"
 #endif
 #if !defined _INC_y_languages
-	#tryinclude "YSI_Players\y_languages\y_languages_entry"
+	#tryinclude "YSI_Players\y_languages\y_languages_entry.inc"
 #endif
 #if !defined _INC_y_languages
-	#tryinclude "YSI\YSI_Players\y_languages\y_languages_entry"
+	#tryinclude "YSI\YSI_Players\y_languages\y_languages_entry.inc"
 #endif
 #if !defined _INC_y_languages
-	#tryinclude <YSI_Players\y_languages\y_languages_entry>
+	#tryinclude <YSI_Players\y_languages\y_languages_entry.inc>
 #endif
 #if !defined _INC_y_languages
-	#tryinclude <YSI\YSI_Players\y_languages\y_languages_entry>
+	#tryinclude <YSI\YSI_Players\y_languages\y_languages_entry.inc>
 #endif
 #if !defined _INC_y_languages
 	#error Could not find y_languages

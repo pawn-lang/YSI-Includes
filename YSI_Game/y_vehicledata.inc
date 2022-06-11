@@ -107,19 +107,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_vehicledata
-	#tryinclude "y_vehicledata\y_vehicledata_entry"
+	#tryinclude "y_vehicledata\y_vehicledata_entry.inc"
 #endif
 #if !defined _INC_y_vehicledata
-	#tryinclude "YSI_Game\y_vehicledata\y_vehicledata_entry"
+	#tryinclude "YSI_Game\y_vehicledata\y_vehicledata_entry.inc"
 #endif
 #if !defined _INC_y_vehicledata
-	#tryinclude "YSI\YSI_Game\y_vehicledata\y_vehicledata_entry"
+	#tryinclude "YSI\YSI_Game\y_vehicledata\y_vehicledata_entry.inc"
 #endif
 #if !defined _INC_y_vehicledata
-	#tryinclude <YSI_Game\y_vehicledata\y_vehicledata_entry>
+	#tryinclude <YSI_Game\y_vehicledata\y_vehicledata_entry.inc>
 #endif
 #if !defined _INC_y_vehicledata
-	#tryinclude <YSI\YSI_Game\y_vehicledata\y_vehicledata_entry>
+	#tryinclude <YSI\YSI_Game\y_vehicledata\y_vehicledata_entry.inc>
 #endif
 #if !defined _INC_y_vehicledata
 	#error Could not find y_vehicledata

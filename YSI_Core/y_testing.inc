@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_testing
-	#tryinclude "y_testing\y_testing_entry"
+	#tryinclude "y_testing\y_testing_entry.inc"
 #endif
 #if !defined _INC_y_testing
-	#tryinclude "YSI_Core\y_testing\y_testing_entry"
+	#tryinclude "YSI_Core\y_testing\y_testing_entry.inc"
 #endif
 #if !defined _INC_y_testing
-	#tryinclude "YSI\YSI_Core\y_testing\y_testing_entry"
+	#tryinclude "YSI\YSI_Core\y_testing\y_testing_entry.inc"
 #endif
 #if !defined _INC_y_testing
-	#tryinclude <YSI_Core\y_testing\y_testing_entry>
+	#tryinclude <YSI_Core\y_testing\y_testing_entry.inc>
 #endif
 #if !defined _INC_y_testing
-	#tryinclude <YSI\YSI_Core\y_testing\y_testing_entry>
+	#tryinclude <YSI\YSI_Core\y_testing\y_testing_entry.inc>
 #endif
 #if !defined _INC_y_testing
 	#error Could not find y_testing

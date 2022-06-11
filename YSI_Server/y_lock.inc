@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_lock
-	#tryinclude "y_lock\y_lock_entry"
+	#tryinclude "y_lock\y_lock_entry.inc"
 #endif
 #if !defined _INC_y_lock
-	#tryinclude "YSI_Server\y_lock\y_lock_entry"
+	#tryinclude "YSI_Server\y_lock\y_lock_entry.inc"
 #endif
 #if !defined _INC_y_lock
-	#tryinclude "YSI\YSI_Server\y_lock\y_lock_entry"
+	#tryinclude "YSI\YSI_Server\y_lock\y_lock_entry.inc"
 #endif
 #if !defined _INC_y_lock
-	#tryinclude <YSI_Server\y_lock\y_lock_entry>
+	#tryinclude <YSI_Server\y_lock\y_lock_entry.inc>
 #endif
 #if !defined _INC_y_lock
-	#tryinclude <YSI\YSI_Server\y_lock\y_lock_entry>
+	#tryinclude <YSI\YSI_Server\y_lock\y_lock_entry.inc>
 #endif
 #if !defined _INC_y_lock
 	#error Could not find y_lock

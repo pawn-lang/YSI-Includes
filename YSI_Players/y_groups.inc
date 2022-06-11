@@ -94,19 +94,19 @@ Optional plugins:
 	#undef _inc_y_groups
 #endif
 #if !defined _Y_GROUPS_INCLUDED
-	#tryinclude "y_groups\y_groups_entry"
+	#tryinclude "y_groups\y_groups_entry.inc"
 #endif
 #if !defined _Y_GROUPS_INCLUDED
-	#tryinclude "YSI_Players\y_groups\y_groups_entry"
+	#tryinclude "YSI_Players\y_groups\y_groups_entry.inc"
 #endif
 #if !defined _Y_GROUPS_INCLUDED
-	#tryinclude "YSI\YSI_Players\y_groups\y_groups_entry"
+	#tryinclude "YSI\YSI_Players\y_groups\y_groups_entry.inc"
 #endif
 #if !defined _Y_GROUPS_INCLUDED
-	#tryinclude <YSI_Players\y_groups\y_groups_entry>
+	#tryinclude <YSI_Players\y_groups\y_groups_entry.inc>
 #endif
 #if !defined _Y_GROUPS_INCLUDED
-	#tryinclude <YSI\YSI_Players\y_groups\y_groups_entry>
+	#tryinclude <YSI\YSI_Players\y_groups\y_groups_entry.inc>
 #endif
 #if defined _Y_GROUPS_INCLUDED
 	#undef _Y_GROUPS_INCLUDED

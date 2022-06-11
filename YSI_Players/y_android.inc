@@ -76,16 +76,16 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_android
-	#tryinclude "YSI_Players\y_android\y_android_entry"
+	#tryinclude "YSI_Players\y_android\y_android_entry.inc"
 #endif
 #if !defined _INC_y_android
-	#tryinclude "YSI\YSI_Players\y_android\y_android_entry"
+	#tryinclude "YSI\YSI_Players\y_android\y_android_entry.inc"
 #endif
 #if !defined _INC_y_android
-	#tryinclude <YSI_Players\y_android\y_android_entry>
+	#tryinclude <YSI_Players\y_android\y_android_entry.inc>
 #endif
 #if !defined _INC_y_android
-	#tryinclude <YSI\YSI_Players\y_android\y_android_entry>
+	#tryinclude <YSI\YSI_Players\y_android\y_android_entry.inc>
 #endif
 #if !defined _INC_y_android
 	#error Could not find y_android

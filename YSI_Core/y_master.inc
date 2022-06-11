@@ -95,19 +95,19 @@ Optional plugins:
 #endif
 
 #if !defined _Y_MASTER_INCLUDED
-	#tryinclude "y_master\y_master_entry"
+	#tryinclude "y_master\y_master_entry.inc"
 #endif
 #if !defined _Y_MASTER_INCLUDED
-	#tryinclude "YSI_Core\y_master\y_master_entry"
+	#tryinclude "YSI_Core\y_master\y_master_entry.inc"
 #endif
 #if !defined _Y_MASTER_INCLUDED
-	#tryinclude "YSI\YSI_Core\y_master\y_master_entry"
+	#tryinclude "YSI\YSI_Core\y_master\y_master_entry.inc"
 #endif
 #if !defined _Y_MASTER_INCLUDED
-	#tryinclude <YSI_Core\y_master\y_master_entry>
+	#tryinclude <YSI_Core\y_master\y_master_entry.inc>
 #endif
 #if !defined _Y_MASTER_INCLUDED
-	#tryinclude <YSI\YSI_Core\y_master\y_master_entry>
+	#tryinclude <YSI\YSI_Core\y_master\y_master_entry.inc>
 #endif
 #if defined _Y_MASTER_INCLUDED
 	#undef _Y_MASTER_INCLUDED
