@@ -191,13 +191,13 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 }
 
 // Enable `&YVA2_DummyPush` WITHOUT matching it within the scanner itself.
-#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1, -1, -1)
+#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1, -1)
 // IF YOU EVER CHANGE THE NUMBER OF DUMMY PARAMETERS, DON'T FORGET TO CHANGE THE
 // PARAMETER BYTE COUNT IN THE SCANNER!  ONLY DONE IT EVERY TIME SO FAR...
-stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0, const dummy4 = 0, const dummy5 = 0)
+stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0, const dummy4 = 0)
 {
 	Debug_Print3("YVA2_DummyPush start");
-	#pragma unused dummy0, dummy1, dummy2, dummy3, dummy4, dummy5
+	#pragma unused dummy0, dummy1, dummy2, dummy3, dummy4
 	// This function serves four purposes:
 	//   
 	//   1) It is the function called if `___` is used incorrectly, so the code
@@ -436,8 +436,8 @@ static stock YVA2_FoundPush(const m[CodeScanner])
 	YSI_g_sLength[YSI_g_sPassthroughNestings] = CodeScanGetMatchLength(m),
 	CodeScanGetMatchAsm(m, YSI_g_sContexts[YSI_g_sPassthroughNestings]),
 	YSI_g_sStacks[YSI_g_sPassthroughNestings] = CodeScanGetMatchStack(m),
-	// If the code is 96 bytes long, `ZERO_PRI` was used not a constant number.
-	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 112) ? 0 : CodeScanGetMatchHole(m, 0);
+	// If the code is 104 bytes long, `ZERO_PRI` was used not a constant number.
+	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 104) ? 0 : CodeScanGetMatchHole(m, 0);
 	if (!YSI_g_sPassthroughNestings)
 	{
 		// Check if this function is returning a string.  It has an extra hidden
@@ -486,6 +486,9 @@ static stock YVA2_Initalise()
 		csmO0A[CodeScanMatcher],
 		csmO0B[CodeScanMatcher],
 		csmO1[CodeScanMatcher],
+#if __COMPILER_O2
+		csmO2[CodeScanMatcher],
+#endif
 		csm2[CodeScanMatcher],
 		csm3[CodeScanMatcher];
 	CodeScanInit(scanner);
@@ -516,20 +519,18 @@ static stock YVA2_Initalise()
 		OP(PUSH_PRI)                    // 32
 		OP(ZERO_PRI)                    // 36
 		OP(PUSH_PRI)                    // 40
-		OP(ZERO_PRI)                    // 44
-		OP(PUSH_PRI)                    // 48
-		OP(CONST_PRI,  4)               // 56
+		OP(CONST_PRI,  4)               // 48
+		OP(PUSH_PRI)                    // 52
+		OP(ZERO_PRI)                    // 56
 		OP(PUSH_PRI)                    // 60
 		OP(ZERO_PRI)                    // 64
 		OP(PUSH_PRI)                    // 68
-		OP(ZERO_PRI)                    // 72
-		OP(PUSH_PRI)                    // 76
-		OP(PUSH_C,     36)              // 84
-		OP(CALL,       &YVA2_DummyPush) // 92
-		OP(HEAP,       4)               // 100
-		OP(STOR_I)                      // 104
-		OP(MOVE_PRI)                    // 108
-		OP(PUSH_PRI)                    // 112
+		OP(PUSH_C,     32)              // 76
+		OP(CALL,       &YVA2_DummyPush) // 84
+		OP(HEAP,       4)               // 92
+		OP(STOR_I)                      // 96
+		OP(MOVE_PRI)                    // 100
+		OP(PUSH_PRI)                    // 104
 	);
 	CodeScanAddMatcher(scanner, csmO0A);
 	CodeScanMatcherInit(csmO0B, &YVA2_FoundPush);
@@ -544,20 +545,18 @@ static stock YVA2_Initalise()
 		OP(PUSH_PRI)                    // 32
 		OP(ZERO_PRI)                    // 36
 		OP(PUSH_PRI)                    // 40
-		OP(ZERO_PRI)                    // 44
-		OP(PUSH_PRI)                    // 48
-		OP(CONST_PRI,  4)               // 56
+		OP(CONST_PRI,  4)               // 48
+		OP(PUSH_PRI)                    // 52
+		OP(ZERO_PRI)                    // 56
 		OP(PUSH_PRI)                    // 60
-		OP(ZERO_PRI)                    // 64
-		OP(PUSH_PRI)                    // 68
-		OP(CONST_PRI,  ???)             // 76
-		OP(PUSH_PRI)                    // 80
-		OP(PUSH_C,     36)              // 88
-		OP(CALL,       &YVA2_DummyPush) // 96
-		OP(HEAP,       4)               // 104
-		OP(STOR_I)                      // 108
-		OP(MOVE_PRI)                    // 112
-		OP(PUSH_PRI)                    // 116
+		OP(CONST_PRI,  ???)             // 68
+		OP(PUSH_PRI)                    // 72
+		OP(PUSH_C,     32)              // 80
+		OP(CALL,       &YVA2_DummyPush) // 88
+		OP(HEAP,       4)               // 96
+		OP(STOR_I)                      // 100
+		OP(MOVE_PRI)                    // 104
+		OP(PUSH_PRI)                    // 108
 	);
 	CodeScanAddMatcher(scanner, csmO0B);
 	/*
@@ -578,17 +577,39 @@ static stock YVA2_Initalise()
 		OP(PUSH_C,     0)               // 24
 		OP(PUSH_C,     0)               // 32
 		OP(PUSH_C,     0)               // 40
-		OP(PUSH_C,     0)               // 48
-		OP(PUSH_C,     4)               // 56
-		OP(PUSH_C,     0)               // 64
-		OP(PUSH_C,     ???)             // 72
-		OP(PUSH_C,     36)              // 80
-		OP(CALL,       &YVA2_DummyPush) // 84
-		OP(HEAP,       4)               // 92
-		OP(STOR_I)                      // 96
-		OP(PUSH_ALT)                    // 100
+		OP(PUSH_C,     4)               // 48
+		OP(PUSH_C,     0)               // 56
+		OP(PUSH_C,     ???)             // 64
+		OP(PUSH_C,     32)              // 72
+		OP(CALL,       &YVA2_DummyPush) // 80
+		OP(HEAP,       4)               // 84
+		OP(STOR_I)                      // 88
+		OP(PUSH_ALT)                    // 92
 	);
 	CodeScanAddMatcher(scanner, csmO1);
+	/*
+		// O2:
+		push5.c 0 0 0 0 0
+		push4.c 0 4 0 0
+		push.c  36
+		call YVA2_DoPush
+		heap 4
+		stor.i
+		push.alt
+	*/
+#if __COMPILER_O2
+	CodeScanMatcherInit(csmO2, &YVA2_FoundPush);
+	CodeScanMatcherPattern(csmO2,
+		OP(PUSH5_C,    0, 0, 0, 0, 0)   // 24
+		OP(PUSH3_C,    4, 0, ???)       // 40
+		OP(PUSH_C,     32)              // 48
+		OP(CALL,       &YVA2_DummyPush) // 56
+		OP(HEAP,       4)               // 64
+		OP(STOR_I)                      // 68
+		OP(PUSH_ALT)                    // 72
+	);
+	CodeScanAddMatcher(scanner, csmO2);
+#endif
 	// Match ANY function calls anywhere.  Will even match calls to `___`, but
 	// we can ignore them (and many others).  I need some way to determine that
 	// "amx_assembly" is up-to-date with the very latest "codescan" changes to
