@@ -1399,35 +1399,45 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:IsNumeric(const string:str[])
-{
-	Debug_Print4("IsNumeric called: \"%s\"", str);
-	new
-		i = -1;
-	if (YSI_IsPacked__(str))
+#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumeric__
+	stock bool:IsNumeric(const string:str[])
 	{
-		if (str{0} == '-') ++i;
-		while (IS_IN_RANGE(str{++i}, '0', '9' + 1)) {}
-		return !str{i};
+		Debug_Print4("IsNumeric called: \"%s\"", str);
+		new
+			i = -1;
+		if (YSI_IsPacked__(str))
+		{
+			if (str{0} == '-') ++i;
+			while (IS_IN_RANGE(str{++i}, '0', '9' + 1)) {}
+			return !str{i};
+		}
+		else
+		{
+			if (str[0] == '-') ++i;
+			while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
+			return !str[i];
+		}
 	}
-	else
-	{
-		if (str[0] == '-') ++i;
-		while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
-		return !str[i];
-	}
-}
 
-#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
-stock bool:isnumeric(const string:str[])
-{
-	return IsNumeric(str);
-}
+	#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
+	stock bool:isnumeric(const string:str[])
+	{
+		return IsNumeric(str);
+	}
+
+	// Ensure this branch is hit a second time.
+	stock YSI_IsNumeric__()
+	{
+	}
+#else
+	HIDE_PAWNDOC(YSI_IsNumeric);
+#endif
 
 // Detect a compiler issue.
 #if __COMPILER_FUNC_DECL_BUG
 	// Try disable the next `IsNumeric` declaration.
 	#define IsNumeric(%0[]) _@IsNumeric(%0[])
+	#define isnumeric(%0[]) _@isnumeric(%0[])
 #endif
 
 /*-------------------------------------------------------------------------*//**
