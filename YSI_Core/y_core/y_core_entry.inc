@@ -240,7 +240,15 @@ enum E_YSI_DIR
 			return number[i] == '\0';
 		}
 
-		#define isnumeric IsNumeric
+		#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
+		stock bool:isnumeric(const number[])
+		{
+			// Shouldn't be used in production.  Not a good version.
+			new i = -1;
+			if (number[0] == '-') ++i;
+			while ('0' <= number[++i] <= '9') {}
+			return number[i] == '\0';
+		}
 
 		// Ensure this branch is hit a second time.
 		stock YSI_IsNumericTest__()
