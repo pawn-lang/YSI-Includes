@@ -372,6 +372,7 @@ static stock Inline_FoundStart(const scanner[CodeScanner], data[E_INLINE_DATA] =
 	if (data[E_INLINE_DATA_STATE] != 0)
 		return 0;
 	Debug_Print5("Inline_FoundStart OK");
+	printf("found start: %08x", CodeScanGetMatchAddress(scanner));
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
 	data[E_INLINE_DATA_NAME] = CodeScanGetMatchHole(scanner, 0);
@@ -482,7 +483,7 @@ static stock Inline_FoundEnd(const scanner[CodeScanner], data[E_INLINE_DATA] = "
 static stock Inline_StoreData(const data[E_INLINE_DATA])
 {
 	// `data[E_INLINE_DATA_NAME]` stores the address of a string with the inline
-	// function's name, followed by extra space for storing: a pointer to the
+	// function's name, preceeded by extra space for storing: a pointer to the
 	// name, a pointer to the function, a pointer to the next inline in the
 	// linked list of names, and something else?
 	new
@@ -517,20 +518,32 @@ static stock Inline_FoundUsingInline(const scanner[CodeScanner])
 	// Found a call to `using inline`.  Change it from (the equivalent of)
 	// `(a = Inline_UI_(a), a)` to `Inline_UI_(a)`.  First, check that the two
 	// holes are the same.  If they're not, this isn't what we want to optimise.
-	if (CodeScanGetMatchHole(scanner, 0) != CodeScanGetMatchHole(scanner, 1))
-		return 0;
 	new
 		ctx[AsmContext];
 	switch (CodeScanGetMatchLength(scanner))
 	{
 		case 8 * cellbytes:
 		{
+			if (CodeScanGetMatchHole(scanner, 0) != CodeScanGetMatchHole(scanner, 1))
+				return 0;
 			CodeScanGetMatchAsm(scanner, ctx, 6 * cellbytes);
 			@emit PUSH.pri
 			@emit NOP
 		}
+#if __COMPILER_O2
+		case 9 * cellbytes:
+		{
+			if (CodeScanGetMatchHole(scanner, 1) != CodeScanGetMatchHole(scanner, 2))
+				return 0;
+			CodeScanGetMatchAsm(scanner, ctx, 7 * cellbytes);
+			@emit PUSH.pri
+			@emit NOP
+		}
+#endif
 		case 10 * cellbytes:
 		{
+			if (CodeScanGetMatchHole(scanner, 0) != CodeScanGetMatchHole(scanner, 1))
+				return 0;
 			CodeScanGetMatchAsm(scanner, ctx, 7 * cellbytes);
 			@emit NOP
 			@emit NOP
@@ -812,7 +825,19 @@ public OnCodeInit()
 		OP(PUSH_S,             ???)
 	);
 	CodeScanAddMatcher(scanner, csm7b);
-	
+
+#if __COMPILER_O2
+	new csm7c[CodeScanMatcher];
+	CodeScanMatcherInit(csm7c, &Inline_FoundUsingInline);
+	CodeScanMatcherPattern(csm7c,
+		OP(PUSH2_ADR,          ???, ???)
+		OP(PUSH_C,             4)
+		OP(CALL,               &Inline_UI_)
+		OP(PUSH_S,             ???)
+	);
+	CodeScanAddMatcher(scanner, csm7c);
+#endif
+
 	// Destructors.
 	{
 		// We can't directly get the address of a destructor.  Instead, we need
@@ -931,8 +956,8 @@ Note:
 // 
 //   +0 - Inline function start pointer.
 //   +1 - Stack size.
-#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;for(new %0;I@F();)while(I@L(%3I@K(%1)))
-#define INLINE_NUL(%9)%8$()%1()%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$__COMPILER_UNPACK#...#%9),F@_@%4:%9=F@_@%4:_@%9;for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1()%4# %8$__COMPILER_UNPACK#...#%9),F@_@%4:%9=F@_@%4:_@%9;for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$
 
@@ -1310,6 +1335,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 	stock bool:Callback_Get({F@_@, _}:...)
 	{
 #endif
+		printf("numargs: %d", numargs());
 		// Construct the old API arguments from the new prototype.  The new
 		// prototype can take both old-style strings and new-style resolved
 		// callbacks from `using inline`.
@@ -1327,7 +1353,9 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			if (numArgs == 4 + __COMPILER_BUG_317)
 				remote = bool:getarg(3 + __COMPILER_BUG_317);
 		}
-		Debug_Print2("Callback_Get called: %d %s %s", numArgs, name, expect);
+		Debug_Print2("Callback_Get: %c %c %c %c %c", name[0], name[1], name[2], name[3], name[4]);
+		Debug_Print2("Callback_Get: %c %c %c %c %c", name{0}, name{1}, name{2}, name{3}, name{4});
+		Debug_Print2("Callback_Get called: %d %s %s", numArgs, Unpack(name), expect);
 		// Check that the assumption made here is valid.  I can't imagine a
 		// case, given the number of libraries in use here, where it couldn't
 		// be!  We check this since any inline data pointer will point in to the
@@ -1362,7 +1390,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			}
 			return true;
 		}
-		getstringarg(name, 0 + __COMPILER_BUG_317);
+		//getstringarg(name, 0 + __COMPILER_BUG_317);
 		// Wrap the new string-find API.
 		if (Callback_Find_(name, ret, remote, GetTagIDFromName(expect)))
 		{
@@ -1968,6 +1996,7 @@ stock Inline_UI_(const &header)
 		return 0;
 	mset(closure, _:E_INLINE_CALL_NULL, 0);
 	mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
+	printf("Inline_UI_ func: %08x", mget(closure, _:E_INLINE_CALL_HANDLER));
 	mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
 	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__("Inline_MaybeFree_", 0, false, "i", _:closure));
@@ -1978,6 +2007,7 @@ stock Inline_UI_(const &header)
 	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(header));
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
+	printf("ret: %08x %08x", ra, Indirect_Ptr(ra));
 	RawMemCpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
 	AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm, args);
 	return Indirect_Ptr(ra);
