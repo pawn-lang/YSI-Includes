@@ -245,7 +245,18 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		);
 		CodeScanAddMatcher(second, lambdaStart2);
 	}
-	
+
+#if __COMPILER_O2
+	new lambdaStart3[CodeScanMatcher];
+	CodeScanMatcherInit(lambdaStart3, &Functional_FoundStart);
+	CodeScanMatcherPattern(lambdaStart3,
+		OP(PUSH3_C,            1, 1, nestingLevel)
+		OP(PUSH_C,             12)
+		OP(CALL,               &LAM@1)
+	);
+	CodeScanAddMatcher(second, lambdaStart3);
+#endif
+
 	new lambdaEnd[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaEnd, &Functional_FoundEnd);
 	CodeScanMatcherPattern(lambdaEnd,
@@ -307,6 +318,17 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		CodeScanAddMatcher(second, lambdaAfter2);
 	}
 	
+#if __COMPILER_O2
+	new lambdaAfter3[CodeScanMatcher];
+	CodeScanMatcherInit(lambdaAfter3, &Functional_FoundAfter);
+	CodeScanMatcherPattern(lambdaAfter3,
+		OP(PUSH5_C,            1, 1, 1, 1, nestingLevel)
+		OP(PUSH_C,             20)
+		OP(CALL,               &LAM@5)
+	);
+	CodeScanAddMatcher(second, lambdaAfter3);
+#endif
+
 	YSI_g_sFunctionalStartPos = 0;
 	YSI_g_sFunctionalEndPos = 0;
 	YSI_g_sFunctionalAfterPos = 0;
