@@ -1018,3 +1018,14 @@ TEST__ y_hooks_Crash()
 	}
 }
 
+HOOK_NATIVE__ YSI_NOP(&num)
+{
+	// Don't call the original.
+	return 42 + num;
+}
+
+TEST__ y_hooks_native()
+{
+	ASSERT_EQ(YSI_NOP(5), 47);
+}
+

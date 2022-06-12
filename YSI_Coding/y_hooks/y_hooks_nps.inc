@@ -299,13 +299,16 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find,
 	}
 }
 
-_@yH(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0)
+_@yH(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0)
 {
-	#pragma unused a, b, c, d, e, f
+	#pragma unused a, b, c, d, e, f, g
 	// This function does nothing.  It merely exists to reserve space for
 	// codegen.  According to my experiments, just 4 parameters are enough to
 	// reserve enough space (exactly) for the code generated below, even for a
-	// function with no parameters.  But better to be safe than sorry.
+	// function with no parameters.  But better to be safe than sorry.  Had to
+	// increase this to 7 for `-O2`.  Slightly ironic that more optimisation
+	// needs more space, but it is because the resulting code generated is
+	// smaller and we need the space.
 }
 
 public OnCodeInit()
@@ -380,6 +383,9 @@ public OnCodeInit()
 						continue;
 					}
 					idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+#if __COMPILER_O2
+					idx2 = 0;
+#endif
 				}
 				case OP_SYSREQ_D:
 				{
@@ -389,7 +395,17 @@ public OnCodeInit()
 						continue;
 					}
 					idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+#if __COMPILER_O2
+					idx2 = 0;
+#endif
 				}
+#if __COMPILER_O2
+				case OP_SYSREQ_N:
+				{
+					idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4)),
+					idx2 = 1;
+				}
+#endif
 				case OP_CALL:
 				{
 					idx1 = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
@@ -414,6 +430,19 @@ public OnCodeInit()
 			{
 				addr += 8;
 			}
+#if __COMPILER_O2
+			else if (idx2)
+			{
+				// sysreq.n
+				// I need to somehow add pushing the number of parameters here
+				// in a single cell.  The only thing we have going for us here
+				// is that the code doesn't need to be JIT compatible (so we
+				// can do clever things with stacks/addresses if nescessary).
+				AMX_Write(addr, _:call),
+				AMX_Write(addr + 4, idx1),
+				addr += 12;
+			}
+#endif
 			else
 			{
 				// Write a different target address.
@@ -445,15 +474,29 @@ public OnCodeInit()
 						continue;
 					}
 					idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+#if __COMPILER_O2
+					idx2 = 0;
+#endif
 				}
 				case OP_SYSREQ_D:
 				{
-					if (Opcode:AMX_Read(addr - 8) == proc)
+					if (HasSysreqD())
 					{
-						addr += 8;
-						continue;
+						if (Opcode:AMX_Read(addr - 8) == proc)
+						{
+							addr += 8;
+							continue;
+						}
+						idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+#if __COMPILER_O2
+						idx2 = 0;
 					}
-					idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+					else
+					{
+						idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+						idx2 = 1;
+#endif
+					}
 				}
 				case OP_CALL:
 				{
@@ -479,6 +522,19 @@ public OnCodeInit()
 			{
 				addr += 8;
 			}
+#if __COMPILER_O2
+			else if (idx2)
+			{
+				// sysreq.n
+				// I need to somehow add pushing the number of parameters here
+				// in a single cell.  The only thing we have going for us here
+				// is that the code doesn't need to be JIT compatible (so we
+				// can do clever things with stacks/addresses if nescessary).
+				AMX_Write(addr, _:call),
+				AMX_Write(addr + 4, idx1),
+				addr += 12;
+			}
+#endif
 			else
 			{
 				// Write a different target address.
@@ -575,6 +631,14 @@ stock _yH@(compressedFormat)
 			type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
 			break;
 		}
+#if __COMPILER_O2
+		case OP_SYSREQ_N:
+		{
+			addr = -DisasmGetOperand(dctx);
+			type = -(YSI_g_sNPSTrampoline + 48 * cellbytes);
+			break;
+		}
+#endif
 		}
 	}
 	//if (type < 0)
@@ -591,26 +655,65 @@ stock _yH@(compressedFormat)
 	//
 
 	// Build the structure in the stack first.
-	@emit POP.pri                                                               // 1
-	@emit PUSH.C       compressedFormat                                         // 3
+#if __COMPILER_O2
+	if (type == -(YSI_g_sNPSTrampoline + 48 * cellbytes))
+	{
+		// Extract the parameter count from the return address.  This is so we
+		// can fake a `CALL.N <addr> <params>` op to replace the `SYSREQ.N` in
+		// the same amount of space.  This is neither JIT nor cache-compatible.
+		// (actually it might be cache-compatible).
+		@emit POP.alt                                                           // 1
+		@emit CONST.pri     AMX_HEADER_COD                                      // 7
+		@emit ADD                                                               // 40
+		static argCountRef = 0;
+		@emit STOR.pri      argCountRef                                         // 42
+		@emit LREF.pri      argCountRef                                         // 44
+		//@emit LOAD.I
+		@emit PUSH.pri                                                          // 45
 
-	// Chain the functions.
-	if (YSI_g_sNPSBaseCall == addr)
-	{
-		@emit PUSH.C       YSI_g_sNPSStack                                      // 5
-		YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
-	}
-	else if (YSI_g_sNPSBaseCall == cellmin)
-	{
-		@emit PUSH.C       (type < 0 ? type : addr)                             // 5
-		YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+		// Chain the functions.
+		if (YSI_g_sNPSBaseCall == addr)
+		{
+			@emit PUSH3.C       compressedFormat, YSI_g_sNPSStack, 8            // 5
+			YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
+		}
+		else if (YSI_g_sNPSBaseCall == cellmin)
+		{
+			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), 8   // 5
+			YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+		}
+		else
+		{
+			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), 8   // 5
+		}
+
+		@emit CONST.pri     4                                                   // 47
+		@emit ADD                                                               // 48
 	}
 	else
+#endif
 	{
-		@emit PUSH.C       (type < 0 ? type : addr)                             // 5
+		@emit POP.pri                                                           // 1
+		@emit PUSH.C       compressedFormat                                     // 3
+
+		// Chain the functions.
+		if (YSI_g_sNPSBaseCall == addr)
+		{
+			@emit PUSH.C       YSI_g_sNPSStack                                  // 5
+			YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
+		}
+		else if (YSI_g_sNPSBaseCall == cellmin)
+		{
+			@emit PUSH.C       (type < 0 ? type : addr)                         // 5
+			YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+		}
+		else
+		{
+			@emit PUSH.C       (type < 0 ? type : addr)                         // 5
+		}
+		@emit PUSH.C       8                                                    // 7
 	}
 
-	@emit PUSH.C       8                                                        // 7
 	@emit PUSH.pri     // Save the return address again.                        // 8
 	@emit PUSH         AMX_Ref(YSI_g_sNPSStack)                                 // 10
 
