@@ -619,6 +619,7 @@ CHAIN_FORWARD:Inline_OnRuntimeError(code, &bool:suppress) = 1;
 
 public OnCodeInit()
 {
+	StillInALS(900);
 	Debug_Print2("Inline_OnCodeInit called");
 	YSI_g_sJumpOffset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
 	YSI_g_sCallbackCallAddress = addressof(Callback_CallHandler_) + YSI_g_sJumpOffset;
@@ -636,6 +637,7 @@ public OnCodeInit()
 	new data[E_INLINE_DATA];
 	
 	// Optimised.
+	StillInALS(901);
 	new csm1a[CodeScanMatcher];
 	CodeScanMatcherInit(csm1a, &Inline_FoundStart);
 	CodeScanMatcherData(csm1a, AMX_Ref(data[E_INLINE_DATA:0]));
@@ -702,6 +704,7 @@ public OnCodeInit()
 	);
 	CodeScanAddMatcher(scanner, csm3a);
 	
+	StillInALS(902);
 	new csm3b[CodeScanMatcher];
 	CodeScanMatcherInit(csm3b, &Inline_FoundVar);
 	CodeScanMatcherData(csm3b, AMX_Ref(data[E_INLINE_DATA:0]));
@@ -880,11 +883,14 @@ public OnCodeInit()
 	// TODO: Try and determine rough types for parent function parameters, using
 	// Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?  Can't remember off the
 	// top of my head).
+	StillInALS(903);
 	CodeScanRunFast(scanner, &I@T);
+	StillInALS(904);
 	
 	#if defined Inline_OnCodeInit
 		Inline_OnCodeInit();
 	#endif
+	StillInALS(905);
 	return 1;
 }
 

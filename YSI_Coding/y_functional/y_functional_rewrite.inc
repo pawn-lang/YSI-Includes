@@ -182,7 +182,8 @@ static stock Functional_FoundCall2(const scanner[CodeScanner])
 
 static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 {
-	Debug_Print4("Functional_FoundCall called: %d", nestingLevel);
+	StillInALS(1100);
+	printf("Functional_FoundCall called: %d", nestingLevel);
 	
 	// Found the code scanner itself - ignore this one.
 	if (nestingLevel > 0)
@@ -193,15 +194,20 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	new
 		callPos = CodeScanGetMatchAddressData(scanner);
 	CodeScanNOPMatch(scanner);
+	printf("Functional_FoundCall called: %d", callPos);
+	printf("Functional_FoundCall called: %d", callPos - AMX_HEADER_COD);
+	StillInALS(1101);
 	if (callPos > YSI_g_sFunctionalLastEnd)
 	{
 		YSI_g_sFunctionalExpectedDepth = -1;
 	}
 	
+	printf("Functional_FoundCall called: %d", callPos);
 	// Start a new scanner at the point this scanner ended.
 	new
 		second[CodeScanner];
 	CodeScanClone(second, scanner);
+	StillInALS(1102);
 	
 	new lambdaStart0[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaStart0, &Functional_FoundStart);
@@ -227,6 +233,7 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		OP(CALL,               &LAM@1)
 	);
 	CodeScanAddMatcher(second, lambdaStart1);
+	StillInALS(1103);
 	
 	// Needs to stay in scope.
 	new lambdaStart2[CodeScanMatcher];
@@ -245,6 +252,7 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		);
 		CodeScanAddMatcher(second, lambdaStart2);
 	}
+	StillInALS(1104);
 
 #if __COMPILER_O2
 	new lambdaStart3[CodeScanMatcher];
@@ -296,6 +304,7 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		OP(CALL,               &LAM@5)
 	);
 	CodeScanAddMatcher(second, lambdaAfter1);
+	StillInALS(1105);
 	
 	new lambdaAfter2[CodeScanMatcher];
 	if (nestingLevel == 0)
@@ -317,7 +326,8 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		);
 		CodeScanAddMatcher(second, lambdaAfter2);
 	}
-	
+	StillInALS(1106);
+		
 #if __COMPILER_O2
 	new lambdaAfter3[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaAfter3, &Functional_FoundAfter);
@@ -329,10 +339,12 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	CodeScanAddMatcher(second, lambdaAfter3);
 #endif
 
+	StillInALS(1107);
 	YSI_g_sFunctionalStartPos = 0;
 	YSI_g_sFunctionalEndPos = 0;
 	YSI_g_sFunctionalAfterPos = 0;
 	CodeScanRun(second);
+	StillInALS(1108);
 	
 	// We now have three bits of data - the call position (`callPos`), the start of the lambda code
 	// (`YSI_g_sFunctionalStartPos`), and the end of the lambda code (`YSI_g_sFunctionalEndPos`).
@@ -344,6 +356,7 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	new
 		ctx[AsmContext],
 		excess = CodeScanGetMatchStack(scanner) - YSI_g_sFunctionalExpectedDepth;
+	StillInALS(1109);
 	AsmInitPtr(ctx, callPos, 16);
 	// The relative jumps are all `+ 8` internally, since they add on the size of the `JUMP` OP.
 	@emit JUMP.rel         (YSI_g_sFunctionalStartPos - callPos)
@@ -355,22 +368,34 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	@emit STOR.pri         AMX_Ref(I@)
 	
 	AsmInitPtr(ctx, YSI_g_sFunctionalStartPos, 40);
+	StillInALS(1110);
+	printf("pos: %08x %08x", ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset], ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_HEADER_COD);
+	StillInALS(1140);
 	if (excess)
 	{
+	StillInALS(1120);
 		@emit JUMP.rel         (YSI_g_sFunctionalAfterPos + 48 - YSI_g_sFunctionalStartPos)
+	StillInALS(1120);
 		
 		// Dump this bit of excess stack to the heap.
 		@emit HEAP             excess
+	StillInALS(1120);
 		@emit LCTRL            4
+	StillInALS(1120);
 		@emit MOVS             excess
+	StillInALS(1120);
 		@emit STACK            excess
+	StillInALS(1120);
 	}
 	else
 	{
+	StillInALS(1130);
 		@emit JUMP.rel         (YSI_g_sFunctionalAfterPos - YSI_g_sFunctionalStartPos)
+	StillInALS(1130);
 	}
 	//@emit PUSH.C           YSI_g_sFunctionalExpectedDepth
 	//@emit CALL             0
+	StillInALS(1111);
 	
 	AsmInitPtr(ctx, YSI_g_sFunctionalAfterPos, 56);
 	if (excess)
@@ -390,6 +415,7 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		@emit JUMP.rel         (callPos - YSI_g_sFunctionalAfterPos)
 	}
 	
+	StillInALS(1112);
 	// Code was written - rescan the whole function.
 	return 1;
 }
@@ -401,6 +427,7 @@ public OnCodeInit()
 	// number (the exact value is unimportant; however, for now we know that it is always `<= 0`, so
 	// if the parameter is `> 0` ignore it - it's the code scanner itself).  Get rid of all the
 	// calls and change them in to jumps to each other.
+	StillInALS(1000);
 	
 	new scanner[CodeScanner];
 	CodeScanInit(scanner);
@@ -435,11 +462,14 @@ public OnCodeInit()
 	CodeScanAddMatcher(scanner, lambdaCall2);
 	
 	// Run fast, with an explicit search function.
+	StillInALS(1001);
 	CodeScanRunFast(scanner, &LAM@0);
+	StillInALS(103);
 	
 	#if defined Functional_OnCodeInit
 		Functional_OnCodeInit();
 	#endif
+	StillInALS(1002);
 	return 1;
 }
 

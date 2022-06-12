@@ -645,25 +645,31 @@ stock Server_GetLongCallDefault()
 
 static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 {
+	StillInALS(101);
 	#if !_YSI_SAFE_STARTUP
 		printf("Unsafe YSI signed by: %s", YSI_gcUnsafeStartupContract);
 	#endif
+	StillInALS(102);
 	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
 	{
+		StillInALS(103);
 		// Loaded from a file.
 		#if _YSI_SAFE_STARTUP
 			Server_PrintIntroMessage("   File loaded from YSI code cache.");
 		#endif
 			R@("OnCachedInit", YSI_EMPTY);
+		StillInALS(104);
 	}
 	else
 	{
+		StillInALS(105);
 		#if defined YSI_NO_MODE_CACHE
 			#pragma unused fs
 		#else
 			#if defined __date && defined __time && defined YSI_AUTO_LOAD_CACHE
 				new name[64];
 				format(name, sizeof (name), "YSI_CACHE.%s.%s", __date, __time);
+		StillInALS(106);
 				if (fexist(name))
 				{
 					if (jit)
@@ -693,8 +699,10 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				static const name[] = "YSI_CACHE.amx";
 			#endif
 		#endif
+		StillInALS(107);
 			Server_DisableLongCall();
 		#if _YSI_SAFE_STARTUP
+		StillInALS(108);
 			if (jit)
 			{
 				Server_PrintIntroPart(
@@ -703,6 +711,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					YSI_SPACE,
 					YSI_gscInitMsgD
 				);
+		StillInALS(109);
 			}
 			else
 			{
@@ -717,17 +726,21 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					YSI_SPACE,
 					YSI_gscInitMsgD
 				);
+		StillInALS(110);
 			}
 		#else
 			#pragma unused jit
 		#endif
+		StillInALS(111);
 		#if defined ScriptInit_OnCodeInit
 			ScriptInit_OnCodeInit();
 		#endif
+		StillInALS(112);
 		#if _YSI_SAFE_STARTUP
 			Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
 			Server_FinishIntroPart();
 		#endif
+		StillInALS(113);
 		#if !defined YSI_NO_MODE_CACHE
 			E_SCRIPTINIT_STATE
 				tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
@@ -742,6 +755,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					YSI_gscInitMsgD
 				);
 			#endif
+		StillInALS(114);
 			if (DumpAMX_Write(name))
 			{
 				#if _YSI_SAFE_STARTUP
@@ -770,18 +784,24 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 						"  gamemode0 ../scriptfiles/YSI_CACHE 1"
 					);
 				#endif
+		StillInALS(115);
 			}
 			else
 			{
+		StillInALS(116);
 				#if _YSI_SAFE_STARTUP
 					Server_PrintIntroPart(YSI_SPACE, YSI_gscFailed);
 					Server_FinishIntroPart();
 				#endif
+		StillInALS(117);
 					YSI_g_sScriptInitState = tmp;
 					Debug_Error("YSI code cache write failed");
+		StillInALS(118);
 			}
+		StillInALS(119);
 		#endif
 			Server_EnableLongCall();
+		StillInALS(120);
 	}
 	return true;
 }
@@ -930,6 +950,16 @@ public OnJITCompile()
 //	}
 //#endif
 
+StillInALS(n) <_ALS:_ALS_go>
+{
+	printf("Still in ALS %d", n);
+}
+
+StillInALS(n) <>
+{
+	printf("Not in ALS %d", n);
+}
+
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : true"/>
  * <transition keep="true" target="_ALS : _ALS_go"/>
@@ -961,7 +991,10 @@ public OnJITCompile()
 					Server_FinishIntroMessage();
 				#endif
 				#if defined ScriptInit_OnYSIInit
+					printf("ScriptInit_OnYSIInit 1");
+					//state _ALS : _ALS_go;
 					ScriptInit_OnYSIInit();
+					printf("after 1");
 				#endif
 				ScriptInit_PreInitFuncs_();
 				CallLocalFunction("OnScriptInit", YSI_EMPTY);
@@ -1078,6 +1111,8 @@ ScriptInit_Purge_retry:
 	YSI_gsPurgeTimer = YSI_SetTimer__("ScriptInit_PurgeTemporaries", 1000 * 60 * 60, false);
 }
 
+
+
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : false"/>
  * <transition keep="true" target="_ALS : _ALS_go"/>
@@ -1086,7 +1121,9 @@ ScriptInit_Purge_retry:
 #if _YSI_SAFE_STARTUP || !defined FILTERSCRIPT
 	public OnGameModeInit()
 	{
+			StillInALS(0);
 			state _ALS : _ALS_go;
+			StillInALS(10);
 			// Kill an existing purge if one exists in this script.
 		#if _YSI_SAFE_STARTUP
 			if (!YSI_FILTERSCRIPT && !YSI_OPEN_MP && !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
@@ -1099,41 +1136,57 @@ ScriptInit_Purge_retry:
 					ResolveYSIScriptfileDirs();
 				#endif
 			}
+			StillInALS(1);
 			if (YSI_gsPurgeTimer)
 			{
 				KillTimer(YSI_gsPurgeTimer);
 				YSI_gsPurgeTimer = 0;
 			}
+			StillInALS(2);
 			// Start a new purge if this is the first script called.
 			if (!existproperty(8, "Purge"))
 			{
 				setproperty(8, "Purge", 1);
 				ScriptInit_PurgeTemporaries();
 			}
+			StillInALS(3);
 		#if _YSI_SAFE_STARTUP
 			if (!Script_IsFilterscript())
 		#endif
 			{
+				StillInALS(30);
 		#if _YSI_SAFE_STARTUP
 				YSI_GAMEMODE = true;
 				if (!YSI_OPEN_MP)
 		#endif
 				{
+					StillInALS(4);
 					state _script_init_fix_state : false;
+					StillInALS(40);
 					// Dump the final assembly of this script so we can inspect it.
 					if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 					{
+						StillInALS(41);
 						DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
+						StillInALS(42);
 						if (!ScriptInit_CallOnCodeInit(false, false))
 							return 0;
+						StillInALS(43);
 					}
+					StillInALS(5);
 					YVers_StartCheck();
+					StillInALS(6);
 					#if _YSI_SAFE_STARTUP
 						Server_FinishIntroMessage();
 					#endif
+					StillInALS(7);
 					#if defined ScriptInit_OnYSIInit
+						printf("ScriptInit_OnYSIInit 2");
+						//state _ALS : _ALS_go;
 						ScriptInit_OnYSIInit();
+						printf("after 2");
 					#endif
+					StillInALS(8);
 					ScriptInit_PreInitFuncs_();
 					CallLocalFunction("OnScriptInit", YSI_EMPTY);
 					ScriptInit_PostInitFuncs_();

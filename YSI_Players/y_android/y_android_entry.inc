@@ -170,13 +170,17 @@ public OnPlayerConnect(playerid)
 #if _YSI_SAFE_STARTUP
 	public OnYSIInit()
 	{
+		printf("c");
 		if (Script_IsGameMode())
 		{
+			printf("d");
 			y_rconfix_Load();
 		}
+		printf("e");
 		#if defined Android_OnYSIInit
 			Android_OnYSIInit();
 		#endif
+		printf("f");
 		return 1;
 	}
 

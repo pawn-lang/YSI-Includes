@@ -253,14 +253,17 @@ public OnCodeInit()
 	// switched to lazy loading.  VERY few YSI features can be used in
 	// `OnCodeInit`, and if there are ever any issues relating to that, the
 	// correct response is "don't do that"!
+	StillInALS(700);
 	if (!YSI_g_sInitialised)
 	{
 		YVA2_Initalise();
 		YSI_g_sInitialised = -1;
 	}
+	StillInALS(701);
 	#if defined VA_OnCodeInit
 		VA_OnCodeInit();
 	#endif
+	StillInALS(702);
 	return 1;
 }
 

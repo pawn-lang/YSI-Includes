@@ -585,8 +585,11 @@ Optional plugins:
 
 public OnCodeInit()
 {
+	StillInALS(300);
 	AddressofResolve();
+	StillInALS(301);
 	Indirect_Init();
+	StillInALS(303);
 	#if defined ThirdParty_OnCodeInit
 		return ThirdParty_OnCodeInit();
 	#else
