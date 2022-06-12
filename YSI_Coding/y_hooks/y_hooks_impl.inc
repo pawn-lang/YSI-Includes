@@ -1239,14 +1239,12 @@ static stock Hooks_SortReplacements()
 
 public OnCodeInit()
 {
-	StillInALS(500);
 	Debug_Print1("Hooks_OnCodeInit called");
 	state _ALS : _ALS_go;
 	// Get the replacements.
 	new
 		idx = 0,
 		publicTableEntry = 0;
-	StillInALS(501);
 	if (Server_JITExists())
 	{
 		// Get the indexes of the startup functions that get recorded before the
@@ -1255,7 +1253,6 @@ public OnCodeInit()
 		YSI_g_sInitFSIdx = funcidx("OnFilterScriptInit");
 		YSI_g_sInitGMIdx = funcidx("OnGameModeInit");
 	}
-	StillInALS(502);
 	// Loop over the redefinition functions and call them to have them call the
 	// "_Hooks_AddReplacement" function above.  If we were being REALLY clever,
 	// these functions could be removed from the public functions table
@@ -1266,32 +1263,23 @@ public OnCodeInit()
 		CallFunction(AMX_Read(publicTableEntry));
 		Hooks_InvalidateName(publicTableEntry);
 	}
-	StillInALS(503);
 	Hooks_SortReplacements();
-	StillInALS(504);
 	Hooks_DoAllHooks();
-	StillInALS(505);
 	// Remove a few other superfluous publics.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<_@_y>)))
 		Hooks_InvalidateName(publicTableEntry);
-	StillInALS(506);
 	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
 		Hooks_InvalidateName(publicTableEntry);
-	StillInALS(507);
 	Hooks_SortPublics();
-	StillInALS(508);
 	Debug_Print1("Hooks_OnCodeInit chain");
-	StillInALS(509);
 	// Dump the generated callbacks for debugging.
 	//DisasmDump("YSI_TEST.asm");
 	#if defined Hooks_OnCodeInit
 		Hooks_OnCodeInit();
 	#endif
-	StillInALS(510);
 	Debug_Print1("Hooks_OnCodeInit end");
 	if (Server_JITExists())
 		Hooks_RepairJITInit();
-	StillInALS(511);
 	return 1;
 }
 

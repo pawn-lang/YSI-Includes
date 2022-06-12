@@ -91,7 +91,6 @@ forward Alloc:Malloc_Allocate(size, const bool:clear = false);
 
 public OnCodeInit()
 {
-	StillInALS(800);
 	Debug_Print1("Malloc_OnCodeInit called");
 	if (heapspace() < MALLOC_MEMORY + 4 * 1024)
 	{
@@ -100,7 +99,6 @@ public OnCodeInit()
 	new
 		Opcode:bounds = RelocateOpcode(OP_BOUNDS),
 		Opcode:nop = RelocateOpcode(OP_NOP);
-	StillInALS(801);
 	for (new i = AMX_HEADER_COD, end = AMX_HEADER_DAT - 4; i < end; i += 4)
 	{
 		// Make sure this isn't just something that LOOKS like "bounds 0",
@@ -114,12 +112,10 @@ public OnCodeInit()
 			AMX_Write(i, _:nop);
 		}
 	}
-	StillInALS(802);
 	// Run all other code setup first (most notably, y_hooks setup).
 	#if defined Malloc_OnCodeInit
 		Malloc_OnCodeInit();
 	#endif
-	StillInALS(803);
 	// Check the heap base, to ensure nothing is currently allocated.
 	new heap;
 	// Should also be the same as `LCTRL 2`, but no need for a third comparison.
@@ -152,7 +148,6 @@ public OnCodeInit()
 	YSI_gMallocMemory[YSI_g_sUnusedStart] = 0;
 	// Write something to the original array location (so it is used at least).
 	YSI_gMallocMemory[0] = MALLOC_MEMORY;
-	StillInALS(804);
 	#if _DEBUG > 4
 		// The "#if" is actually ignored by these "#emit" codes, as always.
 		#emit CONST.alt    YSI_gMallocMemory
@@ -189,12 +184,10 @@ public OnCodeInit()
 	while ((idx = AMX_GetPublicEntry(idx, entry)));
 	// Allocate memory for callback parameters to use.  They use some of the heap when passing
 	// strings etc, so save some space at the bottom of the heap for them to use.  This just leaks
-	StillInALS(804);
 	// memory from the allocation system, and allows it to be safely clobbered by those calls.
 	Malloc_Allocate(YSI_DEFAULT_MALLOC);
 	CGen_AddCodeSpace(AsmGetCodeSize(ctx));
 	Debug_Print6("Malloc_OnCodeInit done");
-	StillInALS(805);
 	return 1;
 }
 

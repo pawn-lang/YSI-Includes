@@ -218,13 +218,10 @@ static stock CGen_SetupCodeSpace()
 
 public OnCodeInit()
 {
-	StillInALS(400);
 	CGen_SetupCodeSpace();
-	StillInALS(401);
 	#if defined CGen_OnCodeInit
 		CGen_OnCodeInit();
 	#endif
-	StillInALS(402);
 	// Check that the code at this point is valid.  An OpCode is at most two
 	// bytes (except "OP_SWITCH", but there are none of them in this area of
 	// code because there are no "switch"es).  If the code here fails to
@@ -233,17 +230,14 @@ public OnCodeInit()
 	new
 		ctx[DisasmContext];
 	DisasmInit(ctx, YSI_g_sCodeSpace - AMX_HEADER_COD);
-	StillInALS(403);
 	for (new i = 0; i != 10; ++i)
 	{
 		if (DisasmNextInsn(ctx) == OP_NONE)
 		{
 			AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_NOP));
-			StillInALS(404);
 			return 1;
 		}
 	}
-	StillInALS(405);
 	return 1;
 }
 

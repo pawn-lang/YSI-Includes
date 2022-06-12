@@ -636,18 +636,14 @@ stock Debug_PrintArray(arr[], size = sizeof (arr))
 
 public OnCodeInit()
 {
-	StillInALS(200);
 	Debug_SetState();
-	StillInALS(201);
 	new
 		s = 0;
 	// Test the ADDRESS of the variable, not the value.
 	#emit CONST.pri @_
 	#emit STOR.S.pri s
-	StillInALS(202);
 	if (s)
 	{
-		StillInALS(203);
 		//goto Debug_OnCodeInit_no_fault();
 		#if defined Debug_OnCodeInit
 			return Debug_OnCodeInit();
@@ -655,7 +651,6 @@ public OnCodeInit()
 			return 1;
 		#endif
 	}
-	StillInALS(204);
 	Debug_Fatal("@_ == 0");
 	while (s != 10000000) ++s;
 	#emit CONST.pri 0

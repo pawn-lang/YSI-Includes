@@ -313,9 +313,7 @@ _@yH(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0)
 
 public OnCodeInit()
 {
-	StillInALS(600);
 	Indirect_Init();
-	StillInALS(601);
 
 	// Step 1:
 	//
@@ -331,13 +329,11 @@ public OnCodeInit()
 		idx1 = 0,
 		idx2 = 0,
 		base = 0;
-	StillInALS(602);
 	{
 		new hdr[AMX_HDR];
 		GetAmxHeader(hdr);
 		base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
 	}
-	StillInALS(603);
 	{
 		YSI_g_sNPSBaseCall = cellmin;
 		// Needs to be split over multiple lines because macros (`_A`).
@@ -355,13 +351,11 @@ public OnCodeInit()
 			}
 		}
 	}
-	StillInALS(604);
 	if (YSI_g_sNPSBaseCall != cellmin)
 	{
 		// Store the final chain.
 		YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
 	}
-	StillInALS(605);
 
 	// Step 2:
 	//
@@ -373,7 +367,6 @@ public OnCodeInit()
 		Opcode:proc = RelocateOpcode(OP_PROC),
 		Opcode:o,
 		reloc = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS;
-	StillInALS(606);
 	if (IsOpcodeRelocationRequired())
 	{
 		for (new addr = AMX_HEADER_COD; addr < 0;)
@@ -558,22 +551,18 @@ public OnCodeInit()
 		}
 	}
 
-	StillInALS(607);
 	// Step 2:
 	//
 	//   Generate `continue`.
 	//
 	Hooks_GenerateContinue();
-	StillInALS(608);
 
 	// Clear the stack.
 	YSI_g_sNPSStack = 0;
 	HeapRelease(heap);
-	StillInALS(609);
 	#if defined YHNPS_OnCodeInit
 		YHNPS_OnCodeInit();
 	#endif
-	StillInALS(610);
 	return 1;
 }
 
