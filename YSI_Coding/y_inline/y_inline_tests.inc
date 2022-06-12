@@ -73,7 +73,6 @@ Optional plugins:
 
 static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA], const f[] = "")
 {
-	printf("c = %d", c);
 	return Callback_Get(c, ret, f);
 }
 
@@ -425,35 +424,18 @@ TEST__ y_inline13()
 
 TEST__ Callback_AA()
 {
-	printf("0");
-	//DumpStack();
 	new
 		cc[E_CALLBACK_DATA];
-	printf("1");
 	inline func(&a)
 	{
 		a = 7;
 		#pragma unused a
 	}
-	printf("2: %08x", AMX_Read(func));
 	y_inline_Get(using inline func, cc);
-	{
-		//AddressofResolve();
-		new
-			amxhdr[AMX_HDR];
-		GetAmxHeader(amxhdr);
-		new gsCodSize = amxhdr[AMX_HDR_DAT] - amxhdr[AMX_HDR_COD];
-		printf("3: %08x", _:cc[0]);
-		printf("3: %08x", _:cc[0] - gsCodSize);
-		printf("3: %08x", AMX_Read(_:cc[0] - gsCodSize + 4));
-	}
 	new
 		a = 0;
-	printf("4");
 	Callback_Call(cc, a);
-	printf("5");
 	ASSERT_EQ(a, 7);
-	printf("6");
 }
 
 TEST__ Callback_Arr1()

@@ -372,7 +372,6 @@ static stock Inline_FoundStart(const scanner[CodeScanner], data[E_INLINE_DATA] =
 	if (data[E_INLINE_DATA_STATE] != 0)
 		return 0;
 	Debug_Print5("Inline_FoundStart OK");
-	printf("found start: %08x", CodeScanGetMatchAddress(scanner));
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
 	data[E_INLINE_DATA_NAME] = CodeScanGetMatchHole(scanner, 0);
@@ -1335,7 +1334,6 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 	stock bool:Callback_Get({F@_@, _}:...)
 	{
 #endif
-		printf("numargs: %d", numargs());
 		// Construct the old API arguments from the new prototype.  The new
 		// prototype can take both old-style strings and new-style resolved
 		// callbacks from `using inline`.
@@ -1353,9 +1351,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			if (numArgs == 4 + __COMPILER_BUG_317)
 				remote = bool:getarg(3 + __COMPILER_BUG_317);
 		}
-		Debug_Print2("Callback_Get: %c %c %c %c %c", name[0], name[1], name[2], name[3], name[4]);
-		Debug_Print2("Callback_Get: %c %c %c %c %c", name{0}, name{1}, name{2}, name{3}, name{4});
-		Debug_Print2("Callback_Get called: %d %s %s", numArgs, Unpack(name), expect);
+		Debug_Print2("Callback_Get called: %d %s %s", numArgs, name, expect);
 		// Check that the assumption made here is valid.  I can't imagine a
 		// case, given the number of libraries in use here, where it couldn't
 		// be!  We check this since any inline data pointer will point in to the
@@ -1390,7 +1386,6 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			}
 			return true;
 		}
-		//getstringarg(name, 0 + __COMPILER_BUG_317);
 		// Wrap the new string-find API.
 		if (Callback_Find_(name, ret, remote, GetTagIDFromName(expect)))
 		{
@@ -1996,7 +1991,6 @@ stock Inline_UI_(const &header)
 		return 0;
 	mset(closure, _:E_INLINE_CALL_NULL, 0);
 	mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
-	printf("Inline_UI_ func: %08x", mget(closure, _:E_INLINE_CALL_HANDLER));
 	mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
 	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__("Inline_MaybeFree_", 0, false, "i", _:closure));
@@ -2007,7 +2001,6 @@ stock Inline_UI_(const &header)
 	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(header));
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
-	printf("ret: %08x %08x", ra, Indirect_Ptr(ra));
 	RawMemCpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
 	AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm, args);
 	return Indirect_Ptr(ra);
