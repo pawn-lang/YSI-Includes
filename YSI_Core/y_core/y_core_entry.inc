@@ -228,7 +228,7 @@ enum E_YSI_DIR
 	E_YSI_DIR_TEMP
 }
 
-#if defined YSI_TESTS
+#if defined YSI_TESTS && __COMPILER_FUNC_DECL_BUG
 	#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumericTest__
 		// Test a compiler crash doesn't.
 		stock bool:IsNumeric(const number[])
