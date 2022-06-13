@@ -313,6 +313,13 @@ _@yH(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0)
 
 public OnCodeInit()
 {
+	// With `-O2` this can generate invalid code on purpose - our fake `CALL.N`
+	// operation.  Thus ensure all other generation is finished first to avoid
+	// them getting confused.
+	#if defined YHNPS_OnCodeInit
+		YHNPS_OnCodeInit();
+	#endif
+
 	{
 		Indirect_Init();
 
@@ -563,9 +570,6 @@ public OnCodeInit()
 		HeapRelease(heap);
 	}
 
-	#if defined YHNPS_OnCodeInit
-		YHNPS_OnCodeInit();
-	#endif
 	return 1;
 }
 

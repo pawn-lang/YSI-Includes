@@ -97,20 +97,18 @@ public OnCodeInit()
 		{
 			Debug_Error("heapspace too low for y_malloc: Did you use \"#pragma dynamic\"?");
 		}
+		// Remove all `BOUNDS 0` ops, finally done properly.
 		new
-			Opcode:bounds = RelocateOpcode(OP_BOUNDS),
+			dctx[DisasmContext],
+			Opcode:op,
 			Opcode:nop = RelocateOpcode(OP_NOP);
-		for (new i = AMX_HEADER_COD, end = AMX_HEADER_DAT - 4; i < end; i += 4)
+		DisasmInit(dctx);
+		while ((op = DisasmNextInsn(dctx)) != OP_NONE)
 		{
-			// Make sure this isn't just something that LOOKS like "bounds 0",
-			// although I don't think there can be because "0" is not a valid
-			// opcode.
-			if (AMX_Read(i) == _:bounds && AMX_Read(i + 4) == 0)
+			if (op == OP_BOUNDS && DisasmGetOperand(dctx) == 0)
 			{
-				// Found a bounds code.
-				AMX_Write(i, _:nop);
-				i += 4;
-				AMX_Write(i, _:nop);
+				AMX_Write(ctx[DisasmContext_cip], _:nop);
+				AMX_Write(ctx[DisasmContext_cip] + 4, _:nop);
 			}
 		}
 	}
