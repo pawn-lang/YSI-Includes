@@ -71,7 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#define FUNC_CHECK_ARR(%0,%1) for (new __i = 0, __j = min(sizeof (%0), sizeof (%1)); __i != __j; ++__i) ASSERT(%0[__i] == %1[__i])
+#define FUNC_CHECK_ARR(%0,%1) for (new __i = 0, __j = min(sizeof (%0), sizeof (%1)); __i != __j; ++__i) printf("%d, %d, %d", __i, %0[__i], %1[__i]),ASSERT(%0[__i] == %1[__i])
 
 TEST__ FUNC_Map1()
 {

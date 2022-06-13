@@ -1241,39 +1241,45 @@ public OnCodeInit()
 {
 	Debug_Print1("Hooks_OnCodeInit called");
 	state _ALS : _ALS_go;
-	// Get the replacements.
-	new
-		idx = 0,
-		publicTableEntry = 0;
-	if (Server_JITExists())
 	{
-		// Get the indexes of the startup functions that get recorded before the
-		// JIT plugin compiles, but called after it.  We thus need to fiddle the
-		// hooking to ensure that the correct functions are always called.
-		YSI_g_sInitFSIdx = funcidx("OnFilterScriptInit");
-		YSI_g_sInitGMIdx = funcidx("OnGameModeInit");
+		// Get the replacements.
+		new
+			idx = 0,
+			publicTableEntry = 0;
+		if (Server_JITExists())
+		{
+			// Get the indexes of the startup functions that get recorded before
+			// the JIT plugin compiles, but called after it.  We thus need to
+			// fiddle the hooking to ensure that the correct functions are
+			// always called.
+			YSI_g_sInitFSIdx = funcidx("OnFilterScriptInit");
+			YSI_g_sInitGMIdx = funcidx("OnGameModeInit");
+		}
+		// Loop over the redefinition functions and call them to have them call
+		// the "_Hooks_AddReplacement" function above.  If we were being REALLY
+		// clever, these functions could be removed from the public functions
+		// table afterwards (there is already code in y_hooks for this) to
+		// reduce its size.
+		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@_yH>)))
+		{
+			// From "amx\dynamic_call.inc" - check it is included in
+			// "y_hooks.inc".
+			CallFunction(AMX_Read(publicTableEntry));
+			Hooks_InvalidateName(publicTableEntry);
+		}
+		Hooks_SortReplacements();
+		Hooks_DoAllHooks();
+		// Remove a few other superfluous publics.
+		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<_@_y>)))
+			Hooks_InvalidateName(publicTableEntry);
+		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
+			Hooks_InvalidateName(publicTableEntry);
+		Hooks_SortPublics();
+		Debug_Print1("Hooks_OnCodeInit chain");
+		// Dump the generated callbacks for debugging.
+		//DisasmDump("YSI_TEST.asm");
 	}
-	// Loop over the redefinition functions and call them to have them call the
-	// "_Hooks_AddReplacement" function above.  If we were being REALLY clever,
-	// these functions could be removed from the public functions table
-	// afterwards (there is already code in y_hooks for this) to reduce is size.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@_yH>)))
-	{
-		// From "amx\dynamic_call.inc" - check it is included in "y_hooks.inc".
-		CallFunction(AMX_Read(publicTableEntry));
-		Hooks_InvalidateName(publicTableEntry);
-	}
-	Hooks_SortReplacements();
-	Hooks_DoAllHooks();
-	// Remove a few other superfluous publics.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<_@_y>)))
-		Hooks_InvalidateName(publicTableEntry);
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
-		Hooks_InvalidateName(publicTableEntry);
-	Hooks_SortPublics();
-	Debug_Print1("Hooks_OnCodeInit chain");
-	// Dump the generated callbacks for debugging.
-	//DisasmDump("YSI_TEST.asm");
+
 	#if defined Hooks_OnCodeInit
 		Hooks_OnCodeInit();
 	#endif

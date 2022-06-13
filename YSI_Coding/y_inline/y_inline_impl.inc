@@ -625,298 +625,303 @@ CHAIN_FORWARD:Inline_OnRuntimeError(code, &bool:suppress) = 1;
 
 public OnCodeInit()
 {
-	Debug_Print2("Inline_OnCodeInit called");
-	YSI_g_sJumpOffset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
-	YSI_g_sCallbackCallAddress = addressof(Callback_CallHandler_) + YSI_g_sJumpOffset;
-	if (FALSE)
 	{
-		// Ensure this function is included.  It causes HUGE issues when not.
-		new tmp[2];
-		strunpack(tmp, tmp);
+			Debug_Print2("Inline_OnCodeInit called");
+			YSI_g_sJumpOffset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
+			YSI_g_sCallbackCallAddress = addressof(Callback_CallHandler_) + YSI_g_sJumpOffset;
+			if (FALSE)
+			{
+				// Ensure this function is included.  It causes HUGE issues when not.
+				new tmp[2];
+				strunpack(tmp, tmp);
+			}
+			
+			new scanner[CodeScanner];
+			CodeScanInit(scanner);
+			
+			// Allocate the inline scanning data on the stack, instead of globally.
+			new data[E_INLINE_DATA];
+			
+			// Optimised.
+			new csm1a[CodeScanMatcher];
+			CodeScanMatcherInit(csm1a, &Inline_FoundStart);
+			CodeScanMatcherData(csm1a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm1a,
+				OP(STACK,              -4)
+				OP(CONST_PRI,          ???)
+				OP(INVERT)
+				OP(INVERT)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             4)
+				OP(CALL,               &I@T)
+				OP(STOR_S_PRI,         ???)
+				OP(STACK,              -4)
+				OP(LOAD_S_PRI,         ???)
+				OP(STOR_S_PRI,         ???)
+			);
+			CodeScanAddMatcher(scanner, csm1a);
+			
+			// Unoptimised.
+			new csm1b[CodeScanMatcher];
+			CodeScanMatcherInit(csm1b, &Inline_FoundStart);
+			CodeScanMatcherData(csm1b, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm1b,
+				OP(STACK,              -4)
+				OP(CONST_PRI,          ???)
+				OP(INVERT)
+				OP(INVERT)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             4)
+				OP(CALL,               &I@T)
+				OP(STOR_S_PRI,         ???)
+				OP(STACK,              -4)
+				OP(LOAD_S_PRI,         ???)
+				OP(STOR_S_PRI,         ???)
+			);
+			CodeScanAddMatcher(scanner, csm1b);
+			
+			// Mid point.
+			new csm2a[CodeScanMatcher];
+			CodeScanMatcherInit(csm2a, &Inline_FoundMid);
+			CodeScanMatcherData(csm2a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm2a,
+				OP(PUSH_C,             0)
+				OP(CALL,               &I@F)
+				OP(JZER,               ???)
+			);
+			CodeScanAddMatcher(scanner, csm2a);
+			
+			// Normal parameter.
+			//   
+			//   ZERO.pri
+			//   HEAP 4
+			//   STOR.I
+			//   PUSH.alt
+			//   
+			new csm3a[CodeScanMatcher];
+			CodeScanMatcherInit(csm3a, &Inline_FoundVar);
+			CodeScanMatcherData(csm3a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm3a,
+				OP(ZERO_PRI)
+				OP(HEAP,               4)
+				OP(STOR_I)
+				OP(PUSH_ALT)
+			);
+			CodeScanAddMatcher(scanner, csm3a);
+			
+			new csm3b[CodeScanMatcher];
+			CodeScanMatcherInit(csm3b, &Inline_FoundVar);
+			CodeScanMatcherData(csm3b, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm3b,
+				OP(ZERO_PRI)
+				OP(HEAP,               4)
+				OP(STOR_I)
+				OP(MOVE_PRI)
+				OP(PUSH_PRI)
+			);
+			CodeScanAddMatcher(scanner, csm3b);
+			
+			// Reference parameter.
+			//   
+			//   CONST.pri ffffffff
+			//   HEAP 4
+			//   STOR.I
+			//   PUSH.alt
+			//   
+			// Array (with size in CELLS).
+			//   
+			//   CONST.pri a
+			//   HEAP 4
+			//   STOR.I
+			//   PUSH.alt
+			//   
+			// String
+			//   
+			//   CONST.pri 80000000
+			//   HEAP 4
+			//   STOR.I
+			//   PUSH.alt
+			//   
+			new csm4a[CodeScanMatcher];
+			CodeScanMatcherInit(csm4a, &Inline_FoundRef);
+			CodeScanMatcherData(csm4a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm4a,
+				OP(CONST_PRI,          ???)
+				OP(HEAP,               4)
+				OP(STOR_I)
+				OP(PUSH_ALT)
+			);
+			CodeScanAddMatcher(scanner, csm4a);
+			
+			new csm4b[CodeScanMatcher];
+			CodeScanMatcherInit(csm4b, &Inline_FoundRef);
+			CodeScanMatcherData(csm4b, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm4b,
+				OP(CONST_PRI,          ???)
+				OP(HEAP,               4)
+				OP(STOR_I)
+				OP(MOVE_PRI)
+				OP(PUSH_PRI)
+			);
+			CodeScanAddMatcher(scanner, csm4b);
+			
+			// End
+			new csm5a[CodeScanMatcher];
+			CodeScanMatcherInit(csm5a, &Inline_FoundEnd);
+			CodeScanMatcherData(csm5a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm5a,
+				OP(CALL,               &I@L)
+				OP(HEAP,               ???)
+				OP(JZER,               ???)
+			);
+			CodeScanAddMatcher(scanner, csm5a);
+			
+			// Constness
+			new csm6a[CodeScanMatcher];
+			CodeScanMatcherInit(csm6a, &Inline_FoundConst);
+			CodeScanMatcherData(csm6a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm6a,
+				OP(PUSH_C,             ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &I@K)
+			);
+			CodeScanAddMatcher(scanner, csm6a);
+			
+			new csm6b[CodeScanMatcher];
+			CodeScanMatcherInit(csm6b, &Inline_FoundConst);
+			CodeScanMatcherData(csm6b, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm6b,
+				OP(CONST_PRI,          ???)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             4)
+				OP(CALL,               &I@K)
+			);
+			CodeScanAddMatcher(scanner, csm6b);
+			
+			new csm6c[CodeScanMatcher];
+			CodeScanMatcherInit(csm6c, &Inline_FoundConst2);
+			CodeScanMatcherData(csm6c, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm6c,
+				OP(ZERO_PRI)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             4)
+				OP(CALL,               &I@K)
+			);
+			CodeScanAddMatcher(scanner, csm6c);
+			
+			// Replace code that was `(Inline_UI_(x), x)` with just
+			// `Inline_UI_()`.
+			new csm7a[CodeScanMatcher];
+			CodeScanMatcherInit(csm7a, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7a,
+				OP(ADDR_PRI,           ???)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(LOAD_S_PRI,         ???)
+				OP(PUSH_PRI)
+			);
+			CodeScanAddMatcher(scanner, csm7a);
+			
+			new csm7b[CodeScanMatcher];
+			CodeScanMatcherInit(csm7b, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7b,
+				OP(PUSH_ADR,           ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm7b);
+		
+		#if __COMPILER_O2
+			new csm7c[CodeScanMatcher];
+			CodeScanMatcherInit(csm7c, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7c,
+				OP(PUSH2_ADR,          ???, ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm7c);
+			
+			new csm7d[CodeScanMatcher];
+			CodeScanMatcherInit(csm7d, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7d,
+				OP(PUSH3_ADR,          ???, ???, ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm7d);
+			
+			new csm7e[CodeScanMatcher];
+			CodeScanMatcherInit(csm7e, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7e,
+				OP(PUSH4_ADR,          ???, ???, ???, ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm7e);
+			
+			new csm7f[CodeScanMatcher];
+			CodeScanMatcherInit(csm7f, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7f,
+				OP(PUSH5_ADR,          ???, ???, ???, ???, ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm7f);
+		#endif
+		
+			// Destructors.
+			{
+				// We can't directly get the address of a destructor.  Instead,
+				// we need to create a local that will be destroyed and read the
+				// call from that.  Use `[2]` so it doesn't match the scanner
+				// later.
+				new I@T:search[2] = {};
+				// THIS BLOCK IS NOT POINTLESS!  IT CALLS A REQUIRED DESTRUCTOR.
+			}
+			// Now we have the destructor address, replace all calls to it.
+			// I've never seen this using `PUSH.adr` instead of `ADDR.pri`/
+			// `PUSH.pri`, even on optimising builds.  `YSI_g_sInlineLinkedList`
+			// currently holds the address of the `I@T:` destructor.  We used
+			// that as a temporary to return the function address from the
+			// (seemingly) pointless block directly above because `addressof`
+			// and `&` don't work for operators (I don't know a generic solution
+			// to this problem, but it has only ever come up once and I could
+			// get a non-portable solution in that one instance).
+			new csm8a[CodeScanMatcher];
+			CodeScanMatcherInit(csm8a, &Inline_FoundDestructor);
+			CodeScanMatcherPattern(csm8a,
+				OP(PUSH_C,             1)
+				OP(ADDR_PRI,           ???)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             8)
+				OP(CALL,               YSI_g_sInlineLinkedList)
+			);
+			CodeScanAddMatcher(scanner, csm8a);
+			
+			// Detect `@return` and make it a real return.
+			new csm9a[CodeScanMatcher];
+			CodeScanMatcherInit(csm9a, &Inline_Found@return);
+			CodeScanMatcherPattern(csm9a,
+				OP(PUSH_C,             4)
+				OP(CALL,               &Callback_Return_)
+			);
+			CodeScanAddMatcher(scanner, csm9a);
+			
+			// Reset the linked list whose variable we borrowed as a temporary.
+			YSI_g_sInlineLinkedList = 0;
+			
+			// Run all the scanners in parallel.
+			// TODO: Try and determine rough types for parent function
+			// parameters, using Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?
+			// Can't remember off the top of my head).
+			CodeScanRunFast(scanner, &I@T);
 	}
-	
-	new scanner[CodeScanner];
-	CodeScanInit(scanner);
-	
-	// Allocate the inline scanning data on the stack, instead of globally.
-	new data[E_INLINE_DATA];
-	
-	// Optimised.
-	new csm1a[CodeScanMatcher];
-	CodeScanMatcherInit(csm1a, &Inline_FoundStart);
-	CodeScanMatcherData(csm1a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm1a,
-		OP(STACK,              -4)
-		OP(CONST_PRI,          ???)
-		OP(INVERT)
-		OP(INVERT)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &I@T)
-		OP(STOR_S_PRI,         ???)
-		OP(STACK,              -4)
-		OP(LOAD_S_PRI,         ???)
-		OP(STOR_S_PRI,         ???)
-	);
-	CodeScanAddMatcher(scanner, csm1a);
-	
-	// Unoptimised.
-	new csm1b[CodeScanMatcher];
-	CodeScanMatcherInit(csm1b, &Inline_FoundStart);
-	CodeScanMatcherData(csm1b, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm1b,
-		OP(STACK,              -4)
-		OP(CONST_PRI,          ???)
-		OP(INVERT)
-		OP(INVERT)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &I@T)
-		OP(STOR_S_PRI,         ???)
-		OP(STACK,              -4)
-		OP(LOAD_S_PRI,         ???)
-		OP(STOR_S_PRI,         ???)
-	);
-	CodeScanAddMatcher(scanner, csm1b);
-	
-	// Mid point.
-	new csm2a[CodeScanMatcher];
-	CodeScanMatcherInit(csm2a, &Inline_FoundMid);
-	CodeScanMatcherData(csm2a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm2a,
-		OP(PUSH_C,             0)
-		OP(CALL,               &I@F)
-		OP(JZER,               ???)
-	);
-	CodeScanAddMatcher(scanner, csm2a);
-	
-	// Normal parameter.
-	//   
-	//   ZERO.pri
-	//   HEAP 4
-	//   STOR.I
-	//   PUSH.alt
-	//   
-	new csm3a[CodeScanMatcher];
-	CodeScanMatcherInit(csm3a, &Inline_FoundVar);
-	CodeScanMatcherData(csm3a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm3a,
-		OP(ZERO_PRI)
-		OP(HEAP,               4)
-		OP(STOR_I)
-		OP(PUSH_ALT)
-	);
-	CodeScanAddMatcher(scanner, csm3a);
-	
-	new csm3b[CodeScanMatcher];
-	CodeScanMatcherInit(csm3b, &Inline_FoundVar);
-	CodeScanMatcherData(csm3b, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm3b,
-		OP(ZERO_PRI)
-		OP(HEAP,               4)
-		OP(STOR_I)
-		OP(MOVE_PRI)
-		OP(PUSH_PRI)
-	);
-	CodeScanAddMatcher(scanner, csm3b);
-	
-	// Reference parameter.
-	//   
-	//   CONST.pri ffffffff
-	//   HEAP 4
-	//   STOR.I
-	//   PUSH.alt
-	//   
-	// Array (with size in CELLS).
-	//   
-	//   CONST.pri a
-	//   HEAP 4
-	//   STOR.I
-	//   PUSH.alt
-	//   
-	// String
-	//   
-	//   CONST.pri 80000000
-	//   HEAP 4
-	//   STOR.I
-	//   PUSH.alt
-	//   
-	new csm4a[CodeScanMatcher];
-	CodeScanMatcherInit(csm4a, &Inline_FoundRef);
-	CodeScanMatcherData(csm4a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm4a,
-		OP(CONST_PRI,          ???)
-		OP(HEAP,               4)
-		OP(STOR_I)
-		OP(PUSH_ALT)
-	);
-	CodeScanAddMatcher(scanner, csm4a);
-	
-	new csm4b[CodeScanMatcher];
-	CodeScanMatcherInit(csm4b, &Inline_FoundRef);
-	CodeScanMatcherData(csm4b, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm4b,
-		OP(CONST_PRI,          ???)
-		OP(HEAP,               4)
-		OP(STOR_I)
-		OP(MOVE_PRI)
-		OP(PUSH_PRI)
-	);
-	CodeScanAddMatcher(scanner, csm4b);
-	
-	// End
-	new csm5a[CodeScanMatcher];
-	CodeScanMatcherInit(csm5a, &Inline_FoundEnd);
-	CodeScanMatcherData(csm5a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm5a,
-		OP(CALL,               &I@L)
-		OP(HEAP,               ???)
-		OP(JZER,               ???)
-	);
-	CodeScanAddMatcher(scanner, csm5a);
-	
-	// Constness
-	new csm6a[CodeScanMatcher];
-	CodeScanMatcherInit(csm6a, &Inline_FoundConst);
-	CodeScanMatcherData(csm6a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm6a,
-		OP(PUSH_C,             ???)
-		OP(PUSH_C,             4)
-		OP(CALL,               &I@K)
-	);
-	CodeScanAddMatcher(scanner, csm6a);
-	
-	new csm6b[CodeScanMatcher];
-	CodeScanMatcherInit(csm6b, &Inline_FoundConst);
-	CodeScanMatcherData(csm6b, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm6b,
-		OP(CONST_PRI,          ???)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &I@K)
-	);
-	CodeScanAddMatcher(scanner, csm6b);
-	
-	new csm6c[CodeScanMatcher];
-	CodeScanMatcherInit(csm6c, &Inline_FoundConst2);
-	CodeScanMatcherData(csm6c, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm6c,
-		OP(ZERO_PRI)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &I@K)
-	);
-	CodeScanAddMatcher(scanner, csm6c);
-	
-	// Replace code that was `(Inline_UI_(x), x)` with just `Inline_UI_()`.
-	new csm7a[CodeScanMatcher];
-	CodeScanMatcherInit(csm7a, &Inline_FoundUsingInline);
-	CodeScanMatcherPattern(csm7a,
-		OP(ADDR_PRI,           ???)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &Inline_UI_)
-		OP(LOAD_S_PRI,         ???)
-		OP(PUSH_PRI)
-	);
-	CodeScanAddMatcher(scanner, csm7a);
-	
-	new csm7b[CodeScanMatcher];
-	CodeScanMatcherInit(csm7b, &Inline_FoundUsingInline);
-	CodeScanMatcherPattern(csm7b,
-		OP(PUSH_ADR,           ???)
-		OP(PUSH_C,             4)
-		OP(CALL,               &Inline_UI_)
-		OP(PUSH_S,             ???)
-	);
-	CodeScanAddMatcher(scanner, csm7b);
-
-#if __COMPILER_O2
-	new csm7c[CodeScanMatcher];
-	CodeScanMatcherInit(csm7c, &Inline_FoundUsingInline);
-	CodeScanMatcherPattern(csm7c,
-		OP(PUSH2_ADR,          ???, ???)
-		OP(PUSH_C,             4)
-		OP(CALL,               &Inline_UI_)
-		OP(PUSH_S,             ???)
-	);
-	CodeScanAddMatcher(scanner, csm7c);
-
-	new csm7d[CodeScanMatcher];
-	CodeScanMatcherInit(csm7d, &Inline_FoundUsingInline);
-	CodeScanMatcherPattern(csm7d,
-		OP(PUSH3_ADR,          ???, ???, ???)
-		OP(PUSH_C,             4)
-		OP(CALL,               &Inline_UI_)
-		OP(PUSH_S,             ???)
-	);
-	CodeScanAddMatcher(scanner, csm7d);
-
-	new csm7e[CodeScanMatcher];
-	CodeScanMatcherInit(csm7e, &Inline_FoundUsingInline);
-	CodeScanMatcherPattern(csm7e,
-		OP(PUSH4_ADR,          ???, ???, ???, ???)
-		OP(PUSH_C,             4)
-		OP(CALL,               &Inline_UI_)
-		OP(PUSH_S,             ???)
-	);
-	CodeScanAddMatcher(scanner, csm7e);
-	
-	new csm7f[CodeScanMatcher];
-	CodeScanMatcherInit(csm7f, &Inline_FoundUsingInline);
-	CodeScanMatcherPattern(csm7f,
-		OP(PUSH5_ADR,          ???, ???, ???, ???, ???)
-		OP(PUSH_C,             4)
-		OP(CALL,               &Inline_UI_)
-		OP(PUSH_S,             ???)
-	);
-	CodeScanAddMatcher(scanner, csm7f);
-#endif
-
-	// Destructors.
-	{
-		// We can't directly get the address of a destructor.  Instead, we need
-		// to create a local that will be destroyed and read the call from that.
-		// Use `[2]` so it doesn't match the scanner later.
-		new I@T:search[2] = {};
-		// THIS BLOCK IS NOT POINTLESS!  IT CALLS A REQUIRED DESTRUCTOR.
-	}
-	// Now we have the destructor address, replace all calls to it.  I've never
-	// seen this using `PUSH.adr` instead of `ADDR.pri`/`PUSH.pri`, even on
-	// optimising builds.  `YSI_g_sInlineLinkedList` currently holds the address
-	// of the `I@T:` destructor.  We used that as a temporary to return the
-	// function address from the (seemingly) pointless block directly above
-	// because `addressof` and `&` don't work for operators (I don't know a
-	// generic solution to this problem, but it has only ever come up once and I
-	// could get a non-portable solution in that one instance).
-	new csm8a[CodeScanMatcher];
-	CodeScanMatcherInit(csm8a, &Inline_FoundDestructor);
-	CodeScanMatcherPattern(csm8a,
-		OP(PUSH_C,             1)
-		OP(ADDR_PRI,           ???)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             8)
-		OP(CALL,               YSI_g_sInlineLinkedList)
-	);
-	CodeScanAddMatcher(scanner, csm8a);
-	
-	// Detect `@return` and make it a real return.
-	new csm9a[CodeScanMatcher];
-	CodeScanMatcherInit(csm9a, &Inline_Found@return);
-	CodeScanMatcherPattern(csm9a,
-		OP(PUSH_C,             4)
-		OP(CALL,               &Callback_Return_)
-	);
-	CodeScanAddMatcher(scanner, csm9a);
-	
-	// Reset the linked list whose variable we borrowed as a temporary.
-	YSI_g_sInlineLinkedList = 0;
-	
-	// Run all the scanners in parallel.
-	// TODO: Try and determine rough types for parent function parameters, using
-	// Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?  Can't remember off the
-	// top of my head).
-	CodeScanRunFast(scanner, &I@T);
 	
 	#if defined Inline_OnCodeInit
 		Inline_OnCodeInit();

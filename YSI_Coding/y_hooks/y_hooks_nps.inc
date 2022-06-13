@@ -313,253 +313,256 @@ _@yH(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0)
 
 public OnCodeInit()
 {
-	Indirect_Init();
+	{
+		Indirect_Init();
 
-	// Step 1:
-	//
-	//   Read the AMX header to loop over all the `@_Hy` functions.  These
-	//   contain the call to `_yH@` which generates the trambopoline code.
-	//
-	//   From this data we build a list of all calls to replace.
-	new
-		heap = GetAmxHeapTop(),
-		allocated = 0,
-		nativeCount = 0,
-		stockCount = 0,
-		idx1 = 0,
-		idx2 = 0,
-		base = 0;
-	{
-		new hdr[AMX_HDR];
-		GetAmxHeader(hdr);
-		base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
-	}
-	{
-		YSI_g_sNPSBaseCall = cellmin;
-		// Needs to be split over multiple lines because macros (`_A`).
-		while (
-			(idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>))
-			&&
-			(idx2 = AMX_GetPublicPointerPrefix(idx2, YSI_g_sNPSTrampoline, _A<@_Hy>))
-		)
+		// Step 1:
+		//
+		//   Read the AMX header to loop over all the `@_Hy` functions.  These
+		//   contain the call to `_yH@` which generates the trambopoline code.
+		//
+		//   From this data we build a list of all calls to replace.
+		new
+			heap = GetAmxHeapTop(),
+			allocated = 0,
+			nativeCount = 0,
+			stockCount = 0,
+			idx1 = 0,
+			idx2 = 0,
+			base = 0;
 		{
-			@.YSI_g_sNPSTrampoline();
-			if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
-			{
-				YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSReplace, YSI_g_sNPSStack);
-				YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
-			}
+			new hdr[AMX_HDR];
+			GetAmxHeader(hdr);
+			base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
 		}
-	}
-	if (YSI_g_sNPSBaseCall != cellmin)
-	{
-		// Store the final chain.
-		YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
-	}
-
-	// Step 2:
-	//
-	//   Iterate over the entire mode and replace all relevant calls.
-	//
-	new
-		Opcode:call = RelocateOpcode(OP_CALL),
-		Opcode:nop = RelocateOpcode(OP_NOP),
-		Opcode:proc = RelocateOpcode(OP_PROC),
-		Opcode:o,
-		reloc = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS;
-	if (IsOpcodeRelocationRequired())
-	{
-		for (new addr = AMX_HEADER_COD; addr < 0;)
 		{
-			switch ((o = UnrelocateOpcode(Opcode:ReadAmxMemory(addr))))
+			YSI_g_sNPSBaseCall = cellmin;
+			// Needs to be split over multiple lines because macros (`_A`).
+			while (
+				(idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>))
+				&&
+				(idx2 = AMX_GetPublicPointerPrefix(idx2, YSI_g_sNPSTrampoline, _A<@_Hy>))
+			)
 			{
-				case OP_SYSREQ_C:
+				@.YSI_g_sNPSTrampoline();
+				if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
 				{
-					// Check that the previous OP is `PUSH.C`.  That represents a real native call,
-					// not our wrapper.
-					if (Opcode:AMX_Read(addr - 8) == proc)
-					{
-						addr += 8;
-						continue;
-					}
-					idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
-#if __COMPILER_O2
-					idx2 = 0;
-#endif
-				}
-				case OP_SYSREQ_D:
-				{
-					if (Opcode:AMX_Read(addr - 8) == proc)
-					{
-						addr += 8;
-						continue;
-					}
-					idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
-#if __COMPILER_O2
-					idx2 = 0;
-#endif
-				}
-#if __COMPILER_O2
-				case OP_SYSREQ_N:
-				{
-					idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4)),
-					idx2 = 1;
-				}
-#endif
-				case OP_CALL:
-				{
-					idx1 = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
-					if (idx1 != cellmin)
-					{
-						// Write a different target address.
-						AMX_Write(addr + 4, idx1);
-					}
-					addr += 8;
-					continue;
-				}
-				default:
-				{
-					addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (4);
-					continue;
-				}
-			}
-			// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
-			// We need to change the pair in to a single `CALL`.  Don't forget
-			// `SYSREQ.D`.
-			if (idx1 == cellmin)
-			{
-				addr += 8;
-			}
-#if __COMPILER_O2
-			else if (idx2)
-			{
-				// sysreq.n
-				// I need to somehow add pushing the number of parameters here
-				// in a single cell.  The only thing we have going for us here
-				// is that the code doesn't need to be JIT compatible (so we
-				// can do clever things with stacks/addresses if nescessary).
-				AMX_Write(addr, _:call),
-				AMX_Write(addr + 4, idx1),
-				addr += 12;
-			}
-#endif
-			else
-			{
-				// Write a different target address.
-				AMX_Write(addr, _:call),
-				AMX_Write(addr + 4, idx1),
-				addr += 8;
-				if (UnrelocateOpcode(Opcode:ReadAmxMemory(addr)) == OP_STACK)
-				{
-					AMX_Write(addr, _:nop),
-					AMX_Write(addr + 4, _:nop),
-					addr += 8;
+					YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSReplace, YSI_g_sNPSStack);
+					YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
 				}
 			}
 		}
-	}
-	else
-	{
-		for (new addr = AMX_HEADER_COD; addr < 0;)
+		if (YSI_g_sNPSBaseCall != cellmin)
 		{
-			switch ((o = Opcode:ReadAmxMemory(addr)))
+			// Store the final chain.
+			YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
+		}
+
+		// Step 2:
+		//
+		//   Iterate over the entire mode and replace all relevant calls.
+		//
+		new
+			Opcode:call = RelocateOpcode(OP_CALL),
+			Opcode:nop = RelocateOpcode(OP_NOP),
+			Opcode:proc = RelocateOpcode(OP_PROC),
+			Opcode:o,
+			reloc = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS;
+		if (IsOpcodeRelocationRequired())
+		{
+			for (new addr = AMX_HEADER_COD; addr < 0;)
 			{
-				case OP_SYSREQ_C:
-				{
-					// Check that the previous OP is `PUSH.C`.  That represents a real native call,
-					// not our wrapper.
-					if (Opcode:AMX_Read(addr - 8) == proc)
+					switch ((o = UnrelocateOpcode(Opcode:ReadAmxMemory(addr))))
 					{
-						addr += 8;
-						continue;
-					}
-					idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
-#if __COMPILER_O2
-					idx2 = 0;
-#endif
-				}
-				case OP_SYSREQ_D:
-				{
-					if (HasSysreqD())
-					{
-						if (Opcode:AMX_Read(addr - 8) == proc)
+						case OP_SYSREQ_C:
 						{
+							// Check that the previous OP is `PUSH.C`.  That represents a real native call,
+							// not our wrapper.
+							if (Opcode:AMX_Read(addr - 8) == proc)
+							{
+								addr += 8;
+								continue;
+							}
+							idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+					#if __COMPILER_O2
+							idx2 = 0;
+					#endif
+						}
+						case OP_SYSREQ_D:
+						{
+							if (Opcode:AMX_Read(addr - 8) == proc)
+							{
+								addr += 8;
+								continue;
+							}
+							idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+					#if __COMPILER_O2
+							idx2 = 0;
+					#endif
+						}
+					#if __COMPILER_O2
+						case OP_SYSREQ_N:
+						{
+							idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4)),
+							idx2 = 1;
+						}
+					#endif
+						case OP_CALL:
+						{
+							idx1 = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
+							if (idx1 != cellmin)
+							{
+								// Write a different target address.
+								AMX_Write(addr + 4, idx1);
+							}
 							addr += 8;
 							continue;
 						}
-						idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
-#if __COMPILER_O2
-						idx2 = 0;
+						default:
+						{
+							addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (4);
+							continue;
+						}
 					}
+					// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
+					// We need to change the pair in to a single `CALL`.  Don't forget
+					// `SYSREQ.D`.
+					if (idx1 == cellmin)
+					{
+						addr += 8;
+					}
+				#if __COMPILER_O2
+					else if (idx2)
+					{
+						// sysreq.n
+						// I need to somehow add pushing the number of parameters here
+						// in a single cell.  The only thing we have going for us here
+						// is that the code doesn't need to be JIT compatible (so we
+						// can do clever things with stacks/addresses if nescessary).
+						AMX_Write(addr, _:call),
+						AMX_Write(addr + 4, idx1),
+						addr += 12;
+					}
+				#endif
 					else
 					{
-						idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
-						idx2 = 1;
-#endif
-					}
-				}
-				case OP_CALL:
-				{
-					idx1 = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
-					if (idx1 != cellmin)
-					{
 						// Write a different target address.
-						AMX_Write(addr + 4, idx1);
+						AMX_Write(addr, _:call),
+						AMX_Write(addr + 4, idx1),
+						addr += 8;
+						if (UnrelocateOpcode(Opcode:ReadAmxMemory(addr)) == OP_STACK)
+						{
+							AMX_Write(addr, _:nop),
+							AMX_Write(addr + 4, _:nop),
+							addr += 8;
+						}
 					}
-					addr += 8;
-					continue;
-				}
-				default:
-				{
-					addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (4);
-					continue;
-				}
-			}
-			// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
-			// We need to change the pair in to a single `CALL`.  Don't forget
-			// `SYSREQ.D`.
-			if (idx1 == cellmin)
-			{
-				addr += 8;
-			}
-#if __COMPILER_O2
-			else if (idx2)
-			{
-				// sysreq.n
-				// I need to somehow add pushing the number of parameters here
-				// in a single cell.  The only thing we have going for us here
-				// is that the code doesn't need to be JIT compatible (so we
-				// can do clever things with stacks/addresses if nescessary).
-				AMX_Write(addr, _:call),
-				AMX_Write(addr + 4, idx1),
-				addr += 12;
-			}
-#endif
-			else
-			{
-				// Write a different target address.
-				AMX_Write(addr, _:call),
-				AMX_Write(addr + 4, idx1),
-				addr += 8;
-				if (Opcode:ReadAmxMemory(addr) == OP_STACK)
-				{
-					AMX_Write(addr, _:nop),
-					AMX_Write(addr + 4, _:nop),
-					addr += 8;
-				}
 			}
 		}
+		else
+		{
+				for (new addr = AMX_HEADER_COD; addr < 0;)
+				{
+					switch ((o = Opcode:ReadAmxMemory(addr)))
+					{
+						case OP_SYSREQ_C:
+						{
+								// Check that the previous OP is `PUSH.C`.  That represents a real native call,
+								// not our wrapper.
+								if (Opcode:AMX_Read(addr - 8) == proc)
+								{
+									addr += 8;
+									continue;
+								}
+								idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+							#if __COMPILER_O2
+								idx2 = 0;
+							#endif
+						}
+						case OP_SYSREQ_D:
+						{
+								if (HasSysreqD())
+								{
+									if (Opcode:AMX_Read(addr - 8) == proc)
+									{
+										addr += 8;
+										continue;
+									}
+									idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+							#if __COMPILER_O2
+									idx2 = 0;
+								}
+								else
+								{
+									idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+									idx2 = 1;
+							#endif
+								}
+						}
+						case OP_CALL:
+						{
+							idx1 = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
+							if (idx1 != cellmin)
+							{
+								// Write a different target address.
+								AMX_Write(addr + 4, idx1);
+							}
+							addr += 8;
+							continue;
+						}
+						default:
+						{
+							addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (4);
+							continue;
+						}
+					}
+					// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
+					// We need to change the pair in to a single `CALL`.  Don't forget
+					// `SYSREQ.D`.
+					if (idx1 == cellmin)
+					{
+						addr += 8;
+					}
+				#if __COMPILER_O2
+					else if (idx2)
+					{
+						// sysreq.n
+						// I need to somehow add pushing the number of parameters here
+						// in a single cell.  The only thing we have going for us here
+						// is that the code doesn't need to be JIT compatible (so we
+						// can do clever things with stacks/addresses if nescessary).
+						AMX_Write(addr, _:call),
+						AMX_Write(addr + 4, idx1),
+						addr += 12;
+					}
+				#endif
+					else
+					{
+						// Write a different target address.
+						AMX_Write(addr, _:call),
+						AMX_Write(addr + 4, idx1),
+						addr += 8;
+						if (Opcode:ReadAmxMemory(addr) == OP_STACK)
+						{
+							AMX_Write(addr, _:nop),
+							AMX_Write(addr + 4, _:nop),
+							addr += 8;
+						}
+					}
+			}
+		}
+
+		// Step 2:
+		//
+		//   Generate `continue`.
+		//
+		Hooks_GenerateContinue();
+
+		// Clear the stack.
+		YSI_g_sNPSStack = 0;
+		HeapRelease(heap);
 	}
 
-	// Step 2:
-	//
-	//   Generate `continue`.
-	//
-	Hooks_GenerateContinue();
-
-	// Clear the stack.
-	YSI_g_sNPSStack = 0;
-	HeapRelease(heap);
 	#if defined YHNPS_OnCodeInit
 		YHNPS_OnCodeInit();
 	#endif

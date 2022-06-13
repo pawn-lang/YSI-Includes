@@ -100,9 +100,9 @@ static stock
 //	return 0;
 //}
 
-stock LAM@1(idx = 0, pattern0 = 1, pattern1 = 1)
+stock LAM@1(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1)
 {
-	#pragma unused idx, pattern0, pattern1
+	#pragma unused idx, pattern0, pattern1, pattern2, pattern3
 }
 #define CALL@LAM@1 LAM@1(1)
 
@@ -119,9 +119,9 @@ stock LAM@0(idx = 0)
 }
 #define CALL@LAM@0 LAM@0(1)
 
-stock LAM@5(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1)
+stock LAM@5(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1, pattern4 = 1, pattern5 = 1, pattern6 = 1)
 {
-	#pragma unused idx, pattern0, pattern1, pattern2, pattern3
+	#pragma unused idx, pattern0, pattern1, pattern2, pattern3, pattern4, pattern5, pattern6
 	return 0;
 }
 #define CALL@LAM@5 LAM@5(1)
@@ -208,8 +208,10 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	CodeScanMatcherPattern(lambdaStart0,
 		OP(PUSH_C,             1)
 		OP(PUSH_C,             1)
+		OP(PUSH_C,             1)
+		OP(PUSH_C,             1)
 		OP(PUSH_C,             nestingLevel)
-		OP(PUSH_C,             12)
+		OP(PUSH_C,             20)
 		OP(CALL,               &LAM@1)
 	);
 	CodeScanAddMatcher(second, lambdaStart0);
@@ -221,9 +223,13 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		OP(PUSH_PRI)
 		OP(CONST_PRI,          1)
 		OP(PUSH_PRI)
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
 		OP(CONST_PRI,          nestingLevel)
 		OP(PUSH_PRI)
-		OP(PUSH_C,             12)
+		OP(PUSH_C,             20)
 		OP(CALL,               &LAM@1)
 	);
 	CodeScanAddMatcher(second, lambdaStart1);
@@ -238,9 +244,13 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 			OP(PUSH_PRI)
 			OP(CONST_PRI,          1)
 			OP(PUSH_PRI)
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
 			OP(ZERO_PRI)
 			OP(PUSH_PRI)
-			OP(PUSH_C,             12)
+			OP(PUSH_C,             20)
 			OP(CALL,               &LAM@1)
 		);
 		CodeScanAddMatcher(second, lambdaStart2);
@@ -250,8 +260,8 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	new lambdaStart3[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaStart3, &Functional_FoundStart);
 	CodeScanMatcherPattern(lambdaStart3,
-		OP(PUSH3_C,            1, 1, nestingLevel)
-		OP(PUSH_C,             12)
+		OP(PUSH5_C,            1, 1, 1, 1, nestingLevel)
+		OP(PUSH_C,             20)
 		OP(CALL,               &LAM@1)
 	);
 	CodeScanAddMatcher(second, lambdaStart3);
@@ -273,8 +283,11 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		OP(PUSH_C,             1)
 		OP(PUSH_C,             1)
 		OP(PUSH_C,             1)
+		OP(PUSH_C,             1)
+		OP(PUSH_C,             1)
+		OP(PUSH_C,             1)
 		OP(PUSH_C,             nestingLevel)
-		OP(PUSH_C,             20)
+		OP(PUSH_C,             32)
 		OP(CALL,               &LAM@5)
 	);
 	CodeScanAddMatcher(second, lambdaAfter0);
@@ -290,9 +303,15 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		OP(PUSH_PRI)
 		OP(CONST_PRI,          1)
 		OP(PUSH_PRI)
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
 		OP(CONST_PRI,          nestingLevel)
 		OP(PUSH_PRI)
-		OP(PUSH_C,             20)
+		OP(PUSH_C,             32)
 		OP(CALL,               &LAM@5)
 	);
 	CodeScanAddMatcher(second, lambdaAfter1);
@@ -310,9 +329,15 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 			OP(PUSH_PRI)
 			OP(CONST_PRI,          1)
 			OP(PUSH_PRI)
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
 			OP(ZERO_PRI)
 			OP(PUSH_PRI)
-			OP(PUSH_C,             20)
+			OP(PUSH_C,             32)
 			OP(CALL,               &LAM@5)
 		);
 		CodeScanAddMatcher(second, lambdaAfter2);
@@ -322,8 +347,9 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	new lambdaAfter3[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaAfter3, &Functional_FoundAfter);
 	CodeScanMatcherPattern(lambdaAfter3,
-		OP(PUSH5_C,            1, 1, 1, 1, nestingLevel)
-		OP(PUSH_C,             20)
+		OP(PUSH5_C,            1, 1, 1, 1, 1)
+		OP(PUSH3_C,            1, 1, nestingLevel)
+		OP(PUSH_C,             32)
 		OP(CALL,               &LAM@5)
 	);
 	CodeScanAddMatcher(second, lambdaAfter3);
@@ -397,46 +423,49 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 public OnCodeInit()
 {
 	Debug_Print2("Functional_OnCodeInit called");
-	// Look for any calls to `LAM@0`, then find the next call to `LAM@1` with a matching parameter
-	// number (the exact value is unimportant; however, for now we know that it is always `<= 0`, so
-	// if the parameter is `> 0` ignore it - it's the code scanner itself).  Get rid of all the
-	// calls and change them in to jumps to each other.
-	
-	new scanner[CodeScanner];
-	CodeScanInit(scanner);
-	
-	new lambdaCall0[CodeScanMatcher];
-	CodeScanMatcherInit(lambdaCall0, &Functional_FoundCall1);
-	CodeScanMatcherPattern(lambdaCall0,
-		OP(PUSH_C,             ???)
-		OP(PUSH_C,             4)
-		OP(CALL,               &LAM@0)
-	);
-	CodeScanAddMatcher(scanner, lambdaCall0);
-	
-	new lambdaCall1[CodeScanMatcher];
-	CodeScanMatcherInit(lambdaCall1, &Functional_FoundCall1);
-	CodeScanMatcherPattern(lambdaCall1,
-		OP(CONST_PRI,          ???)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &LAM@0)
-	);
-	CodeScanAddMatcher(scanner, lambdaCall1);
-	
-	new lambdaCall2[CodeScanMatcher];
-	CodeScanMatcherInit(lambdaCall2, &Functional_FoundCall2);
-	CodeScanMatcherPattern(lambdaCall2,
-		OP(ZERO_PRI)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &LAM@0)
-	);
-	CodeScanAddMatcher(scanner, lambdaCall2);
-	
-	// Run fast, with an explicit search function.
-	CodeScanRunFast(scanner, &LAM@0);
-	
+	{
+		// Look for any calls to `LAM@0`, then find the next call to `LAM@1`
+		// with a matching parameter number (the exact value is unimportant;
+		// however, for now we know that it is always `<= 0`, so if the
+		// parameter is `> 0` ignore it - it's the code scanner itself).  Get
+		// rid of all the calls and change them in to jumps to each other.
+		
+		new scanner[CodeScanner];
+		CodeScanInit(scanner);
+		
+		new lambdaCall0[CodeScanMatcher];
+		CodeScanMatcherInit(lambdaCall0, &Functional_FoundCall1);
+		CodeScanMatcherPattern(lambdaCall0,
+			OP(PUSH_C,             ???)
+			OP(PUSH_C,             4)
+			OP(CALL,               &LAM@0)
+		);
+		CodeScanAddMatcher(scanner, lambdaCall0);
+		
+		new lambdaCall1[CodeScanMatcher];
+		CodeScanMatcherInit(lambdaCall1, &Functional_FoundCall1);
+		CodeScanMatcherPattern(lambdaCall1,
+			OP(CONST_PRI,          ???)
+			OP(PUSH_PRI)
+			OP(PUSH_C,             4)
+			OP(CALL,               &LAM@0)
+		);
+		CodeScanAddMatcher(scanner, lambdaCall1);
+		
+		new lambdaCall2[CodeScanMatcher];
+		CodeScanMatcherInit(lambdaCall2, &Functional_FoundCall2);
+		CodeScanMatcherPattern(lambdaCall2,
+			OP(ZERO_PRI)
+			OP(PUSH_PRI)
+			OP(PUSH_C,             4)
+			OP(CALL,               &LAM@0)
+		);
+		CodeScanAddMatcher(scanner, lambdaCall2);
+		
+		// Run fast, with an explicit search function.
+		CodeScanRunFast(scanner, &LAM@0);
+	}
+
 	#if defined Functional_OnCodeInit
 		Functional_OnCodeInit();
 	#endif

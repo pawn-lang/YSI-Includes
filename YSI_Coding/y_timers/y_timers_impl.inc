@@ -86,82 +86,85 @@ stock
 public OnCodeInit()
 {
 	Debug_Print1("hook Timers_OnYSIInit called");
-	new
-		pointer = 0,
-		time = 0,
-		idx = 0,
-		publicTableEntry = 0;
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@yT_>)))
 	{
-		Debug_Print6("Timer_OnYSIInit: publicTableEntry: %d", publicTableEntry);
-		#emit LREF.S.pri publicTableEntry
-		#emit STOR.S.pri pointer
-		//YSI_g_sCurFunc = pointer;
-		// Don't bother with the real name, call the function by address to get
-		// the time the function runs for.
-		Debug_Print7("Timer_OnYSIInit: pointer: %d", pointer);
-		// Push the address of the current function.
-		#emit PUSH.S     pointer
-		#emit PUSH.C     0xFFFFFFFF // -1: Initial list action for `_Timer_D`.
-		#emit PUSH.C     8
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
-		#emit PUSH.pri
-		#emit LOAD.S.pri pointer
-		#emit SCTRL      6
-		#emit STOR.S.pri time
-		//YSI_g_sCurFunc = 0;
-		Debug_Print7("Timer_OnYSIInit: time: %d", time);
-		if (time != -1)
+		new
+			pointer = 0,
+			time = 0,
+			idx = 0,
+			publicTableEntry = 0;
+		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@yT_>)))
 		{
-			// Find all the functions with the same time.  This is less
-			// efficient than previous implementations (it is O(N^2)), but also
-			// more robust as it won't fail no matter how many different times
-			// there are - old ones relied on an array with a finite size.
-			new
-				pointer2 = 0,
-				time2 = 0,
-				idx2 = 0,
-				total = 0,
-				pre = 0;
-			while ((idx2 = AMX_GetPublicPointerPrefix(idx2, pointer2, _A<@yT_>)))
-			{
-				// Call the functions a second time to guarantee getting
-				#emit PUSH.C     0
-				#emit PUSH.C     0xFFFFFFFF
-				#emit PUSH.C     8
-				#emit LCTRL      6
-				#emit ADD.C      36
-				#emit LCTRL      8
-				#emit PUSH.pri
-				#emit LOAD.S.pri pointer2
-				#emit SCTRL      6
-				#emit STOR.S.pri time2
-				// Check if the new time is a FACTOR, SAME, or MULTIPLE of this
-				// task, so we don't start different timers together.
-				if (time2 == time || time / time2 * time2 == time || time2 / time * time == time2)
-				{
-					++total;
-					if (idx2 < idx)
-					{
-						++pre;
-					}
-				}
-			}
-			Debug_Print7("Timer_OnYSIInit: total: %d, time: %d, pre: %d", total, time, pre);
-			// Now we know what time this function has, how many others have
-			// that time and how many have already been started.
-			new
-				buffer[FUNCTION_LENGTH];
-			publicTableEntry += 4;
+			Debug_Print6("Timer_OnYSIInit: publicTableEntry: %d", publicTableEntry);
 			#emit LREF.S.pri publicTableEntry
 			#emit STOR.S.pri pointer
-			AMX_ReadString(AMX_BASE_ADDRESS + pointer, buffer);
-			Debug_Print7("Timer_OnYSIInit: %s", Unpack(buffer));
-			// Get the time offset for the current call.  This should mean that
-			// all the functions are nicely spread out.
-			YSI_SetTimerEx__(buffer, time * pre / total, false, "ii", 1, -1);
+			//YSI_g_sCurFunc = pointer;
+			// Don't bother with the real name, call the function by address to
+			// get the time the function runs for.
+			Debug_Print7("Timer_OnYSIInit: pointer: %d", pointer);
+			// Push the address of the current function.
+			#emit PUSH.S     pointer
+			#emit PUSH.C     0xFFFFFFFF // -1: Initial list action for `_Timer_D`.
+			#emit PUSH.C     8
+			#emit LCTRL      6
+			#emit ADD.C      36
+			#emit LCTRL      8
+			#emit PUSH.pri
+			#emit LOAD.S.pri pointer
+			#emit SCTRL      6
+			#emit STOR.S.pri time
+			//YSI_g_sCurFunc = 0;
+			Debug_Print7("Timer_OnYSIInit: time: %d", time);
+			if (time != -1)
+			{
+				// Find all the functions with the same time.  This is less
+				// efficient than previous implementations (it is O(N^2)), but
+				// also more robust as it won't fail no matter how many
+				// different times there are - old ones relied on an array with
+				// a finite size.
+				new
+					pointer2 = 0,
+					time2 = 0,
+					idx2 = 0,
+					total = 0,
+					pre = 0;
+				while ((idx2 = AMX_GetPublicPointerPrefix(idx2, pointer2, _A<@yT_>)))
+				{
+					// Call the functions a second time to guarantee getting
+					#emit PUSH.C     0
+					#emit PUSH.C     0xFFFFFFFF
+					#emit PUSH.C     8
+					#emit LCTRL      6
+					#emit ADD.C      36
+					#emit LCTRL      8
+					#emit PUSH.pri
+					#emit LOAD.S.pri pointer2
+					#emit SCTRL      6
+					#emit STOR.S.pri time2
+					// Check if the new time is a FACTOR, SAME, or MULTIPLE of
+					// this task, so we don't start different timers together.
+					if (time2 == time || time / time2 * time2 == time || time2 / time * time == time2)
+					{
+						++total;
+						if (idx2 < idx)
+						{
+							++pre;
+						}
+					}
+				}
+				Debug_Print7("Timer_OnYSIInit: total: %d, time: %d, pre: %d", total, time, pre);
+				// Now we know what time this function has, how many others have
+				// that time and how many have already been started.
+				new
+					buffer[FUNCTION_LENGTH];
+				publicTableEntry += 4;
+				#emit LREF.S.pri publicTableEntry
+				#emit STOR.S.pri pointer
+				AMX_ReadString(AMX_BASE_ADDRESS + pointer, buffer);
+				Debug_Print7("Timer_OnYSIInit: %s", Unpack(buffer));
+				// Get the time offset for the current call.  This should mean
+				// that all the functions are nicely spread out.
+				YSI_SetTimerEx__(buffer, time * pre / total, false, "ii", 1, -1);
+			}
 		}
 	}
 	Debug_Print1("hook Timers_OnYSIInit ended");
