@@ -521,8 +521,8 @@ static stock Inline_FoundUsingInline(const scanner[CodeScanner])
 		ctx[AsmContext];
 #if __COMPILER_O2
 	new
-		count = CodeScanGetHoleCount(scanner) - 1;
-	if (CodeScanGetMatchHole(scanner, count) != CodeScanGetMatchHole(scanner, count - 1))
+		count = CodeScanGetHoleCount(scanner);
+	if (CodeScanGetMatchHole(scanner, count - 2) != CodeScanGetMatchHole(scanner, count - 1))
 		return 0;
 	if (count == 2)
 #else
