@@ -519,35 +519,41 @@ static stock Inline_FoundUsingInline(const scanner[CodeScanner])
 	// holes are the same.  If they're not, this isn't what we want to optimise.
 	new
 		ctx[AsmContext];
-	switch (CodeScanGetMatchLength(scanner))
-	{
-		case 8 * cellbytes:
-		{
-			if (CodeScanGetMatchHole(scanner, 0) != CodeScanGetMatchHole(scanner, 1))
-				return 0;
-			CodeScanGetMatchAsm(scanner, ctx, 6 * cellbytes);
-			@emit PUSH.pri
-			@emit NOP
-		}
 #if __COMPILER_O2
-		case 9 * cellbytes:
-		{
-			if (CodeScanGetMatchHole(scanner, 1) != CodeScanGetMatchHole(scanner, 2))
-				return 0;
-			CodeScanGetMatchAsm(scanner, ctx, 7 * cellbytes);
-			@emit PUSH.pri
-			@emit NOP
-		}
+	new
+		count = CodeScanGetHoleCount(scanner) - 1;
+	if (CodeScanGetMatchHole(scanner, count) != CodeScanGetMatchHole(scanner, count - 1))
+		return 0;
+	if (count == 2)
+#else
+	if (CodeScanGetMatchHole(scanner, 0) != CodeScanGetMatchHole(scanner, 1))
+		return 0;
 #endif
-		case 10 * cellbytes:
+	{
+		switch (CodeScanGetMatchLength(scanner))
 		{
-			if (CodeScanGetMatchHole(scanner, 0) != CodeScanGetMatchHole(scanner, 1))
-				return 0;
-			CodeScanGetMatchAsm(scanner, ctx, 7 * cellbytes);
-			@emit NOP
-			@emit NOP
+			case 8 * cellbytes:
+			{
+				CodeScanGetMatchAsm(scanner, ctx, 6 * cellbytes);
+				@emit PUSH.pri
+				@emit NOP
+			}
+			case 10 * cellbytes:
+			{
+				CodeScanGetMatchAsm(scanner, ctx, 7 * cellbytes);
+				@emit NOP
+				@emit NOP
+			}
 		}
 	}
+#if __COMPILER_O2
+	else
+	{
+		CodeScanGetMatchAsm(scanner, ctx, (4 + count) * cellbytes);
+		@emit PUSH.pri
+		@emit NOP
+	}
+#endif
 	return 0;
 }
 
@@ -835,6 +841,36 @@ public OnCodeInit()
 		OP(PUSH_S,             ???)
 	);
 	CodeScanAddMatcher(scanner, csm7c);
+
+	new csm7d[CodeScanMatcher];
+	CodeScanMatcherInit(csm7d, &Inline_FoundUsingInline);
+	CodeScanMatcherPattern(csm7d,
+		OP(PUSH3_ADR,          ???, ???, ???)
+		OP(PUSH_C,             4)
+		OP(CALL,               &Inline_UI_)
+		OP(PUSH_S,             ???)
+	);
+	CodeScanAddMatcher(scanner, csm7d);
+
+	new csm7e[CodeScanMatcher];
+	CodeScanMatcherInit(csm7e, &Inline_FoundUsingInline);
+	CodeScanMatcherPattern(csm7e,
+		OP(PUSH4_ADR,          ???, ???, ???, ???)
+		OP(PUSH_C,             4)
+		OP(CALL,               &Inline_UI_)
+		OP(PUSH_S,             ???)
+	);
+	CodeScanAddMatcher(scanner, csm7e);
+	
+	new csm7f[CodeScanMatcher];
+	CodeScanMatcherInit(csm7f, &Inline_FoundUsingInline);
+	CodeScanMatcherPattern(csm7f,
+		OP(PUSH5_ADR,          ???, ???, ???, ???, ???)
+		OP(PUSH_C,             4)
+		OP(CALL,               &Inline_UI_)
+		OP(PUSH_S,             ???)
+	);
+	CodeScanAddMatcher(scanner, csm7f);
 #endif
 
 	// Destructors.
