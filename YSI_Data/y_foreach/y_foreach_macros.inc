@@ -492,7 +492,7 @@ FUNC_PAWNDOC(Iter_NonEmpty(Iterator:iter<>));
 
 FUNC_PAWNDOC(Iter_IsFull(Iterator:iter<>));
 #define Iter_IsFull _ITER<Iter_IsFull_Internal>
-#define Iter_IsFull_InternalA(%0,%1)    ((%0) == 0)
+#define Iter_IsFull_InternalA(%0,%1)    ((%0) == (F@s(%1)-1))
 #define Iter_IsFull_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) == (F@s(%1)-F@s(%0)))
 
 /*-------------------------------------------------------------------------*//**
@@ -510,7 +510,7 @@ FUNC_PAWNDOC(Iter_IsFull(Iterator:iter<>));
 
 FUNC_PAWNDOC(Iter_NonFull(Iterator:iter<>));
 #define Iter_NonFull _ITER<Iter_NonFull_Internal>
-#define Iter_NonFull_InternalA(%0,%1)    ((%0) != 0)
+#define Iter_NonFull_InternalA(%0,%1)    ((%0) != (F@s(%1)-1))
 #define Iter_NonFull_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) != (F@s(%1)-F@s(%0)))
 
 /*-------------------------------------------------------------------------*//**
