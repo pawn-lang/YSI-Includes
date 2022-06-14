@@ -1018,14 +1018,51 @@ TEST__ y_hooks_Crash()
 	}
 }
 
-HOOK_NATIVE__ YSI_NOP(&num)
+static stock
+	YSI_g_sMinA = 0,
+	YSI_g_sMinB = 0,
+	YSI_g_sMinC = 0;
+
+HOOK_NATIVE__ min(a, b)
 {
-	// Don't call the original.
-	return 42 + num;
+	// A native function we can easily replicate, in tests only.
+	return
+		(YSI_g_sMinA = a),
+		(YSI_g_sMinB = b),
+		(YSI_g_sMinC = (a < b) ? a : b);
 }
 
 TEST__ y_hooks_native()
 {
-	ASSERT_EQ(YSI_NOP(5), 47);
+	// Test that we haven't broken `min`.
+	ASSERT_EQ(min(5, 6), 5);
+	ASSERT_EQ(min(cellmin, cellmax), cellmin);
+	ASSERT_EQ(min(cellmin, 0), cellmin);
+	ASSERT_EQ(min(0, cellmax), 0);
+	ASSERT_EQ(min(0, 1), 0);
+	ASSERT_EQ(min(-1, 1), -1);
+	ASSERT_EQ(min(-1, 0), -1);
+
+	// Test that the order doesn't matter.
+	ASSERT_EQ(min(6, 5), 5);
+	ASSERT_EQ(min(cellmax, cellmin), cellmin);
+	ASSERT_EQ(min(0, cellmin), cellmin);
+	ASSERT_EQ(min(cellmax, 0), 0);
+	ASSERT_EQ(min(1, 0), 0);
+	ASSERT_EQ(min(1, -1), -1);
+	ASSERT_EQ(min(0, -1), -1);
+
+	// Test that our hook was called.
+	YSI_g_sMinA = 100,
+	YSI_g_sMinB = 100,
+	YSI_g_sMinC = 100;
+	min(80, 90);
+	ASSERT_EQ(YSI_g_sMinA, 80);
+	ASSERT_EQ(YSI_g_sMinB, 90);
+	ASSERT_EQ(YSI_g_sMinC, 80);
+	min(90, 70);
+	ASSERT_EQ(YSI_g_sMinA, 90);
+	ASSERT_EQ(YSI_g_sMinB, 70);
+	ASSERT_EQ(YSI_g_sMinC, 70);
 }
 
