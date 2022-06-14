@@ -246,34 +246,21 @@ stock bool:Server_IsWindowsHost()
 	return val == 120;
 }
 
-stock bool:Server_IsOpenMP()
-{
-	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
-	// `pri` is 0 it wasn't set by the control register.
-	#emit ZERO.pri
-	#emit ZERO.alt
-	#emit LCTRL                9
-	#emit NEQ
-	#emit RETN
-
-	return false;
-}
+forward bool:Server_IsOpenMP();
 
 // Spell `open.mp` correctly in the function name (because why not).
 #define Server_Isopen.mp Server_IsOpenMP
 #define Server_Is_open.mp Server_IsOpenMP
 
-stock bool:Server_IsSAMP()
-{
-	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
-	// `pri` is 0 it wasn't set by the control register.
-	#emit ZERO.pri
-	#emit LCTRL                9
-	#emit EQ.C.pri             0
-	#emit RETN
+#if __COMPILER___EMIT_U
+	#define Server_IsOpenMP() (bool:(__emit(zero.pri, zero.alt, lctrl 9, neq)))
+#endif
 
-	return false;
-}
+forward bool:Server_IsSAMP();
+
+#if __COMPILER___EMIT_U
+	#define Server_IsSAMP() (bool:(__emit(zero.pri, lctrl 9, eq.c.pri 0)))
+#endif
 
 #pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
@@ -1384,5 +1371,34 @@ public _ScriptInit_FixState() <_script_init_fix_state : true>
 
 public _ScriptInit_FixState() <_script_init_fix_state : false>
 {
+}
+
+#if __COMPILER___EMIT_U
+	#endinput
+#endif
+
+stock bool:Server_IsOpenMP()
+{
+	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
+	// `pri` is 0 it wasn't set by the control register.
+	#emit ZERO.pri
+	#emit ZERO.alt
+	#emit LCTRL                9
+	#emit NEQ
+	#emit RETN
+
+	return false;
+}
+
+stock bool:Server_IsSAMP()
+{
+	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
+	// `pri` is 0 it wasn't set by the control register.
+	#emit ZERO.pri
+	#emit LCTRL                9
+	#emit EQ.C.pri             0
+	#emit RETN
+
+	return false;
 }
 
