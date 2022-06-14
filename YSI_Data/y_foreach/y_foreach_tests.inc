@@ -1001,7 +1001,6 @@ TEST__ y_iter_Iter_IsEmpty1()
 {
 	new
 		Iterator:iter1<30>;
-	Iter_Init(iter1);
 	ASSERT(Iter_IsEmpty(iter1));
 	ASSERT(!Iter_NonEmpty(iter1));
 	ASSERT(!Iter_IsFull(iter1));
@@ -1030,7 +1029,6 @@ TEST__ y_iter_Iter_IsEmpty2()
 {
 	new
 		Iterator:iter1<5, 30>;
-	Iter_Init(iter1);
 	ASSERT(Iter_IsEmpty(iter1<>));
 	ASSERT(!Iter_NonEmpty(iter1<>));
 	ASSERT(!Iter_IsFull(iter1<>));
@@ -1091,7 +1089,6 @@ TEST__ y_iter_Iter_IsEmpty3()
 {
 	new
 		Iterator:iter1<5, 30>;
-	Iter_Init(iter1);
 	ASSERT(Iter_IsEmpty(iter1<>));
 	ASSERT(!Iter_NonEmpty(iter1<>));
 	ASSERT(!Iter_IsFull(iter1<>));
