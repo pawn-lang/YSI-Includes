@@ -248,35 +248,28 @@ stock bool:Server_IsWindowsHost()
 
 stock bool:Server_IsOpenMP()
 {
-	// Check if `SYSREQ.D` is removed in the header flags.  open.mp marks the
-	// flag, SA:MP doesn't.
-	#emit LCTRL                1
-	#emit NEG
-	#emit ADD.C                8
-	#emit PUSH.pri
-	#emit LREF.S.pri           0xFFFFFFFC
-	#emit CONST.alt            0x00000400
-	#emit AND
-	#emit EQ.C.pri             0x00000400
-	#emit POP.alt
+	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
+	// `pri` is 0 it wasn't set by the control register.
+	#emit ZERO.pri
+	#emit ZERO.alt
+	#emit LCTRL                9
+	#emit NEQ
 	#emit RETN
 
 	return false;
 }
 
+// Spell `open.mp` correctly in the function name (because why not).
+#define Server_Isopen.mp Server_IsOpenMP
+#define Server_Is_open.mp Server_IsOpenMP
+
 stock bool:Server_IsSAMP()
 {
-	// Check if `SYSREQ.D` is not removed in the header flags.  open.mp marks
-	// the flag, SA:MP doesn't.
-	#emit LCTRL                1
-	#emit NEG
-	#emit ADD.C                8
-	#emit PUSH.pri
-	#emit LREF.S.pri           0xFFFFFFFC
-	#emit CONST.alt            0x00000400
-	#emit AND
+	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
+	// `pri` is 0 it wasn't set by the control register.
+	#emit ZERO.pri
+	#emit LCTRL                9
 	#emit EQ.C.pri             0
-	#emit POP.alt
 	#emit RETN
 
 	return false;
