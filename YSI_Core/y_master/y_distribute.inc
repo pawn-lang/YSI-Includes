@@ -87,6 +87,7 @@ Optional plugins:
 
 #if defined YSI_NO_MASTER
 	#define __declspec(%0)
+	#define DISTRIBUTE(%0);
 	#endinput
 #endif
 

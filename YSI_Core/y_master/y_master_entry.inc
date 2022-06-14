@@ -104,9 +104,7 @@ Optional plugins:
 		#include "..\y_core\y_rconfix"
 	#endif
 	#include "y_master_once"
-	#if !defined YSI_NO_MASTER
-		#include "y_distribute"
-	#endif
+	#include "y_distribute"
 #endif
 
 // ALWAYS!  The compiler defines this automatically, don't use it as this is

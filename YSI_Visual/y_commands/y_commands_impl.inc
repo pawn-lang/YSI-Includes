@@ -187,6 +187,7 @@ static stock const
 
 // Alt commands:
 #define _YCMD_4:@yC_%0(%9);%9(%9)%9;%9(%9);%9(%1)=%2; POSTINIT__%0(){Command_AddAltNamed(#%2,#%0);}
+#define _YCMD_5:@yC_%0(%9);%9(%9)=%2; POSTINIT__%0(){Command_AddAltNamed(#%2,#%0);}
 
 #define @_yC%0\32; @_yC
 #define @y_C%0\32; @y_C

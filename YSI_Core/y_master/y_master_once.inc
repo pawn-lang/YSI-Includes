@@ -221,8 +221,8 @@ Optional plugins:
 #define YSIM_NONE_PTSK%0[%3](%1)   ptask%0[%3](%1)
 #define YSIM_NONE_FUNC%0(%1)<%9>   forward%0(%1);public%0(%1)
 #define YSIM_NONE_GRUP%0(%1)       _GROUP_MAKE_NAME<HOOK__%0...>(%1)
-#define YSIM_NONE_YCMD%0(%1)       @yC_%0(%1);@yC_%0(%1)
-#define YSIM_NONE_ZERO%0(%1)       @yC_%0(%1);@yC_%0(%1)
+#define YSIM_NONE_YCMD%0(%1)       _YCMD_5:@yC_%0(%1);_YCMD_5:@yC_%0(%1)
+#define YSIM_NONE_ZERO%0(%1)       _YCMD_5:@yC_%0(%1);_YCMD_5:@yC_%0(%1)
 
 // Now the compilation parts.
 #define YSIM_NUM(%0,%1,%2)%8$%4#%5(%7)(%0)(%9)            %8$%4#%5i(%7,%2)(%0,_:%2)(%9,%1%2)
