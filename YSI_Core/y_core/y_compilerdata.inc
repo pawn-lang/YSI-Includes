@@ -129,7 +129,7 @@ Optional plugins:
 #define __COMPILER_UNIX (0)
 #define __COMPILER_WINDOWS (1)
 #define __COMPILER_OS __COMPILER_UNIX
-#tryinclude "Y_dEtErMiNe_Os.inc"
+#tryinclude "Y_dEtErMiNe_Os"
 
 #if defined __CompilerThirdPass
 	#error Somehow got a fourth compiler pass.  Please tell Y_Less how.

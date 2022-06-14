@@ -97,19 +97,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_core
-	#tryinclude "..\YSI_Core\y_core\y_core_entry.inc"
+	#tryinclude "..\YSI_Core\y_core\y_core_entry"
 #endif
 #if !defined _INC_y_core
-	#tryinclude "YSI_Core\y_core\y_core_entry.inc"
+	#tryinclude "YSI_Core\y_core\y_core_entry"
 #endif
 #if !defined _INC_y_core
-	#tryinclude "YSI\YSI_Core\y_core\y_core_entry.inc"
+	#tryinclude "YSI\YSI_Core\y_core\y_core_entry"
 #endif
 #if !defined _INC_y_core
-	#tryinclude <YSI_Core\y_core\y_core_entry.inc>
+	#tryinclude <YSI_Core\y_core\y_core_entry>
 #endif
 #if !defined _INC_y_core
-	#tryinclude <YSI\YSI_Core\y_core\y_core_entry.inc>
+	#tryinclude <YSI\YSI_Core\y_core\y_core_entry>
 #endif
 #if !defined _INC_y_core
 	#error Could not find y_scriptinit

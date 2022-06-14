@@ -100,398 +100,398 @@ Optional plugins:
 // internal include guards (or the compiler's one) will prevent their multiple
 // inclusions.  I don't know why I ever made YSI use its own internal version...
 
-#tryinclude <amx\addressof.inc>
-#tryinclude <amx_assembly\addressof.inc>
-#tryinclude <amx_assembly-master\addressof.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\addressof.inc>
-#tryinclude "..\..\amx\addressof.inc"
-#tryinclude "..\..\amx_assembly\addressof.inc"
-#tryinclude "..\..\amx_assembly-master\addressof.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\addressof.inc"
-#tryinclude "..\..\..\amx\addressof.inc"
-#tryinclude "..\..\..\amx_assembly\addressof.inc"
-#tryinclude "..\..\..\amx_assembly-master\addressof.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\addressof.inc"
-#tryinclude "addressof.inc"
-#tryinclude <addressof.inc>
+#tryinclude <amx\addressof>
+#tryinclude <amx_assembly\addressof>
+#tryinclude <amx_assembly-master\addressof>
+#tryinclude <amx_assembly-master\amx_assembly-master\addressof>
+#tryinclude "..\..\amx\addressof"
+#tryinclude "..\..\amx_assembly\addressof"
+#tryinclude "..\..\amx_assembly-master\addressof"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\addressof"
+#tryinclude "..\..\..\amx\addressof"
+#tryinclude "..\..\..\amx_assembly\addressof"
+#tryinclude "..\..\..\amx_assembly-master\addressof"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\addressof"
+#tryinclude "addressof"
+#tryinclude <addressof>
 #if !defined ADDRESSOF_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\addressof_jit.inc>
-#tryinclude <amx_assembly\addressof_jit.inc>
-#tryinclude <amx_assembly-master\addressof_jit.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\addressof_jit.inc>
-#tryinclude "..\..\amx\addressof_jit.inc"
-#tryinclude "..\..\amx_assembly\addressof_jit.inc"
-#tryinclude "..\..\amx_assembly-master\addressof_jit.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\addressof_jit.inc"
-#tryinclude "..\..\..\amx\addressof_jit.inc"
-#tryinclude "..\..\..\amx_assembly\addressof_jit.inc"
-#tryinclude "..\..\..\amx_assembly-master\addressof_jit.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\addressof_jit.inc"
-#tryinclude "addressof_jit.inc"
-#tryinclude <addressof_jit.inc>
+#tryinclude <amx\addressof_jit>
+#tryinclude <amx_assembly\addressof_jit>
+#tryinclude <amx_assembly-master\addressof_jit>
+#tryinclude <amx_assembly-master\amx_assembly-master\addressof_jit>
+#tryinclude "..\..\amx\addressof_jit"
+#tryinclude "..\..\amx_assembly\addressof_jit"
+#tryinclude "..\..\amx_assembly-master\addressof_jit"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\addressof_jit"
+#tryinclude "..\..\..\amx\addressof_jit"
+#tryinclude "..\..\..\amx_assembly\addressof_jit"
+#tryinclude "..\..\..\amx_assembly-master\addressof_jit"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\addressof_jit"
+#tryinclude "addressof_jit"
+#tryinclude <addressof_jit>
 #if !defined ADDRESSOF_JIT_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\amx.inc>
-#tryinclude <amx_assembly\amx.inc>
-#tryinclude <amx_assembly-master\amx.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\amx.inc>
-#tryinclude "..\..\amx\amx.inc"
-#tryinclude "..\..\amx_assembly\amx.inc"
-#tryinclude "..\..\amx_assembly-master\amx.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\amx.inc"
-#tryinclude "..\..\..\amx\amx.inc"
-#tryinclude "..\..\..\amx_assembly\amx.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\amx.inc"
-#tryinclude "amx.inc"
-#tryinclude <amx.inc>
+#tryinclude <amx\amx>
+#tryinclude <amx_assembly\amx>
+#tryinclude <amx_assembly-master\amx>
+#tryinclude <amx_assembly-master\amx_assembly-master\amx>
+#tryinclude "..\..\amx\amx"
+#tryinclude "..\..\amx_assembly\amx"
+#tryinclude "..\..\amx_assembly-master\amx"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\amx"
+#tryinclude "..\..\..\amx\amx"
+#tryinclude "..\..\..\amx_assembly\amx"
+#tryinclude "..\..\..\amx_assembly-master\amx"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\amx"
+#tryinclude "amx"
+#tryinclude <amx>
 #if !defined AMX_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\amx_base.inc>
-#tryinclude <amx_assembly\amx_base.inc>
-#tryinclude <amx_assembly-master\amx_base.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\amx_base.inc>
-#tryinclude "..\..\amx\amx_base.inc"
-#tryinclude "..\..\amx_assembly\amx_base.inc"
-#tryinclude "..\..\amx_assembly-master\amx_base.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\amx_base.inc"
-#tryinclude "..\..\..\amx\amx_base.inc"
-#tryinclude "..\..\..\amx_assembly\amx_base.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_base.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\amx_base.inc"
-#tryinclude "amx_base.inc"
-#tryinclude <amx_base.inc>
+#tryinclude <amx\amx_base>
+#tryinclude <amx_assembly\amx_base>
+#tryinclude <amx_assembly-master\amx_base>
+#tryinclude <amx_assembly-master\amx_assembly-master\amx_base>
+#tryinclude "..\..\amx\amx_base"
+#tryinclude "..\..\amx_assembly\amx_base"
+#tryinclude "..\..\amx_assembly-master\amx_base"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\amx_base"
+#tryinclude "..\..\..\amx\amx_base"
+#tryinclude "..\..\..\amx_assembly\amx_base"
+#tryinclude "..\..\..\amx_assembly-master\amx_base"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\amx_base"
+#tryinclude "amx_base"
+#tryinclude <amx_base>
 #if !defined AMX_BASE_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\amx_header.inc>
-#tryinclude <amx_assembly\amx_header.inc>
-#tryinclude <amx_assembly-master\amx_header.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\amx_header.inc>
-#tryinclude "..\..\amx\amx_header.inc"
-#tryinclude "..\..\amx_assembly\amx_header.inc"
-#tryinclude "..\..\amx_assembly-master\amx_header.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\amx_header.inc"
-#tryinclude "..\..\..\amx\amx_header.inc"
-#tryinclude "..\..\..\amx_assembly\amx_header.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_header.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\amx_header.inc"
-#tryinclude "amx_header.inc"
-#tryinclude <amx_header.inc>
+#tryinclude <amx\amx_header>
+#tryinclude <amx_assembly\amx_header>
+#tryinclude <amx_assembly-master\amx_header>
+#tryinclude <amx_assembly-master\amx_assembly-master\amx_header>
+#tryinclude "..\..\amx\amx_header"
+#tryinclude "..\..\amx_assembly\amx_header"
+#tryinclude "..\..\amx_assembly-master\amx_header"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\amx_header"
+#tryinclude "..\..\..\amx\amx_header"
+#tryinclude "..\..\..\amx_assembly\amx_header"
+#tryinclude "..\..\..\amx_assembly-master\amx_header"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\amx_header"
+#tryinclude "amx_header"
+#tryinclude <amx_header>
 #if !defined AMX_HEADER_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\amx_memory.inc>
-#tryinclude <amx_assembly\amx_memory.inc>
-#tryinclude <amx_assembly-master\amx_memory.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\amx_memory.inc>
-#tryinclude "..\..\amx\amx_memory.inc"
-#tryinclude "..\..\amx_assembly\amx_memory.inc"
-#tryinclude "..\..\amx_assembly-master\amx_memory.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\amx_memory.inc"
-#tryinclude "..\..\..\amx\amx_memory.inc"
-#tryinclude "..\..\..\amx_assembly\amx_memory.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_memory.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\amx_memory.inc"
-#tryinclude "amx_memory.inc"
-#tryinclude <amx_memory.inc>
+#tryinclude <amx\amx_memory>
+#tryinclude <amx_assembly\amx_memory>
+#tryinclude <amx_assembly-master\amx_memory>
+#tryinclude <amx_assembly-master\amx_assembly-master\amx_memory>
+#tryinclude "..\..\amx\amx_memory"
+#tryinclude "..\..\amx_assembly\amx_memory"
+#tryinclude "..\..\amx_assembly-master\amx_memory"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\amx_memory"
+#tryinclude "..\..\..\amx\amx_memory"
+#tryinclude "..\..\..\amx_assembly\amx_memory"
+#tryinclude "..\..\..\amx_assembly-master\amx_memory"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\amx_memory"
+#tryinclude "amx_memory"
+#tryinclude <amx_memory>
 #if !defined AMX_MEMORY_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\asm.inc>
-#tryinclude <amx_assembly\asm.inc>
-#tryinclude <amx_assembly-master\asm.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\asm.inc>
-#tryinclude "..\..\amx\asm.inc"
-#tryinclude "..\..\amx_assembly\asm.inc"
-#tryinclude "..\..\amx_assembly-master\asm.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\asm.inc"
-#tryinclude "..\..\..\amx\asm.inc"
-#tryinclude "..\..\..\amx_assembly\asm.inc"
-#tryinclude "..\..\..\amx_assembly-master\asm.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\asm.inc"
-#tryinclude "asm.inc"
-#tryinclude <asm.inc>
+#tryinclude <amx\asm>
+#tryinclude <amx_assembly\asm>
+#tryinclude <amx_assembly-master\asm>
+#tryinclude <amx_assembly-master\amx_assembly-master\asm>
+#tryinclude "..\..\amx\asm"
+#tryinclude "..\..\amx_assembly\asm"
+#tryinclude "..\..\amx_assembly-master\asm"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\asm"
+#tryinclude "..\..\..\amx\asm"
+#tryinclude "..\..\..\amx_assembly\asm"
+#tryinclude "..\..\..\amx_assembly-master\asm"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\asm"
+#tryinclude "asm"
+#tryinclude <asm>
 #if !defined ASM_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\asm_macros.inc>
-#tryinclude <amx_assembly\asm_macros.inc>
-#tryinclude <amx_assembly-master\asm_macros.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\asm_macros.inc>
-#tryinclude "..\..\amx\asm_macros.inc"
-#tryinclude "..\..\amx_assembly\asm_macros.inc"
-#tryinclude "..\..\amx_assembly-master\asm_macros.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\asm_macros.inc"
-#tryinclude "..\..\..\amx\asm_macros.inc"
-#tryinclude "..\..\..\amx_assembly\asm_macros.inc"
-#tryinclude "..\..\..\amx_assembly-master\asm_macros.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\asm_macros.inc"
-#tryinclude "asm_macros.inc"
-#tryinclude <asm_macros.inc>
+#tryinclude <amx\asm_macros>
+#tryinclude <amx_assembly\asm_macros>
+#tryinclude <amx_assembly-master\asm_macros>
+#tryinclude <amx_assembly-master\amx_assembly-master\asm_macros>
+#tryinclude "..\..\amx\asm_macros"
+#tryinclude "..\..\amx_assembly\asm_macros"
+#tryinclude "..\..\amx_assembly-master\asm_macros"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\asm_macros"
+#tryinclude "..\..\..\amx\asm_macros"
+#tryinclude "..\..\..\amx_assembly\asm_macros"
+#tryinclude "..\..\..\amx_assembly-master\asm_macros"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\asm_macros"
+#tryinclude "asm_macros"
+#tryinclude <asm_macros>
 #if !defined ASM_MACROS_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\codescan.inc>
-#tryinclude <amx_assembly\codescan.inc>
-#tryinclude <amx_assembly-master\codescan.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\codescan.inc>
-#tryinclude "..\..\amx\codescan.inc"
-#tryinclude "..\..\amx_assembly\codescan.inc"
-#tryinclude "..\..\amx_assembly-master\codescan.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\codescan.inc"
-#tryinclude "..\..\..\amx\codescan.inc"
-#tryinclude "..\..\..\amx_assembly\codescan.inc"
-#tryinclude "..\..\..\amx_assembly-master\codescan.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\codescan.inc"
-#tryinclude "codescan.inc"
-#tryinclude <codescan.inc>
+#tryinclude <amx\codescan>
+#tryinclude <amx_assembly\codescan>
+#tryinclude <amx_assembly-master\codescan>
+#tryinclude <amx_assembly-master\amx_assembly-master\codescan>
+#tryinclude "..\..\amx\codescan"
+#tryinclude "..\..\amx_assembly\codescan"
+#tryinclude "..\..\amx_assembly-master\codescan"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\codescan"
+#tryinclude "..\..\..\amx\codescan"
+#tryinclude "..\..\..\amx_assembly\codescan"
+#tryinclude "..\..\..\amx_assembly-master\codescan"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\codescan"
+#tryinclude "codescan"
+#tryinclude <codescan>
 #if !defined CODESCAN_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\amx_jit.inc>
-#tryinclude <amx_assembly\amx_jit.inc>
-#tryinclude <amx_assembly-master\amx_jit.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\amx_jit.inc>
-#tryinclude "..\..\amx\amx_jit.inc"
-#tryinclude "..\..\amx_assembly\amx_jit.inc"
-#tryinclude "..\..\amx_assembly-master\amx_jit.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\amx_jit.inc"
-#tryinclude "..\..\..\amx\amx_jit.inc"
-#tryinclude "..\..\..\amx_assembly\amx_jit.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_jit.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\amx_jit.inc"
-#tryinclude "amx_jit.inc"
-#tryinclude <amx_jit.inc>
+#tryinclude <amx\amx_jit>
+#tryinclude <amx_assembly\amx_jit>
+#tryinclude <amx_assembly-master\amx_jit>
+#tryinclude <amx_assembly-master\amx_assembly-master\amx_jit>
+#tryinclude "..\..\amx\amx_jit"
+#tryinclude "..\..\amx_assembly\amx_jit"
+#tryinclude "..\..\amx_assembly-master\amx_jit"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\amx_jit"
+#tryinclude "..\..\..\amx\amx_jit"
+#tryinclude "..\..\..\amx_assembly\amx_jit"
+#tryinclude "..\..\..\amx_assembly-master\amx_jit"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\amx_jit"
+#tryinclude "amx_jit"
+#tryinclude <amx_jit>
 #if !defined AMX_JIT_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\disasm.inc>
-#tryinclude <amx_assembly\disasm.inc>
-#tryinclude <amx_assembly-master\disasm.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\disasm.inc>
-#tryinclude "..\..\amx\disasm.inc"
-#tryinclude "..\..\amx_assembly\disasm.inc"
-#tryinclude "..\..\amx_assembly-master\disasm.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\disasm.inc"
-#tryinclude "..\..\..\amx\disasm.inc"
-#tryinclude "..\..\..\amx_assembly\disasm.inc"
-#tryinclude "..\..\..\amx_assembly-master\disasm.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\disasm.inc"
-#tryinclude "disasm.inc"
-#tryinclude <disasm.inc>
+#tryinclude <amx\disasm>
+#tryinclude <amx_assembly\disasm>
+#tryinclude <amx_assembly-master\disasm>
+#tryinclude <amx_assembly-master\amx_assembly-master\disasm>
+#tryinclude "..\..\amx\disasm"
+#tryinclude "..\..\amx_assembly\disasm"
+#tryinclude "..\..\amx_assembly-master\disasm"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\disasm"
+#tryinclude "..\..\..\amx\disasm"
+#tryinclude "..\..\..\amx_assembly\disasm"
+#tryinclude "..\..\..\amx_assembly-master\disasm"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\disasm"
+#tryinclude "disasm"
+#tryinclude <disasm>
 #if !defined DISASM_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-//#tryinclude <amx\dynamic_call.inc>
-//#tryinclude <amx_assembly\dynamic_call.inc>
-//#tryinclude <amx_assembly-master\dynamic_call.inc>
-//#tryinclude <amx_assembly-master\amx_assembly-master\dynamic_call.inc>
-//#tryinclude "..\..\amx\dynamic_call.inc"
-//#tryinclude "..\..\amx_assembly\dynamic_call.inc"
-//#tryinclude "..\..\amx_assembly-master\dynamic_call.inc"
-//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\dynamic_call.inc"
-//#tryinclude "..\..\..\amx\dynamic_call.inc"
-//#tryinclude "..\..\..\amx_assembly\dynamic_call.inc"
-//#tryinclude "..\..\..\amx_assembly-master\dynamic_call.inc"
-//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\dynamic_call.inc"
-//#tryinclude "dynamic_call.inc"
-//#tryinclude <dynamic_call.inc>
+//#tryinclude <amx\dynamic_call>
+//#tryinclude <amx_assembly\dynamic_call>
+//#tryinclude <amx_assembly-master\dynamic_call>
+//#tryinclude <amx_assembly-master\amx_assembly-master\dynamic_call>
+//#tryinclude "..\..\amx\dynamic_call"
+//#tryinclude "..\..\amx_assembly\dynamic_call"
+//#tryinclude "..\..\amx_assembly-master\dynamic_call"
+//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\dynamic_call"
+//#tryinclude "..\..\..\amx\dynamic_call"
+//#tryinclude "..\..\..\amx_assembly\dynamic_call"
+//#tryinclude "..\..\..\amx_assembly-master\dynamic_call"
+//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\dynamic_call"
+//#tryinclude "dynamic_call"
+//#tryinclude <dynamic_call>
 //#if !defined DYNAMIC_CALL_INC
 //	#define AMX_INCLUDING_FAILED
 //#endif
 
-#tryinclude <amx\frame_info.inc>
-#tryinclude <amx_assembly\frame_info.inc>
-#tryinclude <amx_assembly-master\frame_info.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\frame_info.inc>
-#tryinclude "..\..\amx\frame_info.inc"
-#tryinclude "..\..\amx_assembly\frame_info.inc"
-#tryinclude "..\..\amx_assembly-master\frame_info.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\frame_info.inc"
-#tryinclude "..\..\..\amx\frame_info.inc"
-#tryinclude "..\..\..\amx_assembly\frame_info.inc"
-#tryinclude "..\..\..\amx_assembly-master\frame_info.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\frame_info.inc"
-#tryinclude "frame_info.inc"
-#tryinclude <frame_info.inc>
+#tryinclude <amx\frame_info>
+#tryinclude <amx_assembly\frame_info>
+#tryinclude <amx_assembly-master\frame_info>
+#tryinclude <amx_assembly-master\amx_assembly-master\frame_info>
+#tryinclude "..\..\amx\frame_info"
+#tryinclude "..\..\amx_assembly\frame_info"
+#tryinclude "..\..\amx_assembly-master\frame_info"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\frame_info"
+#tryinclude "..\..\..\amx\frame_info"
+#tryinclude "..\..\..\amx_assembly\frame_info"
+#tryinclude "..\..\..\amx_assembly-master\frame_info"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\frame_info"
+#tryinclude "frame_info"
+#tryinclude <frame_info>
 #if !defined FRAME_INFO_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude <amx\heap_alloc.inc>
-#tryinclude <amx_assembly\heap_alloc.inc>
-#tryinclude <amx_assembly-master\heap_alloc.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\heap_alloc.inc>
-#tryinclude "..\..\amx\heap_alloc.inc"
-#tryinclude "..\..\amx_assembly\heap_alloc.inc"
-#tryinclude "..\..\amx_assembly-master\heap_alloc.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\heap_alloc.inc"
-#tryinclude "..\..\..\amx\heap_alloc.inc"
-#tryinclude "..\..\..\amx_assembly\heap_alloc.inc"
-#tryinclude "..\..\..\amx_assembly-master\heap_alloc.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\heap_alloc.inc"
-#tryinclude "heap_alloc.inc"
-#tryinclude <heap_alloc.inc>
+#tryinclude <amx\heap_alloc>
+#tryinclude <amx_assembly\heap_alloc>
+#tryinclude <amx_assembly-master\heap_alloc>
+#tryinclude <amx_assembly-master\amx_assembly-master\heap_alloc>
+#tryinclude "..\..\amx\heap_alloc"
+#tryinclude "..\..\amx_assembly\heap_alloc"
+#tryinclude "..\..\amx_assembly-master\heap_alloc"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\heap_alloc"
+#tryinclude "..\..\..\amx\heap_alloc"
+#tryinclude "..\..\..\amx_assembly\heap_alloc"
+#tryinclude "..\..\..\amx_assembly-master\heap_alloc"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\heap_alloc"
+#tryinclude "heap_alloc"
+#tryinclude <heap_alloc>
 #if !defined HEAP_ALLOC_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-//#tryinclude <amx\jit.inc>
-//#tryinclude <amx_assembly\jit.inc>
-//#tryinclude <amx_assembly-master\jit.inc>
-//#tryinclude <amx_assembly-master\amx_assembly-master\jit.inc>
-//#tryinclude "..\..\amx\jit.inc"
-//#tryinclude "..\..\amx_assembly\jit.inc"
-//#tryinclude "..\..\amx_assembly-master\jit.inc"
-//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\jit.inc"
-//#tryinclude "..\..\..\amx\jit.inc"
-//#tryinclude "..\..\..\amx_assembly\jit.inc"
-//#tryinclude "..\..\..\amx_assembly-master\jit.inc"
-//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\jit.inc"
-//#tryinclude "jit.inc"
-//#tryinclude <jit.inc>
+//#tryinclude <amx\jit>
+//#tryinclude <amx_assembly\jit>
+//#tryinclude <amx_assembly-master\jit>
+//#tryinclude <amx_assembly-master\amx_assembly-master\jit>
+//#tryinclude "..\..\amx\jit"
+//#tryinclude "..\..\amx_assembly\jit"
+//#tryinclude "..\..\amx_assembly-master\jit"
+//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\jit"
+//#tryinclude "..\..\..\amx\jit"
+//#tryinclude "..\..\..\amx_assembly\jit"
+//#tryinclude "..\..\..\amx_assembly-master\jit"
+//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\jit"
+//#tryinclude "jit"
+//#tryinclude <jit>
 //#if !defined JIT_INC
 //	#define AMX_INCLUDING_FAILED
 //#endif
 
-#tryinclude <amx\opcode.inc>
-#tryinclude <amx_assembly\opcode.inc>
-#tryinclude <amx_assembly-master\opcode.inc>
-#tryinclude <amx_assembly-master\amx_assembly-master\opcode.inc>
-#tryinclude "..\..\amx\opcode.inc"
-#tryinclude "..\..\amx_assembly\opcode.inc"
-#tryinclude "..\..\amx_assembly-master\opcode.inc"
-#tryinclude "..\..\amx_assembly-master\amx_assembly-master\opcode.inc"
-#tryinclude "..\..\..\amx\opcode.inc"
-#tryinclude "..\..\..\amx_assembly\opcode.inc"
-#tryinclude "..\..\..\amx_assembly-master\opcode.inc"
-#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\opcode.inc"
-#tryinclude "opcode.inc"
-#tryinclude <opcode.inc>
+#tryinclude <amx\opcode>
+#tryinclude <amx_assembly\opcode>
+#tryinclude <amx_assembly-master\opcode>
+#tryinclude <amx_assembly-master\amx_assembly-master\opcode>
+#tryinclude "..\..\amx\opcode"
+#tryinclude "..\..\amx_assembly\opcode"
+#tryinclude "..\..\amx_assembly-master\opcode"
+#tryinclude "..\..\amx_assembly-master\amx_assembly-master\opcode"
+#tryinclude "..\..\..\amx\opcode"
+#tryinclude "..\..\..\amx_assembly\opcode"
+#tryinclude "..\..\..\amx_assembly-master\opcode"
+#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\opcode"
+#tryinclude "opcode"
+#tryinclude <opcode>
 #if !defined OPCODE_INC
 	#define AMX_INCLUDING_FAILED
 #endif
 
-//#tryinclude <amx\os.inc>
-//#tryinclude <amx_assembly\os.inc>
-//#tryinclude <amx_assembly-master\os.inc>
-//#tryinclude <amx_assembly-master\amx_assembly-master\os.inc>
-//#tryinclude "..\..\amx\os.inc"
-//#tryinclude "..\..\amx_assembly\os.inc"
-//#tryinclude "..\..\amx_assembly-master\os.inc"
-//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\os.inc"
-//#tryinclude "..\..\..\amx\os.inc"
-//#tryinclude "..\..\..\amx_assembly\os.inc"
-//#tryinclude "..\..\..\amx_assembly-master\os.inc"
-//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\os.inc"
-//#tryinclude "os.inc"
-//#tryinclude <os.inc>
+//#tryinclude <amx\os>
+//#tryinclude <amx_assembly\os>
+//#tryinclude <amx_assembly-master\os>
+//#tryinclude <amx_assembly-master\amx_assembly-master\os>
+//#tryinclude "..\..\amx\os"
+//#tryinclude "..\..\amx_assembly\os"
+//#tryinclude "..\..\amx_assembly-master\os"
+//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\os"
+//#tryinclude "..\..\..\amx\os"
+//#tryinclude "..\..\..\amx_assembly\os"
+//#tryinclude "..\..\..\amx_assembly-master\os"
+//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\os"
+//#tryinclude "os"
+//#tryinclude <os>
 //#if !defined OS_INC
 //	#define AMX_INCLUDING_FAILED
 //#endif
 
-//#tryinclude <amx\phys_memory.inc>
-//#tryinclude <amx_assembly\phys_memory.inc>
-//#tryinclude <amx_assembly-master\phys_memory.inc>
-//#tryinclude <amx_assembly-master\amx_assembly-master\phys_memory.inc>
-//#tryinclude "..\..\amx\phys_memory.inc"
-//#tryinclude "..\..\amx_assembly\phys_memory.inc"
-//#tryinclude "..\..\amx_assembly-master\phys_memory.inc"
-//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\phys_memory.inc"
-//#tryinclude "..\..\..\amx\phys_memory.inc"
-//#tryinclude "..\..\..\amx_assembly\phys_memory.inc"
-//#tryinclude "..\..\..\amx_assembly-master\phys_memory.inc"
-//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\phys_memory.inc"
-//#tryinclude "phys_memory.inc"
-//#tryinclude <phys_memory.inc>
+//#tryinclude <amx\phys_memory>
+//#tryinclude <amx_assembly\phys_memory>
+//#tryinclude <amx_assembly-master\phys_memory>
+//#tryinclude <amx_assembly-master\amx_assembly-master\phys_memory>
+//#tryinclude "..\..\amx\phys_memory"
+//#tryinclude "..\..\amx_assembly\phys_memory"
+//#tryinclude "..\..\amx_assembly-master\phys_memory"
+//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\phys_memory"
+//#tryinclude "..\..\..\amx\phys_memory"
+//#tryinclude "..\..\..\amx_assembly\phys_memory"
+//#tryinclude "..\..\..\amx_assembly-master\phys_memory"
+//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\phys_memory"
+//#tryinclude "phys_memory"
+//#tryinclude <phys_memory>
 //#if !defined PHYS_MEMORY_INC
 //	#define AMX_INCLUDING_FAILED
 //#endif
 
-//#tryinclude <amx\profiler.inc>
-//#tryinclude <amx_assembly\profiler.inc>
-//#tryinclude <amx_assembly-master\profiler.inc>
-//#tryinclude <amx_assembly-master\amx_assembly-master\profiler.inc>
-//#tryinclude "..\..\amx\profiler.inc"
-//#tryinclude "..\..\amx_assembly\profiler.inc"
-//#tryinclude "..\..\amx_assembly-master\profiler.inc"
-//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\profiler.inc"
-//#tryinclude "..\..\..\amx\profiler.inc"
-//#tryinclude "..\..\..\amx_assembly\profiler.inc"
-//#tryinclude "..\..\..\amx_assembly-master\profiler.inc"
-//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\profiler.inc"
-//#tryinclude "profiler.inc"
-//#tryinclude <profiler.inc>
+//#tryinclude <amx\profiler>
+//#tryinclude <amx_assembly\profiler>
+//#tryinclude <amx_assembly-master\profiler>
+//#tryinclude <amx_assembly-master\amx_assembly-master\profiler>
+//#tryinclude "..\..\amx\profiler"
+//#tryinclude "..\..\amx_assembly\profiler"
+//#tryinclude "..\..\amx_assembly-master\profiler"
+//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\profiler"
+//#tryinclude "..\..\..\amx\profiler"
+//#tryinclude "..\..\..\amx_assembly\profiler"
+//#tryinclude "..\..\..\amx_assembly-master\profiler"
+//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\profiler"
+//#tryinclude "profiler"
+//#tryinclude <profiler>
 //#if !defined PROFILER_INC
 //	#define AMX_INCLUDING_FAILED
 //#endif
 
-//#tryinclude <amx\shellcode.inc>
-//#tryinclude <amx_assembly\shellcode.inc>
-//#tryinclude <amx_assembly-master\shellcode.inc>
-//#tryinclude <amx_assembly-master\amx_assembly-master\shellcode.inc>
-//#tryinclude "..\..\amx\shellcode.inc"
-//#tryinclude "..\..\amx_assembly\shellcode.inc"
-//#tryinclude "..\..\amx_assembly-master\shellcode.inc"
-//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\shellcode.inc"
-//#tryinclude "..\..\..\amx\shellcode.inc"
-//#tryinclude "..\..\..\amx_assembly\shellcode.inc"
-//#tryinclude "..\..\..\amx_assembly-master\shellcode.inc"
-//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\shellcode.inc"
-//#tryinclude "shellcode.inc"
-//#tryinclude <shellcode.inc>
+//#tryinclude <amx\shellcode>
+//#tryinclude <amx_assembly\shellcode>
+//#tryinclude <amx_assembly-master\shellcode>
+//#tryinclude <amx_assembly-master\amx_assembly-master\shellcode>
+//#tryinclude "..\..\amx\shellcode"
+//#tryinclude "..\..\amx_assembly\shellcode"
+//#tryinclude "..\..\amx_assembly-master\shellcode"
+//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\shellcode"
+//#tryinclude "..\..\..\amx\shellcode"
+//#tryinclude "..\..\..\amx_assembly\shellcode"
+//#tryinclude "..\..\..\amx_assembly-master\shellcode"
+//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\shellcode"
+//#tryinclude "shellcode"
+//#tryinclude <shellcode>
 //#if !defined SHELLCODE_INC
 //	#define AMX_INCLUDING_FAILED
 //#endif
 
-//#tryinclude <amx\stack_dump.inc>
-//#tryinclude <amx_assembly\stack_dump.inc>
-//#tryinclude <amx_assembly-master\stack_dump.inc>
-//#tryinclude <amx_assembly-master\amx_assembly-master\stack_dump.inc>
-//#tryinclude "..\..\amx\stack_dump.inc"
-//#tryinclude "..\..\amx_assembly\stack_dump.inc"
-//#tryinclude "..\..\amx_assembly-master\stack_dump.inc"
-//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\stack_dump.inc"
-//#tryinclude "..\..\..\amx\stack_dump.inc"
-//#tryinclude "..\..\..\amx_assembly\stack_dump.inc"
-//#tryinclude "..\..\..\amx_assembly-master\stack_dump.inc"
-//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\stack_dump.inc"
-//#tryinclude "stack_dump.inc"
-//#tryinclude <stack_dump.inc>
+//#tryinclude <amx\stack_dump>
+//#tryinclude <amx_assembly\stack_dump>
+//#tryinclude <amx_assembly-master\stack_dump>
+//#tryinclude <amx_assembly-master\amx_assembly-master\stack_dump>
+//#tryinclude "..\..\amx\stack_dump"
+//#tryinclude "..\..\amx_assembly\stack_dump"
+//#tryinclude "..\..\amx_assembly-master\stack_dump"
+//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\stack_dump"
+//#tryinclude "..\..\..\amx\stack_dump"
+//#tryinclude "..\..\..\amx_assembly\stack_dump"
+//#tryinclude "..\..\..\amx_assembly-master\stack_dump"
+//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\stack_dump"
+//#tryinclude "stack_dump"
+//#tryinclude <stack_dump>
 //#if !defined STACK_DUMP_INC
 //	#define AMX_INCLUDING_FAILED
 //#endif
 
-//#tryinclude <amx\stack_trace.inc>
-//#tryinclude <amx_assembly\stack_trace.inc>
-//#tryinclude <amx_assembly-master\stack_trace.inc>
-//#tryinclude <amx_assembly-master\amx_assembly-master\stack_trace.inc>
-//#tryinclude "..\..\amx\stack_trace.inc"
-//#tryinclude "..\..\amx_assembly\stack_trace.inc"
-//#tryinclude "..\..\amx_assembly-master\stack_trace.inc"
-//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\stack_trace.inc"
-//#tryinclude "..\..\..\amx\stack_trace.inc"
-//#tryinclude "..\..\..\amx_assembly\stack_trace.inc"
-//#tryinclude "..\..\..\amx_assembly-master\stack_trace.inc"
-//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\stack_trace.inc"
-//#tryinclude "stack_trace.inc"
-//#tryinclude <stack_trace.inc>
+//#tryinclude <amx\stack_trace>
+//#tryinclude <amx_assembly\stack_trace>
+//#tryinclude <amx_assembly-master\stack_trace>
+//#tryinclude <amx_assembly-master\amx_assembly-master\stack_trace>
+//#tryinclude "..\..\amx\stack_trace"
+//#tryinclude "..\..\amx_assembly\stack_trace"
+//#tryinclude "..\..\amx_assembly-master\stack_trace"
+//#tryinclude "..\..\amx_assembly-master\amx_assembly-master\stack_trace"
+//#tryinclude "..\..\..\amx\stack_trace"
+//#tryinclude "..\..\..\amx_assembly\stack_trace"
+//#tryinclude "..\..\..\amx_assembly-master\stack_trace"
+//#tryinclude "..\..\..\amx_assembly-master\amx_assembly-master\stack_trace"
+//#tryinclude "stack_trace"
+//#tryinclude <stack_trace>
 //#if !defined STACK_TRACE_INC
 //	#define AMX_INCLUDING_FAILED
 //#endif
@@ -502,34 +502,34 @@ Optional plugins:
 	#error Re-download `https://github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
-//#tryinclude <md-sort\md-sort.inc>
-//#tryinclude <md-sort-master\md-sort.inc>
-//#tryinclude <md-sort-master\md-sort-master\md-sort.inc>
-//#tryinclude "..\..\md-sort\md-sort.inc"
-//#tryinclude "..\..\md-sort-master\md-sort.inc"
-//#tryinclude "..\..\md-sort-master\md-sort-master\md-sort.inc"
-//#tryinclude "..\..\..\md-sort\md-sort.inc"
-//#tryinclude "..\..\..\md-sort-master\md-sort.inc"
-//#tryinclude "..\..\..\md-sort-master\md-sort-master\md-sort.inc"
-//#tryinclude "md-sort.inc"
-//#tryinclude <md-sort.inc>
+//#tryinclude <md-sort\md-sort>
+//#tryinclude <md-sort-master\md-sort>
+//#tryinclude <md-sort-master\md-sort-master\md-sort>
+//#tryinclude "..\..\md-sort\md-sort"
+//#tryinclude "..\..\md-sort-master\md-sort"
+//#tryinclude "..\..\md-sort-master\md-sort-master\md-sort"
+//#tryinclude "..\..\..\md-sort\md-sort"
+//#tryinclude "..\..\..\md-sort-master\md-sort"
+//#tryinclude "..\..\..\md-sort-master\md-sort-master\md-sort"
+//#tryinclude "md-sort"
+//#tryinclude <md-sort>
 //#if !defined _INC_md_sort
 //	#error Download `https://github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
 //#elseif !defined ResetDeepArray_Entry
 //	#error Re-download `https://github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
 //#endif
 
-//#tryinclude <formatex\formatex.inc>
-//#tryinclude <formatex-master\formatex.inc>
-//#tryinclude <formatex-master\formatex-master\formatex.inc>
-//#tryinclude "..\..\formatex\formatex.inc"
-//#tryinclude "..\..\formatex-master\formatex.inc"
-//#tryinclude "..\..\formatex-master\formatex-master\formatex.inc"
-//#tryinclude "..\..\..\formatex\formatex.inc"
-//#tryinclude "..\..\..\formatex-master\formatex.inc"
-//#tryinclude "..\..\..\formatex-master\formatex-master\formatex.inc"
-//#tryinclude "formatex.inc"
-//#tryinclude <formatex.inc>
+//#tryinclude <formatex\formatex>
+//#tryinclude <formatex-master\formatex>
+//#tryinclude <formatex-master\formatex-master\formatex>
+//#tryinclude "..\..\formatex\formatex"
+//#tryinclude "..\..\formatex-master\formatex"
+//#tryinclude "..\..\formatex-master\formatex-master\formatex"
+//#tryinclude "..\..\..\formatex\formatex"
+//#tryinclude "..\..\..\formatex-master\formatex"
+//#tryinclude "..\..\..\formatex-master\formatex-master\formatex"
+//#tryinclude "formatex"
+//#tryinclude <formatex>
 //#if !defined _INC_md_sort
 //	#error Download `https://github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
 //#elseif !defined FormatFlags
@@ -540,20 +540,20 @@ Optional plugins:
 #if !defined _INC_code_parse_inc
 	#undef u@
 #endif
-#tryinclude <code-parse\code-parse.inc>
-#tryinclude <code-parse.inc\code-parse.inc>
-#tryinclude <code-parse.inc-master\code-parse.inc>
-#tryinclude <code-parse.inc-master\code-parse.inc-master\code-parse.inc>
-#tryinclude "..\..\code-parse\code-parse.inc"
-#tryinclude "..\..\code-parse.inc\code-parse.inc"
-#tryinclude "..\..\code-parse.inc-master\code-parse.inc"
-#tryinclude "..\..\code-parse.inc-master\code-parse.inc-master\code-parse.inc"
-#tryinclude "..\..\..\code-parse\code-parse.inc"
-#tryinclude "..\..\..\code-parse.inc\code-parse.inc"
-#tryinclude "..\..\..\code-parse.inc-master\code-parse.inc"
-#tryinclude "..\..\..\code-parse.inc-master\code-parse.inc-master\code-parse.inc"
-#tryinclude "code-parse.inc"
-#tryinclude <code-parse.inc>
+#tryinclude <code-parse\code-parse>
+#tryinclude <code-parse.inc\code-parse>
+#tryinclude <code-parse.inc-master\code-parse>
+#tryinclude <code-parse.inc-master\code-parse.inc-master\code-parse>
+#tryinclude "..\..\code-parse\code-parse"
+#tryinclude "..\..\code-parse.inc\code-parse"
+#tryinclude "..\..\code-parse.inc-master\code-parse"
+#tryinclude "..\..\code-parse.inc-master\code-parse.inc-master\code-parse"
+#tryinclude "..\..\..\code-parse\code-parse"
+#tryinclude "..\..\..\code-parse.inc\code-parse"
+#tryinclude "..\..\..\code-parse.inc-master\code-parse"
+#tryinclude "..\..\..\code-parse.inc-master\code-parse.inc-master\code-parse"
+#tryinclude "code-parse"
+#tryinclude <code-parse>
 #if defined _INC_code_parse_inc
 	#undef u@
 #else
@@ -563,17 +563,17 @@ Optional plugins:
 #endif
 #define u@$ 1]);
 
-#tryinclude <indirection\indirection.inc>
-#tryinclude <indirection-master\indirection.inc>
-#tryinclude <indirection-master\indirection-master\indirection.inc>
-#tryinclude "..\..\indirection\indirection.inc"
-#tryinclude "..\..\indirection-master\indirection.inc"
-#tryinclude "..\..\indirection-master\indirection-master\indirection.inc"
-#tryinclude "..\..\..\indirection\indirection.inc"
-#tryinclude "..\..\..\indirection-master\indirection.inc"
-#tryinclude "..\..\..\indirection-master\indirection-master\indirection.inc"
-#tryinclude "indirection.inc"
-#tryinclude <indirection.inc>
+#tryinclude <indirection\indirection>
+#tryinclude <indirection-master\indirection>
+#tryinclude <indirection-master\indirection-master\indirection>
+#tryinclude "..\..\indirection\indirection"
+#tryinclude "..\..\indirection-master\indirection"
+#tryinclude "..\..\indirection-master\indirection-master\indirection"
+#tryinclude "..\..\..\indirection\indirection"
+#tryinclude "..\..\..\indirection-master\indirection"
+#tryinclude "..\..\..\indirection-master\indirection-master\indirection"
+#tryinclude "indirection"
+#tryinclude <indirection>
 #if !defined _INC_indirection
 	#error Download `https://github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
 #elseif !defined Indirect_Init || defined TAGOF@ || defined __TAGOF

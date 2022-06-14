@@ -122,12 +122,12 @@ static
 
 #if defined _DEBUG
 	#if _DEBUG > 0
-		#tryinclude "..\..\amx\disasm.inc"
-		#tryinclude <amx_assembly\disasm.inc>
-		#tryinclude "..\..\amx_assembly\disasm.inc"
-		#tryinclude "..\..\..\amx_assembly\disasm.inc"
-		#tryinclude "disasm.inc"
-		#tryinclude <disasm.inc>
+		#tryinclude "..\..\amx\disasm"
+		#tryinclude <amx_assembly\disasm>
+		#tryinclude "..\..\amx_assembly\disasm"
+		#tryinclude "..\..\..\amx_assembly\disasm"
+		#tryinclude "disasm"
+		#tryinclude <disasm>
 
 		#if !defined DISASM_INC
 			#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"

@@ -107,17 +107,17 @@ Optional plugins:
 */
 
 #if !defined _INC_y_punycode
-	#tryinclude "y_punycode\y_punycode_entry.inc"
+	#tryinclude "y_punycode\y_punycode_entry"
 #endif
 #if !defined _INC_y_punycode
-	#tryinclude "YSI_Server\y_punycode\y_punycode_entry.inc"
+	#tryinclude "YSI_Server\y_punycode\y_punycode_entry"
 #endif
 #if !defined _INC_y_punycode
-	#tryinclude "YSI\YSI_Server\y_punycode\y_punycode_entry.inc"
+	#tryinclude "YSI\YSI_Server\y_punycode\y_punycode_entry"
 #endif
 #if !defined _INC_y_punycode
-	#tryinclude <YSI_Server\y_punycode\y_punycode_entry.inc>
+	#tryinclude <YSI_Server\y_punycode\y_punycode_entry>
 #endif
 #if !defined _INC_y_punycode
-	#tryinclude <YSI\YSI_Server\y_punycode\y_punycode_entry.inc>
+	#tryinclude <YSI\YSI_Server\y_punycode\y_punycode_entry>
 #endif

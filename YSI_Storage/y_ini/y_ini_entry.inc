@@ -131,12 +131,12 @@ stock const
 #include "y_ini_impl"
 
 #if defined YSI_TESTS
-	#tryinclude "..\..\amx\os.inc"
-	#tryinclude <amx_assembly\os.inc>
-	#tryinclude "..\..\amx_assembly\os.inc"
-	#tryinclude "..\..\..\amx_assembly\os.inc"
-	#tryinclude "os.inc"
-	#tryinclude <os.inc>
+	#tryinclude "..\..\amx\os"
+	#tryinclude <amx_assembly\os>
+	#tryinclude "..\..\amx_assembly\os"
+	#tryinclude "..\..\..\amx_assembly\os"
+	#tryinclude "os"
+	#tryinclude <os>
 
 	#if !defined OS_INC
 		#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"

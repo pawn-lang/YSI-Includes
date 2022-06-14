@@ -77,38 +77,38 @@ Optional plugins:
 */
 
 #if !defined _INC_y_inline
-	#tryinclude "..\YSI_Coding\y_inline\y_inline_entry.inc"
+	#tryinclude "..\YSI_Coding\y_inline\y_inline_entry"
 #endif
 #if !defined _INC_y_inline
-	#tryinclude "YSI_Coding\y_inline\y_inline_entry.inc"
+	#tryinclude "YSI_Coding\y_inline\y_inline_entry"
 #endif
 #if !defined _INC_y_inline
-	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry.inc"
+	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
 #endif
 #if !defined _INC_y_inline
-	#tryinclude <YSI_Coding\y_inline\y_inline_entry.inc>
+	#tryinclude <YSI_Coding\y_inline\y_inline_entry>
 #endif
 #if !defined _INC_y_inline
-	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry.inc>
+	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
 #endif
 #if !defined _INC_y_inline
 	#error Could not find y_inline
 #endif
 
 #if !defined _INC_y_bcrypt
-	#tryinclude ".\y_bcrypt.inc"
+	#tryinclude ".\y_bcrypt"
 #endif
 #if !defined _INC_y_bcrypt
-	#tryinclude "YSI_Extra\y_bcrypt.inc"
+	#tryinclude "YSI_Extra\y_bcrypt"
 #endif
 #if !defined _INC_y_bcrypt
-	#tryinclude "YSI\YSI_Extra\y_bcrypt.inc"
+	#tryinclude "YSI\YSI_Extra\y_bcrypt"
 #endif
 #if !defined _INC_y_bcrypt
-	#tryinclude <YSI_Extra\y_bcrypt.inc>
+	#tryinclude <YSI_Extra\y_bcrypt>
 #endif
 #if !defined _INC_y_bcrypt
-	#tryinclude <YSI\YSI_Extra\y_bcrypt.inc>
+	#tryinclude <YSI\YSI_Extra\y_bcrypt>
 #endif
 #if !defined _INC_y_bcrypt
 	#error Could not find y_bcrypt

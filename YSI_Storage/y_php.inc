@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_php
-	#tryinclude "y_php\y_php_entry.inc"
+	#tryinclude "y_php\y_php_entry"
 #endif
 #if !defined _INC_y_php
-	#tryinclude "YSI_Storage\y_php\y_php_entry.inc"
+	#tryinclude "YSI_Storage\y_php\y_php_entry"
 #endif
 #if !defined _INC_y_php
-	#tryinclude "YSI\YSI_Storage\y_php\y_php_entry.inc"
+	#tryinclude "YSI\YSI_Storage\y_php\y_php_entry"
 #endif
 #if !defined _INC_y_php
-	#tryinclude <YSI_Storage\y_php\y_php_entry.inc>
+	#tryinclude <YSI_Storage\y_php\y_php_entry>
 #endif
 #if !defined _INC_y_php
-	#tryinclude <YSI\YSI_Storage\y_php\y_php_entry.inc>
+	#tryinclude <YSI\YSI_Storage\y_php\y_php_entry>
 #endif
 #if !defined _INC_y_php
 	#error Could not find y_php

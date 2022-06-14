@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_circular
-	#tryinclude "y_circular\y_circular_entry.inc"
+	#tryinclude "y_circular\y_circular_entry"
 #endif
 #if !defined _INC_y_circular
-	#tryinclude "YSI_Data\y_circular\y_circular_entry.inc"
+	#tryinclude "YSI_Data\y_circular\y_circular_entry"
 #endif
 #if !defined _INC_y_circular
-	#tryinclude "YSI\YSI_Data\y_circular\y_circular_entry.inc"
+	#tryinclude "YSI\YSI_Data\y_circular\y_circular_entry"
 #endif
 #if !defined _INC_y_circular
-	#tryinclude <YSI_Data\y_circular\y_circular_entry.inc>
+	#tryinclude <YSI_Data\y_circular\y_circular_entry>
 #endif
 #if !defined _INC_y_circular
-	#tryinclude <YSI\YSI_Data\y_circular\y_circular_entry.inc>
+	#tryinclude <YSI\YSI_Data\y_circular\y_circular_entry>
 #endif
 #if !defined _INC_y_circular
 	#error Could not find y_circular

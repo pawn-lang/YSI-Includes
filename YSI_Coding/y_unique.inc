@@ -90,19 +90,19 @@ Optional plugins:
 #endif
 
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "y_unique\y_unique_entry.inc"
+	#tryinclude "y_unique\y_unique_entry"
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "YSI_Coding\y_unique\y_unique_entry.inc"
+	#tryinclude "YSI_Coding\y_unique\y_unique_entry"
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "YSI\YSI_Coding\y_unique\y_unique_entry.inc"
+	#tryinclude "YSI\YSI_Coding\y_unique\y_unique_entry"
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude <YSI_Coding\y_unique\y_unique_entry.inc>
+	#tryinclude <YSI_Coding\y_unique\y_unique_entry>
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude <YSI\YSI_Coding\y_unique\y_unique_entry.inc>
+	#tryinclude <YSI\YSI_Coding\y_unique\y_unique_entry>
 #endif
 #if defined _Y_UNIQUE_INCLUDED
 	#undef _Y_UNIQUE_INCLUDED

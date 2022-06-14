@@ -91,19 +91,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_playerset
-	#tryinclude "y_playerset\y_playerset_entry.inc"
+	#tryinclude "y_playerset\y_playerset_entry"
 #endif
 #if !defined _INC_y_playerset
-	#tryinclude "YSI_Data\y_playerset\y_playerset_entry.inc"
+	#tryinclude "YSI_Data\y_playerset\y_playerset_entry"
 #endif
 #if !defined _INC_y_playerset
-	#tryinclude "YSI\YSI_Data\y_playerset\y_playerset_entry.inc"
+	#tryinclude "YSI\YSI_Data\y_playerset\y_playerset_entry"
 #endif
 #if !defined _INC_y_playerset
-	#tryinclude <YSI_Data\y_playerset\y_playerset_entry.inc>
+	#tryinclude <YSI_Data\y_playerset\y_playerset_entry>
 #endif
 #if !defined _INC_y_playerset
-	#tryinclude <YSI\YSI_Data\y_playerset\y_playerset_entry.inc>
+	#tryinclude <YSI\YSI_Data\y_playerset\y_playerset_entry>
 #endif
 #if !defined _INC_y_playerset
 	#error Could not find y_playerset

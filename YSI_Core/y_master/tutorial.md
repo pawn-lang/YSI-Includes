@@ -497,7 +497,7 @@ This is using `MASTER` number 1.
 
 foreign bool:IsLoggedIn(playerid);
 
-#tryinclude <impl\impl_users.inc>
+#tryinclude <impl\impl_users>
 ```
 
 #### `impl\impl_users.inc`
@@ -520,7 +520,7 @@ global bool:IsLoggedIn(playerid)
 
 foreign AddObject(model, Float:x, Float:y, Float:z);
 
-#tryinclude <impl\impl_streamer.inc>
+#tryinclude <impl\impl_streamer>
 ```
 
 #### `impl\impl_streamer.inc`
@@ -599,7 +599,7 @@ rest of the `impl_streamer.inc` code:
 
 foreign AddObject(model, Float:x, Float:y, Float:z);
 
-#tryinclude <impl\impl_streamer.inc>
+#tryinclude <impl\impl_streamer>
 ```
 
 #### `impl\impl_streamer.inc`

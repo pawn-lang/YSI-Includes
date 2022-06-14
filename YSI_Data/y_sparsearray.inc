@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_sparsearray
-	#tryinclude "y_sparsearray\y_sparsearray_entry.inc"
+	#tryinclude "y_sparsearray\y_sparsearray_entry"
 #endif
 #if !defined _INC_y_sparsearray
-	#tryinclude "YSI_Data\y_sparsearray\y_sparsearray_entry.inc"
+	#tryinclude "YSI_Data\y_sparsearray\y_sparsearray_entry"
 #endif
 #if !defined _INC_y_sparsearray
-	#tryinclude "YSI\YSI_Data\y_sparsearray\y_sparsearray_entry.inc"
+	#tryinclude "YSI\YSI_Data\y_sparsearray\y_sparsearray_entry"
 #endif
 #if !defined _INC_y_sparsearray
-	#tryinclude <YSI_Data\y_sparsearray\y_sparsearray_entry.inc>
+	#tryinclude <YSI_Data\y_sparsearray\y_sparsearray_entry>
 #endif
 #if !defined _INC_y_sparsearray
-	#tryinclude <YSI\YSI_Data\y_sparsearray\y_sparsearray_entry.inc>
+	#tryinclude <YSI\YSI_Data\y_sparsearray\y_sparsearray_entry>
 #endif
 #if !defined _INC_y_sparsearray
 	#error Could not find y_sparsearray

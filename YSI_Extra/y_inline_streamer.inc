@@ -73,19 +73,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_inline
-	#tryinclude "..\YSI_Coding\y_inline\y_inline_entry.inc"
+	#tryinclude "..\YSI_Coding\y_inline\y_inline_entry"
 #endif
 #if !defined _INC_y_inline
-	#tryinclude "YSI_Coding\y_inline\y_inline_entry.inc"
+	#tryinclude "YSI_Coding\y_inline\y_inline_entry"
 #endif
 #if !defined _INC_y_inline
-	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry.inc"
+	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
 #endif
 #if !defined _INC_y_inline
-	#tryinclude <YSI_Coding\y_inline\y_inline_entry.inc>
+	#tryinclude <YSI_Coding\y_inline\y_inline_entry>
 #endif
 #if !defined _INC_y_inline
-	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry.inc>
+	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
 #endif
 #if !defined _INC_y_inline
 	#error Could not find y_inline
@@ -219,19 +219,19 @@ Optional plugins:
 	}
 #else
 	#if !defined _INC_y_sparsearray
-		#tryinclude "..\YSI_Data\y_sparsearray\y_sparsearray_entry.inc"
+		#tryinclude "..\YSI_Data\y_sparsearray\y_sparsearray_entry"
 	#endif
 	#if !defined _INC_y_sparsearray
-		#tryinclude "YSI_Data\y_sparsearray\y_sparsearray_entry.inc"
+		#tryinclude "YSI_Data\y_sparsearray\y_sparsearray_entry"
 	#endif
 	#if !defined _INC_y_sparsearray
-		#tryinclude "YSI\YSI_Data\y_sparsearray\y_sparsearray_entry.inc"
+		#tryinclude "YSI\YSI_Data\y_sparsearray\y_sparsearray_entry"
 	#endif
 	#if !defined _INC_y_sparsearray
-		#tryinclude <YSI_Data\y_sparsearray\y_sparsearray_entry.inc>
+		#tryinclude <YSI_Data\y_sparsearray\y_sparsearray_entry>
 	#endif
 	#if !defined _INC_y_sparsearray
-		#tryinclude <YSI\YSI_Data\y_sparsearray\y_sparsearray_entry.inc>
+		#tryinclude <YSI\YSI_Data\y_sparsearray\y_sparsearray_entry>
 	#endif
 	#if !defined _INC_y_sparsearray
 		#error Could not find y_sparsearray

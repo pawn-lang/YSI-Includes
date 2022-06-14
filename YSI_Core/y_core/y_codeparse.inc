@@ -90,14 +90,14 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#tryinclude "..\..\code-parse\code-parse.inc"
-#tryinclude <code-parse\code-parse.inc>
-#tryinclude "..\..\code-parse.inc\code-parse.inc"
-#tryinclude <code-parse.inc\code-parse.inc>
-#tryinclude "..\..\code-parse.inc-master\code-parse.inc"
-#tryinclude <code-parse.inc-master\code-parse.inc>
-#tryinclude "code-parse.inc"
-#tryinclude <code-parse.inc>
+#tryinclude "..\..\code-parse\code-parse"
+#tryinclude <code-parse\code-parse>
+#tryinclude "..\..\code-parse.inc\code-parse"
+#tryinclude <code-parse.inc\code-parse>
+#tryinclude "..\..\code-parse.inc-master\code-parse"
+#tryinclude <code-parse.inc-master\code-parse>
+#tryinclude "code-parse"
+#tryinclude <code-parse>
 #if !defined _INC_code_parse_inc
 	#error Could not include "https://github.com/Y-Less/code-parse.inc" - ensure its files are in "include\code-parse\"
 #endif

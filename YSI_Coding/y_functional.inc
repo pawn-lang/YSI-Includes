@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_functional
-	#tryinclude "y_functional\y_functional_entry.inc"
+	#tryinclude "y_functional\y_functional_entry"
 #endif
 #if !defined _INC_y_functional
-	#tryinclude "YSI_Core\y_functional\y_functional_entry.inc"
+	#tryinclude "YSI_Core\y_functional\y_functional_entry"
 #endif
 #if !defined _INC_y_functional
-	#tryinclude "YSI\YSI_Core\y_functional\y_functional_entry.inc"
+	#tryinclude "YSI\YSI_Core\y_functional\y_functional_entry"
 #endif
 #if !defined _INC_y_functional
-	#tryinclude <YSI_Core\y_functional\y_functional_entry.inc>
+	#tryinclude <YSI_Core\y_functional\y_functional_entry>
 #endif
 #if !defined _INC_y_functional
-	#tryinclude <YSI\YSI_Core\y_functional\y_functional_entry.inc>
+	#tryinclude <YSI\YSI_Core\y_functional\y_functional_entry>
 #endif
 #if !defined _INC_y_functional
 	#error Could not find y_functional

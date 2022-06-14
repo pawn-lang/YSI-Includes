@@ -92,19 +92,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_colours
-	#tryinclude "y_colours\y_colours_entry.inc"
+	#tryinclude "y_colours\y_colours_entry"
 #endif
 #if !defined _INC_y_colours
-	#tryinclude "YSI_Server\y_colours\y_colours_entry.inc"
+	#tryinclude "YSI_Server\y_colours\y_colours_entry"
 #endif
 #if !defined _INC_y_colours
-	#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry.inc"
+	#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
 #endif
 #if !defined _INC_y_colours
-	#tryinclude <YSI_Server\y_colours\y_colours_entry.inc>
+	#tryinclude <YSI_Server\y_colours\y_colours_entry>
 #endif
 #if !defined _INC_y_colours
-	#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry.inc>
+	#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
 #endif
 #if !defined _INC_y_colours
 	#error Could not find y_colours

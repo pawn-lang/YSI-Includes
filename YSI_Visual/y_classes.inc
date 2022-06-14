@@ -157,19 +157,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_classes
-	#tryinclude "y_classes\y_classes_entry.inc"
+	#tryinclude "y_classes\y_classes_entry"
 #endif
 #if !defined _INC_y_classes
-	#tryinclude "YSI_Visual\y_classes\y_classes_entry.inc"
+	#tryinclude "YSI_Visual\y_classes\y_classes_entry"
 #endif
 #if !defined _INC_y_classes
-	#tryinclude "YSI\YSI_Visual\y_classes\y_classes_entry.inc"
+	#tryinclude "YSI\YSI_Visual\y_classes\y_classes_entry"
 #endif
 #if !defined _INC_y_classes
-	#tryinclude <YSI_Visual\y_classes\y_classes_entry.inc>
+	#tryinclude <YSI_Visual\y_classes\y_classes_entry>
 #endif
 #if !defined _INC_y_classes
-	#tryinclude <YSI\YSI_Visual\y_classes\y_classes_entry.inc>
+	#tryinclude <YSI\YSI_Visual\y_classes\y_classes_entry>
 #endif
 #if !defined _INC_y_classes
 	#error Could not find y_classes

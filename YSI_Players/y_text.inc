@@ -172,19 +172,19 @@ Optional plugins:
 #endif
 
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "..\YSI_Coding\y_unique\y_unique_entry.inc"
+	#tryinclude "..\YSI_Coding\y_unique\y_unique_entry"
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "YSI_Coding\y_unique\y_unique_entry.inc"
+	#tryinclude "YSI_Coding\y_unique\y_unique_entry"
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "YSI\YSI_Coding\y_unique\y_unique_entry.inc"
+	#tryinclude "YSI\YSI_Coding\y_unique\y_unique_entry"
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude <YSI_Coding\y_unique\y_unique_entry.inc>
+	#tryinclude <YSI_Coding\y_unique\y_unique_entry>
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude <YSI\YSI_Coding\y_unique\y_unique_entry.inc>
+	#tryinclude <YSI\YSI_Coding\y_unique\y_unique_entry>
 #endif
 #if defined _Y_UNIQUE_INCLUDED
 	#undef _Y_UNIQUE_INCLUDED
@@ -193,19 +193,19 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_text
-	#tryinclude "y_text\y_text_entry.inc"
+	#tryinclude "y_text\y_text_entry"
 #endif
 #if !defined _INC_y_text
-	#tryinclude "YSI_Players\y_text\y_text_entry.inc"
+	#tryinclude "YSI_Players\y_text\y_text_entry"
 #endif
 #if !defined _INC_y_text
-	#tryinclude "YSI\YSI_Players\y_text\y_text_entry.inc"
+	#tryinclude "YSI\YSI_Players\y_text\y_text_entry"
 #endif
 #if !defined _INC_y_text
-	#tryinclude <YSI_Players\y_text\y_text_entry.inc>
+	#tryinclude <YSI_Players\y_text\y_text_entry>
 #endif
 #if !defined _INC_y_text
-	#tryinclude <YSI\YSI_Players\y_text\y_text_entry.inc>
+	#tryinclude <YSI\YSI_Players\y_text\y_text_entry>
 #endif
 #if !defined _INC_y_text
 	#error Could not find y_text

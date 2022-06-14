@@ -77,19 +77,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_extra
-	#tryinclude "y_extra\y_extra_entry.inc"
+	#tryinclude "y_extra\y_extra_entry"
 #endif
 #if !defined _INC_y_extra
-	#tryinclude "YSI_Extra\y_extra\y_extra_entry.inc"
+	#tryinclude "YSI_Extra\y_extra\y_extra_entry"
 #endif
 #if !defined _INC_y_extra
-	#tryinclude "YSI\YSI_Extra\y_extra\y_extra_entry.inc"
+	#tryinclude "YSI\YSI_Extra\y_extra\y_extra_entry"
 #endif
 #if !defined _INC_y_extra
-	#tryinclude <YSI_Extra\y_extra\y_extra_entry.inc>
+	#tryinclude <YSI_Extra\y_extra\y_extra_entry>
 #endif
 #if !defined _INC_y_extra
-	#tryinclude <YSI\YSI_Extra\y_extra\y_extra_entry.inc>
+	#tryinclude <YSI\YSI_Extra\y_extra\y_extra_entry>
 #endif
 #if !defined _INC_y_extra
 	#error Could not find y_extra

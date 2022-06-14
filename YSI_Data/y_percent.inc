@@ -90,19 +90,19 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_percent
-	#tryinclude "y_percent\y_percent_entry.inc"
+	#tryinclude "y_percent\y_percent_entry"
 #endif
 #if !defined _INC_y_percent
-	#tryinclude "YSI_Coding\y_percent\y_percent_entry.inc"
+	#tryinclude "YSI_Coding\y_percent\y_percent_entry"
 #endif
 #if !defined _INC_y_percent
-	#tryinclude "YSI\YSI_Coding\y_percent\y_percent_entry.inc"
+	#tryinclude "YSI\YSI_Coding\y_percent\y_percent_entry"
 #endif
 #if !defined _INC_y_percent
-	#tryinclude <YSI_Coding\y_percent\y_percent_entry.inc>
+	#tryinclude <YSI_Coding\y_percent\y_percent_entry>
 #endif
 #if !defined _INC_y_percent
-	#tryinclude <YSI\YSI_Coding\y_percent\y_percent_entry.inc>
+	#tryinclude <YSI\YSI_Coding\y_percent\y_percent_entry>
 #endif
 #if !defined _INC_y_percent
 	#error Could not find y_percent

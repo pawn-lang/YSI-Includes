@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_ascii
-	#tryinclude "y_ascii\y_ascii_entry.inc"
+	#tryinclude "y_ascii\y_ascii_entry"
 #endif
 #if !defined _INC_y_ascii
-	#tryinclude "YSI_Server\y_ascii\y_ascii_entry.inc"
+	#tryinclude "YSI_Server\y_ascii\y_ascii_entry"
 #endif
 #if !defined _INC_y_ascii
-	#tryinclude "YSI\YSI_Server\y_ascii\y_ascii_entry.inc"
+	#tryinclude "YSI\YSI_Server\y_ascii\y_ascii_entry"
 #endif
 #if !defined _INC_y_ascii
-	#tryinclude <YSI_Server\y_ascii\y_ascii_entry.inc>
+	#tryinclude <YSI_Server\y_ascii\y_ascii_entry>
 #endif
 #if !defined _INC_y_ascii
-	#tryinclude <YSI\YSI_Server\y_ascii\y_ascii_entry.inc>
+	#tryinclude <YSI\YSI_Server\y_ascii\y_ascii_entry>
 #endif
 #if !defined _INC_y_ascii
 	#error Could not find y_ascii

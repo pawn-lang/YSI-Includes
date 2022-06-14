@@ -111,19 +111,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_flooding
-	#tryinclude "y_flooding\y_flooding_entry.inc"
+	#tryinclude "y_flooding\y_flooding_entry"
 #endif
 #if !defined _INC_y_flooding
-	#tryinclude "YSI_Server\y_flooding\y_flooding_entry.inc"
+	#tryinclude "YSI_Server\y_flooding\y_flooding_entry"
 #endif
 #if !defined _INC_y_flooding
-	#tryinclude "YSI\YSI_Server\y_flooding\y_flooding_entry.inc"
+	#tryinclude "YSI\YSI_Server\y_flooding\y_flooding_entry"
 #endif
 #if !defined _INC_y_flooding
-	#tryinclude <YSI_Server\y_flooding\y_flooding_entry.inc>
+	#tryinclude <YSI_Server\y_flooding\y_flooding_entry>
 #endif
 #if !defined _INC_y_flooding
-	#tryinclude <YSI\YSI_Server\y_flooding\y_flooding_entry.inc>
+	#tryinclude <YSI\YSI_Server\y_flooding\y_flooding_entry>
 #endif
 #if !defined _INC_y_flooding
 	#error Could not find y_flooding

@@ -126,10 +126,10 @@ Optional plugins:
 
 // Avoid an error with `forward OnRuntimeError(code, &bool:suppress);` in here after already ALS
 // hooking it (#266).
-#tryinclude "..\..\crashdetect.inc"
-#tryinclude <crashdetect.inc>
-#tryinclude "..\..\..\crashdetect.inc"
-#tryinclude "crashdetect.inc"
+#tryinclude "..\..\crashdetect"
+#tryinclude <crashdetect>
+#tryinclude "..\..\..\crashdetect"
+#tryinclude "crashdetect"
 
 // `FIX_OnRconCommand` and `FIX_OnClientCheckResponse` might use `_FIXES_DEFAULT`.
 

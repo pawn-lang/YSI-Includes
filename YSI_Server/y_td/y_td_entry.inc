@@ -99,7 +99,7 @@ Optional plugins:
 
 //#define TEXT_DRAW_NO_STYLE_NAME
 
-//#tryinclude <sscanf2.inc>
+//#tryinclude <sscanf2>
 
 enum td_align
 {

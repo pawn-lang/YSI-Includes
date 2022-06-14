@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_races
-	#tryinclude "y_races\y_races_entry.inc"
+	#tryinclude "y_races\y_races_entry"
 #endif
 #if !defined _INC_y_races
-	#tryinclude "YSI_Visual\y_races\y_races_entry.inc"
+	#tryinclude "YSI_Visual\y_races\y_races_entry"
 #endif
 #if !defined _INC_y_races
-	#tryinclude "YSI\YSI_Visual\y_races\y_races_entry.inc"
+	#tryinclude "YSI\YSI_Visual\y_races\y_races_entry"
 #endif
 #if !defined _INC_y_races
-	#tryinclude <YSI_Visual\y_races\y_races_entry.inc>
+	#tryinclude <YSI_Visual\y_races\y_races_entry>
 #endif
 #if !defined _INC_y_races
-	#tryinclude <YSI\YSI_Visual\y_races\y_races_entry.inc>
+	#tryinclude <YSI\YSI_Visual\y_races\y_races_entry>
 #endif
 #if !defined _INC_y_races
 	#error Could not find y_races
