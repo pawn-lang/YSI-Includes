@@ -247,6 +247,38 @@ stock bool:Server_IsWindowsHost()
 	return val == 120;
 }
 
+stock bool:	Server_IsOpenMP()
+{
+	// Check if `SYSREQ.D` is removed in the header flags.  open.mp marks the
+	// flag, SA:MP doesn't.
+	#emit LCRTL                1
+	#emit NEG
+	#emit ADD.C                8
+	#emit PUSH.pri
+	#emit LREF.S.pri           0xFFFFFFFC
+	#emit CONST.alt            0x00000400
+	#emit AND
+	#emit EQ.C.pri             0x00000400
+	#emit POP.alt
+	#emit RETN
+}
+
+stock bool:	Server_IsSAMP()
+{
+	// Check if `SYSREQ.D` is not removed in the header flags.  open.mp marks
+	// the flag, SA:MP doesn't.
+	#emit LCRTL                1
+	#emit NEG
+	#emit ADD.C                8
+	#emit PUSH.pri
+	#emit LREF.S.pri           0xFFFFFFFC
+	#emit CONST.alt            0x00000400
+	#emit AND
+	#emit EQ.C.pri             0
+	#emit POP.alt
+	#emit RETN
+}
+
 #pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
 {

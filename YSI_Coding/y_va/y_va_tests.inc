@@ -292,11 +292,16 @@ TEST__ y_va2_format()
 {
 	new
 		str[64];
-	// Use `H` and `h` in open.mp for upper- and lower-case HEX.
-	y_va2_format(str, sizeof (str), "Hello %d %04H %s", 99, 0x1F, "woop");
-	ASSERT_SAME(str, "Hello 99 001F woop");
-	y_va2_format(str, sizeof (str), "Hello %d %04h %s", 99, 0x1f, "woop");
-	ASSERT_SAME(str, "Hello 99 001f woop");
+
+	if (Server_IsOpenMP())
+	{
+		// Use `H` and `h` in open.mp for upper- and lower-case HEX.
+		y_va2_format(str, sizeof (str), "Hello %d %04H %s", 99, 0x1F, "woop");
+		ASSERT_SAME(str, "Hello 99 001F woop");
+		y_va2_format(str, sizeof (str), "Hello %d %04h %s", 99, 0x1f, "woop");
+		ASSERT_SAME(str, "Hello 99 001f woop");
+	}
+
 	// Keep `x` as upper-case for backwards compatibility.
 	y_va2_format(str, sizeof (str), "Hello %d %04x %s", 99, 0x1F, "woop");
 	ASSERT_SAME(str, "Hello 99 001F woop");
