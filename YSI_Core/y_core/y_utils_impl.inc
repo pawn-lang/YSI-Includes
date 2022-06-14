@@ -1403,6 +1403,7 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 	stock bool:IsNumeric(const string:str[])
 	{
 		Debug_Print4("IsNumeric called: \"%s\"", str);
+		// This function is copied in `y_core_entry` to test a compiler bug.
 		new
 			i = -1;
 		if (YSI_IsPacked__(str))

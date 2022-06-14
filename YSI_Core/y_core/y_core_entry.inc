@@ -228,35 +228,6 @@ enum E_YSI_DIR
 	E_YSI_DIR_TEMP
 }
 
-#if defined YSI_TESTS && __COMPILER_FUNC_DECL_BUG
-	#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumericTest__
-		// Test a compiler crash doesn't.
-		stock bool:IsNumeric(const number[])
-		{
-			// Shouldn't be used in production.  Not a good version.
-			new i = -1;
-			if (number[0] == '-') ++i;
-			while ('0' <= number[++i] <= '9') {}
-			return number[i] == '\0';
-		}
-
-		#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
-		stock bool:isnumeric(const number[])
-		{
-			// Shouldn't be used in production.  Not a good version.
-			new i = -1;
-			if (number[0] == '-') ++i;
-			while ('0' <= number[++i] <= '9') {}
-			return number[i] == '\0';
-		}
-
-		// Ensure this branch is hit a second time.
-		stock YSI_IsNumericTest__()
-		{
-		}
-	#endif
-#endif
-
 forward bool:DumpAMX_Write(const filename[]);
 forward GetYSIScriptfilesDir(E_YSI_DIR:dir);
 forward bool:DisasmWrite(const filename[]);
@@ -310,6 +281,43 @@ stock const YSIM_VERMAX[] = "X";
 #include "y_amx_impl"
 #include "y_shortfunc"
 #include "..\..\YSI_Players\y_android\y_android_entry"
+
+#if defined YSI_TESTS && __COMPILER_FUNC_DECL_BUG
+	#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumericTest__
+		// Test a compiler crash doesn't.
+		stock IsNumeric(const number[])
+		{
+			Debug_Print4("IsNumeric called: \"%s\"", number);
+			// This function is copied in `y_utils_impl` to test a compiler bug.
+			new
+				i = -1;
+			if (YSI_IsPacked__(number))
+			{
+				if (number{0} == '-') ++i;
+				while ('0' <= number{++i} <= '9') {}
+				return !number{i};
+			}
+			else
+			{
+				if (number[0] == '-') ++i;
+				while ('0' <= number[++i] <= '9') {}
+				return !number[i];
+			}
+		}
+
+		#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
+		stock isnumeric(const number[])
+		{
+			return IsNumeric(number);
+		}
+
+		// Ensure this branch is hit a second time.
+		stock YSI_IsNumericTest__()
+		{
+		}
+	#endif
+#endif
+
 #include "y_utils_impl"
 
 // Part of "y_scriptinit", but requires "y_amx".
