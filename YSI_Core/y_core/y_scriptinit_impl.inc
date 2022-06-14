@@ -250,7 +250,7 @@ stock bool:Server_IsOpenMP()
 {
 	// Check if `SYSREQ.D` is removed in the header flags.  open.mp marks the
 	// flag, SA:MP doesn't.
-	#emit LCRTL                1
+	#emit LCTRL                1
 	#emit NEG
 	#emit ADD.C                8
 	#emit PUSH.pri
@@ -261,14 +261,14 @@ stock bool:Server_IsOpenMP()
 	#emit POP.alt
 	#emit RETN
 
-	__pragma("naked");
+	return false;
 }
 
 stock bool:Server_IsSAMP()
 {
 	// Check if `SYSREQ.D` is not removed in the header flags.  open.mp marks
 	// the flag, SA:MP doesn't.
-	#emit LCRTL                1
+	#emit LCTRL                1
 	#emit NEG
 	#emit ADD.C                8
 	#emit PUSH.pri
@@ -279,7 +279,7 @@ stock bool:Server_IsSAMP()
 	#emit POP.alt
 	#emit RETN
 
-	__pragma("naked");
+	return false;
 }
 
 #pragma deprecated Use `Script_IsLinuxCompiler`.
