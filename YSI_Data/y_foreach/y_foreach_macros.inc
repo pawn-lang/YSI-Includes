@@ -415,7 +415,8 @@ FUNC_PAWNDOC(Iter_Random(Iterator:iter<>));
 FUNC_PAWNDOC(Iter_Count(Iterator:iter<>));
 #define Iter_Count _ITER<Iter_Count_Internal>
 #define Iter_Count_InternalA(%0,%1)    (%0)
-#define Iter_Count_InternalB(%0,%2,%1) (%0[%2])
+#define Iter_Count_InternalB(%0,%2,%1) (_:F@E:(%0 F@a$[%2]))
+#define F@E:(%0$[]) Iter_Count_InternalC(%0$)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to empty.</param>
@@ -443,6 +444,10 @@ FUNC_PAWNDOC(Iter_Clear(Iterator:iter<>));
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to test the emptiness of.</param>
  * <remarks>
+ *  For multi-iterators <c>Iter_IsEmpty(a&lt;&gt;)</c> and <c>Iter_IsEmpty(a&lt;5&gt;)</c>
+ *  are different.  The first returns <c>true</c> when all values are unused
+ *  by any slot.  The second returns <c>true</c> when that slot alone has no
+ *  values, even if every single value is used by other slots.
  *
  * native Iter_IsEmpty(Iterator:Name&lt;&gt;);
  *
@@ -452,11 +457,15 @@ FUNC_PAWNDOC(Iter_Clear(Iterator:iter<>));
 FUNC_PAWNDOC(Iter_IsEmpty(Iterator:iter<>));
 #define Iter_IsEmpty _ITER<Iter_IsEmpty_Internal>
 #define Iter_IsEmpty_InternalA(%0,%1)    ((%0) == 0)
-#define Iter_IsEmpty_InternalB(%0,%2,%1) ((%0[%2]) == 0)
+#define Iter_IsEmpty_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) == 0)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to test the non-emptiness of.</param>
  * <remarks>
+ *  For multi-iterators <c>Iter_NonEmpty(a&lt;&gt;)</c> and <c>Iter_NonEmpty(a&lt;5&gt;)</c>
+ *  are different.  The first returns <c>true</c> when any value is used, in
+ *  any slot.  The second returns <c>true</c> when that slot alone has any
+ *  values.
  *
  * native Iter_NonEmpty(Iterator:Name&lt;&gt;);
  *
@@ -466,7 +475,43 @@ FUNC_PAWNDOC(Iter_IsEmpty(Iterator:iter<>));
 FUNC_PAWNDOC(Iter_NonEmpty(Iterator:iter<>));
 #define Iter_NonEmpty _ITER<Iter_NonEmpty_Internal>
 #define Iter_NonEmpty_InternalA(%0,%1)    ((%0) != 0)
-#define Iter_NonEmpty_InternalB(%0,%2,%1) ((%0[%2]) != 0)
+#define Iter_NonEmpty_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) != 0)
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator to test the fullness of.</param>
+ * <remarks>
+ *  For multi-iterators <c>Iter_IsFull(a&lt;&gt;)</c> and <c>Iter_IsFull(a&lt;5&gt;)</c>
+ *  are different.  The first returns <c>true</c> when all values are used, in
+ *  any slot.  The second returns <c>true</c> when that slot alone has all
+ *  values.
+ *
+ * native Iter_IsFull(Iterator:Name&lt;&gt;);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FUNC_PAWNDOC(Iter_IsFull(Iterator:iter<>));
+#define Iter_IsFull _ITER<Iter_IsFull_Internal>
+#define Iter_IsFull_InternalA(%0,%1)    ((%0) == 0)
+#define Iter_IsFull_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) == (F@s(%1)-F@s(%0)))
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator to test the non-fullness of.</param>
+ * <remarks>
+ *  For multi-iterators <c>Iter_NonFull(a&lt;&gt;)</c> and <c>Iter_NonFull(a&lt;5&gt;)</c>
+ *  are different.  The first returns <c>true</c> when not all values are used
+ *  anywhere.  The second returns <c>true</c> when that slot alone is missing
+ *  some values, even if those values are in other slots.
+ *
+ * native Iter_NonFull(Iterator:Name&lt;&gt;);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FUNC_PAWNDOC(Iter_NonFull(Iterator:iter<>));
+#define Iter_NonFull _ITER<Iter_NonFull_Internal>
+#define Iter_NonFull_InternalA(%0,%1)    ((%0) != 0)
+#define Iter_NonFull_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) != (F@s(%1)-F@s(%0)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the first free slot in.</param>

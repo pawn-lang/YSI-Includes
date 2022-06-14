@@ -721,6 +721,32 @@ stock Iter_Contains_InternalC(const array[], size, value)
 	return 0 <= value < size && array[value] > value;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="counts">Number of items in each iterator part.</param>
+ * <param name="slots">Number of multi-iterator values.</param>
+ * <remarks>
+ *  Return the total number of elements in all slots together.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_Count_InternalC(const counts[], slots = sizeof (counts))
+{
+	new
+		count = 0;
+	while (slots--)
+		count += counts[slots];
+	return count;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="array">iterator data.</param>
+ * <param name="value">Item to check.</param>
+ * <param name="size">Size of the iterator.</param>
+ * <remarks>
+ *  Checks if this item is in the iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Iter_Contains_InternalD(count, const array[], size, start, value)
 {
 	// Check the count first, and that this element is in ANY list.  There is no

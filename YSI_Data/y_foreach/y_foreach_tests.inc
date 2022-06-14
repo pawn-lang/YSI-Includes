@@ -997,6 +997,135 @@ TEST__ y_iter_Iter_Contains2()
 	ASSERT(!Iter_Contains(iter2[5]<4>, 5));
 }
 
+TEST__ y_iter_Iter_IsEmpty1()
+{
+	new
+		Iterator:iter1<30>;
+	Iter_Init(iter1);
+	ASSERT(Iter_IsEmpty(iter1));
+	ASSERT(!Iter_NonEmpty(iter1));
+	ASSERT(!Iter_IsFull(iter1));
+	ASSERT(Iter_NonFull(iter1));
+	Iter_Add(iter1, 40);
+	ASSERT(Iter_IsEmpty(iter1));
+	ASSERT(!Iter_NonEmpty(iter1));
+	ASSERT(!Iter_IsFull(iter1));
+	ASSERT(Iter_NonFull(iter1));
+	Iter_Add(iter1, 20);
+	ASSERT(!Iter_IsEmpty(iter1));
+	ASSERT(Iter_NonEmpty(iter1));
+	ASSERT(!Iter_IsFull(iter1));
+	ASSERT(Iter_NonFull(iter1));
+	for (new i = 0; i != 30; ++i)
+	{
+		Iter_Add(iter1, i);
+	}
+	ASSERT(!Iter_IsEmpty(iter1));
+	ASSERT(Iter_NonEmpty(iter1));
+	ASSERT(Iter_IsFull(iter1));
+	ASSERT(!Iter_NonFull(iter1));
+}
+
+TEST__ y_iter_Iter_IsEmpty2()
+{
+	new
+		Iterator:iter1<5, 30>;
+	Iter_Init(iter1);
+	ASSERT(Iter_IsEmpty(iter1<>));
+	ASSERT(!Iter_NonEmpty(iter1<>));
+	ASSERT(!Iter_IsFull(iter1<>));
+	ASSERT(Iter_NonFull(iter1<>));
+	ASSERT(Iter_IsEmpty(iter1<1>));
+	ASSERT(!Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(Iter_IsEmpty(iter1<2>));
+	ASSERT(!Iter_NonEmpty(iter1<2>));
+	ASSERT(!Iter_IsFull(iter1<2>));
+	ASSERT(Iter_NonFull(iter1<2>));
+	Iter_Add(iter1<2>, 40);
+	ASSERT(Iter_IsEmpty(iter1<>));
+	ASSERT(!Iter_NonEmpty(iter1<>));
+	ASSERT(!Iter_IsFull(iter1<>));
+	ASSERT(Iter_NonFull(iter1<>));
+	ASSERT(Iter_IsEmpty(iter1<1>));
+	ASSERT(!Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(Iter_IsEmpty(iter1<2>));
+	ASSERT(!Iter_NonEmpty(iter1<2>));
+	ASSERT(!Iter_IsFull(iter1<2>));
+	ASSERT(Iter_NonFull(iter1<2>));
+	Iter_Add(iter1<2>, 20);
+	ASSERT(!Iter_IsEmpty(iter1<>));
+	ASSERT(Iter_NonEmpty(iter1<>));
+	ASSERT(!Iter_IsFull(iter1<>));
+	ASSERT(Iter_NonFull(iter1<>));
+	ASSERT(Iter_IsEmpty(iter1<1>));
+	ASSERT(!Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(!Iter_IsEmpty(iter1<2>));
+	ASSERT(Iter_NonEmpty(iter1<2>));
+	ASSERT(!Iter_IsFull(iter1<2>));
+	ASSERT(Iter_NonFull(iter1<2>));
+	for (new i = 0; i != 30; ++i)
+	{
+		Iter_Add(iter1<2>, i);
+	}
+	ASSERT(!Iter_IsEmpty(iter1<>));
+	ASSERT(Iter_NonEmpty(iter1<>));
+	ASSERT(Iter_IsFull(iter1<>));
+	ASSERT(!Iter_NonFull(iter1<>));
+	ASSERT(Iter_IsEmpty(iter1<1>));
+	ASSERT(!Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(!Iter_IsEmpty(iter1<2>));
+	ASSERT(Iter_NonEmpty(iter1<2>));
+	ASSERT(Iter_IsFull(iter1<2>));
+	ASSERT(!Iter_NonFull(iter1<2>));
+}
+
+TEST__ y_iter_Iter_IsEmpty3()
+{
+	new
+		Iterator:iter1<5, 30>;
+	Iter_Init(iter1);
+	ASSERT(Iter_IsEmpty(iter1<>));
+	ASSERT(!Iter_NonEmpty(iter1<>));
+	ASSERT(!Iter_IsFull(iter1<>));
+	ASSERT(Iter_NonFull(iter1<>));
+	ASSERT(Iter_IsEmpty(iter1<1>));
+	ASSERT(!Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(Iter_IsEmpty(iter1<2>));
+	ASSERT(!Iter_NonEmpty(iter1<2>));
+	ASSERT(!Iter_IsFull(iter1<2>));
+	ASSERT(Iter_NonFull(iter1<2>));
+	for (new i = 0; i != 30; ++i)
+	{
+		Iter_Add(iter1<i % 2>, i);
+	}
+	ASSERT(!Iter_IsEmpty(iter1<>));
+	ASSERT(Iter_NonEmpty(iter1<>));
+	ASSERT(Iter_IsFull(iter1<>));
+	ASSERT(!Iter_NonFull(iter1<>));
+	ASSERT(!Iter_IsEmpty(iter1<0>));
+	ASSERT(Iter_NonEmpty(iter1<0>));
+	ASSERT(!Iter_IsFull(iter1<0>));
+	ASSERT(Iter_NonFull(iter1<0>));
+	ASSERT(!Iter_IsEmpty(iter1<1>));
+	ASSERT(Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(Iter_IsEmpty(iter1<2>));
+	ASSERT(!Iter_NonEmpty(iter1<2>));
+	ASSERT(!Iter_IsFull(iter1<2>));
+	ASSERT(Iter_NonFull(iter1<2>));
+}
+
 TEST__ y_iter_Iter_Free()
 {
 	new
