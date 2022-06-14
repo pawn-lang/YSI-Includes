@@ -99,7 +99,6 @@ CHAIN_HOOK(ScriptInit)
 stock
 	#if _YSI_SAFE_STARTUP
 		bool:YSI_GAMEMODE = false,
-		bool:YSI_OPEN_MP = false,
 	#endif
 		bool:YSI_FILTERSCRIPT = false;
 
@@ -247,7 +246,7 @@ stock bool:Server_IsWindowsHost()
 	return val == 120;
 }
 
-stock bool:	Server_IsOpenMP()
+stock bool:Server_IsOpenMP()
 {
 	// Check if `SYSREQ.D` is removed in the header flags.  open.mp marks the
 	// flag, SA:MP doesn't.
@@ -261,9 +260,11 @@ stock bool:	Server_IsOpenMP()
 	#emit EQ.C.pri             0x00000400
 	#emit POP.alt
 	#emit RETN
+
+	__pragma("naked");
 }
 
-stock bool:	Server_IsSAMP()
+stock bool:Server_IsSAMP()
 {
 	// Check if `SYSREQ.D` is not removed in the header flags.  open.mp marks
 	// the flag, SA:MP doesn't.
@@ -277,6 +278,8 @@ stock bool:	Server_IsSAMP()
 	#emit EQ.C.pri             0
 	#emit POP.alt
 	#emit RETN
+
+	__pragma("naked");
 }
 
 #pragma deprecated Use `Script_IsLinuxCompiler`.
@@ -336,15 +339,6 @@ stock bool:Server_IsGameMode()
 #else
 	#define Script_IsGameMode() (TRUE)
 #endif
-
-stock bool:Server_IsOpenMP()
-{
-#if _YSI_SAFE_STARTUP
-	return YSI_OPEN_MP;
-#else
-	return false;
-#endif
-}
 
 static stock const
 	YSI_gscHeader[] = " ========================================== ",
@@ -931,7 +925,6 @@ public OnJITCompile()
 //	public OnScriptInit(id)
 //	{
 //		state _ALS : _ALS_go;
-//		YSI_OPEN_MP = true;
 //		state _script_init_fix_state : false;
 //		// Dump the final assembly of this script so we can inspect it.
 //		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
@@ -973,7 +966,7 @@ public OnJITCompile()
 			state _ALS : _ALS_go;
 		#if _YSI_SAFE_STARTUP
 			YSI_FILTERSCRIPT = true;
-			if (!YSI_OPEN_MP)
+			//if (Server_IsSAMP())
 		#endif
 			{
 				state _script_init_fix_state : true;
@@ -1121,7 +1114,7 @@ ScriptInit_Purge_retry:
 			state _ALS : _ALS_go;
 			// Kill an existing purge if one exists in this script.
 		#if _YSI_SAFE_STARTUP
-			if (!YSI_FILTERSCRIPT && !YSI_OPEN_MP && !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+			if (!YSI_FILTERSCRIPT && /*Server_IsSAMP() &&*/ !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		#else
 			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		#endif
@@ -1148,7 +1141,7 @@ ScriptInit_Purge_retry:
 			{
 		#if _YSI_SAFE_STARTUP
 				YSI_GAMEMODE = true;
-				if (!YSI_OPEN_MP)
+				//if (Server_IsSAMP())
 		#endif
 				{
 					state _script_init_fix_state : false;
@@ -1195,7 +1188,7 @@ ScriptInit_Purge_retry:
 				}
 			}
 		#if _YSI_SAFE_STARTUP
-			if (!YSI_OPEN_MP)
+			//if (Server_IsSAMP())
 		#endif
 			{
 				CallLocalFunction("OnScriptInit@E", YSI_EMPTY);
@@ -1222,7 +1215,7 @@ ScriptInit_Purge_retry:
 	{
 		ScriptInit_OnFilterScriptExit();
 #if _YSI_SAFE_STARTUP
-		if (YSI_FILTERSCRIPT && !YSI_OPEN_MP)
+		if (YSI_FILTERSCRIPT /*&& Server_IsSAMP()*/)
 #endif
 		{
 			ScriptInit_PreExitFuncs_();
@@ -1239,7 +1232,7 @@ ScriptInit_Purge_retry:
 	{
 		ScriptInit_OnGameModeExit();
 #if _YSI_SAFE_STARTUP
-		if (YSI_GAMEMODE && !YSI_OPEN_MP)
+		if (YSI_GAMEMODE /*&& Server_IsSAMP()*/)
 #endif
 		{
 			ScriptInit_PreExitFuncs_();
@@ -1251,21 +1244,21 @@ ScriptInit_Purge_retry:
 	}
 #endif
 
-#if _YSI_SAFE_STARTUP
-	forward OnScriptExit(id);
-
-	public OnScriptExit(id)
-	{
-		if (YSI_OPEN_MP)
-		{
-			ScriptInit_PreExitFuncs_();
-			ScriptInit_OnScriptExit();
-			ScriptInit_PostExitFuncs_();
-			ScriptInit_OnYSIExit();
-		}
-		return 1;
-	}
-#endif
+//#if _YSI_SAFE_STARTUP
+//	forward OnScriptExit(id);
+//
+//	public OnScriptExit(id)
+//	{
+//		if (YSI_OPEN_MP)
+//		{
+//			ScriptInit_PreExitFuncs_();
+//			ScriptInit_OnScriptExit();
+//			ScriptInit_PostExitFuncs_();
+//			ScriptInit_OnYSIExit();
+//		}
+//		return 1;
+//	}
+//#endif
 
 /*
 
