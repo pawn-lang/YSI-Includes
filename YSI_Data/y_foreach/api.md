@@ -649,6 +649,16 @@ Output:
  
 ***
 
+#### Iter_NonEmpty
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Tests if the iterator has some elements.
+
+***
+
 #### Iter_RandomInternal
 >* **Parameters:**
 >	* `count`: count_INFO

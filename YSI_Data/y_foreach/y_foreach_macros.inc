@@ -441,7 +441,7 @@ FUNC_PAWNDOC(Iter_Clear(Iterator:iter<>));
 #define Iter_Clear_InternalD(%0,%1,%2,%3,%4,) Iter_Clear_InternalC(%0,%1,%2,%4)
 
 /*-------------------------------------------------------------------------*//**
- * <param name="iter">Name of the iterator to test emptiness of.</param>
+ * <param name="iter">Name of the iterator to test the emptiness of.</param>
  * <remarks>
  *
  * native Iter_IsEmpty(Iterator:Name&lt;&gt;);
@@ -453,6 +453,20 @@ FUNC_PAWNDOC(Iter_IsEmpty(Iterator:iter<>));
 #define Iter_IsEmpty _ITER<Iter_IsEmpty_Internal>
 #define Iter_IsEmpty_InternalA(%0,%1)    ((%0) == 0)
 #define Iter_IsEmpty_InternalB(%0,%2,%1) ((%0[%2]) == 0)
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator to test the non-emptiness of.</param>
+ * <remarks>
+ *
+ * native Iter_NonEmpty(Iterator:Name&lt;&gt;);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FUNC_PAWNDOC(Iter_NonEmpty(Iterator:iter<>));
+#define Iter_NonEmpty _ITER<Iter_NonEmpty_Internal>
+#define Iter_NonEmpty_InternalA(%0,%1)    ((%0) != 0)
+#define Iter_NonEmpty_InternalB(%0,%2,%1) ((%0[%2]) != 0)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the first free slot in.</param>
