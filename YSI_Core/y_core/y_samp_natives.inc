@@ -122,7 +122,7 @@ native bool:YSI_ArgIndex__(index, output[], size = sizeof (output), bool:pack = 
 
 #if __COMPILER___EMIT_U
 	#if cellbytes == 4
-		#define YSI_IsPacked__(%0) \
+		#define YSI_IsLocalVarPackedString__(%0) \
 			__emit(                         \
 				LREF.S.pri  %0             ,\
 				CONST.alt   0x01000000     ,\
@@ -130,7 +130,7 @@ native bool:YSI_ArgIndex__(index, output[], size = sizeof (output), bool:pack = 
 			)
 		#endinput
 	#elseif cellbytes == 8
-		#define YSI_IsPacked__(%0) \
+		#define YSI_IsLocalVarPackedString__(%0) \
 			__emit(                         \
 				LREF.S.pri  %0             ,\
 				CONST.alt   0x0100000000000000,\
@@ -158,7 +158,7 @@ native bool:YSI_ArgIndex__(index, output[], size = sizeof (output), bool:pack = 
 #if cellbytes != 4
 	#error Unsupported packed string size.
 #endif
-stock bool:YSI_IsPacked__(const string:str[])
+stock bool:YSI_IsLocalVarPackedString__(const string:str[])
 {
 	#emit LREF.S.pri           str
 	#emit CONST.alt            0x01000000

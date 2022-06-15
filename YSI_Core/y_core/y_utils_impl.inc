@@ -559,7 +559,7 @@ stock StrToLower(string:str[], len = sizeof (str))
 	new
 		i = -1,
 		ch = 0;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while ((ch = str{++i}) && len--)
 			str{i} = tolower(ch);
@@ -581,7 +581,7 @@ stock StrToUpper(string:str[], len = sizeof (str))
 	new
 		i = -1,
 		ch = 0;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while ((ch = str{++i}) && len--)
 			str{i} = toupper(ch);
@@ -899,7 +899,7 @@ stock StripNL(string:str[])
 	Debug_Print7("StripNL called: \"%s\"", str);
 	new
 		i = strlen(str);
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while (i-- && str{i} <= ' ') str{i} = '\0';
 	}
@@ -929,7 +929,7 @@ stock StripL(string:str[])
 	new
 		len = strlen(str),
 		i = 0;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while (IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1)) ++i;
 		// The byte offsets in `memcpy` are broken, and packed strings aren't
@@ -961,7 +961,7 @@ stock Strip(string:str[])
 	new
 		len = strlen(str),
 		i = len;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while (i-- && str{i} <= ' ') str{i} = '\0';
 		for (i = 0; IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1); ++i) {}
@@ -993,7 +993,7 @@ stock bool:EndOfLine(const string:line[], pos)
 {
 	Debug_Print7("EndOfLine called: \"%s\", %i", line, pos);
 	if (NOT_IN_RANGE(pos, 0, strlen(line))) return false;
-	if (YSI_IsPacked__(line))
+	if (YSI_IsLocalVarPackedString__(line))
 	{
 		while (IS_IN_RANGE(line{pos}, '\0' + 1, ' ' + 1)) ++pos;
 		return !line{pos};
@@ -1059,7 +1059,7 @@ stock chrfindp(needle, const string:haystack[], start = 0)
 
 stock IPToInt(const string:ip[])
 {
-	if (YSI_IsPacked__(ip))
+	if (YSI_IsLocalVarPackedString__(ip))
 	{
 		new
 			ipv = strval(ip) << 24,
@@ -1124,7 +1124,7 @@ stock IPToInt(const string:ip[])
 
 stock BernsteinHash(const string:str[] /* 12 */)
 {
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		new h = 5381, i = 0, j = 0;
 		while ((j = str{i++}))
@@ -1143,7 +1143,7 @@ stock BernsteinHash(const string:str[] /* 12 */)
 #pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
 stock bernstein(const string:str[] /* 12 */)
 {
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		new h = 5381, i = 0, j = 0;
 		while ((j = str{i++}))
@@ -1173,7 +1173,7 @@ stock bernstein(const string:str[] /* 12 */)
 
 stock JenkinsHash(const string:str[] /* 12 */)
 {
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		new h = 0, i = 0, j = 0;
 		while ((j = str{i++}))
@@ -1208,7 +1208,7 @@ stock bool:IsHex(const string:str[])
 	new
 		i = 0,
 		cur = 0;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		if (str{0} == '0' && (str{1} | 0x20) == 'x') i = 2;
 		do
@@ -1406,7 +1406,7 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 		// This function is copied in `y_core_entry` to test a compiler bug.
 		new
 			i = -1;
-		if (YSI_IsPacked__(str))
+		if (YSI_IsLocalVarPackedString__(str))
 		{
 			if (str{0} == '-') ++i;
 			while (IS_IN_RANGE(str{++i}, '0', '9' + 1)) {}
@@ -1519,7 +1519,7 @@ stock HexStr(const string:str[])
 		ret = 0,
 		val = 0,
 		i = 0;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		if (str{0} == '0' && str{1} | 0x20 == 'x') i = 2;
 		for ( ; ; )
@@ -1591,7 +1591,7 @@ stock hexstr(const string:str[])
 stock bool:BoolStr(const string:str[])
 {
 	// Hooray for De Morgan's rules!
-	return str[0] && ((YSI_IsPacked__(str) ? str{0} : str[0]) != '0') && strcmp(str, "false", true);
+	return str[0] && ((YSI_IsLocalVarPackedString__(str) ? str{0} : str[0]) != '0') && strcmp(str, "false", true);
 }
 
 #pragma deprecated Use `BoolStr` (i.e. use proper capitalisation).
@@ -1613,7 +1613,7 @@ stock bool:boolstr(const string:str[])
 
 stock BinStr(const string:str[])
 {
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		new
 			pos = 0;
@@ -2320,7 +2320,7 @@ stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 	{
 		// Replace `_` with ` `.
 		len = -1;
-		if (YSI_IsPacked__(name))
+		if (YSI_IsLocalVarPackedString__(name))
 		{
 			while ((len = strfind(name, __COMPILER_PACK"_", false, len + 1)) != -1)
 			{
@@ -2354,7 +2354,7 @@ stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 
 stock bool:IsRPName(const string:name[], bool:casing = false, bool:longNames = false)
 {
-	if (YSI_IsPacked__(name))
+	if (YSI_IsLocalVarPackedString__(name))
 	{
 		new
 			parts = 0,
@@ -3189,7 +3189,7 @@ stock GetNearestColourSRGBCached(colour, const Float:options[][3], count = sizeo
 
 stock SkipWhitespace(const string:str[], pos)
 {
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while (IS_IN_RANGE(str{pos}, '\0' + 1, ' ' + 1)) ++pos;
 	}
@@ -3214,7 +3214,7 @@ stock SkipWhitespace(const string:str[], pos)
 
 stock Trim(const string:str[], &start, &end)
 {
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while (IS_IN_RANGE(str{start}, '\0' + 1, ' ' + 1)) ++start;
 		//while ('\0' < str[start] <= ' ') ++start;
@@ -3549,16 +3549,16 @@ stock LevenshteinDistance(const a[], const b[])
 		}
 		// The calls below are NOT wrong, the parameters are swapped so the A/B
 		// packing calls are also swapped.
-		if (YSI_IsPacked__(a))
+		if (YSI_IsLocalVarPackedString__(a))
 		{
-			if (YSI_IsPacked__(b))
+			if (YSI_IsLocalVarPackedString__(b))
 				return DoLevenshteinDistancePackAB(b, lenB, a, lenA);
 			else
 				return DoLevenshteinDistancePackB(b, lenB, a, lenA);
 		}
 		else
 		{
-			if (YSI_IsPacked__(b))
+			if (YSI_IsLocalVarPackedString__(b))
 				return DoLevenshteinDistancePackA(b, lenB, a, lenA);
 			else
 				return DoLevenshteinDistance(b, lenB, a, lenA);
@@ -3574,16 +3574,16 @@ stock LevenshteinDistance(const a[], const b[])
 		Debug_Error("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
 		return 1;
 	}
-	if (YSI_IsPacked__(a))
+	if (YSI_IsLocalVarPackedString__(a))
 	{
-		if (YSI_IsPacked__(b))
+		if (YSI_IsLocalVarPackedString__(b))
 			return DoLevenshteinDistancePackAB(a, lenA, b, lenB);
 		else
 			return DoLevenshteinDistancePackA(a, lenA, b, lenB);
 	}
 	else
 	{
-		if (YSI_IsPacked__(b))
+		if (YSI_IsLocalVarPackedString__(b))
 			return DoLevenshteinDistancePackB(a, lenA, b, lenB);
 		else
 			return DoLevenshteinDistance(a, lenA, b, lenB);
@@ -3656,7 +3656,7 @@ stock File:ftemporary_(string:name[], const string:ext[] = "tmp", const string:p
 	{
 		return File:0;
 	}
-	if (YSI_IsPacked__(name))
+	if (YSI_IsLocalVarPackedString__(name))
 	{
 		// These parts of the filename never change, so only do them once.
 		strcat(name, path, len),
@@ -4470,7 +4470,7 @@ _Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex
 
 stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, bool:useHyphen = true)
 {
-	if (YSI_IsPacked__(text))
+	if (YSI_IsLocalVarPackedString__(text))
 	{
 		// Returns `true` if there is more text to come.
 		new
@@ -4795,7 +4795,7 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 
 stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, &colour, bool:useHyphen = true)
 {
-	if (YSI_IsPacked__(text))
+	if (YSI_IsLocalVarPackedString__(text))
 	{
 		new
 			ch;
@@ -4953,7 +4953,7 @@ stock Float:BiGramSimilarity(const string:string1[], const string:string2[])
 		ngrams1 = -1,
 		ngrams2 = -1;
 	// We can also "improve" the comparison by making all numbers the same.
-	if (YSI_IsPacked__(string1))
+	if (YSI_IsLocalVarPackedString__(string1))
 	{
 		for (new i = 0; (ch = string1{i}); ++i)
 		{
@@ -5013,7 +5013,7 @@ stock Float:BiGramSimilarity(const string:string1[], const string:string2[])
 			}
 		}
 	}
-	if (YSI_IsPacked__(string2))
+	if (YSI_IsLocalVarPackedString__(string2))
 	{
 		for (new i = 0; (ch = string2{i}); ++i)
 		{

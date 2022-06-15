@@ -291,7 +291,7 @@ stock const YSIM_VERMAX[] = "X";
 			// This function is copied in `y_utils_impl` to test a compiler bug.
 			new
 				i = -1;
-			if (YSI_IsPacked__(number))
+			if (YSI_IsLocalVarPackedString__(number))
 			{
 				if (number{0} == '-') ++i;
 				while ('0' <= number{++i} <= '9') {}
