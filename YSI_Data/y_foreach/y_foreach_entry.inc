@@ -329,6 +329,11 @@ Optional plugins:
 #if _FOREACH_VEHICLES || _FOREACH_ACTORS
 	#include "..\..\YSI_Coding\y_remote"
 #endif
+
+CHAIN_HOOK(Iter)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(Iter)
+
 #include "y_foreach_iterators"
 
 #if defined YSI_TESTS
