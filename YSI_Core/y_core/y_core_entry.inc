@@ -161,7 +161,7 @@ Optional plugins:
 	#endif
 
 	#undef _FIXES_DEFAULT
-#elseif !defined YSI_OPENMP__
+#else
 	#define YSI_FIX_CALLBACKS
 #endif
 

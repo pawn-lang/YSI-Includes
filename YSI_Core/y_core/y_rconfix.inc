@@ -96,7 +96,8 @@ static stock const
 // then load this one back up again.
 y_rconfix_Load()
 {
-	#if !defined YSI_OPENMP__
+	if (Server_IsSAMP())
+	{
 		// Test if the fix has already been loaded.
 		setproperty(27, YSI_gscOnClientCheckResponse, 0);
 		YSI_SendRconCommand__(YSI_gscOnClientCheckResponse);
@@ -173,14 +174,15 @@ y_rconfix_Load()
 			Debug_Warning("Could not load RconCommand/ClientCheckResponse fix FS.");
 			Debug_Info("Ignore this error if the FS already loaded.");
 		}
-	#endif
+	}
 }
 
 stock y_rconfix_Unload()
 {
-	#if !defined YSI_OPENMP__
+	if (Server_IsSAMP())
+	{
 		YSI_SendRconCommand__("unloadfs ../scriptfiles/callbackfix");
-	#endif
+	}
 }
 
 #if defined YSI_FIX_CALLBACKS
