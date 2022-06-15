@@ -324,12 +324,8 @@ Optional plugins:
 #include "y_foreach_macros"
 
 #include "y_foreach_impl"
-#include "..\..\YSI_Coding\y_hooks"
 #include "y_foreach_yield"
 
-#if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
-	#include "..\..\YSI_Coding\y_hooks"
-#endif
 #if _FOREACH_VEHICLES || _FOREACH_ACTORS
 	#include "..\..\YSI_Coding\y_remote"
 #endif

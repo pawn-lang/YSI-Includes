@@ -366,7 +366,7 @@ stock Iter_All_Internal(const array[], size, value)
  *//*------------------------------------------------------------------------**/
 
 #if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
-	HOOK__ OnYSIInit()
+	public OnYSIInit()
 	{
 		#if _FOREACH_VEHICLES
 			Iter_Clear(Vehicle);
@@ -469,8 +469,21 @@ stock Iter_All_Internal(const array[], size, value)
 				}
 			}
 		#endif
-		return 1;
+		#if defined Iter_OnYSIInit
+			return Iter_OnYSIInit();
+		#else
+			return 1;
+		#endif
 	}
+
+	#if defined _ALS_OnYSIInit
+		#undef OnYSIInit
+	#endif
+	#define _ALS_OnYSIInit
+	#define OnYSIInit(%0) Iter_OnYSIInit(%0)
+	#if defined Iter_OnYSIInit
+		forward Iter_OnYSIInit();
+	#endif
 #endif
 
 /*
@@ -503,7 +516,7 @@ stock Iter_All_Internal(const array[], size, value)
  *//*------------------------------------------------------------------------**/
 
 #if _FOREACH_CHARACTERS
-	HOOK__ OnPlayerConnect(playerid)
+	public OnPlayerConnect(playerid)
 	{
 		Debug_Print1("Iter_OnPlayerConnect called: %d, %d", playerid, IsPlayerNPC(playerid));
 		#if _FOREACH_BOTS
@@ -520,8 +533,21 @@ stock Iter_All_Internal(const array[], size, value)
 		#endif
 			}
 		Debug_Print2("Iter_OnPlayerConnect end");
-		return 1;
+		#if defined Iter_OnPlayerConnect
+			return Iter_OnPlayerConnect(playerid);
+		#else
+			return 1;
+		#endif
 	}
+
+	#if defined _ALS_OnPlayerConnect
+		#undef OnPlayerConnect
+	#endif
+	#define _ALS_OnPlayerConnect
+	#define OnPlayerConnect(%0) Iter_OnPlayerConnect(%0)
+	#if defined Iter_OnPlayerConnect
+		forward Iter_OnPlayerConnect(playerid);
+	#endif
 	
 	/*---------------------------------------------------------------------*//**
 	 *
@@ -534,11 +560,24 @@ stock Iter_All_Internal(const array[], size, value)
 	 * </remarks>
 	 *//*--------------------------------------------------------------------**/
 	
-	HOOK__ OnPlayerDisconnect(playerid, reason)
+	public OnPlayerDisconnect(playerid, reason)
 	{
 		YSI_SetTimerEx__("Iter_OPDCInternal", 0, false, "i", playerid);
-		return 1;
+		#if defined Iter_OnPlayerDisconnect
+			return Iter_OnPlayerDisconnect(playerid, reason);
+		#else
+			return 1;
+		#endif
 	}
+
+	#if defined _ALS_OnPlayerDisconnect
+		#undef OnPlayerDisconnect
+	#endif
+	#define _ALS_OnPlayerDisconnect
+	#define OnPlayerDisconnect(%0) Iter_OnPlayerDisconnect(%0)
+	#if defined Iter_OnPlayerDisconnect
+		forward Iter_OnPlayerDisconnect(playerid, reason);
+	#endif
 	
 	/*---------------------------------------------------------------------*//**
 	 *
@@ -571,7 +610,7 @@ stock Iter_All_Internal(const array[], size, value)
 	}
 
 	#if _FOREACH_STREAMED
-		HOOK__ OnPlayerStreamIn(playerid, forplayerid)
+		public OnPlayerStreamIn(playerid, forplayerid)
 		{
 			Debug_Print1("Iter_OnPlayerStreamIn called: %d, %d", playerid, forplayerid);
 			#if _FOREACH_BOTS
@@ -588,10 +627,23 @@ stock Iter_All_Internal(const array[], size, value)
 			#endif
 				}
 			Debug_Print2("Iter_OnPlayerStreamIn end");
-			return 1;
+			#if defined Iter_OnPlayerStreamIn
+				return Iter_OnPlayerStreamIn(playerid, forplayerid);
+			#else
+				return 1;
+			#endif
 		}
 
-		HOOK__ OnPlayerStreamOut(playerid, forplayerid)
+		#if defined _ALS_OnPlayerStreamIn
+			#undef OnPlayerStreamIn
+		#endif
+		#define _ALS_OnPlayerStreamIn
+		#define OnPlayerStreamIn(%0) Iter_OnPlayerStreamIn(%0)
+		#if defined Iter_OnPlayerStreamIn
+			forward Iter_OnPlayerStreamIn(playerid, forplayerid);
+		#endif
+
+		public OnPlayerStreamOut(playerid, forplayerid)
 		{
 			Debug_Print1("Iter_OnPlayerStreamOut called: %d, %d", playerid, forplayerid);
 			#if _FOREACH_BOTS
@@ -608,8 +660,21 @@ stock Iter_All_Internal(const array[], size, value)
 			#endif
 				}
 			Debug_Print2("Iter_OnPlayerStreamOut end");
-			return 1;
+			#if defined Iter_OnPlayerStreamOut
+				return Iter_OnPlayerStreamOut(playerid, forplayerid);
+			#else
+				return 1;
+			#endif
 		}
+
+		#if defined _ALS_OnPlayerStreamOut
+			#undef OnPlayerStreamOut
+		#endif
+		#define _ALS_OnPlayerStreamOut
+		#define OnPlayerStreamOut(%0) Iter_OnPlayerStreamOut(%0)
+		#if defined Iter_OnPlayerStreamOut
+			forward Iter_OnPlayerStreamOut(playerid, forplayerid);
+		#endif
 	#endif
 #endif
 
@@ -672,21 +737,47 @@ stock Iter_All_Internal(const array[], size, value)
 	#define DestroyActor Iter_DestroyActor
 
 	#if _FOREACH_STREAMED
-		HOOK__ OnActorStreamIn(actorid, forplayerid)
+		public OnActorStreamIn(actorid, forplayerid)
 		{
 			Debug_Print1("Iter_OnActorStreamIn called: %d, %d", actorid, forplayerid);
 			Iter_Add(StreamedActor[forplayerid], actorid);
 			Debug_Print2("Iter_OnActorStreamIn end");
-			return 1;
+			#if defined Iter_OnActorStreamIn
+				return Iter_OnActorStreamIn();
+			#else
+				return 1;
+			#endif
 		}
 
-		HOOK__ OnActorStreamOut(actorid, forplayerid)
+		#if defined _ALS_OnActorStreamIn
+			#undef OnActorStreamIn
+		#endif
+		#define _ALS_OnActorStreamIn
+		#define OnActorStreamIn(%0) Iter_OnActorStreamIn(%0)
+		#if defined Iter_OnActorStreamIn
+			forward Iter_OnActorStreamIn(actorid, forplayerid);
+		#endif
+
+		public OnActorStreamOut(actorid, forplayerid)
 		{
 			Debug_Print1("Iter_OnActorStreamOut called: %d, %d", actorid, forplayerid);
 			Iter_Remove(StreamedActor[forplayerid], actorid);
 			Debug_Print2("Iter_OnActorStreamOut end");
-			return 1;
+			#if defined Iter_OnActorStreamOut
+				return Iter_OnActorStreamOut(actorid, forplayerid);
+			#else
+				return 1;
+			#endif
 		}
+
+		#if defined _ALS_OnActorStreamOut
+			#undef OnActorStreamOut
+		#endif
+		#define _ALS_OnActorStreamOut
+		#define OnActorStreamOut(%0) Iter_OnActorStreamOut(%0)
+		#if defined Iter_OnActorStreamOut
+			forward Iter_OnActorStreamOut(actorid, forplayerid);
+		#endif
 	#endif
 #endif
 
@@ -812,21 +903,47 @@ stock Iter_All_Internal(const array[], size, value)
 	#define DestroyVehicle Iter_DestroyVehicle
 
 	#if _FOREACH_STREAMED
-		HOOK__ OnVehicleStreamIn(vehicleid, forplayerid)
+		public OnVehicleStreamIn(vehicleid, forplayerid)
 		{
 			Debug_Print1("Iter_OnVehicleStreamIn called: %d, %d", vehicleid, forplayerid);
 			Iter_Add(StreamedVehicle[forplayerid], vehicleid);
 			Debug_Print2("Iter_OnVehicleStreamIn end");
-			return 1;
+			#if defined Iter_OnVehicleStreamIn
+				return Iter_OnVehicleStreamIn(vehicleid, forplayerid);
+			#else
+				return 1;
+			#endif
 		}
 
-		HOOK__ OnVehicleStreamOut(vehicleid, forplayerid)
+		#if defined _ALS_OnVehicleStreamIn
+			#undef OnVehicleStreamIn
+		#endif
+		#define _ALS_OnVehicleStreamIn
+		#define OnVehicleStreamIn(%0) Iter_OnVehicleStreamIn(%0)
+		#if defined Iter_OnVehicleStreamIn
+			forward Iter_OnVehicleStreamIn(vehicleid, forplayerid);
+		#endif
+
+		public OnVehicleStreamOut(vehicleid, forplayerid)
 		{
 			Debug_Print1("Iter_OnVehicleStreamOut called: %d, %d", vehicleid, forplayerid);
 			Iter_Remove(StreamedVehicle[forplayerid], vehicleid);
 			Debug_Print2("Iter_OnVehicleStreamOut end");
-			return 1;
+			#if defined Iter_OnVehicleStreamOut
+				return Iter_OnVehicleStreamOut(vehicleid, forplayerid);
+			#else
+				return 1;
+			#endif
 		}
+
+		#if defined _ALS_OnVehicleStreamOut
+			#undef OnVehicleStreamOut
+		#endif
+		#define _ALS_OnVehicleStreamOut
+		#define OnVehicleStreamOut(%0) Iter_OnVehicleStreamOut(%0)
+		#if defined Iter_OnVehicleStreamOut
+			forward Iter_OnVehicleStreamOut(vehicleid, forplayerid);
+		#endif
 	#endif
 #endif
 
