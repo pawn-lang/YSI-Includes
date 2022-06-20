@@ -795,13 +795,15 @@ At this point the execution is in normal pawn code and the handler can do anythi
 main()
 {
 	// Check if the year is 2022.
-	new is2022 = -1;
+	new is2022 = 0;
 	#emit CONST.pri        2022
 	#emit LCTRL            2022
 	#emit STOR.S.pri       is2022
-	if (is2022 == -1)
+	if (is2022 == 2022)
 	{
-		print("The handler can't return `-1`, so it doesn't exist.");
+		// `pri` was still `2022` after being set by `CONST.pri`, therefore
+		// the handler wasn't called and so doesn't exist.
+		print("The handler can't return `2022`, so it doesn't exist.");
 	}
 	else
 	{

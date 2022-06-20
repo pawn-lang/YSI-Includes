@@ -122,7 +122,7 @@ _Y_CORE_STATIC stock Args_LazyInit()
 			// If the argument ended there (may) be a following parameter.
 			positional = name[end] != '\0',
 			Args_TryAdd(hash, i);
-			P:6("Args_LazyInit: Argument: /%.*s, length: %d, hash: %d", end - 1, name[1], end - 1, hash);
+			Debug_Print6("Args_LazyInit: Argument: /%.*s, length: %d, hash: %d", end - 1, name[1], end - 1, hash);
 		}
 		else if (name[0] == '-' && name[1] == '-' && name[2] == '\0')
 		{
@@ -130,7 +130,7 @@ _Y_CORE_STATIC stock Args_LazyInit()
 			// Start of `rest`.  Can end here.
 			YSI_gsRestStart = i + 1;
 			++YSI_gsArgCount;
-			P:6("Args_LazyInit: Rest: %d", i + 1);
+			Debug_Print6("Args_LazyInit: Rest: %d", i + 1);
 			break;
 		}
 		else if (name[0] == '-' && name[1] == '-')
@@ -140,7 +140,7 @@ _Y_CORE_STATIC stock Args_LazyInit()
 			// If the argument ended there (may) be a following parameter.
 			positional = name[end] != '\0',
 			Args_TryAdd(hash, i);
-			P:6("Args_LazyInit: Argument: --%.*s, length: %d, hash: %d", end - 2, name[2], end - 2, hash);
+			Debug_Print6("Args_LazyInit: Argument: --%.*s, length: %d, hash: %d", end - 2, name[2], end - 2, hash);
 		}
 		else if (name[0] == '-')
 		{
@@ -168,7 +168,7 @@ _Y_CORE_STATIC stock Args_LazyInit()
 				}
 				++YSI_gsArgTotal;
 				Args_TryAdd(hash, i);
-				P:6("Args_LazyInit: Argument: -%c, hash: %d", name[end - 1], hash);
+				Debug_Print6("Args_LazyInit: Argument: -%c, hash: %d", name[end - 1], hash);
 			}
 		}
 		else if (positional)
@@ -176,13 +176,13 @@ _Y_CORE_STATIC stock Args_LazyInit()
 			// Not in a argument parameter.
 			++YSI_gsPositionalCount;
 			YSI_gsLastPositional = i;
-			P:6("Args_LazyInit: Positional: %s", name);
+			Debug_Print6("Args_LazyInit: Positional: %s", name);
 		}
 		else
 		{
 			// Parameter.  Don't do anything with it.
 			positional = true;
-			P:6("Args_LazyInit: Parameter: %s", name);
+			Debug_Print6("Args_LazyInit: Parameter: %s", name);
 		}
 	}
 }
@@ -227,7 +227,7 @@ _Y_CORE_STATIC stock bool:Args_GetStringImpl(short, const long[], output[], size
 		// We need to retrieve the argument, then check if it has `=`, `:`, `-`,
 		// `+`, or other arguments together.
 		YSI_ArgIndex__(idxShort, arg, sizeof (arg), false);
-		P:5("Args_GetStringImpl: short %d = %s", idxShort, arg);
+		Debug_Print5("Args_GetStringImpl: short %d = %s", idxShort, arg);
 		switch (arg[2])
 		{
 		case ':':
@@ -259,7 +259,7 @@ _Y_CORE_STATIC stock bool:Args_GetStringImpl(short, const long[], output[], size
 		// `idxShort == -1`
 		YSI_ArgIndex__(idxLong, arg, sizeof (arg), false),
 		idxShort = strlen(long) + (arg[0] == '/' ? 1 : 2);
-		P:5("Args_GetStringImpl: long %d = %s, %d = %d ('%c')", idxLong, arg, idxShort, arg[idxShort], arg[idxShort]);
+		Debug_Print5("Args_GetStringImpl: long %d = %s, %d = %d ('%c')", idxLong, arg, idxShort, arg[idxShort], arg[idxShort]);
 		switch (arg[idxShort])
 		{
 		case ':':
@@ -286,7 +286,7 @@ _Y_CORE_STATIC stock bool:Args_GetStringImpl(short, const long[], output[], size
 			if (idxLong + 1 < YSI_gsArgSeen)
 			{
 				YSI_ArgIndex__(idxLong + 1, output, size, false);
-				P:5("Args_GetStringImpl: %s", output);
+				Debug_Print5("Args_GetStringImpl: %s", output);
 				if (output[0] == '-' || output[0] == '/')
 				{
 					output[0] = '\0';

@@ -271,7 +271,7 @@ static stock const
 	#endif
 	#define PTEST_CLOSE__%1(%2) forward @_yQ%1(%2); public @_yQ%1(%2)
 	
-	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();P:W("Compile test " #%1 " called.");}static stock Q@_y%1()
+	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();Debug_Warning("Compile test " #%1 " called.");}static stock Q@_y%1()
 #else
 	#define TEST_INIT__%1() static stock y_Q@%1()
 	#define TEST__%1() static stock bool:yQ_@%1()
@@ -373,7 +373,7 @@ stock _Testing_Start(const name[])
 	// as a dummy no-op function call!  I'm actually quite happy I found a use
 	// for it!
 	YSI_g_sCurHeap = heapspace();
-	P:3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
+	Debug_Print3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
 	StrCpy(YSI_gCurTestName, name[2]);
 }
@@ -441,7 +441,7 @@ stock _Testing_Start(const name[])
 stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused str
-	P:3("Testing_Test called: %i, \"%s\"", x, str);
+	Debug_Print3("Testing_Test called: %i, \"%s\"", x, str);
 	++YSI_g_sChecks;
 	static
 		Testing_Test_msg[6],
@@ -469,7 +469,7 @@ stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 	{}
 	// Modify the first two parameters to match the following call:
 	//  
-	//  P:T(str, msg, ___(2));
+	//  Debug_PrintT(str, msg, ___(2));
 	//  
 	#emit LOAD.S.pri       16
 	#emit STOR.S.pri       12
@@ -525,10 +525,10 @@ stock bool:_Testing_End()
 
 stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p = false)
 {
-	P:3("bool:Testing_Run called: %i, %i, \"%s\", %i", tests, fails, lastfail, p);
+	Debug_Print3("bool:Testing_Run called: %i, %i, \"%s\", %i", tests, fails, lastfail, p);
 	#pragma unused p, lastfail
 #if defined RUN_TESTS
-	P:2("Testing_Run() called");
+	Debug_Print2("Testing_Run() called");
 	new
 		idx = 0,
 		bidx = 0,
@@ -558,7 +558,7 @@ Testing_Run_before_fail:
 		// Call the test.
 		buffer[0] = Y_TESTING_TEST,
 		fails = YSI_g_sFails;
-		P:5("Testing_Run(): Calling %s", Unpack(buffer[1]));
+		Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
 		YSI_g_sInTest = true,
 		R@(buffer, YSI_EMPTY),
 		YSI_g_sInTest = false;
@@ -646,7 +646,7 @@ Testing_Run_after_fail:
 	#endif
 	Testing_Next(playerid)
 	{
-		P:2("Testing_Next() called");
+		Debug_Print2("Testing_Next() called");
 		YSI_g_sInTest = false;
 		new
 			buffer[FUNCTION_LENGTH];
@@ -657,7 +657,7 @@ Testing_Run_after_fail:
 			{
 				// Call the shutdown function if there is one.
 				buffer[0] = Y_TESTING_PSHUT;
-				P:5("Testing_Next(): Calling %s", Unpack(buffer));
+				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 			}
 			// Update fail counts.
@@ -687,11 +687,11 @@ Testing_Next_retry:
 				YSI_g_sAsked = false;
 				// Call the setup function if there is one.
 				buffer[0] = Y_TESTING_PINIT;
-				P:5("Testing_Next(): Calling %s", Unpack(buffer));
+				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 				// Call the test.
 				buffer[0] = Y_TESTING_PTEST;
-				P:5("Testing_Next(): Calling %s", Unpack(buffer));
+				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				YSI_g_sInTest = true;
 				R@(buffer, "i", playerid);
 			}
@@ -1025,8 +1025,8 @@ TEST__ y_testing_2()
 	ASSERT(t == YSI_g_sTests);
 	// Fail a fake test on purpose.
 	//state ysi_debug : on;
-	P:I("The next test hasn't really failed...");
-	P:I(" - It is testing the test system.");
+	Debug_Info("The next test hasn't really failed...");
+	Debug_Info(" - It is testing the test system.");
 	//state ysi_debug : off;
 	ASSERT(false);
 	ASSERT(f + 1 == YSI_g_sFails); // Not a mistake.  Run this test twice to

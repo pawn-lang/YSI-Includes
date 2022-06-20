@@ -140,7 +140,7 @@ Optional plugins:
 
 stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
 {
-	P:F("You called _YSI_HAS_y_groups!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
+	Debug_Fatal("You called _YSI_HAS_y_groups!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
 	assert(false);
 	return 0;
 }

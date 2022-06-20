@@ -80,8 +80,8 @@ TEST__ Player_Existing()
 	ASSERT_EQ(Langs_GetLanguage("EN"), ret[E_USER_PRELOAD_LANG]);
 	ASSERT_EQ(ret[E_USER_PRELOAD_BITS], 0x12345678);
 	ASSERT(0xAABBCCDD >= ret[E_USER_PRELOAD_DATE]);
-	P:I("Note that if these tests fail, you will need to");
-	P:I("    first connect to the server as \"TestPlayer\".");
+	Debug_Info("Note that if these tests fail, you will need to");
+	Debug_Info("    first connect to the server as \"TestPlayer\".");
 }
 
 new

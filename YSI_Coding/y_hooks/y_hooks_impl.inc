@@ -146,7 +146,7 @@ static stock
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Hooks_MakeLongName(name[64])
+stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 {
 	new
 		end = 0,
@@ -174,7 +174,7 @@ stock Hooks_MakeLongName(name[64])
 		}
 		else
 		{
-			P:5("Found hook name replacement: %d, %s", pos, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT]);
+			Debug_Print5("Found hook name replacement: %d, %s", pos, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT]);
 			// Found a complete word according to CamelCase rules.
 			strdel(name, pos + 1, end),
 			name[pos] = 0x80000000 | idx;
@@ -188,7 +188,7 @@ stock Hooks_MakeLongName(name[64])
 		// "pos" must be "-1" at the start of this loop.
 		while (name[++pos])
 		{
-			P:7("Hooks_MakeLongName main loop: [%d] = 0x%04x%04x \"%s\"", pos, name[pos] >>> 16, name[pos] & 0xFFFF, name);
+			Debug_Print7("Hooks_MakeLongName main loop: [%d] = 0x%04x%04x \"%s\"", pos, name[pos] >>> 16, name[pos] & 0xFFFF, name);
 			if (name[pos] < '\0')
 			{
 				// Negative number instead of a character.  Used to indicate
@@ -196,8 +196,8 @@ stock Hooks_MakeLongName(name[64])
 				// inline in the loop above because some replacements may be
 				// contained within others - we don't want those to be both done
 				// within each other.
-				P:5("Inserting hook name replacement: %d, %s", pos, YSI_g_sReplacements[name[pos] & ~0x80000000][E_HOOK_NAME_REPLACEMENT_LONG]);
-				P:6("Current character: 0x%04x%04x", name[pos] >>> 16, name[pos] & 0xFFFF);
+				Debug_Print5("Inserting hook name replacement: %d, %s", pos, YSI_g_sReplacements[name[pos] & ~0x80000000][E_HOOK_NAME_REPLACEMENT_LONG]);
+				Debug_Print6("Current character: 0x%04x%04x", name[pos] >>> 16, name[pos] & 0xFFFF);
 				// It took me ages to find a bug in this code.  For some reason,
 				// "strins" was packing the result.  This was because the value
 				// in "name[pos]" was not a real character, so was seen as an
@@ -217,7 +217,7 @@ stock Hooks_MakeLongName(name[64])
 				#endif
 						(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG + E_HOOK_NAME_REPLACEMENT_DATA:1], pos + 1);
 				pos += YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX] - 1;
-				P:6("New string: %s", name);
+				Debug_Print6("New string: %s", name);
 			}
 		}
 	}
@@ -233,7 +233,7 @@ stock Hooks_MakeLongName(name[64])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Hooks_MakeShortName(name[64])
+stock Hooks_MakeShortName(name[Y_HOOKS_MAX_NAME])
 {
 	// Easy one.
 	new
@@ -289,12 +289,12 @@ stock Hooks_MakeShortName(name[64])
 
 _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 {
-	P:4("Hooks_IsolateName called");
+	Debug_Print4("Hooks_IsolateName called");
 	new
 		pos = strfind(name, "@", false, 4);
 	// Make "pos" a legal value inside the error message.
-	if (pos == 4) P:E("Missing hook name (`hook (args)`)");
-	if (pos == -1) P:E("Invalid hook name: %s", Unpack(name), ++pos);
+	if (pos == 4) Debug_Error("Missing hook name (`hook (args)`)");
+	if (pos == -1) Debug_Error("Invalid hook name: %s", Unpack(name), ++pos);
 	name[pos] = '\0',
 	strdel(name, 0, 4);
 }
@@ -317,7 +317,7 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 
 _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &precount, size = sizeof (preloads))
 {
-	P:4("Hooks_GetPreloadLibraries called");
+	Debug_Print4("Hooks_GetPreloadLibraries called");
 	--size,
 	precount = 0;
 	new
@@ -331,7 +331,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 		{
 			if (precount == size)
 			{
-				P:E("y_hooks prehook array filled");
+				Debug_Error("y_hooks prehook array filled");
 				break;
 			}
 			addr = AMX_Read(publicTableEntry);
@@ -340,7 +340,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 			preloads[precount][E_CHAIN_HOOK_VALUE] = CallFunction(addr),
 			++precount;
 			if (strlen(name) > 15)
-				P:E("Overflow in prehook name \"%s\"", Unpack(name));
+				Debug_Error("Overflow in prehook name \"%s\"", Unpack(name));
 			// {
 				// new buffer[FUNCTION_LENGTH];
 				// strunpack(buffer, name);
@@ -382,22 +382,22 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount, const name[64], hooks[], &count)
+_Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount, const name[Y_HOOKS_MAX_NAME], hooks[], &count)
 {
-	P:4("Hooks_GetPreHooks called");
+	Debug_Print4("Hooks_GetPreHooks called");
 	new
 		idx = 0,
-		lfunc[64];
+		lfunc[Y_HOOKS_MAX_NAME];
 	// Collect all the functions with something like this name.
-	P:2("Hooks_GetPreHooks start: %s", Unpack(name));
+	Debug_Print2("Hooks_GetPreHooks start: %s", Unpack(name));
 	do
 	{
 		strcat(lfunc, name),
 		Hooks_MakeShortName(lfunc);
-		P:5("Hooks_GetPreHooks: search = %s", Unpack(lfunc));
-		P:C(new oc = count;);
+		Debug_Print5("Hooks_GetPreHooks: search = %s", Unpack(lfunc));
+		Debug_Code1{new oc = count;}
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
-		P:C(if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[oc] + 4) + AMX_BASE_ADDRESS, buffer); strunpack(buffer, buffer); P:5("Hooks_GetPreHooks: found = %s", buffer); });
+		Debug_Code1{if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[oc] + 4) + AMX_BASE_ADDRESS, buffer); strunpack(buffer, buffer); Debug_Print5("Hooks_GetPreHooks: found = %s", buffer); }}
 		StrCpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
 		strcat(lfunc, "_");
 	}
@@ -415,8 +415,8 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 
 _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, const name[], nlen)
 {
-	P:4("Hooks_GetPointerRewrite called");
-	P:5("Hooks_GetPointerRewrite: (%s), num: %d, hooks: %08x, %08x, %08x, %08x", name, num, AMX_Read(hooks[0]), AMX_Read(hooks[1]), AMX_Read(hooks[2]), AMX_Read(hooks[3]));
+	Debug_Print4("Hooks_GetPointerRewrite called");
+	Debug_Print5("Hooks_GetPointerRewrite: (%s), num: %d, hooks: %08x, %08x, %08x, %08x", name, num, AMX_Read(hooks[0]), AMX_Read(hooks[1]), AMX_Read(hooks[2]), AMX_Read(hooks[3]));
 	switch (num)
 	{
 		case 0:
@@ -436,7 +436,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, c
 			}
 			else
 			{
-				P:F("Could not write function name in \"Hooks_MakePublicPointer\".");
+				Debug_Fatal("Could not write function name in \"Hooks_MakePublicPointer\".");
 				// TODO: Fix this.  Use an alternate memory location (the actual
 				// code segment in which we are writing seems like a good
 				// choice).
@@ -494,7 +494,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, c
 
 _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 {
-	P:4("Hooks_GetStubEntry called");
+	Debug_Print4("Hooks_GetStubEntry called");
 	// Get the address of the next function from the ALS state stub.
 	new
 		ctx[DisasmContext];
@@ -516,7 +516,7 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 					if (h1 == h2)      return  8 * 4; // Most likely.
 					else if (h0 == h2) return 10 * 4;
 					else if (h0 == h1) return 12 * 4;
-					else P:E("y_hooks could not extract state stub jump");
+					else Debug_Error("y_hooks could not extract state stub jump");
 				}
 				else return -1;
 			}
@@ -530,7 +530,7 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 		case OP_PROC:
 		{
 			//return stub;
-			P:E("y_hooks attempting to redirect a PROC hook");
+			Debug_Error("y_hooks attempting to redirect a PROC hook");
 		}
 	}
 	return 0;
@@ -584,12 +584,12 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 
 _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, size = sizeof (hooks))
 {
-	P:4("Hooks_GetAllHooks called: %s %d", name, idx);
+	Debug_Print4("Hooks_GetAllHooks called: %s %d", name, idx);
 	// Start from the very start - repeats the first item.
 	new
 		len = strlen(name) + 1,
 		count = 0,
-		tmpName[64];
+		tmpName[Y_HOOKS_MAX_NAME];
 	while ((idx = AMX_GetPublicEntryPrefix(idx, hooks[count], _A<@yH_>)))
 	{
 		AMX_GetStringFromEntry(hooks[count], tmpName),
@@ -598,7 +598,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 		Hooks_IsolateName(tmpName),
 		Hooks_MakeLongName(tmpName);
 		// Check if the fully expanded name is the name.
-		P:6("Hooks_GetAllHooks found: %s ?= %s %d", name, tmpName, idx);
+		Debug_Print6("Hooks_GetAllHooks found: %s ?= %s %d", name, tmpName, idx);
 		if (!strcmp(tmpName, name))
 		{
 			Hooks_InvalidateName(hooks[count]);
@@ -610,7 +610,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 			// Increment and count how many hooks of this type we have.
 			if (++count == size)
 			{
-				P:W("Hooks_GetAllHooks: Potential overflow." "\n" \
+				Debug_Warning("Hooks_GetAllHooks: Potential overflow." "\n" \
 "\n" \
 "	`MAX_Y_HOOKS` is currently `%d`, recompile with a higher value for more hooks of a single callback:" "\n" \
 "\n" \
@@ -626,7 +626,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 
 _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 {
-	P:4("Hooks_DoAllHooks called");
+	Debug_Print4("Hooks_DoAllHooks called");
 	// Get the preloaders.
 	new
 		precount = 0,
@@ -646,7 +646,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 
 _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, const name[FUNCTION_LENGTH], idx)
 {
-	P:4("Hooks_Collate called: %s %d", Unpack(name), idx);
+	Debug_Print4("Hooks_Collate called: %s %d", Unpack(name), idx);
 	// This records the amount of space available in the nametable, currently
 	// taken up by the names of hooks that we are about to destroy.
 	new
@@ -662,7 +662,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	// Where "XXX" is some unique number (the exact value is irrelevant, it just
 	// means that multiple hooks of the same function have different names).
 	static
-		sName[64],
+		sName[Y_HOOKS_MAX_NAME],
 		sHooks[MAX_Y_HOOKS];
 	// The above now becomes:
 	//   
@@ -709,9 +709,9 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
  * <param name="hasprehooks">Needs to call other stuff first.</param>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, bool:hasprehooks)
+_Y_HOOKS_STATIC Hooks_GenerateCode(const name[Y_HOOKS_MAX_NAME], const hooks[], count, write, bool:hasprehooks)
 {
-	P:4("Hooks_GenerateCode called");
+	Debug_Print4("Hooks_GenerateCode called");
 	// We now have:
 	//  
 	//  1) All the hooks of this function.
@@ -723,7 +723,7 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, 
 	// absolutely simpler!
 	new
 		size = Hooks_WriteFunction(hooks, count, Hooks_GetDefaultReturn(name));
-	P:4("Hooks_GenerateCode %32s called: %6d %6d %08x %d", name, hasprehooks, size, hasprehooks ? (write - AMX_HEADER_COD) : (write - AMX_BASE_ADDRESS), CGen_GetCodeSpace());
+	Debug_Print4("Hooks_GenerateCode %32s called: %6d %6d %08x %d", name, hasprehooks, size, hasprehooks ? (write - AMX_HEADER_COD) : (write - AMX_BASE_ADDRESS), CGen_GetCodeSpace());
 	if (size)
 	{
 		//AMX_Write(write, 40);
@@ -749,7 +749,7 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, 
 
 _Y_HOOKS_STATIC Hooks_InvalidateName(tableEntry)
 {
-	P:4("Hooks_InvalidateName called");
+	Debug_Print4("Hooks_InvalidateName called");
 	tableEntry = AMX_Read(tableEntry + 4);
 	AMX_Write(AMX_BASE_ADDRESS + tableEntry, 0);
 }
@@ -778,7 +778,7 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(tableEntry)
 
 _Y_HOOKS_STATIC stock Hooks_GetFunctionWritePoint(const name[], &write)
 {
-	P:4("Hooks_GetFunctionWritePoint called");
+	Debug_Print4("Hooks_GetFunctionWritePoint called");
 	AMX_GetPublicEntry(0, write, name, true);
 }
 
@@ -789,11 +789,11 @@ _Y_HOOKS_STATIC stock Hooks_GetFunctionWritePoint(const name[], &write)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[64])
+_Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
 {
-	P:4("Hooks_GetDefaultReturn called");
+	Debug_Print4("Hooks_GetDefaultReturn called");
 	new
-		dest[64] = "@y_H";
+		dest[Y_HOOKS_MAX_NAME] = "@y_H";
 	strcat(dest, name);
 	Hooks_MakeShortName(dest);
 	new
@@ -836,10 +836,10 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[64])
 
 _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
 {
-	P:4("Hooks_WriteFunction called");
+	Debug_Print4("Hooks_WriteFunction called");
 	if (size == 0)
 	{
-		P:E("Hooks_WriteFunction: size is 0");
+		Debug_Error("Hooks_WriteFunction: size is 0");
 		return 0;
 	}
 	new
@@ -1005,7 +1005,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 
 _Y_HOOKS_STATIC bool:Hooks_ComparePublics(idx0, idx1)
 {
-	P:4("Hooks_ComparePublics called");
+	Debug_Print4("Hooks_ComparePublics called");
 	idx0 = idx0 * 8 + AMX_HEADER_PUBLICS;
 	idx1 = idx1 * 8 + AMX_HEADER_PUBLICS;
 	new
@@ -1110,7 +1110,7 @@ _Y_HOOKS_STATIC bool:Hooks_ComparePublics(idx0, idx1)
 
 _Y_HOOKS_STATIC Hooks_SortPublics()
 {
-	P:4("Hooks_SortPublics called");
+	Debug_Print4("Hooks_SortPublics called");
 	// Count the number of still active functions.
 	YSI_g_sInitPublicDiff = Hooks_CountInvalidPublics() * 8;
 	new
@@ -1153,7 +1153,7 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 
 _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 {
-	P:4("Hooks_CountInvalidPublics called");
+	Debug_Print4("Hooks_CountInvalidPublics called");
 	new
 		idx = 0,
 		buf = 0,
@@ -1161,7 +1161,7 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 	// Search for functions whose names start with nothing.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, buf, 0)))
 		++count;
-	P:4("Hooks_CountInvalidPublics: Invalid = %d", count);
+	Debug_Print4("Hooks_CountInvalidPublics: Invalid = %d", count);
 	return count;
 }
 
@@ -1177,7 +1177,7 @@ stock _Hooks_AddReplacement(const longName[], const shortName[])
 	// MAY need to strip spaces off the input strings, but I don't think so.
 	if (YSI_g_sReplacePtr == MAX_HOOK_REPLACEMENTS)
 	{
-		P:E("Insufficient space in the replacements table.");
+		Debug_Error("Insufficient space in the replacements table.");
 		return;
 	}
 	strunpack(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 16),
@@ -1227,7 +1227,7 @@ static stock Hooks_SortReplacements()
 			}
 		}
 	}
-	P:C(for (new i = 0 ; i != YSI_g_sReplacePtr; ++i) P:0("Hook Replacement: %d, %d, %s, %s", YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MIN], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG]););
+	Debug_Code1{for (new i = 0 ; i != YSI_g_sReplacePtr; ++i) Debug_Print0("Hook Replacement: %d, %d, %s, %s", YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MIN], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG]);}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1239,45 +1239,51 @@ static stock Hooks_SortReplacements()
 
 public OnCodeInit()
 {
-	P:1("Hooks_OnCodeInit called");
+	Debug_Print1("Hooks_OnCodeInit called");
 	state _ALS : _ALS_go;
-	// Get the replacements.
-	new
-		idx = 0,
-		publicTableEntry = 0;
-	if (Server_JITExists())
 	{
-		// Get the indexes of the startup functions that get recorded before the
-		// JIT plugin compiles, but called after it.  We thus need to fiddle the
-		// hooking to ensure that the correct functions are always called.
-		YSI_g_sInitFSIdx = funcidx("OnFilterScriptInit");
-		YSI_g_sInitGMIdx = funcidx("OnGameModeInit");
+		// Get the replacements.
+		new
+			idx = 0,
+			publicTableEntry = 0;
+		if (Server_JITExists())
+		{
+			// Get the indexes of the startup functions that get recorded before
+			// the JIT plugin compiles, but called after it.  We thus need to
+			// fiddle the hooking to ensure that the correct functions are
+			// always called.
+			YSI_g_sInitFSIdx = funcidx("OnFilterScriptInit");
+			YSI_g_sInitGMIdx = funcidx("OnGameModeInit");
+		}
+		// Loop over the redefinition functions and call them to have them call
+		// the "_Hooks_AddReplacement" function above.  If we were being REALLY
+		// clever, these functions could be removed from the public functions
+		// table afterwards (there is already code in y_hooks for this) to
+		// reduce its size.
+		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@_yH>)))
+		{
+			// From "amx\dynamic_call.inc" - check it is included in
+			// "y_hooks.inc".
+			CallFunction(AMX_Read(publicTableEntry));
+			Hooks_InvalidateName(publicTableEntry);
+		}
+		Hooks_SortReplacements();
+		Hooks_DoAllHooks();
+		// Remove a few other superfluous publics.
+		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<_@_y>)))
+			Hooks_InvalidateName(publicTableEntry);
+		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
+			Hooks_InvalidateName(publicTableEntry);
+		Hooks_SortPublics();
+		Debug_Print1("Hooks_OnCodeInit chain");
+		// Dump the generated callbacks for debugging.
+		//DisasmDump("YSI_TEST.asm");
 	}
-	// Loop over the redefinition functions and call them to have them call the
-	// "_Hooks_AddReplacement" function above.  If we were being REALLY clever,
-	// these functions could be removed from the public functions table
-	// afterwards (there is already code in y_hooks for this) to reduce is size.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@_yH>)))
-	{
-		// From "amx\dynamic_call.inc" - check it is included in "y_hooks.inc".
-		CallFunction(AMX_Read(publicTableEntry));
-		Hooks_InvalidateName(publicTableEntry);
-	}
-	Hooks_SortReplacements();
-	Hooks_DoAllHooks();
-	// Remove a few other superfluous publics.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<_@_y>)))
-		Hooks_InvalidateName(publicTableEntry);
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
-		Hooks_InvalidateName(publicTableEntry);
-	Hooks_SortPublics();
-	P:1("Hooks_OnCodeInit chain");
-	// Dump the generated callbacks for debugging.
-	//DisasmDump("YSI_TEST.asm");
+
 	#if defined Hooks_OnCodeInit
 		Hooks_OnCodeInit();
 	#endif
-	P:1("Hooks_OnCodeInit end");
+	Debug_Print1("Hooks_OnCodeInit end");
 	if (Server_JITExists())
 		Hooks_RepairJITInit();
 	return 1;

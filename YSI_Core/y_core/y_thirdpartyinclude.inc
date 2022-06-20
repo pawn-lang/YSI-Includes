@@ -96,7 +96,7 @@ Optional plugins:
 #endif
 
 // If the files only exist in one place, they will only be included once because
-// of using "#tryinclude".  If they happen to exist in two places, their own
+// of using "#tryinclude.inc".  If they happen to exist in two places, their own
 // internal include guards (or the compiler's one) will prevent their multiple
 // inclusions.  I don't know why I ever made YSI use its own internal version...
 
@@ -498,7 +498,7 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Download `https://github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
-#elseif !defined IsOpcodeRelocationRequired
+#elseif !defined HasSysreqD
 	#error Re-download `https://github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 

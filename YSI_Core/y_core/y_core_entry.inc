@@ -103,6 +103,9 @@ Optional plugins:
 // as most macros are.
 #define YSI_KEYWORD(%0) ((defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_%0) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_%0))
 
+// Similar to `YSI_KEYWORD`, but disabled by default.
+#define YSI_OPTIONAL(%0) (defined YSI_KEYWORD_%0 && !defined YSI_NO_KEYWORD_%0)
+
 // Define `cellbytes` as a symbol that really should exist already!
 #if !defined cellbytes
 	#define cellbytes (cellbits / charbits)
@@ -158,7 +161,7 @@ Optional plugins:
 	#endif
 
 	#undef _FIXES_DEFAULT
-#elseif !defined YSI_OPENMP__
+#else
 	#define YSI_FIX_CALLBACKS
 #endif
 
@@ -278,6 +281,43 @@ stock const YSIM_VERMAX[] = "X";
 #include "y_amx_impl"
 #include "y_shortfunc"
 #include "..\..\YSI_Players\y_android\y_android_entry"
+
+#if defined YSI_TESTS && __COMPILER_FUNC_DECL_BUG
+	#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumericTest__
+		// Test a compiler crash doesn't.
+		stock IsNumeric(const number[])
+		{
+			Debug_Print4("IsNumeric called: \"%s\"", number);
+			// This function is copied in `y_utils_impl` to test a compiler bug.
+			new
+				i = -1;
+			if (YSI_IsPacked__(number))
+			{
+				if (number{0} == '-') ++i;
+				while ('0' <= number{++i} <= '9') {}
+				return !number{i};
+			}
+			else
+			{
+				if (number[0] == '-') ++i;
+				while ('0' <= number[++i] <= '9') {}
+				return !number[i];
+			}
+		}
+
+		#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
+		stock isnumeric(const number[])
+		{
+			return IsNumeric(number);
+		}
+
+		// Ensure this branch is hit a second time.
+		stock YSI_IsNumericTest__()
+		{
+		}
+	#endif
+#endif
+
 #include "y_utils_impl"
 
 // Part of "y_scriptinit", but requires "y_amx".

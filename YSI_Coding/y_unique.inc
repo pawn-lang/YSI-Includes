@@ -107,6 +107,6 @@ Optional plugins:
 #if defined _Y_UNIQUE_INCLUDED
 	#undef _Y_UNIQUE_INCLUDED
 #else
-	#error Did you use `YSI/y_unique` instead of `YSI\y_unique`?
+	#error Did you use `YSI_Coding/y_unique` instead of `YSI_Coding\y_unique`?
 #endif
 

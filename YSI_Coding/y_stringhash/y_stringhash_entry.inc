@@ -320,7 +320,7 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 			return 5381;
 		}
 	}
-	P:3("YHash called: \"%s\", %i, %i, %i, %i", str, _:sensitive, _:type, len, pack);
+	Debug_Print3("YHash called: \"%s\", %i, %i, %i, %i", str, _:sensitive, _:type, len, pack);
 	len = min(len, strlen(str));
 	new
 		i = 0;

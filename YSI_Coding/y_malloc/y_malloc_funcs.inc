@@ -78,7 +78,7 @@ Optional plugins:
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(Malloc_GetSlotSize(Alloc:slot));
+FUNC_PAWNDOC(Malloc_GetSlotSize(Alloc:slot));
 #define Malloc_GetSlotSize(%1) \
 	(YSI_gMallocMemory[_:(%1) - 1])
 
@@ -98,7 +98,7 @@ P:D(Malloc_GetSlotSize(Alloc:slot));
 
 #else
 
-	P:D(Malloc_SlotSize(Alloc:slot));
+	FUNC_PAWNDOC(Malloc_SlotSize(Alloc:slot));
 	#define Malloc_SlotSize(%1) \
 		Malloc_GetSlotSize(%1)
 
@@ -134,7 +134,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
  * <param name="size">The size to set it to.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(Malloc_SetSlotSize(slot,size));
+FUNC_PAWNDOC(Malloc_SetSlotSize(slot,size));
 #define Malloc_SetSlotSize(%1,%2) \
 	YSI_gMallocMemory[_:(%1) - 1] = (%2)
 
@@ -149,7 +149,7 @@ P:D(Malloc_SetSlotSize(slot,size));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Malloc_GetData(Alloc:slot,index));
+FUNC_PAWNDOC(Malloc_GetData(Alloc:slot,index));
 #define Malloc_GetData(%1,%2) \
 	(YSI_gMallocMemory[_:((%1)+Alloc:(%2))])
 
@@ -159,7 +159,7 @@ P:D(Malloc_GetData(Alloc:slot,index));
  * <param name="value">The value to save.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(Malloc_SetData(Alloc:slot,index,value));
+FUNC_PAWNDOC(Malloc_SetData(Alloc:slot,index,value));
 #define Malloc_SetData(%1,%2,%3) \
 	YSI_gMallocMemory[_:((%1)+Alloc:(%2))]=(%3)
 
@@ -174,7 +174,7 @@ P:D(Malloc_SetData(Alloc:slot,index,value));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(mget(Alloc:slot, index));
+FUNC_PAWNDOC(mget(Alloc:slot, index));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mget(%1) \
 		Malloc_Get(%1)
@@ -190,7 +190,7 @@ P:D(mget(Alloc:slot, index));
  *  Shorthand for <symbolref name="Malloc_GetFloat" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
-P:D(mgetf(Alloc:slot, index));
+FUNC_PAWNDOC(mgetf(Alloc:slot, index));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mgetf(%1) \
 		Malloc_GetFloat(%1)
@@ -205,7 +205,7 @@ P:D(mgetf(Alloc:slot, index));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(mset(Alloc:slot, index, value));
+FUNC_PAWNDOC(mset(Alloc:slot, index, value));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mset(%1) \
 		Malloc_Set(%1)
@@ -220,7 +220,7 @@ P:D(mset(Alloc:slot, index, value));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(msetf(Alloc:slot, index, value));
+FUNC_PAWNDOC(msetf(Alloc:slot, index, value));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define msetf(%1) \
 		Malloc_SetFloat(%1)
@@ -241,7 +241,7 @@ P:D(msetf(Alloc:slot, index, value));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(mgets(target[], length, Alloc:array, const index, const bool:pack = false));
+FUNC_PAWNDOC(mgets(target[], length, Alloc:array, const index, const bool:pack = false));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mgets(%1) \
 		Malloc_GetS(%1)
@@ -261,7 +261,7 @@ P:D(mgets(target[], length, Alloc:array, const index, const bool:pack = false));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(mgeta(target[], length, Alloc:array, index));
+FUNC_PAWNDOC(mgeta(target[], length, Alloc:array, index));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mgeta(%1) \
 		Malloc_GetA(%1)
@@ -278,7 +278,7 @@ P:D(mgeta(target[], length, Alloc:array, index));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(msets(Alloc:array, const index, const str[], const bool:pack = false));
+FUNC_PAWNDOC(msets(Alloc:array, const index, const str[], const bool:pack = false));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define msets(%1) \
 		Malloc_SetS(%1)
@@ -295,7 +295,7 @@ P:D(msets(Alloc:array, const index, const str[], const bool:pack = false));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(mseta(Alloc:array, index, const str[], len));
+FUNC_PAWNDOC(mseta(Alloc:array, index, const str[], len));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mseta(%1) \
 		Malloc_SetA(%1)
@@ -308,7 +308,7 @@ P:D(mseta(Alloc:array, index, const str[], len));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Malloc_NextSlot(slot));
+FUNC_PAWNDOC(Malloc_NextSlot(slot));
 #define Malloc_NextSlot(%1) \
 	(YSI_gMallocMemory[(%1)])
 
@@ -331,13 +331,13 @@ P:D(Malloc_NextSlot(slot));
 		{
 			return Malloc_GetData(_:array, index);
 		}
-		P:C(else P:E("Array read index out of bounds: %d[%d]", _:array, index););
+		Debug_Code1{else Debug_Error("Array read index out of bounds: %d[%d]", _:array, index);}
 		return 0;
 	}
 
 #else
 
-	P:D(Malloc_Get(Alloc:array, index));
+	FUNC_PAWNDOC(Malloc_Get(Alloc:array, index));
 	#define Malloc_Get(%1,%2) \
 		Malloc_GetData(%1, %2)
 
@@ -360,13 +360,13 @@ P:D(Malloc_NextSlot(slot));
 		{
 			return Malloc_SetData(_:array, index, value);
 		}
-		P:C(else P:E("Array write index out of bounds: %d[%d]", _:array, index););
+		Debug_Code1{else Debug_Error("Array write index out of bounds: %d[%d]", _:array, index);}
 		return 0;
 	}
 
 #else
 
-	P:D(Malloc_Set(Alloc:array,index,value));
+	FUNC_PAWNDOC(Malloc_Set(Alloc:array,index,value));
 	#define Malloc_Set(%1,%2,%3) \
 		Malloc_SetData(%1, %2, %3)
 
@@ -384,13 +384,13 @@ P:D(Malloc_NextSlot(slot));
 #if defined YSI_MALLOC_SECURE
 
 	Float:Malloc_GetFloat(Alloc:array, index) {
-		P:3("Malloc_GetFloat: array = %d, index = %d.", _:array, index);
+		Debug_Print3("Malloc_GetFloat: array = %d, index = %d.", _:array, index);
 		return Float:Malloc_Get(_:array, index);
 	}
     
 #else 
 
-	P:D(Float:Malloc_GetFloat(Alloc:array, index));
+	FUNC_PAWNDOC(Float:Malloc_GetFloat(Alloc:array, index));
 	#define Malloc_GetFloat(%1,%2) \
 		Float:Malloc_Get(%1,%2)
 
@@ -410,14 +410,14 @@ P:D(Malloc_NextSlot(slot));
 #if defined YSI_MALLOC_SECURE
 
 	Malloc_SetFloat(Alloc:array, index, Float:value) {
-		P:3("Malloc_SetFloat called: %d, %d, %f", _:array, index, _:value);
+		Debug_Print3("Malloc_SetFloat called: %d, %d, %f", _:array, index, _:value);
         Malloc_Set(_:array, index, _:value);
         return 1;
 	}
 
 #else 
 
-	P:D(Malloc_SetFloat(Alloc:array, index, Float:value));
+	FUNC_PAWNDOC(Malloc_SetFloat(Alloc:array, index, Float:value));
 	#define Malloc_SetFloat(%1,%2,%3) \
 		Malloc_Set(%1,%2,%3)
 
@@ -436,7 +436,7 @@ P:D(Malloc_NextSlot(slot));
 
 stock Malloc_GetS(target[], length = sizeof (target), Alloc:array, const index, const bool:pack = false)
 {
-	P:3("Malloc_GetS: array = %d, index = %d.", _:array, index);
+	Debug_Print3("Malloc_GetS: array = %d, index = %d.", _:array, index);
 	if (0 <= index < Malloc_GetSlotSize(_:array))
 	{
 		if (pack)
@@ -463,12 +463,12 @@ stock Malloc_GetS(target[], length = sizeof (target), Alloc:array, const index, 
 
 stock Malloc_SetS(Alloc:array, const index, const str[], const bool:pack = false)
 {
-	P:3("Malloc_SetS called: %d, %d, %s", _:array, index, str);
+	Debug_Print3("Malloc_SetS called: %d, %d, %s", _:array, index, str);
 	new
 		len = strlen(str) + 1;
 	if (0 <= index && index + len <= Malloc_GetSlotSize(_:array))
 	{
-		P:5("Malloc_SetS: In check.");
+		Debug_Print5("Malloc_SetS: In check.");
 		if (pack)
 		{
 			strpack(Malloc_GetData(array, index), str, cellmax);
@@ -483,7 +483,7 @@ stock Malloc_SetS(Alloc:array, const index, const str[], const bool:pack = false
 	else
 	{
 		#if defined YSI_MALLOC_SECURE
-			P:E("String copy failed (%s)", str);
+			Debug_Error("String copy failed (%s)", str);
 		#endif
 		return 0;
 	}
@@ -500,7 +500,7 @@ stock Malloc_SetS(Alloc:array, const index, const str[], const bool:pack = false
 
 stock Malloc_SetVAS(Alloc:array, index, arg)
 {
-	P:3("Malloc_SetVAS called: %d, %d, %d", _:array, index, arg);
+	Debug_Print3("Malloc_SetVAS called: %d, %d, %d", _:array, index, arg);
 	new
 		len = 0;
 	#emit LOAD.S.pri arg
@@ -518,7 +518,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 	#emit STOR.S.pri len
 	if (index >= 0 && index + (++len) <= Malloc_GetSlotSize(_:array))
 	{
-		P:5("Malloc_SetVAS: In check.");
+		Debug_Print5("Malloc_SetVAS: In check.");
 		index += _:array;
 		YSI_gMallocMemory[index] = 0;
 		// Blank and copy the string.
@@ -545,7 +545,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 		//strcat(YSI_gMallocMemory[index], str, cellmax);
 	}
 	#if defined YSI_MALLOC_SECURE
-		P:C(else P:E("String copy failed (%s)", str););
+		Debug_Code1{else Debug_Error("String copy failed (%s)", str);}
 	#endif
 }
 
@@ -561,15 +561,15 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 
 stock Malloc_GetA(dest[], length, Alloc:array, index)
 {
-	P:3("Malloc_GetA called: array = %d, index = %d, length = %d.", _:array, index, length);
+	Debug_Print3("Malloc_GetA called: array = %d, index = %d, length = %d.", _:array, index, length);
 	if (index >= 0)
 	{
 		new
 			size = Malloc_GetSlotSize(_:array);
-		P:5("Malloc_GetA: size = %d, %d.", size, size - index);
+		Debug_Print5("Malloc_GetA: size = %d, %d.", size, size - index);
 		memcpy(dest, YSI_gMallocMemory[index + _:array], 0, min(size - index, length) * 4, length);
 		#if defined YSI_MALLOC_SECURE
-			P:C(if(length > size)P:E("Out of buffer space."););
+			Debug_Code1{if(length > size)Debug_Error("Out of buffer space.");}
 		#endif
 		return 1;
 	}
@@ -588,15 +588,15 @@ stock Malloc_GetA(dest[], length, Alloc:array, index)
 
 stock Malloc_SetA(Alloc:array, index, const source[], length)
 {
-	P:3("Malloc_SetA: array = %d, index = %d.", _:array, index);
+	Debug_Print3("Malloc_SetA: array = %d, index = %d.", _:array, index);
 	if (index >= 0)
 	{
 		new
 			size = Malloc_GetSlotSize(_:array);
-		P:5("Malloc_SetA: size = %d.", size);
+		Debug_Print5("Malloc_SetA: size = %d.", size);
 		memcpy(YSI_gMallocMemory[index + _:array], source, 0, min(size - index, length) * 4, size - index);
 		#if defined YSI_MALLOC_SECURE
-			P:C(if(length > size - index)P:E("Out of buffer space."););
+			Debug_Code1{if(length > size - index)Debug_Error("Out of buffer space.");}
 		#endif
 	}
 }
@@ -612,7 +612,7 @@ stock Malloc_SetA(Alloc:array, index, const source[], length)
 
 stock Malloc_SetVAA(Alloc:array, index, arg)
 {
-	P:3("Malloc_SetVAA called: %d, %d, %d", _:array, index, arg);
+	Debug_Print3("Malloc_SetVAA called: %d, %d, %d", _:array, index, arg);
 	new
 		len = 0;
 	#emit LOAD.S.pri arg
@@ -627,7 +627,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 	#emit STOR.S.pri len
 	if (index >= 0 && index + len <= Malloc_GetSlotSize(_:array))
 	{
-		P:5("Malloc_SetVAA In check.");
+		Debug_Print5("Malloc_SetVAA In check.");
 		index += _:array;
 		// Skip the code above the second time now (store the true source
 		// address in "arg" the first time).
@@ -658,7 +658,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 		#emit STACK      24
 	}
 	#if defined YSI_MALLOC_SECURE
-		P:C(else P:E("Array copy out of memory."););
+		Debug_Code1{else Debug_Error("Array copy out of memory.");}
 	#endif
 }
 
@@ -678,13 +678,13 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 	{
 		new
 			Alloc:slot = Malloc_Allocate(size, false);
-		P:C(if(!slot)P:E("Allocation failed (%d)", size););
+		Debug_Code1{if(!slot)Debug_Error("Allocation failed (%d)", size);}
 		return slot;
 	}
 
 #else
 
-	P:D(Alloc:malloc(size));
+	FUNC_PAWNDOC(Alloc:malloc(size));
 	#define malloc(%1) \
 		Malloc_Allocate(%1)
 
@@ -714,7 +714,7 @@ stock Alloc:calloc(size)
 	//	}
 	//}
 	//#if defined YSI_MALLOC_SECURE
-	P:C(if(!slot)P:E("Allocation failed (%d)", size););
+	Debug_Code1{if(!slot)Debug_Error("Allocation failed (%d)", size);}
 	//#endif
 	return slot;
 }
@@ -732,7 +732,7 @@ stock Alloc:calloc(size)
 	{
 		if (!slot || !Malloc_GetSlotSize(_:slot))
 		{
-			P:1("Free failed (%d)", _:slot);
+			Debug_Print1("Free failed (%d)", _:slot);
 			return 0;
 		}
 		return Malloc_Free(slot);
@@ -740,7 +740,7 @@ stock Alloc:calloc(size)
 
 #else
 
-	P:D(free(Alloc:slot));
+	FUNC_PAWNDOC(free(Alloc:slot));
 	#define free(%1) \
 		Malloc_Free(%1)
 
@@ -759,14 +759,14 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 {
 	if (!size || !slot || !Malloc_GetSlotSize(_:slot))
 	{
-		P:1("Realloc failed (%d)", _:slot);
+		Debug_Print1("Realloc failed (%d)", _:slot);
 		return NO_ALLOC;
 	}
 	new
 		Alloc:ret = Malloc_Allocate(size, clear);
 	if (!ret)
 	{
-		P:1("Realloc failed (%d)", _:slot);
+		Debug_Print1("Realloc failed (%d)", _:slot);
 		return NO_ALLOC;
 	}
 	memcpy(YSI_gMallocMemory[_:ret], YSI_gMallocMemory[_:slot], 0, Malloc_GetSlotSize(slot) * cellbytes, size);
@@ -798,7 +798,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 #endif
 		stock Alloc:Malloc_Allocate(size, const bool:clear = false)
 		{
-			P:2("Malloc_Allocate called: %d, %d, %d, %d", size, YSI_g_sUnusedStart, YSI_g_sHeapStart, Malloc_GetSlotSize(YSI_g_sUnusedStart));
+			Debug_Print2("Malloc_Allocate called: %d, %d, %d, %d", size, YSI_g_sUnusedStart, YSI_g_sHeapStart, Malloc_GetSlotSize(YSI_g_sUnusedStart));
 			// We allocate `size + 1` cells - the extra cell comes before the
 			// returned allocation, and is used to store the size of the
 			// allocation (for when we are freeing data).  To make allocations
@@ -823,7 +823,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 			while (slot)
 			{
 				cs = Malloc_GetSlotSize(slot);
-				P:7("Malloc_Allocate: slot %d %d", slot, cs);
+				Debug_Print7("Malloc_Allocate: slot %d %d", slot, cs);
 				if (!cs)
 				{
 					return NO_ALLOC;
@@ -835,7 +835,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 				p = slot;
 				slot = Malloc_NextSlot(slot);
 			}
-			P:7("Malloc_Allocate: found: %d", slot, cs);
+			Debug_Print7("Malloc_Allocate: found: %d", slot, cs);
 			if (slot)
 			{
 				nextSlot = Malloc_NextSlot(slot);
@@ -889,12 +889,12 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 		stock Malloc_Free(Alloc:slot)
 		{
 			if (slot == NO_ALLOC) return 0;
-			P:4("Malloc_Free called: %d", _:slot);
+			Debug_Print4("Malloc_Free called: %d", _:slot);
 			new
 				size = Malloc_GetSlotSize(_:slot),
 				p = YSI_g_sUnusedStart,
 				l = YSI_g_sHeapStart; // Was "0", now an offset to the heap.
-			P:5("Malloc_Free: size = %d", size);
+			Debug_Print5("Malloc_Free: size = %d", size);
 			if (p)
 			{
 				while (p && p < _:slot)

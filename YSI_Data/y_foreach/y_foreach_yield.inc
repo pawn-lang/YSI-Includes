@@ -85,7 +85,7 @@ stock bool:Iter_YieldEnter()
 	// often be a non-zero jump address (i.e. the return address).
 	if (++YSI_gIteratorDepth >= MAX_NESTED_ITERATORS)
 	{
-		P:E("Too many nested `foreach` yield loops.  Increase `MAX_NESTED_ITERATORS`.");
+		Debug_Error("Too many nested `foreach` yield loops.  Increase `MAX_NESTED_ITERATORS`.");
 		return true;
 	}
 	{}

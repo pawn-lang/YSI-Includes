@@ -221,7 +221,7 @@ _Y_RACES_STATIC stock RaceArray_Add(slot, Float:x, Float:y, Float:z)
  *  Checks a race is active.
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Race__IsActive(raceid));
+FUNC_PAWNDOC(bool:Race__IsActive(raceid));
 #define Race__IsActive(%1) \
 	(YSI_g_sRaceData[(%1)][E_RACE_FLAGS] & e_RACE_FLAGS_ACTIVE)
 
@@ -231,7 +231,7 @@ P:D(bool:Race__IsActive(raceid));
  *  Checks an id is valid and active.
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Race_IsValid(raceid));
+FUNC_PAWNDOC(bool:Race_IsValid(raceid));
 #define Race_IsValid(%1) \
 	(0 <= (%1) < MAX_RACES && Race__IsActive((%1)))
 

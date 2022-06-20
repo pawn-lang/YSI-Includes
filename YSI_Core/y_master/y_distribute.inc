@@ -85,6 +85,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if defined YSI_NO_MASTER
+	#define __declspec(%0)
+	#define DISTRIBUTE(%0);
+	#endinput
+#endif
+
 /*
 
 THIS:

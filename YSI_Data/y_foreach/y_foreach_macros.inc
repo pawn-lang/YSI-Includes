@@ -95,7 +95,7 @@ Optional plugins:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-//P:D(foreach(expr));
+//FUNC_PAWNDOC(foreach(expr));
 #define FOREACH__(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
 #if YSI_KEYWORD(foreach)
 	#define foreach FOREACH__
@@ -151,7 +151,7 @@ Optional plugins:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(iterfunc(params));
+FUNC_PAWNDOC(iterfunc(params));
 #define iterfunc%0(%1) F@y:%0(%1)
 
 /*-------------------------------------------------------------------------*//**
@@ -161,7 +161,7 @@ P:D(iterfunc(params));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iterator@Reverse(Iterator:iter<>));
+FUNC_PAWNDOC(Iterator@Reverse(Iterator:iter<>));
 #define Iterator@Reverse%9;_:(%1=%9(%0)%9)%9; F@o)+_:F@p:F@q:$%1,%0$
 
 /*
@@ -192,7 +192,7 @@ P:D(Iterator@Reverse(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Init(Iterator:iter[]<>));
+FUNC_PAWNDOC(Iter_Init(Iterator:iter[]<>));
 #if __COMPILER_NESTED_ELLIPSIS
 	#define Iter_Init(%0) (I@=0)
 #else
@@ -209,7 +209,7 @@ P:D(Iter_Init(Iterator:iter[]<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_InitAndClear(Iterator:iter[]<>));
+FUNC_PAWNDOC(Iter_InitAndClear(Iterator:iter[]<>));
 #if __COMPILER_NESTED_ELLIPSIS
 	#define Iter_InitAndClear(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@s(Iter_Single@%0[]))
 #else
@@ -227,7 +227,7 @@ P:D(Iter_InitAndClear(Iterator:iter[]<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Add(Iterator:iter<>, value));
+FUNC_PAWNDOC(Iter_Add(Iterator:iter<>, value));
 #define Iter_Add _ITER<Iter_Add_Internal>
 #define Iter_Add_InternalA(%0,%1,%9)    Iter_Add_InternalC(%0,_:%1,F@s(%1)-1,Iter_Tag(%1,%9))
 #define Iter_Add_InternalB(%0,%2,%1,%9) Iter_Add_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
@@ -243,7 +243,7 @@ P:D(Iter_Add(Iterator:iter<>, value));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Remove(Iterator:iter<>, value));
+FUNC_PAWNDOC(Iter_Remove(Iterator:iter<>, value));
 #define Iter_Remove _ITER<Iter_Remove_Internal>
 #define Iter_Remove_InternalA(%0,%1,%9)    Iter_Remove_InternalC(%0,_:%1,F@s(%1)-1,Iter_Tag(%1,%9))
 #define Iter_Remove_InternalB(%0,%2,%1,%9) Iter_Remove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
@@ -259,7 +259,7 @@ P:D(Iter_Remove(Iterator:iter<>, value));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Free(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_Free(Iterator:iter<>));
 #define Iter_Free _ITER<Iter_Free_Internal>
 #define Iter_Free_InternalA(%0,%1)    Iter_Free_Internal(_:%1,F@s(%1)-F@s(%0))
 #define Iter_Free_InternalB(%0,%2,%1) Iter_Free_Internal(_:%1,F@s(%1)-F@s(%0))
@@ -275,7 +275,7 @@ P:D(Iter_Free(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_FreeMulti(Iterator:iter<,>, ));
+FUNC_PAWNDOC(Iter_FreeMulti(Iterator:iter<,>, ));
 #define Iter_FreeMulti _ITER<Iter_FreeMulti_Internal>
 #define Iter_FreeMulti_InternalA(%0,%1)    Iter_FreeMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0))
 #define Iter_FreeMulti_InternalB(%0,%2,%1) Iter_FreeMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0))
@@ -291,7 +291,7 @@ P:D(Iter_FreeMulti(Iterator:iter<,>, ));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Iter_Contains(Iterator:iter<>, value));
+FUNC_PAWNDOC(bool:Iter_Contains(Iterator:iter<>, value));
 #define Iter_Contains(%0) (bool:_ITER<Iter_Contains_Internal>(%0))
 #define Iter_Contains_InternalA(%0,%1,%9)     Iter_Contains_InternalC(_:%1,F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 #define Iter_Contains_InternalB(%0,%2,%1,%9)  Iter_Contains_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),-%2+F@s(%1)-1,Iter_Tag(%1,%9))
@@ -311,7 +311,7 @@ P:D(bool:Iter_Contains(Iterator:iter<>, value));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_GetMulti(Iterator:iter<,>, value));
+FUNC_PAWNDOC(Iter_GetMulti(Iterator:iter<,>, value));
 #define Iter_GetMulti _ITER<Iter_GetMulti_Internal>
 #define Iter_GetMulti_InternalA(%0,%1,%9)    Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 #define Iter_GetMulti_InternalB(%0,%2,%1,%9) Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
@@ -330,7 +330,7 @@ P:D(Iter_GetMulti(Iterator:iter<,>, value));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_SafeRemove(Iterator:iter<>, value, &next));
+FUNC_PAWNDOC(Iter_SafeRemove(Iterator:iter<>, value, &next));
 #define Iter_SafeRemove _ITER<Iter_SafeRemove_Internal>
 #define Iter_SafeRemove_InternalA(%0,%1,%9)    Iter_SafeRemove_InternalC(%0,_:%1,F@s(%1)-1,Iter_Tag(%1,%9))
 #define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
@@ -345,7 +345,7 @@ P:D(Iter_SafeRemove(Iterator:iter<>, value, &next));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_RandomAdd(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_RandomAdd(Iterator:iter<>));
 #define Iter_RandomAdd _ITER<Iter_RandomAdd_Internal>
 #define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,(_:%1),F@s(%1)-1)
 #define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,(_:%1),F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
@@ -362,7 +362,7 @@ P:D(Iter_RandomAdd(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_RandomRemove(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_RandomRemove(Iterator:iter<>));
 #define Iter_RandomRemove _ITER<Iter_RandomRemove_Internal>
 #define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,(_:%1),F@s(%1)-1)
 #define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0[%2],(_:%1),F@s(%1)-F@s(%0),F@s(%1)-1-(%2))
@@ -379,7 +379,7 @@ P:D(Iter_RandomRemove(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_RandomFree(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_RandomFree(Iterator:iter<>));
 #define Iter_RandomFree _ITER<Iter_RandomFree_Internal>
 #define Iter_RandomFree_InternalA(%0,%1)    Iter_RandomFree_InternalC(%0,(_:%1),F@s(%1)-1)
 #define Iter_RandomFree_InternalB(%0,%2,%1) Iter_RandomFree_InternalD(%0,(_:%1),F@s(%1)-F@s(%0),F@s(%0))
@@ -396,7 +396,7 @@ P:D(Iter_RandomFree(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Random(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_Random(Iterator:iter<>));
 #define Iter_Random _ITER<Iter_Random_Internal>
 #define Iter_Random_InternalA(%0,%1)    Iter_Random_Internal(%0,(_:%1),F@s(%1)-1)
 #define Iter_Random_InternalB(%0,%2,%1) Iter_Random_Internal(%0[%2],(_:%1),F@s(%1)-1-(%2))
@@ -412,10 +412,11 @@ P:D(Iter_Random(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Count(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_Count(Iterator:iter<>));
 #define Iter_Count _ITER<Iter_Count_Internal>
 #define Iter_Count_InternalA(%0,%1)    (%0)
-#define Iter_Count_InternalB(%0,%2,%1) (%0[%2])
+#define Iter_Count_InternalB(%0,%2,%1) (_:F@E:(%0 F@a$[%2]))
+#define F@E:(%0$[]) Iter_Count_InternalC(%0$)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to empty.</param>
@@ -434,25 +435,83 @@ P:D(Iter_Count(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Clear(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_Clear(Iterator:iter<>));
 #define Iter_Clear _ITER<Iter_Clear_Internal>
 #define Iter_Clear_InternalA(%0,%1)           Iter_Clear_InternalC(_:%1,F@s(%1),F@s(%0),%0)
 #define Iter_Clear_InternalB(%0,%2,%1)        Iter_Clear_InternalD(_:%1,F@s(%1),F@s(%0),F@s(%1)-F@s(%0),%0,%2)
 #define Iter_Clear_InternalD(%0,%1,%2,%3,%4,) Iter_Clear_InternalC(%0,%1,%2,%4)
 
 /*-------------------------------------------------------------------------*//**
- * <param name="iter">Name of the iterator to test emptiness of.</param>
+ * <param name="iter">Name of the iterator to test the emptiness of.</param>
  * <remarks>
+ *  For multi-iterators <c>Iter_IsEmpty(a&lt;&gt;)</c> and <c>Iter_IsEmpty(a&lt;5&gt;)</c>
+ *  are different.  The first returns <c>true</c> when all values are unused
+ *  by any slot.  The second returns <c>true</c> when that slot alone has no
+ *  values, even if every single value is used by other slots.
  *
  * native Iter_IsEmpty(Iterator:Name&lt;&gt;);
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_IsEmpty(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_IsEmpty(Iterator:iter<>));
 #define Iter_IsEmpty _ITER<Iter_IsEmpty_Internal>
 #define Iter_IsEmpty_InternalA(%0,%1)    ((%0) == 0)
-#define Iter_IsEmpty_InternalB(%0,%2,%1) ((%0[%2]) == 0)
+#define Iter_IsEmpty_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) == 0)
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator to test the non-emptiness of.</param>
+ * <remarks>
+ *  For multi-iterators <c>Iter_NonEmpty(a&lt;&gt;)</c> and <c>Iter_NonEmpty(a&lt;5&gt;)</c>
+ *  are different.  The first returns <c>true</c> when any value is used, in
+ *  any slot.  The second returns <c>true</c> when that slot alone has any
+ *  values.
+ *
+ * native Iter_NonEmpty(Iterator:Name&lt;&gt;);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FUNC_PAWNDOC(Iter_NonEmpty(Iterator:iter<>));
+#define Iter_NonEmpty _ITER<Iter_NonEmpty_Internal>
+#define Iter_NonEmpty_InternalA(%0,%1)    ((%0) != 0)
+#define Iter_NonEmpty_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) != 0)
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator to test the fullness of.</param>
+ * <remarks>
+ *  For multi-iterators <c>Iter_IsFull(a&lt;&gt;)</c> and <c>Iter_IsFull(a&lt;5&gt;)</c>
+ *  are different.  The first returns <c>true</c> when all values are used, in
+ *  any slot.  The second returns <c>true</c> when that slot alone has all
+ *  values.
+ *
+ * native Iter_IsFull(Iterator:Name&lt;&gt;);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FUNC_PAWNDOC(Iter_IsFull(Iterator:iter<>));
+#define Iter_IsFull _ITER<Iter_IsFull_Internal>
+#define Iter_IsFull_InternalA(%0,%1)    ((%0) == (F@s(%1)-1))
+#define Iter_IsFull_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) == (F@s(%1)-F@s(%0)))
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator to test the non-fullness of.</param>
+ * <remarks>
+ *  For multi-iterators <c>Iter_NonFull(a&lt;&gt;)</c> and <c>Iter_NonFull(a&lt;5&gt;)</c>
+ *  are different.  The first returns <c>true</c> when not all values are used
+ *  anywhere.  The second returns <c>true</c> when that slot alone is missing
+ *  some values, even if those values are in other slots.
+ *
+ * native Iter_NonFull(Iterator:Name&lt;&gt;);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FUNC_PAWNDOC(Iter_NonFull(Iterator:iter<>));
+#define Iter_NonFull _ITER<Iter_NonFull_Internal>
+#define Iter_NonFull_InternalA(%0,%1)    ((%0) != (F@s(%1)-1))
+#define Iter_NonFull_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) != (F@s(%1)-F@s(%0)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the first free slot in.</param>
@@ -465,7 +524,7 @@ P:D(Iter_IsEmpty(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Alloc(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_Alloc(Iterator:iter<>));
 #define Iter_Alloc _ITER<Iter_Alloc_Internal>
 #define Iter_Alloc_InternalA(%0,%1)    Iter_Alloc_InternalC(%0,_:%1,F@s(%1)-1)
 #define Iter_Alloc_InternalB(%0,%2,%1) Iter_Alloc_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0))
@@ -495,7 +554,7 @@ P:D(Iter_Alloc(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_FastClear(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_FastClear(Iterator:iter<>));
 #define Iter_FastClear _ITER<Iter_FastClear_Internal>
 #define Iter_FastClear_InternalA(%0,%1);    {static YSII_Xg@Clear[F@s(%1)]={0,1,...};%1=YSII_Xg@Clear;%0=0;}
 #define Iter_FastClear_InternalB(%0,%2,%1); {static YSII_Xg@Clear[F@s(%1)]={0,1,...},YSII_Yg@Clear[F@s(%0)]={0,0,...};%1=YSII_Xg@Clear;%0=YSII_Yg@Clear;}
@@ -507,7 +566,7 @@ P:D(Iter_FastClear(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Begin(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_Begin(Iterator:iter<>));
 #define Iter_Begin _ITER<Iter_Begin_Internal>
 #define Iter_Begin_InternalA(%0,%1)    (F@s(%1)-F@s(%0))
 #define Iter_Begin_InternalB(%0,%2,%1) (F@s(%1)-1-(%2))
@@ -519,7 +578,7 @@ P:D(Iter_Begin(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_End(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_End(Iterator:iter<>));
 #define Iter_End _ITER<Iter_End_Internal>
 #define Iter_End_InternalA(%0,%1)    (F@s(%1)-F@s(%0))
 #define Iter_End_InternalB(%0,%2,%1) (F@s(%1)-1-(%2))
@@ -531,7 +590,7 @@ P:D(Iter_End(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_First(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_First(Iterator:iter<>));
 #define Iter_First _ITER<Iter_First_Internal>
 #define Iter_First_InternalA(%0,%1)    (_:%1[(F@s(%1)-F@s(%0))])
 #define Iter_First_InternalB(%0,%2,%1) (_:%1[(F@s(%1)-1-(%2))])
@@ -544,7 +603,7 @@ P:D(Iter_First(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Last(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_Last(Iterator:iter<>));
 #define Iter_Last _ITER<Iter_Last_Internal>
 #define Iter_Last_InternalA(%0,%1)    ((_:%1[Iter_End_InternalA(%0,%1)-1])-1)
 #define Iter_Last_InternalB(%0,%2,%1) (Iter_Prev_InternalB(%0,%2,%1,Iter_End_InternalB(%0,%2,%1)))
@@ -557,7 +616,7 @@ P:D(Iter_Last(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Next(Iterator:iter<>, cur));
+FUNC_PAWNDOC(Iter_Next(Iterator:iter<>, cur));
 #define Iter_Next _ITER<Iter_Next_Internal>
 #define Iter_Next_InternalA(%0,%1,%9)    (_:%1[Iter_Tag(%1,%9)])
 #define Iter_Next_InternalB(%0,%2,%1,%9) (_:%1[Iter_Tag(%1,%9)])
@@ -570,7 +629,7 @@ P:D(Iter_Next(Iterator:iter<>, cur));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Prev(Iterator:iter<>, cur));
+FUNC_PAWNDOC(Iter_Prev(Iterator:iter<>, cur));
 #define Iter_Prev _ITER<Iter_Prev_Internal>
 #define Iter_Prev_InternalA(%0,%1,%9)    (((_:%1[(Iter_Tag(%1,%9)-1)%F@s(%1)])-1)%F@s(%1))
 #define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0),F@s(%1),Iter_Tag(%1,%9))
@@ -582,7 +641,7 @@ P:D(Iter_Prev(Iterator:iter<>, cur));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_TrueArray(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_TrueArray(Iterator:iter<>));
 #define Iter_TrueArray(%1) F@r(_:Iterator@%1)
 
 /*-------------------------------------------------------------------------*//**
@@ -592,7 +651,7 @@ P:D(Iter_TrueArray(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_TrueCount(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_TrueCount(Iterator:iter<>));
 #define Iter_TrueCount(%1) F@r(Iter_Single@%1)
 
 /*-------------------------------------------------------------------------*//**
@@ -602,7 +661,7 @@ P:D(Iter_TrueCount(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_TrueMulti(Iterator:iter<,>));
+FUNC_PAWNDOC(Iter_TrueMulti(Iterator:iter<,>));
 #define Iter_TrueMulti(%1) F@r(Iter_Multi@%1)
 
 /*-------------------------------------------------------------------------*//**
@@ -612,7 +671,7 @@ P:D(Iter_TrueMulti(Iterator:iter<,>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_TrueSize(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_TrueSize(Iterator:iter<>));
 #define Iter_TrueSize _ITER<Iter_TrueSize_Internal>
 #define Iter_TrueSize_InternalA(%0,%1)    (F@s(%1))
 #define Iter_TrueSize_InternalB(%0,%2,%1) (F@s(%1))
@@ -624,7 +683,7 @@ P:D(Iter_TrueSize(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Starts(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_Starts(Iterator:iter<>));
 #define Iter_Starts _ITER<Iter_Starts_Internal>
 #define Iter_Starts_InternalA(%0,%1)    (F@s(%0))
 #define Iter_Starts_InternalB(%0,%2,%1) (F@s(%0))
@@ -636,7 +695,7 @@ P:D(Iter_Starts(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Size(Iterator:iter<>));
+FUNC_PAWNDOC(Iter_Size(Iterator:iter<>));
 #define Iter_Size _ITER<Iter_Size_Internal>
 #define Iter_Size_InternalA(%0,%1)    (F@s(%1)-F@s(%0))
 #define Iter_Size_InternalB(%0,%2,%1) (F@s(%1)-F@s(%0))
@@ -655,7 +714,7 @@ P:D(Iter_Size(Iterator:iter<>));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
+FUNC_PAWNDOC(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 #define Iter_Index _ITER<Iter_Index_Internal>
 #define Iter_Index_InternalA(%0,%1,%9)    Iter_Index_Internal(%0,%1,F@s(%1)-1,F@s(%1)-1,Iter_Tag(%1,%9))
 #define Iter_Index_InternalB(%0,%2,%1,%9) Iter_Index_Internal(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
@@ -700,7 +759,7 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 #define _IterN@%0\32; _IterN@
 #define _IterL@%0\32; _IterL@
 
-P:D(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
+FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define ITER_SAFE_REMOVE(%0,%1) for (new _IterN@%0=Iter_Prev(%0,%1),_IterL@%0=1;_IterL@%0;%1=Iter_Next(%0,_IterN@%0)==%1?%1:_IterN@%0,--_IterL@%0)
 
 // Remove trailing spaces.  This looks really unsafe because of the "%0\32;"
@@ -946,7 +1005,7 @@ stock const
  *//*------------------------------------------------------------------------**/
 
 #undef Iterator
-P:D(Iterator:Iterator(name));
+FUNC_PAWNDOC(Iterator:Iterator(name));
 #define _no_itertag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
 #define ITERATOR__%1<%2> _no_itertag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={_no_itertag:0,_no_itertag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
 

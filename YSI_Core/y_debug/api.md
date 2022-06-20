@@ -6,7 +6,7 @@
 >	* -
 >* **Remarks:**
 >	Code is not a variable, it's a code chunk and may be written as so:
->	Debug_Code1(if (bla == 2) { bla++; printf("%d", bla); });
+>	Debug_Code1{if (bla == 2) { bla++; printf("%d", bla); }}
 >	The code must all be on one line to avoid errors.
 >	This isn't really a function as the first parameter is part of the name.
  

@@ -152,7 +152,7 @@ static stock
 	YSI_g_sUnusedSlot = 0,
 	YSI_g_sRemaining = sizeof (YSI_g_sTextStrings);
 
-P:D(Text_FindEntry(set, name, hash));
+FUNC_PAWNDOC(Text_FindEntry(set, name, hash));
 #define Text_FindEntry(%0,%1,%2) HashMap_GetWithHash(YSI_g_sTextMap, (%1), (%0) + (%2))
 
 //                                                                                               
@@ -174,14 +174,14 @@ P:D(Text_FindEntry(set, name, hash));
 
 public OnScriptInit()
 {
-	P:1("TextInt_OnScriptInit called");
+	Debug_Print1("TextInt_OnScriptInit called");
 	#if defined TextInt_OnScriptInit
 		TextInt_OnScriptInit();
 	#endif
 	//Text_SpecialInit();
 	Text_LoadAll();
 	_Styles_SpecialInit();
-	P:1("TextInt_OnScriptInit ended");
+	Debug_Print1("TextInt_OnScriptInit ended");
 	return 1;
 }
 
@@ -204,7 +204,7 @@ HOOK__ OnYSIInit()
 {
 	new
 		fakePtrs[YSI_MAX_LANGUAGES] = { -1, ... };
-	P:1("Text_OnYSIInit called");
+	Debug_Print1("Text_OnYSIInit called");
 	HashMap_Init(YSI_g_sTextMap, YSI_g_sTextEntries, E_TEXT_ENTRY_HASHMAP);
 	for (new i = 0; i != sizeof (YSI_g_sTextEntries); ++i)
 		YSI_g_sTextEntries[i][E_TEXT_ENTRY_POINTERS] = fakePtrs;
@@ -222,11 +222,11 @@ HOOK__ OnYSIInit()
 
 static stock Text_LoadAll()
 {
-	P:4("Text_LoadAll called");
+	Debug_Print4("Text_LoadAll called");
 	//print("Text_LoadAll: n");
 	if (Langs_GetLanguageCount() == Language:0)
 	{
-		P:E("No languages found - Did you add \"Langs_AddLanguage\" to the script init (NOT \"main\")?");
+		Debug_Error("No languages found - Did you add \"Langs_AddLanguage\" to the script init (NOT \"main\")?");
 	}
 	new
 		idx = 0,
@@ -235,7 +235,7 @@ static stock Text_LoadAll()
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@yX_>)))
 	{
 		strunpack(buffer, buffer);
-		P:6("Text_LoadAll: Adding %s to list", buffer);
+		Debug_Print6("Text_LoadAll: Adding %s to list", buffer);
 		// Get rid of the end parts, doesn't matter if "Y_TEXT_UNIQUE" is
 		// defined or not as EVERYTHING later is dropped.  Find the SECOND "@" -
 		// there will always be at least one.
@@ -255,7 +255,7 @@ static stock Text_LoadAll()
 
 static stock Text_AddLocal(const buffer[])
 {
-	P:4("Text_AddLocal called: \"%s\", %i", buffer);
+	Debug_Print4("Text_AddLocal called: \"%s\", %i", buffer);
 	// Check if this already exists.  If not, add it to a found free slot.
 	new
 		slot = -1;
@@ -282,16 +282,16 @@ static stock bool:Text_InsertString(target[][], const str[], slot, number)
 	// size of any arbitrary passed string.  Plus, it is slightly faster.  We
 	// could not do any other slot in this manner because we resize the slot,
 	// which moves other slots, but crucially not this one.
-	P:4("Text_InsertString called (%s, %d, %d) (%d)", str, slot, number, YSI_g_sUnusedSlot);
+	Debug_Print4("Text_InsertString called (%s, %d, %d) (%d)", str, slot, number, YSI_g_sUnusedSlot);
 	new
 		newlen = strlen(str);
 	if (number == 0)
 	{
-		P:5("Text_InsertString: A %d (%d)", newlen, YSI_g_sUnusedSlot);
+		Debug_Print5("Text_InsertString: A %d (%d)", newlen, YSI_g_sUnusedSlot);
 		// If there is no number, there can be no multiple strings.
 		if (!Jagged_UnsafeResizeOne(target, slot, newlen + 1))
 			return false;
-		P:5("Text_InsertString: A %d (%d)", newlen, YSI_g_sUnusedSlot);
+		Debug_Print5("Text_InsertString: A %d (%d)", newlen, YSI_g_sUnusedSlot);
 		StrCpy(target[slot], str, newlen + 1);
 		return true;
 	}
@@ -311,10 +311,10 @@ static stock bool:Text_InsertString(target[][], const str[], slot, number)
 		return false;
 	if (largest == number)
 	{
-		P:5("Text_InsertString: B %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		Debug_Print5("Text_InsertString: B %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 		if (!Jagged_UnsafeResizeOne(target, slot, oldlen + newlen + 2))
 			return false;
-		P:5("Text_InsertString: B %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		Debug_Print5("Text_InsertString: B %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 		--oldlen,
 		insert[1] = number + 1,
 		strcat(target[slot][oldlen], str, cellmax),
@@ -322,10 +322,10 @@ static stock bool:Text_InsertString(target[][], const str[], slot, number)
 	}
 	else if (largest < number)
 	{
-		P:5("Text_InsertString: C %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		Debug_Print5("Text_InsertString: C %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 		if (!Jagged_UnsafeResizeOne(target, slot, oldlen + newlen + 2 + 2 * (number - largest)))
 			return false;
-		P:5("Text_InsertString: C %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		Debug_Print5("Text_InsertString: C %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 		--oldlen;
 		do
 		{
@@ -339,33 +339,33 @@ static stock bool:Text_InsertString(target[][], const str[], slot, number)
 	}
 	else
 	{
-		P:5("Text_InsertString: D %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		Debug_Print5("Text_InsertString: D %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 		new
 			p0 = strfind(target[slot], (insert[1] = number, insert), false, 0),
 			p1 = strfind(target[slot], (insert[1] = number + 1, insert), false, p0 + 1);
 		// Don't know what to do in this case!
 		if (p0 == -1 || p1 == -1)
 			return false;
-		P:5("Text_InsertString: D %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		Debug_Print5("Text_InsertString: D %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 		newlen += oldlen;
 		oldlen = p1 - p0 - 2;
 		if (oldlen)
 		{
-			P:5("Text_InsertString: E %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+			Debug_Print5("Text_InsertString: E %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 			if (!Jagged_UnsafeResizeOne(target, slot, newlen - oldlen))
 				return false;
-			P:5("Text_InsertString: E %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+			Debug_Print5("Text_InsertString: E %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 			strdel(target[slot][p0 + 2], 0, oldlen);
 			// Delete any existing text in this position.
 			strins(target[slot][p0], str, 2, cellmax);
 		}
 		else
 		{
-			P:5("Text_InsertString: F %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+			Debug_Print5("Text_InsertString: F %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 			// Nothing to delete, just insert.
 			if (!Jagged_UnsafeResizeOne(target, slot, newlen))
 				return false;
-			P:5("Text_InsertString: F %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+			Debug_Print5("Text_InsertString: F %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 			strins(target[slot][p0], str, 2, cellmax);
 		}
 	}
@@ -383,8 +383,8 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 	// Get the path.
 	// Get the file.
 	// Get the extension.
-	P:5("Text_INILoad called: %s, %s, %s, %s", file, tag, name, value);
-	P:5("Text_INILoad: IsPacked? %08x%08x", value[0], value[1]);
+	Debug_Print5("Text_INILoad called: %s, %s, %s, %s", file, tag, name, value);
+	Debug_Print5("Text_INILoad: IsPacked? %08x%08x", value[0], value[1]);
 	new
 		fname[FUNCTION_LENGTH];
 	// format(fname, sizeof (fname), "%s:%s", file, tag);
@@ -400,7 +400,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 				slot = name[--len],
 				number = 0,
 				hash = 1;
-			P:6("Text_INILoad: Get Number");
+			Debug_Print6("Text_INILoad: Get Number");
 			// Find trailing numbers - they are used to concatenate strings, not
 			// differentiate.  This should really be a y_ini feature (and then I
 			// can add ordering guarantees to simplify the code (unless people
@@ -415,7 +415,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 			#if !defined Y_TEXT_ACCEPT_BREAKING_CHANGE_1
 				if (number)
 				{
-					P:W("y_text line extensions must now use \"NAME-part\" not \"NAME_part\".\n\tTo acknowledge this change and disable this warning, recompile with:\n\n\t\t#define Y_TEXT_ACCEPT_BREAKING_CHANGE_1\n.");
+					Debug_Warning("y_text line extensions must now use \"NAME-part\" not \"NAME_part\".\n\tTo acknowledge this change and disable this warning, recompile with:\n\n\t\t#define Y_TEXT_ACCEPT_BREAKING_CHANGE_1\n.");
 				}
 			#endif
 			// So "MY_TEXT-1" becomes "MY_TEXT", not "MY_TEXT-".
@@ -426,20 +426,20 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 			// `len` is now useless.
 			hash = BernsteinHash(name);
 			slot = Text_FindEntry(fhash, name, hash);
-			P:6("Text_INILoad: Check slot %d", slot);
+			Debug_Print6("Text_INILoad: Check slot %d", slot);
 			if (slot == -1)
 			{
 				slot = Text_GetFreeEntry();
 				if (slot == -1 || !HashMap_AddWithHash(YSI_g_sTextMap, name, fhash + hash, slot))
 				{
-					P:E("Text buffer full!");
+					Debug_Error("Text buffer full!");
 					return;
 				}
 				// Add this string to the hashmap.  We identify it by name, but
 				// the hash is a combination of the string's hash and the search
 				// space's hash (through addition).
 			}
-			P:6("Text_INILoad: Check Collision");
+			Debug_Print6("Text_INILoad: Check Collision");
 			new
 				ss = YSI_g_sTextEntries[slot][E_TEXT_ENTRY_POINTERS][langIndex];
 			if (ss == -1)
@@ -447,7 +447,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 				ss = Text_GetFreeSlot();
 				if (ss == -1)
 				{
-					P:E("Text buffer full!");
+					Debug_Error("Text buffer full!");
 					return;
 				}
 				YSI_g_sTextEntries[slot][E_TEXT_ENTRY_POINTERS][langIndex] = ss;
@@ -464,7 +464,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 static stock Text_CompressLoaded(strings[][])
 {
 	Jagged_PrintHeader(YSI_g_sTextStrings);
-	P:4("Text_CompressLoaded called");
+	Debug_Print4("Text_CompressLoaded called");
 	// Remove all the "\05;\number;"s from the strings, now they are all loaded.
 	for (new i = 0, pos = 0; i != YSI_g_sUnusedSlot; ++i)
 	{
@@ -472,12 +472,12 @@ static stock Text_CompressLoaded(strings[][])
 			strdel(strings[i], pos, pos + 2);
 		printf("    \"%s\"", strings[i]);
 	}
-	P:4("Text_CompressLoaded ended");
+	Debug_Print4("Text_CompressLoaded ended");
 }
 
 static stock Text_LoadLocals()
 {
-	P:4("Text_LoadLocals called");
+	Debug_Print4("Text_LoadLocals called");
 	// This is the interesting part.  Load all the sets which have a name not
 	// '\1' and an index of -1.
 	new
@@ -486,7 +486,7 @@ static stock Text_LoadLocals()
 	langs = Langs_GetLanguageCodes();
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
-		P:6("Text_LoadLocals: i = %d, text = %s, %d, %d", i, YSI_g_sTextSets[i][E_TEXT_SETS_NAME], YSI_g_sTextSets[i][E_TEXT_SETS_LOAD], YSI_g_sTextSets[i][E_TEXT_SETS_HASH]);
+		Debug_Print6("Text_LoadLocals: i = %d, text = %s, %d, %d", i, YSI_g_sTextSets[i][E_TEXT_SETS_NAME], YSI_g_sTextSets[i][E_TEXT_SETS_LOAD], YSI_g_sTextSets[i][E_TEXT_SETS_HASH]);
 		if (YSI_g_sTextSets[i][E_TEXT_SETS_LOAD])
 		{
 			// This is in a file that has apparently not been loaded yet.
@@ -498,7 +498,7 @@ static stock Text_LoadLocals()
 			while ((pos = strfind(langs, "|", false, pos + 1)) != -1)
 			{
 				format(loadTextFile, sizeof (loadTextFile), "YSI/text/%.*s.%.2s", offset, YSI_g_sTextSets[i][E_TEXT_SETS_NAME], langs[pos - 2]);
-				P:4("Text_LoadLocals: %s", loadTextFile);
+				Debug_Print4("Text_LoadLocals: %s", loadTextFile);
 				INI_ParseFile(loadTextFile, "Text_INILoad",
 					.bExtra = true,
 					.extra = _:langIndex,
@@ -508,7 +508,7 @@ static stock Text_LoadLocals()
 				// We can add code here to load the data from y_styles.
 			}
 			//format(YSI_g_sCurLoadTextFile, sizeof (YSI_g_sCurLoadTextFile), "%.*s", offset, YSI_g_sTextSets[i][E_TEXT_SETS_NAME]);
-			P:6("Text_LoadLocals: Loading style %s (%d)", loadTextFile, offset);
+			Debug_Print6("Text_LoadLocals: Loading style %s (%d)", loadTextFile, offset);
 			//_Styles_ParseOne(YSI_g_sCurLoadTextFile);
 			//YSI_g_sTextSets[i][E_TEXT_SETS_NAME][offset] = ':';
 		}
@@ -530,7 +530,7 @@ static stock Text_LoadLocals()
 stock _Text_CheckOwnership(file[], str[])
 {
 	// TODO...
-//	P:4("_Text_CheckOwnership called: %s, %s", file, str);
+//	Debug_Print4("_Text_CheckOwnership called: %s, %s", file, str);
 //	format(YSI_g_sReturnText, sizeof (YSI_g_sReturnText), "%s:%s", file, str);
 	return 1;
 }
@@ -552,7 +552,7 @@ stock _Text_CheckOwnership(file[], str[])
 stock _Text_LookupName(name[])
 {
 	// TODO...
-//	P:4("_Text_LookupName called: %s, %s", name, YSI_g_sReturnText);
+//	Debug_Print4("_Text_LookupName called: %s, %s", name, YSI_g_sReturnText);
 //	new
 //		sh = BernsteinHash(YSI_g_sReturnText);
 //	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
@@ -603,32 +603,32 @@ static stock Text_GetStandard(search[], nh, Language:l)
 	{
 		return;
 	}
-	P:4("Text_GetStandard called");
+	Debug_Print4("Text_GetStandard called");
 	new
 		sh = BernsteinHash(search);//,
 		//fail[MAX_INI_ENTRY_TEXT] = "String not found";
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
-		P:7("Text_GetStandard: %d, %d, %d", i, sh, YSI_g_sTextSets[i][E_TEXT_SETS_HASH]);
+		Debug_Print7("Text_GetStandard: %d, %d, %d", i, sh, YSI_g_sTextSets[i][E_TEXT_SETS_HASH]);
 		if (sh == YSI_g_sTextSets[i][E_TEXT_SETS_HASH] && !strcmp(search, YSI_g_sTextSets[i][E_TEXT_SETS_NAME]))
 		{
 			// Got the start slot.
 			new
 				slot = |(YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], nh);
-			P:7("Text_GetStandard: found %d, %d, %d", YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], nh, slot);
+			Debug_Print7("Text_GetStandard: found %d, %d, %d", YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], nh, slot);
 			if (slot != -1)
 			{
 				new
 					pointer = YSI_g_sTextEntries[slot][E_TEXT_ENTRY_POINTERS][l];
-				P:5("Text_GetStandard: %d, %d, %d, %d", slot, pointer, getproperty(8, YSIM_TXTIND), Master_ID());
+				Debug_Print5("Text_GetStandard: %d, %d, %d, %d", slot, pointer, getproperty(8, YSIM_TXTIND), Master_ID());
 				if (pointer != -1)
 				{
-					//P:5("Text_GetStandard: %08x%08x%08x%08x%08x", YSI_g_sTextStrings[pointer][0], YSI_g_sTextStrings[pointer][1], YSI_g_sTextStrings[pointer][2], YSI_g_sTextStrings[pointer][3], YSI_g_sTextStrings[pointer][4]);
+					//Debug_Print5("Text_GetStandard: %08x%08x%08x%08x%08x", YSI_g_sTextStrings[pointer][0], YSI_g_sTextStrings[pointer][1], YSI_g_sTextStrings[pointer][2], YSI_g_sTextStrings[pointer][3], YSI_g_sTextStrings[pointer][4]);
 					//setproperty(9, YSI_EMPTY, YSIM_STRING, YSI_g_sTextStrings[pointer]);
 					setproperty(8, YSIM_TXTFND, Master_ID());
 					// I reckon this is the only time these functions have ever
 					// been used together directly...
-					P:5("Text_GetStandard: %s", YSI_g_sTextStrings[pointer]);
+					Debug_Print5("Text_GetStandard: %s", YSI_g_sTextStrings[pointer]);
 					//SetPVarString(getproperty(8, YSIM_TXTIND), "YSI_g_sString", YSI_g_sTextStrings[pointer]);
 					//printf("%d %d %d %d %d = %d", YSI_g_sTextStrings[pointer][0], YSI_g_sTextStrings[pointer][1], YSI_g_sTextStrings[pointer][2], YSI_g_sTextStrings[pointer][3], YSI_g_sTextStrings[pointer][4], strlen(YSI_g_sTextStrings[pointer]));
 					// TODO: Fix this for the new parameter list.
@@ -690,13 +690,13 @@ static stock Text_GetText(search[], name[], Language:l)
 	while (search[lst])
 	{
 		pos = strfind(search[lst], "|");
-		P:7("Text_GetText: loop1 %s %d %d %s %d", search, lst, pos, search[lst], search[lst + pos + 1]);
+		Debug_Print7("Text_GetText: loop1 %s %d %d %s %d", search, lst, pos, search[lst], search[lst + pos + 1]);
 		search[lst + pos] = '\0';
 		if (existproperty(7, search[lst]))
 		{
 			// Only call other scripts if ANYONE owns this search.
 			CallRemoteFunction("Text_GetStandard", "sii", search[lst], BernsteinHash(name), _:l);
-			//P:7("Text_GetText: loop2 %s %d %d %s %d %d", search, lst, pos, search[lst], search[pos + 1], ret[0]);
+			//Debug_Print7("Text_GetText: loop2 %s %d %d %s %d %d", search, lst, pos, search[lst], search[pos + 1], ret[0]);
 			search[lst + pos] = '|';
 			//if (ret[0] != '\1')
 			if (getproperty(8, YSIM_TXTFND) != -1)
@@ -731,7 +731,7 @@ static stock Text_GetText(search[], name[], Language:l)
 
 //static stock Text_FindEntry(start, hash)
 //{
-//	P:4("Text_FindEntry called: %i, %i", start, hash);
+//	Debug_Print4("Text_FindEntry called: %i, %i", start, hash);
 //	while (start != -1)
 //	{
 //		new
@@ -757,13 +757,13 @@ static stock Text_GetText(search[], name[], Language:l)
 
 static stock Text_AddEntry(set, name[], value[], hash)
 {
-	P:4("Text_AddEntry called: %i, \"%s\", \"%s\", %i", set, name, value, hash);
+	Debug_Print4("Text_AddEntry called: %i, \"%s\", \"%s\", %i", set, name, value, hash);
 	new
 		entryFree = Text_GetFreeEntry(),
 		slot = Text_GetFreeSlot();
 	if (entryFree == -1 || slot == -1)
 	{
-		P:E("Text buffer full!");
+		Debug_Error("Text buffer full!");
 		return;
 	}
 	// Save the string.
@@ -772,7 +772,7 @@ static stock Text_AddEntry(set, name[], value[], hash)
 	//strpack(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
 	//StrCpy(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
 	// Save the identifier.
-	P:5("Text_AddEntry: slot = %d %d,%d,%d,%d,%d", slot, YSI_g_sTextStrings[slot][0], YSI_g_sTextStrings[slot][1], YSI_g_sTextStrings[slot][2], YSI_g_sTextStrings[slot][3], YSI_g_sTextStrings[slot][4]);
+	Debug_Print5("Text_AddEntry: slot = %d %d,%d,%d,%d,%d", slot, YSI_g_sTextStrings[slot][0], YSI_g_sTextStrings[slot][1], YSI_g_sTextStrings[slot][2], YSI_g_sTextStrings[slot][3], YSI_g_sTextStrings[slot][4]);
 	strpack(YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
 	//StrCpy(YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
 	YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_HASH] = hash;
@@ -873,7 +873,7 @@ static stock Text_GetCurNextOffset(i, &cur, &next)
 
 static stock Text_GetFreeEntry()
 {
-	P:4("Text_GetFreeEntry called");
+	Debug_Print4("Text_GetFreeEntry called");
 	new
 		ret = HashMap_GetUnused(YSI_g_sTextMap);
 	if (ret == -1)
@@ -959,7 +959,7 @@ stock _Text_Send(@PlayerSet:players, search[], ident[], GLOBAL_TAG_TYPES:...)
 		case '\1':
 		{
 			// Null - error.
-			P:E("Text_Send called with NULL");
+			Debug_Error("Text_Send called with NULL");
 			return -1;
 		}
 		case '\2':
@@ -1039,7 +1039,7 @@ stock _Text_Render(playerid, search[], ident[], GLOBAL_TAG_TYPES:...)
 		case '\1':
 		{
 			// Null - error.
-			P:E("Text_Send called with NULL");
+			Debug_Error("Text_Send called with NULL");
 			return;
 		}
 		case '\2':
@@ -1095,7 +1095,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, Func:callback<iiiis>, csearch[]
 	if (isearch[0] == '\1' || csearch[0] == '\1' || b1search[0] == '\1' || (b2ident[0] && b2search[0] == '\1')
 	{
 		// Null - error.
-		P:E("Text_Send called with NULL");
+		Debug_Error("Text_Send called with NULL");
 		return;
 	}
 	if (isearch[0] == '\2')
@@ -1120,7 +1120,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, Func:callback<iiiis>, csearch[]
 			// Get the text for the caption in this language.
 			switch (csearch[0])
 			{
-				case '\1': P:E("Text_Send called with NULL");
+				case '\1': Debug_Error("Text_Send called with NULL");
 				case '\2': StrCpy(YSI_g_sCaptionText[lang], cident, sizeof (YSI_g_sCaptionText[]));
 				default:
 				{
@@ -1131,7 +1131,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, Func:callback<iiiis>, csearch[]
 			// Get the text for button 1 in this language.
 			switch (b1search[0])
 			{
-				case '\1': P:E("Text_Send called with NULL");
+				case '\1': Debug_Error("Text_Send called with NULL");
 				case '\2': StrCpy(YSI_g_sButton1Text[lang], b1ident, sizeof (YSI_g_sButton1Text[]));
 				default:
 				{
@@ -1144,7 +1144,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, Func:callback<iiiis>, csearch[]
 			{
 				switch (b2search[0])
 				{
-					case '\1': P:E("Text_Send called with NULL");
+					case '\1': Debug_Error("Text_Send called with NULL");
 					case '\2': StrCpy(YSI_g_sButton2Text[lang], b2ident, sizeof (YSI_g_sButton2Text[]));
 					default:
 					{
@@ -1191,7 +1191,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, Func:callback<iiiis>, csearch[]
 
 stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], ident[], ...)
 {
-	P:4("Text_Format: %s %d %d %d %s %s", dest, size, _:lang, style, search, ident);
+	Debug_Print4("Text_Format: %s %d %d %d %s %s", dest, size, _:lang, style, search, ident);
 
 	Text_GetText(search, ident, lang);
 	
@@ -1209,13 +1209,13 @@ stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], id
 			new
 				ret = Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_HASH], ident, hash)
 			;
-			P:7("Text_Format: Textset %d entry %d", i, ret);
+			Debug_Print7("Text_Format: Textset %d entry %d", i, ret);
 			if (ret != -1)
 			{
 				Styles_GetData(ret, styleData, label);
 				if ((styleData[E_STYLE_DATA_TYPE] & e_STYLE_TYPE_MASK) != style)
 				{
-					P:7("Text_Format: No matching style data. Types differ 0x%08x == 0x%08x", (styleData[E_STYLE_DATA_TYPE] & e_STYLE_TYPE_MASK), style);
+					Debug_Print7("Text_Format: No matching style data. Types differ 0x%08x == 0x%08x", (styleData[E_STYLE_DATA_TYPE] & e_STYLE_TYPE_MASK), style);
 					break;
 				}
 
@@ -1226,14 +1226,14 @@ stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], id
 
 		if (!foundStyle)
 		{
-			P:7("Text_Format: Style not found, using default");
+			Debug_Print7("Text_Format: Style not found, using default");
 		}
 
 		_Format_SetStyleData(TEXT_MASTER, 0, styleData, label);
 	}
 	else
 	{
-		P:7("Text_Format: Toggling dialog mode");
+		Debug_Print7("Text_Format: Toggling dialog mode");
 		_Text_SetDialogMode();
 	}
 

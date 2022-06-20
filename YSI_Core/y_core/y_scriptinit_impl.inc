@@ -99,7 +99,6 @@ CHAIN_HOOK(ScriptInit)
 stock
 	#if _YSI_SAFE_STARTUP
 		bool:YSI_GAMEMODE = false,
-		bool:YSI_OPEN_MP = false,
 	#endif
 		bool:YSI_FILTERSCRIPT = false;
 
@@ -117,7 +116,7 @@ enum E_SCRIPTINIT_STATE (<<= 1)
 static
 	E_SCRIPTINIT_STATE:YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_NONE;
 
-#define Debug_PrintE(%1); \
+#define Debug_Error(%1); \
 	Debug_Print0("\7\7\7*** YSI Error: " #%1);
 
 #if defined _DEBUG
@@ -247,6 +246,22 @@ stock bool:Server_IsWindowsHost()
 	return val == 120;
 }
 
+forward bool:Server_IsOpenMP();
+
+// Spell `open.mp` correctly in the function name (because why not).
+#define Server_Isopen.mp Server_IsOpenMP
+#define Server_Is_open.mp Server_IsOpenMP
+
+#if __COMPILER___EMIT_U
+	#define Server_IsOpenMP() (bool:(__emit(zero.pri, zero.alt, lctrl 9, neq)))
+#endif
+
+forward bool:Server_IsSAMP();
+
+#if __COMPILER___EMIT_U
+	#define Server_IsSAMP() (bool:(__emit(zero.pri, lctrl 9, eq.c.pri 0)))
+#endif
+
 #pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
 {
@@ -304,15 +319,6 @@ stock bool:Server_IsGameMode()
 #else
 	#define Script_IsGameMode() (TRUE)
 #endif
-
-stock bool:Server_IsOpenMP()
-{
-#if _YSI_SAFE_STARTUP
-	return YSI_OPEN_MP;
-#else
-	return false;
-#endif
-}
 
 static stock const
 	YSI_gscHeader[] = " ========================================== ",
@@ -668,12 +674,12 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				{
 					if (jit)
 					{
-						P:W("Could not auto-load YSI cache - script type (GM/FS) cannot be determined with JIT.");
+						Debug_Warning("Could not auto-load YSI cache - script type (GM/FS) cannot be determined with JIT.");
 						strcat(name, ".amx");
 					}
 					else if (fs)
 					{
-						P:W("Could not auto-load YSI cache - current filterscript cannot be unloaded.");
+						Debug_Warning("Could not auto-load YSI cache - current filterscript cannot be unloaded.");
 						strcat(name, ".amx");
 					}
 					else
@@ -778,7 +784,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					Server_FinishIntroPart();
 				#endif
 					YSI_g_sScriptInitState = tmp;
-					P:E("YSI code cache write failed");
+					Debug_Error("YSI code cache write failed");
 			}
 		#endif
 			Server_EnableLongCall();
@@ -899,7 +905,6 @@ public OnJITCompile()
 //	public OnScriptInit(id)
 //	{
 //		state _ALS : _ALS_go;
-//		YSI_OPEN_MP = true;
 //		state _script_init_fix_state : false;
 //		// Dump the final assembly of this script so we can inspect it.
 //		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
@@ -941,7 +946,7 @@ public OnJITCompile()
 			state _ALS : _ALS_go;
 		#if _YSI_SAFE_STARTUP
 			YSI_FILTERSCRIPT = true;
-			if (!YSI_OPEN_MP)
+			//if (Server_IsSAMP())
 		#endif
 			{
 				state _script_init_fix_state : true;
@@ -1089,7 +1094,7 @@ ScriptInit_Purge_retry:
 			state _ALS : _ALS_go;
 			// Kill an existing purge if one exists in this script.
 		#if _YSI_SAFE_STARTUP
-			if (!YSI_FILTERSCRIPT && !YSI_OPEN_MP && !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+			if (!YSI_FILTERSCRIPT && /*Server_IsSAMP() &&*/ !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		#else
 			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		#endif
@@ -1116,7 +1121,7 @@ ScriptInit_Purge_retry:
 			{
 		#if _YSI_SAFE_STARTUP
 				YSI_GAMEMODE = true;
-				if (!YSI_OPEN_MP)
+				//if (Server_IsSAMP())
 		#endif
 				{
 					state _script_init_fix_state : false;
@@ -1163,7 +1168,7 @@ ScriptInit_Purge_retry:
 				}
 			}
 		#if _YSI_SAFE_STARTUP
-			if (!YSI_OPEN_MP)
+			//if (Server_IsSAMP())
 		#endif
 			{
 				CallLocalFunction("OnScriptInit@E", YSI_EMPTY);
@@ -1190,7 +1195,7 @@ ScriptInit_Purge_retry:
 	{
 		ScriptInit_OnFilterScriptExit();
 #if _YSI_SAFE_STARTUP
-		if (YSI_FILTERSCRIPT && !YSI_OPEN_MP)
+		if (YSI_FILTERSCRIPT /*&& Server_IsSAMP()*/)
 #endif
 		{
 			ScriptInit_PreExitFuncs_();
@@ -1207,7 +1212,7 @@ ScriptInit_Purge_retry:
 	{
 		ScriptInit_OnGameModeExit();
 #if _YSI_SAFE_STARTUP
-		if (YSI_GAMEMODE && !YSI_OPEN_MP)
+		if (YSI_GAMEMODE /*&& Server_IsSAMP()*/)
 #endif
 		{
 			ScriptInit_PreExitFuncs_();
@@ -1219,21 +1224,21 @@ ScriptInit_Purge_retry:
 	}
 #endif
 
-#if _YSI_SAFE_STARTUP
-	forward OnScriptExit(id);
-
-	public OnScriptExit(id)
-	{
-		if (YSI_OPEN_MP)
-		{
-			ScriptInit_PreExitFuncs_();
-			ScriptInit_OnScriptExit();
-			ScriptInit_PostExitFuncs_();
-			ScriptInit_OnYSIExit();
-		}
-		return 1;
-	}
-#endif
+//#if _YSI_SAFE_STARTUP
+//	forward OnScriptExit(id);
+//
+//	public OnScriptExit(id)
+//	{
+//		if (YSI_OPEN_MP)
+//		{
+//			ScriptInit_PreExitFuncs_();
+//			ScriptInit_OnScriptExit();
+//			ScriptInit_PostExitFuncs_();
+//			ScriptInit_OnYSIExit();
+//		}
+//		return 1;
+//	}
+//#endif
 
 /*
 
@@ -1366,5 +1371,34 @@ public _ScriptInit_FixState() <_script_init_fix_state : true>
 
 public _ScriptInit_FixState() <_script_init_fix_state : false>
 {
+}
+
+#if __COMPILER___EMIT_U
+	#endinput
+#endif
+
+stock bool:Server_IsOpenMP()
+{
+	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
+	// `pri` is 0 it wasn't set by the control register.
+	#emit ZERO.pri
+	#emit ZERO.alt
+	#emit LCTRL                9
+	#emit NEQ
+	#emit RETN
+
+	return false;
+}
+
+stock bool:Server_IsSAMP()
+{
+	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
+	// `pri` is 0 it wasn't set by the control register.
+	#emit ZERO.pri
+	#emit LCTRL                9
+	#emit EQ.C.pri             0
+	#emit RETN
+
+	return false;
 }
 
