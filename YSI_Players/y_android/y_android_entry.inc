@@ -98,20 +98,12 @@ forward OnAndroidCheck(playerid, bool:isDisgustingThiefToBeBanned);
 
 stock bool:IsPCPlayer(playerid)
 {
-	if (!IsPlayerConnected(playerid))
-	{
-		return false;
-	}
-	return YSI_g_sIsAndroid[playerid] == false;
+	return IsPlayerConnected(playerid) && YSI_g_sIsAndroid[playerid] == false;
 }
 
 stock bool:IsAndroidPlayer(playerid)
 {
-	if (!IsPlayerConnected(playerid))
-	{
-		return false;
-	}
-	return YSI_g_sIsAndroid[playerid] == true;
+	return IsPlayerConnected(playerid) && YSI_g_sIsAndroid[playerid] == true;
 }
 
 public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
