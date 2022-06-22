@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -194,7 +194,7 @@ loadtext core[ysi_properties];
  * <param name="prop">Property to check.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Property_IsActive(prop));
+FUNC_PAWNDOC(bool:Property_IsActive(prop));
 #define Property_IsActive(%1) \
 	((%1) < MAX_PROPERTIES && (%1) >= 0 && YSI_g_sProperties[(%1)][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_ACTIVE)
 
@@ -204,7 +204,7 @@ P:D(bool:Property_IsActive(prop));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Property_ResetMaxProperties());
+FUNC_PAWNDOC(Property_ResetMaxProperties());
 #define Property_ResetMaxProperties() \
 	Property_SetMaxProperties(cellmax)
 
@@ -216,7 +216,7 @@ P:D(Property_ResetMaxProperties());
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Property_SetOption(slot,value));
+FUNC_PAWNDOC(Property_SetOption(slot,value));
 #define Property_SetOption(%1,%2) \
 	((%2) ? e_PROP_FLAGS_CUST_%1 : e_PROP_FLAGS:0)
 
@@ -225,7 +225,7 @@ P:D(Property_SetOption(slot,value));
  * <param name="flags">flags cell to get it from.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(Property_GetOption(slot,e_PROP_FLAGS:flags));
+FUNC_PAWNDOC(Property_GetOption(slot,e_PROP_FLAGS:flags));
 #define Property_GetOption(%1,%2) \
 	(e_PROP_FLAGS_CUST_%1 & e_PROP_FLAGS:(%2))
 
@@ -238,7 +238,7 @@ P:D(Property_GetOption(slot,e_PROP_FLAGS:flags));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Property_GivePlayerWeapon(playerid,slot,ammo));
+FUNC_PAWNDOC(Property_GivePlayerWeapon(playerid,slot,ammo));
 #define Property_GivePlayerWeapon(%1,%2,%3) \
 	if ((%2) == 39) SetPlayerArmour((%1), 100.0); else GivePlayerWeapon(%1, Property_GetWeaponFromSlot(%2), %3)
 
@@ -269,7 +269,7 @@ stock Property_IsValid(property)
  * <param name="flags">Property flags for ownership type.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Property_IsOwner(playerid,prop,e_PROP_FLAGS:flags));
+FUNC_PAWNDOC(bool:Property_IsOwner(playerid,prop,e_PROP_FLAGS:flags));
 #define Property_IsOwner(%1,%2,%3) \
 	((Property_GetOption(2, (%3))) ? (!Bit_GetBit(YSI_g_sProperties[(%2)][E_PROP_DATA_PLAYERS], (%1))) : (!(_:YSI_g_sProperties[(%2)][E_PROP_DATA_PLAYERS][0] == (%1))))
 
@@ -318,10 +318,10 @@ stock Property_GetType(property)
 
 HOOK__ OnYSIInit()
 {
-	P:2("Property_Property() start");
-	P:5("Property_Property() 0");
+	Debug_Print2("Property_Property() start");
+	Debug_Print5("Property_Property() 0");
 	//Timer_Add("Property_Loop", PROPERTY_LOOP_GRANULARITY);
-	P:5("Property_Property() 1");
+	Debug_Print5("Property_Property() 1");
 	#if defined _YSI_CORE_COMMANDS
 		ycmd("buy");
 		ycmd("bank");
@@ -332,15 +332,15 @@ HOOK__ OnYSIInit()
 		ycmd("enter");
 		ycmd("exit");
 	#endif
-	P:5("Property_Property() 2");
+	Debug_Print5("Property_Property() 2");
 	for (new i = 0; i < MAX_AREAS; i++) YSI_g_sAreaPointers[i] = NO_PROPERTY;
-	P:5("Property_Property() 3");
+	Debug_Print5("Property_Property() 3");
 	for (new i = 0; i < MAX_CHECKPOINTS; i++) YSI_g_sCheckpointPointers[i] = NO_PROPERTY;
 	#if defined _YSI_VISUAL_PICKUPS
-		P:4("Property_Property() 4 " #MAX_DYN_PICKUPS);
+		Debug_Print4("Property_Property() 4 " #MAX_DYN_PICKUPS);
 		for (new i = 0; i < MAX_DYN_PICKUPS; i++) YSI_g_sPickupPointers[i] = NO_PROPERTY;
 	#endif
-	P:2("Property_Property() end");
+	Debug_Print2("Property_Property() end");
 	return 1;
 }
 
@@ -396,8 +396,8 @@ stock DestroyProperty(property)
 
 stock CreateHouse(Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Float:intZ, interior, world, price, checkpoint = 0)
 {
-	P:2("CreateHouse() start 1");
-	P:2("CreateHouse() start 2");
+	Debug_Print2("CreateHouse() start 1");
+	Debug_Print2("CreateHouse() start 2");
 	new
 		i = 0;
 	while (i < MAX_PROPERTIES && Property_IsActive(i))
@@ -407,7 +407,7 @@ stock CreateHouse(Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Fl
 	if (i == MAX_PROPERTIES) return NO_PROPERTY;
 	new
 		cp = 0;
-	P:4("CreateHouse() Make");
+	Debug_Print4("CreateHouse() Make");
 	#if defined _YSI_VISUAL_PICKUPS
 		if (!checkpoint)
 		{
@@ -421,13 +421,13 @@ stock CreateHouse(Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Fl
 	#pragma tabsize 4
 			if ((cp = CreateCheckpoint(extX, extY, extZ, 3.0)) == NO_CHECKPOINT) return NO_PROPERTY;
 	#pragma tabsize 4
-	P:4("CreateHouse() Made");
+	Debug_Print4("CreateHouse() Made");
 	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_HOUS | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp | Property_SetOption(1, checkpoint);
 	YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
 	YSI_g_sProperties[i][E_PROP_DATA_DATA_1] = interior;
 	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = world;
 	
-	P:4("CreateHouse() Save pos");
+	Debug_Print4("CreateHouse() Save pos");
 	YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = _:extX;
 	YSI_g_sProperties[i][E_PROP_DATA_NAME][1] = _:extY;
 	YSI_g_sProperties[i][E_PROP_DATA_NAME][2] = _:extZ;
@@ -436,7 +436,7 @@ stock CreateHouse(Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Fl
 	YSI_g_sProperties[i][E_PROP_DATA_NAME][5] = _:intZ;
 	YSI_g_sProperties[i][E_PROP_DATA_NAME][6] = price;
 
-	P:4("CreateHouse() Save ID");
+	Debug_Print4("CreateHouse() Save ID");
 	#if defined _YSI_VISUAL_PICKUPS
 		if (!checkpoint)
 		{
@@ -1036,22 +1036,22 @@ HOOK__ OnPlayerLeaveCPEx(playerid, cpid)
 	
 	Property_OnPlayerPickUpPickup(playerid, pickupid)
 	{
-		P:2("Property_OnPlayerPickUpPickup() start");
+		Debug_Print2("Property_OnPlayerPickUpPickup() start");
 		if (YSI_g_sPickupTimer[playerid] == -1)
 		{
-			P:4("Property_OnPlayerPickUpPickup() No timer");
+			Debug_Print4("Property_OnPlayerPickUpPickup() No timer");
 			if (pickupid >= MAX_DYN_PICKUPS)
 			{
 				return 0;
 			}
-			P:4("Property_OnPlayerPickUpPickup() Valid pickup");
+			Debug_Print4("Property_OnPlayerPickUpPickup() Valid pickup");
 			new
 				prop = YSI_g_sPickupPointers[pickupid];
 			if (prop == NO_PROPERTY)
 			{
 				return 0;
 			}
-			P:4("Property_OnPlayerPickUpPickup() Valid property");
+			Debug_Print4("Property_OnPlayerPickUpPickup() Valid property");
 			YSI_g_sPlayerPickup[playerid] = pickupid;
 			Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 1, GROUP_PROPERTY_BITS);
 			switch (_:(YSI_g_sProperties[prop][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_TYPES))
@@ -1085,9 +1085,9 @@ HOOK__ OnPlayerLeaveCPEx(playerid, cpid)
 					else Text_SendFormat(playerid, "YSI_PROP_HOUSE_OWNED", ReturnPlayerName(owner));
 				}
 			}
-			YSI_g_sPickupTimer[playerid] = YSI_SetTimerEx("Property_PickupTimeCheck", 500, true, "ii", playerid, pickupid);
+			YSI_g_sPickupTimer[playerid] = YSI_SetTimerEx__("Property_PickupTimeCheck", 500, true, "ii", playerid, pickupid);
 		}
-		P:2("Property_OnPlayerPickUpPickup() end");
+		Debug_Print2("Property_OnPlayerPickUpPickup() end");
 		return 1;
 	}
 	
@@ -1286,7 +1286,7 @@ static stock Property_WeaponName(weapon)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Property_WeaponCost(data));
+FUNC_PAWNDOC(Property_WeaponCost(data));
 #define Property_WeaponCost(%1) \
 	((%1) & 0xFFFFF)
 
@@ -1297,7 +1297,7 @@ P:D(Property_WeaponCost(data));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Property_WeaponAmmo(data));
+FUNC_PAWNDOC(Property_WeaponAmmo(data));
 #define Property_WeaponAmmo(%1) \
 	((%1) >> 20)
 
@@ -1643,7 +1643,7 @@ static stock Property_GenerateAmmuMenu(playerid, ammu, stage, page)
 
 YCMD:sell(playerid, params[], help)
 {
-	P:2("ycmd_sell() start");
+	Debug_Print2("ycmd_sell() start");
 	if (help)
 	{
 		Text_Send(playerid, $YSI_SELL_HELP_1);
@@ -1653,10 +1653,10 @@ YCMD:sell(playerid, params[], help)
 	}
 	else
 	{
-		P:3("ycmd_sell() not help %d", params[0]);
+		Debug_Print3("ycmd_sell() not help %d", params[0]);
 		if (params[0] >= '0' && params[0] <= '9')
 		{
-			P:5("ycmd_sell() params OK");
+			Debug_Print5("ycmd_sell() params OK");
 			new
 				prop = strval(params);
 			if (Property_IsActive(prop))
@@ -1845,7 +1845,7 @@ YCMD:withdraw(playerid, params[], help)
 
 YCMD:buy(playerid, params[], help)
 {
-	P:2("ycmd_buy() start");
+	Debug_Print2("ycmd_buy() start");
 	if (help)
 	{
 		Text_Send(playerid, $YSI_BUY_HELP_1);
@@ -1855,13 +1855,13 @@ YCMD:buy(playerid, params[], help)
 	}
 	else
 	{
-		P:3("ycmd_buy() Not help");
+		Debug_Print3("ycmd_buy() Not help");
 		new
 			cpid = 0,
 			prop = NO_PROPERTY;
 		if (IsPlayerInCheckpoint(playerid))
 		{
-			P:4("ycmd_buy() Checkpoint");
+			Debug_Print4("ycmd_buy() Checkpoint");
 			cpid = Checkpoint_Get(playerid);
 			if (cpid != NO_CHECKPOINT)
 			{
@@ -1877,17 +1877,17 @@ YCMD:buy(playerid, params[], help)
 				{
 					prop = YSI_g_sPickupPointers[cpid];
 				}
-				P:4("ycmd_buy() Pickup %d", cpid);
+				Debug_Print4("ycmd_buy() Pickup %d", cpid);
 		}
 		#pragma tabsize 4
 		#endif
 		else
 		{
-			P:4("ycmd_buy() Not in a checkpoint");
+			Debug_Print4("ycmd_buy() Not in a checkpoint");
 			Text_Send(playerid, $YSI_PROP_CP);
 			return 1;
 		}
-		P:4("ycmd_buy() Prop %d", prop);
+		Debug_Print4("ycmd_buy() Prop %d", prop);
 		if (prop != NO_PROPERTY)
 		{
 			new
@@ -1935,7 +1935,7 @@ YCMD:buy(playerid, params[], help)
 							}
 							else if (YSI_g_sRebuyDelay)
 							{
-								YSI_SetTimerEx("Property_ResetRebuy", YSI_g_sRebuyDelay, false, "i", prop);
+								YSI_SetTimerEx__("Property_ResetRebuy", YSI_g_sRebuyDelay, false, "i", prop);
 								#if defined _YSI_VISUAL_PICKUPS
 									if (Property_GetOption(5, flag))
 										Pickup_Show(cpid, 0);
@@ -2067,7 +2067,7 @@ ptask Property_Loop[500](i)
 	}
 	FOREACH__ (Player, i)
 	{*/
-	P:3("Property_Loop() foreach start");
+	Debug_Print3("Property_Loop() foreach start");
 	new
 		money = 0,
 		bad = 0;
@@ -2122,7 +2122,7 @@ ptask Property_Loop[500](i)
 		GivePlayerMoney(i, money);
 	}
 	if (!bad) GetPlayerPos(i, s_fLastGoodPos[i][0], s_fLastGoodPos[i][1], s_fLastGoodPos[i][2]);
-	P:3("Property_Loop() foreach end");
+	Debug_Print3("Property_Loop() foreach end");
 	//}
 	//sLastTick = currentTick;
 }
@@ -2132,7 +2132,7 @@ ptask Property_Loop[500](i)
  * <param name="playerid">Player to check for.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Property_IsPlayerProperty(e_PROP_FLAGS:flags,playerid));
+FUNC_PAWNDOC(bool:Property_IsPlayerProperty(e_PROP_FLAGS:flags,playerid));
 #define Property_IsPlayerProperty(%1,%2) \
 	((%1) & e_PROP_FLAGS_ACTIVE && (%1) & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP && Checkpoint_HasPlayerNoWorld(_:((%1) & e_PROP_FLAGS_LINK), (%2)))
 
@@ -2274,7 +2274,7 @@ stock Property_GetLink(property)
 
 YCMD:enter(playerid, params[], help)
 {
-	P:2("ycmd_enter() start");
+	Debug_Print2("ycmd_enter() start");
 	if (help)
 	{
 		Text_Send(playerid, $YSI_ENTER_HELP_1);
@@ -2282,13 +2282,13 @@ YCMD:enter(playerid, params[], help)
 	}
 	else
 	{
-		P:3("ycmd_enter() Not help");
+		Debug_Print3("ycmd_enter() Not help");
 		new
 			cpid = 0,
 			prop = NO_PROPERTY;
 		if (IsPlayerInCheckpoint(playerid))
 		{
-			P:4("ycmd_enter() Checkpoint");
+			Debug_Print4("ycmd_enter() Checkpoint");
 			cpid = Checkpoint_Get(playerid);
 			if (cpid != NO_CHECKPOINT)
 			{
@@ -2304,11 +2304,11 @@ YCMD:enter(playerid, params[], help)
 				{
 					prop = YSI_g_sPickupPointers[cpid];
 				}
-				P:4("ycmd_enter() Pickup %d", cpid);
+				Debug_Print4("ycmd_enter() Pickup %d", cpid);
 			}
 		#endif
 		#pragma tabsize 4
-		P:4("ycmd_enter() Prop %d", prop);
+		Debug_Print4("ycmd_enter() Prop %d", prop);
 		if (prop != NO_PROPERTY)
 		{
 			new
@@ -2345,7 +2345,7 @@ YCMD:enter(playerid, params[], help)
 
 YCMD:exit(playerid, params[], help)
 {
-	P:2("ycmd_enter() start");
+	Debug_Print2("ycmd_enter() start");
 	if (help)
 	{
 		Text_Send(playerid, $YSI_EXIT_HELP_1);

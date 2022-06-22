@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -97,7 +97,7 @@ Optional plugins:
 
 stock PA_Init(Bit:a[], bool:init = false, s = bits<MAX_PLAYERS>)
 {
-	P:3("PA_Init called: %i, %i, %i", _:a, _:init, s);
+	Debug_Print3("PA_Init called: %i, %i, %i", _:a, _:init, s);
 	//--s;
 	new
 		Bit:m = init ? (Bit:-1) : (Bit:0);
@@ -126,7 +126,7 @@ stock PA_Init(Bit:a[], bool:init = false, s = bits<MAX_PLAYERS>)
 //#define PA_Set(%0,%1,%2) ((%2)?Bit_Let(%0,(%1)):Bit_Vet(%0,(%1)))
 stock PA_Set(PlayerArray:d<>, slot, bool:set)
 {
-	P:3("PA_Set called: %s, %i, %i", Bit_Display(Bit:d[1]), slot, _:set);
+	Debug_Print3("PA_Set called: %s, %i, %i", Bit_Display(Bit:d[1]), slot, _:set);
 	if (set)
 	{
 		PA_Let(d, slot);
@@ -141,7 +141,7 @@ stock PA_Set(PlayerArray:d<>, slot, bool:set)
 
 stock Iter_Func@PA(start, const PlayerArray:data<>)
 {
-	P:3("YSI_gAPAFunc called: %s, %i", Bit_Display(Bit:data[1]), start);
+	Debug_Print3("YSI_gAPAFunc called: %s, %i", Bit_Display(Bit:data[1]), start);
 	++start;
 	YSI_gAPAFunc_loop:
 	new

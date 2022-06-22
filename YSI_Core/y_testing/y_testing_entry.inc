@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -111,11 +111,11 @@ CHAIN_HOOK(Testing)
 static stock const TEST_FAILED[] = "FAIL:";
 static stock const TEST_PASSED[] = "PASS!";
 
-#define ASSERT(%0) Testing_Test(%0, "%s %s", STRINGISE__(%0))
+#define ASSERT(%0) Testing_Test(%0,"%s %s",STRINGISE__(%0))
 #define ASSERT_TRUE(%0) ASSERT(!!%0)
 #define ASSERT_FALSE(%0) ASSERT(!%0)
-#define ASSERT_NULL(%0) ASSERT(0 == %0)
-#define ASSERT_N:%1(%0) ASSERT(%1 == %0)
+#define ASSERT_NULL(%0) ASSERT_EQ(%0,0)
+#define ASSERT_N:%1(%0) ASSERT_EQ(%0,%1)
 
 #define ASK(%0) Testing_Ask(playerid,%0)
 
@@ -130,22 +130,78 @@ static stock const TEST_PASSED[] = "PASS!";
 #define Y_TESTING_BEFORE _A<y@Q_>
 #define Y_TESTING_AFTER _A<y@_Q>
 
+stock _y@T(GLOBAL_TAG_TYPES:b, tag = tagof (b))
+{
+	#pragma unused b
+	new ret1[16] = "%s %s (%.2f)";
+	new ret2[16] = "%s %s (%d)";
+	return (tag == tagof (Float:)) ? ret1 : ret2;
+}
+
+stock bool:_@yT(a, GLOBAL_TAG_TYPES:b, op, tag = tagof (b))
+{
+	if (tag == tagof (Float:))
+	{
+		switch (op)
+		{
+		case 0:
+			// Approximately equal
+			return Float:a - Float:b < 0.01 && Float:b - Float:a < 0.01;
+		case 1:
+			// Approximately equal
+			return Float:a - Float:b >= 0.01 || Float:b - Float:a >= 0.01;
+		case 2:
+			return Float:a <= Float:b;
+		case 3:
+			return Float:a <  Float:b;
+		case 4:
+			return Float:a >= Float:b;
+		case 5:
+			return Float:a >  Float:b;
+		}
+	}
+	else
+	{
+		switch (op)
+		{
+		case 0:
+			// Approximately equal
+			return a == b;
+		case 1:
+			// Approximately equal
+			return a != b;
+		case 2:
+			return a <= b;
+		case 3:
+			return a <  b;
+		case 4:
+			return a >= b;
+		case 5:
+			return a >  b;
+		}
+	}
+	return false;
+}
+
 // Numbers.
-#define ASSERT_EQ(%1,%0) Testing_Test(J@ == _:(%0), "%s %s (%d)", STRINGISE__(%1 == %0), (J@ = _:(%1)))
-#define ASSERT_NE(%1,%0) Testing_Test(J@ != _:(%0), "%s %s (%d)", STRINGISE__(%1 != %0), (J@ = _:(%1)))
-#define ASSERT_LE(%1,%0) Testing_Test(J@ <= _:(%0), "%s %s (%d)", STRINGISE__(%1 <= %0), (J@ = _:(%1)))
-#define ASSERT_LT(%1,%0) Testing_Test(J@ <  _:(%0), "%s %s (%d)", STRINGISE__(%1 <  %0), (J@ = _:(%1)))
-#define ASSERT_GE(%1,%0) Testing_Test(J@ >= _:(%0), "%s %s (%d)", STRINGISE__(%1 >= %0), (J@ = _:(%1)))
-#define ASSERT_GT(%1,%0) Testing_Test(J@ >  _:(%0), "%s %s (%d)", STRINGISE__(%1 >  %0), (J@ = _:(%1)))
+// Just don't do side-effects in assertations!
+// `_EQ` and `_NE` now convert to float and check the values are close-enough.
+// For ints the subtraction will always be whole, so fail or pass correctly.
+#define ASSERT_EQ(%1,%0) Testing_Test(_@yT(J@,(%0),0),_y@T((%0)),STRINGISE__(%1 == %0),(J@=_:(((%0)^(%0))|(%1))))
+#define ASSERT_NE(%1,%0) Testing_Test(_@yT(J@,(%0),1),_y@T((%0)),STRINGISE__(%1 != %0),(J@=_:(((%0)^(%0))|(%1))))
+#define ASSERT_LE(%1,%0) Testing_Test(_@yT(J@,(%0),2),_y@T((%0)),STRINGISE__(%1 <= %0),(J@=_:(((%0)^(%0))|(%1))))
+#define ASSERT_LT(%1,%0) Testing_Test(_@yT(J@,(%0),3),_y@T((%0)),STRINGISE__(%1 <  %0),(J@=_:(((%0)^(%0))|(%1))))
+#define ASSERT_GE(%1,%0) Testing_Test(_@yT(J@,(%0),4),_y@T((%0)),STRINGISE__(%1 >= %0),(J@=_:(((%0)^(%0))|(%1))))
+#define ASSERT_GT(%1,%0) Testing_Test(_@yT(J@,(%0),5),_y@T((%0)),STRINGISE__(%1 >  %0),(J@=_:(((%0)^(%0))|(%1))))
 
 // Zeroes.
-#define ASSERT_ZE(%1) Testing_Test(J@ == 0, "%s %s (%d)", STRINGISE__(%1 == 0), (J@ = _:(%1)))
-#define ASSERT_NZ(%1) Testing_Test(J@ != 0, "%s %s (%d)", STRINGISE__(%1 != 0), (J@ = _:(%1)))
+#define ASSERT_ZE(%1) Testing_Test(J@==0,"%s%s(%d)",STRINGISE__(%1==0),(J@=_:(%1)))
+#define ASSERT_NZ(%1) Testing_Test(J@!=0,"%s%s(%d)",STRINGISE__(%1!=0),(J@=_:(%1)))
 
-// Strings.
-#define ASSERT_SAME(%1,%0) Testing_Test(strlen(%0) ? (Q@[0] != '\0' && strcmp(Q@, (%0)) == 0) : (Q@[0] == '\0'), "%s %s (\"%s\")", STRINGISE__(%1 == %0), (strunpack(Q@, (%1)), Q@))
-#define ASSERT_DIFF(%1,%0) Testing_Test(strlen(%0) ? (Q@[0] == '\0' || strcmp(Q@, (%0)) != 0) : (Q@[0] != '\0'), "%s %s (\"%s\")", STRINGISE__(%1 != %0), (strunpack(Q@, (%1)), Q@))
-#define ASSERT_NEAR(%1,%0) Testing_Test(strlen(%0) ? (Q@[0] != '\0' && strcmp(Q@, (%0), true) == 0) : (Q@[0] == '\0'), "%s %s (\"%s\")", STRINGISE__(%1 ~= %0), (strunpack(Q@, (%1)), Q@))
+//Strings.
+#define ASSERT_SAME(%1,%0) Testing_Test(strlen(%0)?(Q@[0]&&!strcmp(Q@,(%0))):(!Q@[0]),"%s%s(\"%s\")",STRINGISE__(%1 == %0),(strunpack(Q@,(%1)),Q@))
+#define ASSERT_DIFF(%1,%0) Testing_Test(strlen(%0)?(!Q@[0]||strcmp(Q@,(%0))):(!!Q@[0]),"%s%s(\"%s\")",STRINGISE__(%1 != %0),(strunpack(Q@,(%1)),Q@))
+#define ASSERT_NEAR(%1,%0) Testing_Test(strlen(%0)?(Q@[0]&&!strcmp(Q@,(%0),true)):(!Q@[0]),"%s%s(\"%s\")",STRINGISE__(%1 ~= %0),(strunpack(Q@,(%1)),Q@))
 
 static stock
 	YSI_g_sCurTest = 0,
@@ -188,16 +244,34 @@ static stock const
 
 #if defined RUN_TESTS
 	#define TEST_INIT__%1() forward @y_Q%1(); public @y_Q%1()
-	#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+	#if !__COMPILER_STRING_PACKING
+		#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("  "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+	#elseif cellbytes == 4
+		// Ensure there is always sufficient space for the failures linked list.
+		#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("        "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+	#elseif cellbytes == 8
+		#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("                "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+	#else
+		#error Unsupported packed string size.
+	#endif
 	#define TEST_CLOSE__%1() forward @Qy_%1(); public @Qy_%1()
 	#define TEST_BEFORE_EACH__%1() forward y@Q_%1(); public y@Q_%1()
 	#define TEST_AFTER_EACH__%1() forward y@_Q%1(); public y@_Q%1()
 	
 	#define PTEST_INIT__%1(%2) forward @Q_y%1(%2); public @Q_y%1(%2)
-	#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#if !__COMPILER_STRING_PACKING
+		#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("  "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#elseif cellbytes == 4
+		// Ensure there is always sufficient space for the failures linked list.
+		#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("        "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#elseif cellbytes == 8
+		#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("                "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#else
+		#error Unsupported packed string size.
+	#endif
 	#define PTEST_CLOSE__%1(%2) forward @_yQ%1(%2); public @_yQ%1(%2)
 	
-	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();P:W("Compile test " #%1 " called.");}static stock Q@_y%1()
+	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();Debug_Warning("Compile test " #%1 " called.");}static stock Q@_y%1()
 #else
 	#define TEST_INIT__%1() static stock y_Q@%1()
 	#define TEST__%1() static stock bool:yQ_@%1()
@@ -299,7 +373,7 @@ stock _Testing_Start(const name[])
 	// as a dummy no-op function call!  I'm actually quite happy I found a use
 	// for it!
 	YSI_g_sCurHeap = heapspace();
-	P:3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
+	Debug_Print3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
 	StrCpy(YSI_gCurTestName, name[2]);
 }
@@ -367,7 +441,7 @@ stock _Testing_Start(const name[])
 stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused str
-	P:3("Testing_Test called: %i, \"%s\"", x, str);
+	Debug_Print3("Testing_Test called: %i, \"%s\"", x, str);
 	++YSI_g_sChecks;
 	static
 		Testing_Test_msg[6],
@@ -395,7 +469,7 @@ stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 	{}
 	// Modify the first two parameters to match the following call:
 	//  
-	//  P:T(str, msg, ___(2));
+	//  Debug_PrintT(str, msg, ___(2));
 	//  
 	#emit LOAD.S.pri       16
 	#emit STOR.S.pri       12
@@ -451,10 +525,10 @@ stock bool:_Testing_End()
 
 stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p = false)
 {
-	P:3("bool:Testing_Run called: %i, %i, \"%s\", %i", tests, fails, lastfail, p);
+	Debug_Print3("bool:Testing_Run called: %i, %i, \"%s\", %i", tests, fails, lastfail, p);
 	#pragma unused p, lastfail
 #if defined RUN_TESTS
-	P:2("Testing_Run() called");
+	Debug_Print2("Testing_Run() called");
 	new
 		idx = 0,
 		bidx = 0,
@@ -484,7 +558,7 @@ Testing_Run_before_fail:
 		// Call the test.
 		buffer[0] = Y_TESTING_TEST,
 		fails = YSI_g_sFails;
-		P:5("Testing_Run(): Calling %s", Unpack(buffer[1]));
+		Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
 		YSI_g_sInTest = true,
 		R@(buffer, YSI_EMPTY),
 		YSI_g_sInTest = false;
@@ -572,7 +646,7 @@ Testing_Run_after_fail:
 	#endif
 	Testing_Next(playerid)
 	{
-		P:2("Testing_Next() called");
+		Debug_Print2("Testing_Next() called");
 		YSI_g_sInTest = false;
 		new
 			buffer[FUNCTION_LENGTH];
@@ -583,7 +657,7 @@ Testing_Run_after_fail:
 			{
 				// Call the shutdown function if there is one.
 				buffer[0] = Y_TESTING_PSHUT;
-				P:5("Testing_Next(): Calling %s", Unpack(buffer));
+				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 			}
 			// Update fail counts.
@@ -613,11 +687,11 @@ Testing_Next_retry:
 				YSI_g_sAsked = false;
 				// Call the setup function if there is one.
 				buffer[0] = Y_TESTING_PINIT;
-				P:5("Testing_Next(): Calling %s", Unpack(buffer));
+				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 				// Call the test.
 				buffer[0] = Y_TESTING_PTEST;
-				P:5("Testing_Next(): Calling %s", Unpack(buffer));
+				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				YSI_g_sInTest = true;
 				R@(buffer, "i", playerid);
 			}
@@ -675,27 +749,50 @@ Testing_Next_retry:
 		#endif
 		public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
 		{
+			// TODO: Test if we are in a test before parsing the keys.
 			if ((newkeys & KEY_NO) && !(oldkeys & KEY_NO))
 			{
-				// Fail.
-				++YSI_g_sChecks;
-				TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
-				++YSI_g_sFails;
-				Testing_Next(playerid);
-				return 1;
+					// Fail.
+					++YSI_g_sChecks;
+					TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
+					++YSI_g_sFails;
+					Testing_Next(playerid);
+				#if defined Testing_OnPlayerKeyStateChange
+					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+				#else
+					return 1;
+				#endif
 			}
 			else if ((newkeys & KEY_YES) && !(oldkeys & KEY_YES))
 			{
-				// Pass.
-				TEST_REPORT(TEST_PASSED);
-				Testing_Next(playerid);
-				return 1;
+					// Pass.
+					TEST_REPORT(TEST_PASSED);
+					Testing_Next(playerid);
+				#if defined Testing_OnPlayerKeyStateChange
+					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+				#else
+					return 1;
+				#endif
 			}
 			else
 			{
-				return 0;
+				#if defined Testing_OnPlayerKeyStateChange
+					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+				#else
+					return 0;
+				#endif
 			}
 		}
+		
+		#if defined _ALS_OnPlayerKeyStateChange
+			#undef OnPlayerKeyStateChange
+		#else
+			#define _ALS_OnPlayerKeyStateChange
+		#endif
+		#define OnPlayerKeyStateChange Testing_OnPlayerKeyStateChange
+		#if defined Testing_OnPlayerKeyStateChange
+			forward Testing_OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys);
+		#endif
 	#else
 		public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		{
@@ -928,8 +1025,8 @@ TEST__ y_testing_2()
 	ASSERT(t == YSI_g_sTests);
 	// Fail a fake test on purpose.
 	//state ysi_debug : on;
-	P:I("The next test hasn't really failed...");
-	P:I(" - It is testing the test system.");
+	Debug_Info("The next test hasn't really failed...");
+	Debug_Info(" - It is testing the test system.");
 	//state ysi_debug : off;
 	ASSERT(false);
 	ASSERT(f + 1 == YSI_g_sFails); // Not a mistake.  Run this test twice to
@@ -1002,5 +1099,6 @@ TEST__ y_testing_Asserts()
 	#include "..\y_core\y_utils_tests"
 	#include "..\y_core\y_als_tests"
 	#include "..\y_core\y_cell_tests"
+	#include "..\..\YSI_Coding\y_unique\y_unique_tests"
 #endif
 

@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -320,7 +320,7 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 			return 5381;
 		}
 	}
-	P:3("YHash called: \"%s\", %i, %i, %i, %i", str, _:sensitive, _:type, len, pack);
+	Debug_Print3("YHash called: \"%s\", %i, %i, %i, %i", str, _:sensitive, _:type, len, pack);
 	len = min(len, strlen(str));
 	new
 		i = 0;

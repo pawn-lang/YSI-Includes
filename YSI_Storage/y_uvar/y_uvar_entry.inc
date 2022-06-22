@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -184,7 +184,7 @@ public OnUserData[y_uvar](playerid, name[], value[])
 			return;
 		}
 		// Check that the data is the right size.
-		P:C(if (strval(value) != YSI_g_sLastSize) P:E("uvar data changed in %s", YSI_g_sLastName););
+		Debug_Code1{if (strval(value) != YSI_g_sLastSize) Debug_Error("uvar data changed in %s", YSI_g_sLastName);}
 	}
 	else
 	{
@@ -307,8 +307,8 @@ stock N@(volatile const vardata[], playerCount, dataSize, &pointer)
 	sAddr += 4;
 	#emit LOAD.S.pri dataSize
 	#emit SREF.S.pri sAddr
-	P:5("N@: %d %d %d %d %s", vardata[0], vardata[1], vardata[2], vardata[3], vardata[4]);
-	P:5("N@: %d", YSI_g_sFirstUVarData);
+	Debug_Print5("N@: %d %d %d %d %s", vardata[0], vardata[1], vardata[2], vardata[3], vardata[4]);
+	Debug_Print5("N@: %d", YSI_g_sFirstUVarData);
 }
 
 public OnCodeInit()
@@ -445,7 +445,7 @@ stock _Uvar_DoSavePlayer(playerid)
 
 HOOK__ OnPlayerConnect(playerid)
 {
-	P:1("hook Users_OnPlayerConnect called: %i", playerid);
+	Debug_Print1("hook Users_OnPlayerConnect called: %i", playerid);
 	new
 		p = YSI_g_sFirstUVarData,
 		temp = 0;

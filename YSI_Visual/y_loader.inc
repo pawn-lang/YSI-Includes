@@ -1,58 +1,67 @@
 /**
- * <library name="y_loader">
- * <section>
- *  Description
- * </section>
- *  Loads MTA XML format map files for use with the object and race systems.
- * Legal:
- *  Copyright (C) 2007 Alex "Y_Less" Cole
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- *  MA 02110-1301, USA.
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Public
- * </subsection><ul>
- *  <symbol name="Loader_Spawn">Processes a loaded spawn point.</symbol>
- *  <symbol name="Loader_Check">Processes a loaded checkpoint.</symbol>
- *  <symbol name="Loader_Obj">Processes a loaded object.</symbol>
- * </ul><subsection>
- * Core
- * </subsection><ul>
- *  <symbol name="Loader_Loader">Initialises data.</symbol>
- * </ul><subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="Loader_Parse">Loads a file.</symbol>
- *  <symbol name="Loader_AddHandler">Adds a custom handle for the race file.</symbol>
- *  <symbol name="Loader_GetRace">Returns the current race handle.</symbol>
- * </ul><section>
- *  Tags
- * </section><ul>
- *  <symbol name="e_RACE_FLAGS">Race data flag.</symbol>
- * </ul><section>
- *  Variables
- * </section>
- * <subsection>
- * Static
- * </subsection><ul>
- *  <symbol name="YSI_g_sXMLRules">Handle to the XML parse rule set.</symbol>
- *  <symbol name="YSI_g_sCurRace">Handle to the current race being built.</symbol>
- * </ul>
+ * <library
+ *   name="y_loader"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Loads MTA XML format map files for use with the object and race systems."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <section>
+ *     Legal
+ *   </section>
+ *     Copyright (C) 2007 Alex "Y_Less" Cole
+ *     
+ *     This program is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU General Public License
+ *     as published by the Free Software Foundation; either version 2
+ *     of the License, or (at your option) any later version.
+ *     
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *     
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program; if not, write to the Free Software
+ *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ *     MA 02110-1301, USA.
+ *   <section>
+ *     Functions
+ *   </section>
+ *   <subsection>
+ *     Public
+ *   </subsection><ul>
+ *     <symbol name="Loader_Spawn">Processes a loaded spawn point.</symbol>
+ *     <symbol name="Loader_Check">Processes a loaded checkpoint.</symbol>
+ *     <symbol name="Loader_Obj">Processes a loaded object.</symbol>
+ *   </ul><subsection>
+ *     Core
+ *   </subsection><ul>
+ *     <symbol name="Loader_Loader">Initialises data.</symbol>
+ *   </ul><subsection>
+ *     Stock
+ *   </subsection><ul>
+ *     <symbol name="Loader_Parse">Loads a file.</symbol>
+ *     <symbol name="Loader_AddHandler">Adds a custom handle for the race file.</symbol>
+ *     <symbol name="Loader_GetRace">Returns the current race handle.</symbol>
+ *   </ul><section>
+ *     Tags
+ *   </section><ul>
+ *     <symbol name="e_RACE_FLAGS">Race data flag.</symbol>
+ *   </ul><section>
+ *     Variables
+ *   </section>
+ *   <subsection>
+ *     Static
+ *   </subsection><ul>
+ *     <symbol name="YSI_g_sXMLRules">Handle to the XML parse rule set.</symbol>
+ *     <symbol name="YSI_g_sCurRace">Handle to the current race being built.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:
@@ -71,7 +80,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

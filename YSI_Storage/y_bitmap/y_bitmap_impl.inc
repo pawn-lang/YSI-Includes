@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -87,10 +87,10 @@ stock Bitmap:Bitmap_Create(xSize, ySize, bgColour = 0xFFFFFFFF)
 	new
 		s = xSize * ySize,
 		Alloc:d = malloc(s + 3);
-	P:3("Bitmap_Create called: %d %d %d %d", xSize, ySize, s + 3, _:d);
+	Debug_Print3("Bitmap_Create called: %d %d %d %d", xSize, ySize, s + 3, _:d);
 	if (!d)
 	{
-		P:E("Could not allocate bitmap buffer");
+		Debug_Error("Could not allocate bitmap buffer");
 		return Bitmap:0;
 	}
 	// Raw malloc access.  Set the background colour.

@@ -1,14 +1,25 @@
 /*+
- * <library name="y_pawndoc">
- * <section>
- *  Description
- * </section>
- *  Fix pawndoc comments.
- * <section>
- *  Version
- * </section>
- *  0.2
- * </library>
+ * <library
+ *   name="y_pawndoc"
+ *   version="0.2"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Fix pawndoc comments."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *  <section>
+ *    Description
+ *  </section>
+ *    Fix pawndoc comments.
+ *  <section>
+ *    Version
+ *  </section>
+ *    0.2
+ *  </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1
@@ -26,7 +37,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -103,6 +114,13 @@ Optional plugins:
 #define YSI_ENUM_PAWNDOC _FIXES_ENUM_PAWNDOC
 #define YSI_CLOSE_PAWNDOC _FIXES_CLOSE_PAWNDOC
 #define YSI_HIDE_PAWNDOC _FIXES_HIDE_PAWNDOC
+
+#define FUNC_PAWNDOC _FIXES_FUNC_PAWNDOC
+#define FUNCTION_PAWNDOC _FIXES_FUNC_PAWNDOC
+#define CONST_PAWNDOC _FIXES_CONST_PAWNDOC
+#define ENUM_PAWNDOC _FIXES_ENUM_PAWNDOC
+#define CLOSE_PAWNDOC _FIXES_CLOSE_PAWNDOC
+#define HIDE_PAWNDOC _FIXES_HIDE_PAWNDOC
 
 /**
 	<summary>
@@ -478,7 +496,7 @@ static stock _9;
 	<remarks>
 		This variable only exists to hide other variables.  It starts a massive
 		comment block in the pawndoc XML output that hides all YSI internal
-		variables - that is, those that start with <c>YSI_g<c>.
+		variables - that is, those that start with <c>YSI_g</c>.
 		<p />
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
@@ -494,7 +512,7 @@ static stock YSI_g;
 	<remarks>
 		This variable only exists to hide other variables.  It ends a massive
 		comment block in the pawndoc XML output that hides all YSI internal
-		variables - that is, those that start with <c>YSI_g<c>.
+		variables - that is, those that start with <c>YSI_g</c>.
 	</remarks>
 
 	-->

@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -88,6 +88,8 @@ Optional plugins:
 #if !defined MAX_Y_HOOKS
 	#define MAX_Y_HOOKS (128)
 #endif
+
+#define Y_HOOKS_MAX_NAME (__COMPILER_sNAMEMAX * 2 + 1)
 
 #include "y_hooks_macros"
 #include "y_hooks_impl"

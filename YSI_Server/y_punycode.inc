@@ -1,30 +1,37 @@
 /**
- * <library name="y_punycode">
- * <section>
- *  Description
- * </section>
- *  Functions for converting unicode strings to and from punycode, to be
- *  represented in just ASCII characters.  Based on several public
- *  implementations and the RFC, adapted for PAWN.  For more information see:
- *
- *  <a href="https://en.wikipedia.org/wiki/Punycode" />
- *
- *  Also includes a function that hooks the "HTTP" function to allow for
- *  internationalised domain names with that function.
- * <section>
- *  Version
- * </section>
- *  0.1
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="Puny_Encode">Convert a Unicode string to Punycode.</symbol>
- *  <symbol name="Puny_Decode">Convert a Punycode string to Unicode.</symbol>
- *  <symbol name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</symbol>
- * </ul>
+ * <library
+ *   name="y_punycode"
+ *   version="0.1"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     <p>
+ *     Functions for converting unicode strings to and from punycode, to be
+ *     represented in just ASCII characters.  Based on several public
+ *     implementations and the RFC, adapted for PAWN.  For more information see
+ *     <a href="https://en.wikipedia.org/wiki/Punycode">Wikipedia punycode</a>.
+ *     </p>
+ *     <p>
+ *     Also includes a function that hooks the "HTTP" function to allow for
+ *     internationalised domain names with that function.
+ *     </p>
+ *   </remarks>
+ *   <section>
+ *     Functions
+ *   </section>
+ *   <subsection>
+ *     Stock
+ *   </subsection><ul>
+ *     <symbol name="Puny_Encode">Convert a Unicode string to Punycode.</symbol>
+ *     <symbol name="Puny_Decode">Convert a Punycode string to Unicode.</symbol>
+ *     <symbol name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:
@@ -43,7 +50,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

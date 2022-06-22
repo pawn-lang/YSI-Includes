@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -98,4 +98,7 @@ Optional plugins:
 	#include "y_timers_tests"
 	#include "..\y_hooks"
 #endif
+
+// Decorator syntax.
+#define @timer(%0)%1(%2) TIMER__ %1[%0](%2)
 

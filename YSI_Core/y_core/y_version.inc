@@ -1,18 +1,21 @@
-/*+
- * <library name="y_version">
- * <section>
- *  Description
- * </section>
- *  Checks online to see if there is a newer version of YSI available.
- * <section>
- *  Version
- * </section>
- *  0.2
- * <section>
- *  Hooks
- * </section><ul>
- *  <symbol name="OnGameModeInit">Initialises things.</symbol>
- * </ul>
+/**
+ * <library
+ *   name="y_version"
+ *   version="0.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Checks online to see if there is a newer version of YSI available."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <section>
+ *     Hooks
+ *   </section><ul>
+ *     <symbol name="OnGameModeInit">Initialises things.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:
@@ -31,7 +34,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -97,8 +100,8 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 #define YSI_VERSION_RESPO               2
 
 #define YSI_VERSION_MAJOR               5
-#define YSI_VERSION_MINOR               05
-#define YSI_VERSION_BUILD               0506
+#define YSI_VERSION_MINOR               06
+#define YSI_VERSION_BUILD               1932
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 
@@ -338,12 +341,15 @@ stock Server_GetServerVersion()
 	return Script_GetIncludesVersion();
 }
 
-stock Script_GetIncludesString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
+stock Script_GetIncludesString(version[], vlen = sizeof (version))
 {
 	// Not done yet.
 	version[0] = '\0';
 	// SA:MP version determination (from includes only).
-	#if !defined _samp_included
+	#if defined __SAMP_INCLUDES_VERSION
+		// No SA:MP version.
+		format(version, vlen, "samp-stdlib v%06x", __SAMP_INCLUDES_VERSION);
+	#elseif !defined _samp_included
 		// No SA:MP version.
 		strcat(version, "<none>", vlen);
 	#elseif defined StartRecordingPlayback
@@ -410,16 +416,6 @@ stock Script_GetIncludesString(version[], os[], vlen = sizeof (version), olen = 
 			strcat(version, "0.3DL", vlen);
 		#endif
 	#endif
-	if (Server_IsWindowsHost())
-	{
-		os[0] = '\0',
-		strcat(os, YSI_gscWindows, olen);
-	}
-	else
-	{
-		os[0] = '\0',
-		strcat(os, YSI_gscLinux, olen);
-	}
 }
 
 
@@ -427,6 +423,14 @@ stock Script_GetIncludesString(version[], os[], vlen = sizeof (version), olen = 
 stock Server_GetServerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
 {
 	return Script_GetIncludesString(version, os, vlen, olen);
+}
+
+stock Script_GetStartString(output[], size = sizeof (output))
+{
+	static months[12][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	new year, month, day, hour, minute, second;
+	Server_GetStartDateTime(year, month, day, hour, minute, second);
+	format(output, size, "%02d %s %04d - %02d:%02d:%02d", day, months[month - 1], year, hour, minute, second);
 }
 
 stock bool:Server_CrashDetectExists()
@@ -450,19 +454,44 @@ stock bool:Server_CrashDetectExists()
 	static stock YVers_PrintHeader()
 	{
 		new
-			version[32], os[10];
-		Script_GetIncludesString(version, os),
-		format(version, sizeof (version), "Server:      %s - %s", version, os),
+			version[38], os[10];
+		GetConsoleVarAsString("version", version, sizeof (version));
+		if (version[0])
+		{
+			format(version, sizeof (version), "Server:      %s (%s)", version, Server_IsWindowsHost() ? YSI_gscWindows : YSI_gscLinux);
+		}
+		else
+		{
+			// TODO: Determine the exact SA:MP server version.
+			format(version, sizeof (version), "Server:      SA:MP (%s)", Server_IsWindowsHost() ? YSI_gscWindows : YSI_gscLinux);
+		}
 		Server_PrintIntroPart(version),
+		Script_GetStartString(version),
+		format(version, sizeof (version), "Started:     %s", version),
+		Server_PrintIntroPart(version),
+		Server_PrintIntroPart(""),
 		Script_GetCompilerString(version, os),
-		format(version, sizeof (version), "Compiler:    %s - %s", version, os),
+		format(version, sizeof (version), "Compiler:    %s (%s)", version, os),
+		Server_PrintIntroPart(version),
+		Script_GetIncludesString(version),
+		format(version, sizeof (version), "Includes:    %s", version),
 		Server_PrintIntroPart(version),
 		Script_GetCompilerCodepage(version),
 		format(version, sizeof (version), "Codepage:    %s", version),
-		Server_PrintIntroPart(version),
-		Server_PrintIntroPart("YSI:         " YSI_VERSION),
-		format(version, sizeof (version), "Started:     %d", Server_GetStartTime()),
-		Server_PrintIntroPart(version),
+		Server_PrintIntroPart(version);
+		#if ((__Pawn & 0x0F) >= 0x0A)
+			format(version, sizeof (version), "Built:       %s - %s", __date, __time),
+			Server_PrintIntroPart(version);
+		#endif
+		Server_PrintIntroPart(""),
+		Server_PrintIntroPart("YSI:         v" YSI_VERSION);
+		#if defined YSI_NO_MASTER
+			Server_PrintIntroPart("Master:      <none>");
+		#else
+			format(version, sizeof (version), "Master:      %d", @_),
+			Server_PrintIntroPart(version);
+		#endif
+		Server_PrintIntroPart(""),
 		Server_GetJITString(version),
 		format(version, sizeof (version), "JIT:         %s", version),
 		Server_PrintIntroPart(version);
@@ -490,18 +519,7 @@ stock bool:Server_CrashDetectExists()
 		}
 		Server_FinishIntroPart();
 	}
-
-	/*---------------------------------------------------------------------*//*+
-	 * <returns>
-	 *  OnYSIInit
-	 * </returns>
-	 * <remarks>
-	 *      Constructor.  Checks to see if there is a new version available.
-	 *      This code can not use ANY of the rest of YSI as it needs to be
-	 *      included by everything first.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-		
+	
 	#if !defined HTTP
 		stock YVers_StartCheck()
 		{
@@ -529,6 +547,17 @@ stock bool:Server_CrashDetectExists()
 	#endif
 	
 	forward YVers_Callback(index, code, data[]);
+
+	/*---------------------------------------------------------------------*//**
+	 * <returns>
+	 *  OnYSIInit
+	 * </returns>
+	 * <remarks>
+	 *      Constructor.  Checks to see if there is a new version available.
+	 *      This code can not use ANY of the rest of YSI as it needs to be
+	 *      included by everything first.
+	 * </remarks>
+	 *//*--------------------------------------------------------------------**/
 	
 	stock YVers_StartCheck()
 	{
@@ -546,10 +575,10 @@ stock bool:Server_CrashDetectExists()
 			YSI_gLockData[1] = YSI_gLockData[0] + 7;
 		#endif
 		YVers_PrintHeader();
-		//YSI_Print(" |                                      | ");
-		//YSI_Print(" |  Checking the latest YSI version..   | ");
-		//YSI_Print(YSI_gscSpacer);
-		//YSI_Print(YSI_gscHeader);
+		//YSI_Print__(" |                                      | ");
+		//YSI_Print__(" |  Checking the latest YSI version..   | ");
+		//YSI_Print__(YSI_gscSpacer);
+		//YSI_Print__(YSI_gscHeader);
 		// Call my server to check the current public YSI version.  v is the
 		// current version and c is the version of data response which this code
 		// can parse.  Note that the response data SHOULD be backward compatible
@@ -576,7 +605,7 @@ stock bool:Server_CrashDetectExists()
 		return 1;
 	}
 	
-	/*---------------------------------------------------------------------*//*+
+	/*---------------------------------------------------------------------*//**
 	 *
 	 * <param name="	index">Not used.</param>
 	 * <param name="	code">Response code from the server.</param>
@@ -627,9 +656,9 @@ stock bool:Server_CrashDetectExists()
 						last = pos + 1;
 					}
 				}
-				//YSI_Print(YSI_gscSpacer),
-				//YSI_Print(YSI_gscHeader),
-				//YSI_Print(YSI_gscMiniGap);
+				//YSI_Print__(YSI_gscSpacer),
+				//YSI_Print__(YSI_gscHeader),
+				//YSI_Print__(YSI_gscMiniGap);
 				Server_FinishIntroPart(),
 				Server_FinishIntroMessage();
 			}

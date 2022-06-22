@@ -1,13 +1,16 @@
 /*+
- * <library name="y_unique">
- * <section>
- *  Description
- * </section>
- *  Defines a symbol differently every time it is included.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library
+ *   name="y_unique"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Defines a symbol differently every time it is included."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
  * </library>
  *//** *//*
 Legal:
@@ -26,7 +29,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -104,6 +107,6 @@ Optional plugins:
 #if defined _Y_UNIQUE_INCLUDED
 	#undef _Y_UNIQUE_INCLUDED
 #else
-	#error Did you use `YSI/y_unique` instead of `YSI\y_unique`?
+	#error Did you use `YSI_Coding/y_unique` instead of `YSI_Coding\y_unique`?
 #endif
 

@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -661,7 +661,6 @@ stock Iter_Remove_InternalD(&count, array[], start, size, value)
 
 stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 {
-	last = size;
 	if (0 <= value < size++ && array[value] > value)
 	{
 		// This version has reverse iterators, which need maintaining, and can
@@ -670,10 +669,18 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 			--count,
 			last = (array[(value - 1) % size] - 1) % size,
 			array[last] = array[value],
-			array[value] = value,
-			array[(array[last] - 1) % size] = (last + 1) % size;
+			// Set the current value.
+			array[value] = -123456789,
+			// Set the reverse pointer.  The one before the next is NEVER in the
+			// iterator at this point, because we just removed its previous.
+			array[(array[last] - 1) % size] = (last + 1) % size - size - size;
 	}
-	return INVALID_ITERATOR_SLOT;
+	else
+	{
+		return
+			last = size,
+			INVALID_ITERATOR_SLOT;
+	}
 }
 
 stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
@@ -690,7 +697,7 @@ stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
 				return
 					--count,
 					array[last] = array[value],
-					array[value] = value;
+					array[value] = -123456789;
 			}
 			last = start;
 		}
@@ -713,6 +720,32 @@ stock Iter_Contains_InternalC(const array[], size, value)
 	// one list it can be in.
 	return 0 <= value < size && array[value] > value;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="counts">Number of items in each iterator part.</param>
+ * <param name="slots">Number of multi-iterator values.</param>
+ * <remarks>
+ *  Return the total number of elements in all slots together.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_Count_InternalC(const counts[], slots = sizeof (counts))
+{
+	new
+		count = 0;
+	while (slots--)
+		count += counts[slots];
+	return count;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="array">iterator data.</param>
+ * <param name="value">Item to check.</param>
+ * <param name="size">Size of the iterator.</param>
+ * <remarks>
+ *  Checks if this item is in the iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Iter_Contains_InternalD(count, const array[], size, start, value)
 {

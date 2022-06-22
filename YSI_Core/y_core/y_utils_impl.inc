@@ -94,6 +94,7 @@ Optional plugins:
 #define FLOAT_E                         (Float:0x402DF854) // e
 #define FLOAT_PI                        (Float:0x40490FDB) // pi
 #define FLOAT_ROOT_2                    (Float:0x3FB504F3) // sqrt(2)
+#define FLOAT_EPSILON                   (Float:0x00000001) // https://en.wikipedia.org/wiki/Machine_epsilon
 
 #define IS_NAN(%0) (_:((Float:0x7FFFFFFF) & (%0)) > (0x7F800000))
 
@@ -189,7 +190,7 @@ stock BeautifyProfilingTime(t, iters)
  *//*------------------------------------------------------------------------**/
 
 // "Write To File", not another "WTF" meaning...
-stock DumpProfilingTime(const name[], const timings[], iters, size = sizeof (timings))
+stock DumpProfilingTime(const string:name[], const timings[], iters, size = sizeof (timings))
 {
 	new File:fhnd = File:0;
 	if (fexist(name))
@@ -204,7 +205,7 @@ stock DumpProfilingTime(const name[], const timings[], iters, size = sizeof (tim
 	}
 	if (!fhnd)
 	{
-		P:W("Could not write to profiling results file \"%s\".", name);
+		Debug_Warning("Could not write to profiling results file \"%s\".", name);
 		return;
 	}
 	va_fprintf(fhnd, "%d,%d,%d", gettime(), size, iters);
@@ -280,7 +281,7 @@ stock DumpProfilingTime(const name[], const timings[], iters, size = sizeof (tim
 	 *//*------------------------------------------------------------------------**/
 
 	// Cunning macro only uses "%0" once, yet is still safe.
-	P:D(GetIP(playerid));
+	FUNC_PAWNDOC(GetIP(playerid));
 	#define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 #endif
 
@@ -346,7 +347,7 @@ stock DumpProfilingTime(const name[], const timings[], iters, size = sizeof (tim
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:UCMP(value, upper));
+FUNC_PAWNDOC(bool:UCMP(value, upper));
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
 
 /*-------------------------------------------------------------------------*//**
@@ -359,7 +360,7 @@ P:D(bool:UCMP(value, upper));
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsNaN(Float:value));
+FUNC_PAWNDOC(bool:IsNaN(Float:value));
 #define IsNaN(%0) IS_NAN(%0)
 
 /*-------------------------------------------------------------------------*//**
@@ -369,7 +370,7 @@ P:D(bool:IsNaN(Float:value));
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:VALID_PLAYERID(playerid));
+FUNC_PAWNDOC(bool:VALID_PLAYERID(playerid));
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
 /*-------------------------------------------------------------------------*//**
@@ -387,7 +388,7 @@ P:D(bool:VALID_PLAYERID(playerid));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IS_IN_RANGE(value, lower, upper));
+FUNC_PAWNDOC(bool:IS_IN_RANGE(value, lower, upper));
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
@@ -405,7 +406,7 @@ P:D(bool:IS_IN_RANGE(value, lower, upper));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:NOT_IN_RANGE(value, lower, upper));
+FUNC_PAWNDOC(bool:NOT_IN_RANGE(value, lower, upper));
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
@@ -419,7 +420,7 @@ P:D(bool:NOT_IN_RANGE(value, lower, upper));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(ceildiv(numerator, denominator));
+FUNC_PAWNDOC(ceildiv(numerator, denominator));
 #if defined ceildiv
 	#undef ceildiv
 #endif
@@ -445,7 +446,7 @@ P:D(ceildiv(numerator, denominator));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(floordiv(numerator, denominator));
+FUNC_PAWNDOC(floordiv(numerator, denominator));
 #if defined floordiv
 	#undef floordiv
 #endif
@@ -468,8 +469,14 @@ P:D(floordiv(numerator, denominator));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsNull(const str[]));
-#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
+FUNC_PAWNDOC(bool:IsNull(const string:str[]));
+#if cellbytes == 4
+	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x01000000)
+#elseif cellbytes == 8
+	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x0100000000000000)
+#else
+	#error Unsupported packed string size.
+#endif
 
 #if defined isnull
 	#undef isnull
@@ -478,7 +485,7 @@ P:D(bool:IsNull(const str[]));
 #define _ALS_isnull
 
 //#pragma deprecated Use `IsNull` (i.e. use proper capitalisation).
-//stock bool:isnull(const str[])
+//stock bool:isnull(const string:str[])
 //{
 //	return IsNull(str);
 //}
@@ -487,7 +494,7 @@ P:D(bool:IsNull(const str[]));
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsOdd(value));
+FUNC_PAWNDOC(bool:IsOdd(value));
 #define IsOdd(%0) ((%0)&1)
 
 #if defined isodd
@@ -506,7 +513,7 @@ P:D(bool:IsOdd(value));
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsEven(value));
+FUNC_PAWNDOC(bool:IsEven(value));
 #define IsEven(%0) (~(%0)&1)
 
 #if defined iseven
@@ -527,13 +534,13 @@ P:D(bool:IsEven(value));
  * <param name="len">(Implicit) maximum length of the destination.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(StrCpy(dest[], const src[], len = sizeof (dest)));
+FUNC_PAWNDOC(StrCpy(string:dest[], const string:src[], len = sizeof (dest)));
 #define StrCpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
 
 #if defined strcpy
 	#undef strcpy
 #endif
-#define strcpy(%0) strcat((%0[0] = '\0', %0), %1)
+#define strcpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
 #define _ALS_strcpy
 
 //#pragma deprecated Use `StrCpy` (i.e. use proper capitalisation).
@@ -547,13 +554,21 @@ P:D(StrCpy(dest[], const src[], len = sizeof (dest)));
  * <param name="len">How much of the string to convert.</param>
  *//*------------------------------------------------------------------------**/
 
-stock StrToLower(str[], len = sizeof (str))
+stock StrToLower(string:str[], len = sizeof (str))
 {
 	new
 		i = -1,
 		ch = 0;
-	while ((ch = str[++i]) && len--)
-		str[i] = tolower(ch);
+	if (YSI_IsPacked__(str))
+	{
+		while ((ch = str{++i}) && len--)
+			str{i} = tolower(ch);
+	}
+	else
+	{
+		while ((ch = str[++i]) && len--)
+			str[i] = tolower(ch);
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -561,61 +576,290 @@ stock StrToLower(str[], len = sizeof (str))
  * <param name="len">How much of the string to convert.</param>
  *//*------------------------------------------------------------------------**/
 
-stock StrToUpper(str[], len = sizeof (str))
+stock StrToUpper(string:str[], len = sizeof (str))
 {
 	new
 		i = -1,
 		ch = 0;
-	while ((ch = str[++i]) && len--)
-		str[i] = toupper(ch);
+	if (YSI_IsPacked__(str))
+	{
+		while ((ch = str{++i}) && len--)
+			str{i} = toupper(ch);
+	}
+	else
+	{
+		while ((ch = str[++i]) && len--)
+			str[i] = toupper(ch);
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *   Relatively high quality 32-bit PRNG.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock RandomMulberry32()
+{
+	static s = 0;
+
+	// z = (s += 0x6D2B79F5);
+	#emit LOAD.pri     s
+	#emit ADD.C        0x6D2B79F5
+	#emit STOR.pri     s
+
+	// z = (z ^ z >>> 15) * (1 | z);
+	#emit MOVE.alt
+	#emit SHR.C.pri    15
+	#emit XOR
+	#emit PUSH.pri
+	#emit CONST.pri    1
+	#emit OR
+	#emit POP.alt
+	#emit UMUL
+
+	// z ^= z + (z ^ z >>> 7) * (61 | z);
+	#emit PUSH.pri
+	#emit MOVE.alt
+	#emit SHR.C.pri    7
+	#emit XOR
+	#emit PUSH.pri
+	#emit CONST.pri    61
+	#emit OR
+	#emit POP.alt
+	#emit UMUL
+	#emit POP.alt
+	#emit ADD
+	#emit XOR
+
+	// return z ^ z >>> 14;
+	#emit MOVE.alt
+	#emit SHR.C.pri    14
+	#emit XOR
+	#emit RETN
+
+	__pragma("naked");
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *   Slightly lower quality 32-bit PRNG.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock RandomSplitMix32()
+{
+	static s = 0;
+
+	// z = (s += 0x9E3779B9);
+	#emit LOAD.pri     s
+	#emit ADD.C        0x9E3779B9
+	#emit STOR.pri     s
+
+	// z ^= z >> 15;
+	#emit MOVE.alt
+	#emit SHR.C.pri    15
+	#emit XOR
+
+	// z *= 0x85EBCA6B;
+	#emit CONST.alt    0x85EBCA6B
+	#emit UMUL
+
+	// z ^= z >> 13;
+	#emit MOVE.alt
+	#emit SHR.C.pri    13
+	#emit XOR
+
+	// z *= 0xC2B2AE35;
+	#emit CONST.alt    0xC2B2AE35
+	#emit UMUL
+
+	// return z ^= z >> 16;
+	#emit MOVE.alt
+	#emit SHR.C.pri    16
+	#emit XOR
+	#emit RETN
+
+	__pragma("naked");
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="minOrMax">Upper bound, or lower bound with 2+ parameters or when less than naught.</param>
+ * <param name="max">Upper bound.</param>
+ * <param>Value(s) to not return.</param>
+ * <remarks>
+ *   Generate a random number between the given numbers (min &lt;= n &lt; max).
+ *   Default minimum is 0 (changes the parameter order).  This uses a compile-
+ *   time macro to detect the number of parameters and adjust the implementation
+ *   accordingly.  Also when there is only one parameter and it is below naught,
+ *   it uses naught as the max and the parameter as the min instead.  Won't
+ *   return the value <c>except</c> if it is between the limits.  So can be
+ *   called with one, two, or three parameters.  Don't try
+ *   <c>Random(0, _, 2);</c> for example, it won't work.  With more than two
+ *   parameters all the rest are numbers that should not be returned.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Random(minOrMax, max, ...)
+{
+	// Here for documentation only.
+	return 0;
+}
+ 
+/*-------------------------------------------------------------------------*//**
+ * <param name="min">Lower bound.</param>
+ * <param name="max">Upper bound.</param>
+ * <param name="">Values to not return.</param>
+ * <remarks>
+ *   Generate a random number between the given numbers (min &lt;= n &lt; max).
+ *   Default minimum is 0 (changes the parameter order).  Won't return any of
+ *   the extra parameter values, so you can do:
+ *   <code>
+ *     Random(0, 20, 11, 12, 13);
+ *   </code>
+ *   To randomly select <c>0-10, 14-19</c> (inclusive).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock RandomMinMaxExceptMany(min, max, ...)
+{
+	assert(min < max);
+	// This can't use the same technique as `RandomMinMaxExcept`, because the
+	// exception values may not be unique.  That method would fail miserably
+	// with `RandomMinMaxExceptMany(0, 4, 1, 1, 1, 1);`
+	new args = numargs();
+	//new valid = 0;
+	//// Count how many excluded values are actually within the random selection
+	//// range.
+	//for (new i = 2; i != args; ++i)
+	//{
+	//	if (min <= getarg(i) < max)
+	//	{
+	//		++valid;
+	//	}
+	//}
+	// Instead we will have to first check that there are valid candidates
+	// returns.
+	for (new i = min, j; i != max; ++i)
+	{
+		j = 1;
+		while (++j != args)
+		{
+			// Check if any of the exceptions match this input value.
+			if (getarg(j) == i)
+			{
+				break;
+			}
+		}
+		if (j == args)
+		{
+			// There is at least one number that can be returned.
+			for ( ; ; )
+			{
+				// Get a random number.
+				i = YSI_Random__(max - min) + min;
+				// Check if it is invalid.
+				j = 1;
+				while (++j != args)
+				{
+					// Check if any of the exceptions match this input value.
+					if (getarg(j) == i)
+					{
+						break;
+					}
+				}
+				if (j == args)
+				{
+					// Not found;
+					return i;
+				}
+			}
+		}
+	}
+	// Will probably fail.  If you get an exception here you called the code
+	// with an invalid set of values.
+	assert(numargs() == 0);
+	return max;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="min">Lower bound.</param>
+ * <param name="max">Upper bound.</param>
+ * <param name="except">Value to not return.</param>
+ * <remarks>
+ *   Generate a random number between the given numbers (min &lt;= n &lt; max).
+ *   Won't return the value <c>except</c> if it is between the limits.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock RandomMinMaxExcept(min, max, except)
+{
+	assert(min < max);
+	if (min <= except < max)
+	{
+		// Select from one fewer random numbers, and shift the results.
+		return (max = YSI_Random__(max - 1 - min) + min) + _:(max >= except);
+	}
+	else
+	{
+		// The ignored value is outside the range we care about.
+		return YSI_Random__(max - min) + min;
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
  * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
  * <remarks>
- *  Generate a random float between the given numbers (min &lt;= n &lt; max).
- *  Default minimum is 0 (changes the parameter order).
+ *   Generate a random number  between the given numbers (min &lt;= n &lt; max).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock RandomMinMax(min, max)
 {
 	assert(min < max);
-	return YSI_Random(max - min) + min;
+	return YSI_Random__(max - min) + min;
 }
 
 /*-------------------------------------------------------------------------*//**
  * <param name="max">Upper bound.</param>
  * <remarks>
- *  Generate a random float between the given numbers (min &lt;= n &lt; max).
- *  Default minimum is 0 (changes the parameter order).  This uses a compile-
- *  time macro to detect one or two parameters.  If there is only one parameter
- *  it uses the native.  If there are two it uses the stock.  Actually now uses
- *  a stock for both, so that when there is only one parameter and it is below
- *  naught, it uses naught as the max and the parameter as the min instead.
+ *   Generate a random number between the given numbers (min &lt;= n &lt; max).
+ *   Default minimum is 0 (changes the parameter order).  This uses a compile-
+ *   time macro to detect the number of parameters and adjust the implementation
+ *   accordingly.  Also when there is only one parameter and it is below naught,
+ *   it uses naught as the max and the parameter as the min instead.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Random(max)
+stock RandomMax(max)
 {
 	if (max < 0)
 	{
-		return -YSI_Random(-max);
+		return -YSI_Random__(-max);
 	}
-	return YSI_Random(max);
+	return YSI_Random__(max);
 }
 
+// The macro to detect one parameter.
+#define Random(%0) RandomMax(%0)PP_DISCARD$
+
 // The macro to detect two parameters.
-#define Random(%0,%1) RandomMinMax(%0,%1)
+#define RandomMax(%0,%1)PP_DISCARD$ RandomMinMax(%0,%1)PP_DISCARD$
+
+// The macro to detect three parameters.
+#define RandomMinMax(%0,%1,%2)PP_DISCARD$ RandomMinMaxExcept(%0,%1,%2)PP_DISCARD$
+
+// The macro to detect many parameters.
+#define RandomMinMaxExcept(%0,%1,%2,%3)PP_DISCARD$ RandomMinMaxExceptMany(%0,%1,%2,%3)PP_DISCARD$
 
 /*-------------------------------------------------------------------------*//**
  * <param name="minmax">Lower bound, or upper bound when only parameter.</param>
  * <param name="max">Upper bound.</param>
  * <param name="dp">How small to make the differences</param>
  * <remarks>
- *  Generate a random float between the given numbers (min &lt;= n &lt; max).  Default
- *  minimum is 0.0 (changes the parameter order).
+ *   Generate a random float between the given numbers (min &lt;= n &lt; max).
+ *   Default minimum is 0.0 (changes the parameter order).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -646,76 +890,123 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 /*-------------------------------------------------------------------------*//**
  * <param name="str">The string to remove whitespace from the end of.</param>
  * <remarks>
- *  Updated from old versions, should be more efficient
+ *   Updated from old versions, should be more efficient
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock StripNL(str[])
+stock StripNL(string:str[])
 {
-	P:7("StripNL called: \"%s\"", str);
+	Debug_Print7("StripNL called: \"%s\"", str);
 	new
 		i = strlen(str);
-	while (i-- && str[i] <= ' ') str[i] = '\0';
+	if (YSI_IsPacked__(str))
+	{
+		while (i-- && str{i} <= ' ') str{i} = '\0';
+	}
+	else
+	{
+		while (i-- && str[i] <= ' ') str[i] = '\0';
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">The string to remove whitespace from the end of.</param>
  * <remarks>
- *  Updated from old versions, should be more efficient
+ *   Updated from old versions, should be more efficient
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(StripR(str[]));
+FUNC_PAWNDOC(StripR(string:str[]));
 #define StripR StripNL
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">The string to remove whitespace from the start of.</param>
  *//*------------------------------------------------------------------------**/
 
-stock StripL(str[])
+stock StripL(string:str[])
 {
-	P:7("StripL called: \"%s\"", str);
+	Debug_Print7("StripL called: \"%s\"", str);
 	new
 		len = strlen(str),
 		i = 0;
-	while ('\0' < str[i] <= ' ') ++i;
-	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
+	if (YSI_IsPacked__(str))
+	{
+		while (IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1)) ++i;
+		// The byte offsets in `memcpy` are broken, and packed strings aren't
+		// even in order.  Thus we do it the slow way.
+		//if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
+		//Debug_Error("Cannot use `StripL` on a packed string");
+		if (i)
+		{
+			for (new j = 0; (str{j} = str{i}); ++i, ++j) {}
+		}
+	}
+	else
+	{
+		while (IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1)) ++i;
+		if (i)
+		{
+			memcpy(str[0], str[i], 0, (len - i + 1) * 4, len);
+		}
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">The string to remove whitespace from the start and end of.</param>
  *//*------------------------------------------------------------------------**/
 
-stock Strip(str[])
+stock Strip(string:str[])
 {
-	P:7("Strip called: \"%s\"", str);
+	Debug_Print7("Strip called: \"%s\"", str);
 	new
 		len = strlen(str),
 		i = len;
-	while (i-- && str[i] <= ' ') str[i] = '\0';
-	i = 0;
-	while ('\0' < str[i] <= ' ') ++i;
-	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
+	if (YSI_IsPacked__(str))
+	{
+		while (i-- && str{i} <= ' ') str{i} = '\0';
+		for (i = 0; IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1); ++i) {}
+		if (i)
+		{
+			for (new j = 0; (str{j} = str{i}); ++i, ++j) {}
+		}
+	}
+	else
+	{
+		while (i-- && str[i] <= ' ') str[i] = '\0';
+		for (i = 0; IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1); ++i) {}
+		if (i)
+		{
+			memcpy(str[0], str[i], 0, (len - i + 1) * 4, len);
+		}
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
  * <param name="line">String to check.</param>
  * <param name="pos">Postion to start from.</param>
  * <remarks>
- *  Checks if the current point in a line is the end of non-whitespace data.
+ *   Checks if the current point in a line is the end of non-whitespace data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:EndOfLine(const line[], pos)
+stock bool:EndOfLine(const string:line[], pos)
 {
-	P:7("EndOfLine called: \"%s\", %i", line, pos);
+	Debug_Print7("EndOfLine called: \"%s\", %i", line, pos);
 	if (NOT_IN_RANGE(pos, 0, strlen(line))) return false;
-	while (IS_IN_RANGE(line[pos], '\0' + 1, ' ' + 1)) ++pos;
-	return !line[pos];
+	if (YSI_IsPacked__(line))
+	{
+		while (IS_IN_RANGE(line{pos}, '\0' + 1, ' ' + 1)) ++pos;
+		return !line{pos};
+	}
+	else
+	{
+		while (IS_IN_RANGE(line[pos], '\0' + 1, ' ' + 1)) ++pos;
+		return !line[pos];
+	}
 }
 
 #pragma deprecated Use `EndOfLine` (i.e. use proper capitalisation).
-stock bool:endofline(const line[], pos)
+stock bool:endofline(const string:line[], pos)
 {
 	return EndOfLine(line, pos);
 }
@@ -725,20 +1016,20 @@ stock bool:endofline(const line[], pos)
  * <param name="haystack">The string to find it in.</param>
  * <param name="start">The offset to start from.</param>
  * <returns>
- *  Fail - -1, Success - pos
+ *   Fail - -1, Success - pos
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock ChrFind(needle, const haystack[], start = 0)
+stock ChrFind(needle, const string:haystack[], start = 0)
 {
-	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
+	Debug_Print3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
 	new search[2];
 	search[0] = needle;
 	return strfind(haystack, search, false, start);
 }
 
 #pragma deprecated Use `ChrFind` (i.e. use proper capitalisation).
-stock chrfind(needle, const haystack[], start = 0)
+stock chrfind(needle, const string:haystack[], start = 0)
 {
 	return ChrFind(needle, haystack, start);
 }
@@ -748,16 +1039,16 @@ stock chrfind(needle, const haystack[], start = 0)
  * <param name="haystack">The string to find it in.</param>
  * <param name="start">The offset to start from.</param>
  * <returns>
- *  Fail - -1, Success - pos
+ *   Fail - -1, Success - pos
  * </returns>
  * <remarks>
- *  Like <symbolref name="ChrFind" />, but with no upper-bounds check on
- *  <paramref name="start" />.  Now it has them anyway...
+ *   Like <symbolref name="ChrFind" />, but with no upper-bounds check on
+ *   <paramref name="start" />.  Now it has them anyway...
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `ChrFind` (i.e. use proper capitalisation, and bounds checks).
-stock chrfindp(needle, const haystack[], start = 0)
+stock chrfindp(needle, const string:haystack[], start = 0)
 {
 	return ChrFind(needle, haystack, start);
 }
@@ -766,114 +1057,181 @@ stock chrfindp(needle, const haystack[], start = 0)
  * <param name="ip">Dot notation IP to convert to an integer.</param>
  *//*------------------------------------------------------------------------**/
 
-stock IPToInt(const ip[])
+stock IPToInt(const string:ip[])
 {
-	new
-		ipv = strval(ip) << 24,
-		pos = 0;
-	while (pos < 15 && ip[pos++] != '.') {}
-	ipv += strval(ip[pos]) << 16;
-	while (pos < 15 && ip[pos++] != '.') {}
-	ipv += strval(ip[pos]) << 8;
-	while (pos < 15 && ip[pos++] != '.') {}
-	return ipv + strval(ip[pos]);
+	if (YSI_IsPacked__(ip))
+	{
+		new
+			ipv = strval(ip) << 24,
+			pos = 0,
+			tmp[4];
+		while (pos < 15 && ip{pos++} != '.') {}
+		// This is the only way to extract part of a packed string.
+		strmid(tmp, ip, pos, cellmax);
+		ipv += strval(tmp) << 16;
+		while (pos < 15 && ip{pos++} != '.') {}
+		strmid(tmp, ip, pos, cellmax);
+		ipv += strval(tmp) << 8;
+		while (pos < 15 && ip{pos++} != '.') {}
+		strmid(tmp, ip, pos, cellmax);
+		return ipv + strval(tmp);
+	}
+	else
+	{
+		new
+			ipv = strval(ip) << 24,
+			pos = 0;
+		while (pos < 15 && ip[pos++] != '.') {}
+		ipv += strval(ip[pos]) << 16;
+		while (pos < 15 && ip[pos++] != '.') {}
+		ipv += strval(ip[pos]) << 8;
+		while (pos < 15 && ip[pos++] != '.') {}
+		return ipv + strval(ip[pos]);
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
  * <param name="string">the string to hash.</param>
  * <returns>
- *  the bernstein hash of the input string
+ *   The bernstein hash of the input string
  * </returns>
  * <remarks>
- *  This is a 32bit hash system so is not very secure, however we're only
- *  using this as a string enumerator to uniquely identify strings easilly
- *  and allow for a binary search of strings based on the hash of their name.
- *  crc32, then jenkins were originally used however this is far faster, if a
- *  little collision prone, but we're checking the strings manually anyway.
- *  This doesn't matter as it would be done regardless of hash method, so this
- *  doesn't need to be accounted for.  Speed is all that matters with at 
- *  least a bit of non collision (the number of strings we're dealing with,
- *  this should have none-few collisions).
- *
- *  I modified it slightly from the original code pasted by aru, to code
- *  closer to the code <a href="http://www.burtleburtle.net/bob/hash/doobs.html" />
- *  and to work with PAWN (and shaved 0.2�s off the time for one call :D).
- *
- *  Uber reduced version (just for fun):
- *  b(s[]){new h=-1,i,j;while((j=s[i++]))h=h*33+j;return h;}
- *
- *  Update: Contrary to what I said above this is also used to identify colour
- *  strings for the updated text system involving file based styling and this
- *  is not checked for collisions as it's unimportant.  But this doesn't affect
- *  the function at all, I just mentioned it here for "interest".
+ *   This is a 32bit hash system so is not very secure, however we're only using
+ *   this as a string enumerator to uniquely identify strings easilly and allow
+ *   for a binary search of strings based on the hash of their name.
+ *   <em>crc32</em>, then <em>jenkins</em> were originally used however this is
+ *   far faster, if a little collision prone, but we're checking the strings
+ *   manually anyway.  This doesn't matter as it would be done regardless of
+ *   hash method, so this doesn't need to be accounted for.  Speed is all that
+ *   matters with at least least a bit of non collision (the number of strings
+ *   we're dealing with, this should have none-to-few collisions).
+ *   <p/>
+ *   I modified it slightly from the original code pasted by aru, to code closer
+ *   to <a href="http://www.burtleburtle.net/bob/hash/doobs.html">the code</a>
+ *   and to work with PAWN (and shaved 0.2us off the time for one call :D).
+ *   <p/>
+ *   Uber reduced version (just for fun):
+ *   <code>
+ *   b(s[]){new h=-1,i,j;while((j=s[i++]))h=h*33+j;return h;}
+ *   </code>
+ *   <p/>
+ *   Update: Contrary to what I said above this is also used to identify colour
+ *   strings for the updated text system involving file based styling and this
+ *   is not checked for collisions as it's unimportant.  But this doesn't affect
+ *   the function at all, I just mentioned it here for "interest".
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock BernsteinHash(const string[] /* 12 */)
+stock BernsteinHash(const string:str[] /* 12 */)
 {
-	new h = 5381, i = 0, j = 0;
-	while ((j = string[i++]))
-		h = h * 33 ^ j;
-	return h;
+	if (YSI_IsPacked__(str))
+	{
+		new h = 5381, i = 0, j = 0;
+		while ((j = str{i++}))
+			h = h * 33 ^ j;
+		return h;
+	}
+	else
+	{
+		new h = 5381, i = 0, j = 0;
+		while ((j = str[i++]))
+			h = h * 33 ^ j;
+		return h;
+	}
 }
 
 #pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
-stock bernstein(const string[] /* 12 */)
+stock bernstein(const string:str[] /* 12 */)
 {
-	new h = 5381, i = 0, j = 0;
-	while ((j = string[i++]))
-		h = h * 33 ^ j;
-	return h;
+	if (YSI_IsPacked__(str))
+	{
+		new h = 5381, i = 0, j = 0;
+		while ((j = str{i++}))
+			h = h * 33 ^ j;
+		return h;
+	}
+	else
+	{
+		new h = 5381, i = 0, j = 0;
+		while ((j = str[i++]))
+			h = h * 33 ^ j;
+		return h;
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="string">the string to hash.</param>
+ * <param name="str">the string to hash.</param>
  * <returns>
- *  the Jenkins hash of the input string
+ *   the Jenkins hash of the input string
  * </returns>
  * <remarks>
- *  This is a 32bit hash system so is not very secure, however we're only
- *  using this as a string enumerator to uniquely identify strings easilly
- *  and allow for a binary search of strings based on the hash of their name.
+ *   This is a 32bit hash system so is not very secure, however we're only using
+ *   this as a string enumerator to uniquely identify strings easilly and allow
+ *   for a binary search of strings based on the hash of their name.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock JenkinsHash(const string[] /* 12 */)
+stock JenkinsHash(const string:str[] /* 12 */)
 {
-	new h = 0, i = 0, j = 0;
-	while ((j = string[i++]))
-		h += j, h += h << 10, h ^= h >> 6;
-	return
-		h += h << 3,
-		h ^= h >> 1,
-		h + (h << 15);
+	if (YSI_IsPacked__(str))
+	{
+		new h = 0, i = 0, j = 0;
+		while ((j = str{i++}))
+			h += j, h += h << 10, h ^= h >> 6;
+		return
+			h += h << 3,
+			h ^= h >> 1,
+			h + (h << 15);
+	}
+	else
+	{
+		new h = 0, i = 0, j = 0;
+		while ((j = str[i++]))
+			h += j, h += h << 10, h ^= h >> 6;
+		return
+			h += h << 3,
+			h ^= h >> 1,
+			h + (h << 15);
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to check.</param>
  * <returns>
- *  true/false.
+ *   true/false.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock bool:IsHex(const str[])
+stock bool:IsHex(const string:str[])
 {
-	P:3("ishex called: \"%s\"", str);
+	Debug_Print3("ishex called: \"%s\"", str);
 	new
 		i = 0,
 		cur = 0;
-	if (str[0] == '0' && (str[1] | 0x20) == 'x') i = 2;
-	do
+	if (YSI_IsPacked__(str))
 	{
-		cur = str[i++];
+		if (str{0} == '0' && (str{1} | 0x20) == 'x') i = 2;
+		do
+		{
+			cur = str{i++};
+		}
+		while (IS_IN_RANGE(cur, '0', '9' + 1) || IS_IN_RANGE(cur | 0x20, 'a', 'f' + 1));
 	}
-	while (IS_IN_RANGE(cur, '0', '9' + 1) || IS_IN_RANGE(cur | 0x20, 'a', 'f' + 1));
+	else
+	{
+		if (str[0] == '0' && (str[1] | 0x20) == 'x') i = 2;
+		do
+		{
+			cur = str[i++];
+		}
+		while (IS_IN_RANGE(cur, '0', '9' + 1) || IS_IN_RANGE(cur | 0x20, 'a', 'f' + 1));
+	}
 	//while (('0' <= cur <= '9') || ('a' <= (cur | 0x20) <= 'f'));
 	return !cur; // Valid if this is the end of the string.
 }
 
 #pragma deprecated Use `IsHex` (i.e. use proper capitalisation).
-stock bool:ishex(const str[])
+stock bool:ishex(const string:str[])
 {
 	return IsHex(str);
 }
@@ -881,16 +1239,16 @@ stock bool:ishex(const str[])
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to unpack</param>
  * <returns>
- *  unpacked string
+ *   unpacked string
  * </returns>
  * <remarks>
- *  Mainly used for debugging.
+ *   Mainly used for debugging.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Unpack(const str[])
+stock Unpack(const string:str[])
 {
-	P:3("Unpack called: \"%s\"", str);
+	Debug_Print3("Unpack called: \"%s\"", str);
 	new
 		ret[YSI_MAX_STRING] = {0};
 	if (strlen(str) <= YSI_MAX_STRING)
@@ -901,11 +1259,11 @@ stock Unpack(const str[])
 }
 
 #pragma deprecated Use `Unpack` (i.e. use proper capitalisation).
-stock unpack(const str[])
+stock unpack(const string:str[])
 {
 	// Doesn't call the original, instead inlines the code because it returns a
 	// string, and the compiler doesn't like nested string returning functions.
-	P:3("unpack called: \"%s\"", str);
+	Debug_Print3("unpack called: \"%s\"", str);
 	new
 		ret[YSI_MAX_STRING] = {0};
 	if (strlen(str) <= YSI_MAX_STRING)
@@ -918,11 +1276,11 @@ stock unpack(const str[])
 /*-------------------------------------------------------------------------*//**
  * <param name="idx">Index of the string in the parameters.</param>
  * <returns>
- *  string
+ *   string
  * </returns>
  * <remarks>
- *  Is passed the result of getarg, which will be the address of a string (in
- *  theory) and uses that for DMA to get the string.
+ *   Is passed the result of getarg, which will be the address of a string (in
+ *   theory) and uses that for DMA to get the string.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -987,13 +1345,12 @@ stock ReturnStringArg(idx)
  *  Formatted string.
  * </returns>
  * <remarks>
- *  Just wraps <c>format</c> and returns a string instead.
- *
- *  Has extra code to ensure that it works correct on the old compiler.
+ *   Just wraps <c>format</c> and returns a string instead.  Has extra code to
+ *   ensure that it works correctly on the old compiler.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
+stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused fmat
 	
@@ -1038,29 +1395,56 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to check</param>
  * <remarks>
- *  Checks if a given string is numeric.
+ *   Checks if a given string is numeric.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:IsNumeric(const str[])
-{
-	P:4("IsNumeric called: \"%s\"", str);
-	new
-		i = -1;
-	while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
-	return !str[i];
-}
+#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumeric__
+	stock bool:IsNumeric(const string:str[])
+	{
+		Debug_Print4("IsNumeric called: \"%s\"", str);
+		// This function is copied in `y_core_entry` to test a compiler bug.
+		new
+			i = -1;
+		if (YSI_IsPacked__(str))
+		{
+			if (str{0} == '-') ++i;
+			while (IS_IN_RANGE(str{++i}, '0', '9' + 1)) {}
+			return !str{i};
+		}
+		else
+		{
+			if (str[0] == '-') ++i;
+			while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
+			return !str[i];
+		}
+	}
 
-#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
-stock bool:isnumeric(const str[])
-{
-	return IsNumeric(str);
-}
+	#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
+	stock bool:isnumeric(const string:str[])
+	{
+		return IsNumeric(str);
+	}
+
+	// Ensure this branch is hit a second time.
+	stock YSI_IsNumeric__()
+	{
+	}
+#else
+	HIDE_PAWNDOC(YSI_IsNumeric);
+#endif
+
+// Detect a compiler issue.
+#if __COMPILER_FUNC_DECL_BUG
+	// Try disable the next `IsNumeric` declaration.
+	#define IsNumeric(%0[]) _@IsNumeric(%0[])
+	#define isnumeric(%0[]) _@isnumeric(%0[])
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player to mess up</param>
  * <remarks>
- *  Make some random effects on the player.
+ *   Make some random effects on the player.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1120,158 +1504,228 @@ stock Utils_ChaosMod(playerid)
 
 
 /*-------------------------------------------------------------------------*//**
- *
  * <param name="string">String to convert to a number.</param>
  * <returns>
- *  value of the passed hex string.
+ *   value of the passed hex string.
  * </returns>
  * <remarks>
- *  Now stops on invalid characters.
+ *   Now stops on invalid characters.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock HexStr(const string[])
+stock HexStr(const string:str[])
 {
 	new
 		ret = 0,
 		val = 0,
 		i = 0;
-	if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
-	for ( ; ; )
+	if (YSI_IsPacked__(str))
 	{
-		switch ((val = string[i++]))
+		if (str{0} == '0' && str{1} | 0x20 == 'x') i = 2;
+		for ( ; ; )
 		{
-			case '0' .. '9':
+			switch ((val = str{i++}))
 			{
-				val -= '0';
+				case '0' .. '9':
+				{
+					val -= '0';
+				}
+				case 'a' .. 'f':
+				{
+					val -= 'a' - 10;
+				}
+				case 'A' .. 'F':
+				{
+					val -= 'A' - 10;
+				}
+				default: break;
 			}
-			case 'a' .. 'f':
-			{
-				val -= 'a' - 10;
-			}
-			case 'A' .. 'F':
-			{
-				val -= 'A' - 10;
-			}
-			default: break;
+			ret = ret << 4 | val;
 		}
-		ret = ret << 4 | val;
+	}
+	else
+	{
+		if (str[0] == '0' && str[1] | 0x20 == 'x') i = 2;
+		for ( ; ; )
+		{
+			switch ((val = str[i++]))
+			{
+				case '0' .. '9':
+				{
+					val -= '0';
+				}
+				case 'a' .. 'f':
+				{
+					val -= 'a' - 10;
+				}
+				case 'A' .. 'F':
+				{
+					val -= 'A' - 10;
+				}
+				default: break;
+			}
+			ret = ret << 4 | val;
+		}
 	}
 	return ret;
 }
 
 #pragma deprecated Use `HexStr` (i.e. use proper capitalisation).
-stock hexstr(const string[])
+stock hexstr(const string:str[])
 {
-	return HexStr(string);
+	return HexStr(str);
 }
 
 /*-------------------------------------------------------------------------*//**
- *
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
- *  bool: passed boolean.
+ *   bool: passed boolean.
  * </returns>
  * <remarks>
- *  This can take a number of ways of representing booleans - 0, false and
- *  nothing there.  Anything not one of those things (false is not case
- *  sensitive) is assumed true.
+ *   This can take a number of ways of representing booleans - 0, false and
+ *   nothing there.  Anything not one of those things (false is not case
+ *   sensitive) is assumed true.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:BoolStr(const string[])
+stock bool:BoolStr(const string:str[])
 {
 	// Hooray for De Morgan's rules!
-	return string[0] && string[0] != '0' && strcmp(string, "false", true);
+	return str[0] && ((YSI_IsPacked__(str) ? str{0} : str[0]) != '0') && strcmp(str, "false", true);
 }
 
 #pragma deprecated Use `BoolStr` (i.e. use proper capitalisation).
-stock bool:boolstr(const string[])
+stock bool:boolstr(const string:str[])
 {
-	return BoolStr(string);
+	return BoolStr(str);
 }
 
 /*-------------------------------------------------------------------------*//**
- *
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
- *  bool: passed boolean.
+ *   bool: passed boolean.
  * </returns>
  * <remarks>
- *  This takes a value in 0110101 (boolean) format and returns it as a
- *  regular value.
+ *   This takes a value in 0110101 (boolean) format and returns it as a
+ *   regular value.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock BinStr(const string[])
+stock BinStr(const string:str[])
 {
-	new
-		pos = 0;
-	switch (string[0])
+	if (YSI_IsPacked__(str))
 	{
-		case '0':
-		{
-			if (string[1] | 0x20 == 'b')
-			{
-				pos = 2;
-			}
-		}
-		case '1':
-		{
-		}
-		default:
-		{
-			return 0;
-		}
-	}
-	new
-		value = 0;
-	for ( ; ; )
-	{
-		switch (string[pos++])
+		new
+			pos = 0;
+		switch (str{0})
 		{
 			case '0':
 			{
-				value <<= 1;
+				if (str{1} | 0x20 == 'b')
+				{
+					pos = 2;
+				}
 			}
 			case '1':
 			{
-				value = (value << 1) | 1;
 			}
 			default:
 			{
-				break;
+				return 0;
 			}
 		}
+		new
+			value = 0;
+		for ( ; ; )
+		{
+			switch (str{pos++})
+			{
+				case '0':
+				{
+					value <<= 1;
+				}
+				case '1':
+				{
+					value = (value << 1) | 1;
+				}
+				default:
+				{
+					break;
+				}
+			}
+		}
+		return value;
 	}
-	return value;
+	else
+	{
+		new
+			pos = 0;
+		switch (str[0])
+		{
+			case '0':
+			{
+				if (str[1] | 0x20 == 'b')
+				{
+					pos = 2;
+				}
+			}
+			case '1':
+			{
+			}
+			default:
+			{
+				return 0;
+			}
+		}
+		new
+			value = 0;
+		for ( ; ; )
+		{
+			switch (str[pos++])
+			{
+				case '0':
+				{
+					value <<= 1;
+				}
+				case '1':
+				{
+					value = (value << 1) | 1;
+				}
+				default:
+				{
+					break;
+				}
+			}
+		}
+		return value;
+	}
 }
 
 #pragma deprecated Use `BinStr` (i.e. use proper capitalisation).
-stock binstr(const string[])
+stock binstr(const string:str[])
 {
-	return BinStr(string);
+	return BinStr(str);
 }
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Base64Encode
+ *   Base64Encode
  * </summary>
  * <remarks>
- *  Encodes data using proper base64.  This code is complicated by the fact that
- *  PAWN packed strings are backwards by cells in memory, so we need to do the
- *  writes in what seems like a strange order.
+ *   Encodes data using proper base64.  This code is complicated by the fact
+ *   that PAWN packed strings are backwards by cells in memory, so we need to do
+ *   the writes in what seems like a strange order.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest), offset = 0)
+stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof (dest), offset = 0)
 {
 	static
 		// This is what the encoding should look like.  We mangle it to make the
 		// representation in memory look like a C string, not a PAWN packed
 		// string.
 		//sEncoding[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98",
+		sEncoding[65 char] = __COMPILER_PACK"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98",
 		//tmp,
 		ret = 0;
 	num = num << __COMPILER_CELL_SHIFT;
@@ -1444,14 +1898,14 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Base64Decode
+ *   Base64Decode
  * </summary>
  * <remarks>
- *  Decodes data using proper base64.
+ *   Decodes data using proper base64.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
+stock Base64Decode(dest[], const string:src[], len = sizeof (dest), offset = 0)
 {
 	static
 		// Again, the encoding looks slightly mangled as we want the bytes in
@@ -1640,15 +2094,15 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  RawMemCpy
+ *   RawMemCpy
  * </summary>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
  * <param name="numbytes">Number of bytes to copy.</param>
  * <remarks>
- *  Like memcpy, but takes addresses instead of arrays.  Also far less secure
- *  because it doesn't check the destination size - it just assumes it is large
- *  enough.
+ *   Like memcpy, but takes addresses instead of arrays.  Also far less secure
+ *   because it doesn't check the destination size - it just assumes it is large
+ *   enough.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1666,18 +2120,15 @@ stock rawMemcpy(dest, src, numbytes)
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of cells to fill.</param>
  * <remarks>
- *  Based on code by Slice:
+ *   Based on <a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781">
+ *   code by Slice</a>, modified to use binary flags instead of a loop.
  *
- *  <a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781" />
+ *   "MemSet" takes an array, the size of the array, and a value to fill it with
+ *   and sets the whole array to that value.
  *
- *  Modified to use binary flags instead of a loop.
- *
- *  "MemSet" takes an array, the size of the array, and a value to fill it with
- *  and sets the whole array to that value.
- *
- *  "rawmemset" is similar, but takes an AMX data segment address instead and
- *  the size is in bytes, not cells.  However, the size must still be a multiple
- *  of 4.
+ *   "rawmemset" is similar, but takes an AMX data segment address instead and
+ *   the size is in bytes, not cells.  However, the size must still be a
+ *   multiple of 4.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1858,19 +2309,30 @@ stock ReturnPlayerName(playerid)
  * </summary>
  * <param name="playerid">Player whose name you want to get.</param>
  * <remarks>
- *  Get a player's name, with <c>_<c/> replaced by <c> <c/>.
+ *  Get a player's name, with <c>_</c> replaced by <c> </c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:GetPlayerRPName(playerid, name[], len = sizeof (name))
+stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 {
+	// Returns an unpacked string.
 	if (GetPlayerName(playerid, name, len - 1))
 	{
 		// Replace `_` with ` `.
 		len = -1;
-		while ((len = strfind(name, "_", false, len + 1)) != -1)
+		if (YSI_IsPacked__(name))
 		{
-			name[len] = ' ';
+			while ((len = strfind(name, __COMPILER_PACK"_", false, len + 1)) != -1)
+			{
+				name{len} = ' ';
+			}
+		}
+		else
+		{
+			while ((len = strfind(name, __COMPILER_PACK"_", false, len + 1)) != -1)
+			{
+				name[len] = ' ';
+			}
 		}
 		return true;
 	}
@@ -1890,87 +2352,172 @@ stock bool:GetPlayerRPName(playerid, name[], len = sizeof (name))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:IsRPName(const name[], bool:casing = false, bool:longNames = false)
+stock bool:IsRPName(const string:name[], bool:casing = false, bool:longNames = false)
 {
-	new
-		parts = 0,
-		ch = name[0],
-		pos = -1;
-	if (ch == ' ' || ch == '_' || ch == '\0')
+	if (YSI_IsPacked__(name))
 	{
-		// Leading bad characters.
-		return false;
-	}
-	if (casing)
-	{
-		do
+		new
+			parts = 0,
+			ch = name{0},
+			pos = -1;
+		if (ch == ' ' || ch == '_' || ch == '\0')
 		{
-			if (NOT_IN_RANGE((ch = name[++pos]), 'A', 'Z' + 1))
+			// Leading bad characters.
+			return false;
+		}
+		if (casing)
+		{
+			do
 			{
-				// Not a capital letter.
-				return false;
-			}
-			while ((ch = name[++pos]))
-			{
-				// Allow real spaces, YSF can enable that.
-				if (ch == '_' || ch == ' ')
+				if (NOT_IN_RANGE((ch = name{++pos}), 'A', 'Z' + 1))
 				{
-					if (name[pos + 1] == '\0')
-					{
-						// Ends with `_`.
-						return false;
-					}
-					break;
-				}
-				if (NOT_IN_RANGE(ch, 'a', 'z' + 1))
-				{
-					// Not a lower-case letter.
+					// Not a capital letter.
 					return false;
 				}
+				while ((ch = name{++pos}))
+				{
+					// Allow real spaces, YSF can enable that.
+					if (ch == '_' || ch == ' ')
+					{
+						if (name{pos + 1} == '\0')
+						{
+							// Ends with `_`.
+							return false;
+						}
+						break;
+					}
+					if (NOT_IN_RANGE(ch, 'a', 'z' + 1))
+					{
+						// Not a lower-case letter.
+						return false;
+					}
+				}
+				// Found a name part.
+				++parts;
 			}
-			// Found a name part.
-			++parts;
+			while (ch);
 		}
-		while (ch);
+		else
+		{
+			do
+			{
+				while ((ch = name{++pos}))
+				{
+					// Allow real spaces, YSF can enable that.
+					if (ch == '_' || ch == ' ')
+					{
+						if (name{pos + 1} == '\0')
+						{
+							// Ends with `_`.
+							return false;
+						}
+						break;
+					}
+					if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
+					{
+						// Not a valid name letter.
+						return false;
+					}
+				}
+				// Found a name part.
+				++parts;
+			}
+			while (ch);
+		}
+		switch (parts)
+		{
+		case 1:
+			// Not enough parts.
+			return false;
+		case 2:
+			// Exactly two parts.
+			return true;
+		}
+		// More parts.  Is this allowed?
+		return longNames;
 	}
 	else
 	{
-		do
+		new
+			parts = 0,
+			ch = name[0],
+			pos = -1;
+		if (ch == ' ' || ch == '_' || ch == '\0')
 		{
-			while ((ch = name[++pos]))
+			// Leading bad characters.
+			return false;
+		}
+		if (casing)
+		{
+			do
 			{
-				// Allow real spaces, YSF can enable that.
-				if (ch == '_' || ch == ' ')
+				if (NOT_IN_RANGE((ch = name[++pos]), 'A', 'Z' + 1))
 				{
-					if (name[pos + 1] == '\0')
-					{
-						// Ends with `_`.
-						return false;
-					}
-					break;
-				}
-				if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
-				{
-					// Not a valid name letter.
+					// Not a capital letter.
 					return false;
 				}
+				while ((ch = name[++pos]))
+				{
+					// Allow real spaces, YSF can enable that.
+					if (ch == '_' || ch == ' ')
+					{
+						if (name[pos + 1] == '\0')
+						{
+							// Ends with `_`.
+							return false;
+						}
+						break;
+					}
+					if (NOT_IN_RANGE(ch, 'a', 'z' + 1))
+					{
+						// Not a lower-case letter.
+						return false;
+					}
+				}
+				// Found a name part.
+				++parts;
 			}
-			// Found a name part.
-			++parts;
+			while (ch);
 		}
-		while (ch);
+		else
+		{
+			do
+			{
+				while ((ch = name[++pos]))
+				{
+					// Allow real spaces, YSF can enable that.
+					if (ch == '_' || ch == ' ')
+					{
+						if (name[pos + 1] == '\0')
+						{
+							// Ends with `_`.
+							return false;
+						}
+						break;
+					}
+					if (NOT_IN_RANGE(ch, 'a', 'z' + 1) && NOT_IN_RANGE(ch, 'A', 'Z' + 1))
+					{
+						// Not a valid name letter.
+						return false;
+					}
+				}
+				// Found a name part.
+				++parts;
+			}
+			while (ch);
+		}
+		switch (parts)
+		{
+		case 1:
+			// Not enough parts.
+			return false;
+		case 2:
+			// Exactly two parts.
+			return true;
+		}
+		// More parts.  Is this allowed?
+		return longNames;
 	}
-	switch (parts)
-	{
-	case 1:
-		// Not enough parts.
-		return false;
-	case 2:
-		// Exactly two parts.
-		return true;
-	}
-	// More parts.  Is this allowed?
-	return longNames;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2000,7 +2547,7 @@ stock bool:HasRPName(playerid, bool:casing = false, bool:longNames = false)
  * </summary>
  * <param name="playerid">Player whose name you want to get.</param>
  * <remarks>
- *  Get a player's name, with <c>_<c/> replaced by <c> <c/>.
+ *  Get a player's name, with <c>_</c> replaced by <c> </c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2028,7 +2575,7 @@ stock ReturnPlayerRPName(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock ftouch(const filename[])
+stock ftouch(const string:filename[])
 {
 	if (fexist(filename))
 	{
@@ -2123,7 +2670,7 @@ stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN
 #pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 {
-	P:W("`InterpolateColorLinear()` called, please use `InterpolateColourLinear()` isntead,");
+	Debug_Warning("`InterpolateColorLinear()` called, please use `InterpolateColourLinear()` isntead,");
 	return InterpolateColourLinear(startColour, endColour, value, maxvalue, minvalue);
 }
 
@@ -2215,7 +2762,7 @@ stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 #pragma deprecated Use `InterpolateColourGamma` instead.
 stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-	P:W("`InterpolateColorGamma()` called, please use `InterpolateColourGamma()` isntead,");
+	Debug_Warning("`InterpolateColorGamma()` called, please use `InterpolateColourGamma()` isntead,");
 	return InterpolateColourGamma(startColour, endColour, fraction);
 }
 
@@ -2376,7 +2923,7 @@ stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 #pragma deprecated Use `InterpolateColourSRGB` instead.
 stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-	P:W("`InterpolateColorSRGB()` called, please use `InterpolateColourSRGB()` isntead,");
+	Debug_Warning("`InterpolateColorSRGB()` called, please use `InterpolateColourSRGB()` isntead,");
 	return InterpolateColourSRGB(startColour, endColour, fraction);
 }
 
@@ -2640,9 +3187,16 @@ stock GetNearestColourSRGBCached(colour, const Float:options[][3], count = sizeo
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock SkipWhitespace(const str[], pos)
+stock SkipWhitespace(const string:str[], pos)
 {
-	while (IS_IN_RANGE(str[pos], '\0' + 1, ' ' + 1)) ++pos;
+	if (YSI_IsPacked__(str))
+	{
+		while (IS_IN_RANGE(str{pos}, '\0' + 1, ' ' + 1)) ++pos;
+	}
+	else
+	{
+		while (IS_IN_RANGE(str[pos], '\0' + 1, ' ' + 1)) ++pos;
+	}
 	//while ('\0' < str[pos] <= ' ') ++pos;
 	return pos;
 }
@@ -2658,18 +3212,35 @@ stock SkipWhitespace(const str[], pos)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Trim(const str[], &start, &end)
+stock Trim(const string:str[], &start, &end)
 {
-	while (IS_IN_RANGE(str[start], '\0' + 1, ' ' + 1)) ++start;
-	//while ('\0' < str[start] <= ' ') ++start;
-	if (str[start])
+	if (YSI_IsPacked__(str))
 	{
-		while (end-- > start && str[end] <= ' ') {}
-		++end;
+		while (IS_IN_RANGE(str{start}, '\0' + 1, ' ' + 1)) ++start;
+		//while ('\0' < str[start] <= ' ') ++start;
+		if (str{start})
+		{
+			while (end-- > start && str{end} <= ' ') {}
+			++end;
+		}
+		else
+		{
+			end = start;
+		}
 	}
 	else
 	{
-		end = start;
+		while (IS_IN_RANGE(str[start], '\0' + 1, ' ' + 1)) ++start;
+		//while ('\0' < str[start] <= ' ') ++start;
+		if (str[start])
+		{
+			while (end-- > start && str[end] <= ' ') {}
+			++end;
+		}
+		else
+		{
+			end = start;
+		}
 	}
 }
 
@@ -2829,9 +3400,9 @@ stock memcmp(arr1[], arr2[], count)
 	return MemCmp(arr1, arr2, count);
 }
 
-#define MAX_LEVENSHTEIN_STRING (32)
+#define MAX_LEVENSHTEIN_STRING (YSI_MAX_STRING)
 
-static stock DoLevenshteinDistance(const a[], lenA, const b[], lenB)
+static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], lenB)
 {
 	// "a" is the shorter string in this call.
 	new
@@ -2853,6 +3424,96 @@ static stock DoLevenshteinDistance(const a[], lenA, const b[], lenB)
 					matrix[j + 1] + 1     , /* Insertion cost.    */ min(
 					matrix[j] + 1         , /* Deletion cost.     */
 					prev + _:(b[i] != a[j]) /* Substitution cost. */ )
+				);
+			prev = matrix[j + 1];
+			matrix[j + 1] = distance;
+		}
+	}
+	return matrix[lenA];
+}
+
+static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[], lenB)
+{
+	// "a" is the shorter string in this call.
+	new
+		// Can only compare strings up to this length.
+		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
+	// Initial subsequence equal.
+	//if (!strcmp(a, b, false, lenA))
+	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		// Loop over the characters in the longer string, and use the matrix for the shorter string.
+		new
+			prev = matrix[0];
+		matrix[0] = i + 1;
+		for (new j = 0; j != lenA; ++j)
+		{
+			new
+				distance = min(
+					matrix[j + 1] + 1     , /* Insertion cost.    */ min(
+					matrix[j] + 1         , /* Deletion cost.     */
+					prev + _:(b[i] != a{j}) /* Substitution cost. */ )
+				);
+			prev = matrix[j + 1];
+			matrix[j + 1] = distance;
+		}
+	}
+	return matrix[lenA];
+}
+
+static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[], lenB)
+{
+	// "a" is the shorter string in this call.
+	new
+		// Can only compare strings up to this length.
+		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
+	// Initial subsequence equal.
+	//if (!strcmp(a, b, false, lenA))
+	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		// Loop over the characters in the longer string, and use the matrix for the shorter string.
+		new
+			prev = matrix[0];
+		matrix[0] = i + 1;
+		for (new j = 0; j != lenA; ++j)
+		{
+			new
+				distance = min(
+					matrix[j + 1] + 1     , /* Insertion cost.    */ min(
+					matrix[j] + 1         , /* Deletion cost.     */
+					prev + _:(b{i} != a[j]) /* Substitution cost. */ )
+				);
+			prev = matrix[j + 1];
+			matrix[j + 1] = distance;
+		}
+	}
+	return matrix[lenA];
+}
+
+static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[], lenB)
+{
+	// "a" is the shorter string in this call.
+	new
+		// Can only compare strings up to this length.
+		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
+	// Initial subsequence equal.
+	//if (!strcmp(a, b, false, lenA))
+	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		// Loop over the characters in the longer string, and use the matrix for the shorter string.
+		new
+			prev = matrix[0];
+		matrix[0] = i + 1;
+		for (new j = 0; j != lenA; ++j)
+		{
+			new
+				distance = min(
+					matrix[j + 1] + 1     , /* Insertion cost.    */ min(
+					matrix[j] + 1         , /* Deletion cost.     */
+					prev + _:(b{i} != a{j}) /* Substitution cost. */ )
 				);
 			prev = matrix[j + 1];
 			matrix[j + 1] = distance;
@@ -2883,10 +3544,25 @@ stock LevenshteinDistance(const a[], const b[])
 	{
 		if (lenB > MAX_LEVENSHTEIN_STRING)
 		{
-			P:E("`LevenshteinDistance` can currenly only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+			Debug_Error("`LevenshteinDistance` can currenly only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
 			return 1;
 		}
-		return DoLevenshteinDistance(b, lenB, a, lenA);
+		// The calls below are NOT wrong, the parameters are swapped so the A/B
+		// packing calls are also swapped.
+		if (YSI_IsPacked__(a))
+		{
+			if (YSI_IsPacked__(b))
+				return DoLevenshteinDistancePackAB(b, lenB, a, lenA);
+			else
+				return DoLevenshteinDistancePackB(b, lenB, a, lenA);
+		}
+		else
+		{
+			if (YSI_IsPacked__(b))
+				return DoLevenshteinDistancePackA(b, lenB, a, lenA);
+			else
+				return DoLevenshteinDistance(b, lenB, a, lenA);
+		}
 	}
 	else if (lenA == lenB && strcmp(a, b) == 0)
 	{
@@ -2895,10 +3571,23 @@ stock LevenshteinDistance(const a[], const b[])
 	}
 	if (lenA > MAX_LEVENSHTEIN_STRING)
 	{
-		P:E("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+		Debug_Error("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
 		return 1;
 	}
-	return DoLevenshteinDistance(a, lenA, b, lenB);
+	if (YSI_IsPacked__(a))
+	{
+		if (YSI_IsPacked__(b))
+			return DoLevenshteinDistancePackAB(a, lenA, b, lenB);
+		else
+			return DoLevenshteinDistancePackA(a, lenA, b, lenB);
+	}
+	else
+	{
+		if (YSI_IsPacked__(b))
+			return DoLevenshteinDistancePackB(a, lenA, b, lenB);
+		else
+			return DoLevenshteinDistance(a, lenA, b, lenB);
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2955,7 +3644,7 @@ stock PrintArg(n)
 
 #define printarg PrintArg
 
-stock File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = sizeof (name))
+stock File:ftemporary_(string:name[], const string:ext[] = "tmp", const string:path[] = "", len = sizeof (name))
 {
 	new
 		pathLen = strlen(path);
@@ -2967,34 +3656,69 @@ stock File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = siz
 	{
 		return File:0;
 	}
-	// These parts of the filename never change, so only do them once.
-	strcat(name, path, len),
-	name[pathLen] = '_',
-	name[pathLen + YSI_TEMP_FILE_LENGTH + 1] = '.',
-	strcat(name[pathLen + YSI_TEMP_FILE_LENGTH + 2], ext, len);
-	// Generate a random filename, with an equal distribution of letters and
-	// numbers.
-	do
+	if (YSI_IsPacked__(name))
 	{
-		// The post-increment here skips the `_` filename prefix.
-		for (new i = pathLen; i++ < YSI_TEMP_FILE_LENGTH + pathLen; )
+		// These parts of the filename never change, so only do them once.
+		strcat(name, path, len),
+		name{pathLen} = '_',
+		name{pathLen + YSI_TEMP_FILE_LENGTH + 1} = '.',
+		name{pathLen + YSI_TEMP_FILE_LENGTH + 1} = '\0',
+		strcat(name, ext, len);
+		// Generate a random filename, with an equal distribution of letters and
+		// numbers.
+		do
 		{
-			new ch = random(62);
-			if (ch < 26)
+			// The post-increment here skips the `_` filename prefix.
+			for (new i = pathLen; i++ < YSI_TEMP_FILE_LENGTH + pathLen; )
 			{
-				name[i] = ch + 'a';
-			}
-			else if (ch < 52)
-			{
-				name[i] = ch + ('A' - 26);
-			}
-			else
-			{
-				name[i] = ch + ('0' - 52);
+				new ch = random(62);
+				if (ch < 26)
+				{
+					name{i} = ch + 'a';
+				}
+				else if (ch < 52)
+				{
+					name{i} = ch + ('A' - 26);
+				}
+				else
+				{
+					name{i} = ch + ('0' - 52);
+				}
 			}
 		}
+		while (fexist(name));
 	}
-	while (fexist(name));
+	else
+	{
+		// These parts of the filename never change, so only do them once.
+		strcat(name, path, len),
+		name[pathLen] = '_',
+		name[pathLen + YSI_TEMP_FILE_LENGTH + 1] = '.',
+		strcat(name[pathLen + YSI_TEMP_FILE_LENGTH + 2], ext, len);
+		// Generate a random filename, with an equal distribution of letters and
+		// numbers.
+		do
+		{
+			// The post-increment here skips the `_` filename prefix.
+			for (new i = pathLen; i++ < YSI_TEMP_FILE_LENGTH + pathLen; )
+			{
+				new ch = random(62);
+				if (ch < 26)
+				{
+					name[i] = ch + 'a';
+				}
+				else if (ch < 52)
+				{
+					name[i] = ch + ('A' - 26);
+				}
+				else
+				{
+					name[i] = ch + ('0' - 52);
+				}
+			}
+		}
+		while (fexist(name));
+	}
 	// Open the file, to ensure it is created.
 	return fopen(name, io_readwrite);
 }
@@ -3007,7 +3731,7 @@ stock File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = siz
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:fautocleanup(const name[], maxAge)
+stock bool:fautocleanup(const string:name[], maxAge)
 {
 	// Add the file to `.tempfiles`.
 	new
@@ -3043,7 +3767,7 @@ stock bool:fautocleanup(const name[], maxAge)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAge = YSI_TEMP_FILE_AGE)
+stock File:ftemporary(string:ret[] = "", const string:ext[] = "tmp", len = sizeof (ret), maxAge = YSI_TEMP_FILE_AGE)
 {
 	// Open the file, to ensure it is created.
 	if (len < 32)
@@ -3096,16 +3820,16 @@ stock File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), maxAg
 static stock
 	YSI_gsDefaultDirs[E_YSI_DIR][YSI_DIR_LENGTH] = {
 #if _DEBUG
-		_YSI_DEFAULT_DIR_PREFIX "/debug/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/debug/",
 #endif
 #if defined YSI_TESTS
-		_YSI_DEFAULT_DIR_PREFIX "/tests/",
-		_YSI_DEFAULT_DIR_PREFIX "/YDBG/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/tests/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/YDBG/",
 #endif
 		//"/text/",
 		//"/users/",
-		_YSI_DEFAULT_DIR_PREFIX "/fixes/",
-		_YSI_DEFAULT_DIR_PREFIX "/temp/"
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/fixes/",
+		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/temp/"
 	};
 
 #undef _YSI_DEFAULT_DIR_PREFIX
@@ -3137,18 +3861,18 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 	{
 		new
 			bool:first = true,
-			path[38] = "     /scriptfiles/", // The `18`s below are this length.
+			path[38] = __COMPILER_UNPACK"     /scriptfiles/", // The `18`s below are this length.
 			test[YSI_DIR_LENGTH + 8],
 			File:file;
 		for (new E_YSI_DIR:dir = E_YSI_DIR:0; dir != E_YSI_DIR; ++dir)
 		{
-			if (YSI_gsDefaultDirs[dir][0] == '/')
+			if (YSI_gsDefaultDirs[dir]{0} == '/')
 			{
 				path[18] = '\0',
-				strcat(path, "YSI"),
+				strcat(path, __COMPILER_PACK"YSI"),
 				strcat(path, YSI_gsDefaultDirs[dir]),
 				StrCpy(test, path[18]),
-				strcat(test, ".gitkeep");
+				strcat(test, __COMPILER_PACK".gitkeep");
 				if ((file = fopen(test, io_write)))
 				{
 					// Found `YSI/dir/`.
@@ -3217,7 +3941,7 @@ stock bool:Files_CopyRange(File:i, end, const string:dst[])
 	while (end--)
 	{
 		//printf("trailing char: %d", end);
-		fputchar(o, fgetchar(i, 0, false), false);
+		fputchar(o, YSI_FGetChar__(i, false), false);
 	}
 	return bool:fclose(o);
 }
@@ -3338,6 +4062,1054 @@ stock bool:TryPPM(ppm)
 	return random(1000000) < ppm;
 }
 
+_Y_CORE_STATIC stock IterativeColouredSkipSUnpacked(const string:text[], start, &colour)
+{
+	new
+		ch = 0,
+		i = 0,
+		cc = 0;
+	while ((ch = text[start]))
+	{
+		if (ch == '\r' || ch == '\n')
+		{
+			// Instantly end.  We don't skip this whitespace.
+			return start;
+		}
+		else if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
+		{
+			// Interesting whitespace.  Will exclude `'\r'` and `'\n'` thanks to
+			// the `else`.
+			++start;
+		}
+		else if (ch == '{')
+		{
+			for (i = 1, cc = 0; i != 7; ++i)
+			{
+				ch = text[start + i];
+				if (IS_IN_RANGE(ch, '0', '9' + 1))
+				{
+					cc = (cc << 4) | (ch - '0');
+				}
+				else if (IS_IN_RANGE(ch, 'a', 'f' + 1))
+				{
+					cc = (cc << 4) | (ch - ('a' - 10));
+				}
+				else if (IS_IN_RANGE(ch, 'A', 'F' + 1))
+				{
+					cc = (cc << 4) | (ch - ('A' - 10));
+				}
+				else
+				{
+					// Bad HEX.
+					return start;
+				}
+			}
+			if (text[start + 7] == '}')
+			{
+				colour = cc,
+				start += 8;
+			}
+			else
+			{
+				// Not valid whitespace.
+				return start;
+			}
+		}
+		else
+		{
+			// Not valid whitespace.
+			return start;
+		}
+	}
+	return start;
+}
+
+_Y_CORE_STATIC stock IterativeColouredSkipWUnpacked(const string:text[], lastIndex, start, &bool:hyphen, &colour, bool:useHyphen = true)
+{
+	// Offset.
+	new
+		// How many real letters appear within the width.
+		preLen = 0,
+		// How many real letters appear in the whole word?
+		truLen = 0,
+		g1 = 0,
+		g2 = 0,
+		ch = 0,
+		i = start,
+		j = 0,
+		cc = 0;
+	while ((ch = text[i]) > ' ')
+	{
+		if (IS_IN_RANGE(ch, 'a', 'z' + 1) || IS_IN_RANGE(ch, 'A', 'Z' + 1))
+		{
+			// Real letter.
+			if (i < lastIndex)
+			{
+				g1 = g2,
+				g2 = i,
+				++preLen;
+			}
+			++truLen;
+		}
+		else switch (ch)
+		{
+		case '{':
+		{
+			for (j = 1, cc = 0; ; ++j)
+			{
+				ch = text[i + j];
+				if (ch <= ' ')
+				{
+					useHyphen = false,
+					i += j;
+					break;
+				}
+				else if (j == 7)
+				{
+					i += 8;
+					if (ch != '}')
+					{
+						useHyphen = false;
+					}
+					else if (i <= lastIndex)
+					{
+						// Only propagate the colour if it is complete in the line.
+						colour = cc;
+					}
+					break;
+				}
+				else if (IS_IN_RANGE(ch, '0', '9' + 1))
+				{
+					cc = (cc << 4) | (ch - '0');
+				}
+				else if (IS_IN_RANGE(ch, 'a', 'f' + 1))
+				{
+					cc = (cc << 4) | (ch - ('a' - 10));
+				}
+				else if (IS_IN_RANGE(ch, 'A', 'F' + 1))
+				{
+					cc = (cc << 4) | (ch - ('A' - 10));
+				}
+				else
+				{
+					// Bad HEX.
+					useHyphen = false,
+					// NOT an OBOE, rechecks one character.
+					i += j;
+					break;
+				}
+			}
+			// Don't re-increment.
+			continue;
+		}
+		case '.', ',', '?', '!', '\'':
+		{
+			// Allow these in normal text.  Thus do nothing.
+		}
+		default:
+		{
+			// Not a real word.  Can't be hyphenated.
+			useHyphen = false;
+		}
+		}
+		++i;
+	}
+	// End of the word.
+	if (i <= lastIndex)
+	{
+		// Enough space.
+		return
+			hyphen = false,
+			i;
+	}
+	else if (useHyphen && truLen > 6 && preLen > 3)
+	{
+		// Can and should be hyphenated.
+		switch (truLen - preLen)
+		{
+		case 1:
+		{
+			// Only 1 character after the split.
+			return
+				hyphen = true,
+				g1;
+		}
+		case 2:
+		{
+			// Only 1 character after the split.
+			return
+				hyphen = true,
+				g2;
+		}
+		default:
+		{
+			return
+				hyphen = true,
+				g2 + 1 == lastIndex ? g2 : g2 + 1;
+		}
+		}
+	}
+	// Move the whole thing to the next line.
+	return
+		hyphen = false,
+		start;
+}
+
+_Y_CORE_STATIC stock IterativeColouredSkipSPacked(const string:text[], start, &colour)
+{
+	new
+		ch = 0,
+		i = 0,
+		cc = 0;
+	while ((ch = text{start}))
+	{
+		if (ch == '\r' || ch == '\n')
+		{
+			// Instantly end.  We don't skip this whitespace.
+			return start;
+		}
+		else if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
+		{
+			// Interesting whitespace.  Will exclude `'\r'` and `'\n'` thanks to
+			// the `else`.
+			++start;
+		}
+		else if (ch == '{')
+		{
+			for (i = 1, cc = 0; i != 7; ++i)
+			{
+				ch = text{start + i};
+				if (IS_IN_RANGE(ch, '0', '9' + 1))
+				{
+					cc = (cc << 4) | (ch - '0');
+				}
+				else if (IS_IN_RANGE(ch, 'a', 'f' + 1))
+				{
+					cc = (cc << 4) | (ch - ('a' - 10));
+				}
+				else if (IS_IN_RANGE(ch, 'A', 'F' + 1))
+				{
+					cc = (cc << 4) | (ch - ('A' - 10));
+				}
+				else
+				{
+					// Bad HEX.
+					return start;
+				}
+			}
+			if (text{start + 7} == '}')
+			{
+				colour = cc,
+				start += 8;
+			}
+			else
+			{
+				// Not valid whitespace.
+				return start;
+			}
+		}
+		else
+		{
+			// Not valid whitespace.
+			return start;
+		}
+	}
+	return start;
+}
+
+_Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex, start, &bool:hyphen, &colour, bool:useHyphen = true)
+{
+	// Offset.
+	new
+		// How many real letters appear within the width.
+		preLen = 0,
+		// How many real letters appear in the whole word?
+		truLen = 0,
+		g1 = 0,
+		g2 = 0,
+		ch = 0,
+		i = start,
+		j = 0,
+		cc = 0;
+	while ((ch = text{i}) > ' ')
+	{
+		if (IS_IN_RANGE(ch, 'a', 'z' + 1) || IS_IN_RANGE(ch, 'A', 'Z' + 1))
+		{
+			// Real letter.
+			if (i < lastIndex)
+			{
+				g1 = g2,
+				g2 = i,
+				++preLen;
+			}
+			++truLen;
+		}
+		else switch (ch)
+		{
+		case '{':
+		{
+			for (j = 1, cc = 0; ; ++j)
+			{
+				ch = text{i + j};
+				if (ch <= ' ')
+				{
+					useHyphen = false,
+					i += j;
+					break;
+				}
+				else if (j == 7)
+				{
+					i += 8;
+					if (ch != '}')
+					{
+						useHyphen = false;
+					}
+					else if (i <= lastIndex)
+					{
+						// Only propagate the colour if it is complete in the line.
+						colour = cc;
+					}
+					break;
+				}
+				else if (IS_IN_RANGE(ch, '0', '9' + 1))
+				{
+					cc = (cc << 4) | (ch - '0');
+				}
+				else if (IS_IN_RANGE(ch, 'a', 'f' + 1))
+				{
+					cc = (cc << 4) | (ch - ('a' - 10));
+				}
+				else if (IS_IN_RANGE(ch, 'A', 'F' + 1))
+				{
+					cc = (cc << 4) | (ch - ('A' - 10));
+				}
+				else
+				{
+					// Bad HEX.
+					useHyphen = false,
+					// NOT an OBOE, rechecks one character.
+					i += j;
+					break;
+				}
+			}
+			// Don't re-increment.
+			continue;
+		}
+		case '.', ',', '?', '!', '\'':
+		{
+			// Allow these in normal text.  Thus do nothing.
+		}
+		default:
+		{
+			// Not a real word.  Can't be hyphenated.
+			useHyphen = false;
+		}
+		}
+		++i;
+	}
+	// End of the word.
+	if (i <= lastIndex)
+	{
+		// Enough space.
+		return
+			hyphen = false,
+			i;
+	}
+	else if (useHyphen && truLen > 6 && preLen > 3)
+	{
+		// Can and should be hyphenated.
+		switch (truLen - preLen)
+		{
+		case 1:
+		{
+			// Only 1 character after the split.
+			return
+				hyphen = true,
+				g1;
+		}
+		case 2:
+		{
+			// Only 1 character after the split.
+			return
+				hyphen = true,
+				g2;
+		}
+		default:
+		{
+			return
+				hyphen = true,
+				g2 + 1 == lastIndex ? g2 : g2 + 1;
+		}
+		}
+	}
+	// Move the whole thing to the next line.
+	return
+		hyphen = false,
+		start;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  bool:IterativeTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
+ * </summary>
+ * <param name="text">The input string to split up.</param>
+ * <param name="start">Where in the string to start the next line.</param>
+ * <param name="width">The maximum size of the output (including hyphen).</param>
+ * <param name="end">The index to end the current line at (excluding hyphen).</param>
+ * <param name="next">The index to start the next line from (skips trailing spaces).</param>
+ * <param name="hyphen">Should a hyphen be inserted in to the output?</param>
+ * <param name="useHyphen">May a hyphen be included?</param>
+ * <returns>
+ *  Does the function need to be called again to show another line?
+ * </returns>
+ * <remarks>
+ *  Split some text in to multiple lines.  With sensible breaks at spaces or
+ *  mid-word if they're long enough.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, bool:useHyphen = true)
+{
+	if (YSI_IsPacked__(text))
+	{
+		// Returns `true` if there is more text to come.
+		new
+			lastSpace = start,
+			wordLen = 0,
+			i = start,
+			ch;
+		for (new j = 0; j != width; ++i, ++j)
+		{
+			switch ((ch = text{i}))
+			{
+			case '\0':
+			{
+				// End of the string.  Quite easy.
+				return
+					end = wordLen ? i : lastSpace,
+					// Just initialise this, the value shouldn't be used.
+					next = i,
+					// No hyphen, obviously.
+					hyphen = false,
+					// No more calls after this.
+					false;
+			}
+			case '\r':
+			{
+				// New line.  Quite easy.
+				return
+					end = wordLen ? i : lastSpace,
+					next = text{i + 1} == '\n' ? i + 2 : i + 1,
+					hyphen = false,
+					true;
+			}
+			case '\n':
+			{
+				// New line.  Very easy.
+				return
+					end = wordLen ? i : lastSpace,
+					next = i + 1,
+					hyphen = false,
+					true;
+			}
+			case 1 .. 9, 11 .. 12, 14 .. 32:
+			{
+				// Spacing.
+				if (wordLen)
+				{
+					// Was in a word, now aren't.
+					lastSpace = i,
+					wordLen = 0;
+				}
+				// Else do nothing, we're just skipping an extended space.
+			}
+			default:
+			{
+				// Text.
+				++wordLen;
+			}
+			}
+		}
+		// If we reach the end of the loop we've found the full width of text.
+		if (wordLen == 0)
+		{
+			// In space.  Good.  Skip the rest of the space.
+			end = lastSpace,
+			hyphen = false;
+			while ('\0' < (ch = text{i}) <= ' ')
+			{
+				if (ch == '\r')
+				{
+					return
+						next = text{i + 1} == '\n' ? i + 2 : i + 1,
+						true;
+				}
+				else if (ch == '\n')
+				{
+					return
+						next = i + 1,
+						true;
+				}
+				++i;
+			}
+			return
+				next = i,
+				ch != '\0';
+		}
+		// In the middle of a string.  Work out if we should split the text with a
+		// hyphen or move it down to the next line.
+		if (text{i} > ' ')
+		{
+			if (!useHyphen || wordLen < 4)
+			{
+				// Not enough space for three characters plus a hyphen on the
+				// current line.  Move it down to the next line.
+				return
+					end = lastSpace,
+					next = i - wordLen,
+					hyphen = false,
+					true;
+			}
+			if (text{i + 1} > ' ')
+			{
+				// There will be at least three characters on the next line (the new
+				// two plus the one replaced by the hyphen).
+				return
+					end = i - 1,
+					next = i - 1,
+					hyphen = true,
+					true;
+			}
+			if (wordLen >= 6)
+			{
+				// There are at least six characters total.
+				return
+					end = i - 2,
+					next = i - 2,
+					hyphen = true,
+					true;
+			}
+			// Five or six characters long.  Move to the next line.
+			return
+				end = lastSpace,
+				next = i - wordLen,
+				hyphen = false,
+				true;
+		}
+		// The word fits precisely.
+		end = i,
+		hyphen = false;
+		while ('\0' < (ch = text{i}) <= ' ')
+		{
+			if (ch == '\r')
+			{
+				return
+					next = text{i + 1} == '\n' ? i + 2 : i + 1,
+					true;
+			}
+			else if (ch == '\n')
+			{
+				return
+					next = i + 1,
+					true;
+			}
+			++i;
+		}
+		return
+			next = i,
+			ch != '\0';
+	}
+	else
+	{
+		// Returns `true` if there is more text to come.
+		new
+			lastSpace = start,
+			wordLen = 0,
+			i = start,
+			ch;
+		for (new j = 0; j != width; ++i, ++j)
+		{
+			switch ((ch = text[i]))
+			{
+			case '\0':
+			{
+				// End of the string.  Quite easy.
+				return
+					end = wordLen ? i : lastSpace,
+					// Just initialise this, the value shouldn't be used.
+					next = i,
+					// No hyphen, obviously.
+					hyphen = false,
+					// No more calls after this.
+					false;
+			}
+			case '\r':
+			{
+				// New line.  Quite easy.
+				return
+					end = wordLen ? i : lastSpace,
+					next = text[i + 1] == '\n' ? i + 2 : i + 1,
+					hyphen = false,
+					true;
+			}
+			case '\n':
+			{
+				// New line.  Very easy.
+				return
+					end = wordLen ? i : lastSpace,
+					next = i + 1,
+					hyphen = false,
+					true;
+			}
+			case 1 .. 9, 11 .. 12, 14 .. 32:
+			{
+				// Spacing.
+				if (wordLen)
+				{
+					// Was in a word, now aren't.
+					lastSpace = i,
+					wordLen = 0;
+				}
+				// Else do nothing, we're just skipping an extended space.
+			}
+			default:
+			{
+				// Text.
+				++wordLen;
+			}
+			}
+		}
+		// If we reach the end of the loop we've found the full width of text.
+		if (wordLen == 0)
+		{
+			// In space.  Good.  Skip the rest of the space.
+			end = lastSpace,
+			hyphen = false;
+			while ('\0' < (ch = text[i]) <= ' ')
+			{
+				if (ch == '\r')
+				{
+					return
+						next = text[i + 1] == '\n' ? i + 2 : i + 1,
+						true;
+				}
+				else if (ch == '\n')
+				{
+					return
+						next = i + 1,
+						true;
+				}
+				++i;
+			}
+			return
+				next = i,
+				ch != '\0';
+		}
+		// In the middle of a string.  Work out if we should split the text with a
+		// hyphen or move it down to the next line.
+		if (text[i] > ' ')
+		{
+			if (!useHyphen || wordLen < 4)
+			{
+				// Not enough space for three characters plus a hyphen on the
+				// current line.  Move it down to the next line.
+				return
+					end = lastSpace,
+					next = i - wordLen,
+					hyphen = false,
+					true;
+			}
+			if (text[i + 1] > ' ')
+			{
+				// There will be at least three characters on the next line (the new
+				// two plus the one replaced by the hyphen).
+				return
+					end = i - 1,
+					next = i - 1,
+					hyphen = true,
+					true;
+			}
+			if (wordLen >= 6)
+			{
+				// There are at least six characters total.
+				return
+					end = i - 2,
+					next = i - 2,
+					hyphen = true,
+					true;
+			}
+			// Five or six characters long.  Move to the next line.
+			return
+				end = lastSpace,
+				next = i - wordLen,
+				hyphen = false,
+				true;
+		}
+		// The word fits precisely.
+		end = i,
+		hyphen = false;
+		while ('\0' < (ch = text[i]) <= ' ')
+		{
+			if (ch == '\r')
+			{
+				return
+					next = text[i + 1] == '\n' ? i + 2 : i + 1,
+					true;
+			}
+			else if (ch == '\n')
+			{
+				return
+					next = i + 1,
+					true;
+			}
+			++i;
+		}
+		return
+			next = i,
+			ch != '\0';
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  bool:IterativeColouredTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
+ * </summary>
+ * <param name="text">The input string to split up.</param>
+ * <param name="start">Where in the string to start the next line.</param>
+ * <param name="width">The maximum size of the output (including hyphen).</param>
+ * <param name="end">The index to end the current line at (excluding hyphen).</param>
+ * <param name="next">The index to start the next line from (skips trailing spaces).</param>
+ * <param name="hyphen">Should a hyphen be inserted in to the output?</param>
+ * <param name="colour">The colour for the start of the next line.</param>
+ * <param name="useHyphen">May a hyphen be included?</param>
+ * <returns>
+ *  Does the function need to be called again to show another line?
+ * </returns>
+ * <remarks>
+ *  Split some text in to multiple lines.  With sensible breaks at spaces or
+ *  mid-word if they're long enough.  Unlike <c>IterativeTextSplitter</c> it
+ * will never split in the middle of <c>{RRGGBB}</c> colour sequences, and can
+ * ignore them for many checks.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, &colour, bool:useHyphen = true)
+{
+	if (YSI_IsPacked__(text))
+	{
+		new
+			ch;
+		hyphen = false,
+		width += start,
+		end = start;
+		while ((ch = text{start}))
+		{
+			if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
+			{
+				// Skip whitespace.
+				start = IterativeColouredSkipSPacked(text, start, colour);
+				switch (text{start})
+				{
+				case '\r':
+				{
+					return
+						next = text{start + 1} == '\n' ? start + 2 : start + 1,
+						true;
+				}
+				case '\n':
+				{
+					return
+						next = start + 1,
+						true;
+				}
+				case '\0':
+				{
+					return
+						next = start,
+						false;
+				}
+				}
+				if (start > width)
+				{
+					return
+						next = start,
+						true;
+				}
+			}
+			else
+			{
+				ch = IterativeColouredSkipWPacked(text, width, start, hyphen, colour, useHyphen);
+				if (ch == start)
+				{
+					// Either showed nothing of this word, or parts.
+					return
+						next = ch,
+						true;
+				}
+				else if (hyphen)
+				{
+					return
+						next = end = ch,
+						true;
+				}
+				start = end = ch;
+			}
+		}
+		return
+			next = start,
+			false;
+	}
+	else
+	{
+		new
+			ch;
+		hyphen = false,
+		width += start,
+		end = start;
+		while ((ch = text[start]))
+		{
+			if (IS_IN_RANGE(ch, '\0' + 1, ' ' + 1))
+			{
+				// Skip whitespace.
+				start = IterativeColouredSkipSUnpacked(text, start, colour);
+				switch (text[start])
+				{
+				case '\r':
+				{
+					return
+						next = text[start + 1] == '\n' ? start + 2 : start + 1,
+						true;
+				}
+				case '\n':
+				{
+					return
+						next = start + 1,
+						true;
+				}
+				case '\0':
+				{
+					return
+						next = start,
+						false;
+				}
+				}
+				if (start > width)
+				{
+					return
+						next = start,
+						true;
+				}
+			}
+			else
+			{
+				ch = IterativeColouredSkipWUnpacked(text, width, start, hyphen, colour, useHyphen);
+				if (ch == start)
+				{
+					// Either showed nothing of this word, or parts.
+					return
+						next = ch,
+						true;
+				}
+				else if (hyphen)
+				{
+					return
+						next = end = ch,
+						true;
+				}
+				start = end = ch;
+			}
+		}
+		return
+			next = start,
+			false;
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  BiGramSimilarity(const string1[], const string2[]);
+ * </summary>
+ * <param name="string1">The first string to compare.</param>
+ * <param name="string1">The second string to compare.</param>
+ * <returns>
+ *  The normalised similarity between the strings.
+ * </returns>
+ * <remarks>
+ *  Compares the pairs of letters and numbers in each string with each other to
+ *  find a measure of how much of one ordered string is in the other.  Useful
+ *  for seeing if two strings are similar to humans.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Float:BiGramSimilarity(const string:string1[], const string:string2[])
+{
+	// 2-dimensional comparison of lower-case letters.
+	new
+		matrix[36 * 36],
+		pair = 0,
+		ch,
+		unique1 = 0,
+		unique2 = 0,
+		ngrams1 = -1,
+		ngrams2 = -1;
+	// We can also "improve" the comparison by making all numbers the same.
+	if (YSI_IsPacked__(string1))
+	{
+		for (new i = 0; (ch = string1{i}); ++i)
+		{
+			// This code only looks at numbers and letters, and ignores case.
+			if ('0' <= ch <= '9')
+			{
+				pair = (pair / 36) | ((ch - '0') * 36);
+			}
+			else if ('a' <= ch <= 'z')
+			{
+				pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
+			}
+			else if ('A' <= ch <= 'Z')
+			{
+				pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
+			}
+			else
+			{
+				// Not a character we are interested in.
+				continue;
+			}
+			if (++ngrams1)
+			{
+				// Got at least TWO characters.
+				++matrix[pair],
+				++unique1;
+			}
+		}
+	}
+	else
+	{
+		for (new i = 0; (ch = string1[i]); ++i)
+		{
+			// This code only looks at numbers and letters, and ignores case.
+			if ('0' <= ch <= '9')
+			{
+				pair = (pair / 36) | ((ch - '0') * 36);
+			}
+			else if ('a' <= ch <= 'z')
+			{
+				pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
+			}
+			else if ('A' <= ch <= 'Z')
+			{
+				pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
+			}
+			else
+			{
+				// Not a character we are interested in.
+				continue;
+			}
+			if (++ngrams1)
+			{
+				// Got at least TWO characters.
+				++matrix[pair],
+				++unique1;
+			}
+		}
+	}
+	if (YSI_IsPacked__(string2))
+	{
+		for (new i = 0; (ch = string2{i}); ++i)
+		{
+			// This code only looks at numbers and letters, and ignores case.
+			if ('0' <= ch <= '9')
+			{
+				pair = (pair / 36) | ((ch - '0') * 36);
+			}
+			else if ('a' <= ch <= 'z')
+			{
+				pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
+			}
+			else if ('A' <= ch <= 'Z')
+			{
+				pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
+			}
+			else
+			{
+				// Not a character we are interested in.
+				continue;
+			}
+			// The original version had positive numbers as pairs in `string1` but
+			// not `string2`, and vice-versa, but I already optimised it.
+			if (!++ngrams2)
+			{
+			}
+			else if (matrix[pair])
+			{
+				--matrix[pair],
+				--unique1;
+			}
+			else
+			{
+				++unique2;
+			}
+			/*if (++ngrams2)
+			{
+				// Got at least TWO characters.
+				--matrix[pair];
+			}*/
+		}
+	}
+	else
+	{
+		for (new i = 0; (ch = string2[i]); ++i)
+		{
+			// This code only looks at numbers and letters, and ignores case.
+			if ('0' <= ch <= '9')
+			{
+				pair = (pair / 36) | ((ch - '0') * 36);
+			}
+			else if ('a' <= ch <= 'z')
+			{
+				pair = (pair / 36) | ((ch - ('a' - 10)) * 36);
+			}
+			else if ('A' <= ch <= 'Z')
+			{
+				pair = (pair / 36) | ((ch - ('A' - 10)) * 36);
+			}
+			else
+			{
+				// Not a character we are interested in.
+				continue;
+			}
+			// The original version had positive numbers as pairs in `string1` but
+			// not `string2`, and vice-versa, but I already optimised it.
+			if (!++ngrams2)
+			{
+			}
+			else if (matrix[pair])
+			{
+				--matrix[pair],
+				--unique1;
+			}
+			else
+			{
+				++unique2;
+			}
+			/*if (++ngrams2)
+			{
+				// Got at least TWO characters.
+				--matrix[pair];
+			}*/
+		}
+	}
+	if (ngrams1 < 1 || ngrams2 < 1)
+	{
+		// There just aren't enough letters to compare.
+		return 0.0;
+	}
+	// Normalise the number of matching pairs and multiply.
+	return (1.0 - floatdiv(unique1, ngrams1)) * (1.0 - floatdiv(unique2, ngrams2));
+}
+
+forward y_utils_end();
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  Float:FloatAbs(Float:number);
@@ -3351,7 +5123,7 @@ stock bool:TryPPM(ppm)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Float:FloatAbs(Float:value));
+FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 #define FloatAbs(%0) ((%0) & (Float:0x7FFFFFFF))
 #define _ALS_FloatAbs
 

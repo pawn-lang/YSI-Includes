@@ -27,32 +27,6 @@ static stock y_files_Write1000000(File:f)
 	}
 }
 
-// Run first.
-TEST__ y_files_Directories()
-{
-	new bool:dir = Files_CreateDirSync("YSI\\tests\\y_files\\created-dir");
-	ASSERT(dir);
-	ASSERT(!!fexist("YSI\\tests\\y_files\\created-dir"));
-	if (dir)
-	{
-		new File:f;
-		//while (!(f = fopen("YSI\\tests\\y_files\\created-dir\\.touch", io_write))) {}
-		if ((f = fopen("YSI\\tests\\y_files\\created-dir\\.touch", io_write)))
-		{
-			ASSERT(!!fexist("YSI\\tests\\y_files\\created-dir\\.touch"));
-			fclose(f);
-			fremove("YSI\\tests\\y_files\\created-dir\\.touch");
-			ASSERT(!fexist("YSI\\tests\\y_files\\created-dir\\.touch"));
-		}
-		else
-		{
-			ASSERT(false, "fopen");
-		}
-		ASSERT(Files_RemoveDirSync("YSI\\tests\\y_files\\created-dir"));
-	}
-	ASSERT(!fexist("YSI\\tests\\y_files\\created-dir"));
-}
-
 TEST__ y_files_SmallCopy()
 {
 	// Make sure this triggers the small copy code.
@@ -169,28 +143,28 @@ TEST__ y_files_LargeCopy()
 	ASSERT(Files_CopySync("YSI\\tests\\y_files\\large.in", "YSI\\tests\\y_files\\large.out"));
 	ASSERT(!!fexist("YSI\\tests\\y_files\\large.in"));
 	ASSERT(!!fexist("YSI\\tests\\y_files\\large.out"));
-	while (!(f = fopen("YSI\\tests\\y_files\\large.in", io_read))) {}
-	//f = fopen("YSI\\tests\\y_files\\large.in", io_read);
-	//if (f)
-	//{
-	ASSERT_EQ(flength(f), 10000000);
-	fclose(f);
-	//}
-	//else
-	//{
-	//	ASSERT(false, "in check");
-	//}
-	while (!(f = fopen("YSI\\tests\\y_files\\large.out", io_read))) {}
-	//f = fopen("YSI\\tests\\y_files\\large.out", io_read);
-	//if (f)
-	//{
-	ASSERT_EQ(flength(f), 10000000);
-	fclose(f);
-	//}
-	//else
-	//{
-	//	ASSERT(false, "out check");
-	//}
+	//while (!(f = fopen("YSI\\tests\\y_files\\large.in", io_read))) {}
+	f = fopen("YSI\\tests\\y_files\\large.in", io_read);
+	if (f)
+	{
+		ASSERT_EQ(flength(f), 10000000);
+		fclose(f);
+	}
+	else
+	{
+		ASSERT(false, "in check");
+	}
+	//while (!(f = fopen("YSI\\tests\\y_files\\large.out", io_read))) {}
+	f = fopen("YSI\\tests\\y_files\\large.out", io_read);
+	if (f)
+	{
+		ASSERT_EQ(flength(f), 10000000);
+		fclose(f);
+	}
+	else
+	{
+		ASSERT(false, "out check");
+	}
 }
 
 TEST__ y_files_SmallMove()
@@ -265,23 +239,24 @@ TEST__ y_files_LargeMove()
 	ASSERT_GT(10000000, YSI_LARGE_FILE_SIZE);
 	// Create a dummy file.
 	new File:f;
-	while (!(f = fopen("YSI\\tests\\y_files\\large.in", io_write))) {}
-	y_files_Write1000000(f);
-	y_files_Write1000000(f);
-	y_files_Write1000000(f);
-	y_files_Write1000000(f);
-	y_files_Write1000000(f);
-	y_files_Write1000000(f);
-	y_files_Write1000000(f);
-	y_files_Write1000000(f);
-	y_files_Write1000000(f);
-	y_files_Write1000000(f);
-	fclose(f);
-	//}
-	//else
-	//{
-	//	ASSERT(false, "creation");
-	//}
+	if ((f = fopen("YSI\\tests\\y_files\\large.in", io_write)))
+	{
+		y_files_Write1000000(f);
+		y_files_Write1000000(f);
+		y_files_Write1000000(f);
+		y_files_Write1000000(f);
+		y_files_Write1000000(f);
+		y_files_Write1000000(f);
+		y_files_Write1000000(f);
+		y_files_Write1000000(f);
+		y_files_Write1000000(f);
+		y_files_Write1000000(f);
+		fclose(f);
+	}
+	else
+	{
+		ASSERT(false, "creation");
+	}
 	fremove("YSI\\tests\\y_files\\large.out");
 	ASSERT(!!fexist("YSI\\tests\\y_files\\large.in"));
 	ASSERT(!fexist("YSI\\tests\\y_files\\large.out"));

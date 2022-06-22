@@ -34,7 +34,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -104,9 +104,7 @@ Optional plugins:
 		#include "..\y_core\y_rconfix"
 	#endif
 	#include "y_master_once"
-	#if !defined YSI_NO_MASTER
-		#include "y_distribute"
-	#endif
+	#include "y_distribute"
 #endif
 
 // ALWAYS!  The compiler defines this automatically, don't use it as this is
@@ -125,7 +123,7 @@ Optional plugins:
 	#include "y_master__pop_master"
 	
 	// Useful debug information (isn't compiled, but shows up with "-l").
-	P:C(static stock const _POPPED_MASTER = MASTER;);
+	Debug_Code1{static stock const _POPPED_MASTER = MASTER;}
 #endif
 
 #if MASTER < 0 || MASTER >= MAX_MASTERS

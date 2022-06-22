@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -124,6 +124,6 @@ forward ORM_InsertInline(ORM:id, Func:cb<>);
 forward ORM_DeleteInline(ORM:id, Func:cb<>);
 forward ORM_LoadInline(ORM:id, Func:cb<>);
 forward ORM_SaveInline(ORM:id, Func:cb<>);
-forward BCrypt_CheckInline(const text[], const hash[], Func:cb<i>);
-forward BCrypt_HashInline(const text[], cost = 12, Func:cb<s>);
+forward bool:BCrypt_CheckInline(const password[], const hash[], Func:cb<i>);
+forward BCrypt_HashInline(const password[], cost = 12, {F@_@s, F@_@si}:cb); // Func:cb<s> | Func:cb<si>
 

@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -995,6 +995,132 @@ TEST__ y_iter_Iter_Contains2()
 	ASSERT(!Iter_Contains(iter2[5]< >, 5));
 	ASSERT(!Iter_Contains(iter2[5]<0>, 5));
 	ASSERT(!Iter_Contains(iter2[5]<4>, 5));
+}
+
+TEST__ y_iter_Iter_IsEmpty1()
+{
+	new
+		Iterator:iter1<30>;
+	ASSERT(Iter_IsEmpty(iter1));
+	ASSERT(!Iter_NonEmpty(iter1));
+	ASSERT(!Iter_IsFull(iter1));
+	ASSERT(Iter_NonFull(iter1));
+	Iter_Add(iter1, 40);
+	ASSERT(Iter_IsEmpty(iter1));
+	ASSERT(!Iter_NonEmpty(iter1));
+	ASSERT(!Iter_IsFull(iter1));
+	ASSERT(Iter_NonFull(iter1));
+	Iter_Add(iter1, 20);
+	ASSERT(!Iter_IsEmpty(iter1));
+	ASSERT(Iter_NonEmpty(iter1));
+	ASSERT(!Iter_IsFull(iter1));
+	ASSERT(Iter_NonFull(iter1));
+	for (new i = 0; i != 30; ++i)
+	{
+		Iter_Add(iter1, i);
+	}
+	ASSERT(!Iter_IsEmpty(iter1));
+	ASSERT(Iter_NonEmpty(iter1));
+	ASSERT(Iter_IsFull(iter1));
+	ASSERT(!Iter_NonFull(iter1));
+}
+
+TEST__ y_iter_Iter_IsEmpty2()
+{
+	new
+		Iterator:iter1<5, 30>;
+	ASSERT(Iter_IsEmpty(iter1<>));
+	ASSERT(!Iter_NonEmpty(iter1<>));
+	ASSERT(!Iter_IsFull(iter1<>));
+	ASSERT(Iter_NonFull(iter1<>));
+	ASSERT(Iter_IsEmpty(iter1<1>));
+	ASSERT(!Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(Iter_IsEmpty(iter1<2>));
+	ASSERT(!Iter_NonEmpty(iter1<2>));
+	ASSERT(!Iter_IsFull(iter1<2>));
+	ASSERT(Iter_NonFull(iter1<2>));
+	Iter_Add(iter1<2>, 40);
+	ASSERT(Iter_IsEmpty(iter1<>));
+	ASSERT(!Iter_NonEmpty(iter1<>));
+	ASSERT(!Iter_IsFull(iter1<>));
+	ASSERT(Iter_NonFull(iter1<>));
+	ASSERT(Iter_IsEmpty(iter1<1>));
+	ASSERT(!Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(Iter_IsEmpty(iter1<2>));
+	ASSERT(!Iter_NonEmpty(iter1<2>));
+	ASSERT(!Iter_IsFull(iter1<2>));
+	ASSERT(Iter_NonFull(iter1<2>));
+	Iter_Add(iter1<2>, 20);
+	ASSERT(!Iter_IsEmpty(iter1<>));
+	ASSERT(Iter_NonEmpty(iter1<>));
+	ASSERT(!Iter_IsFull(iter1<>));
+	ASSERT(Iter_NonFull(iter1<>));
+	ASSERT(Iter_IsEmpty(iter1<1>));
+	ASSERT(!Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(!Iter_IsEmpty(iter1<2>));
+	ASSERT(Iter_NonEmpty(iter1<2>));
+	ASSERT(!Iter_IsFull(iter1<2>));
+	ASSERT(Iter_NonFull(iter1<2>));
+	for (new i = 0; i != 30; ++i)
+	{
+		Iter_Add(iter1<2>, i);
+	}
+	ASSERT(!Iter_IsEmpty(iter1<>));
+	ASSERT(Iter_NonEmpty(iter1<>));
+	ASSERT(Iter_IsFull(iter1<>));
+	ASSERT(!Iter_NonFull(iter1<>));
+	ASSERT(Iter_IsEmpty(iter1<1>));
+	ASSERT(!Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(!Iter_IsEmpty(iter1<2>));
+	ASSERT(Iter_NonEmpty(iter1<2>));
+	ASSERT(Iter_IsFull(iter1<2>));
+	ASSERT(!Iter_NonFull(iter1<2>));
+}
+
+TEST__ y_iter_Iter_IsEmpty3()
+{
+	new
+		Iterator:iter1<5, 30>;
+	ASSERT(Iter_IsEmpty(iter1<>));
+	ASSERT(!Iter_NonEmpty(iter1<>));
+	ASSERT(!Iter_IsFull(iter1<>));
+	ASSERT(Iter_NonFull(iter1<>));
+	ASSERT(Iter_IsEmpty(iter1<1>));
+	ASSERT(!Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(Iter_IsEmpty(iter1<2>));
+	ASSERT(!Iter_NonEmpty(iter1<2>));
+	ASSERT(!Iter_IsFull(iter1<2>));
+	ASSERT(Iter_NonFull(iter1<2>));
+	for (new i = 0; i != 30; ++i)
+	{
+		Iter_Add(iter1<i % 2>, i);
+	}
+	ASSERT(!Iter_IsEmpty(iter1<>));
+	ASSERT(Iter_NonEmpty(iter1<>));
+	ASSERT(Iter_IsFull(iter1<>));
+	ASSERT(!Iter_NonFull(iter1<>));
+	ASSERT(!Iter_IsEmpty(iter1<0>));
+	ASSERT(Iter_NonEmpty(iter1<0>));
+	ASSERT(!Iter_IsFull(iter1<0>));
+	ASSERT(Iter_NonFull(iter1<0>));
+	ASSERT(!Iter_IsEmpty(iter1<1>));
+	ASSERT(Iter_NonEmpty(iter1<1>));
+	ASSERT(!Iter_IsFull(iter1<1>));
+	ASSERT(Iter_NonFull(iter1<1>));
+	ASSERT(Iter_IsEmpty(iter1<2>));
+	ASSERT(!Iter_NonEmpty(iter1<2>));
+	ASSERT(!Iter_IsFull(iter1<2>));
+	ASSERT(Iter_NonFull(iter1<2>));
 }
 
 TEST__ y_iter_Iter_Free()
@@ -3700,5 +3826,201 @@ TEST__ y_iter_RandomExclude()
 	ASSERT_FALSE(selected[17]);
 	ASSERT_FALSE(selected[18]);
 	ASSERT_FALSE(selected[19]);
+}
+
+TEST__ y_iter_RemoveMidLoop()
+{
+	new
+		Iterator:iter<20>;
+	Iter_Add(iter, 5);
+	FOREACH__(new i : iter)
+	{
+		ASSERT_EQ(i, 5);
+		Iter_Remove(iter, i);
+		ASSERT_LT(Iterator@iter[5], 0);
+		break;
+	}
+	Iter_Add(iter, 0);
+	FOREACH__(new i : iter)
+	{
+		ASSERT_EQ(i, 0);
+		Iter_Remove(iter, i);
+		ASSERT_LT(Iterator@iter[0], 0);
+		break;
+	}
+	Iter_Add(iter, 19);
+	FOREACH__(new i : iter)
+	{
+		ASSERT_EQ(i, 19);
+		Iter_Remove(iter, i);
+		ASSERT_LT(Iterator@iter[19], 0);
+		break;
+	}
+}
+
+TEST__ y_iter_RemoveThenReverse()
+{
+	new
+		Iterator:iter<20>;
+	new j;
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 6);
+	Iter_Add(iter, 7);
+	Iter_Add(iter, 9);
+	Iter_Add(iter, 13);
+	j = 0;
+	FOREACH__(new i : iter)
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 5);
+		case 1:
+			ASSERT_EQ(i, 6);
+		case 2:
+			ASSERT_EQ(i, 7);
+		case 3:
+			ASSERT_EQ(i, 9);
+		case 4:
+			ASSERT_EQ(i, 13);
+		default:
+			ASSERT(false);
+		}
+		++j;
+	}
+	j = 0;
+	FOREACH__(new i : Reverse(iter))
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 13);
+		case 1:
+			ASSERT_EQ(i, 9);
+		case 2:
+			ASSERT_EQ(i, 7);
+		case 3:
+			ASSERT_EQ(i, 6);
+		case 4:
+			ASSERT_EQ(i, 5);
+		default:
+			ASSERT(false);
+		}
+		++j;
+	}
+	Iter_Remove(iter, 6);
+	j = 0;
+	FOREACH__(new i : iter)
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 5);
+		case 1:
+			ASSERT_EQ(i, 7);
+		case 2:
+			ASSERT_EQ(i, 9);
+		case 3:
+			ASSERT_EQ(i, 13);
+		default:
+			ASSERT(false);
+		}
+		++j;
+	}
+	j = 0;
+	FOREACH__(new i : Reverse(iter))
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 13);
+		case 1:
+			ASSERT_EQ(i, 9);
+		case 2:
+			ASSERT_EQ(i, 7);
+		case 3:
+			ASSERT_EQ(i, 5);
+		default:
+			ASSERT(false);
+		}
+		++j;
+	}
+	Iter_Remove(iter, 9);
+	j = 0;
+	FOREACH__(new i : iter)
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 5);
+		case 1:
+			ASSERT_EQ(i, 7);
+		case 2:
+			ASSERT_EQ(i, 13);
+		default:
+			ASSERT(false);
+		}
+		++j;
+	}
+	j = 0;
+	FOREACH__(new i : Reverse(iter))
+	{
+		switch (j)
+		{
+		case 0:
+			ASSERT_EQ(i, 13);
+		case 1:
+			ASSERT_EQ(i, 7);
+		case 2:
+			ASSERT_EQ(i, 5);
+		default:
+			ASSERT(false);
+		}
+		++j;
+	}
+}
+
+static stock y_iterate_NestedYield(a, b)
+{
+	while (a != b)
+	{
+		YIELD__ return a;
+		++a;
+	}
+}
+
+iterfunc stock y_iterate_NestedYield(a = 10, b = 20)
+{
+	y_iterate_NestedYield(a, b);
+}
+#define Iterator@y_iterate_NestedYield iteryield
+
+iterfunc stock y_iterate_NestedInner(a = 5, b)
+{
+	Iter_Func@y_iterate_NestedYield(a, b);
+}
+#define Iterator@y_iterate_NestedInner iteryield
+
+TEST__ y_iterate_NestedYield()
+{
+	new sum = 0;
+	foreach (new i : y_iterate_NestedYield(30, 40))
+	{
+		sum += i;
+		ASSERT(30 <= i < 40);
+	}
+	ASSERT_EQ(sum, 345);
+	foreach (new i : y_iterate_NestedYield())
+	{
+		sum += i;
+		ASSERT(10 <= i < 20);
+	}
+	ASSERT_EQ(sum, 345 + 145);
+	foreach (new i : y_iterate_NestedInner(_, 15))
+	{
+		sum += i;
+		ASSERT(5 <= i < 15);
+	}
+	ASSERT_EQ(sum, 345 + 145 + 95);
 }
 

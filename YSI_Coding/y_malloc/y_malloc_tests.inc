@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -89,7 +89,7 @@ TEST__ y_malloc_2_100()
 		Alloc:b = malloc(100);
 	ASSERT(bool:b);
 	free(a);
-	ASSERT_EQ(a, b);
+	ASSERT_EQ(_:a, _:b);
 }
 
 TEST__ y_malloc_2000()
@@ -119,7 +119,7 @@ TEST__ y_malloc_Loads()
 	// Allocate slightly more memory than we have room for.
 	new
 		Alloc:a = malloc(MALLOC_MEMORY + 1);
-	ASSERT_EQ(a, NO_ALLOC);
+	ASSERT_EQ(_:a, _:NO_ALLOC);
 	ASSERT(!free(a));
 }
 
@@ -277,12 +277,12 @@ TEST__ y_malloc_NewS_0()
 TEST__ y_malloc_NewS_1()
 {
 	new
-		Alloc:a = Malloc_NewS("Hello There", true);
+		Alloc:a = Malloc_NewS(__COMPILER_UNPACK"Hello There", true);
 	ASSERT(bool:a);
 	if (a)
 	{
 		static const
-			b[12 char] = !"Hello There";
+			b[12 char] = __COMPILER_PACK"Hello There";
 		ASSERT_EQ(mget(a, 0), b[0]);
 		ASSERT_EQ(mget(a, 1), b[1]);
 		ASSERT_EQ(mget(a, 2), b[2]);
@@ -304,7 +304,7 @@ public y_malloc_Deferred(Alloc:alloc)
 	{
 		if (mget(alloc, i) != i * 2)
 		{
-			P:E("y_malloc_Deferred test error");
+			Debug_Error("y_malloc_Deferred test error");
 		}
 	}
 	free(clobber);
@@ -319,6 +319,6 @@ TEST__ y_malloc_Deferred()
 	{
 		mset(alloc, i, i * 2);
 	}
-	YSI_SetTimerEx("y_malloc_Deferred", 10, false, "i", _:alloc);
+	YSI_SetTimerEx__("y_malloc_Deferred", 10, false, "i", _:alloc);
 }
 

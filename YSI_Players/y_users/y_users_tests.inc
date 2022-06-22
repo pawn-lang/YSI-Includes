@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -76,12 +76,12 @@ TEST__ Player_Existing()
 	new
 		ret[E_USER_PRELOAD];
 	Player_Preload("TestPlayer", ret);
-	ASSERT_EQ(0, ret[E_USER_PRELOAD_YID]);
+	ASSERT_EQ(ret[E_USER_PRELOAD_YID], 0);
 	ASSERT_EQ(Langs_GetLanguage("EN"), ret[E_USER_PRELOAD_LANG]);
-	ASSERT_EQ(0x12345678, ret[E_USER_PRELOAD_BITS]);
+	ASSERT_EQ(ret[E_USER_PRELOAD_BITS], 0x12345678);
 	ASSERT(0xAABBCCDD >= ret[E_USER_PRELOAD_DATE]);
-	P:I("Note that if these tests fail, you will need to");
-	P:I("    first connect to the server as \"TestPlayer\".");
+	Debug_Info("Note that if these tests fail, you will need to");
+	Debug_Info("    first connect to the server as \"TestPlayer\".");
 }
 
 new

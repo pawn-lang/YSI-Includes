@@ -1,25 +1,28 @@
 /**
- * <library name="y_files">
- * <section>
- *  Description
- * </section>
- *  Optimised copy/move file functions, plus directory creation on Windows.
- * <section>
- *  Version
- * </section>
- *  0.1
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="Files_CopySync">Copy a file.</symbol>
- *  <symbol name="Files_MoveSync">Move (rename) a file.</symbol>
- *  <symbol name="Files_CreateDirSync">Create a directory.</symbol>
- * </ul><section>Compile options</section><ul>
- *  <symbol name="YSI_LARGE_FILE_SIZE">File size at which Windows uses shell copies/moves.</symbol>
- * </ul>
+ * <library
+ *   name="y_files"
+ *   version="0.1"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Optimised copy/move file functions, plus directory creation on Windows."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <section>
+ *     Functions
+ *   </section>
+ *   <subsection>
+ *     Stock
+ *   </subsection><ul>
+ *     <symbol name="Files_CopySync">Copy a file.</symbol>
+ *     <symbol name="Files_MoveSync">Move (rename) a file.</symbol>
+ *     <symbol name="Files_CreateDirSync">Create a directory.</symbol>
+ *   </ul><section>Compile options</section><ul>
+ *     <symbol name="YSI_LARGE_FILE_SIZE">File size at which Windows uses shell copies/moves.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:
@@ -38,7 +41,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -98,16 +101,16 @@ Optional plugins:
 	#tryinclude "y_files\y_files_entry"
 #endif
 #if !defined _INC_y_files
-	#tryinclude "YSI_Coding\y_files\y_files_entry"
+	#tryinclude "YSI_Server\y_files\y_files_entry"
 #endif
 #if !defined _INC_y_files
-	#tryinclude "YSI\YSI_Coding\y_files\y_files_entry"
+	#tryinclude "YSI\YSI_Server\y_files\y_files_entry"
 #endif
 #if !defined _INC_y_files
-	#tryinclude <YSI_Coding\y_files\y_files_entry>
+	#tryinclude <YSI_Server\y_files\y_files_entry>
 #endif
 #if !defined _INC_y_files
-	#tryinclude <YSI\YSI_Coding\y_files\y_files_entry>
+	#tryinclude <YSI\YSI_Server\y_files\y_files_entry>
 #endif
 #if !defined _INC_y_files
 	#error Could not find y_files

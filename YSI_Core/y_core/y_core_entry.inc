@@ -103,6 +103,9 @@ Optional plugins:
 // as most macros are.
 #define YSI_KEYWORD(%0) ((defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_%0) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_%0))
 
+// Similar to `YSI_KEYWORD`, but disabled by default.
+#define YSI_OPTIONAL(%0) (defined YSI_KEYWORD_%0 && !defined YSI_NO_KEYWORD_%0)
+
 // Define `cellbytes` as a symbol that really should exist already!
 #if !defined cellbytes
 	#define cellbytes (cellbits / charbits)
@@ -130,6 +133,12 @@ Optional plugins:
 
 // `FIX_OnRconCommand` and `FIX_OnClientCheckResponse` might use `_FIXES_DEFAULT`.
 
+#if defined YSI_OPEN
+	#if 1 YSI_OPEN.MP == 1
+		#define YSI_OPENMP__
+	#endif
+#endif
+
 #if defined _INC_SAMP_Community_fixes
 	#if defined FIXES_DefaultDisabled
 		#if FIXES_DefaultDisabled == 1
@@ -143,8 +152,12 @@ Optional plugins:
 		#define _FIXES_DEFAULT (1)
 	#endif
 
-	#if FIX_OnRconCommand == 0 && FIX_OnClientCheckResponse == 0
+	#if !defined FIX_OnRconCommand || !defined FIX_OnClientCheckResponse
 		#define YSI_FIX_CALLBACKS
+	#else
+		#if FIX_OnRconCommand == 0 && FIX_OnClientCheckResponse == 0
+			#define YSI_FIX_CALLBACKS
+		#endif
 	#endif
 
 	#undef _FIXES_DEFAULT
@@ -256,12 +269,55 @@ stock const YSIM_VERMAX[] = "X";
 // The ever loved `y_version`.
 #include "y_version"
 
+#if defined YSI_TESTS
+	#define _Y_CORE_STATIC
+#else
+	#define _Y_CORE_STATIC static
+#endif
+
 // More common utilities and user-facing functions.
 #include "y_debug_impl"
 #include "y_cell_impl"
 #include "y_amx_impl"
 #include "y_shortfunc"
 #include "..\..\YSI_Players\y_android\y_android_entry"
+
+#if defined YSI_TESTS && __COMPILER_FUNC_DECL_BUG
+	#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumericTest__
+		// Test a compiler crash doesn't.
+		stock IsNumeric(const number[])
+		{
+			Debug_Print4("IsNumeric called: \"%s\"", number);
+			// This function is copied in `y_utils_impl` to test a compiler bug.
+			new
+				i = -1;
+			if (YSI_IsPacked__(number))
+			{
+				if (number{0} == '-') ++i;
+				while ('0' <= number{++i} <= '9') {}
+				return !number{i};
+			}
+			else
+			{
+				if (number[0] == '-') ++i;
+				while ('0' <= number[++i] <= '9') {}
+				return !number[i];
+			}
+		}
+
+		#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
+		stock isnumeric(const number[])
+		{
+			return IsNumeric(number);
+		}
+
+		// Ensure this branch is hit a second time.
+		stock YSI_IsNumericTest__()
+		{
+		}
+	#endif
+#endif
+
 #include "y_utils_impl"
 
 // Part of "y_scriptinit", but requires "y_amx".
@@ -344,6 +400,7 @@ stock _YSI_ConstMod(const &var, const val)
 	#emit LREF.S.pri var
 	#emit LOAD.S.alt val
 	#emit SREF.S.alt var
+	#emit RETN
 	return 0;
 }
 
@@ -389,7 +446,7 @@ stock DONT_USE_SCM(a, b, const c[])
 #if defined SCM
 	#undef SCM
 #endif
-#define SCM DONT_USE
+#define SCM D0NT_USE
 
 #define __COMPILER_EARLY_PASS
 

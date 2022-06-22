@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -160,5 +160,45 @@ TEST__ ForwardTimer()
 timer ForwardTimer[5000](string:msg[])
 {
 	#pragma unused msg
+}
+
+static stock
+	Timer:YSI_g_sStopAndStart;
+
+timer StopAndStart[50]()
+{
+	//printf("StopAndStart started");
+	//printf("===================");
+	STOP__ YSI_g_sStopAndStart;
+	//printf("StopAndStart ended");
+}
+
+TEST__ StopAndStart()
+{
+	YSI_g_sStopAndStart = DEFER__ StopAndStart();
+	ASSERT(Timer_IsRunning(YSI_g_sStopAndStart));
+	ASSERT(_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
+	ASSERT(!Timer_IsRunning(YSI_g_sStopAndStart));
+	ASSERT(!_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
+	ASSERT(!Timer_IsRunning(YSI_g_sStopAndStart));
+	YSI_g_sStopAndStart = DEFER__ StopAndStart();
+}
+
+timer StopAndStop[50]()
+{
+	printf("StopAndStop started: %d", _YSI_g_sCurrentTimer);
+	STOP__;
+	STOP__;
+	STOP__;
+	printf("StopAndStop finished");
+}
+
+TEST__ StopAndStop()
+{
+	YSI_g_sStopAndStart = REPEAT__[5] StopAndStop();
+	for (new i = 0; i != 1000; ++i)
+	{
+		ASSERT(DEFER__ StopAndStop());
+	}
 }
 

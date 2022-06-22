@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -121,7 +121,7 @@ new
 
 stock SetMaxConnections(max = -1, e_FLOOD_ACTION:action = e_FLOOD_ACTION_BLOCK)
 {
-	P:3("SetMaxConnections called: %i, %i", max, _:action);
+	Debug_Print3("SetMaxConnections called: %i, %i", max, _:action);
 	YSI_g_sMaxConnections = max;
 	YSI_g_sConnectionAction = action;
 }
@@ -197,7 +197,7 @@ static Flooding_CheckIP(playerid, ip[])
 		}
 		if (Iter_Count(FloodingPlayer) > YSI_g_sMaxConnections)
 		{
-			P:I("Max Connections exceeded");
+			Debug_Info("Max Connections exceeded");
 			switch (YSI_g_sConnectionAction)
 			{
 				case e_FLOOD_ACTION_BLOCK:
@@ -235,7 +235,7 @@ static Flooding_CheckIP(playerid, ip[])
 						cmd[22] = "banip ";
 					strcat(cmd, ip);
 					SendRconCommand(cmd);
-					YSI_SetTimerEx("Flooding_UnbanIP", 10000, false, "i", ip32);
+					YSI_SetTimerEx__("Flooding_UnbanIP", 10000, false, "i", ip32);
 				}
 				case e_FLOOD_ACTION_OTHER:
 				{

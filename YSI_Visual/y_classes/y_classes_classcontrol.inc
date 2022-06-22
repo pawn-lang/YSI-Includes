@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -232,7 +232,7 @@ MASTER_HOOK__ OnPlayerRequestClass(playerid, classid)
 
 MASTER_HOOK__ OnPlayerSpawn(playerid)
 {
-	P:2("Class_OnPlayerSpawn called: %d", playerid);
+	Debug_Print2("Class_OnPlayerSpawn called: %d", playerid);
 	if (YSI_g_sPlayerFlags[playerid] & e_SPAWN_FLAGS_HELD) return -1;
 	if (!(YSI_g_sPlayerFlags[playerid] & e_SPAWN_FLAGS_RESELECT))
 	{
@@ -247,12 +247,12 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 
 // public _Class_SpawnPlayer1(playerid)
 // {
-	// P:1("_Class_SpawnPlayer1 called: %d", playerid);
+	// Debug_Print1("_Class_SpawnPlayer1 called: %d", playerid);
 	// //SpawnPlayer(playerid);
 	// YSI_g_sPlayerFlags[playerid] |= (e_SPAWN_FLAGS_IGNORE_ONCE);
 	// TogglePlayerSpectating(playerid, false);
 	// //SpawnPlayer(playerid);
-	// //YSI_g_sTimer[playerid] = YSI_SetTimerEx("_Class_SpawnPlayer3", 20, false, "i", playerid);
+	// //YSI_g_sTimer[playerid] = YSI_SetTimerEx__("_Class_SpawnPlayer3", 20, false, "i", playerid);
 	// //Class_TK(playerid);
 // }
 
@@ -260,7 +260,7 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 
 // public _Class_SpawnPlayer2(playerid)
 // {
-	// P:1("_Class_SpawnPlayer2 called: %d", playerid);
+	// Debug_Print1("_Class_SpawnPlayer2 called: %d", playerid);
 	// //SpawnPlayer(playerid);
 	// //YSI_g_sPlayerFlags[playerid] |= (e_SPAWN_FLAGS_IGNORE_ONCE);
 	// TogglePlayerSpectating(playerid, false);
@@ -271,7 +271,7 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 
 // public _Class_SpawnPlayer3(playerid)
 // {
-	// P:1("_Class_SpawnPlayer3 called: %d", playerid);
+	// Debug_Print1("_Class_SpawnPlayer3 called: %d", playerid);
 	// SpawnPlayer(playerid);
 	// //Class_TK(playerid);
 	// //YSI_g_sPlayerFlags[playerid] |= (e_SPAWN_FLAGS_IGNORE_ONCE);
@@ -283,16 +283,16 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 
 // public _Class_SpawnPlayer4(playerid)
 // {
-	// P:1("_Class_SpawnPlayer4 called: %d", playerid);
+	// Debug_Print1("_Class_SpawnPlayer4 called: %d", playerid);
 	// //SpawnPlayer(playerid);
 	// Class_Spectate(playerid);
 	// if (YSI_g_sPlayerFlags[playerid] & (e_SPAWN_FLAGS_ENABLED))
 	// {
-		// YSI_g_sTimer[playerid] = YSI_SetTimerEx("_Class_SpawnPlayer1", 10, false, "i", playerid);
+		// YSI_g_sTimer[playerid] = YSI_SetTimerEx__("_Class_SpawnPlayer1", 10, false, "i", playerid);
 	// }
 	// else
 	// {
-		// YSI_g_sTimer[playerid] = YSI_SetTimerEx("_Class_SpawnPlayer2", 10, false, "i", playerid);
+		// YSI_g_sTimer[playerid] = YSI_SetTimerEx__("_Class_SpawnPlayer2", 10, false, "i", playerid);
 	// }
 	// //Class_TK(playerid);
 	// //YSI_g_sPlayerFlags[playerid] |= (e_SPAWN_FLAGS_IGNORE_ONCE);
@@ -304,22 +304,22 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 
 // public _Class_Return(playerid)
 // {
-	// P:1("_Class_Return called: %d", playerid);
+	// Debug_Print1("_Class_Return called: %d", playerid);
 	// Class_ReturnToSelection(playerid);
 	// //Class_TK(playerid);
-	// //YSI_g_sTimer[playerid] = YSI_SetTimerEx("_Class_NotSpawned", 500, false, "i", playerid);
+	// //YSI_g_sTimer[playerid] = YSI_SetTimerEx__("_Class_NotSpawned", 500, false, "i", playerid);
 // }
 
 // forward _Class_NotSpawned(playerid);
 
 // public _Class_NotSpawned(playerid)
 // {
-	// P:1("_Class_NotSpawned called: %d", playerid);
+	// Debug_Print1("_Class_NotSpawned called: %d", playerid);
 	// // Called if they don't connect properly.
 	// Class_DisableSelection(playerid);
 	// //SetPlayerCameraPos(playerid, 1958.3783, 1343.1572, 15.3746);
 	// //SetPlayerCameraLookAt(playerid, 1958.3783, 1343.1572, 15.3746);
-	// YSI_SetTimerEx("_Class_Return", 10, false, "i", playerid);
+	// YSI_SetTimerEx__("_Class_Return", 10, false, "i", playerid);
 	// YSI_g_sPlayerFlags[playerid] |= (e_SPAWN_FLAGS_RETURNED | e_SPAWN_FLAGS_INSTANT);
 // }
 

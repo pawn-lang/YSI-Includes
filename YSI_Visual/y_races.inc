@@ -1,13 +1,16 @@
 /**
- * <library name="y_races">
- * <section>
- *  Description
- * </section>
- *  Create, manage, and run races.
- * <section>
- *  Version
- * </section>
- *  2.0
+ * <library
+ *   name="y_races"
+ *   version="2.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Create, manage, and run races."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
  * </library>
  *//** *//*
 Legal:
@@ -26,7 +29,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

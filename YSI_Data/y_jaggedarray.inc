@@ -1,13 +1,16 @@
 /**
- * <library name="y_jaggedarray">
- * <section>
- *  Description
- * </section>
- *  Provides code to easilly manipulate the sizes of 2d array slots.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library
+ *   name="y_jaggedarray"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Provides code to easilly manipulate the sizes of 2d array slots."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
  * </library>
  *//** *//*
 Legal:
@@ -26,7 +29,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

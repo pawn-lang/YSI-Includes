@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -143,14 +143,14 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 			arrayEnd = _Jagged_End(array, size1, size2);
 		if (newEnd > arrayEnd)
 		{
-			P:1("Insufficient space to grow jagged array.");
+			Debug_Print1("Insufficient space to grow jagged array.");
 			return false;
 		}
 		new
 			slotEnd = _Jagged_Address(array, slot),
 			//oldSize = slotEnd - slotStart,
 			shift = newEnd - slotEnd; //newSize - oldSize;
-		P:5("Jagged_ResizeOne: Resizing slot %d from %d to %d", slot - 1, _Jagged_SizeOf(array, size1, size2, slot - 1), newSize);
+		Debug_Print5("Jagged_ResizeOne: Resizing slot %d from %d to %d", slot - 1, _Jagged_SizeOf(array, size1, size2, slot - 1), newSize);
 		if (shift != 0)
 		{
 			new
@@ -182,7 +182,7 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 		// Do nothing if they're the same.
 		return true;
 	}
-	P:C(else if (slot == size1) print("Cannot alter the last slot in an array."););
+	Debug_Code1{else if (slot == size1) print("Cannot alter the last slot in an array.");}
 	return false;
 }
 #define Jagged_ResizeOne(%0,%1) _Jagged_ResizeOne(_Jagged(%0),%1)
@@ -214,14 +214,14 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 //			arrayEnd = _Jagged_End(array, size1, size2);
 //		if (newEnd > arrayEnd)
 //		{
-//			P:1("Insufficient space to grow jagged array.");
+//			Debug_Print1("Insufficient space to grow jagged array.");
 //			return false;
 //		}
 //		new
 //			slotEnd = _Jagged_Address(array, slot),
 //			//oldSize = slotEnd - slotStart,
 //			shift = newEnd - slotEnd; //newSize - oldSize;
-//		P:5("Jagged_ResizeOne: Resizing slot %d from %d to %d", slot - 1, _Jagged_SizeOf(array, size1, size2, slot - 1), newSize);
+//		Debug_Print5("Jagged_ResizeOne: Resizing slot %d from %d to %d", slot - 1, _Jagged_SizeOf(array, size1, size2, slot - 1), newSize);
 //		if (shift != 0)
 //		{
 //			new
@@ -275,7 +275,7 @@ stock bool:_Jagged_Resize(array[][], size1, size2, ...)
 	// that is all in other functions now.
 	for (new i = 3; i != num; ++i)
 	{
-		P:7("_Jagged_Resize: loop %d %d %d", i, getarg(i, 0), getarg(i, 1));
+		Debug_Print7("_Jagged_Resize: loop %d %d %d", i, getarg(i, 0), getarg(i, 1));
 		if (!_Jagged_ResizeOne(array, size1, size2, getarg(i, 0), getarg(i, 1)))
 			return false;
 	}
@@ -303,7 +303,7 @@ stock bool:_Jagged_ResizeAll(array[][], size1, size2, ...)
 	// that is all in other functions now.
 	for (new i = 3, j = 0; j != num; ++i, ++j)
 	{
-		P:7("_Jagged_Resize: loop %d %d %d", i, j, getarg(i));
+		Debug_Print7("_Jagged_Resize: loop %d %d %d", i, j, getarg(i));
 		_Jagged_ResizeOne(array, size1, size2, j, getarg(i));
 	}
 }
@@ -341,13 +341,13 @@ stock bool:Jagged_MoveOne(array[][], size1, size2, slot, newSize)
 			arrayEnd = _Jagged_End(array, size1, size2);
 		if (newEnd > arrayEnd)
 		{
-			P:1("Insufficient space to grow jagged array.");
+			Debug_Print1("Insufficient space to grow jagged array.");
 			return false;
 		}
 		new
 			slotEnd = _Jagged_Address(array, slot),
 			shift = newEnd - slotEnd;
-		P:5("Jagged_MoveOne: Mov slot %d from %d to %d", slot - 1, _Jagged_SizeOf(array, size1, size2, slot - 1), newSize);
+		Debug_Print5("Jagged_MoveOne: Mov slot %d from %d to %d", slot - 1, _Jagged_SizeOf(array, size1, size2, slot - 1), newSize);
 		if (shift != 0)
 		{
 			// Shift all the subsequent slots.
@@ -361,7 +361,7 @@ stock bool:Jagged_MoveOne(array[][], size1, size2, slot, newSize)
 		// Do nothing if they're the same.
 		return true;
 	}
-	P:C(else if (slot == size1) print("Cannot alter the last slot in an array."););
+	Debug_Code1{else if (slot == size1) print("Cannot alter the last slot in an array.");}
 	return false;
 }
 
@@ -384,7 +384,7 @@ stock bool:_Jagged_Move(array[][], size1, size2, ...)
 	// that is all in other functions now.
 	for (new i = 3; i != num; ++i)
 	{
-		P:7("_Jagged_Move: loop %d %d %d", i, getarg(i, 0), getarg(i, 1));
+		Debug_Print7("_Jagged_Move: loop %d %d %d", i, getarg(i, 0), getarg(i, 1));
 		Jagged_MoveOne(array, size1, size2, getarg(i, 0), getarg(i, 1));
 	}
 }
@@ -487,7 +487,7 @@ stock bool:_Jagged_MoveAll(array[][], size1, size2, ...)
 	// that is all in other functions now.
 	for (new i = 3, j = 0; j != num; ++i, ++j)
 	{
-		P:7("_Jagged_Move: loop %d %d %d", i, j, getarg(i));
+		Debug_Print7("_Jagged_Move: loop %d %d %d", i, j, getarg(i));
 		Jagged_MoveOne(array, size1, size2, j, getarg(i));
 	}
 }

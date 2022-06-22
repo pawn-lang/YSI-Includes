@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -78,33 +78,35 @@ Optional plugins:
 
 // Unify the two BCrypt plugins in to a single API.
 #if defined bcrypt_included
-	forward YSI_BCryptCheckDone(extra, ptr);
-	forward YSI_BCryptHashDone(extra, ptr, hashid);
+	stock _YSI_gHashID = 0;
 
-	native _YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
-	native _YSI_BCryptCheck(const password[], const hash[], const callback_name[], const callback_format[], ...) = bcrypt_check;
-	native _YSI_BCryptHash(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_hash;
-	native bool:_YSI_BCryptIsEqual(const key[], cost, const callback_name[], const callback_format[], ...) = bcrypt_is_equal;
+	forward _YSI_BCryptCheckDone(extra, ptr);
+	forward _YSI_BCryptHashDone(extra, ptr, hashid);
+
+	native bool:_YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
+	native bool:_YSI_BCryptCheck(const password[], const hash[], const callback[], const format[], ...) = bcrypt_check;
+	native bool:_YSI_BCryptHash(const password[], cost, const callback[], const format[], ...) = bcrypt_hash;
+	native bool:_YSI_BCryptIsEqual() = bcrypt_is_equal;
 
 	// Fix the missing native.
-	stock BCrypt_GetHash(hash[], size = sizeof(hash))
+	stock bool:BCrypt_GetHash(hash[], size = sizeof (hash))
 	{
+		// The native doesn't take a size parameter, so check it here.
 		assert(size >= 61);
 		return _YSI_BCryptGetHash(hash);
 	}
 
 	// Plus keep the original version for backwards-compatibility.
 	#pragma deprecated Use `BCrypt_GetHash`.
-	native YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
+	native bool:YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
 	#define YSI_BCryptGetHash(%0,%1) YSI_BCryptGetHash(%0)
 	#define _ALS_YSI_BCryptGetHash
 
-	public YSI_BCryptCheckDone(extra, ptr)
+	public _YSI_BCryptCheckDone(extra, ptr)
 	{
-		// Call the original function.  I think the old compiler messes up if we
-		// use the renamed version here.  Maybe.  Not sure why this doesn't use
-		// `_YSI_BCryptIsEqual`...
-		new success = bcrypt_is_equal();
+		// Call the original function.
+		new success = _YSI_BCryptIsEqual();
+		// See below for why this line is commented.  It IS passed, secretly.
 		//#emit PUSH.S       success
 		#emit PUSH.S       extra
 		#emit PUSH.C       8
@@ -122,7 +124,7 @@ Optional plugins:
 		#emit RETN
 	}
 
-	public YSI_BCryptHashDone(extra, ptr, hashid)
+	public _YSI_BCryptHashDone(extra, ptr, hashid)
 	{
 		// Call the original function.
 		#emit PUSH.S       hashid
@@ -136,34 +138,25 @@ Optional plugins:
 		#emit SCTRL        6
 	}
 
-	stock BCrypt_Check(extra, const callback[], const input[], const hash[])
+	stock bool:BCrypt_Check(extra, const callback[], const password[], const hash[])
 	{
 		new ptr;
-		if (AMX_GetPublicPointer(0, ptr, callback))
-		{
-			_YSI_BCryptCheck(input, hash, "YSI_BCryptCheckDone", "ii", extra, ptr);
-		}
+		return AMX_GetPublicPointer(0, ptr, callback) && _YSI_BCryptCheck(password, hash, "_YSI_BCryptCheckDone", "ii", extra, ptr);
 	}
 
-	stock BCrypt_Hash(extra, const callback[], const input[], cost)
+	stock BCrypt_Hash(extra, const callback[], const password[], cost)
 	{
 		new ptr;
-		static hashid = 0;
-		++hashid;
-		if (AMX_GetPublicPointer(0, ptr, callback))
-		{
-			_YSI_BCryptHash(input, cost, "YSI_BCryptHashDone", "iii", extra, ptr, hashid);
-			return hashid;
-		}
-		return 0;
+		return
+			++_YSI_gHashID,
+			AMX_GetPublicPointer(0, ptr, callback) && _YSI_BCryptHash(password, cost, "_YSI_BCryptHashDone", "iii", extra, ptr, _YSI_gHashID) ? _YSI_gHashID : 0;
 	}
-
 #elseif defined _samp_bcrypt_included
 	// I've never had to de-const a native before!
 	// Wait, that's not true - `GetPlayerName` is over-const!
-	native BCrypt_GetHash(hash[], size = sizeof(hash)) = bcrypt_get_hash;
-	native BCrypt_Check(extra, const callback[], const input[], const hash[]) = bcrypt_verify;
-	native BCrypt_Hash(extra, const callback[], const input[], cost) = bcrypt_hash;
+	native bool:BCrypt_GetHash(hash[], size = sizeof (hash)) = bcrypt_get_hash;
+	native bool:BCrypt_Check(extra, const callback[], const password[], const hash[]) = bcrypt_verify;
+	native bool:BCrypt_Hash(extra, const callback[], const password[], cost) = bcrypt_hash;
 #else
 	// We used to not have an error for this case, just gave undefined errors.  But now they must
 	// include it explicitly, so add a real error.

@@ -1,15 +1,20 @@
 /**
- * <library name="y_bitmap">
- * <section>
- *  Description
- * </section>
- *  Code to generate images on the server in the bitmap format.  This is by far
- *  the simplest format to write to as it is just a huge array of colours (at
- *  least 24-bit bitmaps are, and we only do them).
- * <section>
- *  Version
- * </section>
- *  0.1
+ * <library
+ *   name="y_bitmap"
+ *   version="0.1"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     Code to generate images on the server in the bitmap format.  This is by far
+ *     the simplest format to write to as it is just a huge array of colours (at
+ *     least 24-bit bitmaps are, and we only do them).
+ *   </remarks>
  * </library>
  *//** *//*
 Legal:
@@ -28,7 +33,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

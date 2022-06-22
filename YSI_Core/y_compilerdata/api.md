@@ -121,7 +121,7 @@ __COMPILER_SECOND_PASS
 __COMPILER_THIRD_PASS
 ```
 
-As a general rule, just use `#if __COMPILER_1ST_PASS` and `#if !__COMPILER_1ST_PASS`, because passes 2 and 3 should be treated basically the same.  I debated how to expose them, and if `2ND` should be true in the third pass as well.  YSI also has the `P:D` macro, which only outputs code in the first pass (used for generating `#define` documentation with `-r`.  Thus there are two more macros which can be used to determine the *use* of the current pass, rather than the absolute number:
+As a general rule, just use `#if __COMPILER_1ST_PASS` and `#if !__COMPILER_1ST_PASS`, because passes 2 and 3 should be treated basically the same.  I debated how to expose them, and if `2ND` should be true in the third pass as well.  YSI also has the `FUNC_PAWNDOC` macro, which only outputs code in the first pass (used for generating `#define` documentation with `-r`.  Thus there are two more macros which can be used to determine the *use* of the current pass, rather than the absolute number:
 
 ```pawn
 // 1 for first pass, 0 for second and third.  Used to indicate if the documented
@@ -166,6 +166,9 @@ __COMPILER_NAKED
 
 // `static enum` when that's allowed, `enum` otherwise.
 __COMPILER_STATIC_ENUM
+
+// `const static` when that's allowed, `const` otherwise.
+__COMPILER_CONST_STATIC
 
 // 1 when `{ {}, ... }` is allowed, 0 otherwise.
 __COMPILER_NESTED_ELLIPSIS
@@ -229,6 +232,12 @@ __COMPILER_CODEPAGE
 
 // The compiler has native support for the AMXModX `decl` keyword.
 __COMPILER_DECL
+
+// The compiler has native support for #234 (i.e. `obj.Method()` syntax).
+__COMPILER_THIS
+
+// The script is being compiled with `-O2` on later versions.
+__COMPILER_O2
 ```
 
 ## Default Values
@@ -291,4 +300,71 @@ main()
 	printf("%d %f %s", a, b, c);
 }
 ```
+
+## `THIS__`
+
+`THIS__` allows you to use a limited form of OO-like syntax, based on the variable `this`.  You need to define `this` at the top of a file using `THIS__`, then undefine it at the end:
+
+```pawn
+// Top.
+#define this. THIS__(Entity)
+
+// Code.
+Float:this.SomeFunction()
+{
+	return this.GetAngle();
+}
+
+// End.
+#undef this
+```
+
+Becomes:
+
+```pawn
+// Code.
+Float:Entity_SomeFunction(Entity:this__)
+{
+	return Entity_GetAngle(this__);
+}
+```
+
+You could, if you really really really want to do:
+
+```pawn
+// Top.
+#define this. THIS__(Entity)
+#define Entity:: THIS__(Entity)
+
+// Code.
+Float:Entity::SomeFunction()
+{
+	return this.GetAngle();
+}
+
+// End.
+#undef this
+```
+
+However, people can't call the function using the `::` syntax, it only works here for declarations.  Thus it is instead likely more worth using explicit declarations with `this__`:
+
+```pawn
+// Top.
+#define this. THIS__(Entity)
+
+// Code.
+Float:Entity_SomeFunction(Entity:this__)
+{
+	return this.GetAngle();
+}
+
+// End.
+#undef this
+```
+
+And only use `this.` and `::` internally.
+
+While normally there are YSI keywords so you can enable `this` as a short form of `THIS__`, you can't here because `this` is used as the variable operated on.  However, since `THIS__` only really appears once per file it is less in need of shortening.
+
+There is currently no support for varaibles like `this.Data[ANGLE]`, but I'm thinking about how to achieve it.
 

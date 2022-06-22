@@ -1,45 +1,54 @@
 /**
- * <library name="y_bit">
- * <section>
- *  Description
- * </section>
- *  Provides functions for bit manipulation and bit arrays greater than 32bits.
- *  The arrays are usually bigger than required due to cell boundaries but this
- *  shouldn't cause a major problem (bit tests on the 101st bit of a 100 bit
- *  array won't return 0 for out of bounds, but the 129th will).
- *
- *  Note that y_commands has a few optimisations which bypass the code in here
- *  so any modifications to bit array layouts will need to be reflected there.
- * <section>
- *  Version
- * </section>
- *  0.2
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="Bit_Set">Sets a slot to the given value.</symbol>
- *  <symbol name="Bit_Get">Gets a slot state.</symbol>
- *  <symbol name="Bit_SetAll">Sets all the slots in an array to the same thing.</symbol>
- *  <symbol name="Bit_GetCount">Gets the number of 1s in a bit array.</symbol>
- * </ul><subsection>
- * Inline
- * </subsection><ul>
- *  <symbol name="Bit_Bits">Gets the number of cells required for a bit array.</symbol>
- *  <symbol name="Bit_Let">Sets a slot to 1.</symbol>
- *  <symbol name="Bit_Vet">Sets a slot to 0.</symbol>
- *  <symbol name="Bit_GetBits">Gets the bit at a slot unsafely.</symbol>
- * </ul><section>
- *  Definitions
- * </section><ul>
- *  <symbol name="CELLSHIFT">Number of bits that can hold "cellbits"</symbol>
- * </ul><section>
- *  Tags
- * </section><ul>
- *  <symbol name="Bit">Bit array type.</symbol>
- * </ul>
+ * <library
+ *   name="y_bit"
+ *   version="0.2"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     <p>
+ *     Provides functions for bit manipulation and bit arrays greater than 32bits.
+ *     The arrays are usually bigger than required due to cell boundaries but this
+ *     shouldn't cause a major problem (bit tests on the 101st bit of a 100 bit
+ *     array won't return 0 for out of bounds, but the 129th will).
+ *     </p>
+ *     
+ *     <p>
+ *     Note that y_commands has a few optimisations which bypass the code in here
+ *     so any modifications to bit array layouts will need to be reflected there.
+ *     </p>
+ *   </remarks>
+ *   <section>
+ *     Functions
+ *   </section>
+ *   <subsection>
+ *     Stock
+ *   </subsection><ul>
+ *     <symbol name="Bit_Set">Sets a slot to the given value.</symbol>
+ *     <symbol name="Bit_Get">Gets a slot state.</symbol>
+ *     <symbol name="Bit_SetAll">Sets all the slots in an array to the same thing.</symbol>
+ *     <symbol name="Bit_GetCount">Gets the number of 1s in a bit array.</symbol>
+ *   </ul><subsection>
+ *     Inline
+ *   </subsection><ul>
+ *     <symbol name="Bit_Bits">Gets the number of cells required for a bit array.</symbol>
+ *     <symbol name="Bit_Let">Sets a slot to 1.</symbol>
+ *     <symbol name="Bit_Vet">Sets a slot to 0.</symbol>
+ *     <symbol name="Bit_GetBits">Gets the bit at a slot unsafely.</symbol>
+ *   </ul><section>
+ *     Definitions
+ *   </section><ul>
+ *     <symbol name="CELLSHIFT">Number of bits that can hold "cellbits"</symbol>
+ *   </ul><section>
+ *     Tags
+ *   </section><ul>
+ *     <symbol name="Bit">Bit array type.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:
@@ -58,7 +67,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

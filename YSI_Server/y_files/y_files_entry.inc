@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -78,23 +78,9 @@ Optional plugins:
 
 #include "..\..\YSI_Core\y_utils"
 
-#if defined YSI_NO_WINDOWS_FILES
-	// Aliases.
-	#define Files_CopySync Files_Copy
-	#define Files_MoveSync Files_Move
-#else
-	#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
-
-	#tryinclude "..\..\amx\windows\import_table"
-	#tryinclude <amx_assembly\windows\import_table>
-	#tryinclude "..\..\amx_assembly\windows\import_table"
-	#tryinclude "..\..\..\amx_assembly\windows\import_table"
-	#tryinclude "windows\import_table"
-	#tryinclude <windows\import_table>
-	#if !defined IMPORT_TABLE_INC
-		#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
-	#endif
-#endif
+// Aliases.
+#define Files_CopySync Files_Copy
+#define Files_MoveSync Files_Move
 
 // Declare the functions that might not exist.
 #pragma deprecated Use `Files_RemoveDirSync`, the async code doesn't save time.
@@ -112,13 +98,7 @@ forward bool:Files_CreateDirSync(const string:dir[]);
 	#define YSI_LARGE_FILE_SIZE (1024 * 1024) // 1Mb
 #endif
 
-#include "y_files_impl"
-
 #if defined YSI_TESTS
 	#include "y_files_tests"
-#endif
-
-#if defined YSI_PROFILINGS
-	#include "y_files_profilings"
 #endif
 

@@ -1,32 +1,35 @@
 /**
- * <library name="y_zonepulse">
- * <section>
- *  Description
- * </section>
- *  Gradually fades a zone's colour between one colour and another, then back.
- * <section>
- *  Version
- * </section>
- *  0.1
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Public
- * </subsection><ul>
- *  <symbol name="__GangZonePulse">The timer that does the hard work.</symbol>
- * </ul><subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="GangZonePulse">Pulse a zone for player or collection of players.</symbol>
- *  <symbol name="GangZonePulseForPlayer">Pulse a zone for a player.</symbol>
- *  <symbol name="GangZonePulseForAll">Pulse a zone for everyone.</symbol>
- *  <symbol name="GangZoneStopPulse">Stop a zone pulsing for a set of players.</symbol>
- *  <symbol name="GangZoneStopPulseForPlayer">Stop a zone pulsing for a single player.</symbol>
- *  <symbol name="GangZoneStopPulseForAll">Stop a zone pulsing for everyone.</symbol>
- * </ul><section>Compile options</section><ul>
- *  <symbol name="ZONE_PULSE_STAGE_TIME">ms between each pulse frame.</symbol>
- * </ul>
+ * <library
+ *   name="y_zonepulse"
+ *   version="0.1"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Gradually fades a zone's colour between one colour and another, then back."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <section>
+ *     Functions
+ *   </section>
+ *   <subsection>
+ *     Public
+ *   </subsection><ul>
+ *     <symbol name="__GangZonePulse">The timer that does the hard work.</symbol>
+ *   </ul><subsection>
+ *     Stock
+ *   </subsection><ul>
+ *     <symbol name="GangZonePulse">Pulse a zone for player or collection of players.</symbol>
+ *     <symbol name="GangZonePulseForPlayer">Pulse a zone for a player.</symbol>
+ *     <symbol name="GangZonePulseForAll">Pulse a zone for everyone.</symbol>
+ *     <symbol name="GangZoneStopPulse">Stop a zone pulsing for a set of players.</symbol>
+ *     <symbol name="GangZoneStopPulseForPlayer">Stop a zone pulsing for a single player.</symbol>
+ *     <symbol name="GangZoneStopPulseForAll">Stop a zone pulsing for everyone.</symbol>
+ *   </ul><section>Compile options</section><ul>
+ *     <symbol name="ZONE_PULSE_STAGE_TIME">ms between each pulse frame.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:
@@ -45,7 +48,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

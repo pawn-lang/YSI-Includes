@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -151,7 +151,7 @@ forward _Config_Load_y_svar(name[], value[]);
 
 public _Config_Load_y_svar(name[], value[])
 {
-	P:7("_Config_Load_y_svar called: %s %s", name, value);
+	Debug_Print7("_Config_Load_y_svar called: %s %s", name, value);
 	// See what the name of the loaded data was.
 	new
 		pos = strfind(name, "-");
@@ -167,7 +167,7 @@ public _Config_Load_y_svar(name[], value[])
 			return;
 		}
 		// Check that the data is the right size.
-		P:C(if (strval(value) != YSI_g_sLastSize) P:E("uvar data changed in %s", YSI_g_sLastName););
+		Debug_Code1{if (strval(value) != YSI_g_sLastSize) Debug_Error("uvar data changed in %s", YSI_g_sLastName);}
 	}
 	else
 	{
@@ -263,7 +263,7 @@ public _Config_Load_y_svar(name[], value[])
 stock M@(volatile const vardata[], dataSize, &pointer, ds2 = 1)
 {
 	dataSize *= ds2;
-	P:2("M@ called");
+	Debug_Print2("M@ called");
 	new
 		sAddr = 0;
 	// Store the basic data, including linked-list pointers and a pointer to the
@@ -280,8 +280,8 @@ stock M@(volatile const vardata[], dataSize, &pointer, ds2 = 1)
 	sAddr += 4;
 	#emit LOAD.S.pri dataSize
 	#emit SREF.S.pri sAddr
-	P:5("M@: %d %d %d %d %s", vardata[0], vardata[1], vardata[2], vardata[3], vardata[4]);
-	P:5("M@: %d", YSI_g_sFirstUVarData);
+	Debug_Print5("M@: %d %d %d %d %s", vardata[0], vardata[1], vardata[2], vardata[3], vardata[4]);
+	Debug_Print5("M@: %d", YSI_g_sFirstUVarData);
 }
 
 HOOK__ OnScriptExit()
@@ -291,13 +291,13 @@ HOOK__ OnScriptExit()
 
 Svar_Save()
 {
-	P:1("Svar_OnScriptExit called");
+	Debug_Print1("Svar_OnScriptExit called");
 	// Loop through all the player data items and write them to a file.
 	new
 		INI:__fwrite = INI_Open("YSI/" #MODE_NAME "_config.ini");
 	if (__fwrite == INI_NO_FILE)
 	{
-		P:E("y_svar could not open data file for " #MODE_NAME);
+		Debug_Error("y_svar could not open data file for " #MODE_NAME);
 		return;
 	}
 	INI_SetTag(__fwrite, "y_svar");
@@ -344,7 +344,7 @@ Svar_Save()
 
 public OnCodeInit()
 {
-	P:1("hook Svar_OnScriptInit called");
+	Debug_Print1("hook Svar_OnScriptInit called");
 	// List them all.
 	YSI_g_sFirstUVarData = -1;
 	// Call all @yS_ functions to get all required data.

@@ -1,13 +1,16 @@
 /*+
- * <library name="y_pawndoc">
- * <section>
- *  Description
- * </section>
- *  Fix pawndoc comments.
- * <section>
- *  Version
- * </section>
- *  0.2
+ * <library
+ *   name="y_pawndoc"
+ *   version="0.2"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Fix pawndoc comments."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
  * </library>
  *//** *//*
 Legal:
@@ -26,7 +29,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -82,13 +85,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+// So others know the pawndoc macros exist.
+#define FIXES_PAWNDOC
+
+// Strip tags from states.
+#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
+
+// Defer macro expansion.
+#define PP_BRACKETS<> ()
+
 /**
  * <remarks>
  * Creates fake functions that Pawndoc comments can be attached to in the first
  * compilation phase, before the real macros are created.  Macros can't have
  * documentation comments, but why not?  They need documenting...
  * <p/>
- * Used internally as <c>_FIXES_FUNC_PAWNDOC</c>.
+ * Used internally as <c>YSI_FUNC_PAWNDOC</c>.
  * <p/>
  * This creates a native of the same name, then calls it from a special function
  * (called <c>PAWNDOC</c>) with a state set to the name of this function, to
@@ -114,12 +126,10 @@ Optional plugins:
 
 #if __COMPILER_1ST_PASS
 	// First compiler pass only.
-	#define _FIXES_FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; static stock PAWNDOC() <__PAWNDOC:%0> { (%0()); }
+	#define _FIXES_FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC PP_BRACKETS<> <__PAWNDOC:%0> { (%0()); }
 #else
 	#define _FIXES_FUNC_PAWNDOC(%0(%1));
 #endif
-// Strip tags from states.
-#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
 
 _FIXES_FUNC_PAWNDOC(FUNC_PAWNDOC(const symbol[]));
 
@@ -129,7 +139,7 @@ _FIXES_FUNC_PAWNDOC(FUNC_PAWNDOC(const symbol[]));
  * compilation phase, before the real macros are created.  Macros can't have
  * documentation comments, but why not?  They need documenting...
  * <p/>
- * Used internally as <c>_FIXES_CONST_PAWNDOC</c>.
+ * Used internally as <c>YSI_CONST_PAWNDOC</c>.
  * <p/>
  * This creates a static stock of the same name to attach the documentation to,
  * before actually defining the macro.
@@ -150,19 +160,19 @@ _FIXES_FUNC_PAWNDOC(FUNC_PAWNDOC(const symbol[]));
 
 #if __COMPILER_1ST_PASS
 	// First compiler pass only.
-	#define _FIXES_CONST_PAWNDOC(%0); static stock %0 = 0;
+	#define _FIXES_CONST_PAWNDOC(%0=%1); static stock %0 = %1;
 #else
 	#define _FIXES_CONST_PAWNDOC(%0);
 #endif
 
-_FIXES_FUNC_PAWNDOC(CONST_PAWNDOC(const symbol[]));
+_FIXES_FUNC_PAWNDOC(CONST_PAWNDOC(const symbol[] = 0));
 
 /**
  * <remarks>
  * Create a <c>const</c> that is never used, which has pawndoc documentation
  * attached to it.  This seems to be the best way to prevent the documentation
  * from appearing in XML (<c>-r</c>) output - even conditional compilation
- * doesn't work on comments.  Used internally as <c>_FIXES_HIDE_PAWNDOC</c>.
+ * doesn't work on comments.  Used internally as <c>YSI_HIDE_PAWNDOC</c>.
  * <p />
  * The input should have some unique name, so when using it within an ifdef
  * block, don't use the same name as the tested symbol, because the the
@@ -173,21 +183,25 @@ _FIXES_FUNC_PAWNDOC(CONST_PAWNDOC(const symbol[]));
  * </remarks>
  */
 
-_FIXES_FUNC_PAWNDOC(HIDE_PAWNDOC(const symbol[]));
 #define _FIXES_HIDE_PAWNDOC(%0); const %0 = 0;
+
+_FIXES_FUNC_PAWNDOC(HIDE_PAWNDOC(const symbol[]));
 
 /**
  * <remarks>
  * There's a bug with the pawndoc for enums.  They loose the documentation, or
  * get some other documentation unless they're immediately followed by another
- * declaration, most notably a function.  This declares a <c>native</c> with a
- * similar name (prefixed with <c>_@</c>, so watch symbol lengths) so the docs
- * are attached to the correct symbol and the additional function isn't output.
+ * declaration, most notably a function.  This uses the same
+ * <c>PAWNDOC&lt;&gt;</c> trick as <c>FUNC_PAWNDOC</c> to use the <c>enum</c>
+ * name as a symbol, this time passing it to a function that should always
+ * exist.  This ensures the docs are attached to the correct symbol and the
+ * additional function is well documented.
  * </remarks>
  */
 
+#define _FIXES_ENUM_PAWNDOC(%0); stock PAWNDOC PP_BRACKETS<> <__PAWNDOC:%0> { random(_:%0); }
+
 _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
-#define _FIXES_ENUM_PAWNDOC(%0); static stock %0:_@%0() { return %0; }
 
 /**
  * <remarks>
@@ -196,13 +210,19 @@ _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
  * </remarks>
  */
 
-_FIXES_FUNC_PAWNDOC(CLOSE_PAWNDOC());
 #if __COMPILER_1ST_PASS
 	// First compiler pass only.
-	#define _FIXES_CLOSE_PAWNDOC(); static stock PAWNDOC() <__PAWNDOC:PAWNDOC> {} static stock PAWNDOC() <> {}
-#else
-	#define _FIXES_CLOSE_PAWNDOC();
+	stock PAWNDOC() <__PAWNDOC:PAWNDOC>
+	{
+	}
+
+	stock PAWNDOC() <>
+	{
+	}
 #endif
+
+// Some compile-time safety.
+#define PAWNDOC() Dont_Call_PAWNDOC()
 
 /**
 	<hidden />

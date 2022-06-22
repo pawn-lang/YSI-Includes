@@ -19,7 +19,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -99,7 +99,6 @@ CHAIN_HOOK(ScriptInit)
 stock
 	#if _YSI_SAFE_STARTUP
 		bool:YSI_GAMEMODE = false,
-		bool:YSI_OPEN_MP = false,
 	#endif
 		bool:YSI_FILTERSCRIPT = false;
 
@@ -117,7 +116,7 @@ enum E_SCRIPTINIT_STATE (<<= 1)
 static
 	E_SCRIPTINIT_STATE:YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_NONE;
 
-#define Debug_PrintE(%1); \
+#define Debug_Error(%1); \
 	Debug_Print0("\7\7\7*** YSI Error: " #%1);
 
 #if defined _DEBUG
@@ -247,6 +246,22 @@ stock bool:Server_IsWindowsHost()
 	return val == 120;
 }
 
+forward bool:Server_IsOpenMP();
+
+// Spell `open.mp` correctly in the function name (because why not).
+#define Server_Isopen.mp Server_IsOpenMP
+#define Server_Is_open.mp Server_IsOpenMP
+
+#if __COMPILER___EMIT_U
+	#define Server_IsOpenMP() (bool:(__emit(zero.pri, zero.alt, lctrl 9, neq)))
+#endif
+
+forward bool:Server_IsSAMP();
+
+#if __COMPILER___EMIT_U
+	#define Server_IsSAMP() (bool:(__emit(zero.pri, lctrl 9, eq.c.pri 0)))
+#endif
+
 #pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
 {
@@ -305,50 +320,9 @@ stock bool:Server_IsGameMode()
 	#define Script_IsGameMode() (TRUE)
 #endif
 
-stock bool:Server_IsOpenMP()
-{
-#if _YSI_SAFE_STARTUP
-	return YSI_OPEN_MP;
-#else
-	return false;
-#endif
-}
-
 static stock const
 	YSI_gscHeader[] = " ========================================== ",
 	YSI_gscSpacer[] = " |                                        | ",
-	YSI_gscObnoxiousHeader0[] = "\n" \
-		"         ==============================================================\n" \
-		"         |                                                            |\n" \
-		"         |                                                            |\n" \
-		"         |     YYYYYYY       YYYYYYY   SSSSSSSSSSSSSSS IIIIIIIIII     |\n" \
-		"         |     Y:::::Y       Y:::::Y SS:::::::::::::::SI::::::::I     |",
-	YSI_gscObnoxiousHeader1[] = \
-		"         |     Y:::::Y       Y:::::YS:::::SSSSSS::::::SI::::::::I     |\n" \
-		"         |     Y::::::Y     Y::::::YS:::::S     SSSSSSSII::::::II     |\n" \
-		"         |     YYY:::::Y   Y:::::YYYS:::::S              I::::I       |\n" \
-		"         |        Y:::::Y Y:::::Y   S:::::S              I::::I       |\n" \
-		"         |         Y:::::Y:::::Y     S::::SSSS           I::::I       |",
-	YSI_gscObnoxiousHeader2[] = \
-		"         |          Y:::::::::Y       SS::::::SSSSS      I::::I       |\n" \
-		"         |           Y:::::::Y          SSS::::::::SS    I::::I       |\n" \
-		"         |            Y:::::Y              SSSSSS::::S   I::::I       |\n" \
-		"         |            Y:::::Y                   S:::::S  I::::I       |\n" \
-		"         |            Y:::::Y                   S:::::S  I::::I       |",
-	YSI_gscObnoxiousHeader3[] = \
-		"         |            Y:::::Y       SSSSSSS     S:::::SII::::::II     |\n" \
-		"         |         YYYY:::::YYYY    S::::::SSSSSS:::::SI::::::::I     |\n" \
-		"         |         Y:::::::::::Y    S:::::::::::::::SS I::::::::I     |\n" \
-		"         |         YYYYYYYYYYYYY     SSSSSSSSSSSSSSS   IIIIIIIIII     |\n" \
-		"         |                                                            |",
-	YSI_gscObnoxiousHeader4[] = \
-		"         |                                                            |\n" \
-		"         |                      (c) 2021 MPL v1.1                     |\n" \
-		"         |            Alex \"Y_Less\" Cole and contributors.            |\n" \
-		"         |                                                            |\n" \
-		"         |                                                            |",
-	YSI_gscObnoxiousHeader5[] = \
-		"         ==============================================================\n",
 	YSI_gscInitMsgA[] = "    Dumping \"pre-init.asm\", this",
 	YSI_gscInitMsgB[] = "    Dumping \"post-init.asm\", this",
 	YSI_gscInitMsgC[] = "   may take a little bit of time.",
@@ -360,10 +334,22 @@ static stock const
 
 static stock
 	YSI_gsStartTime,
+	YSI_gsStartHMS,
+	YSI_gsStartDMY,
 	bool:YSI_gsObnoxiousHeader = true,
 	bool:YSI_gsFirstHeader = true,
 	bool:YSI_gsNewPart = true,
 	YSI_gsPurgeTimer = 0;
+
+static stock ScriptInit_GetStartTime()
+{
+	new h, m, s, d, y;
+	YSI_gsStartTime = gettime(),
+	gettime(h, m, s),
+	YSI_gsStartHMS = (h << 16) | (m << 8) | s,
+	getdate(y, m, d),
+	YSI_gsStartDMY = (y << 16) | (m << 8) | d;
+}
 
 native YSI_VAPrintF(const fmt[], addr) = printf;
 forward bool:fautocleanup(const name[], maxAge);
@@ -388,22 +374,47 @@ static stock ScriptInit_Dump(const filename[], const message[])
 	#endif
 }
 
+static stock Server_PrintYSIHeader()
+{
+	YSI_Print__("         ==============================================================");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         |    YYYYYYY       YYYYYYY    SSSSSSSSSSSSSSS  IIIIIIIIII    |");
+	YSI_Print__("         |    Y:::::Y       Y:::::Y  SS:::::::::::::::S I::::::::I    |");
+	YSI_Print__("         |    Y:::::Y       Y:::::Y S:::::SSSSSS::::::S I::::::::I    |");
+	YSI_Print__("         |    Y::::::Y     Y::::::Y S:::::S     SSSSSSS II::::::II    |");
+	YSI_Print__("         |    YYY:::::Y   Y:::::YYY S:::::S               I::::I      |");
+	YSI_Print__("         |       Y:::::Y Y:::::Y    S:::::S               I::::I      |");
+	YSI_Print__("         |        Y:::::Y:::::Y      S::::SSSS            I::::I      |");
+	YSI_Print__("         |         Y:::::::::Y        SS::::::SSSSS       I::::I      |");
+	YSI_Print__("         |          Y:::::::Y           SSS::::::::SS     I::::I      |");
+	YSI_Print__("         |           Y:::::Y               SSSSSS::::S    I::::I      |");
+	YSI_Print__("         |           Y:::::Y                    S:::::S   I::::I      |");
+	YSI_Print__("         |           Y:::::Y                    S:::::S   I::::I      |");
+	YSI_Print__("         |           Y:::::Y        SSSSSSS     S:::::S II::::::II    |");
+	YSI_Print__("         |        YYYY:::::YYYY     S::::::SSSSSS:::::S I::::::::I    |");
+	YSI_Print__("         |        Y:::::::::::Y     S:::::::::::::::SS  I::::::::I    |");
+	YSI_Print__("         |        YYYYYYYYYYYYY      SSSSSSSSSSSSSSS    IIIIIIIIII    |");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         |                      (c) 2021 MPL v1.1                     |");
+	YSI_Print__("         |            Alex \"Y_Less\" Cole and contributors.            |");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         |                                                            |");
+	YSI_Print__("         ==============================================================");
+}
+
 stock Server_PrintIntroMessage(...)
 {
 	#if _YSI_SAFE_STARTUP
 		if (YSI_gsObnoxiousHeader)
 		{
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_gscObnoxiousHeader0),
-			YSI_Print(YSI_gscObnoxiousHeader1),
-			YSI_Print(YSI_gscObnoxiousHeader2),
-			YSI_Print(YSI_gscObnoxiousHeader3),
-			YSI_Print(YSI_gscObnoxiousHeader4),
-			YSI_Print(YSI_gscObnoxiousHeader5),
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_gscHeader),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_SPACE),
+			Server_PrintYSIHeader(),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_gscHeader),
 			YSI_gsObnoxiousHeader = false,
 			YSI_gsFirstHeader = false;
 		}
@@ -411,12 +422,12 @@ stock Server_PrintIntroMessage(...)
 	#endif
 		if (YSI_gsFirstHeader)
 		{
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_gscHeader),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_gscHeader),
 			YSI_gsFirstHeader = false;
 		}
 		// Header.
-		YSI_Print(YSI_gscSpacer);
+		YSI_Print__(YSI_gscSpacer);
 		// Body.
 		for (new i = 3 * cellbytes, j = (numargs() << __COMPILER_CELL_SHIFT) + (3 * cellbytes), a = 0; i != j; i += cellbytes)
 		{
@@ -428,8 +439,8 @@ stock Server_PrintIntroMessage(...)
 			YSI_VAPrintF(" | %38s | ", a);
 		}
 		// Footer.
-		YSI_Print(YSI_gscSpacer);
-		YSI_Print(YSI_gscHeader);
+		YSI_Print__(YSI_gscSpacer);
+		YSI_Print__(YSI_gscHeader);
 }
 
 stock Server_PrintIntroPart(...)
@@ -437,17 +448,12 @@ stock Server_PrintIntroPart(...)
 	#if _YSI_SAFE_STARTUP
 		if (YSI_gsObnoxiousHeader)
 		{
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_gscObnoxiousHeader0),
-			YSI_Print(YSI_gscObnoxiousHeader1),
-			YSI_Print(YSI_gscObnoxiousHeader2),
-			YSI_Print(YSI_gscObnoxiousHeader3),
-			YSI_Print(YSI_gscObnoxiousHeader4),
-			YSI_Print(YSI_gscObnoxiousHeader5),
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_gscHeader),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_SPACE),
+			Server_PrintYSIHeader(),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_gscHeader),
 			YSI_gsObnoxiousHeader = false,
 			YSI_gsFirstHeader = false;
 		}
@@ -455,15 +461,15 @@ stock Server_PrintIntroPart(...)
 	#endif
 		if (YSI_gsFirstHeader)
 		{
-			YSI_Print(YSI_SPACE),
-			YSI_Print(YSI_gscHeader),
+			YSI_Print__(YSI_SPACE),
+			YSI_Print__(YSI_gscHeader),
 			YSI_gsFirstHeader = false;
 		}
 		// Header.
 		if (YSI_gsNewPart)
 		{
 			YSI_gsNewPart = false;
-			YSI_Print(YSI_gscSpacer);
+			YSI_Print__(YSI_gscSpacer);
 		}
 		// Body.
 		for (new i = 3 * cellbytes, j = 3 * cellbytes + (numargs() << __COMPILER_CELL_SHIFT), a = 0; i != j; i += cellbytes)
@@ -480,14 +486,14 @@ stock Server_PrintIntroPart(...)
 stock Server_FinishIntroPart()
 {
 	// Footer.
-	YSI_Print(YSI_gscSpacer);
-	YSI_Print(YSI_gscHeader);
+	YSI_Print__(YSI_gscSpacer);
+	YSI_Print__(YSI_gscHeader);
 	YSI_gsNewPart = true;
 }
 
 stock Server_FinishIntroMessage()
 {
-	YSI_Print(YSI_SPACE),
+	YSI_Print__(YSI_SPACE),
 	YSI_gsFirstHeader = true;
 }
 
@@ -576,6 +582,16 @@ stock Server_GetStartTime()
 	return YSI_gsStartTime;
 }
 
+stock Server_GetStartDateTime(&year, &month, &day, &hour, &minute, &second)
+{
+	hour = YSI_gsStartHMS >>> 16,
+	minute = YSI_gsStartHMS >>> 8 & 0xFF,
+	second = YSI_gsStartHMS & 0xFF,
+	year = YSI_gsStartDMY >>> 16,
+	month = YSI_gsStartDMY >>> 8 & 0xFF,
+	day = YSI_gsStartDMY & 0xFF;
+}
+
 stock bool:Server_HasLongCallControl()
 {
 	// This code detects if the `0xFE` long call control register works.  If it
@@ -658,12 +674,12 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				{
 					if (jit)
 					{
-						P:W("Could not auto-load YSI cache - script type (GM/FS) cannot be determined with JIT.");
+						Debug_Warning("Could not auto-load YSI cache - script type (GM/FS) cannot be determined with JIT.");
 						strcat(name, ".amx");
 					}
 					else if (fs)
 					{
-						P:W("Could not auto-load YSI cache - current filterscript cannot be unloaded.");
+						Debug_Warning("Could not auto-load YSI cache - current filterscript cannot be unloaded.");
 						strcat(name, ".amx");
 					}
 					else
@@ -768,7 +784,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					Server_FinishIntroPart();
 				#endif
 					YSI_g_sScriptInitState = tmp;
-					P:E("YSI code cache write failed");
+					Debug_Error("YSI code cache write failed");
 			}
 		#endif
 			Server_EnableLongCall();
@@ -790,7 +806,7 @@ public OnJITCompile()
 	{
 		return 0;
 	}
-	YSI_gsStartTime = gettime();
+	ScriptInit_GetStartTime();
 	#if _YSI_SAFE_STARTUP
 		ResolveYSIScriptfileDirs();
 	#endif
@@ -834,13 +850,15 @@ public OnJITCompile()
 
 #define y_@I%0\32; y_@I
 
-#define u@$ 0]);
+#define __script_init_u@_1
+// Can't `#undef` this because it declares a `forward` with the same name.
+#define u@$ 1]);
 
 // Detect tags.
 #define _@Iy:%8$%3:%0(%1)<_> %8$%0(%1)<%3>
 
 // Detect arrays, on `final` only.
-#define _@yI:_I@y:%8$%0[%4]%9(%1)<%3> %8$@yI_%0();@yI_%0(){new %3:y__[sizeof(%0)];y_@I%0(y__);_YSI_ConstCpy(_:%0,_:y__,0,sizeof y__*4,sizeof y__);}static y_@I%0(%3:y__[sizeof(%0)])y__=
+#define _@yI:_I@y:%8$%0[%4]%9(%1)<%3> %8$@yI_%0();@yI_%0(){new %3:y__[sizeof(%0)];y_@I%0(y__);_YSI_ConstCpy__(_:%0,_:y__,0,sizeof y__*4,sizeof y__);}static y_@I%0(%3:y__[sizeof(%0)])y__=
 
 // Finish inits.
 #define _y@I:%8$%0(%1)<%3>(%2) %8$%3:%2%0(%1);%3:%2%0(%1)
@@ -887,12 +905,11 @@ public OnJITCompile()
 //	public OnScriptInit(id)
 //	{
 //		state _ALS : _ALS_go;
-//		YSI_OPEN_MP = true;
 //		state _script_init_fix_state : false;
 //		// Dump the final assembly of this script so we can inspect it.
 //		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 //		{
-//			YSI_gsStartTime = gettime();
+//			ScriptInit_GetStartTime();
 //			ResolveYSIScriptfileDirs();
 //			DEBUG_MAYBE_DUMP(YSI_gscPreInitFile, YSI_gscInitMsgA);
 //			if (!ScriptInit_CallOnCodeInit(false, true))
@@ -929,14 +946,14 @@ public OnJITCompile()
 			state _ALS : _ALS_go;
 		#if _YSI_SAFE_STARTUP
 			YSI_FILTERSCRIPT = true;
-			if (!YSI_OPEN_MP)
+			//if (Server_IsSAMP())
 		#endif
 			{
 				state _script_init_fix_state : true;
 				// Dump the final assembly of this script so we can inspect it.
 				if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 				{
-					YSI_gsStartTime = gettime();
+					ScriptInit_GetStartTime();
 					#if _YSI_SAFE_STARTUP
 						ResolveYSIScriptfileDirs();
 					#endif
@@ -1063,7 +1080,7 @@ ScriptInit_Purge_clean:
 	fremove(tmp);
 	// Recheck once an hour.
 ScriptInit_Purge_retry:
-	YSI_gsPurgeTimer = YSI_SetTimer("ScriptInit_PurgeTemporaries", 1000 * 60 * 60, false);
+	YSI_gsPurgeTimer = YSI_SetTimer__("ScriptInit_PurgeTemporaries", 1000 * 60 * 60, false);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1077,12 +1094,12 @@ ScriptInit_Purge_retry:
 			state _ALS : _ALS_go;
 			// Kill an existing purge if one exists in this script.
 		#if _YSI_SAFE_STARTUP
-			if (!YSI_FILTERSCRIPT && !YSI_OPEN_MP && !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+			if (!YSI_FILTERSCRIPT && /*Server_IsSAMP() &&*/ !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		#else
 			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		#endif
 			{
-				YSI_gsStartTime = gettime();
+				ScriptInit_GetStartTime();
 				#if _YSI_SAFE_STARTUP
 					ResolveYSIScriptfileDirs();
 				#endif
@@ -1104,7 +1121,7 @@ ScriptInit_Purge_retry:
 			{
 		#if _YSI_SAFE_STARTUP
 				YSI_GAMEMODE = true;
-				if (!YSI_OPEN_MP)
+				//if (Server_IsSAMP())
 		#endif
 				{
 					state _script_init_fix_state : false;
@@ -1151,7 +1168,7 @@ ScriptInit_Purge_retry:
 				}
 			}
 		#if _YSI_SAFE_STARTUP
-			if (!YSI_OPEN_MP)
+			//if (Server_IsSAMP())
 		#endif
 			{
 				CallLocalFunction("OnScriptInit@E", YSI_EMPTY);
@@ -1178,7 +1195,7 @@ ScriptInit_Purge_retry:
 	{
 		ScriptInit_OnFilterScriptExit();
 #if _YSI_SAFE_STARTUP
-		if (YSI_FILTERSCRIPT && !YSI_OPEN_MP)
+		if (YSI_FILTERSCRIPT /*&& Server_IsSAMP()*/)
 #endif
 		{
 			ScriptInit_PreExitFuncs_();
@@ -1195,7 +1212,7 @@ ScriptInit_Purge_retry:
 	{
 		ScriptInit_OnGameModeExit();
 #if _YSI_SAFE_STARTUP
-		if (YSI_GAMEMODE && !YSI_OPEN_MP)
+		if (YSI_GAMEMODE /*&& Server_IsSAMP()*/)
 #endif
 		{
 			ScriptInit_PreExitFuncs_();
@@ -1207,21 +1224,21 @@ ScriptInit_Purge_retry:
 	}
 #endif
 
-#if _YSI_SAFE_STARTUP
-	forward OnScriptExit(id);
-
-	public OnScriptExit(id)
-	{
-		if (YSI_OPEN_MP)
-		{
-			ScriptInit_PreExitFuncs_();
-			ScriptInit_OnScriptExit();
-			ScriptInit_PostExitFuncs_();
-			ScriptInit_OnYSIExit();
-		}
-		return 1;
-	}
-#endif
+//#if _YSI_SAFE_STARTUP
+//	forward OnScriptExit(id);
+//
+//	public OnScriptExit(id)
+//	{
+//		if (YSI_OPEN_MP)
+//		{
+//			ScriptInit_PreExitFuncs_();
+//			ScriptInit_OnScriptExit();
+//			ScriptInit_PostExitFuncs_();
+//			ScriptInit_OnYSIExit();
+//		}
+//		return 1;
+//	}
+//#endif
 
 /*
 
@@ -1354,5 +1371,34 @@ public _ScriptInit_FixState() <_script_init_fix_state : true>
 
 public _ScriptInit_FixState() <_script_init_fix_state : false>
 {
+}
+
+#if __COMPILER___EMIT_U
+	#endinput
+#endif
+
+stock bool:Server_IsOpenMP()
+{
+	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
+	// `pri` is 0 it wasn't set by the control register.
+	#emit ZERO.pri
+	#emit ZERO.alt
+	#emit LCTRL                9
+	#emit NEQ
+	#emit RETN
+
+	return false;
+}
+
+stock bool:Server_IsSAMP()
+{
+	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
+	// `pri` is 0 it wasn't set by the control register.
+	#emit ZERO.pri
+	#emit LCTRL                9
+	#emit EQ.C.pri             0
+	#emit RETN
+
+	return false;
 }
 

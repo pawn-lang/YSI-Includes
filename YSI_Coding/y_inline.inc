@@ -1,19 +1,25 @@
 /**
- * <library name="y_inline">
- * <section>
- *  Description
- * </section>
- *  This library allows a user to write inline functions in their script.  It
- *  first detects all inline functions and generates data on them, such as
- *  parameter counts and addresses.  When an inline function is passed in code
- *  its current context data is stored.  Finally, when an inline function is
- *  found to be called at some point its current local stack is stored in global
- *  memory.  When the function actually is called, the stack is restored, and
- *  additional parameters which are the inline function parameters, are passed.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library
+ *   name="y_inline"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     This library allows a user to write inline functions in their script.  It
+ *     first detects all inline functions and generates data on them, such as
+ *     parameter counts and addresses.  When an inline function is passed in
+ *     code its current context data is stored.  Finally, when an inline
+ *     function is found to be called at some point its current local stack is
+ *     stored in global memory.  When the function actually is called, the stack
+ *     is restored, and additional parameters which are the inline function
+ *     parameters, are passed.
+ *   </remarks>
  * </library>
  *//** *//*
 Legal:
@@ -32,7 +38,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

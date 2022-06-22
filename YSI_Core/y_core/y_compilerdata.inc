@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -107,8 +107,14 @@ Optional plugins:
 //   P:D(bool:MyFunc(playerid));
 //   #define MyFunc(%0) ((%0) < MAX_PLAYERS)
 //   
-#define P:%1(%2); Debug_Print%1(%2);
-#define C:%1(%2); Debug_Code%1(%2);
+
+#if YSI_OPTIONAL(P)
+	#define P:%1(%2); Debug_Print%1(%2);
+#endif
+
+#if YSI_OPTIONAL(C)
+	#define C:%1{%2} Debug_Code%1{%2}
+#endif
 
 // This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
 // or `__COMPILER_WINDOWS` depending on where the code is being built.  It does
@@ -179,12 +185,14 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 #if sizeof (__COMPILER_PACKED_TEST) == 1
 	#define __COMPILER_STRING_PACKING (1)
 	#define __COMPILER_PACK
-	#define __COMPILER_UKPACK !
+	#define __COMPILER_UNPACK !""
 #else
 	#define __COMPILER_STRING_PACKING (0)
-	#define __COMPILER_PACK !
-	#define __COMPILER_UKPACK
+	#define __COMPILER_PACK !""
+	#define __COMPILER_UNPACK
 #endif
+
+#define __COMPILER_UNPACKEDMAX ((1<<cellbits)-1)
 
 #include "y_compilerdata_codepage"
 
@@ -192,11 +200,64 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 #define __COMPILER_NAMEOF (0)
 #define __COMPILER_PRAGMA (0)
 #define __COMPILER___EMIT_U (0)
+#define __COMPILER_FUNC_DECL_BUG (0)
 
 #define __COMPILER_STATIC_ENUM enum
+#define __COMPILER_CONST_STATIC const
+
+// Generate macro opcodes?
+#define __COMPILER_O2 (0)
 
 // Has `#pragma option`
 #define __COMPILER_OPTION (0)
+
+// Example:
+//
+//   #define this. THIS__(Entity)
+//   this.GetAngle();
+//
+// Becomes:
+//
+//   Entity_GetAngle(this);
+//
+// And if #234 (or even just a `__tagof` precursor) is made it just becomes:
+//
+//   #define THIS__(%0)%1(%2) __tagof(this).%1(__tagof(this):_:this,%2)
+//
+// Unfortunately making it this:
+//
+//   #define THIS__(%0) this.
+//
+// Is a recursive definition and will hang the compiler in an infinite loop.
+// Trying to defer the replacements with something like:
+//
+//   #define THIS__(%0) this PP_DEFER.
+//
+// Would prevent the infinite loop, but then may not be valid syntax - it
+// depends if we want `this .Func` to work as opposed to just `this.Func`.  I
+// personally think no, because then that doesn't look like normal symbols and
+// behaves differently in terms of macro replacements.  This also falls foul of
+// another warning I noted in the discussion of #234, that of `this` now
+// appearing in the output twice and this being subject to macro replacements
+// twice.  However, since doing it for `this` only is a small subset of the
+// functionality suggested by #234 this is less of an issue than would happen in
+// the generic case - we know exactly what `#define this` is, and thus don't
+// need to worry about the effect of multiple replacements.  Actually, even if
+// `__tagof` is added, there's no real need to change this definition - it
+// already works in the special cases for which it is defined.
+//
+// I've not yet worked out a way to support both of these at once:
+//
+//   this.Data[ANGLE] = this.GetAngle();
+//
+// Becoming:
+//
+//   Entity_Data[this][ANGLE] = Entity_GetAngle(this);
+//
+// While I can detect `)` or `]`, I can't until after the opening brackets.
+#define THIS__(%0)%1(%2) %0_%1(%0:this__,%2)
+#define this__,) this__)
+#define __COMPILER_THIS (0)
 
 #if (__Pawn & 0x0F) >= 0x0A
 	#define __COMPILER_MODIFIED (1)
@@ -220,6 +281,11 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 		#undef __COMPILER_BUG_317
 		#define __COMPILER_BUG_317 (0)
 	#endif
+	// I don't actually know when this was introduced.
+	#if __PawnBuild == 10
+		#undef __COMPILER_FUNC_DECL_BUG
+		#define __COMPILER_FUNC_DECL_BUG (1)
+	#endif
 	#if __PawnBuild >= 10
 		#undef __COMPILER___EMIT_U
 		#define __COMPILER___EMIT_U (1)
@@ -231,6 +297,15 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 		
 		#define __COMPILER_NAMEOF (1)
 		//#define __COMPILER_PRAGMA (1)
+		#undef __COMPILER_CONST_STATIC
+		#define __COMPILER_CONST_STATIC const static
+	#endif
+
+	#if defined __optimisation
+		#if __optimisation == 2
+			#undef __COMPILER_O2
+			#define __COMPILER_O2 (1)
+		#endif
 	#endif
 #else
 	#define __COMPILER_USER_WARNING (0)
@@ -248,7 +323,7 @@ const __COMPILER_DETERMINE_SEMICOLON = 1;
 	// `-;-`
 	#define __COMPILER_SEMICOLON (0)
 
-	// The macros `P:C` and `P:#` don't work without this.
+	// The macros `Debug_Code1` and `P:#` don't work without this.
 	#pragma semicolon 1
 
 	#if __COMPILER_USER_WARNING
@@ -670,7 +745,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 //#if !__COMPILER_CONST_TAGGED
 //	// Fix for bugged const assignments.
 //	#define _yI@%0\32; _yI@
-//	#define const%0:%1[%2]=%3:%4; const _yI@%1[%2]=%4,%0:%1[sizeof(_yI@%1)];PREINIT__ %1()_YSI_ConstCpy(_:(%1),(_yI@%1),0,sizeof(%1)*4,sizeof(%1));
+//	#define const%0:%1[%2]=%3:%4; const _yI@%1[%2]=%4,%0:%1[sizeof(_yI@%1)];PREINIT__ %1()_YSI_ConstCpy__(_:(%1),(_yI@%1),0,sizeof(%1)*4,sizeof(%1));
 //#endif
 
 // Consistent naming of compiler defined values. 

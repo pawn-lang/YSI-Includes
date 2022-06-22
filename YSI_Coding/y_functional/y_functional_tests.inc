@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -221,7 +221,7 @@ TEST__ FUNC_FoldL_multiple()
 		a0[10] = { 1,  2,  3, ...},
 		ret = 0;
 	ret = FoldL({ _0 * _1 }, 11, a0) + FoldL({ _0 + _1 }, 11, a0);
-	ASSERT_EQ(ret, 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
+	ASSERT_EQ(ret,1*2*3*4*5*6*7*8*9*10*11+1+2+3+4+5+6+7+8+9+10+11);
 }
 
 static FUNC_FoldL_nested_Add(a, b)
@@ -235,7 +235,7 @@ TEST__ FUNC_FoldL_params()
 		a0[10] = { 1,  2,  3, ...},
 		ret = 0;
 	ret = FUNC_FoldL_nested_Add(FoldL({ _0 * _1 }, 11, a0), FoldL({ _0 + _1 }, 11, a0));
-	ASSERT_EQ(ret, 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
+	ASSERT_EQ(ret,1*2*3*4*5*6*7*8*9*10*11+1+2+3+4+5+6+7+8+9+10+11);
 }
 
 TEST__ FUNC_FoldL_nested()
@@ -244,7 +244,7 @@ TEST__ FUNC_FoldL_nested()
 		a0[10] = { 1,  2,  3, ...},
 		ret = 0;
 	ret = FoldL({ _0 * _1 }, FoldL({ _0 + _1 }, 11, a0), a0);
-	ASSERT_EQ(ret, 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11));
+	ASSERT_EQ(ret,1*2*3*4*5*6*7*8*9*10*(1+2+3+4+5+6+7+8+9+10+11));
 }
 
 TEST__ FUNC_FoldR3()

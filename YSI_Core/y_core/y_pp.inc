@@ -1,13 +1,16 @@
 /*+
- * <library name="y_pp">
- * <section>
- *  Description
- * </section>
- *  More complex processing in the pre-processor.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library
+ *   name="y_pp"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="More complex processing in the pre-processor."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
  * </library>
  *//** *//*
 Legal:
@@ -26,7 +29,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -222,6 +225,7 @@ Optional plugins:
 #define PP_LOOP@127(%0)(%1) PP_LOOP@64(%0)(%1)%1PP_LOOP@63(%0)(%1)
 #define PP_LOOP@128(%0)(%1) PP_LOOP@64(%0)(%1)%1PP_LOOP@64(%0)(%1)
 
+#define PP_BRACKETS<> ()
 #define PP_LEFT_BRACKET<> (
 #define PP_RIGHT_BRACKET<> )
 #define PP_LEFT_BRACE<> {
@@ -233,6 +237,7 @@ Optional plugins:
 #define PP_NULL<>
 #define PP_DOLLAR$
 #define PP_DISCARD%0$
+#define PP_DEFER
 
 // Isolate a single variable in declarations, ended by either `;` or `,`.
 #define _PP_MAKE_SINGLE_VAR_STRIP<%9>%0;%1: %9(%0)

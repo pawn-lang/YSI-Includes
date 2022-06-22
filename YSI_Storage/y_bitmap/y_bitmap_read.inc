@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -76,7 +76,7 @@ static stock
 
 static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 {
-	if (fgetchar(bmp, 0, false) != 'B' || fgetchar(bmp, 0, false) != 'M')
+	if (YSI_FGetChar__(bmp, false) != 'B' || YSI_FGetChar__(bmp, false) != 'M')
 	{
 		return false;
 	}
@@ -84,8 +84,8 @@ static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 	// Load in the header.
 	fblockread(bmp, YSI_g_sBlock);
 	//new size = YSI_g_sBlock[0];
-	P:5("Bitmap_ReadHeader: %08x %08x %08x", YSI_g_sBlock[0], YSI_g_sBlock[1], YSI_g_sBlock[2]);
-	P:5("Bitmap_ReadHeader: %08x %08x %08x %08x %08x %08x %08x %08x %08x %08x", YSI_g_sBlock[3], YSI_g_sBlock[4], YSI_g_sBlock[5], YSI_g_sBlock[6], YSI_g_sBlock[7], YSI_g_sBlock[8], YSI_g_sBlock[9], YSI_g_sBlock[10], YSI_g_sBlock[11], YSI_g_sBlock[12]);
+	Debug_Print5("Bitmap_ReadHeader: %08x %08x %08x", YSI_g_sBlock[0], YSI_g_sBlock[1], YSI_g_sBlock[2]);
+	Debug_Print5("Bitmap_ReadHeader: %08x %08x %08x %08x %08x %08x %08x %08x %08x %08x", YSI_g_sBlock[3], YSI_g_sBlock[4], YSI_g_sBlock[5], YSI_g_sBlock[6], YSI_g_sBlock[7], YSI_g_sBlock[8], YSI_g_sBlock[9], YSI_g_sBlock[10], YSI_g_sBlock[11], YSI_g_sBlock[12]);
 
 	// 'BM', 40 byte header, 1 plane, 24 bits, no compression.
 	if (YSI_g_sBlock[3] != 40 || YSI_g_sBlock[6] != 0x00180001 || YSI_g_sBlock[7] != 0)
@@ -96,7 +96,7 @@ static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 	x = YSI_g_sBlock[4],
 	y = YSI_g_sBlock[5];
 
-	P:5("Bitmap_ReadHeader: %d, %d, %d, %d", x, y, YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader), ceildiv(x * 3, 4) * 4 * y);
+	Debug_Print5("Bitmap_ReadHeader: %d, %d, %d, %d", x, y, YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader), ceildiv(x * 3, 4) * 4 * y);
 
 	if (YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader) != ceildiv(x * 3, 4) * 4 * y)
 	{
@@ -123,7 +123,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		Alloc:input = malloc(size);
 	if (!input)
 	{
-		P:E("Bitmap_Read: Could not allocate line read buffer");
+		Debug_Error("Bitmap_Read: Could not allocate line read buffer");
 		return false;
 	}
 

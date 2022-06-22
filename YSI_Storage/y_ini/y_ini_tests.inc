@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -1095,7 +1095,7 @@ TEST__ INI_AddToBuffer0()
 {
 	new
 		INI:i = INI_Open(MakeYINITestPath("test3.ini"));
-	ASSERT_NE(i, INI_NO_FILE);
+	ASSERT_NE(File:i, File:INI_NO_FILE);
 	ASSERT(!INI_AddToBuffer(i, "", "hi"));
 	ASSERT(!INI_AddToBuffer(INI_NO_FILE, "foo", "bar"));
 	ASSERT(INI_AddToBuffer(i, "key", "value"));
@@ -1110,7 +1110,7 @@ TEST__ INI_AddToBuffer0a()
 {
 	new
 		INI:i = INI_Open(MakeYINITestPath("test3.ini"));
-	ASSERT_NE(i, INI_NO_FILE);
+	ASSERT_NE(File:i, File:INI_NO_FILE);
 	ASSERT(!INI_AddToBuffer(i, "", "hi"));
 	ASSERT(!INI_AddToBuffer(INI_NO_FILE, "foo", "bar"));
 	ASSERT(INI_AddToBuffer(i, "key", "value"));
@@ -1155,12 +1155,30 @@ public INI_WriteOne(tag[], name[], value[])
 	}
 }
 
+TEST__ fseek()
+{
+	fremove(MakeYINITestPath("fseek.ini"));
+	new File:f = fopen(MakeYINITestPath("fseek.ini"), io_write);
+	ASSERT(!!f);
+	if (!f)
+	{
+		return;
+	}
+	fwrite(f, "hello world");
+	fseek(f, 0, seek_start);
+	fwrite(f, "hi");
+	ASSERT_EQ(flength(f), 11);
+	fwrite(f, "hello world");
+	ASSERT_EQ(flength(f), 13);
+	fclose(f);
+}
+
 TEST__ INI_Write3()
 {
 	fremove(MakeYINITestPath("test9.ini"));
 	new
 		INI:i = INI_Open(MakeYINITestPath("test9.ini"));
-	ASSERT_NE(i, INI_NO_FILE);
+	ASSERT_NE(File:i, File:INI_NO_FILE);
 	INI_WriteString(i, "hi", "there");
 	INI_SetTag(i, "tag");
 	INI_WriteString(i, "yeah", "yeah");

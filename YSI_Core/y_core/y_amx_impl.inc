@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -355,7 +355,7 @@ stock AMX_TraceMemory(pattern[], &addrRet, &dataRet, size = sizeof (pattern))
 
 stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
 {
-	P:7("AMX_GetBaseCount called: %i, %i, %i", _:table, base, count);
+	Debug_Print7("AMX_GetBaseCount called: %i, %i, %i", _:table, base, count);
 	switch (table)
 	{
 		case AMX_TABLE_PUBLICS:
@@ -399,7 +399,7 @@ stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
 
 stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
-	P:7("AMX_GetEntry called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
+	Debug_Print7("AMX_GetEntry called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
 		base = 0,
 		count = 0;
@@ -455,7 +455,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 
 stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:7("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	Debug_Print7("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		base = 0,
 		count = 0,
@@ -494,7 +494,7 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 
 stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:7("AMX_GetEntrySuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	Debug_Print7("AMX_GetEntrySuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		base = 0,
 		count = 0,
@@ -558,7 +558,7 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 
 stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
 {
-	P:7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
+	Debug_Print7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
 	new
 		base = 0,
 		count = 0,
@@ -592,7 +592,7 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern
 
 stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
 {
-	P:7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
+	Debug_Print7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
 		base = 0,
 		count = 0,
@@ -633,7 +633,7 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 
 stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
 {
-	P:7("AMX_GetNameSuffix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
+	Debug_Print7("AMX_GetNameSuffix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
 		base = 0,
 		count = 0,
@@ -703,7 +703,7 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 
 stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
-	P:7("AMX_GetPointer called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
+	Debug_Print7("AMX_GetPointer called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
 		pointer = 0;
 	idx = AMX_GetEntry(table, idx, pointer, pattern, exact);
@@ -723,7 +723,7 @@ stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", cons
 
 stock AMX_GetPointerPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:7("AMX_GetPointerPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	Debug_Print7("AMX_GetPointerPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
 	idx = AMX_GetEntryPrefix(table, idx, pointer, pattern);
@@ -743,7 +743,7 @@ stock AMX_GetPointerPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 
 stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:7("AMX_GetPointerSuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	Debug_Print7("AMX_GetPointerSuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
 	idx = AMX_GetEntrySuffix(table, idx, pointer, pattern);
@@ -763,7 +763,7 @@ stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 
 stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
-	P:7("AMX_GetValue called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
+	Debug_Print7("AMX_GetValue called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
 		pointer = 0;
 	idx = AMX_GetPointer(table, idx, pointer, pattern, exact);
@@ -783,7 +783,7 @@ stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 
 stock AMX_GetValuePrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:7("AMX_GetValuePrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	Debug_Print7("AMX_GetValuePrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
 	idx = AMX_GetPointerPrefix(table, idx, pointer, pattern);
@@ -803,7 +803,7 @@ stock AMX_GetValuePrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 
 stock AMX_GetValueSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:7("AMX_GetValueSuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	Debug_Print7("AMX_GetValueSuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
 	idx = AMX_GetPointerSuffix(table, idx, pointer, pattern);
@@ -925,7 +925,7 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 	do
 	{
 		buffer = str[idx];
-		P:7("AMX_WriteString: Writing %04x%04x", buffer >>> 16, buffer & 0xFFFF);
+		Debug_Print7("AMX_WriteString: Writing %04x%04x", buffer >>> 16, buffer & 0xFFFF);
 		if      (!(buffer & 0xFF000000))
 		{
 			#emit LREF.S.pri                addr
@@ -1022,7 +1022,7 @@ stock AMX_WriteArray(addr, const src[], len = sizeof (src))
 
 stock AMX_Deref(addr)
 {
-	P:7("AMX_Deref called: %i", addr);
+	Debug_Print7("AMX_Deref called: %i", addr);
 	#emit LOAD.S.pri                    addr
 	#emit STOR.S.pri                    16
 	#emit RETN
@@ -1392,14 +1392,14 @@ stock AMX_DumpHeader()
 // Function call versions of `AMX_Read` and `AMX_Write`.
 stock AMX_Write(addr, value)
 {
-	P:7("AMX_Write called: %i, %i", addr, value);
+	Debug_Print7("AMX_Write called: %i, %i", addr, value);
 	#emit LOAD.S.pri                    value
 	#emit SREF.S.pri                    addr
 }
 
 stock AMX_Read(addr)
 {
-	P:7("AMX_Read called: %i", addr);
+	Debug_Print7("AMX_Read called: %i", addr);
 	#emit LREF.S.pri                    addr
 	#emit RETN
 	__pragma("naked");
@@ -1412,7 +1412,7 @@ stock AMX_Read(addr)
 
 stock AMX_Ref(const &addr)
 {
-	P:7("AMX_Ref called: %i", addr);
+	Debug_Print7("AMX_Ref called: %i", addr);
 	#emit LOAD.S.pri                    addr
 	#emit RETN
 	__pragma("naked");

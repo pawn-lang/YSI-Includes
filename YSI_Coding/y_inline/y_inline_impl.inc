@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -248,10 +248,10 @@ Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE
 
 // Revert to the old scanning design, but using the new code scanner.
 
-const INLINE_PATTERN_1 = _C<Alex>;
-const INLINE_PATTERN_2 = _C<_Y_L>;
-const INLINE_PATTERN_3 = _C<ess_>;
-const INLINE_PATTERN_4 = _C<Cole>;
+__COMPILER_CONST_STATIC INLINE_PATTERN_1 = _C<Alex>;
+__COMPILER_CONST_STATIC INLINE_PATTERN_2 = _C<_Y_L>;
+__COMPILER_CONST_STATIC INLINE_PATTERN_3 = _C<ess_>;
+__COMPILER_CONST_STATIC INLINE_PATTERN_4 = _C<Cole>;
 
 forward Callback_Release_(ResolvedAlloc:a);
 forward Inline_MaybeFree_(Alloc:slot);
@@ -368,10 +368,10 @@ public Inline_MaybeConst_(ResolvedAlloc:slot)
 
 static stock Inline_FoundStart(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundStart called");
+	Debug_Print4("Inline_FoundStart called");
 	if (data[E_INLINE_DATA_STATE] != 0)
 		return 0;
-	P:5("Inline_FoundStart OK");
+	Debug_Print5("Inline_FoundStart OK");
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
 	data[E_INLINE_DATA_NAME] = CodeScanGetMatchHole(scanner, 0);
@@ -382,10 +382,10 @@ static stock Inline_FoundStart(const scanner[CodeScanner], data[E_INLINE_DATA] =
 
 static stock Inline_FoundMid(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundMid called");
+	Debug_Print4("Inline_FoundMid called");
 	if (data[E_INLINE_DATA_STATE] != 1)
 		return 0;
-	P:5("Inline_FoundMid OK");
+	Debug_Print5("Inline_FoundMid OK");
 	data[E_INLINE_DATA_STACK] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_STATE] = 2;
 	data[E_INLINE_DATA_CLEANUP] = CodeScanGetMatchHole(scanner, 0);
@@ -395,7 +395,7 @@ static stock Inline_FoundMid(const scanner[CodeScanner], data[E_INLINE_DATA] = "
 static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 {
 	if (data[E_INLINE_DATA_PARAMETER_COUNT] == MAX_INLINE_PARAMETERS)
-		P:F("y_inline: Max inline parameter count exceeded (%d).", MAX_INLINE_PARAMETERS);
+		Debug_Fatal("y_inline: Max inline parameter count exceeded (%d).", MAX_INLINE_PARAMETERS);
 	else switch (size)
 	{
 		case INLINE_DESCRIPTOR_VAR:
@@ -422,54 +422,54 @@ static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 
 static stock Inline_FoundConst(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundConst called");
+	Debug_Print4("Inline_FoundConst called");
 	if (data[E_INLINE_DATA_STATE] != 2)
 		return 0;
-	P:5("Inline_FoundConst OK");
+	Debug_Print5("Inline_FoundConst OK");
 	data[E_INLINE_DATA_STATE] = 3 + CodeScanGetMatchHole(scanner, 0);
 	return 0;
 }
 
 static stock Inline_FoundConst2(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundConst2 called");
+	Debug_Print4("Inline_FoundConst2 called");
 	#pragma unused scanner
 	// Can't use size to determine this match as two pieces of code are the same
 	// size in the same place, but mean very different things.
 	if (data[E_INLINE_DATA_STATE] != 2)
 		return 0;
-	P:5("Inline_FoundConst2 OK");
+	Debug_Print5("Inline_FoundConst2 OK");
 	data[E_INLINE_DATA_STATE] = 3;
 	return 0;
 }
 
 static stock Inline_FoundVar(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundVar called");
+	Debug_Print4("Inline_FoundVar called");
 	#pragma unused scanner
 	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	P:5("Inline_FoundVar OK");
+	Debug_Print5("Inline_FoundVar OK");
 	Inline_FoundDescriptor(0, data);
 	return 0;
 }
 
 static stock Inline_FoundRef(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundRef called");
+	Debug_Print4("Inline_FoundRef called");
 	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	P:5("Inline_FoundRef OK");
+	Debug_Print5("Inline_FoundRef OK");
 	Inline_FoundDescriptor(CodeScanGetMatchHole(scanner, 0), data);
 	return 0;
 }
 
 static stock Inline_FoundEnd(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	P:4("Inline_FoundEnd called");
+	Debug_Print4("Inline_FoundEnd called");
 	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	P:5("Inline_FoundEnd OK");
+	Debug_Print5("Inline_FoundEnd OK");
 	data[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
 	// Do the actual codegen here.
 	Inline_DoCodeGen(scanner, data);
@@ -482,7 +482,7 @@ static stock Inline_FoundEnd(const scanner[CodeScanner], data[E_INLINE_DATA] = "
 static stock Inline_StoreData(const data[E_INLINE_DATA])
 {
 	// `data[E_INLINE_DATA_NAME]` stores the address of a string with the inline
-	// function's name, followed by extra space for storing: a pointer to the
+	// function's name, preceeded by extra space for storing: a pointer to the
 	// name, a pointer to the function, a pointer to the next inline in the
 	// linked list of names, and something else?
 	new
@@ -517,25 +517,43 @@ static stock Inline_FoundUsingInline(const scanner[CodeScanner])
 	// Found a call to `using inline`.  Change it from (the equivalent of)
 	// `(a = Inline_UI_(a), a)` to `Inline_UI_(a)`.  First, check that the two
 	// holes are the same.  If they're not, this isn't what we want to optimise.
-	if (CodeScanGetMatchHole(scanner, 0) != CodeScanGetMatchHole(scanner, 1))
-		return 0;
 	new
 		ctx[AsmContext];
-	switch (CodeScanGetMatchLength(scanner))
+#if __COMPILER_O2
+	new
+		count = CodeScanGetHoleCount(scanner);
+	if (CodeScanGetMatchHole(scanner, count - 2) != CodeScanGetMatchHole(scanner, count - 1))
+		return 0;
+	if (count == 2)
+#else
+	if (CodeScanGetMatchHole(scanner, 0) != CodeScanGetMatchHole(scanner, 1))
+		return 0;
+#endif
 	{
-		case 8 * cellbytes:
+		switch (CodeScanGetMatchLength(scanner))
 		{
-			CodeScanGetMatchAsm(scanner, ctx, 6 * cellbytes);
-			@emit PUSH.pri
-			@emit NOP
-		}
-		case 10 * cellbytes:
-		{
-			CodeScanGetMatchAsm(scanner, ctx, 7 * cellbytes);
-			@emit NOP
-			@emit NOP
+			case 8 * cellbytes:
+			{
+				CodeScanGetMatchAsm(scanner, ctx, 6 * cellbytes);
+				@emit PUSH.pri
+				@emit NOP
+			}
+			case 10 * cellbytes:
+			{
+				CodeScanGetMatchAsm(scanner, ctx, 7 * cellbytes);
+				@emit NOP
+				@emit NOP
+			}
 		}
 	}
+#if __COMPILER_O2
+	else
+	{
+		CodeScanGetMatchAsm(scanner, ctx, (4 + count) * cellbytes);
+		@emit PUSH.pri
+		@emit NOP
+	}
+#endif
 	return 0;
 }
 
@@ -607,256 +625,303 @@ CHAIN_FORWARD:Inline_OnRuntimeError(code, &bool:suppress) = 1;
 
 public OnCodeInit()
 {
-	P:2("Inline_OnCodeInit called");
-	YSI_g_sJumpOffset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
-	YSI_g_sCallbackCallAddress = addressof(Callback_CallHandler_) + YSI_g_sJumpOffset;
-	if (FALSE)
 	{
-		// Ensure this function is included.  It causes HUGE issues when not.
-		new tmp[2];
-		strunpack(tmp, tmp);
+			Debug_Print2("Inline_OnCodeInit called");
+			YSI_g_sJumpOffset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
+			YSI_g_sCallbackCallAddress = addressof(Callback_CallHandler_) + YSI_g_sJumpOffset;
+			if (FALSE)
+			{
+				// Ensure this function is included.  It causes HUGE issues when not.
+				new tmp[2];
+				strunpack(tmp, tmp);
+			}
+			
+			new scanner[CodeScanner];
+			CodeScanInit(scanner);
+			
+			// Allocate the inline scanning data on the stack, instead of globally.
+			new data[E_INLINE_DATA];
+			
+			// Optimised.
+			new csm1a[CodeScanMatcher];
+			CodeScanMatcherInit(csm1a, &Inline_FoundStart);
+			CodeScanMatcherData(csm1a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm1a,
+				OP(STACK,              -4)
+				OP(CONST_PRI,          ???)
+				OP(INVERT)
+				OP(INVERT)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             4)
+				OP(CALL,               &I@T)
+				OP(STOR_S_PRI,         ???)
+				OP(STACK,              -4)
+				OP(LOAD_S_PRI,         ???)
+				OP(STOR_S_PRI,         ???)
+			);
+			CodeScanAddMatcher(scanner, csm1a);
+			
+			// Unoptimised.
+			new csm1b[CodeScanMatcher];
+			CodeScanMatcherInit(csm1b, &Inline_FoundStart);
+			CodeScanMatcherData(csm1b, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm1b,
+				OP(STACK,              -4)
+				OP(CONST_PRI,          ???)
+				OP(INVERT)
+				OP(INVERT)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             4)
+				OP(CALL,               &I@T)
+				OP(STOR_S_PRI,         ???)
+				OP(STACK,              -4)
+				OP(LOAD_S_PRI,         ???)
+				OP(STOR_S_PRI,         ???)
+			);
+			CodeScanAddMatcher(scanner, csm1b);
+			
+			// Mid point.
+			new csm2a[CodeScanMatcher];
+			CodeScanMatcherInit(csm2a, &Inline_FoundMid);
+			CodeScanMatcherData(csm2a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm2a,
+				OP(PUSH_C,             0)
+				OP(CALL,               &I@F)
+				OP(JZER,               ???)
+			);
+			CodeScanAddMatcher(scanner, csm2a);
+			
+			// Normal parameter.
+			//   
+			//   ZERO.pri
+			//   HEAP 4
+			//   STOR.I
+			//   PUSH.alt
+			//   
+			new csm3a[CodeScanMatcher];
+			CodeScanMatcherInit(csm3a, &Inline_FoundVar);
+			CodeScanMatcherData(csm3a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm3a,
+				OP(ZERO_PRI)
+				OP(HEAP,               4)
+				OP(STOR_I)
+				OP(PUSH_ALT)
+			);
+			CodeScanAddMatcher(scanner, csm3a);
+			
+			new csm3b[CodeScanMatcher];
+			CodeScanMatcherInit(csm3b, &Inline_FoundVar);
+			CodeScanMatcherData(csm3b, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm3b,
+				OP(ZERO_PRI)
+				OP(HEAP,               4)
+				OP(STOR_I)
+				OP(MOVE_PRI)
+				OP(PUSH_PRI)
+			);
+			CodeScanAddMatcher(scanner, csm3b);
+			
+			// Reference parameter.
+			//   
+			//   CONST.pri ffffffff
+			//   HEAP 4
+			//   STOR.I
+			//   PUSH.alt
+			//   
+			// Array (with size in CELLS).
+			//   
+			//   CONST.pri a
+			//   HEAP 4
+			//   STOR.I
+			//   PUSH.alt
+			//   
+			// String
+			//   
+			//   CONST.pri 80000000
+			//   HEAP 4
+			//   STOR.I
+			//   PUSH.alt
+			//   
+			new csm4a[CodeScanMatcher];
+			CodeScanMatcherInit(csm4a, &Inline_FoundRef);
+			CodeScanMatcherData(csm4a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm4a,
+				OP(CONST_PRI,          ???)
+				OP(HEAP,               4)
+				OP(STOR_I)
+				OP(PUSH_ALT)
+			);
+			CodeScanAddMatcher(scanner, csm4a);
+			
+			new csm4b[CodeScanMatcher];
+			CodeScanMatcherInit(csm4b, &Inline_FoundRef);
+			CodeScanMatcherData(csm4b, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm4b,
+				OP(CONST_PRI,          ???)
+				OP(HEAP,               4)
+				OP(STOR_I)
+				OP(MOVE_PRI)
+				OP(PUSH_PRI)
+			);
+			CodeScanAddMatcher(scanner, csm4b);
+			
+			// End
+			new csm5a[CodeScanMatcher];
+			CodeScanMatcherInit(csm5a, &Inline_FoundEnd);
+			CodeScanMatcherData(csm5a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm5a,
+				OP(CALL,               &I@L)
+				OP(HEAP,               ???)
+				OP(JZER,               ???)
+			);
+			CodeScanAddMatcher(scanner, csm5a);
+			
+			// Constness
+			new csm6a[CodeScanMatcher];
+			CodeScanMatcherInit(csm6a, &Inline_FoundConst);
+			CodeScanMatcherData(csm6a, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm6a,
+				OP(PUSH_C,             ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &I@K)
+			);
+			CodeScanAddMatcher(scanner, csm6a);
+			
+			new csm6b[CodeScanMatcher];
+			CodeScanMatcherInit(csm6b, &Inline_FoundConst);
+			CodeScanMatcherData(csm6b, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm6b,
+				OP(CONST_PRI,          ???)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             4)
+				OP(CALL,               &I@K)
+			);
+			CodeScanAddMatcher(scanner, csm6b);
+			
+			new csm6c[CodeScanMatcher];
+			CodeScanMatcherInit(csm6c, &Inline_FoundConst2);
+			CodeScanMatcherData(csm6c, AMX_Ref(data[E_INLINE_DATA:0]));
+			CodeScanMatcherPattern(csm6c,
+				OP(ZERO_PRI)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             4)
+				OP(CALL,               &I@K)
+			);
+			CodeScanAddMatcher(scanner, csm6c);
+			
+			// Replace code that was `(Inline_UI_(x), x)` with just
+			// `Inline_UI_()`.
+			new csm7a[CodeScanMatcher];
+			CodeScanMatcherInit(csm7a, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7a,
+				OP(ADDR_PRI,           ???)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(LOAD_S_PRI,         ???)
+				OP(PUSH_PRI)
+			);
+			CodeScanAddMatcher(scanner, csm7a);
+			
+			new csm7b[CodeScanMatcher];
+			CodeScanMatcherInit(csm7b, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7b,
+				OP(PUSH_ADR,           ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm7b);
+		
+		#if __COMPILER_O2
+			new csm7c[CodeScanMatcher];
+			CodeScanMatcherInit(csm7c, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7c,
+				OP(PUSH2_ADR,          ???, ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm7c);
+			
+			new csm7d[CodeScanMatcher];
+			CodeScanMatcherInit(csm7d, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7d,
+				OP(PUSH3_ADR,          ???, ???, ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm7d);
+			
+			new csm7e[CodeScanMatcher];
+			CodeScanMatcherInit(csm7e, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7e,
+				OP(PUSH4_ADR,          ???, ???, ???, ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm7e);
+			
+			new csm7f[CodeScanMatcher];
+			CodeScanMatcherInit(csm7f, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm7f,
+				OP(PUSH5_ADR,          ???, ???, ???, ???, ???)
+				OP(PUSH_C,             4)
+				OP(CALL,               &Inline_UI_)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm7f);
+		#endif
+		
+			// Destructors.
+			{
+				// We can't directly get the address of a destructor.  Instead,
+				// we need to create a local that will be destroyed and read the
+				// call from that.  Use `[2]` so it doesn't match the scanner
+				// later.
+				new I@T:search[2] = {};
+				// THIS BLOCK IS NOT POINTLESS!  IT CALLS A REQUIRED DESTRUCTOR.
+			}
+			// Now we have the destructor address, replace all calls to it.
+			// I've never seen this using `PUSH.adr` instead of `ADDR.pri`/
+			// `PUSH.pri`, even on optimising builds.  `YSI_g_sInlineLinkedList`
+			// currently holds the address of the `I@T:` destructor.  We used
+			// that as a temporary to return the function address from the
+			// (seemingly) pointless block directly above because `addressof`
+			// and `&` don't work for operators (I don't know a generic solution
+			// to this problem, but it has only ever come up once and I could
+			// get a non-portable solution in that one instance).
+			new csm8a[CodeScanMatcher];
+			CodeScanMatcherInit(csm8a, &Inline_FoundDestructor);
+			CodeScanMatcherPattern(csm8a,
+				OP(PUSH_C,             1)
+				OP(ADDR_PRI,           ???)
+				OP(PUSH_PRI)
+				OP(PUSH_C,             8)
+				OP(CALL,               YSI_g_sInlineLinkedList)
+			);
+			CodeScanAddMatcher(scanner, csm8a);
+			
+			// Detect `@return` and make it a real return.
+			new csm9a[CodeScanMatcher];
+			CodeScanMatcherInit(csm9a, &Inline_Found@return);
+			CodeScanMatcherPattern(csm9a,
+				OP(PUSH_C,             4)
+				OP(CALL,               &Callback_Return_)
+			);
+			CodeScanAddMatcher(scanner, csm9a);
+			
+			// Reset the linked list whose variable we borrowed as a temporary.
+			YSI_g_sInlineLinkedList = 0;
+			
+			// Run all the scanners in parallel.
+			// TODO: Try and determine rough types for parent function
+			// parameters, using Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?
+			// Can't remember off the top of my head).
+			CodeScanRunFast(scanner, &I@T);
 	}
-	
-	new scanner[CodeScanner];
-	CodeScanInit(scanner);
-	
-	// Allocate the inline scanning data on the stack, instead of globally.
-	new data[E_INLINE_DATA];
-	
-	// Optimised.
-	new csm1a[CodeScanMatcher];
-	CodeScanMatcherInit(csm1a, &Inline_FoundStart);
-	CodeScanMatcherData(csm1a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm1a,
-		OP(STACK,              -4)
-		OP(CONST_PRI,          ???)
-		OP(INVERT)
-		OP(INVERT)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &I@T)
-		OP(STOR_S_PRI,         ???)
-		OP(STACK,              -4)
-		OP(LOAD_S_PRI,         ???)
-		OP(STOR_S_PRI,         ???)
-	);
-	CodeScanAddMatcher(scanner, csm1a);
-	
-	// Unoptimised.
-	new csm1b[CodeScanMatcher];
-	CodeScanMatcherInit(csm1b, &Inline_FoundStart);
-	CodeScanMatcherData(csm1b, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm1b,
-		OP(STACK,              -4)
-		OP(CONST_PRI,          ???)
-		OP(INVERT)
-		OP(INVERT)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &I@T)
-		OP(STOR_S_PRI,         ???)
-		OP(STACK,              -4)
-		OP(LOAD_S_PRI,         ???)
-		OP(STOR_S_PRI,         ???)
-	);
-	CodeScanAddMatcher(scanner, csm1b);
-	
-	// Mid point.
-	new csm2a[CodeScanMatcher];
-	CodeScanMatcherInit(csm2a, &Inline_FoundMid);
-	CodeScanMatcherData(csm2a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm2a,
-		OP(PUSH_C,             0)
-		OP(CALL,               &I@F)
-		OP(JZER,               ???)
-	);
-	CodeScanAddMatcher(scanner, csm2a);
-	
-	// Normal parameter.
-	//   
-	//   ZERO.pri
-	//   HEAP 4
-	//   STOR.I
-	//   PUSH.alt
-	//   
-	new csm3a[CodeScanMatcher];
-	CodeScanMatcherInit(csm3a, &Inline_FoundVar);
-	CodeScanMatcherData(csm3a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm3a,
-		OP(ZERO_PRI)
-		OP(HEAP,               4)
-		OP(STOR_I)
-		OP(PUSH_ALT)
-	);
-	CodeScanAddMatcher(scanner, csm3a);
-	
-	new csm3b[CodeScanMatcher];
-	CodeScanMatcherInit(csm3b, &Inline_FoundVar);
-	CodeScanMatcherData(csm3b, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm3b,
-		OP(ZERO_PRI)
-		OP(HEAP,               4)
-		OP(STOR_I)
-		OP(MOVE_PRI)
-		OP(PUSH_PRI)
-	);
-	CodeScanAddMatcher(scanner, csm3b);
-	
-	// Reference parameter.
-	//   
-	//   CONST.pri ffffffff
-	//   HEAP 4
-	//   STOR.I
-	//   PUSH.alt
-	//   
-	// Array (with size in CELLS).
-	//   
-	//   CONST.pri a
-	//   HEAP 4
-	//   STOR.I
-	//   PUSH.alt
-	//   
-	// String
-	//   
-	//   CONST.pri 80000000
-	//   HEAP 4
-	//   STOR.I
-	//   PUSH.alt
-	//   
-	new csm4a[CodeScanMatcher];
-	CodeScanMatcherInit(csm4a, &Inline_FoundRef);
-	CodeScanMatcherData(csm4a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm4a,
-		OP(CONST_PRI,          ???)
-		OP(HEAP,               4)
-		OP(STOR_I)
-		OP(PUSH_ALT)
-	);
-	CodeScanAddMatcher(scanner, csm4a);
-	
-	new csm4b[CodeScanMatcher];
-	CodeScanMatcherInit(csm4b, &Inline_FoundRef);
-	CodeScanMatcherData(csm4b, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm4b,
-		OP(CONST_PRI,          ???)
-		OP(HEAP,               4)
-		OP(STOR_I)
-		OP(MOVE_PRI)
-		OP(PUSH_PRI)
-	);
-	CodeScanAddMatcher(scanner, csm4b);
-	
-	// End
-	new csm5a[CodeScanMatcher];
-	CodeScanMatcherInit(csm5a, &Inline_FoundEnd);
-	CodeScanMatcherData(csm5a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm5a,
-		OP(CALL,               &I@L)
-		OP(HEAP,               ???)
-		OP(JZER,               ???)
-	);
-	CodeScanAddMatcher(scanner, csm5a);
-	
-	// Constness
-	new csm6a[CodeScanMatcher];
-	CodeScanMatcherInit(csm6a, &Inline_FoundConst);
-	CodeScanMatcherData(csm6a, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm6a,
-		OP(PUSH_C,             ???)
-		OP(PUSH_C,             4)
-		OP(CALL,               &I@K)
-	);
-	CodeScanAddMatcher(scanner, csm6a);
-	
-	new csm6b[CodeScanMatcher];
-	CodeScanMatcherInit(csm6b, &Inline_FoundConst);
-	CodeScanMatcherData(csm6b, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm6b,
-		OP(CONST_PRI,          ???)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &I@K)
-	);
-	CodeScanAddMatcher(scanner, csm6b);
-	
-	new csm6c[CodeScanMatcher];
-	CodeScanMatcherInit(csm6c, &Inline_FoundConst2);
-	CodeScanMatcherData(csm6c, AMX_Ref(data[E_INLINE_DATA:0]));
-	CodeScanMatcherPattern(csm6c,
-		OP(ZERO_PRI)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &I@K)
-	);
-	CodeScanAddMatcher(scanner, csm6c);
-	
-	// Replace code that was `(Inline_UI_(x), x)` with just `Inline_UI_()`.
-	new csm7a[CodeScanMatcher];
-	CodeScanMatcherInit(csm7a, &Inline_FoundUsingInline);
-	CodeScanMatcherPattern(csm7a,
-		OP(ADDR_PRI,           ???)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
-		OP(CALL,               &Inline_UI_)
-		OP(LOAD_S_PRI,         ???)
-		OP(PUSH_PRI)
-	);
-	CodeScanAddMatcher(scanner, csm7a);
-	
-	new csm7b[CodeScanMatcher];
-	CodeScanMatcherInit(csm7b, &Inline_FoundUsingInline);
-	CodeScanMatcherPattern(csm7b,
-		OP(PUSH_ADR,           ???)
-		OP(PUSH_C,             4)
-		OP(CALL,               &Inline_UI_)
-		OP(PUSH_S,             ???)
-	);
-	CodeScanAddMatcher(scanner, csm7b);
-	
-	// Destructors.
-	{
-		// We can't directly get the address of a destructor.  Instead, we need
-		// to create a local that will be destroyed and read the call from that.
-		// Use `[2]` so it doesn't match the scanner later.
-		new I@T:search[2] = {};
-		// THIS BLOCK IS NOT POINTLESS!  IT CALLS A REQUIRED DESTRUCTOR.
-	}
-	// Now we have the destructor address, replace all calls to it.  I've never
-	// seen this using `PUSH.adr` instead of `ADDR.pri`/`PUSH.pri`, even on
-	// optimising builds.  `YSI_g_sInlineLinkedList` currently holds the address
-	// of the `I@T:` destructor.  We used that as a temporary to return the
-	// function address from the (seemingly) pointless block directly above
-	// because `addressof` and `&` don't work for operators (I don't know a
-	// generic solution to this problem, but it has only ever come up once and I
-	// could get a non-portable solution in that one instance).
-	new csm8a[CodeScanMatcher];
-	CodeScanMatcherInit(csm8a, &Inline_FoundDestructor);
-	CodeScanMatcherPattern(csm8a,
-		OP(PUSH_C,             1)
-		OP(ADDR_PRI,           ???)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             8)
-		OP(CALL,               YSI_g_sInlineLinkedList)
-	);
-	CodeScanAddMatcher(scanner, csm8a);
-	
-	// Detect `@return` and make it a real return.
-	new csm9a[CodeScanMatcher];
-	CodeScanMatcherInit(csm9a, &Inline_Found@return);
-	CodeScanMatcherPattern(csm9a,
-		OP(PUSH_C,             4)
-		OP(CALL,               &Callback_Return_)
-	);
-	CodeScanAddMatcher(scanner, csm9a);
-	
-	// Reset the linked list whose variable we borrowed as a temporary.
-	YSI_g_sInlineLinkedList = 0;
-	
-	// Run all the scanners in parallel.
-	// TODO: Try and determine rough types for parent function parameters, using
-	// Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?  Can't remember off the
-	// top of my head).
-	CodeScanRunFast(scanner, &I@T);
 	
 	#if defined Inline_OnCodeInit
 		Inline_OnCodeInit();
@@ -931,8 +996,8 @@ Note:
 // 
 //   +0 - Inline function start pointer.
 //   +1 - Stack size.
-#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;for(new %0;I@F();)while(I@L(%3I@K(%1)))
-#define INLINE_NUL(%9)%8$()%1()%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$__COMPILER_UNPACK#...#%9),F@_@%4:%9=F@_@%4:_@%9;for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1()%4# %8$__COMPILER_UNPACK#...#%9),F@_@%4:%9=F@_@%4:_@%9;for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$
 
@@ -1043,7 +1108,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_RemoteHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
@@ -1072,20 +1137,20 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 
 stock Function:GetLocalFunction(const func[], const spec[])
 {
-	P:4("GetLocalFunction called: %s, %s", func, spec);
+	Debug_Print4("GetLocalFunction called: %s, %s", func, spec);
 	if (funcidx(func) == -1)
 		return Function:0;
-	P:6("GetLocalFunction: 0");
+	Debug_Print6("GetLocalFunction: 0");
 	new
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
 	if (!closure)
 		return Function:0;
-	P:6("GetLocalFunction: 1");
+	Debug_Print6("GetLocalFunction: 1");
 	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_LocalHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
@@ -1181,7 +1246,7 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
 				mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
 				mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-				mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
+				mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__("Inline_MaybeFree_", 0, false, "i", _:closure));
 				mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 				mset(closure, _:E_INLINE_CALL_METADATA, 0);
 				mset(closure, _:E_INLINE_CALL_SIZE, size);
@@ -1213,13 +1278,13 @@ static stock Callback_InlineByName(const name[], tag)
 
 stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 {
-	P:4("Callback_Find_ 0");
+	Debug_Print4("Callback_Find_ 0");
 	// Remote calls must always be publics.  Indirection handles publics
 	// natively.  However, it doesn't handle it amazingly since it needs to
 	// handle it very generically.
 	if (remote)
 	{
-		P:6("Callback_Find_ 1");
+		Debug_Print6("Callback_Find_ 1");
 		new
 			tagname[FUNCTION_LENGTH];
 		GetTagNameFromID(tag, tagname);
@@ -1231,7 +1296,7 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 		// this name.
 		return !!(dest = Callback_InlineByName(name, tag));
 	}
-	P:6("Callback_Find_ 3");
+	Debug_Print6("Callback_Find_ 3");
 	new
 		tagname[FUNCTION_LENGTH];
 	GetTagNameFromID(tag, tagname);
@@ -1327,7 +1392,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			if (numArgs == 4 + __COMPILER_BUG_317)
 				remote = bool:getarg(3 + __COMPILER_BUG_317);
 		}
-		P:2("Callback_Get called: %d %s %s", numArgs, name, expect);
+		Debug_Print2("Callback_Get called: %d %s %s", numArgs, name, expect);
 		// Check that the assumption made here is valid.  I can't imagine a
 		// case, given the number of libraries in use here, where it couldn't
 		// be!  We check this since any inline data pointer will point in to the
@@ -1343,7 +1408,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 		if (!(0 < ret < 128))
 		{
 			// Resolved inline.
-			P:3("Callback_Get: Found resolved callback: %08x", ret);
+			Debug_Print3("Callback_Get: Found resolved callback: %08x", ret);
 			setarg(1 + __COMPILER_BUG_317, 0, ret);
 			// Direct function pointer.
 			Indirect_Claim(ret);
@@ -1362,7 +1427,6 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			}
 			return true;
 		}
-		getstringarg(name, 0 + __COMPILER_BUG_317);
 		// Wrap the new string-find API.
 		if (Callback_Find_(name, ret, remote, GetTagIDFromName(expect)))
 		{
@@ -1396,7 +1460,7 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx("Inline_MaybeConst_", 0, false, "i", AMX_Ref(func[E_INLINE_CALL_NULL]));
+	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__("Inline_MaybeConst_", 0, false, "i", AMX_Ref(func[E_INLINE_CALL_NULL]));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1888,13 +1952,13 @@ static stock Inline_OnAsmError(const ctx[AsmContext], AsmError:error)
 {
 	switch (numargs() == 1 ? AsmGetError(ctx) : error)
 	{
-	case ASM_ERROR_OPCODE:          P:E("ASM_ERROR_OPCODE in Inline_Main.");
-	case ASM_ERROR_OPERAND:         P:E("ASM_ERROR_OPERAND in Inline_Main.");
-	case ASM_ERROR_SPACE:           P:E("ASM_ERROR_SPACE in Inline_Main.");
-	case ASM_ERROR_LABEL_OVERFLOW:  P:E("ASM_ERROR_LABEL_OVERFLOW in Inline_Main.");
-	case ASM_ERROR_LABEL_DUPLICATE: P:E("ASM_ERROR_LABEL_DUPLICATE in Inline_Main.");
+	case ASM_ERROR_OPCODE:          Debug_Error("ASM_ERROR_OPCODE in Inline_Main.");
+	case ASM_ERROR_OPERAND:         Debug_Error("ASM_ERROR_OPERAND in Inline_Main.");
+	case ASM_ERROR_SPACE:           Debug_Error("ASM_ERROR_SPACE in Inline_Main.");
+	case ASM_ERROR_LABEL_OVERFLOW:  Debug_Error("ASM_ERROR_LABEL_OVERFLOW in Inline_Main.");
+	case ASM_ERROR_LABEL_DUPLICATE: Debug_Error("ASM_ERROR_LABEL_DUPLICATE in Inline_Main.");
 	case ASM_ERROR_NONE: return;
-	default: P:E("Unknown error in Inline_Main.");
+	default: Debug_Error("Unknown error in Inline_Main.");
 	}
 	// TODO: Abort codegen.
 }
@@ -1951,7 +2015,7 @@ stock Inline_UI_(const &header)
 	// We can't use `AMX_Ref()` here because passing a `const &` to a `...` function
 	// gets the address of a heap temporary, instead of the original.  Even
 	// `const ...` doesn't solve this.
-	P:3("Inline_UI_ called: %d", header);
+	Debug_Print3("Inline_UI_ called: %d", header);
 	new
 		ptr = Inline_Ref(header),
 		frm = AMX_Read(header + cellbytes),
@@ -1963,14 +2027,14 @@ stock Inline_UI_(const &header)
 		// when we determine it is needed, but that would be no faster in the
 		// common case, and slower in the uncommon case, so just do it together.
 		Alloc:closure = malloc((size >>> __COMPILER_CELL_SHIFT) + (_:E_INLINE_CALL - 1));
-	P:5("Inline_UI_: %d %d %d %d %d", ptr, frm, size, _:closure, AMX_Read(header));
+	Debug_Print5("Inline_UI_: %d %d %d %d %d", ptr, frm, size, _:closure, AMX_Read(header));
 	if (!closure)
 		return 0;
 	mset(closure, _:E_INLINE_CALL_NULL, 0);
 	mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
 	mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
+	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 	mset(closure, _:E_INLINE_CALL_METADATA, 0);
 	mset(closure, _:E_INLINE_CALL_SIZE, size);

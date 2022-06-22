@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -221,7 +221,7 @@ _Y_RACES_STATIC stock RaceArray_Add(slot, Float:x, Float:y, Float:z)
  *  Checks a race is active.
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Race__IsActive(raceid));
+FUNC_PAWNDOC(bool:Race__IsActive(raceid));
 #define Race__IsActive(%1) \
 	(YSI_g_sRaceData[(%1)][E_RACE_FLAGS] & e_RACE_FLAGS_ACTIVE)
 
@@ -231,7 +231,7 @@ P:D(bool:Race__IsActive(raceid));
  *  Checks an id is valid and active.
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Race_IsValid(raceid));
+FUNC_PAWNDOC(bool:Race_IsValid(raceid));
 #define Race_IsValid(%1) \
 	(0 <= (%1) < MAX_RACES && Race__IsActive((%1)))
 
@@ -590,7 +590,7 @@ GLOBAL__ void:Race_SetEntry(raceid, cost)
 
 _Y_RACES_STATIC Race_Dropout(playerid)
 {
-	YSI_SetTimerEx("Race_Timeout", (YSI_g_sRaceData[(YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE])][E_RACE_FLAGS] & e_RACE_FLAGS_EXIT_TIME), false, "i", playerid);
+	YSI_SetTimerEx__("Race_Timeout", (YSI_g_sRaceData[(YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE])][E_RACE_FLAGS] & e_RACE_FLAGS_EXIT_TIME), false, "i", playerid);
 	YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE] |= RACE_PLAYER_OUT;
 	YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TOUT] = GetTickCount();
 }
@@ -884,7 +884,7 @@ public Race_Countdown(race, time)
 	if (time)
 	{
 		Text_Send(YSI_g_sRacers[race], $YSI_RACE_COUNTDOWN, time);
-		YSI_SetTimerEx("Race_Countdown", 1000, false, "ii", race, time - 1);
+		YSI_SetTimerEx__("Race_Countdown", 1000, false, "ii", race, time - 1);
 	}
 	else
 	{

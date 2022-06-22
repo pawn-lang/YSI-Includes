@@ -1,19 +1,26 @@
 /*+
- * <library name="y_stripnumbers">
- * <section>
- *  Description
- * </section>
- *  Removes tag overrides which are actually numbers.  This allows for:
- *
- *      uvar g_a[MAX_PLAYERS][E_SOME_ENUM];
- *      uvar g_b[MAX_PLAYERS][42];
- *
- *  Without stripping you would end with code doing "42:0" or getting a tag
- *  mismatch on "E_SOME_ENUM", both of which are problems.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library
+ *   name="y_stripnumbers"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     Removes tag overrides which are actually numbers.  This allows for:
+ *   
+ *     <code>
+ *         uvar g_a[MAX_PLAYERS][E_SOME_ENUM]; <br />
+ *         uvar g_b[MAX_PLAYERS][42];
+ *     </code>
+ *   
+ *     Without stripping you would end with code doing "42:0" or getting a tag
+ *     mismatch on "E_SOME_ENUM", both of which are problems.
+ *   </remarks>
  * </library>
  *//** *//*
 Legal:
@@ -32,7 +39,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -94,47 +94,50 @@ static stock
 
 public OnCodeInit()
 {
-	YSI_g_sBaseRelocation = -DisasmReloc(0);
-	YSI_g_sLCTRLStubAddress = addressof (CTRL_LCTRLStub) + 4 + YSI_g_sBaseRelocation;
-	YSI_g_sSCTRLStubAddress = addressof (CTRL_SCTRLStub) + 4 + YSI_g_sBaseRelocation;
-
-	// Scan for `LCTRL` and `SCTRL`.  Modify any that are >= 256 to calls.
-	// Optimised.
-	new scanner[CodeScanner];
-	CodeScanInit(scanner);
-
-	new lctrl[CodeScanMatcher];
-	CodeScanMatcherInit(lctrl, &CTRL_FoundLCTRL);
-	CodeScanMatcherPattern(lctrl,
-		OP(LCTRL, ???)
-	);
-	CodeScanAddMatcher(scanner, lctrl);
-
-	new sctrl[CodeScanMatcher];
-	CodeScanMatcherInit(sctrl, &CTRL_FoundSCTRL);
-	CodeScanMatcherPattern(sctrl,
-		OP(SCTRL, ???)
-	);
-	CodeScanAddMatcher(scanner, sctrl);
-
-	CodeScanRun(scanner);
-
-	// Rewrite the functions after scanning so that we can still look up their
-	// addresses before invalidating them all (not that we currently do).
-
-	// Loop over all `@y_L` (`LCTRL`) and `@y_S` (`SCTRL`) functions and convert
-	// their file contents.
-	new
-		idx = 0,
-		addr;
-	while ((idx = AMX_GetPublicPointerPrefix(idx, addr, _A<@y_L>)))
 	{
-		CTRL_WriteLCTRLStub(addr);
-	}
+		YSI_g_sBaseRelocation = -DisasmReloc(0);
+		YSI_g_sLCTRLStubAddress = addressof (CTRL_LCTRLStub) + 4 + YSI_g_sBaseRelocation;
+		YSI_g_sSCTRLStubAddress = addressof (CTRL_SCTRLStub) + 4 + YSI_g_sBaseRelocation;
 
-	while ((idx = AMX_GetPublicPointerPrefix(idx, addr, _A<@y_S>)))
-	{
-		CTRL_WriteSCTRLStub(addr);
+		// Scan for `LCTRL` and `SCTRL`.  Modify any that are >= 256 to calls.
+		// Optimised.
+		new scanner[CodeScanner];
+		CodeScanInit(scanner);
+
+		new lctrl[CodeScanMatcher];
+		CodeScanMatcherInit(lctrl, &CTRL_FoundLCTRL);
+		CodeScanMatcherPattern(lctrl,
+			OP(LCTRL, ???)
+		);
+		CodeScanAddMatcher(scanner, lctrl);
+
+		new sctrl[CodeScanMatcher];
+		CodeScanMatcherInit(sctrl, &CTRL_FoundSCTRL);
+		CodeScanMatcherPattern(sctrl,
+			OP(SCTRL, ???)
+		);
+		CodeScanAddMatcher(scanner, sctrl);
+
+		CodeScanRun(scanner);
+
+		// Rewrite the functions after scanning so that we can still look up
+		// their addresses before invalidating them all (not that we currently
+		// do).
+
+		// Loop over all `@y_L` (`LCTRL`) and `@y_S` (`SCTRL`) functions and
+		// convert their file contents.
+		new
+			idx = 0,
+			addr;
+		while ((idx = AMX_GetPublicPointerPrefix(idx, addr, _A<@y_L>)))
+		{
+			CTRL_WriteLCTRLStub(addr);
+		}
+
+		while ((idx = AMX_GetPublicPointerPrefix(idx, addr, _A<@y_S>)))
+		{
+			CTRL_WriteSCTRLStub(addr);
+		}
 	}
 
 	#if defined CTRL_OnCodeInit

@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -191,13 +191,24 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 }
 
 // Enable `&YVA2_DummyPush` WITHOUT matching it within the scanner itself.
-#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1, -1, -1)
+#if __COMPILER_O2
+	#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
+	#define Y_VA_DUMMIES ,const dummy6=0,const dummy7=0,const dummy8=0,const dummy9=0,const dummy10=0,const dummy11=0
+#else
+	#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1, -1, -1)
+	#define Y_VA_DUMMIES
+#endif
 // IF YOU EVER CHANGE THE NUMBER OF DUMMY PARAMETERS, DON'T FORGET TO CHANGE THE
 // PARAMETER BYTE COUNT IN THE SCANNER!  ONLY DONE IT EVERY TIME SO FAR...
-stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0, const dummy4 = 0, const dummy5 = 0)
+stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0, const dummy4 = 0, const dummy5 = 0 Y_VA_DUMMIES)
 {
-	P:3("YVA2_DummyPush start");
+	Debug_Print3("YVA2_DummyPush start");
 	#pragma unused dummy0, dummy1, dummy2, dummy3, dummy4, dummy5
+#if __COMPILER_O2
+	#pragma unused dummy6, dummy7, dummy8, dummy9, dummy10, dummy11
+#endif
+	#undef Y_VA_DUMMIES
+
 	// This function serves four purposes:
 	//   
 	//   1) It is the function called if `___` is used incorrectly, so the code
@@ -215,7 +226,7 @@ stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRe
 	//   
 	if (YSI_g_sInitialised)
 	{
-		P:W("Bare `___` usage found - make sure it is a function parameter.");
+		Debug_Warning("Bare `___` usage found - make sure it is a function parameter.");
 	}
 	else if (TRUE)
 	{
@@ -261,22 +272,31 @@ public OnCodeInit()
 
 static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes/*, const depth*/, const offset)
 {
+#if __COMPILER_O2
+	@emit ADDR.pri     offset                  // 8
+	@emit PUSH.pri                             // 12
+	@emit PUSH3.C      pushedBytes - 4, skippedBytes, 12 // 28
+	@emit CALL.abs     addressof (YVA2_DoPush) // 36
+	@emit HEAP         4                       // 44
+#else
 	// `pushedBytes` is the number of bytes originally pushed to the target
 	// function (which includes four for the `___` return value).
 	// Use `ctx` so we can use `@emit`.
 	@emit ADDR.pri     offset                  // 8
 	@emit PUSH.pri                             // 12
-	@emit PUSH.C       pushedBytes - 4         // 28
-	@emit PUSH.C       skippedBytes            // 20
+	@emit PUSH.C       pushedBytes - 4         // 20
+	@emit PUSH.C       skippedBytes            // 28
 	@emit PUSH.C       12                      // 36
 	@emit CALL.abs     addressof (YVA2_DoPush) // 44
 	// We keep the `HEAP` here since we know that the original code wants to
 	// clean up an extra four bytes from the heap, so it still needs to exist.
 	@emit HEAP         4                       // 52
+#endif
 }
 
 static stock YVA2_CodeGenShiftCode(dest, src, end)
 {
+	//printf("shift code: %08x, %08x, %08x", dest, src, end);
 	// Shift some the code up.  We can't use `memcpy` as the destination most
 	// probably overlaps the source.
 	while (src != end)
@@ -322,26 +342,35 @@ static stock YVA2_CodeGenDeepCleanup(ctx[AsmContext], depth, returningString)
 	@emit STACK        (depth << __COMPILER_CELL_SHIFT)
 }
 
-static stock YVA2_CodeGenPushVariable(ctx[AsmContext], stack)
-{
-	// Remove a single temporary storage location.
-	@emit PUSH.S       stack
-}
+//static stock YVA2_CodeGenPushVariable(ctx[AsmContext], stack)
+//{
+//	// Remove a single temporary storage location.
+//	@emit PUSH.S       stack
+//}
 
 static stock YVA2_FoundCall(const m[CodeScanner])
 {
 	if (YSI_g_sPassthroughNestings)
 	{
+		//printf("found passthrough: %08x, %d", CodeScanGetMatchAddress(m), CodeScanGetMatchLength(m));
 		new
 			pos = YSI_g_sPassthroughNestings - 1;
+		//printf("...: %d, %d, %d", CodeScanGetMatchStack(m), pos, YSI_g_sStacks[pos]);
 		if ((CodeScanGetMatchStack(m) < YSI_g_sStacks[pos]) || (!pos && YSI_g_sSkips[0] & cellmin && CodeScanGetMatchStack(m) < YSI_g_sStacks[pos] + cellbytes))
 		{
 			new
 				len = CodeScanGetMatchLength(m),
 				end = CodeScanGetMatchAddressData(m) + len,
-				hole = CodeScanGetMatchHole(m, 0),
+				// If the length is 12 the code was `SYSREQ.N`, which means the
+				// argument count comes AFTER the call, whereas in all other
+				// cases it comes before.
+				paramCount = CodeScanGetMatchHole(m, len == 12),
 				returningString = 0,
+#if __COMPILER_O2
+				codeLength = 44;
+#else
 				codeLength = 52;
+#endif
 			YSI_g_sPassthroughNestings = pos;
 			if (!pos && YSI_g_sSkips[0] & cellmin)
 			{
@@ -366,7 +395,7 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 						returningString = 0;
 				}
 				if (!returningString)
-					P:F("Found string return preamble without postamble - Y_Less needs to fix this!");
+					Debug_Fatal("Found string return preamble without postamble - Y_Less needs to fix this!");
 			}
 			if (returningString)
 			{
@@ -376,8 +405,12 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 				codeLength = ReadAmxMemory(YSI_g_sContexts[0][AsmContext_buffer] + cellbytes),
 				AsmEmitStack(YSI_g_sContexts[0], (YSI_g_sMaxNesting + 1) * -cellbytes),
 				AsmEmitHeap(YSI_g_sContexts[0], codeLength),
-				AsmEmitPushAlt(YSI_g_sContexts[0]),
+				AsmEmitPushAlt(YSI_g_sContexts[0]);
+#if __COMPILER_O2
+				codeLength = 44 + 5 * cellbytes;
+#else
 				codeLength = 52 + 5 * cellbytes;
+#endif
 			}
 			else if (!pos)
 			{
@@ -387,22 +420,33 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 			new
 				dest = YSI_g_sContexts[pos][AsmContext_buffer];
 			// First, rewrite the `___` call-site to call `YVA2_DoPush` instead.
-			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], hole, YSI_g_sSkips[pos], -YSI_g_sStacks[0] - (pos << __COMPILER_CELL_SHIFT)), // YSI_g_sStacks[0]!!!
+			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], paramCount, YSI_g_sSkips[pos], -YSI_g_sStacks[0] - (pos << __COMPILER_CELL_SHIFT)), // YSI_g_sStacks[0]!!!
 			// Shift the code up.
 			YVA2_CodeGenShiftCode(
 				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
 				dest + YSI_g_sLength[pos] + (returningString ? 12 : 0),
-				end + returningString),
+				end + returningString);
 			// Adjust the assembly context.  `codeLength` is the length of the
 			// code from `YVA2_CodeGenPushSite`.
-			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - codeLength + returningString) - 16;
-			if (len == 24)
-				YSI_g_sContexts[pos][AsmContext_buffer_offset] -= 8;
-			YVA2_CodeGenPushVariable(YSI_g_sContexts[pos], -YSI_g_sStacks[0] - (pos << __COMPILER_CELL_SHIFT));
-			YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
+			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - codeLength + returningString) - len,
+			dest = -YSI_g_sStacks[0] - (pos << __COMPILER_CELL_SHIFT);
+			if (len == 12)
+			{
+				// `-O2`, convert `SYSREQ.N` to `SYSREQ.C`.
+				end = CodeScanGetMatchHole(m, 0),
+				AsmEmitPushS(YSI_g_sContexts[pos], dest),
+				AsmEmitSysreqC(YSI_g_sContexts[pos], end);
+			}
+			else
+			{
+				// Not `-O2`, emit the new push and skip the existing `SYSREQ.C`
+				// or `CALL`, thus this path can be used with `-O2` too.
+				AsmEmitPushS(YSI_g_sContexts[pos], dest),
+				YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
+			}
 			if (returningString == 12)
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
-			if (len == 24)
+			if (len != 16)
 				YVA2_CodeGenMainCleanup(YSI_g_sContexts[pos]);
 			if (YSI_g_sPassthroughNestings)
 			{
@@ -427,7 +471,7 @@ static stock YVA2_FoundPush(const m[CodeScanner])
 		addr = CodeScanGetMatchAddress(m);
 	if (YSI_g_sPassthroughNestings >= MAX_NESTED_PASSTHROUGHS)
 	{
-		P:F("`___` nested too deeply - increase `MAX_NESTED_PASSTHROUGHS`.");
+		Debug_Fatal("`___` nested too deeply - increase `MAX_NESTED_PASSTHROUGHS`.");
 		return;
 	}
 	YSI_g_sMaxNesting = max(YSI_g_sMaxNesting, YSI_g_sPassthroughNestings),
@@ -457,11 +501,11 @@ static stock YVA2_FoundPush(const m[CodeScanner])
 		}
 	}
 	++YSI_g_sPassthroughNestings;
-	P:3("YVA2_FoundPush: %d", CodeScanGetMatchStack(m));
-	P:5("YVA2_FoundPush: %d %d", addr, YSI_g_sInitialised);
+	Debug_Print3("YVA2_FoundPush: %d", CodeScanGetMatchStack(m));
+	Debug_Print5("YVA2_FoundPush: %d %d", addr, YSI_g_sInitialised);
 	if (addr < YSI_g_sInitialised < addr + 100)
 	{
-		P:5("YVA2_FoundPush: Found match");
+		Debug_Print5("YVA2_FoundPush: Found match");
 		YSI_g_sInitialised = addr;
 	}
 }
@@ -480,15 +524,47 @@ static stock YVA2_FoundPush(const m[CodeScanner])
 
 static stock YVA2_Initalise()
 {
-	P:3("YVA2_Initalise start");
+	Debug_Print3("YVA2_Initalise start");
 	new
 		scanner[CodeScanner],
+#if __COMPILER_O2
+		csmO2[CodeScanMatcher],
+#else
 		csmO0A[CodeScanMatcher],
 		csmO0B[CodeScanMatcher],
 		csmO1[CodeScanMatcher],
+#endif
 		csm2[CodeScanMatcher],
 		csm3[CodeScanMatcher];
 	CodeScanInit(scanner);
+#if __COMPILER_O2
+	/*
+		// O2:
+		push5.c 0 0 0 0 0
+		push4.c 0 4 0 0
+		push.c  36
+		call YVA2_DoPush
+		heap 4
+		stor.i
+		push.alt
+	*/
+	CodeScanMatcherInit(csmO2, &YVA2_FoundPush);
+	// We normally need at least 92 bytes for `YVA2_CodeGenPushSite` and
+	// `YVA2_CodeGenMainCleanup` together which means way more dummy variables
+	// for padding with `-O2`.  Even with rewritten code to use `PUSH3.C` it
+	// turns out we only save 8 bytes (so now need exactly 84 bytes):
+	CodeScanMatcherPattern(csmO2,
+		OP(PUSH5_C,    0, 0, 0, 0, 0)   // 24
+		OP(PUSH5_C,    0, 0, 0, 0, 0)   // 48
+		OP(PUSH5_C,    0, 0, 4, 0, ???) // 72
+		OP(PUSH_C,     60)              // 80
+		OP(CALL,       &YVA2_DummyPush) // 88
+		OP(HEAP,       4)               // 96
+		OP(STOR_I)                      // 100
+		OP(PUSH_ALT)                    // 104
+	);
+	CodeScanAddMatcher(scanner, csmO2);
+#else
 	/*
 		// O0:
 		const.pri 4
@@ -589,6 +665,7 @@ static stock YVA2_Initalise()
 		OP(PUSH_ALT)                    // 100
 	);
 	CodeScanAddMatcher(scanner, csmO1);
+#endif
 	// Match ANY function calls anywhere.  Will even match calls to `___`, but
 	// we can ignore them (and many others).  I need some way to determine that
 	// "amx_assembly" is up-to-date with the very latest "codescan" changes to
@@ -604,17 +681,28 @@ static stock YVA2_Initalise()
 		OP(CALL,       ???)
 	);
 	CodeScanAddMatcher(scanner, csm2);
+	CodeScanMatcherInit(csm3, &YVA2_FoundCall);
+#if __COMPILER_O2
 	/*
 		push.c   ???
 		sysreq.c ???
 		stack    ???
 	*/
-	CodeScanMatcherInit(csm3, &YVA2_FoundCall);
+	CodeScanMatcherPattern(csm3,
+		OP(SYSREQ_N,   ???, ???)
+	);
+#else
+	/*
+		push.c   ???
+		sysreq.c ???
+		stack    ???
+	*/
 	CodeScanMatcherPattern(csm3,
 		OP(PUSH_C,     ???)
 		OP(SYSREQ_C,   ???)
 		OP(STACK,      ???)
 	);
+#endif
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRunFast(scanner, &YVA2_DummyPush);
@@ -695,67 +783,3 @@ stock va_getstring(dest[], arg, len = sizeof (dest))
 	#emit STACK      16
 }
 
-stock PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, const fmat[], va_args<>)
-{
-	return CreatePlayerTextDraw(playerid, x, y, va_return(fmat, va_start<4>));
-}
-
-stock Text:va_TextDrawCreate(Float:x, Float:y, const fmat[], va_args<>)
-{
-	return TextDrawCreate(x, y, va_return(fmat, va_start<3>));
-}
-
-stock va_TextDrawSetString(Text:text, const fmat[], va_args<>)
-{
-	return TextDrawSetString(text, va_return(fmat, va_start<2>));
-}
-
-stock va_PlayerTextDrawSetString(playerid, PlayerText:text, const fmat[], va_args<>)
-{
-	return PlayerTextDrawSetString(playerid, text, va_return(fmat, va_start<3>));
-}
-
-stock va_SendClientMessage(playerid, colour, const fmat[], va_args<>)
-{
-	return SendClientMessage(playerid, colour, va_return(fmat, va_start<3>));
-}
-
-stock va_SendClientMessageToAll(colour, const fmat[], va_args<>)
-{
-	return SendClientMessageToAll(colour, va_return(fmat, va_start<2>));
-}
-
-stock va_SendPlayerMessageToPlayer(playerid, senderid, const fmat[], va_args<>)
-{
-	return SendPlayerMessageToPlayer(playerid, senderid, va_return(fmat, va_start<3>));
-}
-
-stock va_SendPlayerMessageToAll(senderid, const fmat[], va_args<>)
-{
-	return SendPlayerMessageToAll(senderid, va_return(fmat, va_start<2>));
-}
-
-stock va_GameTextForPlayer(playerid, const fmat[], time, style, va_args<>)
-{
-	return GameTextForPlayer(playerid, va_return(fmat, va_start<4>), time, style);
-}
-
-stock va_GameTextForAll(const fmat[], time, style, va_args<>)
-{
-	return GameTextForAll(va_return(fmat, va_start<3>), time, style);
-}
-
-stock va_print(const fmat[], va_args<>)
-{
-	return print(va_return(fmat, va_start<1>));
-}
-
-stock va_fprintf(File:fhnd, const fmat[], va_args<>)
-{
-	return fwrite(fhnd, va_return(fmat, va_start<2>));
-}
-
-stock va_SendRconCommand(const command[], va_args<>)
-{
-	return SendRconCommand(va_return(command, va_start<1>));
-}

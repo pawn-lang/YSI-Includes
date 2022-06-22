@@ -30,7 +30,7 @@
 // compile if you're using one of these, but at least it can be detected.
 
 // Use an unpacked raw string, to maybe get translations.
-static stock const __COMPILER_CODEPAGE_TEST_6[] = __COMPILER_UKPACK\"AÒ";
+static stock const __COMPILER_CODEPAGE_TEST_6[] = \__COMPILER_UNPACK"AÒ";
 
 #if sizeof (__COMPILER_CODEPAGE_TEST_6) == 2
 	const __COMPILER_CODEPAGE_TEST_7 = 'AÒ';

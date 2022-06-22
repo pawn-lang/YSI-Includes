@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -678,7 +678,7 @@ static
 
 Test_SetPlayer(el, playerid, bool:s)
 {
-	P:1("Test_SetPlayer called: %d %d %d", el, playerid, s);
+	Debug_Print1("Test_SetPlayer called: %d %d %d", el, playerid, s);
 	gPl = playerid;
 	gEl = el;
 	gS = s;

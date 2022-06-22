@@ -15,7 +15,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -102,14 +102,14 @@ static stock
 stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <YSI_has_groups : n>
 {
 	#pragma unused forgroup
-	P:2("Class_ResolveGroups<n>: call Resolve %d %d %d", class, _:forgroup, cp);
+	Debug_Print2("Class_ResolveGroups<n>: call Resolve %d %d %d", class, _:forgroup, cp);
 	if (!cp) PA_Init(YSI_g_sClasses[class][E_CLASS_PLAYERS], true);
 }
 
 stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <>
 {
 	#pragma unused forgroup
-	P:2("Class_ResolveGroups<>: call Resolve %d %d %d", class, _:forgroup, cp);
+	Debug_Print2("Class_ResolveGroups<>: call Resolve %d %d %d", class, _:forgroup, cp);
 	if (!cp) PA_Init(YSI_g_sClasses[class][E_CLASS_PLAYERS], true);
 }
 
@@ -117,56 +117,56 @@ stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <>
  * <param name="classid">Class to check if active.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:_Class_IsActive(classid));
+FUNC_PAWNDOC(bool:_Class_IsActive(classid));
 #define _Class_IsActive(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS] & e_CLASS_FLAGS_ACTIVE)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="classid">Class to check if valid.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:_Class_IsValid(classid));
+FUNC_PAWNDOC(bool:_Class_IsValid(classid));
 #define _Class_IsValid(%1) (IS_IN_RANGE((%1), 0, MAX_CLASSES) && _Class_IsActive(%1))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="classid">Class to check.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:_Class_Enabled(classid));
+FUNC_PAWNDOC(bool:_Class_Enabled(classid));
 #define _Class_Enabled(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS] & e_CLASS_FLAGS_ENABLED)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="classid">Class to get X location for.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(Float:Class_X(classid));
+FUNC_PAWNDOC(Float:Class_X(classid));
 #define Class_X(%1) YSI_g_sClasses[(%1)][E_CLASS_X]
 
 /*-------------------------------------------------------------------------*//**
  * <param name="classid">Class to get Y location for.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(Float:Class_Y(classid));
+FUNC_PAWNDOC(Float:Class_Y(classid));
 #define Class_Y(%1) YSI_g_sClasses[(%1)][E_CLASS_Y]
 
 /*-------------------------------------------------------------------------*//**
  * <param name="classid">Class to get Z location for.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(Float:Class_Z(classid));
+FUNC_PAWNDOC(Float:Class_Z(classid));
 #define Class_Z(%1) YSI_g_sClasses[(%1)][E_CLASS_Z]
 
 /*-------------------------------------------------------------------------*//**
  * <param name="classid">Class to get angle for.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(Float:Class_A(classid));
+FUNC_PAWNDOC(Float:Class_A(classid));
 #define Class_A(%1) YSI_g_sClasses[(%1)][E_CLASS_A]
 
 /*-------------------------------------------------------------------------*//**
  * <param name="classid">Class to get skin for.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(Class_Skin(classid));
+FUNC_PAWNDOC(Class_Skin(classid));
 #define Class_Skin(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS] & e_CLASS_FLAGS_SKIN)
 
 /*-------------------------------------------------------------------------*//**
@@ -190,10 +190,10 @@ HOOK__ OnYSIInit()
 				classRight = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
 			if (classLeft != 0 || classMiddle != 1 || classRight != 2)
 			{
-				P:E("y_classes assumptions failed.  Do you have \"AddPlayerClass\" in your modes?");
+				Debug_Error("y_classes assumptions failed.  Do you have \"AddPlayerClass\" in your modes?");
 			}
 			//print("==========================");
-			P:4("Class_OnYSIInit: classes = %d %d %d", classLeft, classMiddle, classRight);
+			Debug_Print4("Class_OnYSIInit: classes = %d %d %d", classLeft, classMiddle, classRight);
 			//print("==========================");
 			#if !defined YSI_NO_MASTER
 				switch (_Master_Get(#_YCM, true))
@@ -201,7 +201,7 @@ HOOK__ OnYSIInit()
 					case e_YSIM_GET_TYPE_NO_CONTEST:
 					{
 						// Nothing changed, or we took it without force.
-						P:2("Got master " #_YCM);
+						Debug_Print2("Got master " #_YCM);
 						state _YCM:y;
 						_YCM@ = _E_YCM@y;
 					}
@@ -219,7 +219,7 @@ HOOK__ OnYSIInit()
 					}
 					case e_YSIM_GET_TYPE_NOT_GOT:
 					{
-						P:E("`E_YSIM_GET_TYPE_NOT_GOT` with `force = true`");
+						Debug_Error("`E_YSIM_GET_TYPE_NOT_GOT` with `force = true`");
 					}
 				}
 			#endif
@@ -230,7 +230,7 @@ HOOK__ OnYSIInit()
 
 static stock Class_FindNew(playerid, playerclass, dir)
 {
-	P:4("Class_FindNew called: %i, %i, %i", playerid, playerclass, dir);
+	Debug_Print4("Class_FindNew called: %i, %i, %i", playerid, playerclass, dir);
 	if (dir == 0)
 	{
 		// No change, check the current skin is still valid.  There are plenty
@@ -245,7 +245,7 @@ static stock Class_FindNew(playerid, playerclass, dir)
 	do
 	{
 		playerclass = (playerclass + dir) % YSI_g_sClassCount;
-		P:4("Class_FindNew: %d %d", playerclass, playerid);
+		Debug_Print4("Class_FindNew: %d %d", playerclass, playerid);
 	}
 	while (playerclass != old && (!_Class_Enabled(playerclass) || !PA_Get(YSI_g_sClasses[playerclass][E_CLASS_PLAYERS], playerid)));
 	// (!(playerclass == old || (_Class_Enabled(playerclass) && PA_Get(YSI_g_sClasses[playerclass][E_CLASS_PLAYERS], playerid))))
@@ -265,7 +265,7 @@ FOREIGN__ void:Class_Goto(playerid, playerclass);
 
 GLOBAL__ void:Class_Goto(playerid, playerclass)
 {
-	P:2("Class_Goto called: %i, %i", playerid, playerclass);
+	Debug_Print2("Class_Goto called: %i, %i", playerid, playerclass);
 	// This now sets the REAL spawn information, including spawn location.
 	SetSpawnInfo(playerid, NO_TEAM, Class_Skin(e_PLAYER_CLASS:playerclass), Class_X(e_PLAYER_CLASS:playerclass), Class_Y(e_PLAYER_CLASS:playerclass), Class_Z(e_PLAYER_CLASS:playerclass), Class_A(e_PLAYER_CLASS:playerclass), 0, 0, 0, 0, 0, 0);
 	SetPlayerSkin(playerid, Class_Skin(e_PLAYER_CLASS:playerclass));
@@ -299,19 +299,19 @@ GLOBAL__ void:Class_Goto(playerid, playerclass)
 		public OnPlayerRequestSpawn(playerid)
 	#endif
 		{
-			P:1("Class_OnPlayerRequestSpawn called: %d", playerid);
+			Debug_Print1("Class_OnPlayerRequestSpawn called: %d", playerid);
 			new
 				time = GetTickCount();
 			if ((time - YSI_g_sLastRefuse[playerid]) >= 500)
 			{
 				new
 					ret = CallRemoteFunction("Class_OnPlayerRequestSpawn", "i", playerid);
-				P:4("Class_OnPlayerRequestSpawn() return: %d", ret);
+				Debug_Print4("Class_OnPlayerRequestSpawn() return: %d", ret);
 				if (ret)
 				{
 					new
 						Group:newgroup = YSI_g_sClasses[YSI_g_sPlayerClass[playerid]][E_CLASS_GROUP];
-					P:4("Class_OnPlayerRequestSpawn() newgroup: %d", _:newgroup);
+					Debug_Print4("Class_OnPlayerRequestSpawn() newgroup: %d", _:newgroup);
 					if (newgroup != Group:-1) Class_ResolveGroups(playerid, newgroup, true);
 					if (ret == -1)
 					{
@@ -324,7 +324,7 @@ GLOBAL__ void:Class_Goto(playerid, playerclass)
 					}
 				}
 			}
-			P:5("Class_OnPlayerRequestSpawn: Return 0");
+			Debug_Print5("Class_OnPlayerRequestSpawn: Return 0");
 			return
 				YSI_g_sLastRefuse[playerid] = time,
 				0;
@@ -348,7 +348,7 @@ CHAIN_FORWARD:Class_OnPlayerRequestSpawn(playerid) = 1;
 
 MASTER_HOOK__ OnPlayerSpawn(playerid)
 {
-	P:2("Class_OnPlayerSpawn called: %d", playerid);
+	Debug_Print2("Class_OnPlayerSpawn called: %d", playerid);
 	new
 		playerclass = YSI_g_sPlayerClass[playerid],
 		weapon = 0;
@@ -365,7 +365,7 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 		}
 	}
 	weapon = YSI_g_sClasses[playerclass][E_CLASS_WEAPONS][MAX_CLASS_SPAWN_WEAPONS];
-	P:5("Class_OnPlayerSpawn: Armour %d %d %d", weapon, weapon & 0xFF, WEAPON_ARMOUR);
+	Debug_Print5("Class_OnPlayerSpawn: Armour %d %d %d", weapon, weapon & 0xFF, WEAPON_ARMOUR);
 	if ((weapon & 0xFF) == WEAPON_ARMOUR)
 	{
 		weapon >>>= 8;
@@ -413,8 +413,8 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
  *//*------------------------------------------------------------------------**/
 
 #define _CLASS_WEAPON_CODE \
-	{if((n-w+1)/2>MAX_CLASS_SPAWN_WEAPONS) P:E("Excessive class weapon data."); \
-	if((n-w)&0x01){while(w!=n)if((cw=getarg(w++))==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(100<<8);else if(w==n)P:E(": Insufficient class weapon data.");else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);} \
+	{if((n-w+1)/2>MAX_CLASS_SPAWN_WEAPONS) Debug_Error("Excessive class weapon data."); \
+	if((n-w)&0x01){while(w!=n)if((cw=getarg(w++))==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(100<<8);else if(w==n)Debug_Error(": Insufficient class weapon data.");else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);} \
 	else{while(w!=n)weapons[((cw=getarg(w++))==WEAPON_ARMOUR)?MAX_CLASS_SPAWN_WEAPONS:(s++)]=(cw&0xFF)|(getarg(w++)<<8);}}
 
 /*-------------------------------------------------------------------------*//**
@@ -435,7 +435,7 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 
 stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, ...)
 {
-	P:3("Class_Add called: %i, %f, %f, %f, %f, (+%i)", skin, x, y, z, a, numargs() - 5);
+	Debug_Print3("Class_Add called: %i, %f, %f, %f, %f, (+%i)", skin, x, y, z, a, numargs() - 5);
 	new
 		n = numargs(),
 		w = 5,
@@ -463,7 +463,7 @@ stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, ...)
 
 stock Class_AddEx(Group:forgroup, Group:setgroup, skin, Float:x, Float:y, Float:z, Float:a, ...)
 {
-	P:3("Class_AddEx called: %i, %i, %i, %f, %f, %f, %f (+%i)", _:forgroup, _:setgroup, skin, x, y, z, a, numargs() - 7);
+	Debug_Print3("Class_AddEx called: %i, %i, %i, %f, %f, %f, %f (+%i)", _:forgroup, _:setgroup, skin, x, y, z, a, numargs() - 7);
 	new
 		n = numargs(),
 		w = 7,
@@ -489,7 +489,7 @@ stock Class_AddEx(Group:forgroup, Group:setgroup, skin, Float:x, Float:y, Float:
 
 stock Class_AddForGroup(Group:group, skin, Float:x, Float:y, Float:z, Float:a, ...)
 {
-	P:3("Class_AddForGroup called: %i, %i, %f, %f, %f, %f (+%i)", _:group, skin, x, y, z, a, numargs() - 6);
+	Debug_Print3("Class_AddForGroup called: %i, %i, %f, %f, %f, %f (+%i)", _:group, skin, x, y, z, a, numargs() - 6);
 	new
 		n = numargs(),
 		w = 6,
@@ -515,7 +515,7 @@ stock Class_AddForGroup(Group:group, skin, Float:x, Float:y, Float:z, Float:a, .
 
 stock Class_AddWithGroupSet(Group:group, skin, Float:x, Float:y, Float:z, Float:a, ...)
 {
-	P:3("Class_AddWithGroupSet called: %i, %i, %f, %f, %f, %f (+%i)", _:group, skin, x, y, z, a, numargs() - 6);
+	Debug_Print3("Class_AddWithGroupSet called: %i, %i, %f, %f, %f, %f (+%i)", _:group, skin, x, y, z, a, numargs() - 6);
 	new
 		n = numargs(),
 		w = 6,
@@ -548,7 +548,7 @@ FOREIGN__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,const w[],c,Group:f,G
 GLOBAL__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,const w[],c,Group:f,Group:g)
 {
 	#pragma unused c
-	P:2("Class_AddClass called: %i, %f, %f, %f, %f, %s, %i, %i, %i", s, x, y, z, a, Debug_PrintArray(w, c), c, _:f, _:g);
+	Debug_Print2("Class_AddClass called: %i, %f, %f, %f, %f, %s, %i, %i, %i", s, x, y, z, a, Debug_PrintArray(w, c), c, _:f, _:g);
 	new
 		i = 0;
 	while (i != MAX_CLASSES && _Class_IsActive(i)) ++i;
@@ -559,14 +559,14 @@ GLOBAL__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,const w[],c,Group:f,Gr
 	YSI_g_sClasses[i][E_CLASS_Z] = z,
 	YSI_g_sClasses[i][E_CLASS_A] = a,
 	memcpy(YSI_g_sClasses[i][E_CLASS_WEAPONS], w, 0, (MAX_CLASS_SPAWN_WEAPONS + 1) * 4, MAX_CLASS_SPAWN_WEAPONS + 1);
-	// P:7("Class_AddClass: weapon %d %d %d", j, c, i);
+	// Debug_Print7("Class_AddClass: weapon %d %d %d", j, c, i);
 	PA_FastInit(YSI_g_sClasses[i][E_CLASS_PLAYERS]);
-	// P:7("Class_AddClass: weapon %d %d %d", j, c, f);
+	// Debug_Print7("Class_AddClass: weapon %d %d %d", j, c, f);
 	Class_ResolveGroups(i, f, false);
-	// P:7("Class_AddClass: weapon %d %d %d", j, c, g);
+	// Debug_Print7("Class_AddClass: weapon %d %d %d", j, c, g);
 	YSI_g_sClasses[i][E_CLASS_GROUP] = g;
 	YSI_g_sClassCount++;
-	// P:7("Class_AddClass: weapon %d %d %d", j, c, YSI_g_sClassCount);
+	// Debug_Print7("Class_AddClass: weapon %d %d %d", j, c, YSI_g_sClassCount);
 	return i;
 }
 
@@ -604,7 +604,7 @@ GLOBAL__ Class_Enable(classid, bool:toggle)
 			// Hide the class for anyone currently viewing it.
 			FOREACH__ (new playerid : Player)
 			{
-				P:5("Class_Enable: %d %d %d", playerid, _:YSI_g_sPlayerClass[playerid], _:e_PLAYER_CLASS_IN_SELECTION);
+				Debug_Print5("Class_Enable: %d %d %d", playerid, _:YSI_g_sPlayerClass[playerid], _:e_PLAYER_CLASS_IN_SELECTION);
 				if (Player_InSelection(playerid))
 				{
 					_Class_OnPlayerRequestClass(playerid, YSI_g_sInternalClass[playerid]);
@@ -627,7 +627,7 @@ FOREIGN__ void:Class_Delete(classid);
 
 GLOBAL__ void:Class_Delete(classid)
 {
-	P:2("Class_Delete called: %i", classid);
+	Debug_Print2("Class_Delete called: %i", classid);
 	if (Class_Enable(classid, false))
 	{
 		YSI_g_sClasses[classid][E_CLASS_FLAGS] = e_CLASS_FLAGS:0;
@@ -703,11 +703,11 @@ stock Class_Reprocess(playerid)
 		// constantly adding "0".
 		classid = Class_FindNew(playerid, YSI_g_sPlayerClass[playerid], 0),
 		Class_Goto(playerid, classid);
-		P:5("Class_Reprocess() selected: %d", classid);
+		Debug_Print5("Class_Reprocess() selected: %d", classid);
 	}
 	else
 	{
-		P:E("No YSI classes found");
+		Debug_Error("No YSI classes found");
 		SetSpawnInfo(playerid, NO_TEAM, 0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0),
 		SetPlayerSkin(playerid, 0);
 	}
@@ -756,7 +756,7 @@ public OnPlayerRequestClass(playerid, classid)
 		static stock _Class_OnPlayerRequestClass(playerid, classid)
 	#endif
 		{
-			P:1("Class_OnPlayerRequestClass called: %d %d", playerid, classid);
+			Debug_Print1("Class_OnPlayerRequestClass called: %d %d", playerid, classid);
 			// Find which direction they pressed.
 			if (YSI_g_sClassCount)
 			{
@@ -769,11 +769,11 @@ public OnPlayerRequestClass(playerid, classid)
 				classid = Class_FindNew(playerid, YSI_g_sPlayerClass[playerid], ((classid - YSI_g_sInternalClass[playerid]) + 1) % 3 - 1),
 				YSI_g_sInternalClass[playerid] = cid,
 				Class_Goto(playerid, classid);
-				P:5("Class_OnPlayerRequestClass() selected: %d", classid);
+				Debug_Print5("Class_OnPlayerRequestClass() selected: %d", classid);
 			}
 			else
 			{
-				P:E("No YSI classes found");
+				Debug_Error("No YSI classes found");
 				SetSpawnInfo(playerid, NO_TEAM, 0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0),
 				SetPlayerSkin(playerid, 0),
 				classid = -1;

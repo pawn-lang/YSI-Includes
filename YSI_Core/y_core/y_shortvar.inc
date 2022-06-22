@@ -1,13 +1,16 @@
 /*+
- * <library name="y_shortvar">
- * <section>
- *  Description
- * </section>
- *  Declares a few variables with very short names, used all over YSI.
- * <section>
- *  Version
- * </section>
- *  0.2
+ * <library
+ *   name="y_shortvar"
+ *   version="0.2"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Declares a few variables with very short names, used all over YSI."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
  * </library>
  *//** *//*
 Legal:
@@ -26,7 +29,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -144,7 +147,7 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 		O@(tmp, 0, false);
 	}
 #endif
-#define DONT_USE(%9);}%9(){} }
+#define D0NT_USE(%9);}%9(){} }
 
 #if !defined TRUE
 stock const

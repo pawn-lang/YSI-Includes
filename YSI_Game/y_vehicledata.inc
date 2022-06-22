@@ -1,35 +1,37 @@
 /**
- * <library name="y_vehicledata">
- * <section>
- *  Description
- * </section>
- *  Basic functions for gathering data on various vehicle models.  Things like
- *  what sort of vehicle they are and what organisation they belong to.
- * <section>
- *  Version
- * </section>
- *  0.2
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="Vehicle_Speed">Get current vehicle speed in KMH.</symbol>
- * </ul><section>
- *  Tags
- * </section><ul>
- *  <symbol name="VIM">Vehicle Internal Modelid.</symbol>
- * </ul><section>
- *  Variables
- * </section>
- * <subsection>
- * Global
- * </subsection><ul>
- *  <symbol name="YSI_gVehicleFlags">Data on vehicles.</symbol>
- *  <symbol name="YSI_gVehicleNames">Names of vehicles.</symbol>
- *  <symbol name="YSI_gVehicleTopSpeed">Top speed of vehicles.</symbol>
- * </ul>
+ * <library
+ *   name="y_vehicledata"
+ *   version="0.2"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Basic functions for gathering data on various vehicle models.  Things like what sort of vehicle they are and what organisation they belong to."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <section>
+ *     Functions
+ *   </section>
+ *   <subsection>
+ *     Stock
+ *   </subsection><ul>
+ *     <symbol name="Vehicle_Speed">Get current vehicle speed in KMH.</symbol>
+ *   </ul><section>
+ *     Tags
+ *   </section><ul>
+ *     <symbol name="VIM">Vehicle Internal Modelid.</symbol>
+ *   </ul><section>
+ *     Variables
+ *   </section>
+ *   <subsection>
+ *     Global
+ *   </subsection><ul>
+ *     <symbol name="YSI_gVehicleFlags">Data on vehicles.</symbol>
+ *     <symbol name="YSI_gVehicleNames">Names of vehicles.</symbol>
+ *     <symbol name="YSI_gVehicleTopSpeed">Top speed of vehicles.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:
@@ -48,7 +50,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

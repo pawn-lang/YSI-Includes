@@ -58,7 +58,7 @@ forward y_va_PublicRecurseFunction(const func[], vara);
 public y_va_PublicRecurseFunction(const func[], vara)
 {
 	// "" Passed to "CallLocalFunction" crashes it.
-	ASSERT_EQ(123, y_va_CallLocalFunction_X(func, "\1", vara));
+	ASSERT_EQ(y_va_CallLocalFunction_X(func, "\1", vara), 123);
 }
 
 forward y_va_PublicCallFunction(const func[], vara);
@@ -133,6 +133,13 @@ TEST__ y_va_CallLocalFunction()
 	ASSERT_EQ(YSI_g_sVariable, 9);
 	ASSERT_EQ(123, y_va_CallLocalFunction(1, 45));
 	ASSERT_EQ(YSI_g_sVariable, 45);
+}
+
+forward y_va_SetTimerExPublic(a, b, c);
+
+public y_va_SetTimerExPublic(a, b, c)
+{
+	#pragma unused a, b, c
 }
 
 static stock y_va_SetTimerEx(va_args<>)
@@ -285,6 +292,17 @@ TEST__ y_va2_format()
 {
 	new
 		str[64];
+
+	if (Server_IsOpenMP())
+	{
+		// Use `H` and `h` in open.mp for upper- and lower-case HEX.
+		y_va2_format(str, sizeof (str), "Hello %d %04H %s", 99, 0x1F, "woop");
+		ASSERT_SAME(str, "Hello 99 001F woop");
+		y_va2_format(str, sizeof (str), "Hello %d %04h %s", 99, 0x1f, "woop");
+		ASSERT_SAME(str, "Hello 99 001f woop");
+	}
+
+	// Keep `x` as upper-case for backwards compatibility.
 	y_va2_format(str, sizeof (str), "Hello %d %04x %s", 99, 0x1F, "woop");
 	ASSERT_SAME(str, "Hello 99 001F woop");
 }

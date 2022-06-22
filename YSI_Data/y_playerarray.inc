@@ -1,15 +1,20 @@
 /**
- * <library name="y_playerarray">
- * <section>
- *  Description
- * </section>
- *  This code provides arrays of players who can do things.  This is for support
- *  of the text system which can take arrays of player ids, bit arrays or just a
- *  single ID.
- * <section>
- *  Version
- * </section>
- *  1.0
+ * <library
+ *   name="y_playerarray"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     This code provides arrays of players who can do things.  This is for support
+ *     of the text system which can take arrays of player ids, bit arrays or just a
+ *     single ID.
+ *   </remarks>
  * </library>
  *//** *//*
 Legal:
@@ -28,7 +33,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

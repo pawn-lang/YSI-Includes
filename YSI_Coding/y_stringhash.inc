@@ -1,26 +1,29 @@
 /**
- * <library name="y_stringhash">
- * <section>
- *  Description
- * </section>
- *  Allows you to hash strings at compile time to use them in a switch.
- * <section>
- *  Version
- * </section>
- *  2.0
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="YHash">Generate a string hash at run time.</symbol>
- * </ul><section>
- *  Definitions
- * </section><ul>
- *  <symbol name="_H">Generate a string hash at compile time.</symbol>
- *  <symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
- * </ul>
+ * <library
+ *   name="y_stringhash"
+ *   version="2.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Allows you to hash strings at compile time to use them in a switch."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <section>
+ *     Functions
+ *   </section>
+ *   <subsection>
+ *     Stock
+ *   </subsection><ul>
+ *     <symbol name="YHash">Generate a string hash at run time.</symbol>
+ *   </ul><section>
+ *     Definitions
+ *   </section><ul>
+ *     <symbol name="_H">Generate a string hash at compile time.</symbol>
+ *     <symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:
@@ -39,7 +42,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:

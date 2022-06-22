@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -107,14 +107,17 @@ public @y_inlineTimerCount(Func:func<>, time, count, due)
 	if (count == 0)
 	{
 		Indirect_Release(func);
-		P:7("y_inlineTimerCount ending: %d (%d)", _:func, ++YSI_gsCalls);
+		Debug_Print7("y_inlineTimerCount ending: %d (%d)", _:func, ++YSI_gsCalls);
 	}
 	else
 	{
 		// Run again, to track the count.  Reduce jitter by tracking due times.
-		new timer = YSI_SetTimerEx("@y_inlineTimerCount", time + (due - GetTickCount()), false, "iiii", _:func, time, count, due + time);
+		//printf("%d %d %d", time, due, GetTickCount());
+		new timer = time + (due - GetTickCount());
+		//printf("delay = %d", timer);
+		timer = YSI_SetTimerEx__("@y_inlineTimerCount", timer < 0 ? 0 : timer, false, "iiii", _:func, time, count, due + time);
 		Indirect_SetMeta(func, timer);
-		P:7("y_inlineTimerCount calls: %d (%d), %d", _:func, ++YSI_gsCalls, timer);
+		Debug_Print7("y_inlineTimerCount calls: %d (%d), %d", _:func, ++YSI_gsCalls, timer);
 	}
 }
 
@@ -131,7 +134,10 @@ forward @y_inlineTimerStart(Func:func<>, time, due);
 public @y_inlineTimerStart(Func:func<>, time, due)
 {
 	// Initial repeating timer, to set the time offset.
-	new timer = YSI_SetTimerEx("@y_inlineTimerRepeat", time + (due - GetTickCount()), true, "i", _:func, due + time);
+	//printf("%d %d %d", time, due, GetTickCount());
+	new timer = time + (due - GetTickCount());
+	//printf("delay = %d", timer);
+	timer = YSI_SetTimerEx__("@y_inlineTimerRepeat", timer < 0 ? 0 : timer, true, "i", _:func);
 	Indirect_SetMeta(func, timer);
 	// Call the function after setting the meta, incase it kills the timer.
 	@.func();
@@ -188,14 +194,14 @@ stock Timer_CreateCallback(Func:func<>, initialOrTime, timeOrCount = 0, count = 
 	{
 		// Repeat forever, but DON'T repeat here, this is just the initial offset time.
 		Indirect_Claim(func);
-		new timer = YSI_SetTimerEx("@y_inlineTimerStart", initialOrTime, false, "iii", _:func, timeOrCount, GetTickCount() + initialOrTime);
+		new timer = YSI_SetTimerEx__("@y_inlineTimerStart", initialOrTime, false, "iii", _:func, timeOrCount, GetTickCount() + initialOrTime);
 		Indirect_SetMeta(func, timer);
 	}
 	else
 	{
 		// Repeat N times.
 		Indirect_Claim(func);
-		new timer = YSI_SetTimerEx("@y_inlineTimerCount", initialOrTime, false, "iiii", _:func, timeOrCount, count, GetTickCount() + initialOrTime);
+		new timer = YSI_SetTimerEx__("@y_inlineTimerCount", initialOrTime, false, "iiii", _:func, timeOrCount, count, GetTickCount() + initialOrTime);
 		Indirect_SetMeta(func, timer);
 	}
 	return _:func;

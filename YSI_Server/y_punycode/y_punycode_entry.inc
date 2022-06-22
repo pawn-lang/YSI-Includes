@@ -20,7 +20,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -83,13 +83,15 @@ Optional plugins:
 // Some versions use "-1" or "cellmax", the RFC uses "PUNY_BASE".
 #define PUNY_INVL PUNY_BASE
 
-static stock const
+__COMPILER_CONST_STATIC
 	PUNY_TMIN = 1,
 	PUNY_TMAX = 26,
 	PUNY_SKEW = 38,
 	PUNY_BIAS = 72,
 	PUNY_INIT = 128,
-	PUNY_DAMP = 700,
+	PUNY_DAMP = 700;
+
+static stock const
 	YSI_gscDecoder[128] =
 		{
 			PP_LOOP<48>(PUNY_INVL)(,),
@@ -367,7 +369,7 @@ stock Puny_EncodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (ds
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(_Puny_Basic(num));
+FUNC_PAWNDOC(_Puny_Basic(num));
 #define _Puny_Basic(%0) (((%0) > 25) ? ((%0) + ('0' - 25)) : ((%0) + 'a'))
 
 /*-------------------------------------------------------------------------*//**
@@ -488,7 +490,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 			sPart[64], // Maximum legal domain part length.
 			sEncoded[256]; // Maximum legal hostname length.
 		new
-			idx = strfind(url, !"://");
+			idx = strfind(url, __COMPILER_PACK"://");
 		// Skip any prefix.
 		if (idx != -1) idx += 2;
 		// Add the protocol.
@@ -497,12 +499,12 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 		// Encode all parts.
 		new
 			prev = idx + 1,
-			end = strfind(url, !"/", false, prev);
+			end = strfind(url, __COMPILER_PACK"/", false, prev);
 		if (end == -1) end = strlen(url); // Nothing after the main domain.
 		do
 		{
 			// Find the size of one part.
-			idx = strfind(url, !".", false, prev);
+			idx = strfind(url, __COMPILER_PACK".", false, prev);
 			// Only encode the domain part.
 			if (!(-1 < idx < end)) idx = end;
 			static
@@ -518,15 +520,15 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 				case 1:
 				{
 					// The hyphen at the start is the only one - no latin chars.
-					if (sPart[0] == '-' && strfind(sPart, !"-", false, 1) == -1) format(sEncoded, sizeof (sEncoded), "%sxn-%s%c", sEncoded, sPart, ch);
+					if (sPart[0] == '-' && strfind(sPart, __COMPILER_PACK"-", false, 1) == -1) format(sEncoded, sizeof (sEncoded), "%sxn-%s%c", sEncoded, sPart, ch);
 					else format(sEncoded, sizeof (sEncoded), "%sxn--%s%c", sEncoded, sPart, ch);
 					#if defined _DEBUG
 						#if _DEBUG >= 1
 							static
 								sDecoded[64];
 							Puny_Decode(sDecoded, sPart);
-							P:5("Puny_HTTP Original: \"%s\", Encoded: \"%s\", Decoded: \"%s\"", url[prev], sPart, sDecoded);
-							if (strcmp(url[prev], sDecoded)) P:E("Puny_Decode did not match Puny_Encode");
+							Debug_Print5("Puny_HTTP Original: \"%s\", Encoded: \"%s\", Decoded: \"%s\"", url[prev], sPart, sDecoded);
+							if (strcmp(url[prev], sDecoded)) Debug_Error("Puny_Decode did not match Puny_Encode");
 						#endif
 					#endif
 				}
@@ -541,10 +543,10 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 		// Add the remainder of the domain.
 		if (url[end]) strcat(sEncoded, url[end + 1]);
 		#if defined _DEBUG
-			P:2("Puny_HTTP Domain: \"%s\" -> \"%s\"", url, sEncoded);
+			Debug_Print2("Puny_HTTP Domain: \"%s\" -> \"%s\"", url, sEncoded);
 		#endif
 		// Call the original "HTTP".
-		return YSI_HTTP(index, type, sEncoded, data, callback);
+		return YSI_HTTP__(index, type, sEncoded, data, callback);
 	}
 	
 	#if defined _ALS_HTTP

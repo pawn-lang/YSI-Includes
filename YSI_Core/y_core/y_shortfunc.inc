@@ -1,21 +1,24 @@
 /*+
- * <library name="y_shortfunc">
- * <section>
- *  Description
- * </section>
- *  Defines new names for native functions.
- * <section>
- *  Version
- * </section>
- *  0.2
- * <section>
- *  Natives
- * </section><ul>
- *  <symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>
- *  <symbol name="V@">Renaming of <symbolref name="getproperty" /> for size reasons.</symbol>
- *  <symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
- *  <symbol name="R@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
- * </ul>
+ * <library
+ *   name="y_shortfunc"
+ *   version="0.2"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Defines new names for native functions."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <section>
+ *     Natives
+ *   </section><ul>
+ *     <symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>
+ *     <symbol name="V@">Renaming of <symbolref name="getproperty" /> for size reasons.</symbol>
+ *     <symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
+ *     <symbol name="R@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
+ *   </ul>
  * </library>
  *//** *//*
 Legal:
@@ -34,7 +37,7 @@ Legal:
 	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
+	Portions created by the Initial Developer are Copyright (c) 2022
 	the Initial Developer. All Rights Reserved.
 
 Contributors:
@@ -141,7 +144,7 @@ static stock const
 // CallRemoteFunction wrapper that handles references and string returns.
 stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	P:5("K@ called: %s, %s", function, fmat);
+	Debug_Print5("K@ called: %s, %s", function, fmat);
 
 	#pragma unused function, fmat
 	// New implementation of "CallRemoteFunction".  Wraps the old function
@@ -240,7 +243,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
 			YSI_g_sPropVarArg[1] = '@' + ++j;
-			P:7("K@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
+			Debug_Print7("K@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
 			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 		}
 	}
@@ -285,7 +288,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 // CallRemoteFunction wrapper that handles references and regular returns.
 stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	P:5("D@ called: %s, %s", function, fmat);
+	Debug_Print5("D@ called: %s, %s", function, fmat);
 
 	#pragma unused function, fmat
 	// New implementation of "CallRemoteFunction".  Wraps the old function
@@ -355,7 +358,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
 			YSI_g_sPropVarArg[1] = '@' + ++j;
-			P:7("D@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
+			Debug_Print7("D@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
 			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 		}
 	}
@@ -378,7 +381,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 
 stock F@(calltype = 1, master = -1, heapptr = 0)
 {
-	P:5("F@ called: %d, %d, %d", calltype, master, heapptr);
+	Debug_Print5("F@ called: %d, %d, %d", calltype, master, heapptr);
 	// First copy the calltype to a global, so it can be read from the functions
 	// that actually call `CallLocalFunction` (0) and `CallRemoteFunction` (1).
 	YSI_g_sCallData = calltype;
@@ -400,12 +403,12 @@ stock F@(calltype = 1, master = -1, heapptr = 0)
 
 stock L@(GLOBAL_TAG_TYPES:ret, GLOBAL_TAG_TYPES:...)
 {
-	P:5("L@ called: %d", ret);
+	Debug_Print5("L@ called: %d", ret);
 	// Return possibly multiple values remotely.
 	setproperty(8, YSI_g_sPropReturn, ret);
 	for (new i = 1, j = numargs(); i != j; ++i)
 	{
-		P:7("L@: loop %d = %d", i, getarg(i));
+		Debug_Print7("L@: loop %d = %d", i, getarg(i));
 		YSI_g_sPropVarArg[1] = '@' + i,
 		setproperty(8, YSI_g_sPropVarArg, getarg(i));
 	}
@@ -414,12 +417,12 @@ stock L@(GLOBAL_TAG_TYPES:ret, GLOBAL_TAG_TYPES:...)
 
 stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 {
-	P:5("T@ called: %s", ret);
+	Debug_Print5("T@ called: %s", ret);
 	// Return possibly multiple values remotely.
 	setproperty(8, YSI_g_sPropEmpty, YSIM_STRING, ret);
 	for (new i = 1, j = numargs(); i != j; ++i)
 	{
-		P:7("T@: loop %d = %d", i, getarg(i));
+		Debug_Print7("T@: loop %d = %d", i, getarg(i));
 		YSI_g_sPropVarArg[1] = '@' + i,
 		setproperty(8, YSI_g_sPropVarArg, getarg(i));
 	}
@@ -429,7 +432,7 @@ stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 stock X@(GLOBAL_TAG_TYPES:n)
 {
 	// THIS MUST REMAIN FOREVER!  Detected by fixes.inc.
-	P:4("X@ called: %i", n);
+	Debug_Print4("X@ called: %i", n);
 	setproperty(8, YSI_g_sPropReturn, n);
 }
 
