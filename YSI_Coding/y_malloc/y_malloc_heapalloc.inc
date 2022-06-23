@@ -107,8 +107,8 @@ public OnCodeInit()
 		{
 			if (op == OP_BOUNDS && DisasmGetOperand(dctx) == 0)
 			{
-				AMX_Write(ctx[DisasmContext_cip], _:nop);
-				AMX_Write(ctx[DisasmContext_cip] + 4, _:nop);
+				AMX_Write(dctx[DisasmContext_cip], _:nop);
+				AMX_Write(dctx[DisasmContext_cip] + 4, _:nop);
 			}
 		}
 	}
