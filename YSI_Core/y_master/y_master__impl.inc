@@ -380,10 +380,10 @@ static stock Master_GetCurrentMaster(installState)
 	// THIS CODE IS COPIED IN y_classes (mostly).
 	#if _YSIM_IS_SERVER
 		// Steal the master.
-		switch (_Master_Get(#_YCM, true))
+		switch (_Master_Get(__COMPILER_UNPACK#_YCM, true))
 	#else //if _YSIM_IS_CLOUD
 		// See if this script should be master.
-		switch (_Master_Get(#_YCM, false))
+		switch (_Master_Get(__COMPILER_UNPACK#_YCM, false))
 	#endif
 		{
 			case e_YSIM_GET_TYPE_NO_CONTEST:
@@ -405,7 +405,7 @@ static stock Master_GetCurrentMaster(installState)
 				state _YCM:u;
 				_YCM@ = _E_YCM@u;
 				// Determine the next unique name.
-				CallRemoteFunction(#_YCM, YSI_EMPTY);
+				CallRemoteFunction(__COMPILER_UNPACK#_YCM, YSI_EMPTY);
 				// Servers always get all data, so it doesn't matter that
 				// for now this is state "u".
 				++installState;
@@ -803,7 +803,7 @@ public OnMasterSystemInit(id)
 public _YCM() <_YCM:y>
 {
 	Debug_Print1("%d: " #_YCM "() <y> called, master = %d", Master_ID(), getproperty(9, #_YCM));
-	if (getproperty(9, #_YCM) == Master_ID())
+	if (getproperty(9, __COMPILER_UNPACK#_YCM) == Master_ID())
 	{
 		Debug_Print2(#_YCM " natural end");
 		if (YSI_gModuleShutdown)
@@ -819,11 +819,11 @@ public _YCM() <_YCM:y>
 		_YCM@ = _E_YCM@p;
 		// Ending normally, relinquish control peacefully to the highest version.
 		setproperty(8, YSIM_VERMAX, 0);
-		CallRemoteFunction(#MAKE_YCM<YSIM_VERSION...>, YSI_EMPTY);
-		setproperty(9, #_YCM, 0);
+		CallRemoteFunction(__COMPILER_UNPACK#MAKE_YCM<YSIM_VERSION...>, YSI_EMPTY);
+		setproperty(9, __COMPILER_UNPACK#_YCM, 0);
 		// Called locally to begin the hand off process.
 		_Master_UnnameAll(_MASTER);
-		CallRemoteFunction(#_YCM, YSI_EMPTY);
+		CallRemoteFunction(__COMPILER_UNPACK#_YCM, YSI_EMPTY);
 	}
 	else
 	{
@@ -831,14 +831,14 @@ public _YCM() <_YCM:y>
 		// Brutally stolen, but can be later reclaimed.
 		state _YCM:n;
 		_YCM@ = _E_YCM@n;
-		_Master_Relinquish(#_YCM);
+		_Master_Relinquish(__COMPILER_UNPACK#_YCM);
 		_Master_UnnameAll(_MASTER);
 	}
-	if (getproperty(9, #_YCM))
+	if (getproperty(9, __COMPILER_UNPACK#_YCM))
 	{
 		// This is where we need to to the handoff.
-		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, YSI_EMPTY);
-		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...Group>, YSI_EMPTY);
+		CallLocalFunction(__COMPILER_UNPACK#MAKE_YCM<HANDOFF_SOURCE...>, YSI_EMPTY);
+		CallLocalFunction(__COMPILER_UNPACK#MAKE_YCM<HANDOFF_SOURCE...Group>, YSI_EMPTY);
 	}
 }
 
@@ -883,17 +883,17 @@ public _YCM() <_YCM:w>
 	
 	// Ending normally, relinquish control peacefully to the highest version.
 	setproperty(8, YSIM_VERMAX, 0);
-	CallRemoteFunction(#MAKE_YCM<YSIM_VERSION...>, YSI_EMPTY);
-	setproperty(9, #_YCM, 0);
+	CallRemoteFunction(__COMPILER_UNPACK#MAKE_YCM<YSIM_VERSION...>, YSI_EMPTY);
+	setproperty(9, __COMPILER_UNPACK#_YCM, 0);
 	// Called locally to begin the hand off process.
-	CallRemoteFunction(#_YCM, YSI_EMPTY);
+	CallRemoteFunction(__COMPILER_UNPACK#_YCM, YSI_EMPTY);
 
 	// Now try pass everything off.
-	if (getproperty(9, #_YCM))
+	if (getproperty(9, __COMPILER_UNPACK#_YCM))
 	{
 		// This is where we need to to the handoff.
-		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, YSI_EMPTY);
-		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...Group>, YSI_EMPTY);
+		CallLocalFunction(__COMPILER_UNPACK#MAKE_YCM<HANDOFF_SOURCE...>, YSI_EMPTY);
+		CallLocalFunction(__COMPILER_UNPACK#MAKE_YCM<HANDOFF_SOURCE...Group>, YSI_EMPTY);
 	}
 }
 

@@ -163,10 +163,12 @@ Optional plugins:
 	// Get the new master.
 	#define MASTER 58
 	#include "y_master_entry"
+#endinput
 	// Include the tests.
 	#include "y_master_tests"
 	// Pop the master.
 	#include "y_master_entry"
+#endinput
 
 	#define MASTER 57
 	#define YSIM_U_ENABLE
