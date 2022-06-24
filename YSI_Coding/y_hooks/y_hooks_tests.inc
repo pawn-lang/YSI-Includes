@@ -74,95 +74,6 @@ Optional plugins:
 static
 	YSI_g_sValue = 0;
 
-static stock y_hooks_funcidx2(const str[])
-{
-	new
-		func[FUNCTION_LENGTH],
-		buf = 0,
-		idx = 0;
-	while ((idx = AMX_GetPublicName(idx, func, str)))
-	{
-		if (!strcmp(func, str))
-		{
-			AMX_GetPublicEntry(idx - 1, buf);
-			return buf;
-		}
-	}
-	return -1;
-}
-
-forward y_hooks_Invalidate1();
-public y_hooks_Invalidate1() {}
-
-TEST__ y_hooks_Invalidate1()
-{
-	ASSERT_NE(funcidx("y_hooks_Invalidate1"), -1);
-	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate1"));
-	Hooks_SortPublics();
-	ASSERT_EQ(funcidx("y_hooks_Invalidate1"), -1);
-}
-
-forward y_hooks_Invalidate2();
-public y_hooks_Invalidate2() {}
-
-forward y_hooks_Invalidate3();
-public y_hooks_Invalidate3() {}
-
-TEST__ y_hooks_Invalidate23()
-{
-	new
-		base0 = 0,
-		count0 = 0;
-	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base0, count0);
-	ASSERT_NE(funcidx("y_hooks_Invalidate2"), -1);
-	ASSERT_NE(funcidx("y_hooks_Invalidate3"), -1);
-	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate2"));
-	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate3"));
-	Hooks_SortPublics();
-	ASSERT_EQ(funcidx("y_hooks_Invalidate2"), -1);
-	ASSERT_EQ(funcidx("y_hooks_Invalidate3"), -1);
-	new
-		base1 = 0,
-		count1 = 0;
-	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base1, count1);
-	ASSERT(base1 > base0);
-	ASSERT(count1 < count0);
-}
-
-TEST__ y_hooks_IsolateName1()
-{
-	new
-		name[FUNCTION_LENGTH];
-	name = __COMPILER_UNPACK"@yH_Hello@Other";
-	Hooks_IsolateName(name);
-	ASSERT_FALSE(strcmp(name, "Hello"));
-	name = __COMPILER_UNPACK"@yH_Hi@@Other";
-	Hooks_IsolateName(name);
-	ASSERT_FALSE(strcmp(name, "Hi"));
-	name = __COMPILER_UNPACK"@yH_No@Other@More";
-	Hooks_IsolateName(name);
-	ASSERT_FALSE(strcmp(name, "No"));
-	name = __COMPILER_UNPACK"@yH_Yes_Other@N";
-	Hooks_IsolateName(name);
-	ASSERT_FALSE(strcmp(name, "Yes_Other"));
-}
-
-TEST__ y_hooks_IsolateName2()
-{
-	new
-		func[FUNCTION_LENGTH];
-	#define FUNC:%0; func = __COMPILER_UNPACK"_yH@"#%0"@";Hooks_IsolateName(func);ASSERT(!strcmp(func, #%0));
-	FUNC:A;
-	FUNC:AAA;
-	FUNC:AAB;
-	FUNC:ABA;
-	FUNC:ABB;
-	FUNC:aB;
-	FUNC:ab;
-	FUNC:Ab;
-	#undef FUNC
-}
-
 #if !defined CHAIN_ORDER
 	#define CHAIN_ORDER() 0
 #endif
@@ -194,7 +105,6 @@ TEST__ y_hooksPrehook()
 	CallLocalFunction("OnTestPrehook", "");
 	ASSERT_EQ(YSI_g_sValue, 90);
 }
-#endinput
 
 forward OnTestCallback();
 
@@ -219,7 +129,6 @@ TEST__ y_hooksOrdering()
 	CallLocalFunction("OnTestCallback", "");
 	ASSERT_EQ(YSI_g_sValue, 89);
 }
-#endinput
 
 static
 	bool:y_hooks_OnScriptInit_called = false;
@@ -629,156 +538,94 @@ TEST__ y_hooks_Ony_hooksTest5()
 	YSI_g_sValue = 0;
 }
 
-TEST__ Hooks_MakeLongName0()
+static stock y_hooks_funcidx2(const str[])
 {
 	new
-		name[Y_HOOKS_MAX_NAME];
-	name = __COMPILER_UNPACK"OnUpd";
-	ASSERT_EQ(Hooks_MakeLongName(name), 8);
-	ASSERT_SAME(name, "OnUpdate");
-	name = __COMPILER_UNPACK"OnUpdD";
-	ASSERT_EQ(Hooks_MakeLongName(name), 9);
-	ASSERT_SAME(name, "OnUpdateD");
-	name = __COMPILER_UNPACK"OnUpda";
-	ASSERT_EQ(Hooks_MakeLongName(name), 6);
-	ASSERT_SAME(name, "OnUpda");
+		func[FUNCTION_LENGTH],
+		buf = 0,
+		idx = 0;
+	while ((idx = AMX_GetPublicName(idx, func, str)))
+	{
+		if (!strcmp(func, str))
+		{
+			AMX_GetPublicEntry(idx - 1, buf);
+			return buf;
+		}
+	}
+	return -1;
 }
 
-TEST__ Hooks_MakeLongName1()
+forward y_hooks_Invalidate1();
+public y_hooks_Invalidate1() {}
+
+TEST__ y_hooks_Invalidate1()
+{
+	ASSERT_NE(funcidx("y_hooks_Invalidate1"), -1);
+	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate1"));
+	Hooks_SortPublics();
+	ASSERT_EQ(funcidx("y_hooks_Invalidate1"), -1);
+}
+
+forward y_hooks_Invalidate2();
+public y_hooks_Invalidate2() {}
+
+forward y_hooks_Invalidate3();
+public y_hooks_Invalidate3() {}
+
+TEST__ y_hooks_Invalidate23()
 {
 	new
-		name[Y_HOOKS_MAX_NAME];
-	name = __COMPILER_UNPACK"CP";
-	ASSERT_EQ(Hooks_MakeLongName(name), 10);
-	ASSERT_SAME(name, "Checkpoint");
-	name = __COMPILER_UNPACK"TD";
-	ASSERT_EQ(Hooks_MakeLongName(name), 8);
-	ASSERT_SAME(name, "TextDraw");
-	name = __COMPILER_UNPACK"Upd";
-	ASSERT_EQ(Hooks_MakeLongName(name), 6);
-	ASSERT_SAME(name, "Update");
-	name = __COMPILER_UNPACK"Dyn";
-	ASSERT_EQ(Hooks_MakeLongName(name), 7);
-	ASSERT_SAME(name, "Dynamic");
-	name = __COMPILER_UNPACK"Obj";
-	ASSERT_EQ(Hooks_MakeLongName(name), 6);
-	ASSERT_SAME(name, "Object");
-	name = __COMPILER_UNPACK"Cmd";
-	ASSERT_EQ(Hooks_MakeLongName(name), 7);
-	ASSERT_SAME(name, "Command");
-	name = __COMPILER_UNPACK"DynamicCP";
-	ASSERT_EQ(Hooks_MakeLongName(name), 9);
-	ASSERT_SAME(name, "DynamicCP");
+		base0 = 0,
+		count0 = 0;
+	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base0, count0);
+	ASSERT_NE(funcidx("y_hooks_Invalidate2"), -1);
+	ASSERT_NE(funcidx("y_hooks_Invalidate3"), -1);
+	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate2"));
+	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate3"));
+	Hooks_SortPublics();
+	ASSERT_EQ(funcidx("y_hooks_Invalidate2"), -1);
+	ASSERT_EQ(funcidx("y_hooks_Invalidate3"), -1);
+	new
+		base1 = 0,
+		count1 = 0;
+	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base1, count1);
+	ASSERT(base1 > base0);
+	ASSERT(count1 < count0);
 }
 
-#if __COMPILER_sNAMEMAX == 31
-	TEST__ Hooks_MakeLongName2()
-	{
-		new
-			name[Y_HOOKS_MAX_NAME];
-		name = __COMPILER_UNPACK"OnUpdTDCP";
-		ASSERT_EQ(Hooks_MakeLongName(name), 26);
-		ASSERT_SAME(name, "OnUpdateTextDrawCheckpoint");
-		name = __COMPILER_UNPACK"OnUpdTDObjCmd";
-		ASSERT_EQ(Hooks_MakeLongName(name), 29);
-		ASSERT_SAME(name, "OnUpdateTextDrawObjectCommand");
-		name = __COMPILER_UNPACK"OnUpdTDCPObjCmd";
-		ASSERT_EQ(Hooks_MakeLongName(name), 31);
-		ASSERT_SAME(name, "OnUpdateTextDrawCPObjectCommand");
-	}
+TEST__ y_hooks_IsolateName1()
+{
+	new
+		name[FUNCTION_LENGTH];
+	name = "@yH_Hello@Other";
+	Hooks_IsolateName(name);
+	ASSERT_FALSE(strcmp(name, "Hello"));
+	name = "@yH_Hi@@Other";
+	Hooks_IsolateName(name);
+	ASSERT_FALSE(strcmp(name, "Hi"));
+	name = "@yH_No@Other@More";
+	Hooks_IsolateName(name);
+	ASSERT_FALSE(strcmp(name, "No"));
+	name = "@yH_Yes_Other@N";
+	Hooks_IsolateName(name);
+	ASSERT_FALSE(strcmp(name, "Yes_Other"));
+}
 
-	TEST__ Hooks_MakeShortName1()
-	{
-		new
-			name[Y_HOOKS_MAX_NAME];
-		name = __COMPILER_UNPACK"OnPlayerEnterRaceCP";
-		ASSERT_EQ(Hooks_MakeShortName(name), 19);
-		ASSERT_SAME(name, "OnPlayerEnterRaceCP");
-		name = __COMPILER_UNPACK"OnPlayerEnterRaceCheckpoint";
-		ASSERT_EQ(Hooks_MakeShortName(name), 27);
-		ASSERT_SAME(name, "OnPlayerEnterRaceCheckpoint");
-		name = __COMPILER_UNPACK"OnPlayerEnterDynamicCP";
-		ASSERT_EQ(Hooks_MakeShortName(name), 22);
-		ASSERT_SAME(name, "OnPlayerEnterDynamicCP");
-		name = __COMPILER_UNPACK"OnPlayerEnterDynamicRaceCheckpoint";
-		ASSERT_EQ(Hooks_MakeShortName(name), 26);
-		ASSERT_SAME(name, "OnPlayerEnterDynamicRaceCP");
-		name = __COMPILER_UNPACK"AAAAAAAAAAAAAAAAAAAUpdateTextDraw";
-		Hooks_MakeShortName(name);
-		ASSERT_SAME(name, "AAAAAAAAAAAAAAAAAAAUpdateTD");
-		name = __COMPILER_UNPACK"BBBBBAAAAAAAAAAAAAAAAAAAUpdateTextDraw";
-		Hooks_MakeShortName(name);
-		ASSERT_SAME(name, "BBBBBAAAAAAAAAAAAAAAAAAAUpdTD");
-	}
-
-	TEST__ Hooks_MakeShortName2()
-	{
-		new
-			name[Y_HOOKS_MAX_NAME];
-		name = __COMPILER_UNPACK"AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC";
-		ASSERT_EQ(Hooks_MakeShortName(name), 43);
-		ASSERT_SAME(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC");
-		name = __COMPILER_UNPACK"AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCommandCCCC";
-		ASSERT_EQ(Hooks_MakeShortName(name), 45);
-		ASSERT_SAME(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC");
-	}
-#elseif __COMPILER_sNAMEMAX == 63
-	TEST__ Hooks_MakeLongName2()
-	{
-		new
-			name[Y_HOOKS_MAX_NAME];
-		name = __COMPILER_UNPACK"OnUpdTDCP";
-		ASSERT_EQ(Hooks_MakeLongName(name), 26);
-		ASSERT_SAME(name, "OnUpdateTextDrawCheckpoint");
-		name = __COMPILER_UNPACK"OnUpdTDObjCmd";
-		ASSERT_EQ(Hooks_MakeLongName(name), 29);
-		ASSERT_SAME(name, "OnUpdateTextDrawObjectCommand");
-		name = __COMPILER_UNPACK"OnUpdTDCPObjCmd";
-		ASSERT_EQ(Hooks_MakeLongName(name), 39);
-		ASSERT_SAME(name, "OnUpdateTextDrawCheckpointObjectCommand");
-		name = __COMPILER_UNPACK"OnUpdTDCPObjCmdBBBBBBBBBAAAAAAAAAAAAAAAAAAA";
-		ASSERT_EQ(Hooks_MakeLongName(name), 59);
-		ASSERT_SAME(name, "OnUpdateTextDrawCPObjectCommandBBBBBBBBBAAAAAAAAAAAAAAAAAAA");
-	}
-
-	TEST__ Hooks_MakeShortName1()
-	{
-		new
-			name[Y_HOOKS_MAX_NAME];
-		name = __COMPILER_UNPACK"OnPlayerEnterRaceCP";
-		ASSERT_EQ(Hooks_MakeShortName(name), 19);
-		ASSERT_SAME(name, "OnPlayerEnterRaceCP");
-		name = __COMPILER_UNPACK"OnPlayerEnterRaceCheckpoint";
-		ASSERT_EQ(Hooks_MakeShortName(name), 27);
-		ASSERT_SAME(name, "OnPlayerEnterRaceCheckpoint");
-		name = __COMPILER_UNPACK"OnPlayerEnterDynamicCP";
-		ASSERT_EQ(Hooks_MakeShortName(name), 22);
-		ASSERT_SAME(name, "OnPlayerEnterDynamicCP");
-		name = __COMPILER_UNPACK"OnPlayerEnterDynamicRaceCheckpointBBBBBBBBBBBBBBBAAAAAAAAAAAAAAAAAAA";
-		ASSERT_EQ(Hooks_MakeShortName(name), 60);
-		ASSERT_SAME(name, "OnPlayerEnterDynamicRaceCPBBBBBBBBBBBBBBBAAAAAAAAAAAAAAAAAAA");
-		name = __COMPILER_UNPACK"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUpdateTextDraw";
-		Hooks_MakeShortName(name);
-		ASSERT_SAME(name, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUpdateTD");
-		name = __COMPILER_UNPACK"BBBBBBBBBBBBBBBAAAAAAAAAAAAAAAAAAABBBBBAAAAAAAAAAAAAAAAAAAUpdateTextDraw";
-		Hooks_MakeShortName(name);
-		ASSERT_SAME(name, "BBBBBBBBBBBBBBBAAAAAAAAAAAAAAAAAAABBBBBAAAAAAAAAAAAAAAAAAAUpdTD");
-	}
-
-	TEST__ Hooks_MakeShortName2()
-	{
-		new
-			name[Y_HOOKS_MAX_NAME];
-		name = __COMPILER_UNPACK"AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC";
-		ASSERT_EQ(Hooks_MakeShortName(name), 43);
-		ASSERT_SAME(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC");
-		name = __COMPILER_UNPACK"BBBBBBBBBBCCCCCCCCBBBBBBBBBBCCCCCCCCAAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCommandCCCC";
-		ASSERT_EQ(Hooks_MakeShortName(name), 81);
-		ASSERT_SAME(name, "BBBBBBBBBBCCCCCCCCBBBBBBBBBBCCCCCCCCAAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC");
-	}
-#else
-	#error No y_hooks tests for this sNAMEMAX.
-#endif
+TEST__ y_hooks_IsolateName2()
+{
+	new
+		func[FUNCTION_LENGTH];
+	#define FUNC:%0; func = "_yH@"#%0"@";Hooks_IsolateName(func);ASSERT(!strcmp(func, #%0));
+	FUNC:A;
+	FUNC:AAA;
+	FUNC:AAB;
+	FUNC:ABA;
+	FUNC:ABB;
+	FUNC:aB;
+	FUNC:ab;
+	FUNC:Ab;
+	#undef FUNC
+}
 
 static g_y_hooksVar = 0;
 
@@ -854,6 +701,157 @@ TEST__ y_hooks_SpecialCases()
 	CallLocalFunction("OnPlayerEnterDynamicArea", "ii", 0, 0);
 	ASSERT_EQ(g_y_hooksVar, 110);
 }
+
+TEST__ Hooks_MakeLongName0()
+{
+	new
+		name[Y_HOOKS_MAX_NAME];
+	name = "OnUpd";
+	ASSERT_EQ(Hooks_MakeLongName(name), 8);
+	ASSERT_SAME(name, "OnUpdate");
+	name = "OnUpdD";
+	ASSERT_EQ(Hooks_MakeLongName(name), 9);
+	ASSERT_SAME(name, "OnUpdateD");
+	name = "OnUpda";
+	ASSERT_EQ(Hooks_MakeLongName(name), 6);
+	ASSERT_SAME(name, "OnUpda");
+}
+
+TEST__ Hooks_MakeLongName1()
+{
+	new
+		name[Y_HOOKS_MAX_NAME];
+	name = "CP";
+	ASSERT_EQ(Hooks_MakeLongName(name), 10);
+	ASSERT_SAME(name, "Checkpoint");
+	name = "TD";
+	ASSERT_EQ(Hooks_MakeLongName(name), 8);
+	ASSERT_SAME(name, "TextDraw");
+	name = "Upd";
+	ASSERT_EQ(Hooks_MakeLongName(name), 6);
+	ASSERT_SAME(name, "Update");
+	name = "Dyn";
+	ASSERT_EQ(Hooks_MakeLongName(name), 7);
+	ASSERT_SAME(name, "Dynamic");
+	name = "Obj";
+	ASSERT_EQ(Hooks_MakeLongName(name), 6);
+	ASSERT_SAME(name, "Object");
+	name = "Cmd";
+	ASSERT_EQ(Hooks_MakeLongName(name), 7);
+	ASSERT_SAME(name, "Command");
+	name = "DynamicCP";
+	ASSERT_EQ(Hooks_MakeLongName(name), 9);
+	ASSERT_SAME(name, "DynamicCP");
+}
+
+#if __COMPILER_sNAMEMAX == 31
+	TEST__ Hooks_MakeLongName2()
+	{
+		new
+			name[Y_HOOKS_MAX_NAME];
+		name = "OnUpdTDCP";
+		ASSERT_EQ(Hooks_MakeLongName(name), 26);
+		ASSERT_SAME(name, "OnUpdateTextDrawCheckpoint");
+		name = "OnUpdTDObjCmd";
+		ASSERT_EQ(Hooks_MakeLongName(name), 29);
+		ASSERT_SAME(name, "OnUpdateTextDrawObjectCommand");
+		name = "OnUpdTDCPObjCmd";
+		ASSERT_EQ(Hooks_MakeLongName(name), 31);
+		ASSERT_SAME(name, "OnUpdateTextDrawCPObjectCommand");
+	}
+
+	TEST__ Hooks_MakeShortName1()
+	{
+		new
+			name[Y_HOOKS_MAX_NAME];
+		name = "OnPlayerEnterRaceCP";
+		ASSERT_EQ(Hooks_MakeShortName(name), 19);
+		ASSERT_SAME(name, "OnPlayerEnterRaceCP");
+		name = "OnPlayerEnterRaceCheckpoint";
+		ASSERT_EQ(Hooks_MakeShortName(name), 27);
+		ASSERT_SAME(name, "OnPlayerEnterRaceCheckpoint");
+		name = "OnPlayerEnterDynamicCP";
+		ASSERT_EQ(Hooks_MakeShortName(name), 22);
+		ASSERT_SAME(name, "OnPlayerEnterDynamicCP");
+		name = "OnPlayerEnterDynamicRaceCheckpoint";
+		ASSERT_EQ(Hooks_MakeShortName(name), 26);
+		ASSERT_SAME(name, "OnPlayerEnterDynamicRaceCP");
+		name = "AAAAAAAAAAAAAAAAAAAUpdateTextDraw";
+		Hooks_MakeShortName(name);
+		ASSERT_SAME(name, "AAAAAAAAAAAAAAAAAAAUpdateTD");
+		name = "BBBBBAAAAAAAAAAAAAAAAAAAUpdateTextDraw";
+		Hooks_MakeShortName(name);
+		ASSERT_SAME(name, "BBBBBAAAAAAAAAAAAAAAAAAAUpdTD");
+	}
+
+	TEST__ Hooks_MakeShortName2()
+	{
+		new
+			name[Y_HOOKS_MAX_NAME];
+		name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC";
+		ASSERT_EQ(Hooks_MakeShortName(name), 43);
+		ASSERT_SAME(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC");
+		name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCommandCCCC";
+		ASSERT_EQ(Hooks_MakeShortName(name), 45);
+		ASSERT_SAME(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC");
+	}
+#elseif __COMPILER_sNAMEMAX == 63
+	TEST__ Hooks_MakeLongName2()
+	{
+		new
+			name[Y_HOOKS_MAX_NAME];
+		name = "OnUpdTDCP";
+		ASSERT_EQ(Hooks_MakeLongName(name), 26);
+		ASSERT_SAME(name, "OnUpdateTextDrawCheckpoint");
+		name = "OnUpdTDObjCmd";
+		ASSERT_EQ(Hooks_MakeLongName(name), 29);
+		ASSERT_SAME(name, "OnUpdateTextDrawObjectCommand");
+		name = "OnUpdTDCPObjCmd";
+		ASSERT_EQ(Hooks_MakeLongName(name), 39);
+		ASSERT_SAME(name, "OnUpdateTextDrawCheckpointObjectCommand");
+		name = "OnUpdTDCPObjCmdBBBBBBBBBAAAAAAAAAAAAAAAAAAA";
+		ASSERT_EQ(Hooks_MakeLongName(name), 59);
+		ASSERT_SAME(name, "OnUpdateTextDrawCPObjectCommandBBBBBBBBBAAAAAAAAAAAAAAAAAAA");
+	}
+
+	TEST__ Hooks_MakeShortName1()
+	{
+		new
+			name[Y_HOOKS_MAX_NAME];
+		name = "OnPlayerEnterRaceCP";
+		ASSERT_EQ(Hooks_MakeShortName(name), 19);
+		ASSERT_SAME(name, "OnPlayerEnterRaceCP");
+		name = "OnPlayerEnterRaceCheckpoint";
+		ASSERT_EQ(Hooks_MakeShortName(name), 27);
+		ASSERT_SAME(name, "OnPlayerEnterRaceCheckpoint");
+		name = "OnPlayerEnterDynamicCP";
+		ASSERT_EQ(Hooks_MakeShortName(name), 22);
+		ASSERT_SAME(name, "OnPlayerEnterDynamicCP");
+		name = "OnPlayerEnterDynamicRaceCheckpointBBBBBBBBBBBBBBBAAAAAAAAAAAAAAAAAAA";
+		ASSERT_EQ(Hooks_MakeShortName(name), 60);
+		ASSERT_SAME(name, "OnPlayerEnterDynamicRaceCPBBBBBBBBBBBBBBBAAAAAAAAAAAAAAAAAAA");
+		name = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUpdateTextDraw";
+		Hooks_MakeShortName(name);
+		ASSERT_SAME(name, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUpdateTD");
+		name = "BBBBBBBBBBBBBBBAAAAAAAAAAAAAAAAAAABBBBBAAAAAAAAAAAAAAAAAAAUpdateTextDraw";
+		Hooks_MakeShortName(name);
+		ASSERT_SAME(name, "BBBBBBBBBBBBBBBAAAAAAAAAAAAAAAAAAABBBBBAAAAAAAAAAAAAAAAAAAUpdTD");
+	}
+
+	TEST__ Hooks_MakeShortName2()
+	{
+		new
+			name[Y_HOOKS_MAX_NAME];
+		name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC";
+		ASSERT_EQ(Hooks_MakeShortName(name), 43);
+		ASSERT_SAME(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC");
+		name = "BBBBBBBBBBCCCCCCCCBBBBBBBBBBCCCCCCCCAAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCommandCCCC";
+		ASSERT_EQ(Hooks_MakeShortName(name), 81);
+		ASSERT_SAME(name, "BBBBBBBBBBCCCCCCCCBBBBBBBBBBCCCCCCCCAAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC");
+	}
+#else
+	#error No y_hooks tests for this sNAMEMAX.
+#endif
 
 TEST__ Hooks_GetDefaultReturn()
 {

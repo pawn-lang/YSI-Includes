@@ -24,7 +24,7 @@ GLOBAL__ string:M_FuncV()
 {
 	new
 		str[YSI_MAX_STRING];
-	format(str, sizeof (str), __COMPILER_UNPACK"MODULE %d", YSIM_TEST_MODULE);
+	format(str, sizeof (str), "MODULE %d", YSIM_TEST_MODULE);
 	return str;
 }
 

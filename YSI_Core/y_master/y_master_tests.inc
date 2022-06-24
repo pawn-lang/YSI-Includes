@@ -35,7 +35,6 @@ YSIM_CLIENT_GLOBAL  stock y_master_test_4(&a, &e, const b[], c, const string:d[]
 	e = 999;
 	return 45;
 }
-#endinput
 
 YSIM_STUB_FOREIGN stock y_master_test_5(&a, &e, const b[], c = sizeof (b), const string:d[] = "hmm");
 

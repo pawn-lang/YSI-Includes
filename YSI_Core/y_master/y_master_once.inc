@@ -164,7 +164,7 @@ Optional plugins:
 // ordered to do work by a central controller (though inaccurate in this case as
 // that is not what happens here - a central server is given work by many other
 // clients).
-#define YSIM_PARSER(%2)%0(%1) FUNC_PARSER(%2,NUM_CST_DEF:STR_CST_DEF:REF_DEF:ARR_CST:QAL:RET_VOD_STR_TAG:LEN:)(%0(%1))(%1)__COMPILER_UNPACK#()()()()
+#define YSIM_PARSER(%2)%0(%1) FUNC_PARSER(%2,NUM_CST_DEF:STR_CST_DEF:REF_DEF:ARR_CST:QAL:RET_VOD_STR_TAG:LEN:)(%0(%1))(%1)#()()()()
 
 #define YSIM_SERVER_FOREIGN%0(%1)  %0(%1);YSIM_PARSER(YSIM_MF)%0(%1)
 // The global is just the function implementation - doesn't need extra code.
@@ -407,7 +407,7 @@ enum _E_YCM
 #define _YCM@w (_YCM@==_E_YCM@w)
 
 #if !defined YSI_MODULE_PATH
-	#define YSI_MODULE_PATH __COMPILER_UNPACK"../modules/"
+	#define YSI_MODULE_PATH "../modules/"
 #endif
 
 #if !defined YSI_NO_MASTER
@@ -431,7 +431,7 @@ enum _E_YCM
 #endif
 
 static stock const
-	YSI_FIXES_gscSingleProperty[] = __COMPILER_UNPACK"FIXES_gscSingleProperty";
+	YSI_FIXES_gscSingleProperty[] = "FIXES_gscSingleProperty";
 
 #if !defined FIXES_ID
 	forward _FIXES_DetermineID();
@@ -458,7 +458,7 @@ static stock const
 
 public OnYSIInit()
 {
-	Debug_Print1(__COMPILER_UNPACK"Master_OnYSIInit");
+	Debug_Print1("Master_OnYSIInit");
 	state _ALS : _ALS_go;
 	#if !defined YSI_NO_MASTER
 		getproperty(8, YSI_EMPTY, YSIM_STRING + 1, YSI_g_sModuleName);
@@ -473,17 +473,17 @@ public OnYSIInit()
 	// Properties get lost between script changes so we need to force a rebuild.
 	@_ = 0;
 	setproperty(8, YSIM_MASTER, 0);
-	CallRemoteFunction(__COMPILER_UNPACK"Master_Reassert", YSI_EMPTY);
+	CallRemoteFunction("Master_Reassert", YSI_EMPTY);
 	// For fixes.inc.  If it exists we just override its result.
 	@_ = -1;
 	setproperty(5, YSI_FIXES_gscSingleProperty, 0);
-	CallRemoteFunction(__COMPILER_UNPACK"_FIXES_DetermineID", YSI_EMPTY);
+	CallRemoteFunction("_FIXES_DetermineID", YSI_EMPTY);
 	new
 		masters = getproperty(8, YSIM_MASTER) | getproperty(5, YSI_FIXES_gscSingleProperty);
 	@_ = Cell_GetLowestEmpty(masters);
-	Debug_Info(__COMPILER_UNPACK"YSI Script ID: %d", @_);
+	Debug_Info("YSI Script ID: %d", @_);
 	setproperty(8, YSIM_MASTER, masters | Master_ID());
-	Debug_Code1{if (!Master_ID()) Debug_Error(__COMPILER_UNPACK"MasterID not assigned");}
+	Debug_Code1{if (!Master_ID()) Debug_Error("MasterID not assigned");}
 	#if !defined YSI_NO_MASTER
 		if (Master_ID() && YSI_g_sModuleName[0])
 		{
@@ -492,7 +492,7 @@ public OnYSIInit()
 	#endif
 	// Make sure this is called before all other YSI initialisations, at least all the ones which
 	// use the master system.
-	CallLocalFunction(__COMPILER_UNPACK"OnMasterSystemInit", "i", Master_ID());
+	CallLocalFunction("OnMasterSystemInit", "i", Master_ID());
 	Master_OnYSIInit();
 	return 1;
 }
@@ -520,7 +520,7 @@ forward Master_OnCloseModules();
 
 public OnScriptExit()
 {
-	Debug_Print1(__COMPILER_UNPACK"MasterOnce_OnScriptExit called");
+	Debug_Print1("MasterOnce_OnScriptExit called");
 	#if !defined YSI_NO_MASTER
 		if (YSI_g_sModuleName[0])
 		{
@@ -531,7 +531,7 @@ public OnScriptExit()
 		if (!Script_IsFilterscript())
 		{
 			// First call - disable all modules.
-			CallRemoteFunction(__COMPILER_UNPACK"Master_OnCloseModules", YSI_EMPTY);
+			CallRemoteFunction("Master_OnCloseModules", YSI_EMPTY);
 		}
 		// Loop through everything this script is master for and call the remote function for it.
 		// EXCEPT for this script itself!
@@ -546,20 +546,20 @@ public OnScriptExit()
 			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
 			func[2] = YSI_g_sMasterData[i] >> 16,
 			CallLocalFunction(func, YSI_EMPTY);
-			Debug_Print5(__COMPILER_UNPACK"Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
+			Debug_Print5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
 			// The properties currently clear instantly, but that may not always be the case.
 		}
 	#endif
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~Master_ID()),
 	Master_OnScriptExit(),
-	CallRemoteFunction(__COMPILER_UNPACK"OnMasterSystemClose", "i", Master_ID());
+	CallRemoteFunction("OnMasterSystemClose", "i", Master_ID());
 	#if !defined YSI_NO_MASTER
 		YSI_gModuleShutdown = true;
 		if (!Script_IsFilterscript())
 		{
 			// Second call - pass off module data.
 			setproperty(8, YSI_EMPTY, YSIM_STRING + 2, YSI_EMPTY);
-			CallRemoteFunction(__COMPILER_UNPACK"Master_OnCloseModules", YSI_EMPTY);
+			CallRemoteFunction("Master_OnCloseModules", YSI_EMPTY);
 
 			// Finally shut down all the modules.
 			getproperty(8, YSI_EMPTY, YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
@@ -569,9 +569,9 @@ public OnScriptExit()
 			while ((next = strfind(YSI_UNSAFE_HUGE_STRING, ";", false, prev)) != -1)
 			{
 				YSI_UNSAFE_HUGE_STRING[next] = '\0';
-				format(Q@, sizeof (Q@), __COMPILER_UNPACK"unloadfs %s%s", YSI_g_scModulePath, YSI_UNSAFE_HUGE_STRING[prev]);
+				format(Q@, sizeof (Q@), "unloadfs %s%s", YSI_g_scModulePath, YSI_UNSAFE_HUGE_STRING[prev]);
 				SendRconCommand(Q@);
-				format(Q@, sizeof (Q@), __COMPILER_UNPACK"unloadfs ./%s%s", YSI_g_scModulePath, YSI_UNSAFE_HUGE_STRING[prev]);
+				format(Q@, sizeof (Q@), "unloadfs ./%s%s", YSI_g_scModulePath, YSI_UNSAFE_HUGE_STRING[prev]);
 				SendRconCommand(Q@);
 				prev = next + 1;
 			}
@@ -601,7 +601,7 @@ forward OnMasterSystemClose(id);
 #if !defined YSI_NO_MASTER
 	public Master_OnCloseModules()
 	{
-		Debug_Print1(__COMPILER_UNPACK"Master_OnCloseModules called");
+		Debug_Print1("Master_OnCloseModules called");
 		if (YSI_g_sModuleName[0])
 		{
 			// This is a module, and thus purely loaded for the sake of gamemodes.  Shut it down.
@@ -618,7 +618,7 @@ forward OnMasterSystemClose(id);
 				func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
 				func[2] = YSI_g_sMasterData[i] >> 16,
 				CallLocalFunction(func, YSI_EMPTY);
-				Debug_Print5(__COMPILER_UNPACK"Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
+				Debug_Print5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
 				// The properties currently clear instantly, but that may not always be the case.
 			}
 			if (prev)
@@ -627,7 +627,7 @@ forward OnMasterSystemClose(id);
 				getproperty(8, YSI_EMPTY, YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
 				prev = strlen(YSI_UNSAFE_HUGE_STRING);
 				strcat(YSI_UNSAFE_HUGE_STRING[prev], YSI_g_sModuleName);
-				strcat(YSI_UNSAFE_HUGE_STRING[prev], __COMPILER_UNPACK";");
+				strcat(YSI_UNSAFE_HUGE_STRING[prev], ";");
 				setproperty(8, YSI_EMPTY, YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
 				YSI_g_sMasterCount = 0;
 			}
@@ -638,23 +638,23 @@ forward OnMasterSystemClose(id);
 	{
 		if (existproperty(10, module))
 		{
-			Debug_Error(__COMPILER_UNPACK"Module \"%s\" already loaded.", module);
+			Debug_Error("Module \"%s\" already loaded.", module);
 		}
 		else
 		{
 			setproperty(8, YSI_EMPTY, YSIM_STRING + 1, module);
 			new
 				masters = getproperty(8, YSIM_MASTER);
-			format(Q@, sizeof (Q@), __COMPILER_UNPACK"loadfs %s%s", YSI_g_scModulePath, module);
+			format(Q@, sizeof (Q@), "loadfs %s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
-				Debug_Fatal(__COMPILER_UNPACK"Could not load module \"%s\"", module);
+				Debug_Fatal("Could not load module \"%s\"", module);
 				return false;
 			}
 			else
 			{
-				Debug_Print0(__COMPILER_UNPACK"Module \"%s\" loaded", module);
+				Debug_Print0("Module \"%s\" loaded", module);
 			}
 			deleteproperty(8, YSI_EMPTY, YSIM_STRING + 1);
 		}
@@ -670,7 +670,7 @@ forward OnMasterSystemClose(id);
 	{
 		if (!Master_IsModuleLoaded(module))
 		{
-			Debug_Warning(__COMPILER_UNPACK"Module \"%s\" not loaded.", module);
+			Debug_Warning("Module \"%s\" not loaded.", module);
 		}
 		#if _YSI_SAFE_STARTUP
 			// Free up a temporary filterscript slot for the swapping.  Handily,
@@ -684,16 +684,16 @@ forward OnMasterSystemClose(id);
 		setproperty(8, YSI_EMPTY, YSIM_STRING + 1, module);
 		new
 			masters = getproperty(8, YSIM_MASTER);
-		format(Q@, sizeof (Q@), __COMPILER_UNPACK"loadfs ./%s%s", YSI_g_scModulePath, module);
+		format(Q@, sizeof (Q@), "loadfs ./%s%s", YSI_g_scModulePath, module);
 		SendRconCommand(Q@);
 		if (masters == getproperty(8, YSIM_MASTER))
 		{
 			// Didn't load, try the alternate version.
-			format(Q@, sizeof (Q@), __COMPILER_UNPACK"loadfs %s%s", YSI_g_scModulePath, module);
+			format(Q@, sizeof (Q@), "loadfs %s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
-				Debug_Fatal(__COMPILER_UNPACK"Could not reload module \"%s\"", module);
+				Debug_Fatal("Could not reload module \"%s\"", module);
 				#if _YSI_SAFE_STARTUP
 					y_rconfix_Load();
 				#endif
@@ -701,19 +701,19 @@ forward OnMasterSystemClose(id);
 			}
 			else
 			{
-				format(Q@, sizeof (Q@), __COMPILER_UNPACK"unloadfs ./%s%s", YSI_g_scModulePath, module);
+				format(Q@, sizeof (Q@), "unloadfs ./%s%s", YSI_g_scModulePath, module);
 				SendRconCommand(Q@);
-				CallRemoteFunction(__COMPILER_UNPACK"Master_Reassert", YSI_EMPTY);
-				Debug_Print0(__COMPILER_UNPACK"Module \"%s\" (re)loaded.", module);
+				CallRemoteFunction("Master_Reassert", YSI_EMPTY);
+				Debug_Print0("Module \"%s\" (re)loaded.", module);
 			}
 		}
 		else
 		{
 			// Loaded a second version of the script.  Unload the first version.
-			format(Q@, sizeof (Q@), __COMPILER_UNPACK"unloadfs %s%s", YSI_g_scModulePath, module);
+			format(Q@, sizeof (Q@), "unloadfs %s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
-			CallRemoteFunction(__COMPILER_UNPACK"Master_Reassert", YSI_EMPTY);
-			Debug_Print0(__COMPILER_UNPACK"Module \"%s\" (re)loaded.", module);
+			CallRemoteFunction("Master_Reassert", YSI_EMPTY);
+			Debug_Print0("Module \"%s\" (re)loaded.", module);
 		}
 		return true;
 	}
@@ -724,25 +724,25 @@ forward OnMasterSystemClose(id);
 		{
 			new
 				masters = getproperty(8, YSIM_MASTER);
-			format(Q@, sizeof (Q@), __COMPILER_UNPACK"unloadfs %s%s", YSI_g_scModulePath, module);
+			format(Q@, sizeof (Q@), "unloadfs %s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
-			format(Q@, sizeof (Q@), __COMPILER_UNPACK"unloadfs ./%s%s", YSI_g_scModulePath, module);
+			format(Q@, sizeof (Q@), "unloadfs ./%s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
-			CallRemoteFunction(__COMPILER_UNPACK"Master_Reassert", YSI_EMPTY);
+			CallRemoteFunction("Master_Reassert", YSI_EMPTY);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
-				Debug_Fatal(__COMPILER_UNPACK"Could not unload module \"%s\"", module);
+				Debug_Fatal("Could not unload module \"%s\"", module);
 				return false;
 			}
 			else
 			{
-				Debug_Print0(__COMPILER_UNPACK"Module \"%s\" unloaded.", module);
+				Debug_Print0("Module \"%s\" unloaded.", module);
 				return true;
 			}
 		}
 		else
 		{
-			Debug_Error(__COMPILER_UNPACK"Module \"%s\" not loaded.", module);
+			Debug_Error("Module \"%s\" not loaded.", module);
 			return false;
 		}
 	}
@@ -758,10 +758,10 @@ forward OnMasterSystemClose(id);
 
 	public OnRconCommand(cmd[])
 	{
-		Debug_Print1(__COMPILER_UNPACK"MasterOnce_OnRconCommand called");
+		Debug_Print1("MasterOnce_OnRconCommand called");
 		if (!Script_IsFilterscript())
 		{
-			if (!strcmp(cmd, __COMPILER_UNPACK"loadmodule ", true, 11))
+			if (!strcmp(cmd, "loadmodule ", true, 11))
 			{
 				if (cmd[11])
 				{
@@ -769,11 +769,11 @@ forward OnMasterSystemClose(id);
 				}
 				else
 				{
-					Debug_Fatal(__COMPILER_UNPACK"No module specified for \"loadmodule\"");
+					Debug_Fatal("No module specified for \"loadmodule\"");
 				}
 				return 1;
 			}
-			else if (!strcmp(cmd, __COMPILER_UNPACK"unloadmodule ", true, 13))
+			else if (!strcmp(cmd, "unloadmodule ", true, 13))
 			{
 				if (cmd[13])
 				{
@@ -781,11 +781,11 @@ forward OnMasterSystemClose(id);
 				}
 				else
 				{
-					Debug_Fatal(__COMPILER_UNPACK"No module specified for \"unloadmodule\"");
+					Debug_Fatal("No module specified for \"unloadmodule\"");
 				}
 				return 1;
 			}
-			else if (!strcmp(cmd, __COMPILER_UNPACK"reloadmodule ", true, 13))
+			else if (!strcmp(cmd, "reloadmodule ", true, 13))
 			{
 				if (cmd[13])
 				{
@@ -793,7 +793,7 @@ forward OnMasterSystemClose(id);
 				}
 				else
 				{
-					Debug_Fatal(__COMPILER_UNPACK"No module specified for \"reloadmodule\"");
+					Debug_Fatal("No module specified for \"reloadmodule\"");
 				}
 				return 1;
 			}
@@ -852,7 +852,7 @@ public Master_Reassert()
 
 stock _Master_Relinquish(const library[])
 {
-	Debug_Print4(__COMPILER_UNPACK"_Master_Relinquish called: %s %d", library, YSI_g_sMasterCount);
+	Debug_Print4("_Master_Relinquish called: %s %d", library, YSI_g_sMasterCount);
 	switch (YSI_g_sMasterCount)
 	{
 		case 0: return;
@@ -879,13 +879,13 @@ stock _Master_Relinquish(const library[])
 
 static stock _Master_Rename(const name[])
 {
-	Debug_Print3(__COMPILER_UNPACK"_Master_Rename called: \"%s\"", name);
+	Debug_Print3("_Master_Rename called: \"%s\"", name);
 	// Set the name of the function at `index` back to what it should be.
 	new
 		entry;
 	if (AMX_GetPublicEntry(0, entry, name, true))
 	{
-		Debug_Print5(__COMPILER_UNPACK"_Master_Rename: found %d", entry);
+		Debug_Print5("_Master_Rename: found %d", entry);
 		new
 			len = strlen(name);
 		// These function names are stored in C order, not packed string order.
@@ -910,7 +910,7 @@ static stock _Master_Rename(const name[])
 
 static stock _Master_Unname(const name[])
 {
-	Debug_Print3(__COMPILER_UNPACK"_Master_Unname called: \"%s\"", name);
+	Debug_Print3("_Master_Unname called: \"%s\"", name);
 	// Rename the public function to exactly the same thing with the last letter
 	// increased by one.  This ensures that it can't be called, but keeps its
 	// position in the binary tree (so that we don't need to sort the public
@@ -934,7 +934,7 @@ static stock _Master_Unname(const name[])
 			#emit STOR.S.pri addr
 			new str[FUNCTION_LENGTH];
 			AMX_ReadString(addr, str);
-			Debug_Print5(__COMPILER_UNPACK"_Master_Unname: Comparing \"%s\" and \"%s\" to %d", name, Unpack(str), len);
+			Debug_Print5("_Master_Unname: Comparing \"%s\" and \"%s\" to %d", name, Unpack(str), len);
 			// Check if the strings are identical.
 			if (strlen(str) == len)
 			{
@@ -949,7 +949,7 @@ static stock _Master_Unname(const name[])
 					// take the place of the next function and be called instead
 					// of it, when neither should be called.
 					strunpack(str, str);
-					Debug_Fatal(__COMPILER_UNPACK"_Master_Unname: Function \"%s\" is adjacent to \"%s\"; cannot hide it.", name, str);
+					Debug_Fatal("_Master_Unname: Function \"%s\" is adjacent to \"%s\"; cannot hide it.", name, str);
 					return;
 				}
 			}
@@ -972,7 +972,7 @@ static stock _Master_Unname(const name[])
 		#emit INC.pri
 		#emit SREF.S.pri entry
 	}
-	Debug_Code1{else Debug_Error(__COMPILER_UNPACK"_Master_Unname: Could not function \"%s\"", name);}
+	Debug_Code1{else Debug_Error("_Master_Unname: Could not function \"%s\"", name);}
 }
 
 stock _Master_UnnameAll(master)
@@ -1006,9 +1006,9 @@ stock _Master_RenameAll(master)
 		{
 			buffer[0] = 0x40404040, // '@@@@',
 			strunpack(buffer, buffer);
-			Debug_Print6(__COMPILER_UNPACK"_Master_RenameAll: Renaming to \"%s\"", buffer);
+			Debug_Print6("_Master_RenameAll: Renaming to \"%s\"", buffer);
 			++buffer[strlen(buffer) - 1];
-			Debug_Print6(__COMPILER_UNPACK"_Master_RenameAll: Renaming from \"%s\"", buffer);
+			Debug_Print6("_Master_RenameAll: Renaming from \"%s\"", buffer);
 			_Master_Rename(buffer[2]);
 		}
 	}
@@ -1026,20 +1026,20 @@ enum e_YSIM_GET_TYPE
  *//*------------------------------------------------------------------------**/
 
 static stock const
-	YSI_g_scYSIM_VERSION[] = __COMPILER_UNPACK"YSIM_VERSION%s";
+	YSI_g_scYSIM_VERSION[] = "YSIM_VERSION%s";
 
 stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 {
-	Debug_Print2(__COMPILER_UNPACK"_Master_Get called");
+	Debug_Print2("_Master_Get called");
 	new
 		e_YSIM_GET_TYPE:ret = e_YSIM_GET_TYPE_NO_CONTEST;
 	new
 		master = getproperty(9, library);
-	Debug_Print3(__COMPILER_UNPACK"E_YSIM_GET_TYPE:_Master_Get called: \"%s\", %i, %d", library, _:force, master);
+	Debug_Print3("E_YSIM_GET_TYPE:_Master_Get called: \"%s\", %i, %d", library, _:force, master);
 	if (master)
 	{
-		Debug_Print4(__COMPILER_UNPACK"_Master_Get: Prop exists: %d %d", master, Master_ID());
-		Debug_Print4(__COMPILER_UNPACK"_Master_Get: Prop set");
+		Debug_Print4("_Master_Get: Prop exists: %d %d", master, Master_ID());
+		Debug_Print4("_Master_Get: Prop set");
 		if (master == Master_ID())
 		{
 			// Nothing has changed.
@@ -1075,18 +1075,18 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 			return e_YSIM_GET_TYPE_NOT_GOT;
 		}
 	}
-	Debug_Print4(__COMPILER_UNPACK"_Master_Get: Get master.");
+	Debug_Print4("_Master_Get: Get master.");
 	setproperty(9, library, Master_ID());
-	Debug_Print4(__COMPILER_UNPACK"_Master_Get: Set master.");
+	Debug_Print4("_Master_Get: Set master.");
 	// Add this library to the list.  The list is designed to only deal with
 	// two or three character master names now!
 	if (YSI_g_sMasterCount < MAX_MASTERS)
 	{
-		Debug_Print4(__COMPILER_UNPACK"_Master_Get: Set master string %s = %d", library, library[0] | (library[1] << 8) | (library[2] << 16));
+		Debug_Print4("_Master_Get: Set master string %s = %d", library, library[0] | (library[1] << 8) | (library[2] << 16));
 		YSI_g_sMasterData[YSI_g_sMasterCount++] = library[0] | (library[1] << 8) | (library[2] << 16);
-		Debug_Print4(__COMPILER_UNPACK"_Master_Get: Set master string.");
+		Debug_Print4("_Master_Get: Set master string.");
 	}
-	Debug_Code1{else Debug_Error(__COMPILER_UNPACK"Too many master scripts");}
+	Debug_Code1{else Debug_Error("Too many master scripts");}
 	return ret;
 }
 

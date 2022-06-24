@@ -148,7 +148,6 @@ static stock
 
 stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 {
-	Debug_Print3("Hooks_MakeLongName called: %s, %d", name, name[0]);
 	new
 		end = 0,
 		i = 0,
@@ -178,7 +177,7 @@ stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 			Debug_Print5("Found hook name replacement: %d, %s", pos, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT]);
 			// Found a complete word according to CamelCase rules.
 			strdel(name, pos + 1, end),
-			name[pos] = 0x00800000 | idx;
+			name[pos] = 0x80000000 | idx;
 		}
 	}
 	// All the replacements have been found and marked.  Now actually insert.
@@ -190,14 +189,14 @@ stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 		while (name[++pos])
 		{
 			Debug_Print7("Hooks_MakeLongName main loop: [%d] = 0x%04x%04x \"%s\"", pos, name[pos] >>> 16, name[pos] & 0xFFFF, name);
-			if (name[pos] >= 0x00800000)
+			if (name[pos] < '\0')
 			{
 				// Negative number instead of a character.  Used to indicate
 				// where a replacement should be inserted.  They are not done
 				// inline in the loop above because some replacements may be
 				// contained within others - we don't want those to be both done
 				// within each other.
-				Debug_Print5("Inserting hook name replacement: %d, %s", pos, YSI_g_sReplacements[name[pos] & ~0x00800000][E_HOOK_NAME_REPLACEMENT_LONG]);
+				Debug_Print5("Inserting hook name replacement: %d, %s", pos, YSI_g_sReplacements[name[pos] & ~0x80000000][E_HOOK_NAME_REPLACEMENT_LONG]);
 				Debug_Print6("Current character: 0x%04x%04x", name[pos] >>> 16, name[pos] & 0xFFFF);
 				// It took me ages to find a bug in this code.  For some reason,
 				// "strins" was packing the result.  This was because the value
@@ -205,7 +204,7 @@ stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 				// indication that the string was packed.  I fixed it by moving
 				// the assignment to "name[pos]" above "strins".  So while the
 				// two lines look independent, they aren't!
-				i = name[pos] & ~0x00800000,
+				i = name[pos] & ~0x80000000,
 				name[pos] = YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG];
 				// Use the original "strins" - we know this string is not
 				// packed, but it might sometimes look like it is.  The "fixed"
@@ -236,7 +235,6 @@ stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 
 stock Hooks_MakeShortName(name[Y_HOOKS_MAX_NAME])
 {
-	Debug_Print4("Hooks_MakeShortName called: %s, %d", name, name[0]);
 	// Easy one.
 	new
 		len = 0,
@@ -267,7 +265,7 @@ stock Hooks_MakeShortName(name[Y_HOOKS_MAX_NAME])
 	if (!strcmp(name, "OnFilterScriptInit"))
 	{
 		// Only needs renaming in filterscripts.
-		name = __COMPILER_UNPACK"OnScriptInit@C";
+		name = "OnScriptInit@C";
 		len = 14;
 	}
 #endif
@@ -275,7 +273,7 @@ stock Hooks_MakeShortName(name[Y_HOOKS_MAX_NAME])
 	if (!strcmp(name, "OnGameModeInit"))
 	{
 		// Only needs renaming in gamemodes.
-		name = __COMPILER_UNPACK"OnScriptInit@E";
+		name = "OnScriptInit@E";
 		len = 14;
 	}
 #endif
@@ -291,7 +289,7 @@ stock Hooks_MakeShortName(name[Y_HOOKS_MAX_NAME])
 
 _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 {
-	Debug_Print4("Hooks_IsolateName called: %s, %d", name, name[0]);
+	Debug_Print4("Hooks_IsolateName called");
 	new
 		pos = strfind(name, "@", false, 4);
 	// Make "pos" a legal value inside the error message.
@@ -396,7 +394,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 	{
 		strcat(lfunc, name),
 		Hooks_MakeShortName(lfunc);
-		Debug_Print5("Hooks_GetPreHooks: search = %s", lfunc);
+		Debug_Print5("Hooks_GetPreHooks: search = %s", Unpack(lfunc));
 		Debug_Code1{new oc = count;}
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
 		Debug_Code1{if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[oc] + 4) + AMX_BASE_ADDRESS, buffer); strunpack(buffer, buffer); Debug_Print5("Hooks_GetPreHooks: found = %s", buffer); }}
@@ -795,7 +793,7 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
 {
 	Debug_Print4("Hooks_GetDefaultReturn called");
 	new
-		dest[Y_HOOKS_MAX_NAME] = __COMPILER_UNPACK"@y_H";
+		dest[Y_HOOKS_MAX_NAME] = "@y_H";
 	strcat(dest, name);
 	Hooks_MakeShortName(dest);
 	new
@@ -1278,11 +1276,13 @@ public OnCodeInit()
 			Hooks_InvalidateName(publicTableEntry);
 		Hooks_SortPublics();
 		Debug_Print1("Hooks_OnCodeInit chain");
+		// Dump the generated callbacks for debugging.
+		//DisasmDump("YSI_TEST.asm");
 	}
 
-	//#if defined Hooks_OnCodeInit
-	//	Hooks_OnCodeInit();
-	//#endif
+	#if defined Hooks_OnCodeInit
+		Hooks_OnCodeInit();
+	#endif
 	Debug_Print1("Hooks_OnCodeInit end");
 	if (Server_JITExists())
 		Hooks_RepairJITInit();
