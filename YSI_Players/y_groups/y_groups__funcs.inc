@@ -557,6 +557,7 @@ GGLOBAL__ Iter_Func@Group_...(start, Group:g)
 	return -1;
 }
 
+// `foreach` takes the size of these variables, so they must remain `stock`
 stock const
 	F@z:_GROUP_MAKE_NAME<Iterator@Group_...> = F@z:0,
 	_GROUP_MAKE_NAME<iterstart@Group_...> = -1;
