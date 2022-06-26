@@ -109,7 +109,7 @@ Optional plugins:
 #include "..\..\YSI_Coding\y_va"
 
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        43
+#define _Y_ITERATE_LOCAL_VERSION        44
 
 #if __Pawn != 0x030A
 	#define NO_CUSTOM_WARNINGS
@@ -325,10 +325,6 @@ Optional plugins:
 
 #include "y_foreach_impl"
 #include "y_foreach_yield"
-
-#if _FOREACH_VEHICLES || _FOREACH_ACTORS
-	#include "..\..\YSI_Coding\y_remote"
-#endif
 
 CHAIN_HOOK(Iter)
 #undef CHAIN_ORDER

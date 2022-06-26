@@ -650,6 +650,11 @@ stock Iter_All_Internal(const array[], size, value)
 	#endif
 #endif
 
+static stock const
+	YSI_gsIter_VehicleDo[] = "Iter_VehicleDo",
+	YSI_gsIter_ActorDo[] = "Iter_ActorDo";
+	YSI_gsii[] = "ii";
+
 /*
 
            db                                                           
@@ -664,7 +669,9 @@ stock Iter_All_Internal(const array[], size, value)
 */
 
 #if _FOREACH_ACTORS
-	REMOTE_FUNC__ stock void:Iter_ActorDo(bool:add, actorid)
+	forward void:Iter_ActorDo(bool:add, actorid);
+
+	public void:Iter_ActorDo(bool:add, actorid)
 	{
 		// Because there may be multiple scripts running, we need to tell all of
 		// them when an actor is created or destroyed.
@@ -678,7 +685,7 @@ stock Iter_All_Internal(const array[], size, value)
 	{
 		new
 			ret = CreateActor(modelid, X, Y, Z, Rotation);
-		broadcastfunc Iter_ActorDo(true, ret);
+		CallRemoteFunction(YSI_gsIter_ActorDo, YSI_gsii, true, ret);
 		#if _FOREACH_LOCALS
 			Iter_Add(LocalActor, ret);
 		#endif
@@ -694,7 +701,7 @@ stock Iter_All_Internal(const array[], size, value)
 	
 	stock Iter_DestroyActor(actorid)
 	{
-		broadcastfunc Iter_ActorDo(false, actorid);
+		CallRemoteFunction(YSI_gsIter_ActorDo, YSI_gsii, false, actorid);
 		#if _FOREACH_LOCALS
 			Iter_Remove(LocalActor, actorid);
 		#endif
@@ -762,7 +769,10 @@ stock Iter_All_Internal(const array[], size, value)
 #endif
 
 #if _FOREACH_VEHICLES
-	REMOTE_FUNC__ stock void:Iter_VehicleDo(bool:add, vehicleid)
+
+	forward void:Iter_VehicleDo(bool:add, vehicleid);
+	
+	public void:Iter_VehicleDo(bool:add, vehicleid)
 	{
 		// Because there may be multiple scripts running, we need to tell all of
 		// them when a vehicle is created or destroyed.
@@ -784,7 +794,7 @@ stock Iter_All_Internal(const array[], size, value)
 		#endif
 		if (ret)
 		{
-			broadcastfunc Iter_VehicleDo(true, ret);
+			CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gsii, true, ret);
 			#if _FOREACH_LOCALS
 				Iter_Add(LocalVehicle, ret);
 			#endif
@@ -805,7 +815,7 @@ stock Iter_All_Internal(const array[], size, value)
 			ret = AddStaticVehicle(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2);
 		if (ret)
 		{
-			broadcastfunc Iter_VehicleDo(true, ret);
+			CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gsii, true, ret);
 			#if _FOREACH_LOCALS
 				Iter_Add(LocalVehicle, ret);
 			#endif
@@ -832,7 +842,7 @@ stock Iter_All_Internal(const array[], size, value)
 		#endif
 		if (ret)
 		{
-			broadcastfunc Iter_VehicleDo(true, ret);
+			CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gsii, true, ret);
 			#if _FOREACH_LOCALS
 				Iter_Add(LocalVehicle, ret);
 			#endif
@@ -849,7 +859,7 @@ stock Iter_All_Internal(const array[], size, value)
 	
 	stock Iter_DestroyVehicle(vehicleid)
 	{
-		broadcastfunc Iter_VehicleDo(false, vehicleid);
+		CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gsii, false, vehicleid);
 		#if _FOREACH_LOCALS
 			Iter_Remove(LocalVehicle, vehicleid);
 		#endif
