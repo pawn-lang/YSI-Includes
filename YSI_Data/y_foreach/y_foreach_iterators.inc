@@ -652,7 +652,7 @@ stock Iter_All_Internal(const array[], size, value)
 
 static stock const
 	YSI_gsIter_VehicleDo[] = "Iter_VehicleDo",
-	YSI_gsIter_ActorDo[] = "Iter_ActorDo";
+	YSI_gsIter_ActorDo[] = "Iter_ActorDo",
 	YSI_gsii[] = "ii";
 
 /*
