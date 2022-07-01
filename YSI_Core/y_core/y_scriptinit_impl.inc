@@ -734,6 +734,9 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
 			Server_FinishIntroPart();
 		#endif
+		#if defined ScriptInit_OnYSIInit
+			ScriptInit_OnYSIInit();
+		#endif
 		#if !defined YSI_NO_MODE_CACHE
 			E_SCRIPTINIT_STATE
 				tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
@@ -965,9 +968,6 @@ public OnJITCompile()
 				#if _YSI_SAFE_STARTUP
 					Server_FinishIntroMessage();
 				#endif
-				#if defined ScriptInit_OnYSIInit
-					ScriptInit_OnYSIInit();
-				#endif
 				ScriptInit_PreInitFuncs_();
 				CallLocalFunction("OnScriptInit", YSI_EMPTY);
 				ScriptInit_PostInitFuncs_();
@@ -1135,9 +1135,6 @@ ScriptInit_Purge_retry:
 					YVers_StartCheck();
 					#if _YSI_SAFE_STARTUP
 						Server_FinishIntroMessage();
-					#endif
-					#if defined ScriptInit_OnYSIInit
-						ScriptInit_OnYSIInit();
 					#endif
 					ScriptInit_PreInitFuncs_();
 					CallLocalFunction("OnScriptInit", YSI_EMPTY);
