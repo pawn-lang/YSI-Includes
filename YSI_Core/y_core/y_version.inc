@@ -511,7 +511,7 @@ stock bool:Server_CrashDetectExists()
 				YSI_EMPTY,
 				"          github.com/Y-Less/          ",
 				"       samp-plugin-crashdetect/",
-				YSI_EMPTY,
+				YSI_EMPTY
 			);
 		}
 		else
