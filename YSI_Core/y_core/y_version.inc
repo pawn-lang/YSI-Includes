@@ -508,10 +508,10 @@ stock bool:Server_CrashDetectExists()
 				"     long-call controls have been",
 				"  detected.  Get the unofficial fixed",
 				"            release from:",
-				" ",
+				YSI_EMPTY,
 				"          github.com/Y-Less/          ",
 				"       samp-plugin-crashdetect/",
-				" ",
+				YSI_EMPTY,
 			);
 		}
 		else
