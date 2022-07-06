@@ -236,9 +236,7 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 			ip[16];
 		GetPlayerIp(playerid, ip, sizeof (ip)),
 		YSI_gPlayerIP[playerid] = IPToInt(ip);
-		#if defined _y_utils_OnPlayerConnect
-			_y_utils_OnPlayerConnect(playerid);
-		#endif
+		ScriptInit_OnPlayerConnect(playerid);
 		return 1;
 	}
 
@@ -247,18 +245,13 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 	#else
 		#define _ALS_OnPlayerConnect
 	#endif
-	#define OnPlayerConnect _y_utils_OnPlayerConnect
-
-	#if defined _y_utils_OnPlayerConnect
-		forward _y_utils_OnPlayerConnect(playerid);
-	#endif
+	#define OnPlayerConnect(%0) CHAIN_PUBLIC:ScriptInit_OnPlayerConnect(%0)
+	CHAIN_FORWARD:ScriptInit_OnPlayerConnect(playerid) = 1;
 
 	public OnPlayerDisconnect(playerid, reason)
 	{
+		ScriptInit_OnPlayerDisconnect(playerid, reason);
 		YSI_gPlayerIP[playerid] = -1;
-		#if defined _y_utils_OnPlayerDisconnect
-			_y_utils_OnPlayerDisconnect(playerid, reason);
-		#endif
 		return 1;
 	}
 
@@ -267,11 +260,8 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 	#else
 		#define _ALS_OnPlayerDisconnect
 	#endif
-	#define OnPlayerDisconnect _y_utils_OnPlayerDisconnect
-
-	#if defined _y_utils_OnPlayerDisconnect
-		forward _y_utils_OnPlayerDisconnect(playerid, reason);
-	#endif
+	#define OnPlayerDisconnect(%0) CHAIN_PUBLIC:ScriptInit_OnPlayerDisconnect(%0)
+	CHAIN_FORWARD:ScriptInit_OnPlayerDisconnect(playerid, reason) = 1;
 
 	/*-------------------------------------------------------------------------*//**
 	 * <param name="playerid">Player to get IP of.</param>
