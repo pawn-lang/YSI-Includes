@@ -33,7 +33,7 @@
 #elseif Y_COMPILERDATA_WARNING == 1
 	#warning Could not determine `sNAMEMAX`, falling back on 31.
 #elseif Y_COMPILERDATA_WARNING == 2
-	#warning Semicolons were disabled.  Enabling them YSI requires them.
+	#warning Semicolons were disabled (`-;-`).  Re-enabling them as YSI requires them.
 #elseif Y_COMPILERDATA_WARNING == 3
 	#warning YSI_MAX_STRING changed.  This may require explicit changes (but they will error for you).
 #else
