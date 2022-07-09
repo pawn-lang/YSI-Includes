@@ -14,13 +14,13 @@
 
 #define @hook(%0)%1(%2) forward UNIQUE_FUNCTION<@yH_%1@...>();ADDRESSOF_MAKE_CALL__%1(%2)_Hooks_AddPublicHook(,_:"\"%1\"",%0);static UNIQUE_FUNCTION<_Hy@%1@...>(%2)
 
-#define _Hooks_AddPublicHook(%0?(((%1(%2))%3)%4):%5,%6,"%7",%9false) _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%7(%2))%3)%4):%5,"\"%7\"")
+#define _Hooks_AddPublicHook(%0?(((%1(%2))%3)%4):%5,%6,%9false,"%7") _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%7(%2))%3)%4):%5)
 
-stock _Hooks_AddPublicHook(address, const name[], const hooked[] = "", bool:callback = true)
+stock _Hooks_AddPublicHook(address, const name[], bool:callback = true, const hooked[] = "")
 {
 }
 
-stock _Hooks_AddFuncHook(address, hooked, const name[])
+stock _Hooks_AddFuncHook(address, hooked)
 {
 }
 
