@@ -136,3 +136,6 @@ Optional plugins:
 	#define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)
 #endif
 
+// Decorator syntax.
+#define @hook(%0)%1(%2) 
+
