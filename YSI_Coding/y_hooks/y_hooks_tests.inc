@@ -1066,3 +1066,28 @@ TEST__ y_hooks_native()
 	ASSERT_EQ(YSI_g_sMinC, 70);
 }
 
+@hook("OnNewHooks") OnNewHooks1(playerid)
+{
+	#pragma unused playerid
+	YSI_g_sValue += 4;
+}
+
+@hook("OnNewHooks") OnNewHooks2(playerid)
+{
+	#pragma unused playerid
+	YSI_g_sValue += 8;
+}
+
+@hook() OnNewHooks(playerid)
+{
+	#pragma unused playerid
+	YSI_g_sValue += 2;
+}
+
+TEST__ OnNewHooks()
+{
+	YSI_g_sValue = 1;
+	CallLocalFunction("OnNewHooks", "i", 0);
+	ASSERT_EQ(YSI_g_sValue, 15);
+}
+
