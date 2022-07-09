@@ -1066,13 +1066,13 @@ TEST__ y_hooks_native()
 	ASSERT_EQ(YSI_g_sMinC, 70);
 }
 
-@hook(.hooked = "OnNewHooks") OnNewHooks1(playerid)
+@hook(.callback = "OnNewHooks") OnNewHooks1(playerid)
 {
 	#pragma unused playerid
 	YSI_g_sValue += 4;
 }
 
-@hook(_, "OnNewHooks") OnNewHooks2(playerid)
+@hook("OnNewHooks") OnNewHooks2(playerid)
 {
 	#pragma unused playerid
 	YSI_g_sValue += 8;
