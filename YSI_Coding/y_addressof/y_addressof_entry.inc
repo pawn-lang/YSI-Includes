@@ -43,6 +43,8 @@ stock _Hooks_AddPublicHook(address, const name[], const callback[] = "", order =
 	// If `fallback` is set it was `hook` not `hook public`, so doesn't have
 	// `continue`.  This is easy code to fall back on.  I say it is "easy",
 	// I've not actually written it yet...
+
+	// TODO: `order` isn't actually used yet.
 }
 
 stock _Hooks_AddFuncHook(address, hooked, order = cellmin)

@@ -561,7 +561,7 @@ public y_hooks_Invalidate1() {}
 TEST__ y_hooks_Invalidate1()
 {
 	ASSERT_NE(funcidx("y_hooks_Invalidate1"), -1);
-	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate1"));
+	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate1"));
 	Hooks_SortPublics();
 	ASSERT_EQ(funcidx("y_hooks_Invalidate1"), -1);
 }
@@ -580,8 +580,8 @@ TEST__ y_hooks_Invalidate23()
 	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base0, count0);
 	ASSERT_NE(funcidx("y_hooks_Invalidate2"), -1);
 	ASSERT_NE(funcidx("y_hooks_Invalidate3"), -1);
-	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate2"));
-	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate3"));
+	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate2"));
+	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate3"));
 	Hooks_SortPublics();
 	ASSERT_EQ(funcidx("y_hooks_Invalidate2"), -1);
 	ASSERT_EQ(funcidx("y_hooks_Invalidate3"), -1);
@@ -1066,28 +1066,28 @@ TEST__ y_hooks_native()
 	ASSERT_EQ(YSI_g_sMinC, 70);
 }
 
-@hook(.callback = "OnNewHooks") OnNewHooks1(playerid)
-{
-	#pragma unused playerid
-	YSI_g_sValue += 4;
-}
-
-@hook("OnNewHooks") OnNewHooks2(playerid)
-{
-	#pragma unused playerid
-	YSI_g_sValue += 8;
-}
-
-@hook() OnNewHooks(playerid)
-{
-	#pragma unused playerid
-	YSI_g_sValue += 2;
-}
-
-TEST__ OnNewHooks()
-{
-	YSI_g_sValue = 1;
-	CallLocalFunction("OnNewHooks", "i", 0);
-	ASSERT_EQ(YSI_g_sValue, 15);
-}
+//@hook(.callback = "OnNewHooks") OnNewHooks1(playerid)
+//{
+//	#pragma unused playerid
+//	YSI_g_sValue += 4;
+//}
+//
+//@hook("OnNewHooks") OnNewHooks2(playerid)
+//{
+//	#pragma unused playerid
+//	YSI_g_sValue += 8;
+//}
+//
+//@hook() OnNewHooks(playerid)
+//{
+//	#pragma unused playerid
+//	YSI_g_sValue += 2;
+//}
+//
+//TEST__ OnNewHooks()
+//{
+//	YSI_g_sValue = 1;
+//	CallLocalFunction("OnNewHooks", "i", 0);
+//	ASSERT_EQ(YSI_g_sValue, 15);
+//}
 

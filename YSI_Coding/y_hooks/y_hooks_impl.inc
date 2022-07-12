@@ -348,7 +348,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 			// }
 			// Remove this public from the publics table.  Means that future public
 			// function calls will be faster by having a smaller search space.
-			Hooks_InvalidateName(publicTableEntry);
+			Hooks_InvalidatePointer(publicTableEntry);
 		}
 	}
 	// Sort the preload libraries.
@@ -592,6 +592,11 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 		tmpName[Y_HOOKS_MAX_NAME];
 	while ((idx = AMX_GetPublicEntryPrefix(idx, hooks[count], _A<@yH_>)))
 	{
+		if (AMX_Read(AMX_BASE_ADDRESS + hooks[count]) == 0)
+		{
+			// Not a valid pointer, previously removed.
+			continue;
+		}
 		AMX_GetStringFromEntry(hooks[count], tmpName),
 		len = strlen(tmpName),
 		strunpack(tmpName, tmpName),
@@ -601,7 +606,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 		Debug_Print6("Hooks_GetAllHooks found: %s ?= %s %d", name, tmpName, idx);
 		if (!strcmp(tmpName, name))
 		{
-			Hooks_InvalidateName(hooks[count]);
+			Hooks_InvalidatePointer(hooks[count]);
 			// Record how much consecutive space we have to play with in the
 			// AMX.  I'm slightly concerned that this code assumes that the
 			// hooks are all consecutive, when they might not be thanks to
@@ -627,6 +632,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 {
 	Debug_Print4("Hooks_DoAllHooks called");
+	printf("Hooks_DoAllHooks called");
 	// Get the preloaders.
 	new
 		precount = 0,
@@ -635,12 +641,20 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	// Main loop
 	new
 		name[FUNCTION_LENGTH],
+		entry,
 		idx = 0;
 	// Get the next hook type.
-	while ((idx = AMX_GetPublicNamePrefix(idx, name, _A<@yH_>)))
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
 	{
-		// Collect all the hooks of this function, and rewrite the call code.
-		Hooks_Collate(preloads, precount, name, idx - 1);
+		printf("entry: %d, %d", entry, idx);
+//		if (AMX_Read(AMX_BASE_ADDRESS + entry) == 0)
+//		{
+//			// Not a valid pointer, previously removed.
+//			continue;
+//		}
+//		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(AMX_BASE_ADDRESS + entry + 4), name);
+//		// Collect all the hooks of this function, and rewrite the call code.
+//		Hooks_Collate(preloads, precount, name, idx - 1);
 	}
 }
 
@@ -747,10 +761,9 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[Y_HOOKS_MAX_NAME], const hooks[], 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_InvalidateName(tableEntry)
+_Y_HOOKS_STATIC Hooks_InvalidatePointer(tableEntry)
 {
-	Debug_Print4("Hooks_InvalidateName called");
-	tableEntry = AMX_Read(tableEntry + 4);
+	Debug_Print4("Hooks_InvalidatePointer called");
 	AMX_Write(AMX_BASE_ADDRESS + tableEntry, 0);
 }
 
@@ -1008,9 +1021,27 @@ _Y_HOOKS_STATIC bool:Hooks_ComparePublics(idx0, idx1)
 	Debug_Print4("Hooks_ComparePublics called");
 	idx0 = idx0 * 8 + AMX_HEADER_PUBLICS;
 	idx1 = idx1 * 8 + AMX_HEADER_PUBLICS;
+	if (AMX_Read(idx0) == 0)
+	{
+		// First pointer has no address, this order is fine.
+		return false;
+	}
 	new
 		addr0 = AMX_BASE_ADDRESS + AMX_Read(idx0 + 4),
-		addr1 = AMX_BASE_ADDRESS + AMX_Read(idx1 + 4),
+		addr1 = AMX_BASE_ADDRESS + AMX_Read(idx1 + 4);
+	if (AMX_Read(idx1) == 0)
+	{
+		// Second pointer has no address, partially swap them.  We don't need
+		// any temp variables here because we don't care about half the values.
+		return
+			addr0 = AMX_Read(addr0),
+			AMX_Write(addr1, addr0),
+			addr0 = AMX_Read(idx0),
+			AMX_Write(idx1, addr0),
+			AMX_Write(idx0, 0),
+			true;
+	}
+	new
 		s0,
 		s1,
 		cmp;
@@ -1110,39 +1141,39 @@ _Y_HOOKS_STATIC bool:Hooks_ComparePublics(idx0, idx1)
 
 _Y_HOOKS_STATIC Hooks_SortPublics()
 {
-	Debug_Print4("Hooks_SortPublics called");
-	// Count the number of still active functions.
-	YSI_g_sInitPublicDiff = Hooks_CountInvalidPublics() * 8;
-	new
-		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
-	// Now I need to SORT the functions, and I have honestly no idea how to do
-	// that.  Fortunately I don't actually need to move the strings themselves
-	// around as they just sit nicely in the nametable; I only need to sort the
-	// pointers.
-	for (new i = 1; i < oldCount; ++i)
-	{
-		for (new j = i; j > 0 && Hooks_ComparePublics(j - 1, j); --j)
-		{
-			// Do nothing extra.
-		}
-	}
-	// Move the start address UP to reduce the VM's search space.
-	if (YSI_g_sInitPublicDiff)
-	{
-		// Update stored values in y_amx so they reflect the new structure.
-		if (!Server_JITExists() || YSI_g_sSortedOnce)
-		{
-			oldCount = AMX_Read(AMX_BASE_ADDRESS + 32),
-			AMX_Write(AMX_BASE_ADDRESS + 32, oldCount + YSI_g_sInitPublicDiff),
-			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
-			ResetStaticAmxHeader(),
-			YSI_g_sSortedOnce = true;
-		}
-	}
-	// TODO: Inform the fixes2 plugin of the change.  That stores indexes, not
-	// addresses so it needs to update itself (somehow - I don't actually know
-	// HOW it will do this...)  Probably inform it first, store the addresses,
-	// then inform it again to track down and replace those addresses.
+//	Debug_Print4("Hooks_SortPublics called");
+//	// Count the number of still active functions.
+//	YSI_g_sInitPublicDiff = Hooks_CountInvalidPublics() * 8;
+//	new
+//		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
+//	// Now I need to SORT the functions, and I have honestly no idea how to do
+//	// that.  Fortunately I don't actually need to move the strings themselves
+//	// around as they just sit nicely in the nametable; I only need to sort the
+//	// pointers.
+//	for (new i = 1; i < oldCount; ++i)
+//	{
+//		for (new j = i; j > 0 && Hooks_ComparePublics(j - 1, j); --j)
+//		{
+//			// Do nothing extra.
+//		}
+//	}
+//	// Move the start address UP to reduce the VM's search space.
+//	if (YSI_g_sInitPublicDiff)
+//	{
+//		// Update stored values in y_amx so they reflect the new structure.
+//		if (!Server_JITExists() || YSI_g_sSortedOnce)
+//		{
+//			oldCount = AMX_Read(AMX_BASE_ADDRESS + 32),
+//			AMX_Write(AMX_BASE_ADDRESS + 32, oldCount + YSI_g_sInitPublicDiff),
+//			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
+//			ResetStaticAmxHeader(),
+//			YSI_g_sSortedOnce = true;
+//		}
+//	}
+//	// TODO: Inform the fixes2 plugin of the change.  That stores indexes, not
+//	// addresses so it needs to update itself (somehow - I don't actually know
+//	// HOW it will do this...)  Probably inform it first, store the addresses,
+//	// then inform it again to track down and replace those addresses.
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1265,15 +1296,15 @@ public OnCodeInit()
 			// From "amx\dynamic_call.inc" - check it is included in
 			// "y_hooks.inc".
 			CallFunction(AMX_Read(publicTableEntry));
-			Hooks_InvalidateName(publicTableEntry);
+			Hooks_InvalidatePointer(publicTableEntry);
 		}
 		Hooks_SortReplacements();
 		Hooks_DoAllHooks();
 		// Remove a few other superfluous publics.
 		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<_@_y>)))
-			Hooks_InvalidateName(publicTableEntry);
+			Hooks_InvalidatePointer(publicTableEntry);
 		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
-			Hooks_InvalidateName(publicTableEntry);
+			Hooks_InvalidatePointer(publicTableEntry);
 		Hooks_SortPublics();
 		Debug_Print1("Hooks_OnCodeInit chain");
 		// Dump the generated callbacks for debugging.
