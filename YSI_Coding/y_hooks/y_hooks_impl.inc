@@ -1317,6 +1317,8 @@ public OnCodeInit()
 		Hooks_InvalidatePointer(publicTableEntry);
 	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@_Hy>)))
 		Hooks_InvalidatePointer(publicTableEntry);
+	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@y_H>)))
+		Hooks_InvalidatePointer(publicTableEntry);
 	Hooks_SortPublics();
 	Debug_Print1("Hooks_OnCodeInit end");
 	if (Server_JITExists())
