@@ -1349,7 +1349,7 @@ Format_Render_start:
 						ffake[0] = string[idx];
 						if (ffake{1} == '@')
 						{
-							if (!AMX_GetPublicPointer(0, fidx, ffake))
+							if (!AMX_GetPublicPointer(0, fidx, ffake, true))
 							{
 								continue;
 							}
@@ -1364,7 +1364,7 @@ Format_Render_start:
 							sFunc2[sFunc2[1]] = '\0';
 							idx += ceildiv(sFunc2[1], 4);
 							sFunc2[1] = '@';
-							if (!AMX_GetPublicPointer(0, fidx, sFunc2))
+							if (!AMX_GetPublicPointer(0, fidx, sFunc2, true))
 							{
 								continue;
 							}

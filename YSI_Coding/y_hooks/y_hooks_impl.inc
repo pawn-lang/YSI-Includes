@@ -1187,7 +1187,7 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 		idx = 0,
 		buf = 0,
 		count = 0;
-	// Search for functions whose names start with nothing.
+	// Search for functions who point to nothing.
 	while ((idx = AMX_GetPublicPointer(idx, buf)) && buf == 0)
 	{
 		++count;

@@ -318,7 +318,7 @@ static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
 		ptr,
 		name[FUNCTION_LENGTH];
 	format(name, sizeof (name), "@y_L%d", reg);
-	if (AMX_GetPublicPointer(0, ptr, name))
+	if (AMX_GetPublicPointer(0, ptr, name, true))
 	{
 		@emit CALL.abs         ptr + 16
 	}
@@ -344,7 +344,7 @@ static stock CTRL_FoundSCTRL(const scanner[CodeScanner])
 		ptr,
 		name[FUNCTION_LENGTH];
 	format(name, sizeof (name), "@y_S%d", reg);
-	if (AMX_GetPublicPointer(0, ptr, name))
+	if (AMX_GetPublicPointer(0, ptr, name, true))
 	{
 		@emit CALL.abs         ptr + 16
 	}

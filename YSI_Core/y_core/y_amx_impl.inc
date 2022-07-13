@@ -404,7 +404,66 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 		base = 0,
 		count = 0;
 	AMX_GetBaseCount(table, base, count);
-	if (idx < count)
+	if (exact)
+	{
+		if (idx)
+		{
+			return 0;
+		}
+		// We are looking for only a specific name.
+		//if (table == AMX_TABLE_PUBLICS)
+		//{
+		//	// Use the native.
+		//	idx = funcidx(pattern);
+		//	if (idx != -1)
+		//	{
+		//		buffer = idx * 8 + base;
+		//		return count;
+		//	}
+		//}
+		//else
+		{
+			// Binary search.
+			--count;
+			new
+				addr = 0,
+				str[FUNCTION_LENGTH],
+				mid,
+				pos;
+			while (idx <= count)
+			{
+				mid = (idx + count) / 2;
+				pos = mid * 8 + base + 4;
+
+				#emit LREF.S.pri pos
+				#emit STOR.S.pri addr
+				if (addr)
+				{
+					AMX_ReadString(addr + AMX_BASE_ADDRESS, str);
+					addr = strcmp(str, pattern);
+					if (addr < 0)
+					{
+						idx = mid + 1;
+					}
+					else if (addr > 0)
+					{
+						count = mid - 1;
+					}
+					else
+					{
+						buffer = pos - 4;
+						return cellmax;
+					}
+				}
+				else
+				{
+					// Not really sure what to do here...
+					count += 2; // Advance `mid` by 1.
+				}
+			}
+		}
+	}
+	else if (idx < count)
 	{
 		if (pattern[0] == '\0')
 		{
@@ -414,7 +473,6 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 		else
 		{
 			new
-				quick = (pattern[0]) | (pattern[1] << 8) | (pattern[2] << 16) | (pattern[3] << 24),
 				addr = 0,
 				pos = idx * 8 + base + 4,
 				str[FUNCTION_LENGTH];
@@ -425,18 +483,11 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 				#emit STOR.S.pri addr
 				if (addr)
 				{
-					// Get the 4 bytes 5 bytes before this position.
-					addr += AMX_BASE_ADDRESS;
-					#emit LREF.S.pri addr
-					#emit STOR.S.pri base
-					if (base == quick)
+					AMX_ReadString(addr + AMX_BASE_ADDRESS, str);
+					if (strfind(str, pattern) != -1)
 					{
-						AMX_ReadString(addr, str);
-						if (exact ? (str{0} && !strcmp(str, pattern)) : (strfind(str, pattern) != -1))
-						{
-							buffer = pos - 4;
-							return idx;
-						}
+						buffer = pos - 4;
+						return idx;
 					}
 				}
 				pos += 8;
