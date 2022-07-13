@@ -133,7 +133,7 @@ static
 		#endif
 
 		// Dump the final assembly of this script so we can inspect it.
-		#define DEBUG_MAYBE_DUMP(%0,%2); ScriptInit_Dump(%0,%2);
+		#define DEBUG_MAYBE_DUMP(%0,%2); PrintAmxHeader(),ScriptInit_Dump(%0,%2);
 	#endif
 #endif
 #if !defined DEBUG_MAYBE_DUMP
