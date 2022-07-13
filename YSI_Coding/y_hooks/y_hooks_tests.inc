@@ -978,6 +978,7 @@ TEST__ y_hooks_State1()
 	ASSERT_EQ(g_y_hooksVar, 2000);
 	state y_hooks_state : y_hooks_state_1;
 	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
+	ASSERT_EQ(g_y_hooksVar, 1000);
 	state y_hooks_state : y_hooks_state_3;
 	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
 	ASSERT_EQ(g_y_hooksVar, 3000);
