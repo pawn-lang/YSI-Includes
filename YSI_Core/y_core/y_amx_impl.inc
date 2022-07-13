@@ -620,7 +620,7 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern
 #define AMX_GetPubvarNamePrefix( AMX_GetNamePrefix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagNamePrefix( AMX_GetNamePrefix(AMX_TABLE_TAGS,
 
-stock AMX_GetNamePrefix(E_AMX_TABLE:table, initial, buffer[FUNCTION_LENGTH], pattern)
+stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	Debug_Print7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
@@ -628,15 +628,44 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, initial, buffer[FUNCTION_LENGTH], pat
 		count = 0,
 		addr = 0;
 	AMX_GetBaseCount(table, base, count);
-	new
-		idx = initial,
-		pos = idx * 8 + base + 4;
-	// TODO: binary search for the start when `initial == 0`.
-	while (idx < count)
+	if (idx == 0)
 	{
-		++idx;
+		// Binary search for the start of the prefixes.
+		pattern = swapchars(pattern); // Little-endian for comparisons.
+		while (idx < count)
+		{
+			new mid = (idx + count) / 2;
+			addr = mid * 8 + base + 4;
+
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                addr
+			if (addr)
+			{
+				// Get the 4 bytes 5 bytes before this position.
+				addr += AMX_BASE_ADDRESS;
+				#emit LREF.S.pri                addr
+				#emit STOR.S.pri                addr
+				if (swapchars(addr) - pattern < 0)
+				{
+					idx = mid + 1;
+				}
+				else
+				{
+					// >=, because we want the very start.
+					count = mid;
+				}
+			}
+		}
+
+		// Now we re-check the value at `idx`.
+		AMX_GetBaseCount(table, base, count);
+		pattern = swapchars(pattern);
+	}
+	if (idx < count)
+	{
 		// Get the address of the string.
-		#emit LREF.S.pri                pos
+		base = idx * 8 + base + 4;
+		#emit LREF.S.pri                base
 		#emit STOR.S.pri                addr
 		if (addr)
 		{
@@ -646,18 +675,12 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, initial, buffer[FUNCTION_LENGTH], pat
 			#emit STOR.S.pri                addr
 			if (addr == pattern)
 			{
-				#emit LREF.S.pri            pos
+				#emit LREF.S.pri            base
 				#emit STOR.S.pri            addr
 				AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
-				return idx;
-			}
-			else if (initial)
-			{
-				// Early return.
-				return 0;
+				return idx + 1;
 			}
 		}
-		pos += 8;
 	}
 	return 0;
 }
