@@ -410,10 +410,11 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
  * <param name="ptr">A pointer to write the new stub address to.</param>
  * <param name="next">The pointer for the function called after y_hooks.</param>
  * <param name="name">The name of the callback being processed.</param>
- * <param name="nlen">Space available in the header to write text in.</param>
+ * <param name="namelen">Space available in the header to write text in.</param>
+ * <param name="namewrite">Position in the header to write text in.</param>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, const name[], nlen)
+_Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, const name[], &namelen, &namewrite)
 {
 	Debug_Print4("Hooks_GetPointerRewrite called");
 	Debug_Print5("Hooks_GetPointerRewrite: (%s), num: %d, hooks: %08x, %08x, %08x, %08x", name, num, AMX_Read(hooks[0]), AMX_Read(hooks[1]), AMX_Read(hooks[2]), AMX_Read(hooks[3]));
@@ -424,7 +425,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, c
 			next = 0;
 			new
 				len = strlen(name);
-			if (nlen >= len)
+			if (namelen >= len)
 			{
 				// We don't have an existing callback with this name, only hooks.
 				// We need to add the name of the callback to the AMX header,
@@ -432,7 +433,9 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, c
 				new
 					str[FUNCTION_LENGTH];
 				strpack(str, name),
-				AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(ptr + 4), str, len);
+				AMX_WriteString(namewrite, str, len);
+				namelen -= len + 1;
+				namewrite += len + 1;
 			}
 			else
 			{
@@ -610,7 +613,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 			// AMX.  I'm slightly concerned that this code assumes that the
 			// hooks are all consecutive, when they might not be thanks to
 			// replacements.
-			if (count) namelen += len; // The first hook was already counted.
+			namelen += len;
 			// Increment and count how many hooks of this type we have.
 			if (++count == size)
 			{
@@ -640,7 +643,12 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	new
 		name[FUNCTION_LENGTH],
 		entry,
-		idx = 0;
+		idx = 0,
+		// This records the amount of space available in the nametable currently
+		// taken up by the names of hooks that we are about to destroy, and
+		// where they are located.  Now includes all hooks together.
+		namelen = 0,
+		namewrite = 0;
 	// Get the next hook type.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
 	{
@@ -651,17 +659,13 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 		}
 		AMX_GetStringFromEntry(entry, name);
 		// Collect all the hooks of this function, and rewrite the call code.
-		Hooks_Collate(preloads, precount, name, idx - 1);
+		Hooks_Collate(preloads, precount, name, idx - 1, namelen, namewrite);
 	}
 }
 
-_Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, const name[FUNCTION_LENGTH], idx)
+_Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, const name[FUNCTION_LENGTH], idx, &namelen, &namewrite)
 {
 	Debug_Print4("Hooks_Collate called: %s %d", Unpack(name), idx);
-	// This records the amount of space available in the nametable, currently
-	// taken up by the names of hooks that we are about to destroy.
-	new
-		namelen = strlen(name);
 	// For this function, note that:
 	//   
 	//   hook OnPlayerConnect(playerid)
@@ -695,6 +699,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	strunpack(sName, name),
 	Hooks_IsolateName(sName),
 	Hooks_MakeLongName(sName);
+	namelen = 0;
 	new
 		// Get all the hooks of this type.  They are stored alphabetically.
 		hookCount = Hooks_GetAllHooks(sName, sHooks, idx, namelen),
@@ -705,7 +710,8 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	// Get the preloads.
 	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
 	// Get where in the chain we are being inserted.
-	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen);
+	namewrite = AMX_BASE_ADDRESS + AMX_Read(writePtr + 4);
+	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen, namewrite);
 	// Add ALS hooks to the end of the list.
 	if ((sHooks[hookCount] = nextPtr)) ++hookCount;
 	// Write the code.
