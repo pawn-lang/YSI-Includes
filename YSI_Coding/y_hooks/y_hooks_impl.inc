@@ -434,6 +434,9 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, c
 					str[FUNCTION_LENGTH];
 				strpack(str, name),
 				AMX_WriteString(namewrite, str, len);
+				// Save the new name's address.
+				AMX_Write(ptr + 4, namewrite - AMX_BASE_ADDRESS);
+				// Update the space available.
 				namelen -= len + 1;
 				namewrite += len + 1;
 			}
@@ -652,6 +655,10 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	// Get the next hook type.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
 	{
+		if (namewrite == 0)
+		{
+			namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
+		}
 		if (AMX_Read(entry) == 0)
 		{
 			// Not a valid pointer, previously removed.
@@ -705,7 +712,6 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	strunpack(sName, name),
 	Hooks_IsolateName(sName),
 	Hooks_MakeLongName(sName);
-	namelen = 0;
 	new
 		// Get all the hooks of this type.  They are stored alphabetically.
 		hookCount = Hooks_GetAllHooks(sName, sHooks, idx, namelen),
@@ -716,7 +722,6 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	// Get the preloads.
 	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
 	// Get where in the chain we are being inserted.
-	namewrite = AMX_BASE_ADDRESS + AMX_Read(writePtr + 4);
 	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen, namewrite);
 	// Add ALS hooks to the end of the list.
 	if ((sHooks[hookCount] = nextPtr)) ++hookCount;
