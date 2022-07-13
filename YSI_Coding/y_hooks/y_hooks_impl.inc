@@ -1141,7 +1141,6 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 {
 	Debug_Print4("Hooks_SortPublics called");
 	// Count the number of still active functions.
-	YSI_g_sInitPublicDiff = Hooks_CountInvalidPublics() * 8;
 	new
 		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
 	// Now I need to SORT the functions, and I have honestly no idea how to do
@@ -1155,6 +1154,7 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 			// Do nothing extra.
 		}
 	}
+	YSI_g_sInitPublicDiff = Hooks_CountInvalidPublics() * 8;
 	// Move the start address UP to reduce the VM's search space.
 	if (YSI_g_sInitPublicDiff)
 	{
@@ -1176,7 +1176,7 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Counts the number of public functions that have had their names erased.
+ *  Counts the number of public functions that have had their pointers erased.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1188,8 +1188,10 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 		buf = 0,
 		count = 0;
 	// Search for functions whose names start with nothing.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, buf, 0)))
+	while ((idx = AMX_GetPublicPointer(idx, buf)) && buf == 0)
+	{
 		++count;
+	}
 	Debug_Print4("Hooks_CountInvalidPublics: Invalid = %d", count);
 	return count;
 }
