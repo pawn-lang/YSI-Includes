@@ -482,7 +482,7 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, initial, &buffer, pattern)
 				buffer = pos - 4;
 				return idx;
 			}
-			else if (initial && swapchars(addr) > swapchars(pattern))
+			else if (initial)
 			{
 				// Early return.
 				return 0;
@@ -628,7 +628,7 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, initial, buffer[FUNCTION_LENGTH], pat
 				AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
 				return idx;
 			}
-			else if (initial && swapchars(addr) > swapchars(pattern))
+			else if (initial)
 			{
 				// Early return.
 				return 0;
