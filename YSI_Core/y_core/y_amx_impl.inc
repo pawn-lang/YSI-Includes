@@ -435,30 +435,24 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 				mid = (idx + count) / 2;
 				pos = mid * 8 + base + 4;
 
-				#emit LREF.S.pri pos
-				#emit STOR.S.pri addr
-				if (addr)
+				#emit LREF.S.pri                pos
+				#emit LOAD.alt                  AMX_BASE_ADDRESS
+				#emit ADD
+				#emit STOR.S.pri                addr
+				AMX_ReadString(addr, str);
+				addr = strcmp(str, pattern);
+				if (addr < 0)
 				{
-					AMX_ReadString(addr + AMX_BASE_ADDRESS, str);
-					addr = strcmp(str, pattern);
-					if (addr < 0)
-					{
-						idx = mid + 1;
-					}
-					else if (addr > 0)
-					{
-						count = mid - 1;
-					}
-					else
-					{
-						buffer = pos - 4;
-						return cellmax;
-					}
+					idx = mid + 1;
+				}
+				else if (addr > 0)
+				{
+					count = mid - 1;
 				}
 				else
 				{
-					// Not really sure what to do here...
-					count += 2; // Advance `mid` by 1.
+					buffer = pos - 4;
+					return cellmax;
 				}
 			}
 		}
@@ -479,16 +473,15 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 			do
 			{
 				++idx;
-				#emit LREF.S.pri pos
-				#emit STOR.S.pri addr
-				if (addr)
+				#emit LREF.S.pri                pos
+				#emit LOAD.alt                  AMX_BASE_ADDRESS
+				#emit ADD
+				#emit STOR.S.pri                addr
+				AMX_ReadString(addr, str);
+				if (strfind(str, pattern) != -1)
 				{
-					AMX_ReadString(addr + AMX_BASE_ADDRESS, str);
-					if (strfind(str, pattern) != -1)
-					{
-						buffer = pos - 4;
-						return idx;
-					}
+					buffer = pos - 4;
+					return idx;
 				}
 				pos += 8;
 			}
@@ -522,22 +515,20 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 			addr = mid * 8 + base + 4;
 
 			#emit LREF.S.pri                addr
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
 			#emit STOR.S.pri                addr
-			if (addr)
+			// Get the 4 bytes 5 bytes before this position.
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                addr
+			if (swapchars(addr) - pattern < 0)
 			{
-				// Get the 4 bytes 5 bytes before this position.
-				addr += AMX_BASE_ADDRESS;
-				#emit LREF.S.pri                addr
-				#emit STOR.S.pri                addr
-				if (swapchars(addr) - pattern < 0)
-				{
-					idx = mid + 1;
-				}
-				else
-				{
-					// >=, because we want the very start.
-					count = mid;
-				}
+				idx = mid + 1;
+			}
+			else
+			{
+				// >=, because we want the very start.
+				count = mid;
 			}
 		}
 
@@ -550,18 +541,16 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		// Get the address of the string.
 		base = idx * 8 + base + 4;
 		#emit LREF.S.pri                base
+		#emit LOAD.alt                  AMX_BASE_ADDRESS
+		#emit ADD
 		#emit STOR.S.pri                addr
-		if (addr)
+		// Get the 4 bytes 5 bytes before this position.
+		#emit LREF.S.pri                addr
+		#emit STOR.S.pri                addr
+		if (addr == pattern)
 		{
-			// Get the 4 bytes 5 bytes before this position.
-			addr += AMX_BASE_ADDRESS;
-			#emit LREF.S.pri                addr
-			#emit STOR.S.pri                addr
-			if (addr == pattern)
-			{
-				buffer = base - 4;
-				return idx + 1;
-			}
+			buffer = base - 4;
+			return idx + 1;
 		}
 	}
 	return 0;
@@ -589,42 +578,40 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		++idx;
 		// Get the address of the string.
 		#emit LREF.S.pri                pos
+		#emit LOAD.alt                  AMX_BASE_ADDRESS
+		#emit ADD
 		#emit STOR.S.pri                addr
-		if (addr)
+		for ( ; ; )
 		{
-			addr += AMX_BASE_ADDRESS;
-			for ( ; ; )
-			{
-				// Find the end of the string.
-				#emit LREF.S.pri            addr
-				#emit STOR.S.pri            ch
-				if (ch & 0x000000FF)
-				{
-					if (ch & 0x0000FF00)
-					{
-						if (ch & 0x00FF0000)
-						{
-							if (ch & 0xFF000000)
-							{
-								addr += 4;
-								continue;
-							}
-							else addr -= 1;
-						}
-						else addr -= 2;
-					}
-					else addr -= 3;
-				}
-				else addr -= 4;
-				break;
-			}
+			// Find the end of the string.
 			#emit LREF.S.pri                addr
 			#emit STOR.S.pri                ch
-			if (ch == pattern)
+			if (ch & 0x000000FF)
 			{
-				buffer = pos - 4;
-				return idx;
+				if (ch & 0x0000FF00)
+				{
+					if (ch & 0x00FF0000)
+					{
+						if (ch & 0xFF000000)
+						{
+							addr += 4;
+							continue;
+						}
+						else addr -= 1;
+					}
+					else addr -= 2;
+				}
+				else addr -= 3;
 			}
+			else addr -= 4;
+			break;
+		}
+		#emit LREF.S.pri                addr
+		#emit STOR.S.pri                ch
+		if (ch == pattern)
+		{
+			buffer = pos - 4;
+			return idx;
 		}
 		pos += 8;
 	}
@@ -650,15 +637,14 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern
 	while (idx < count)
 	{
 		++idx;
-		#emit LREF.S.pri pos
-		#emit STOR.S.pri addr
-		if (addr)
+		#emit LREF.S.pri                pos
+		#emit LOAD.alt                  AMX_BASE_ADDRESS
+		#emit ADD
+		#emit STOR.S.pri                addr
+		AMX_ReadString(addr, buffer);
+		if ((pattern[0] == '\0') || (exact ? (!strcmp(buffer, pattern)) : (strfind(buffer, pattern) != -1)))
 		{
-			AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
-			if ((pattern[0] == '\0') || (exact ? (!strcmp(buffer, pattern)) : (strfind(buffer, pattern) != -1)))
-			{
-				return idx;
-			}
+			return idx;
 		}
 		pos += 8;
 	}
@@ -689,22 +675,19 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 			addr = mid * 8 + base + 4;
 
 			#emit LREF.S.pri                addr
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
 			#emit STOR.S.pri                addr
-			if (addr)
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                addr
+			if (swapchars(addr) - pattern < 0)
 			{
-				// Get the 4 bytes 5 bytes before this position.
-				addr += AMX_BASE_ADDRESS;
-				#emit LREF.S.pri                addr
-				#emit STOR.S.pri                addr
-				if (swapchars(addr) - pattern < 0)
-				{
-					idx = mid + 1;
-				}
-				else
-				{
-					// >=, because we want the very start.
-					count = mid;
-				}
+				idx = mid + 1;
+			}
+			else
+			{
+				// >=, because we want the very start.
+				count = mid;
 			}
 		}
 
@@ -717,20 +700,16 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 		// Get the address of the string.
 		base = idx * 8 + base + 4;
 		#emit LREF.S.pri                base
+		#emit LOAD.alt                  AMX_BASE_ADDRESS
+		#emit ADD
 		#emit STOR.S.pri                addr
-		if (addr)
+		// Get the 4 bytes 5 bytes before this position.
+		#emit LREF.S.pri                addr
+		#emit STOR.S.pri                count
+		if (count == pattern)
 		{
-			// Get the 4 bytes 5 bytes before this position.
-			addr += AMX_BASE_ADDRESS;
-			#emit LREF.S.pri                addr
-			#emit STOR.S.pri                addr
-			if (addr == pattern)
-			{
-				#emit LREF.S.pri            base
-				#emit STOR.S.pri            addr
-				AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
-				return idx + 1;
-			}
+			AMX_ReadString(addr, buffer);
+			return idx + 1;
 		}
 	}
 	return 0;
@@ -757,49 +736,49 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 	{
 		++idx;
 		#emit LREF.S.pri                pos
+		#emit LOAD.alt                  AMX_BASE_ADDRESS
+		#emit ADD
 		#emit STOR.S.pri                addr
-		if (addr)
+		// We used to do this by using the next entry in the table.
+		// However, we have since started mangling the table at run-time, so
+		// we can no longer use the shortcut as a) the next entries may not
+		// exist (bypassable) and b) the strings are no longer in order (an
+		// unfixable problem).
+		for ( ; ; )
 		{
-			// We used to do this by using the next entry in the table.
-			// However, we have since started mangling the table at run-time, so
-			// we can no longer use the shortcut as a) the next entries may not
-			// exist (bypassable) and b) the strings are no longer in order (an
-			// unfixable problem).
-			addr += AMX_BASE_ADDRESS;
-			for ( ; ; )
-			{
-				// Find the end of the string.
-				#emit LREF.S.pri            addr
-				#emit STOR.S.pri            ch
-				if (ch & 0x000000FF)
-				{
-					if (ch & 0x0000FF00)
-					{
-						if (ch & 0x00FF0000)
-						{
-							if (ch & 0xFF000000)
-							{
-								addr += 4;
-								continue;
-							}
-							else addr -= 1;
-						}
-						else addr -= 2;
-					}
-					else addr -= 3;
-				}
-				else addr -= 4;
-				break;
-			}
+			// Find the end of the string.
 			#emit LREF.S.pri                addr
 			#emit STOR.S.pri                ch
-			if (ch == pattern)
+			if (ch & 0x000000FF)
 			{
-				#emit LREF.S.pri            pos
-				#emit STOR.S.pri            addr
-				AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
-				return idx;
+				if (ch & 0x0000FF00)
+				{
+					if (ch & 0x00FF0000)
+					{
+						if (ch & 0xFF000000)
+						{
+							addr += 4;
+							continue;
+						}
+						else addr -= 1;
+					}
+					else addr -= 2;
+				}
+				else addr -= 3;
 			}
+			else addr -= 4;
+			break;
+		}
+		#emit LREF.S.pri                addr
+		#emit STOR.S.pri                ch
+		if (ch == pattern)
+		{
+			#emit LREF.S.pri                pos
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
+			#emit STOR.S.pri                addr
+			AMX_ReadString(addr, buffer);
+			return idx;
 		}
 		pos += 8;
 	}
@@ -957,9 +936,11 @@ stock AMX_GetPublicIndexFromEntry(tableEntry)
 stock AMX_GetStringFromEntry(tableEntry, str[], size = sizeof (str))
 {
 	tableEntry += 4;
-	#emit LREF.S.pri tableEntry
-	#emit STOR.S.pri tableEntry
-	AMX_ReadString(AMX_BASE_ADDRESS + tableEntry, str, size);
+	#emit LREF.S.pri                tableEntry
+	#emit LOAD.alt                  AMX_BASE_ADDRESS
+	#emit ADD
+	#emit STOR.S.pri                tableEntry
+	AMX_ReadString(tableEntry, str, size);
 }
 
 stock AMX_ReadString(addr, str[], len = sizeof (str))
@@ -974,25 +955,25 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 		
 		// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
 		#emit PUSH.pri
-		#emit CONST.alt            0b11111111000000001111111100000000
+		#emit CONST.alt                 0b11111111000000001111111100000000
 		#emit AND
-		#emit SHR.C.pri            8
+		#emit SHR.C.pri                 8
 		#emit SWAP.pri
-		#emit CONST.alt            0b00000000111111110000000011111111
+		#emit CONST.alt                 0b00000000111111110000000011111111
 		#emit AND
-		#emit SHL.C.pri            8
+		#emit SHL.C.pri                 8
 		#emit POP.alt
 		#emit OR
 		
 		// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
 		#emit PUSH.pri
-		#emit CONST.alt            0b11111111111111110000000000000000
+		#emit CONST.alt                 0b11111111111111110000000000000000
 		#emit AND
-		#emit SHR.C.pri            16
+		#emit SHR.C.pri                 16
 		#emit SWAP.pri
-		#emit CONST.alt            0b00000000000000001111111111111111
+		#emit CONST.alt                 0b00000000000000001111111111111111
 		#emit AND
-		#emit SHL.C.pri            16
+		#emit SHL.C.pri                 16
 		#emit POP.alt
 		#emit OR
 		
@@ -1156,9 +1137,10 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 		{
 			// Found the tag, get the name.
 			buffer += 4;
-			#emit LREF.S.pri buffer
-			#emit STOR.S.pri buffer
-			buffer += AMX_BASE_ADDRESS;
+			#emit LREF.S.pri                buffer
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
+			#emit STOR.S.pri                buffer
 			AMX_ReadString(buffer, name, len);
 			strunpack(name, name, len);
 			//printf("tag %d (%s) = %d, %d", idx, name, value & 0x3FFFFFFF, _:tag & 0x3FFFFFFF);
