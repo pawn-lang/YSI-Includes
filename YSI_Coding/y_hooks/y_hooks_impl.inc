@@ -658,8 +658,14 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 			continue;
 		}
 		AMX_GetStringFromEntry(entry, name);
+		// Move back to the first hook.
+		--idx;
 		// Collect all the hooks of this function, and rewrite the call code.
-		Hooks_Collate(preloads, precount, name, idx - 1, namelen, namewrite);
+		Hooks_Collate(preloads, precount, name, idx, namelen, namewrite);
+		// Because we decremented `idx` this will re-test the same slot but
+		// that's good because we do an insertion sort so some publics may have
+		// been moved up (they also may not, but that's not a problem because in
+		// that case the `== 0` check above will trigger and skip the repeat).
 	}
 }
 
