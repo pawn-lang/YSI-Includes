@@ -453,7 +453,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 #define AMX_GetPubvarEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_TAGS,
 
-stock AMX_GetEntryPrefix(E_AMX_TABLE:table, initial, &buffer, pattern)
+stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
@@ -461,15 +461,44 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, initial, &buffer, pattern)
 		count = 0,
 		addr = 0;
 	AMX_GetBaseCount(table, base, count);
-	new
-		idx = initial,
-		pos = idx * 8 + base + 4;
-	// TODO: binary search for the start when `initial == 0`.
-	while (idx < count)
+	if (idx == 0)
 	{
-		++idx;
+		// Binary search for the start of the prefixes.
+		pattern = swapchars(pattern); // Little-endian for comparisons.
+		while (idx < count)
+		{
+			new mid = (idx + count) / 2;
+			addr = mid * 8 + base + 4;
+
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                addr
+			if (addr)
+			{
+				// Get the 4 bytes 5 bytes before this position.
+				addr += AMX_BASE_ADDRESS;
+				#emit LREF.S.pri                addr
+				#emit STOR.S.pri                addr
+				if (swapchars(addr) - pattern < 0)
+				{
+					idx = mid + 1;
+				}
+				else
+				{
+					// >=, because we want the very start.
+					count = mid;
+				}
+			}
+		}
+
+		// Now we re-check the value at `idx`.
+		AMX_GetBaseCount(table, base, count);
+		pattern = swapchars(pattern);
+	}
+	if (idx < count)
+	{
 		// Get the address of the string.
-		#emit LREF.S.pri                pos
+		base = idx * 8 + base + 4;
+		#emit LREF.S.pri                base
 		#emit STOR.S.pri                addr
 		if (addr)
 		{
@@ -479,16 +508,10 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, initial, &buffer, pattern)
 			#emit STOR.S.pri                addr
 			if (addr == pattern)
 			{
-				buffer = pos - 4;
-				return idx;
-			}
-			else if (initial)
-			{
-				// Early return.
-				return 0;
+				buffer = base - 4;
+				return idx + 1;
 			}
 		}
-		pos += 8;
 	}
 	return 0;
 }
