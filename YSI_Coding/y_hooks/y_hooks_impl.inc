@@ -1272,11 +1272,11 @@ public OnCodeInit()
 {
 	Debug_Print1("Hooks_OnCodeInit called");
 	state _ALS : _ALS_go;
+	new
+		idx = 0,
+		publicTableEntry = 0;
 	{
 		// Get the replacements.
-		new
-			idx = 0,
-			publicTableEntry = 0;
 		if (Server_JITExists())
 		{
 			// Get the indexes of the startup functions that get recorded before
@@ -1300,12 +1300,6 @@ public OnCodeInit()
 		}
 		Hooks_SortReplacements();
 		Hooks_DoAllHooks();
-		// Remove a few other superfluous publics.
-		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<_@_y>)))
-			Hooks_InvalidatePointer(publicTableEntry);
-		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
-			Hooks_InvalidatePointer(publicTableEntry);
-		Hooks_SortPublics();
 		Debug_Print1("Hooks_OnCodeInit chain");
 		// Dump the generated callbacks for debugging.
 		//DisasmDump("YSI_TEST.asm");
@@ -1314,6 +1308,16 @@ public OnCodeInit()
 	#if defined Hooks_OnCodeInit
 		Hooks_OnCodeInit();
 	#endif
+	// Remove a few other superfluous publics.
+	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<_@_y>)))
+		Hooks_InvalidatePointer(publicTableEntry);
+	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
+		Hooks_InvalidatePointer(publicTableEntry);
+	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@Hy_>)))
+		Hooks_InvalidatePointer(publicTableEntry);
+	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@_Hy>)))
+		Hooks_InvalidatePointer(publicTableEntry);
+	Hooks_SortPublics();
 	Debug_Print1("Hooks_OnCodeInit end");
 	if (Server_JITExists())
 		Hooks_RepairJITInit();
