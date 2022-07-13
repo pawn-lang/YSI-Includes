@@ -453,7 +453,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 #define AMX_GetPubvarEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_TAGS,
 
-stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
+stock AMX_GetEntryPrefix(E_AMX_TABLE:table, initial, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
@@ -462,7 +462,9 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		addr = 0;
 	AMX_GetBaseCount(table, base, count);
 	new
+		idx = initial,
 		pos = idx * 8 + base + 4;
+	// TODO: binary search for the start when `initial == 0`.
 	while (idx < count)
 	{
 		++idx;
@@ -479,6 +481,11 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 			{
 				buffer = pos - 4;
 				return idx;
+			}
+			else if (initial && swapchars(addr) > swapchars(pattern))
+			{
+				// Early return.
+				return 0;
 			}
 		}
 		pos += 8;
@@ -590,7 +597,7 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern
 #define AMX_GetPubvarNamePrefix( AMX_GetNamePrefix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagNamePrefix( AMX_GetNamePrefix(AMX_TABLE_TAGS,
 
-stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
+stock AMX_GetNamePrefix(E_AMX_TABLE:table, initial, buffer[FUNCTION_LENGTH], pattern)
 {
 	Debug_Print7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
@@ -599,7 +606,9 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 		addr = 0;
 	AMX_GetBaseCount(table, base, count);
 	new
+		idx = initial,
 		pos = idx * 8 + base + 4;
+	// TODO: binary search for the start when `initial == 0`.
 	while (idx < count)
 	{
 		++idx;
@@ -618,6 +627,11 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 				#emit STOR.S.pri            addr
 				AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
 				return idx;
+			}
+			else if (initial && swapchars(addr) > swapchars(pattern))
+			{
+				// Early return.
+				return 0;
 			}
 		}
 		pos += 8;
