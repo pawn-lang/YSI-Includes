@@ -411,17 +411,17 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 			return 0;
 		}
 		// We are looking for only a specific name.
-		//if (table == AMX_TABLE_PUBLICS)
-		//{
-		//	// Use the native.
-		//	idx = funcidx(pattern);
-		//	if (idx != -1)
-		//	{
-		//		buffer = idx * 8 + base;
-		//		return count;
-		//	}
-		//}
-		//else
+		if (table == AMX_TABLE_PUBLICS)
+		{
+			// Use the native.
+			idx = funcidx(pattern);
+			if (idx != -1)
+			{
+				buffer = idx * 8 + base;
+				return cellmax;
+			}
+		}
+		else
 		{
 			// Binary search.
 			--count;
