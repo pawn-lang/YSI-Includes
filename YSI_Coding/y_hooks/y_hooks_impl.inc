@@ -778,21 +778,6 @@ _Y_HOOKS_STATIC Hooks_InvalidatePointer(tableEntry)
 */
 
 /*-------------------------------------------------------------------------*//**
- * <param name="name">The function to get the address pointer of.</param>
- * <param name="write">Destination variable.</param>
- * <returns>
- *  The address at which this function's pointer is stored in the AMX header, if
- *  the function exists of course.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC stock Hooks_GetFunctionWritePoint(const name[], &write)
-{
-	Debug_Print4("Hooks_GetFunctionWritePoint called");
-	AMX_GetPublicEntry(0, write, name, true);
-}
-
-/*-------------------------------------------------------------------------*//**
  * <param name="name">The function to get the default return of.</param>
  * <returns>
  *  The default return for a callback, normally 1.
