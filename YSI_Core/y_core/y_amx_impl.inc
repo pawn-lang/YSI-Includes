@@ -452,25 +452,54 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		count = 0,
 		addr = 0;
 	AMX_GetBaseCount(table, base, count);
-	new
-		pos = idx * 8 + base + 4;
-	while (idx < count)
+	if (idx == 0)
 	{
-		++idx;
+		// Binary search for the start of the prefixes.
+		pattern = swapchars(pattern); // Little-endian for comparisons.
+		new
+			upper = count;
+		while (idx < upper)
+		{
+			new
+				mid = (idx + upper) / 2;
+			addr = mid * 8 + base + 4;
+			
+			#emit LREF.S.pri                addr
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
+			#emit STOR.S.pri                addr
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                addr
+			if (swapchars(addr) - pattern < 0)
+			{
+				idx = mid + 1;
+			}
+			else
+			{
+				// >=, because we want the very start.
+				upper = mid;
+			}
+		}
+
+		// Now we re-check the value at `idx`.
+		pattern = swapchars(pattern);
+	}
+	if (idx < count)
+	{
 		// Get the address of the string.
-		#emit LREF.S.pri                pos
+		base = idx * 8 + base + 4;
+		#emit LREF.S.pri                base
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
 		// Get the 4 bytes 5 bytes before this position.
 		#emit LREF.S.pri                addr
-		#emit STOR.S.pri                addr
-		if (addr == pattern)
+		#emit STOR.S.pri                count
+		if (count == pattern)
 		{
-			buffer = pos - 4;
-			return idx;
+			buffer = base - 4;
+			return idx + 1;
 		}
-		pos += 8;
 	}
 	return 0;
 }
@@ -584,24 +613,54 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 		count = 0,
 		addr = 0;
 	AMX_GetBaseCount(table, base, count);
-	new
-		pos = idx * 8 + base + 4;
-	while (idx < count)
+	if (idx == 0)
 	{
-		++idx;
+		// Binary search for the start of the prefixes.
+		pattern = swapchars(pattern); // Little-endian for comparisons.
+		new
+			upper = count;
+		while (idx < upper)
+		{
+			new
+				mid = (idx + upper) / 2;
+			addr = mid * 8 + base + 4;
+			
+			#emit LREF.S.pri                addr
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
+			#emit STOR.S.pri                addr
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                addr
+			if (swapchars(addr) - pattern < 0)
+			{
+				idx = mid + 1;
+			}
+			else
+			{
+				// >=, because we want the very start.
+				upper = mid;
+			}
+		}
+
+		// Now we re-check the value at `idx`.
+		pattern = swapchars(pattern);
+	}
+	if (idx < count)
+	{
 		// Get the address of the string.
-		#emit LREF.S.pri                pos
+		base = idx * 8 + base + 4;
+		#emit LREF.S.pri                base
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
+		// Get the 4 bytes 5 bytes before this position.
 		#emit LREF.S.pri                addr
-		#emit STOR.S.pri                base
-		if (base == pattern)
+		#emit STOR.S.pri                count
+		if (count == pattern)
 		{
 			AMX_ReadString(addr, buffer);
-			return idx;
+			return idx + 1;
 		}
-		pos += 8;
 	}
 	return 0;
 }
