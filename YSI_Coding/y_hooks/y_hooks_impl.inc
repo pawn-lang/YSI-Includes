@@ -1119,14 +1119,18 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 			{
 			#if !defined YSI_TESTS
 			case _A<@y_H>:
+				// This is conditional because some tests use it somewhere.
 				continue;
 			#endif
 			case
+				// These need to be on separate lines because they're extremely
+				// complex macros that the compiler will give up on if they're
+				// all on one line (due to line length limits).
 				_A<@_y_>,
 				_A<@CO_>,
 				_A<@Hy_>,
 				_A<@_Hy>:
-					continue;
+				continue;
 			}
 			// Neither an invalid pointer nor a removed name.
 			AMX_Write(write - 4, tmp),
