@@ -591,7 +591,12 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 			tmpName[j++] = ch;
 		}
 		tmpName[j] = '\0',
-		Hooks_MakeLongName(tmpName);		
+		Hooks_MakeLongName(tmpName);
+		// Return the legacy order.
+		//if (ch == '@')
+		//{
+		//	order = strval(name[i]);
+		//}
 	}
 	else
 	{
