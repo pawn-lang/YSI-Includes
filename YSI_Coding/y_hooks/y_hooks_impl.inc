@@ -136,7 +136,10 @@ static stock
 	YSI_g_sInitGMRep = 0,
 	YSI_g_sInitPublicDiff = 0,
 	YSI_g_sActiveHooks = 0,
-	bool:YSI_g_sSortedOnce = false;
+	bool:YSI_g_sSortedOnce = false,
+	YSI_g_sName[Y_HOOKS_MAX_NAME],
+	YSI_g_sHooks[MAX_Y_HOOKS],
+	YSI_g_sCount;
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Function name to modify.</param>
@@ -423,17 +426,17 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount, const name[Y_HOOKS_MAX_NAME], hooks[], &count)
+_Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount, hooks[], &count)
 {
 	Debug_Print4("Hooks_GetPreHooks called");
 	new
 		idx = 0,
 		lfunc[Y_HOOKS_MAX_NAME];
 	// Collect all the functions with something like this name.
-	Debug_Print2("Hooks_GetPreHooks start: %s", Unpack(name));
+	Debug_Print2("Hooks_GetPreHooks start: %s", Unpack(YSI_g_sName));
 	do
 	{
-		strcat(lfunc, name),
+		strcat(lfunc, YSI_g_sName),
 		Hooks_MakeShortName(lfunc);
 		Debug_Print5("Hooks_GetPreHooks: search = %s", Unpack(lfunc));
 		Debug_Code1{new oc = count;}
@@ -456,17 +459,17 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
  * <param name="namewrite">Position in the header to write text in.</param>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, const name[], &namelen, &namewrite)
+_Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, &namelen, &namewrite)
 {
 	Debug_Print4("Hooks_GetPointerRewrite called");
-	Debug_Print5("Hooks_GetPointerRewrite: (%s), num: %d, hooks: %08x, %08x, %08x, %08x", name, num, AMX_Read(hooks[0]), AMX_Read(hooks[1]), AMX_Read(hooks[2]), AMX_Read(hooks[3]));
+	Debug_Print5("Hooks_GetPointerRewrite: (%s), num: %d, hooks: %08x, %08x, %08x, %08x", YSI_g_sName, num, AMX_Read(hooks[0]), AMX_Read(hooks[1]), AMX_Read(hooks[2]), AMX_Read(hooks[3]));
 	switch (num)
 	{
 		case 0:
 		{
 			next = 0;
 			new
-				len = strlen(name);
+				len = strlen(YSI_g_sName);
 			if (namelen >= len)
 			{
 				// We don't have an existing callback with this name, only hooks.
@@ -474,7 +477,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, c
 				// and we have enough space in which to do so.
 				new
 					str[FUNCTION_LENGTH];
-				strpack(str, name),
+				strpack(str, YSI_g_sName),
 				AMX_WriteString(namewrite, str, len);
 				
 				// Update the space available.
@@ -587,9 +590,81 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 	return 0;
 }
 
+_Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[], const callback[])
+{
+	new
+		i = 0,
+		j = 0;
+	// Extract the name, ignoring any `"`s.
+	if (callback[0])
+	{
+		// Specified an exact callback, use it.
+		while (callback[i] < '0')
+		{
+			++i;
+		}
+		while (callback[i] >= '0')
+		{
+			tmpName[j++] = callback[i++];
+		}
+		tmpName[j] = '\0';
+	}
+	else
+	{
+		// Derive the callback from the function name.
+		while (name[i] < '0')
+		{
+			++i;
+		}
+		while (name[i] >= '0')
+		{
+			tmpName[j++] = name[i++];
+		}
+		tmpName[j] = '\0';
+		//len = strlen(tmpName),
+		Hooks_IsolateName(tmpName),
+		Hooks_MakeLongName(tmpName);		
+	}
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="name">The name of the callback (with y_hooks prefix).</param>
  * <param name="hooks">Array in which to store the function headers.</param>
+ * <param name="idx">Current position in the AMX header.</param>
+ * <param name="namelen">Min bound of space used by all these names.</param>
+ * <returns>
+ *  The number of hooks found.
+ * </returns>
+ * <remarks>
+ *  Called from inside the <c>@yH_</c> functions, to register themselves.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+//stock _Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_first>
+//{
+//	// Found a new callback to set up.
+//	Hooks_ExtractName(tmpName, name, callback);
+//}
+//
+//stock _Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_rest>
+//{
+//	if (order != cellmin)
+//	{
+//		Debug_Warning("`.order` is not implemented yet.")
+//	}
+//	new
+//		tmpName[Y_HOOKS_MAX_NAME];
+//	if (fallback)
+//	{
+//		Hooks_ExtractName(tmpName, name, callback);
+//	}
+//	else
+//	{
+//		Debug_Fatal("`hook public` is not implemented yet.");
+//	}
+//}
+
+/*-------------------------------------------------------------------------*//**
  * <param name="idx">Current position in the AMX header.</param>
  * <param name="namelen">Min bound of space used by all these names.</param>
  * <returns>
@@ -633,32 +708,32 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, size = sizeof (hooks))
+_Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 {
-	Debug_Print4("Hooks_GetAllHooks called: %s %d", name, idx);
+	Debug_Print4("Hooks_GetAllHooks called: %s %d", YSI_g_sName, idx);
 	// Start from the very start - repeats the first item.
 	new
-		len = strlen(name) + 1,
+		len = 0,
 		count = 0,
 		tmpName[Y_HOOKS_MAX_NAME];
 	// This call is also binary search safe as it accepts `idx` so has a known
 	// start point (thus isn't using a binary search unless `idx` is `0` in
 	// which case no name mangling has happened yet anyway).
-	while ((idx = AMX_GetPublicEntryPrefix(idx, hooks[count], _A<@yH_>)))
+	while ((idx = AMX_GetPublicEntryPrefix(idx, YSI_g_sHooks[count], _A<@yH_>)))
 	{
-		if (AMX_Read(hooks[count]) == 0)
+		if (AMX_Read(YSI_g_sHooks[count]) == 0)
 		{
 			// Not a valid pointer, previously removed.
 			continue;
 		}
-		AMX_GetStringFromEntry(hooks[count], tmpName),
+		AMX_GetStringFromEntry(YSI_g_sHooks[count], tmpName),
 		len = strlen(tmpName),
 		strunpack(tmpName, tmpName),
 		Hooks_IsolateName(tmpName),
 		Hooks_MakeLongName(tmpName);
 		// Check if the fully expanded name is the name.
-		Debug_Print6("Hooks_GetAllHooks found: %s ?= %s %d", name, tmpName, idx);
-		if (!strcmp(tmpName, name))
+		Debug_Print6("Hooks_GetAllHooks found: %s ?= %s %d", YSI_g_sName, tmpName, idx);
+		if (!strcmp(tmpName, YSI_g_sName))
 		{
 			// Record how much consecutive space we have to play with in the
 			// AMX.  I'm slightly concerned that this code assumes that the
@@ -666,7 +741,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 			// replacements.
 			namelen += len;
 			// Increment and count how many hooks of this type we have.
-			if (++count == size)
+			if (++count == sizeof (YSI_g_sHooks))
 			{
 				Debug_Warning("Hooks_GetAllHooks: Potential overflow." "\n" \
 "\n" \
@@ -692,7 +767,6 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	Hooks_GetPreloadLibraries(preloads, precount);
 	// Main loop
 	new
-		name[FUNCTION_LENGTH],
 		entry,
 		idx = 0,
 		// This records the amount of space available in the nametable currently
@@ -713,11 +787,14 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 			// Not a valid pointer, previously removed.
 			continue;
 		}
-		AMX_GetStringFromEntry(entry, name);
+		AMX_GetStringFromEntry(entry, YSI_g_sName);
 		// Move back to the first hook.
 		--idx;
 		// Collect all the hooks of this function, and rewrite the call code.
-		Hooks_Collate(preloads, precount, name, idx, namelen, namewrite);
+		strunpack(YSI_g_sName, YSI_g_sName),
+		Hooks_IsolateName(YSI_g_sName),
+		Hooks_MakeLongName(YSI_g_sName);
+		Hooks_Collate(preloads, precount, idx, namelen, namewrite);
 		// Because we decremented `idx` this will re-test the same slot but
 		// that's good because we do an insertion sort so some publics may have
 		// been moved up (they also may not, but that's not a problem because in
@@ -725,9 +802,9 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	}
 }
 
-_Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, const name[FUNCTION_LENGTH], idx, &namelen, &namewrite)
+_Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, idx, &namelen, &namewrite)
 {
-	Debug_Print4("Hooks_Collate called: %s %d", Unpack(name), idx);
+	Debug_Print4("Hooks_Collate called: %s %d", Unpack(AMX_GetStringFromEntry), idx);
 	// For this function, note that:
 	//   
 	//   hook OnPlayerConnect(playerid)
@@ -738,9 +815,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	//   
 	// Where "XXX" is some unique number (the exact value is irrelevant, it just
 	// means that multiple hooks of the same function have different names).
-	static
-		sName[Y_HOOKS_MAX_NAME],
-		sHooks[MAX_Y_HOOKS];
+	//
 	// The above now becomes:
 	//   
 	//   OnPlayerConnect
@@ -758,24 +833,22 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	//   OnPlayerEnterRaceCheckpoint
 	//   
 	// Thus expanding common name length reductions.
-	strunpack(sName, name),
-	Hooks_IsolateName(sName),
-	Hooks_MakeLongName(sName);
+	// Get all the hooks of this type.  They are stored alphabetically.
+	YSI_g_sCount = Hooks_GetAllHooks(idx, namelen);
 	new
-		// Get all the hooks of this type.  They are stored alphabetically.
-		hookCount = Hooks_GetAllHooks(sName, sHooks, idx, namelen),
-		writePtr = sHooks[0], // Header for the first found hook.
+		writePtr = YSI_g_sHooks[0], // Header for the first found hook.
 		nextPtr = 0,
 		pc = 0,
 		ph[16];
 	// Get the preloads.
-	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
+	Hooks_GetPreHooks(preloads, precount, ph, pc),
 	// Get where in the chain we are being inserted.
-	precount = Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen, namewrite);
+	precount = Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, namelen, namewrite);
 	// Add ALS hooks to the end of the list.
-	if ((sHooks[hookCount] = nextPtr)) ++hookCount;
+	if ((YSI_g_sHooks[YSI_g_sCount] = nextPtr)) ++YSI_g_sCount;
 	// Write the code.
-	hookCount = Hooks_GenerateCode(sName, sHooks, hookCount, writePtr, pc > 1);
+	new
+		funcPtr = Hooks_GenerateCode(writePtr, pc > 1);
 	if (pc == 0)
 	{
 		// Insert the new header in to the correct location in the public
@@ -787,7 +860,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 		{
 			nextPtr = AMX_Read(writePtr + 12),
 			AMX_ReadString(nextPtr + AMX_BASE_ADDRESS, str, sizeof (str));
-			if (strcmp(str, sName) > 0)
+			if (strcmp(str, YSI_g_sName) > 0)
 			{
 				// Save the new name's address.
 				AMX_Write(writePtr + 4, precount);
@@ -802,18 +875,16 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	}
 	// Save the function pointer again so it can be used by
 	// the rewrite code.
-	AMX_Write(writePtr, hookCount);
+	AMX_Write(writePtr, funcPtr);
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="name">Name of the function to generate.</param>
- * <param name="hooks">All the functions to call.</param>
  * <param name="count">Number of functions to call.</param>
  * <param name="write">Where to write the new function's pointer.</param>
  * <param name="hasprehooks">Needs to call other stuff first.</param>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_GenerateCode(const name[Y_HOOKS_MAX_NAME], const hooks[], count, write, bool:hasprehooks)
+_Y_HOOKS_STATIC Hooks_GenerateCode(write, bool:hasprehooks)
 {
 	Debug_Print4("Hooks_GenerateCode called");
 	// We now have:
@@ -826,8 +897,8 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[Y_HOOKS_MAX_NAME], const hooks[], 
 	// much!  I don't know if this code is faster (I suspect it is), but it is
 	// absolutely simpler!
 	new
-		size = Hooks_WriteFunction(hooks, count, Hooks_GetDefaultReturn(name));
-	Debug_Print4("Hooks_GenerateCode %32s called: %6d %6d %08x %d", name, hasprehooks, size, hasprehooks ? (write - AMX_HEADER_COD) : (write - AMX_BASE_ADDRESS), CGen_GetCodeSpace());
+		size = Hooks_WriteFunction(Hooks_GetDefaultReturn(YSI_g_sName));
+	Debug_Print4("Hooks_GenerateCode %32s called: %6d %6d %08x %d", YSI_g_sName, hasprehooks, size, hasprehooks ? (write - AMX_HEADER_COD) : (write - AMX_BASE_ADDRESS), CGen_GetCodeSpace());
 	if (size)
 	{
 		//AMX_Write(write, 40);
@@ -837,7 +908,7 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[Y_HOOKS_MAX_NAME], const hooks[], 
 	}
 	else
 	{
-		size = AMX_Read(hooks[0]);
+		size = AMX_Read(YSI_g_sHooks[0]);
 		if (hasprehooks) write = size + (AMX_REAL_DATA + AMX_HEADER_COD);
 		else write = size;
 	}
@@ -912,8 +983,6 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
 */
 
 /*-------------------------------------------------------------------------*//**
- * <param name="pointers">The hooks to link together.</param>
- * <param name="size">The number of functions in the array.</param>
  * <param name="ret">The default return.</param>
  * <param name="skipable">Can future hooks be ignored on -1?</param>
  * <returns>
@@ -924,16 +993,16 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
+_Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 {
 	Debug_Print4("Hooks_WriteFunction called");
-	if (size == 0)
+	if (YSI_g_sCount == 0)
 	{
 		Debug_Error("Hooks_WriteFunction: size is 0");
 		return 0;
 	}
 	new
-		bool:multiple = size != 1,
+		bool:multiple = YSI_g_sCount != 1,
 		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
 		ctx[AsmContext];
 	// Make sure the underlying system doesn't change without us.  Now supported
@@ -999,8 +1068,8 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		for (new i = 0; ; )
 		{
 			// Get the absolute offset from here.
-			@emit CALL          (AMX_Read(pointers[i]) + base) // 2
-			Hooks_InvalidatePointer(pointers[i]);
+			@emit CALL          (AMX_Read(YSI_g_sHooks[i]) + base) // 2
+			Hooks_InvalidatePointer(YSI_g_sHooks[i]);
 			if (skipable)
 			{
 				// =====================================
@@ -1021,7 +1090,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 			if (ret) @emit AND       // 8
 			else @emit OR            // 8
 			// Loop and do the very first items last.
-			if (++i == size) break;
+			if (++i == YSI_g_sCount) break;
 			else @emit STOR.S.pri -4 // 10
 		}
 		if (skipable)
@@ -1037,8 +1106,8 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	{
 		// Still need this code as they may hook a function that doesn't exist,
 		// but we still need to correctly process -1 or -2.
-		@emit CALL          (AMX_Read(pointers[0]) + base)
-		Hooks_InvalidatePointer(pointers[0]);
+		@emit CALL          (AMX_Read(YSI_g_sHooks[0]) + base)
+		Hooks_InvalidatePointer(YSI_g_sHooks[0]);
 		@emit ZERO.alt
 		@emit JSGEQ.label   Hooks_SkipInvert
 		@emit INVERT
