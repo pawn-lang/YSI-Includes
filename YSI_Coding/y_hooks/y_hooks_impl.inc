@@ -627,12 +627,13 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="name">The name of the callback (with y_hooks prefix).</param>
- * <param name="hooks">Array in which to store the function headers.</param>
- * <param name="idx">Current position in the AMX header.</param>
- * <param name="namelen">Min bound of space used by all these names.</param>
+ * <param name="address">The hook implementation location.</param>
+ * <param name="name">The name of the implementation function.</param>
+ * <param name="callback">The optional hooked callback name.</param>
+ * <param name="order">Where in the list to call this hook.</param>
+ * <param name="fallback">Is this an old style <c>hook</c> callback?</param>
  * <returns>
- *  The number of hooks found.
+ *  Should this function be added to the current list of hooks?
  * </returns>
  * <remarks>
  *  Called from inside the <c>@yH_</c> functions, to register themselves.
@@ -643,10 +644,21 @@ stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", or
 {
 	// Found a new callback to set up.
 	Hooks_ExtractName(YSI_g_sName, name, callback);
-	return true;
+	if (fallback)
+	{
+		// Because this function is a fallback type, all the others we want to
+		// find should also be fallbacks.
+		state y_hooks_scan : y_hooks_scan_fallback;
+		return true;
+	}
+	else
+	{
+		Debug_Fatal("`hook public` is not implemented yet.");
+		return false;
+	}
 }
 
-stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_rest>
+stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_fallback>
 {
 	if (order != cellmin)
 	{
@@ -662,9 +674,16 @@ stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", or
 	}
 	else
 	{
-		Debug_Fatal("`hook public` is not implemented yet.");
+		// Not a fallback function, but we're in the fallback lookup state.
 		return false;
 	}
+}
+
+stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <>
+{
+	#pragma unused address, name, callback, order, fallback
+	// We don't care about these hook types in any other state.
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -794,7 +813,6 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 		// to get the base function name (in to `YSI_g_sName`).
 		state y_hooks_scan : y_hooks_scan_first;
 		CallFunction(entry);
-		state y_hooks_scan : y_hooks_scan_rest;
 		// Move back to the first hook in this group (the one we just called).
 		--idx;
 		// Collect all the hooks of this function, and rewrite the call code.
