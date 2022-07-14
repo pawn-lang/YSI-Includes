@@ -511,44 +511,26 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		pattern = swapchars(pattern); // Little-endian for comparisons.
 		new
 			upper = count,
-			mid,
-			data;
+			mid = (idx + upper) / 2;
 		while (idx < upper)
 		{
-			mid = (idx + upper) / 2;
-			while (mid < upper)
+			addr = mid * 8 + base + 4;
+			#emit LREF.S.pri                addr
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
+			#emit STOR.S.pri                addr
+			// Get the 4 bytes 5 bytes before this position.
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                addr
+			if (swapchars(addr) - pattern < 0)
 			{
-				addr = mid * 8 + base;
-				#emit LREF.S.pri                addr
-				#emit STOR.S.pri                data
-				if (data == 0)
-				{
-					++mid
-				}
-				else
-				{
-					addr += 4;
-					#emit LREF.S.pri                addr
-					#emit LOAD.alt                  AMX_BASE_ADDRESS
-					#emit ADD
-					#emit STOR.S.pri                addr
-					// Get the 4 bytes 5 bytes before this position.
-					#emit LREF.S.pri                addr
-					#emit STOR.S.pri                data
-					if (swapchars(data) - pattern < 0)
-					{
-						idx = mid + 1;
-					}
-					else
-					{
-						// >=, because we want the very start.
-						upper = mid;
-					}
-					goto AMX_GetEntryPrefix_next;
-				}
+				idx = mid + 1;
 			}
-			upper = (idx + upper) / 2;
-AMX_GetEntryPrefix_next:
+			else
+			{
+				// >=, because we want the very start.
+				upper = mid;
+			}
 		}
 
 		// Now we re-check the value at `idx`.
