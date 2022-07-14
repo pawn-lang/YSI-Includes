@@ -404,7 +404,60 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 		base = 0,
 		count = 0;
 	AMX_GetBaseCount(table, base, count);
-	if (idx < count)
+	if (exact)
+	{
+		if (idx)
+		{
+			return 0;
+		}
+		// We are looking for only a specific name.
+		if (table == AMX_TABLE_PUBLICS)
+		{
+			// Use the native.
+			idx = funcidx(pattern);
+			if (idx != -1)
+			{
+				buffer = idx * 8 + base;
+				return cellmax;
+			}
+		}
+		else
+		{
+			// Binary search.
+			--count;
+			new
+				addr = 0,
+				str[FUNCTION_LENGTH],
+				mid,
+				pos;
+			while (idx <= count)
+			{
+				mid = (idx + count) / 2;
+				pos = mid * 8 + base + 4;
+
+				#emit LREF.S.pri                pos
+				#emit LOAD.alt                  AMX_BASE_ADDRESS
+				#emit ADD
+				#emit STOR.S.pri                addr
+				AMX_ReadString(addr, str);
+				addr = strcmp(str, pattern);
+				if (addr < 0)
+				{
+					idx = mid + 1;
+				}
+				else if (addr > 0)
+				{
+					count = mid - 1;
+				}
+				else
+				{
+					buffer = pos - 4;
+					return cellmax;
+				}
+			}
+		}
+	}
+	else if (idx < count)
 	{
 		if (pattern[0] == '\0')
 		{
@@ -425,7 +478,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 				#emit ADD
 				#emit STOR.S.pri                addr
 				AMX_ReadString(addr, str);
-				if (exact ? (strcmp(str, pattern) == 0) : (strfind(str, pattern) != -1))
+				if (strfind(str, pattern) != -1)
 				{
 					buffer = pos - 4;
 					return idx;
@@ -452,13 +505,60 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		count = 0,
 		addr = 0;
 	AMX_GetBaseCount(table, base, count);
-	new
-		pos = idx * 8 + base + 4;
-	while (idx < count)
+	if (idx == 0)
 	{
-		++idx;
+		// Binary search for the start of the prefixes.
+		pattern = swapchars(pattern); // Little-endian for comparisons.
+		new
+			upper = count,
+			mid,
+			data;
+		while (idx < upper)
+		{
+			mid = (idx + upper) / 2;
+			while (mid < upper)
+			{
+				addr = mid * 8 + base;
+				#emit LREF.S.pri                addr
+				#emit STOR.S.pri                data
+				if (data == 0)
+				{
+					++mid
+				}
+				else
+				{
+					addr += 4;
+					#emit LREF.S.pri                addr
+					#emit LOAD.alt                  AMX_BASE_ADDRESS
+					#emit ADD
+					#emit STOR.S.pri                addr
+					// Get the 4 bytes 5 bytes before this position.
+					#emit LREF.S.pri                addr
+					#emit STOR.S.pri                data
+					if (swapchars(data) - pattern < 0)
+					{
+						idx = mid + 1;
+					}
+					else
+					{
+						// >=, because we want the very start.
+						upper = mid;
+					}
+					goto AMX_GetEntryPrefix_next;
+				}
+			}
+			upper = (idx + upper) / 2;
+AMX_GetEntryPrefix_next:
+		}
+
+		// Now we re-check the value at `idx`.
+		pattern = swapchars(pattern);
+	}
+	if (idx < count)
+	{
 		// Get the address of the string.
-		#emit LREF.S.pri                pos
+		base = idx * 8 + base + 4;
+		#emit LREF.S.pri                base
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
@@ -467,10 +567,9 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		#emit STOR.S.pri                addr
 		if (addr == pattern)
 		{
-			buffer = pos - 4;
-			return idx;
+			buffer = base - 4;
+			return idx + 1;
 		}
-		pos += 8;
 	}
 	return 0;
 }
@@ -503,8 +602,8 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		for ( ; ; )
 		{
 			// Find the end of the string.
-			#emit LREF.S.pri            addr
-			#emit STOR.S.pri            ch
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                ch
 			if (ch & 0x000000FF)
 			{
 				if (ch & 0x0000FF00)
@@ -584,24 +683,52 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 		count = 0,
 		addr = 0;
 	AMX_GetBaseCount(table, base, count);
-	new
-		pos = idx * 8 + base + 4;
-	while (idx < count)
+	if (idx == 0)
 	{
-		++idx;
+		// Binary search for the start of the prefixes.
+		pattern = swapchars(pattern); // Little-endian for comparisons.
+		while (idx < count)
+		{
+			new mid = (idx + count) / 2;
+			addr = mid * 8 + base + 4;
+
+			#emit LREF.S.pri                addr
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
+			#emit STOR.S.pri                addr
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                addr
+			if (swapchars(addr) - pattern < 0)
+			{
+				idx = mid + 1;
+			}
+			else
+			{
+				// >=, because we want the very start.
+				count = mid;
+			}
+		}
+
+		// Now we re-check the value at `idx`.
+		AMX_GetBaseCount(table, base, count);
+		pattern = swapchars(pattern);
+	}
+	if (idx < count)
+	{
 		// Get the address of the string.
-		#emit LREF.S.pri                pos
+		base = idx * 8 + base + 4;
+		#emit LREF.S.pri                base
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
+		// Get the 4 bytes 5 bytes before this position.
 		#emit LREF.S.pri                addr
-		#emit STOR.S.pri                base
-		if (base == pattern)
+		#emit STOR.S.pri                count
+		if (count == pattern)
 		{
 			AMX_ReadString(addr, buffer);
-			return idx;
+			return idx + 1;
 		}
-		pos += 8;
 	}
 	return 0;
 }
@@ -846,25 +973,25 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 		
 		// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
 		#emit PUSH.pri
-		#emit CONST.alt            0b11111111000000001111111100000000
+		#emit CONST.alt                 0b11111111000000001111111100000000
 		#emit AND
-		#emit SHR.C.pri            8
+		#emit SHR.C.pri                 8
 		#emit SWAP.pri
-		#emit CONST.alt            0b00000000111111110000000011111111
+		#emit CONST.alt                 0b00000000111111110000000011111111
 		#emit AND
-		#emit SHL.C.pri            8
+		#emit SHL.C.pri                 8
 		#emit POP.alt
 		#emit OR
 		
 		// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
 		#emit PUSH.pri
-		#emit CONST.alt            0b11111111111111110000000000000000
+		#emit CONST.alt                 0b11111111111111110000000000000000
 		#emit AND
-		#emit SHR.C.pri            16
+		#emit SHR.C.pri                 16
 		#emit SWAP.pri
-		#emit CONST.alt            0b00000000000000001111111111111111
+		#emit CONST.alt                 0b00000000000000001111111111111111
 		#emit AND
-		#emit SHL.C.pri            16
+		#emit SHL.C.pri                 16
 		#emit POP.alt
 		#emit OR
 		
