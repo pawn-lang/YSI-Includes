@@ -169,6 +169,7 @@ __COMPILER_TAG_DATA(F@_@iiiis, 0);
 
 HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
+	#pragma unused dialogid
 	// Apparently there's a hack to alter this.
 	dialogid = YSI_g_sPlayerDialog[playerid];
 	Debug_Print1("Dialog_OnDialogResponse called: %d %d %d %d %s", playerid, dialogid, response, listitem, inputtext);

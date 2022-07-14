@@ -260,6 +260,7 @@ static stock
 
 HOOK__ OnMasterSystemInit(id)
 {
+	#pragma unused id
 	YSI_g_sTestVar = 6;
 }
 

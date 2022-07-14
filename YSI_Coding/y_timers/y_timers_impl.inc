@@ -220,6 +220,7 @@ HOOK__ OnPlayerConnect(playerid)
 
 HOOK__ OnPlayerDisconnect(playerid, reason)
 {
+	#pragma unused reason
 	Debug_Print1("hook Timers_OnPlayerDisconnect called: %d, %d, playerid, reason");
 	// Loop through all the per-player timers.  Correctly finds them all from a
 	// linked list hidden in static variables (which are really global).

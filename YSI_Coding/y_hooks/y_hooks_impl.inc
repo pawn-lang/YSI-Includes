@@ -642,6 +642,7 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 
 stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_first>
 {
+	#pragma unused address, order
 	// Found a new callback to set up.
 	Hooks_ExtractName(YSI_g_sName, name, callback);
 	if (fallback)
