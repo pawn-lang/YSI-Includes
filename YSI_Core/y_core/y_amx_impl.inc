@@ -404,7 +404,71 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 		base = 0,
 		count = 0;
 	AMX_GetBaseCount(table, base, count);
-	if (idx < count)
+	if (exact)
+	{
+		if (idx)
+		{
+			return 0;
+		}
+		// We are looking for only a specific name.
+		if (table == AMX_TABLE_PUBLICS)
+		{
+			// Use the native.
+			idx = funcidx(pattern);
+			if (idx != -1)
+			{
+				buffer = idx * 8 + base;
+				return cellmax;
+			}
+		}
+		else
+		{
+			// Binary search.
+			new
+				quick = (pattern[0]) | (pattern[1] << 8) | (pattern[2] << 16) | (pattern[3] << 24),
+				addr = 0,
+				str[FUNCTION_LENGTH],
+				mid,
+				pos;
+			while (idx < count)
+			{
+				mid = (idx + count) / 2;
+				pos = mid * 8 + base + 4;
+
+				#emit LREF.S.pri                pos
+				#emit LOAD.alt                  AMX_BASE_ADDRESS
+				#emit ADD
+				#emit STOR.S.pri                addr
+				if (AMX_Read(addr) < quick)
+				{
+					idx = mid + 1;
+				}
+				else if (AMX_Read(addr) > quick)
+				{
+					count = mid;
+				}
+				else
+				{
+					AMX_ReadString(addr, str);
+					addr = strcmp(str, pattern);
+					if (addr < 0)
+					{
+						idx = mid + 1;
+					}
+					else if (addr > 0)
+					{
+						count = mid;
+					}
+					else
+					{
+						buffer = pos - 4;
+						return cellmax;
+					}
+				}
+			}
+		}
+	}
+	else if (idx < count)
 	{
 		if (pattern[0] == '\0')
 		{
@@ -425,7 +489,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 				#emit ADD
 				#emit STOR.S.pri                addr
 				AMX_ReadString(addr, str);
-				if (exact ? (strcmp(str, pattern) == 0) : (strfind(str, pattern) != -1))
+				if (strfind(str, pattern) != -1)
 				{
 					buffer = pos - 4;
 					return idx;
@@ -457,11 +521,11 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		// Binary search for the start of the prefixes.
 		pattern = swapchars(pattern); // Little-endian for comparisons.
 		new
-			upper = count;
+			upper = count,
+			mid;
 		while (idx < upper)
 		{
-			new
-				mid = (idx + upper) / 2;
+			mid = (idx + upper) / 2;
 			addr = mid * 8 + base + 4;
 			
 			#emit LREF.S.pri                addr
@@ -577,24 +641,96 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern
 	Debug_Print7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
 	new
 		base = 0,
-		count = 0,
-		addr = 0;
+		count = 0;
 	AMX_GetBaseCount(table, base, count);
-	new
-		pos = idx * 8 + base + 4;
-	while (idx < count)
+	if (exact)
 	{
-		++idx;
-		#emit LREF.S.pri                pos
-		#emit LOAD.alt                  AMX_BASE_ADDRESS
-		#emit ADD
-		#emit STOR.S.pri                addr
-		AMX_ReadString(addr, buffer);
-		if ((pattern[0] == '\0') || (exact ? (!strcmp(buffer, pattern)) : (strfind(buffer, pattern) != -1)))
+		if (idx)
 		{
-			return idx;
+			return 0;
 		}
-		pos += 8;
+		// We are looking for only a specific name.
+		if (table == AMX_TABLE_PUBLICS)
+		{
+			// Use the native.
+			idx = funcidx(pattern);
+			if (idx != -1)
+			{
+				// What even is the point of this case?
+				buffer[0] = '\0',
+				strcat(buffer, pattern);
+				return cellmax;
+			}
+		}
+		else
+		{
+			// Binary search.
+			new
+				quick = (pattern[0]) | (pattern[1] << 8) | (pattern[2] << 16) | (pattern[3] << 24),
+				addr = 0,
+				mid,
+				pos;
+			while (idx < count)
+			{
+				mid = (idx + count) / 2;
+				pos = mid * 8 + base + 4;
+
+				#emit LREF.S.pri                pos
+				#emit LOAD.alt                  AMX_BASE_ADDRESS
+				#emit ADD
+				#emit STOR.S.pri                addr
+				if (AMX_Read(addr) < quick)
+				{
+					idx = mid + 1;
+				}
+				else if (AMX_Read(addr) > quick)
+				{
+					count = mid;
+				}
+				else
+				{
+					AMX_ReadString(addr, buffer);
+					addr = strcmp(buffer, pattern);
+					if (addr < 0)
+					{
+						idx = mid + 1;
+					}
+					else if (addr > 0)
+					{
+						count = mid;
+					}
+					else
+					{
+						return cellmax;
+					}
+				}
+			}
+		}
+	}
+	else if (idx < count)
+	{
+		new
+			addr = 0,
+			pos = idx * 8 + base + 4;
+		do
+		{
+			++idx;
+			#emit LREF.S.pri                pos
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
+			#emit STOR.S.pri                addr
+			AMX_ReadString(addr, buffer);
+			if (pattern[0] == '\0')
+			{
+				return idx;
+			}
+			if (strfind(buffer, pattern) != -1)
+			{
+				return idx;
+			}
+			pos += 8;
+		}
+		while (idx < count);
 	}
 	return 0;
 }
@@ -618,11 +754,11 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 		// Binary search for the start of the prefixes.
 		pattern = swapchars(pattern); // Little-endian for comparisons.
 		new
-			upper = count;
+			upper = count,
+			mid;
 		while (idx < upper)
 		{
-			new
-				mid = (idx + upper) / 2;
+			mid = (idx + upper) / 2;
 			addr = mid * 8 + base + 4;
 			
 			#emit LREF.S.pri                addr
