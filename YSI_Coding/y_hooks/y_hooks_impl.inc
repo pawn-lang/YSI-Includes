@@ -300,6 +300,55 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  This is the old version of <c>AMX_GetPublicEntry</c> that doesn't use a
+ *  binary search, so is slower but more resiliant in this code which shuffles
+ *  things around.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetPublicEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+{
+	Debug_Print7("AMX_GetEntry called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
+	new
+		base = 0,
+		count = 0;
+	AMX_GetBaseCount(table, base, count);
+	if (idx < count)
+	{
+		if (pattern[0] == '\0')
+		{
+			buffer = idx * 8 + base;
+			return idx + 1;
+		}
+		else
+		{
+			new
+				addr = 0,
+				pos = idx * 8 + base + 4,
+				str[FUNCTION_LENGTH];
+			do
+			{
+				++idx;
+				#emit LREF.S.pri                pos
+				#emit LOAD.alt                  AMX_BASE_ADDRESS
+				#emit ADD
+				#emit STOR.S.pri                addr
+				AMX_ReadString(addr, str);
+				if (exact ? (strcmp(str, pattern) == 0) : (strfind(str, pattern) != -1))
+				{
+					buffer = pos - 4;
+					return idx;
+				}
+				pos += 8;
+			}
+			while (idx < count);
+		}
+	}
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
  * <param name="preloads">Desination in which to store all the preloads.</param>
  * <param name="precount">Number of found preload libraries.</param>
  * <param name="size">Maximum number of libraries to store.</param>
@@ -1061,11 +1110,26 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 		tmp = AMX_Read(read);
 		if (tmp)
 		{
-			// Not an invalid pointer.
-			write -= 8,
-			AMX_Write(write, tmp),
-			tmp = AMX_Read(read + 4),
-			AMX_Write(write + 4, tmp);
+			AMX_Write(write - 8, tmp),
+			
+			// Check if we should skip it anyway (i.e. is it one of the prefixes
+			// we want removed).
+			tmp = AMX_Read(read + 4);
+			switch (AMX_Read(tmp + AMX_BASE_ADDRESS))
+			{
+			case
+			#if !defined YSI_TESTS
+				_A<@y_H>,
+			#endif
+				_A<@_y_>,
+				_A<@CO_>,
+				_A<@Hy_>,
+				_A<@_Hy>:
+					continue;
+			}
+			// Neither an invalid pointer nor a removed name.
+			AMX_Write(write - 4, tmp),
+			write -= 8;
 		}
 	}
 	while (read != AMX_HEADER_PUBLICS);
@@ -1202,19 +1266,7 @@ public OnCodeInit()
 	#if defined Hooks_OnCodeInit
 		Hooks_OnCodeInit();
 	#endif
-	// Remove a few other superfluous publics.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<_@_y>)))
-		Hooks_InvalidatePointer(publicTableEntry);
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
-		Hooks_InvalidatePointer(publicTableEntry);
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@Hy_>)))
-		Hooks_InvalidatePointer(publicTableEntry);
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@_Hy>)))
-		Hooks_InvalidatePointer(publicTableEntry);
-	#if !defined YSI_TESTS
-		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@y_H>)))
-			Hooks_InvalidatePointer(publicTableEntry);
-	#endif
+	
 	Hooks_CompressPublics();
 	Debug_Print1("Hooks_OnCodeInit end");
 	if (Server_JITExists())
