@@ -114,6 +114,7 @@ Optional plugins:
 #define @H_y%0\32; @H_y // hook public
 #define @y_H%0\32; @y_H // DEFINE_HOOK_RETURN
 #define @_yH%0\32; @_yH // DEFINE_HOOK_REPLACEMENT
+#define _Hy@%0\32; _Hy@ // Hook implementation
 
 #define DEFINE_HOOK_RETURN__(%0,%1); forward @y_H%0(); public @y_H%0() { return (%1); }
 
@@ -138,6 +139,12 @@ Optional plugins:
 #define ADDRMKCL_%0\32; ADDRMKCL_ // Named parameters.
 
 // Tags.
+#define _Hy@Float: Float:_Hy@
+#define _Hy@File: File:_Hy@
+#define _Hy@bool: bool:_Hy@
+#define _Hy@void: void:_Hy@
+#define _Hy@string: string:_Hy@
+
 #define @yH_Float: Float:@yH_
 #define @yH_File: File:@yH_
 #define @yH_bool: bool:@yH_
@@ -152,9 +159,9 @@ Optional plugins:
 
 #define ADDRMKCL_NUL(%0)%8$()(#) ADDRMKCL_END(%0)%8$(,)(#)
 // I don't actually need the tag, this is purely internal.
-#define ADDRMKCL_END(%0)%8$(,%6)(#%7)return%9_Hooks_AddPublicHook(, ADDRMKCL:%8$UNIQUE_FUNCTION<@yH_%0@...>()return _Hooks_AddPublicHook(O@A_()?(((_:UNIQUE_FUNCTION<%0@...>(%6)),O@V_)?1:2):(O@V_),
+#define ADDRMKCL_END(%0)%8$(,%6)(#%7)return%9_Hooks_AddPublicHook(, ADDRMKCL:%8$UNIQUE_FUNCTION<@yH_%0@...>()return _Hooks_AddPublicHook(O@A_()?(((_:UNIQUE_FUNCTION<_Hy@%0@...>(%6)),O@V_)?1:2):(O@V_),
 
-#define @hook(%0)%1(%2) UNIQUE_FUNCTION<@yH_%1@...>();UNIQUE_FUNCTION<%1@...>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _Hooks_AddPublicHook(,_:"\"%1\"",%0);static UNIQUE_FUNCTION<%1@...>(%2)
+#define @hook(%0)%1(%2) UNIQUE_FUNCTION<@yH_%1@...>();UNIQUE_FUNCTION<_Hy@%1@...>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _Hooks_AddPublicHook(,_:"\"%1\"",%0);public UNIQUE_FUNCTION<_Hy@%1@...>(%2)
 
 #define ADDRMKCL:%8$%0(%1)%2(%3,%4,.%5=%6) ADDRMKCL_%5:%8$%0(%1)%2(%3,%4,%6)
 #define ADDRMKCL_callback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,%6)
@@ -175,5 +182,5 @@ Optional plugins:
 //#define HOOK_NATIVE__%0(%1) @hook(.fallback2__=%0)%0(%1)
 //#define HOOK_FUNCTION__%0(%1) @hook(.fallback2__=%0)%0(%1)
 
-#define REHOOK__%0(%1) static UNIQUE_FUNCTION<%0@...>(%1)
+#define REHOOK__%0(%1) public UNIQUE_FUNCTION<_Hy@%0@...>(%1)
 

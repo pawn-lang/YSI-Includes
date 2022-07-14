@@ -1240,7 +1240,8 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 				_A<@_y_>,
 				_A<@CO_>,
 				_A<@Hy_>,
-				_A<@_Hy>:
+				_A<@_Hy>,
+				_A<_Hy@>:
 				continue;
 			}
 			// Neither an invalid pointer nor a removed name.
