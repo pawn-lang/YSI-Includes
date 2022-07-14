@@ -1117,10 +1117,11 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 			tmp = AMX_Read(read + 4);
 			switch (AMX_Read(tmp + AMX_BASE_ADDRESS))
 			{
-			case
 			#if !defined YSI_TESTS
-				_A<@y_H>,
+			case _A<@y_H>:
+				continue;
 			#endif
+			case
 				_A<@_y_>,
 				_A<@CO_>,
 				_A<@Hy_>,
