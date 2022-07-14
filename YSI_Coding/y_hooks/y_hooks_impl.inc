@@ -1040,162 +1040,45 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 */
 
 /*-------------------------------------------------------------------------*//**
- * <param name="idx0">The index of the 1st public.</param>
- * <param name="idx1">The index of the 2nd public.</param>
  * <remarks>
- *  Compares two public function entries, and if need-be, swaps them over.
- * </remarks>
- * <returns>Did a swap happen?</returns>
- *//*------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC bool:Hooks_ComparePublics(idx0, idx1)
-{
-	Debug_Print4("Hooks_ComparePublics called");
-	idx0 = idx0 * 8 + AMX_HEADER_PUBLICS;
-	idx1 = idx1 * 8 + AMX_HEADER_PUBLICS;
-	new
-		addr0 = AMX_Read(idx0),
-		addr1 = AMX_Read(idx1);
-	if (addr0 == 0)
-	{
-		// First pointer has no address, this order is fine.
-		return false;
-	}
-	if (addr1 == 0)
-	{
-		// Second pointer has no address, partially swap them.  We don't need
-		// any temp variables here because we don't care about half the values.
-		return
-			addr1 = AMX_Read(idx0 + 4),
-			AMX_Write(idx1 + 4, addr1),
-			AMX_Write(idx1, addr0),
-			AMX_Write(idx0, 0),
-			true;
-	}
-	new
-		s0,
-		s1,
-		cmp;
-	for (addr0 = AMX_Read(idx0 + 4) + AMX_BASE_ADDRESS, addr1 = AMX_Read(idx1 + 4) + AMX_BASE_ADDRESS; ; addr0 += 4, addr1 += 4)
-	{
-		s0 = AMX_Read(addr0);
-		s1 = AMX_Read(addr1);
-		#emit ADDR.pri   s0
-		#emit LODB.I     1
-		#emit MOVE.alt
-		#emit ADDR.pri   s1
-		#emit LODB.I     1
-		#emit SUB
-		#emit STOR.S.pri cmp
-		if (cmp > 0)
-		{
-			// Already in order - good.
-			return false;
-		}
-		if (cmp < 0)
-		{
-			break;
-		}
-		{}
-		#emit ADDR.pri   s0
-		#emit LODB.I     2
-		#emit MOVE.alt
-		#emit ADDR.pri   s1
-		#emit LODB.I     2
-		#emit SUB
-		#emit STOR.S.pri cmp
-		if (cmp > 0)
-		{
-			// Already in order - good.
-			return false;
-		}
-		if (cmp < 0)
-		{
-			break;
-		}
-		{}
-		#emit LOAD.S.alt s0
-		#emit LOAD.S.pri s1
-		#emit SHL.C.alt  8
-		#emit SHL.C.pri  8
-		#emit SUB
-		#emit STOR.S.pri cmp
-		if (cmp > 0)
-		{
-			// Already in order - good.
-			return false;
-		}
-		if (cmp < 0)
-		{
-			break;
-		}
-		{}
-		#emit LOAD.S.alt s0
-		#emit LOAD.S.pri s1
-		#emit SUB
-		#emit STOR.S.pri cmp
-		if (cmp > 0)
-		{
-			// Already in order - good.
-			return false;
-		}
-		if (cmp < 0)
-		{
-			break;
-		}
-		// Loop.
-	}
-	// Swap them over.
-	// Read.
-	addr0 = AMX_Read(idx0),
-	addr1 = AMX_Read(idx0 + 4),
-	s0 = AMX_Read(idx1),
-	s1 = AMX_Read(idx1 + 4),
-	
-	// Write.
-	AMX_Write(idx0, s0),
-	AMX_Write(idx0 + 4, s1),
-	AMX_Write(idx1, addr0),
-	AMX_Write(idx1 + 4, addr1);
-	
-	// We swapped the two functions, so we need to keep running the sort step.
-	return true;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Goes through the whole of the public functions table and sorts them all in
- *  to alphabetical order.  This is done as we move and rename some so we need
- *  to fix the virtual machine's binary search.
+ *  Goes through the whole of the public functions table and moves those
+ *  without valid pointers to the start, then moves the start address up to
+ *  after them.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_SortPublics()
+_Y_HOOKS_STATIC Hooks_CompressPublics()
 {
-	Debug_Print4("Hooks_SortPublics called");
+	Debug_Print4("Hooks_CompressPublics called");
 	// Count the number of still active functions.
 	new
-		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
-	// Now I need to SORT the functions, and I have honestly no idea how to do
-	// that.  Fortunately I don't actually need to move the strings themselves
-	// around as they just sit nicely in the nametable; I only need to sort the
-	// pointers.
-	for (new i = 1; i < oldCount; ++i)
+		read = AMX_HEADER_NATIVES,
+		write = AMX_HEADER_NATIVES,
+		tmp;
+	do
 	{
-		for (new j = i; j > 0 && Hooks_ComparePublics(j - 1, j); --j)
+		read -= 8;
+		tmp = AMX_Read(read);
+		if (tmp)
 		{
-			// Do nothing extra.
+			// Not an invalid pointer.
+			write -= 8,
+			AMX_Write(write, tmp),
+			tmp = AMX_Read(read + 4),
+			AMX_Write(write + 4, tmp);
 		}
 	}
-	YSI_g_sInitPublicDiff = Hooks_CountInvalidPublics() * 8;
+	while (read != AMX_HEADER_PUBLICS);
+	// Get the difference from the old to the new publics table.
+	YSI_g_sInitPublicDiff = write - AMX_HEADER_PUBLICS;
 	// Move the start address UP to reduce the VM's search space.
 	if (YSI_g_sInitPublicDiff)
 	{
 		// Update stored values in y_amx so they reflect the new structure.
 		if (!Server_JITExists() || YSI_g_sSortedOnce)
 		{
-			oldCount = AMX_Read(AMX_BASE_ADDRESS + 32),
-			AMX_Write(AMX_BASE_ADDRESS + 32, oldCount + YSI_g_sInitPublicDiff),
+			tmp = AMX_Read(AMX_BASE_ADDRESS + 32),
+			AMX_Write(AMX_BASE_ADDRESS + 32, tmp + YSI_g_sInitPublicDiff),
 			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
 			ResetStaticAmxHeader(),
 			YSI_g_sSortedOnce = true;
@@ -1205,28 +1088,6 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	// addresses so it needs to update itself (somehow - I don't actually know
 	// HOW it will do this...)  Probably inform it first, store the addresses,
 	// then inform it again to track down and replace those addresses.
-}
-
-/*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Counts the number of public functions that have had their pointers erased.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_CountInvalidPublics()
-{
-	Debug_Print4("Hooks_CountInvalidPublics called");
-	new
-		idx = 0,
-		buf = 0,
-		count = 0;
-	// Search for functions who point to nothing.
-	while ((idx = AMX_GetPublicPointer(idx, buf)) && buf == 0)
-	{
-		++count;
-	}
-	Debug_Print4("Hooks_CountInvalidPublics: Invalid = %d", count);
-	return count;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1354,7 +1215,7 @@ public OnCodeInit()
 		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@y_H>)))
 			Hooks_InvalidatePointer(publicTableEntry);
 	#endif
-	Hooks_SortPublics();
+	Hooks_CompressPublics();
 	Debug_Print1("Hooks_OnCodeInit end");
 	if (Server_JITExists())
 		Hooks_RepairJITInit();

@@ -562,7 +562,7 @@ TEST__ y_hooks_Invalidate1()
 {
 	ASSERT_NE(funcidx("y_hooks_Invalidate1"), -1);
 	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate1"));
-	Hooks_SortPublics();
+	Hooks_CompressPublics();
 	ASSERT_EQ(funcidx("y_hooks_Invalidate1"), -1);
 }
 
@@ -582,7 +582,7 @@ TEST__ y_hooks_Invalidate23()
 	ASSERT_NE(funcidx("y_hooks_Invalidate3"), -1);
 	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate2"));
 	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate3"));
-	Hooks_SortPublics();
+	Hooks_CompressPublics();
 	ASSERT_EQ(funcidx("y_hooks_Invalidate2"), -1);
 	ASSERT_EQ(funcidx("y_hooks_Invalidate3"), -1);
 	new
