@@ -285,25 +285,6 @@ stock Hooks_MakeShortName(name[Y_HOOKS_MAX_NAME])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="name">The string to get the hooked function name from.</param>
- * <returns>
- *  The input string without y_hooks name decorations.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
-{
-	Debug_Print4("Hooks_IsolateName called");
-	new
-		pos = strfind(name, "@", false, 4);
-	// Make "pos" a legal value inside the error message.
-	if (pos == 4) Debug_Error("Missing hook name (`hook (args)`)");
-	if (pos == -1) Debug_Error("Invalid hook name: %s", Unpack(name), ++pos);
-	name[pos] = '\0',
-	strdel(name, 0, 4);
-}
-
-/*-------------------------------------------------------------------------*//**
  * <remarks>
  *  This is the old version of <c>AMX_GetPublicEntry</c> that doesn't use a
  *  binary search, so is slower but more resiliant in this code which shuffles
@@ -609,7 +590,6 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 			tmpName[j++] = name[i++];
 		}
 		tmpName[j] = '\0',
-		Hooks_IsolateName(tmpName),
 		Hooks_MakeLongName(tmpName);		
 	}
 	else
@@ -725,16 +705,17 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 	// which case no name mangling has happened yet anyway).
 	while ((idx = AMX_GetPublicEntryPrefix(idx, addr, _A<@yH_>)))
 	{
-		YSI_g_sHooks[count] = addr,
-		addr = AMX_Read(addr);
-		if (addr == 0)
+		YSI_g_sHooks[count] = addr;
+		if (AMX_Read(addr) == 0)
 		{
 			// Not a valid pointer, previously removed.
 			continue;
 		}
 		// Call the hook stub, and see if it thinks it is a valid hook.
-		if (CallFunction(addr))
+		if (CallFunction(AMX_Read(addr)))
 		{
+			// Replace the function pointer to the implementation.
+			AMX_Write(addr, YSI_g_sAddress);
 			// Record how much consecutive space we have to play with in the
 			// AMX.  I'm slightly concerned that this code assumes that the
 			// hooks are all consecutive, when they might not be thanks to

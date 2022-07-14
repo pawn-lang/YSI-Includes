@@ -593,40 +593,6 @@ TEST__ y_hooks_Invalidate23()
 	ASSERT(count1 < count0);
 }
 
-TEST__ y_hooks_IsolateName1()
-{
-	new
-		name[FUNCTION_LENGTH];
-	name = "@yH_Hello@Other";
-	Hooks_IsolateName(name);
-	ASSERT_FALSE(strcmp(name, "Hello"));
-	name = "@yH_Hi@@Other";
-	Hooks_IsolateName(name);
-	ASSERT_FALSE(strcmp(name, "Hi"));
-	name = "@yH_No@Other@More";
-	Hooks_IsolateName(name);
-	ASSERT_FALSE(strcmp(name, "No"));
-	name = "@yH_Yes_Other@N";
-	Hooks_IsolateName(name);
-	ASSERT_FALSE(strcmp(name, "Yes_Other"));
-}
-
-TEST__ y_hooks_IsolateName2()
-{
-	new
-		func[FUNCTION_LENGTH];
-	#define FUNC:%0; func = "_yH@"#%0"@";Hooks_IsolateName(func);ASSERT(!strcmp(func, #%0));
-	FUNC:A;
-	FUNC:AAA;
-	FUNC:AAB;
-	FUNC:ABA;
-	FUNC:ABB;
-	FUNC:aB;
-	FUNC:ab;
-	FUNC:Ab;
-	#undef FUNC
-}
-
 static g_y_hooksVar = 0;
 
 TEST__ y_hooks_Customs()
