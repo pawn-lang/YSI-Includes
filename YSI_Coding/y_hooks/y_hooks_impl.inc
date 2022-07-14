@@ -323,20 +323,6 @@ _Y_HOOKS_STATIC stock bool:Hooks_GetPublicEntry(&buffer, const pattern[])
 	return false;
 }
 
-_Y_HOOKS_STATIC stock Hooks_QuickCall(addr)
-{
-	#pragma unused addr
-	#emit POP.pri                     // Pop the frame pointer.
-	#emit SCTRL                     5 // Restore the frame pointer.
-	#emit POP.alt                     // Pop the return address.
-	#emit POP.pri                     // Pop the argument count.
-	#emit POP.pri                     // Pop the target address.
-	#emit PUSH.C                    0 // Push the new argument count.
-	#emit PUSH.alt                    // Push the return address.
-	#emit SCTRL                     6 // Jump to the target address.
-	__pragma("naked");
-}
-
 /*-------------------------------------------------------------------------*//**
  * <param name="preloads">Desination in which to store all the preloads.</param>
  * <param name="precount">Number of found preload libraries.</param>
@@ -364,7 +350,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 	{
 		new
 			name[FUNCTION_LENGTH char],
-			addr = 0;
+			tmp = 0;
 		// This is called before we start mangling names, so no binary search
 		// danger yet.
 		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
@@ -374,10 +360,18 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 				Debug_Error("y_hooks prehook array filled");
 				break;
 			}
-			addr = AMX_Read(publicTableEntry);
+			//addr = AMX_Read(publicTableEntry);
 			AMX_ReadString(AMX_Read(publicTableEntry + 4) + AMX_BASE_ADDRESS + 4, name),
-			strunpack(preloads[precount][E_CHAIN_HOOK_NAME], name, 16),
-			preloads[precount][E_CHAIN_HOOK_VALUE] = Hooks_QuickCall(addr),
+			strunpack(preloads[precount][E_CHAIN_HOOK_NAME], name, 16);
+			#emit PUSH.C                    0
+			#emit LCTRL                     6
+			#emit ADD.C                     36
+			#emit LCTRL                     8
+			#emit PUSH.pri
+			#emit LREF.S.pri                publicTableEntry
+			#emit SCTRL                     6
+			#emit STOR.S.pri                tmp
+			preloads[precount][E_CHAIN_HOOK_VALUE] = tmp;
 			++precount;
 			if (strlen(name) > 15)
 				Debug_Error("Overflow in prehook name \"%s\"", Unpack(name));
@@ -739,7 +733,8 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 	new
 		addr = 0,
 		count = 0,
-		tmpName[Y_HOOKS_MAX_NAME];
+		tmpName[Y_HOOKS_MAX_NAME],
+		tmp;
 	// This call is also binary search safe as it accepts `idx` so has a known
 	// start point (thus isn't using a binary search unless `idx` is `0` in
 	// which case no name mangling has happened yet anyway).
@@ -751,8 +746,17 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 			// Not a valid pointer, previously removed.
 			continue;
 		}
+		{}
 		// Call the hook stub, and see if it thinks it is a valid hook.
-		if (Hooks_QuickCall(AMX_Read(addr)))
+		#emit PUSH.C                    0
+		#emit LCTRL                     6
+		#emit ADD.C                     36
+		#emit LCTRL                     8
+		#emit PUSH.pri
+		#emit LREF.S.pri                addr
+		#emit SCTRL                     6
+		#emit STOR.S.pri                tmp
+		if (tmp)
 		{
 			// Replace the function pointer to the implementation.
 			AMX_Write(addr, YSI_g_sAddress);
@@ -805,16 +809,22 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 		{
 			namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
 		}
-		entry = AMX_Read(entry);
-		if (entry == 0)
+		if (AMX_Read(entry) == 0)
 		{
 			// Not a valid pointer, previously removed.
 			continue;
 		}
+		{}
 		// Invoke the function, which will result in our callback being called
 		// to get the base function name (in to `YSI_g_sName`).
 		state y_hooks_scan : y_hooks_scan_first;
-		Hooks_QuickCall(entry);
+		#emit PUSH.C                    0
+		#emit LCTRL                     6
+		#emit ADD.C                     36
+		#emit LCTRL                     8
+		#emit PUSH.pri
+		#emit LREF.S.pri                entry
+		#emit SCTRL                     6
 		// Move back to the first hook in this group (the one we just called).
 		--idx;
 		// Collect all the hooks of this function, and rewrite the call code.
@@ -986,7 +996,17 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
 	if (Hooks_GetPublicEntry(ptr, dest))
 	{
 		// A "RET_OnWhatever" function exists - rationalise the return.
-		return Hooks_QuickCall(AMX_Read(ptr)) ? 1 : 0;
+		//ptr = AMX_Read(ptr);
+		#emit PUSH.C                    0
+		#emit LCTRL                     6
+		#emit ADD.C                     36
+		#emit LCTRL                     8
+		#emit PUSH.pri
+		#emit LREF.S.pri                ptr
+		#emit SCTRL                     6
+		#emit EQ.C.pri                  1
+		#emit STOR.S.pri                ptr
+		return ptr;
 	}
 	return 1;
 }
@@ -1347,9 +1367,13 @@ public OnCodeInit()
 		// reduce its size.  Binary search safe as it is first.
 		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@_yH>)))
 		{
-			// From "amx\dynamic_call.inc" - check it is included in
-			// "y_hooks.inc".
-			Hooks_QuickCall(AMX_Read(publicTableEntry));
+			#emit PUSH.C                    0
+			#emit LCTRL                     6
+			#emit ADD.C                     36
+			#emit LCTRL                     8
+			#emit PUSH.pri
+			#emit LREF.S.pri                publicTableEntry
+			#emit SCTRL                     6
 			Hooks_InvalidatePointer(publicTableEntry);
 		}
 		Hooks_SortReplacements();
