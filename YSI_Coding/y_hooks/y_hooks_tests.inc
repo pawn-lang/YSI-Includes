@@ -951,7 +951,7 @@ HOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_1>
 	g_y_hooksVar = strval(c[0]);
 }
 
-HOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_2>
+REHOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_2>
 {
 	g_y_hooksVar = strval(c[5]);
 }
@@ -962,7 +962,7 @@ REHOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_3>
 }
 
 //HOOK__ public y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
-hook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
+REHOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
 {
 	g_y_hooksVar = strval(c[5]);
 }

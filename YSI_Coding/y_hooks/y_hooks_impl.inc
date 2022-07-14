@@ -139,7 +139,8 @@ static stock
 	bool:YSI_g_sSortedOnce = false,
 	YSI_g_sName[Y_HOOKS_MAX_NAME],
 	YSI_g_sHooks[MAX_Y_HOOKS],
-	YSI_g_sCount;
+	YSI_g_sCount = 0,
+	YSI_g_sAddress = 0;
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Function name to modify.</param>
@@ -596,7 +597,22 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 		i = 0,
 		j = 0;
 	// Extract the name, ignoring any `"`s.
-	if (callback[0])
+	if (callback[0] == 0)
+	{
+		// Derive the callback from the function name.
+		while (name[i] < '0')
+		{
+			++i;
+		}
+		while (name[i] >= '0')
+		{
+			tmpName[j++] = name[i++];
+		}
+		tmpName[j] = '\0',
+		Hooks_IsolateName(tmpName),
+		Hooks_MakeLongName(tmpName);		
+	}
+	else
 	{
 		// Specified an exact callback, use it.
 		while (callback[i] < '0')
@@ -608,22 +624,6 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 			tmpName[j++] = callback[i++];
 		}
 		tmpName[j] = '\0';
-	}
-	else
-	{
-		// Derive the callback from the function name.
-		while (name[i] < '0')
-		{
-			++i;
-		}
-		while (name[i] >= '0')
-		{
-			tmpName[j++] = name[i++];
-		}
-		tmpName[j] = '\0';
-		//len = strlen(tmpName),
-		Hooks_IsolateName(tmpName),
-		Hooks_MakeLongName(tmpName);		
 	}
 }
 
@@ -640,29 +640,33 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-//stock _Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_first>
-//{
-//	// Found a new callback to set up.
-//	Hooks_ExtractName(tmpName, name, callback);
-//}
-//
-//stock _Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_rest>
-//{
-//	if (order != cellmin)
-//	{
-//		Debug_Warning("`.order` is not implemented yet.")
-//	}
-//	new
-//		tmpName[Y_HOOKS_MAX_NAME];
-//	if (fallback)
-//	{
-//		Hooks_ExtractName(tmpName, name, callback);
-//	}
-//	else
-//	{
-//		Debug_Fatal("`hook public` is not implemented yet.");
-//	}
-//}
+stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_first>
+{
+	// Found a new callback to set up.
+	Hooks_ExtractName(YSI_g_sName, name, callback);
+	return true;
+}
+
+stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_rest>
+{
+	if (order != cellmin)
+	{
+		Debug_Warning("`.order` is not implemented yet.");
+	}
+	new
+		tmpName[Y_HOOKS_MAX_NAME];
+	if (fallback)
+	{
+		Hooks_ExtractName(tmpName, name, callback);
+		YSI_g_sAddress = address;
+		return strcmp(tmpName, YSI_g_sName) == 0;
+	}
+	else
+	{
+		Debug_Fatal("`hook public` is not implemented yet.");
+		return false;
+	}
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="idx">Current position in the AMX header.</param>
@@ -713,33 +717,31 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 	Debug_Print4("Hooks_GetAllHooks called: %s %d", YSI_g_sName, idx);
 	// Start from the very start - repeats the first item.
 	new
-		len = 0,
+		addr = 0,
 		count = 0,
 		tmpName[Y_HOOKS_MAX_NAME];
 	// This call is also binary search safe as it accepts `idx` so has a known
 	// start point (thus isn't using a binary search unless `idx` is `0` in
 	// which case no name mangling has happened yet anyway).
-	while ((idx = AMX_GetPublicEntryPrefix(idx, YSI_g_sHooks[count], _A<@yH_>)))
+	while ((idx = AMX_GetPublicEntryPrefix(idx, addr, _A<@yH_>)))
 	{
-		if (AMX_Read(YSI_g_sHooks[count]) == 0)
+		YSI_g_sHooks[count] = addr,
+		addr = AMX_Read(addr);
+		if (addr == 0)
 		{
 			// Not a valid pointer, previously removed.
 			continue;
 		}
-		AMX_GetStringFromEntry(YSI_g_sHooks[count], tmpName),
-		len = strlen(tmpName),
-		strunpack(tmpName, tmpName),
-		Hooks_IsolateName(tmpName),
-		Hooks_MakeLongName(tmpName);
-		// Check if the fully expanded name is the name.
-		Debug_Print6("Hooks_GetAllHooks found: %s ?= %s %d", YSI_g_sName, tmpName, idx);
-		if (!strcmp(tmpName, YSI_g_sName))
+		// Call the hook stub, and see if it thinks it is a valid hook.
+		if (CallFunction(addr))
 		{
 			// Record how much consecutive space we have to play with in the
 			// AMX.  I'm slightly concerned that this code assumes that the
 			// hooks are all consecutive, when they might not be thanks to
 			// replacements.
-			namelen += len;
+			AMX_GetStringFromEntry(YSI_g_sHooks[count], tmpName),
+			namelen += strlen(tmpName);
+			Debug_Print6("Hooks_GetAllHooks found: %s ?= %s %d", YSI_g_sName, tmpName, idx);
 			// Increment and count how many hooks of this type we have.
 			if (++count == sizeof (YSI_g_sHooks))
 			{
@@ -782,18 +784,20 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 		{
 			namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
 		}
-		if (AMX_Read(entry) == 0)
+		entry = AMX_Read(entry);
+		if (entry == 0)
 		{
 			// Not a valid pointer, previously removed.
 			continue;
 		}
-		AMX_GetStringFromEntry(entry, YSI_g_sName);
-		// Move back to the first hook.
+		// Invoke the function, which will result in our callback being called
+		// to get the base function name (in to `YSI_g_sName`).
+		state y_hooks_scan : y_hooks_scan_first;
+		CallFunction(entry);
+		state y_hooks_scan : y_hooks_scan_rest;
+		// Move back to the first hook in this group (the one we just called).
 		--idx;
 		// Collect all the hooks of this function, and rewrite the call code.
-		strunpack(YSI_g_sName, YSI_g_sName),
-		Hooks_IsolateName(YSI_g_sName),
-		Hooks_MakeLongName(YSI_g_sName);
 		Hooks_Collate(preloads, precount, idx, namelen, namewrite);
 		// Because we decremented `idx` this will re-test the same slot but
 		// that's good because we do an insertion sort so some publics may have
