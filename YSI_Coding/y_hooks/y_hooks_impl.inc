@@ -303,49 +303,39 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
  * <remarks>
  *  This is the old version of <c>AMX_GetPublicEntry</c> that doesn't use a
  *  binary search, so is slower but more resiliant in this code which shuffles
- *  things around.
+ *  things around.  Also optimised for the local simple known use-case.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPublicEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+_Y_HOOKS_STATIC stock bool:Hooks_GetPublicEntry(&buffer, const pattern[])
 {
-	Debug_Print7("AMX_GetEntry called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
-		base = 0,
-		count = 0;
-	AMX_GetBaseCount(table, base, count);
-	if (idx < count)
+		quick = (pattern[0]) | (pattern[1] << 8) | (pattern[2] << 16) | (pattern[3] << 24),
+		//tmp,
+		addr = 0,
+		pos = AMX_HEADER_PUBLICS + 4,
+		str[FUNCTION_LENGTH];
+	do
 	{
-		if (pattern[0] == '\0')
+		#emit LREF.S.pri                pos
+		#emit LOAD.alt                  AMX_BASE_ADDRESS
+		#emit ADD
+		#emit STOR.S.pri                addr
+		//tmp = AMX_Read(addr);
+		//printf("tmp = %08x, quick = %08x", tmp, quick);
+		if (AMX_Read(addr) == quick)
 		{
-			buffer = idx * 8 + base;
-			return idx + 1;
-		}
-		else
-		{
-			new
-				addr = 0,
-				pos = idx * 8 + base + 4,
-				str[FUNCTION_LENGTH];
-			do
+			AMX_ReadString(addr, str);
+			if (strcmp(str, pattern) == 0)
 			{
-				++idx;
-				#emit LREF.S.pri                pos
-				#emit LOAD.alt                  AMX_BASE_ADDRESS
-				#emit ADD
-				#emit STOR.S.pri                addr
-				AMX_ReadString(addr, str);
-				if (exact ? (strcmp(str, pattern) == 0) : (strfind(str, pattern) != -1))
-				{
-					buffer = pos - 4;
-					return idx;
-				}
-				pos += 8;
+				buffer = pos - 4;
+				return true;
 			}
-			while (idx < count);
 		}
+		pos += 8;
 	}
-	return 0;
+	while (pos < AMX_HEADER_NATIVES);
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -376,6 +366,8 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 		new
 			name[FUNCTION_LENGTH char],
 			addr = 0;
+		// This is called before we start mangling names, so no binary search
+		// danger yet.
 		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
 		{
 			if (precount == size)
@@ -445,10 +437,11 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 		Hooks_MakeShortName(lfunc);
 		Debug_Print5("Hooks_GetPreHooks: search = %s", Unpack(lfunc));
 		Debug_Code1{new oc = count;}
-		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
+		// Needs to be binary search safe, i.e. use fallback code.
+		if (Hooks_GetPublicEntry(hooks[count], lfunc)) ++count;
 		Debug_Code1{if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[oc] + 4) + AMX_BASE_ADDRESS, buffer); strunpack(buffer, buffer); Debug_Print5("Hooks_GetPreHooks: found = %s", buffer); }}
 		StrCpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
-		strcat(lfunc, "_");
+		strcat(lfunc, __COMPILER_UNPACK"_");
 	}
 	while (++idx <= precount);
 }
@@ -648,6 +641,9 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 		len = strlen(name) + 1,
 		count = 0,
 		tmpName[Y_HOOKS_MAX_NAME];
+	// This call is also binary search safe as it accepts `idx` so has a known
+	// start point (thus isn't using a binary search unless `idx` is `0` in
+	// which case no name mangling has happened yet anyway).
 	while ((idx = AMX_GetPublicEntryPrefix(idx, hooks[count], _A<@yH_>)))
 	{
 		if (AMX_Read(hooks[count]) == 0)
@@ -704,7 +700,8 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 		// where they are located.  Now includes all hooks together.
 		namelen = 0,
 		namewrite = 0;
-	// Get the next hook type.
+	// Get the next hook type.  This is binary-search safe because it is the
+	// first call before any name mangling has happened.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
 	{
 		if (namewrite == 0)
@@ -885,12 +882,13 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
 {
 	Debug_Print4("Hooks_GetDefaultReturn called");
 	new
-		dest[Y_HOOKS_MAX_NAME] = "@y_H";
+		dest[Y_HOOKS_MAX_NAME] = __COMPILER_UNPACK"@y_H";
 	strcat(dest, name);
 	Hooks_MakeShortName(dest);
 	new
 		ptr = 0;
-	if (AMX_GetPublicEntry(0, ptr, dest, true))
+	// Needs to be binary search safe.
+	if (Hooks_GetPublicEntry(ptr, dest))
 	{
 		// A "RET_OnWhatever" function exists - rationalise the return.
 		return CallFunction(AMX_Read(ptr)) ? 1 : 0;
@@ -1253,7 +1251,7 @@ public OnCodeInit()
 		// the "_Hooks_AddReplacement" function above.  If we were being REALLY
 		// clever, these functions could be removed from the public functions
 		// table afterwards (there is already code in y_hooks for this) to
-		// reduce its size.
+		// reduce its size.  Binary search safe as it is first.
 		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@_yH>)))
 		{
 			// From "amx\dynamic_call.inc" - check it is included in
