@@ -434,11 +434,34 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, c
 					str[FUNCTION_LENGTH];
 				strpack(str, name),
 				AMX_WriteString(namewrite, str, len);
-				// Save the new name's address.
-				AMX_Write(ptr + 4, namewrite - AMX_BASE_ADDRESS);
-				// Update the space available.
-				namelen -= len + 1;
-				namewrite += len + 1;
+				num = AMX_Read(ptr);
+				// Insert the new header in to the correct location in the
+				// public functions header.  There's no point using a binary
+				// search here because we need to loop through all lower entries
+				// anyway to shift them down, thus we may as well combine that
+				// with the search operation and save a step.
+				for (new tmp; ; ptr += 8)
+				{
+					tmp = AMX_Read(ptr + 12),
+					AMX_ReadString(tmp + AMX_BASE_ADDRESS, str, sizeof (str));
+					if (strcmp(str, name) > 0)
+					{
+						// Save the new name's address.
+						AMX_Write(ptr + 4, namewrite - AMX_BASE_ADDRESS);
+						// Save the function pointer again so it can be used by
+						// the rewrite code.
+						AMX_Write(ptr, num);
+						
+						// Update the space available.
+						namelen -= len + 1;
+						namewrite += len + 1;
+						break;
+					}
+					// Shift this entry up.
+					AMX_Write(ptr + 4, tmp),
+					tmp = AMX_Read(ptr + 8),
+					AMX_Write(ptr, tmp);
+				}
 			}
 			else
 			{
@@ -723,6 +746,11 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
 	// Get where in the chain we are being inserted.
 	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen, namewrite);
+	if (pc == 0)
+	{
+		// The header was shuffled.  Point to the new entry location.
+		sHooks[0] = writePtr;
+	}
 	// Add ALS hooks to the end of the list.
 	if ((sHooks[hookCount] = nextPtr)) ++hookCount;
 	// Write the code.
@@ -1141,39 +1169,39 @@ _Y_HOOKS_STATIC bool:Hooks_ComparePublics(idx0, idx1)
 
 _Y_HOOKS_STATIC Hooks_SortPublics()
 {
-	Debug_Print4("Hooks_SortPublics called");
-	// Count the number of still active functions.
-	new
-		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
-	// Now I need to SORT the functions, and I have honestly no idea how to do
-	// that.  Fortunately I don't actually need to move the strings themselves
-	// around as they just sit nicely in the nametable; I only need to sort the
-	// pointers.
-	for (new i = 1; i < oldCount; ++i)
-	{
-		for (new j = i; j > 0 && Hooks_ComparePublics(j - 1, j); --j)
-		{
-			// Do nothing extra.
-		}
-	}
-	YSI_g_sInitPublicDiff = Hooks_CountInvalidPublics() * 8;
-	// Move the start address UP to reduce the VM's search space.
-	if (YSI_g_sInitPublicDiff)
-	{
-		// Update stored values in y_amx so they reflect the new structure.
-		if (!Server_JITExists() || YSI_g_sSortedOnce)
-		{
-			oldCount = AMX_Read(AMX_BASE_ADDRESS + 32),
-			AMX_Write(AMX_BASE_ADDRESS + 32, oldCount + YSI_g_sInitPublicDiff),
-			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
-			ResetStaticAmxHeader(),
-			YSI_g_sSortedOnce = true;
-		}
-	}
-	// TODO: Inform the fixes2 plugin of the change.  That stores indexes, not
-	// addresses so it needs to update itself (somehow - I don't actually know
-	// HOW it will do this...)  Probably inform it first, store the addresses,
-	// then inform it again to track down and replace those addresses.
+//	Debug_Print4("Hooks_SortPublics called");
+//	// Count the number of still active functions.
+//	new
+//		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
+//	// Now I need to SORT the functions, and I have honestly no idea how to do
+//	// that.  Fortunately I don't actually need to move the strings themselves
+//	// around as they just sit nicely in the nametable; I only need to sort the
+//	// pointers.
+//	for (new i = 1; i < oldCount; ++i)
+//	{
+//		for (new j = i; j > 0 && Hooks_ComparePublics(j - 1, j); --j)
+//		{
+//			// Do nothing extra.
+//		}
+//	}
+//	YSI_g_sInitPublicDiff = Hooks_CountInvalidPublics() * 8;
+//	// Move the start address UP to reduce the VM's search space.
+//	if (YSI_g_sInitPublicDiff)
+//	{
+//		// Update stored values in y_amx so they reflect the new structure.
+//		if (!Server_JITExists() || YSI_g_sSortedOnce)
+//		{
+//			oldCount = AMX_Read(AMX_BASE_ADDRESS + 32),
+//			AMX_Write(AMX_BASE_ADDRESS + 32, oldCount + YSI_g_sInitPublicDiff),
+//			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
+//			ResetStaticAmxHeader(),
+//			YSI_g_sSortedOnce = true;
+//		}
+//	}
+//	// TODO: Inform the fixes2 plugin of the change.  That stores indexes, not
+//	// addresses so it needs to update itself (somehow - I don't actually know
+//	// HOW it will do this...)  Probably inform it first, store the addresses,
+//	// then inform it again to track down and replace those addresses.
 }
 
 /*-------------------------------------------------------------------------*//**
