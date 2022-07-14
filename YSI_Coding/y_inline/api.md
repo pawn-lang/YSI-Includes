@@ -1,4 +1,4 @@
-#### _@_y_inline_@_
+#### @_y_inline_y_@
 >* **Parameters:**
 
 >* **Returns:**

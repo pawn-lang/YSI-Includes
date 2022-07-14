@@ -90,9 +90,9 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-forward _@_y_funcinc_@_();
+forward @_y_funcinc_y_@();
 
-public _@_y_funcinc_@_()
+public @_y_funcinc_y_@()
 {
 	new tmp[2];
 	// This function calls any functions used in assembly code in YSI to ensure
