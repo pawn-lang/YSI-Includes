@@ -285,24 +285,6 @@ stock Hooks_MakeShortName(name[Y_HOOKS_MAX_NAME])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="name">The string to get the hooked function name from.</param>
- * <returns>
- *  The input string without y_hooks name decorations.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
-{
-	Debug_Print4("Hooks_IsolateName called");
-	new
-		pos = strfind(name, "@", false, 4);
-	if (pos != -1)
-	{
-		name[pos] = '\0';
-	}
-}
-
-/*-------------------------------------------------------------------------*//**
  * <remarks>
  *  This is the old version of <c>AMX_GetPublicEntry</c> that doesn't use a
  *  binary search, so is slower but more resiliant in this code which shuffles
@@ -593,6 +575,7 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[], const callback[])
 {
 	new
+		ch,
 		i = 0,
 		j = 0;
 	// Extract the name, ignoring any `"`s.
@@ -603,12 +586,11 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 		{
 			++i;
 		}
-		while (name[i] >= '0')
+		while ((ch = name[i++]) >= '0' && ch != '@')
 		{
-			tmpName[j++] = name[i++];
+			tmpName[j++] = ch;
 		}
 		tmpName[j] = '\0',
-		Hooks_IsolateName(tmpName),
 		Hooks_MakeLongName(tmpName);		
 	}
 	else
@@ -618,9 +600,9 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 		{
 			++i;
 		}
-		while (callback[i] >= '0')
+		while ((ch = callback[i++]) >= '0')
 		{
-			tmpName[j++] = callback[i++];
+			tmpName[j++] = ch;
 		}
 		tmpName[j] = '\0';
 	}
