@@ -130,13 +130,14 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 
 // These parts are redefined every time the master system is included.
 #if !YSIM_HAS_MASTER
-	#define FOREIGN__      YSIM_NONE_FOREIGN
-	#define GLOBAL__       YSIM_NONE_GLOBAL
-	#define MASTER_FUNC__  YSIM_NONE_FUNC
-	#define MASTER_HOOK__  YSIM_NONE_HOOK
-	#define MASTER_TASK__  YSIM_NONE_TASK
-	#define MASTER_PTASK__ YSIM_NONE_PTSK
-	#define GROUP_HOOK__   YSIM_NONE_GRUP
+	#define FOREIGN__       YSIM_NONE_FOREIGN
+	#define GLOBAL__        YSIM_NONE_GLOBAL
+	#define MASTER_FUNC__   YSIM_NONE_FUNC
+	#define MASTER_HOOK__   YSIM_NONE_HOOK
+	#define MASTER_TASK__   YSIM_NONE_TASK
+	#define MASTER_PTASK__  YSIM_NONE_PTSK
+	#define GROUP_HOOK__    YSIM_NONE_GRUP
+	#define MASTER_REHOOK__ YSIM_NONE_REHK
 	#if _MASTER == 0
 		// Less strict (implicit user master).
 		#define YSIM_COMMAND YSIM_NONE_ZERO
@@ -145,13 +146,14 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#endif
 	#define Master_Caller() (1)
 #elseif _YSIM_IS_SERVER
-	#define FOREIGN__      YSIM_SERVER_FOREIGN
-	#define GLOBAL__       YSIM_SERVER_GLOBAL
-	#define MASTER_FUNC__  YSIM_SERVER_FUNC
-	#define MASTER_HOOK__  YSIM_SERVER_HOOK
-	#define MASTER_TASK__  YSIM_SERVER_TASK
-	#define MASTER_PTASK__ YSIM_SERVER_PTSK
-	#define GROUP_HOOK__   YSIM_SERVER_GRUP
+	#define FOREIGN__       YSIM_SERVER_FOREIGN
+	#define GLOBAL__        YSIM_SERVER_GLOBAL
+	#define MASTER_FUNC__   YSIM_SERVER_FUNC
+	#define MASTER_HOOK__   YSIM_SERVER_HOOK
+	#define MASTER_TASK__   YSIM_SERVER_TASK
+	#define MASTER_PTASK__  YSIM_SERVER_PTSK
+	#define GROUP_HOOK__    YSIM_SERVER_GRUP
+	#define MASTER_REHOOK__ YSIM_SERVER_REHK
 	#if _MASTER == 0
 		// Less strict (implicit user master).
 		#define YSIM_COMMAND YSIM_SERVER_ZERO
@@ -160,13 +162,14 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#endif
 	#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(@_):(I@))
 #elseif _YSIM_IS_CLIENT
-	#define FOREIGN__      YSIM_CLIENT_FOREIGN
-	#define GLOBAL__       YSIM_CLIENT_GLOBAL
-	#define MASTER_FUNC__  YSIM_CLIENT_FUNC
-	#define MASTER_HOOK__  YSIM_CLIENT_HOOK
-	#define MASTER_TASK__  YSIM_CLIENT_TASK
-	#define MASTER_PTASK__ YSIM_CLIENT_PTSK
-	#define GROUP_HOOK__   YSIM_CLIENT_GRUP
+	#define FOREIGN__       YSIM_CLIENT_FOREIGN
+	#define GLOBAL__        YSIM_CLIENT_GLOBAL
+	#define MASTER_FUNC__   YSIM_CLIENT_FUNC
+	#define MASTER_HOOK__   YSIM_CLIENT_HOOK
+	#define MASTER_TASK__   YSIM_CLIENT_TASK
+	#define MASTER_PTASK__  YSIM_CLIENT_PTSK
+	#define GROUP_HOOK__    YSIM_CLIENT_GRUP
+	#define MASTER_REHOOK__ YSIM_CLIENT_REHK
 	#if _MASTER == 0
 		// Less strict (implicit user master).
 		#define YSIM_COMMAND YSIM_CLIENT_ZERO
@@ -175,13 +178,14 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#endif
 	#define Master_Caller() (-1)
 #elseif _YSIM_IS_STUB
-	#define FOREIGN__      YSIM_STUB_FOREIGN
-	#define GLOBAL__       YSIM_STUB_GLOBAL
-	#define MASTER_FUNC__  YSIM_STUB_FUNC
-	#define MASTER_HOOK__  YSIM_STUB_HOOK
-	#define MASTER_TASK__  YSIM_STUB_TASK
-	#define MASTER_PTASK__ YSIM_STUB_PTSK
-	#define GROUP_HOOK__   YSIM_STUB_GRUP
+	#define FOREIGN__       YSIM_STUB_FOREIGN
+	#define GLOBAL__        YSIM_STUB_GLOBAL
+	#define MASTER_FUNC__   YSIM_STUB_FUNC
+	#define MASTER_HOOK__   YSIM_STUB_HOOK
+	#define MASTER_TASK__   YSIM_STUB_TASK
+	#define MASTER_PTASK__  YSIM_STUB_PTSK
+	#define GROUP_HOOK__    YSIM_STUB_GRUP
+	#define MASTER_REHOOK__ YSIM_STUB_REHK
 	#if _MASTER == 0
 		// Less strict (implicit user master).
 		#define YSIM_COMMAND YSIM_STUB_ZERO
@@ -190,13 +194,14 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#endif
 	#define Master_Caller
 #else
-	#define FOREIGN__      YSIM_CLOUD_FOREIGN
-	#define GLOBAL__       YSIM_CLOUD_GLOBAL
-	#define MASTER_FUNC__  YSIM_CLOUD_FUNC
-	#define MASTER_HOOK__  YSIM_CLOUD_HOOK
-	#define MASTER_TASK__  YSIM_CLOUD_TASK
-	#define MASTER_PTASK__ YSIM_CLOUD_PTSK
-	#define GROUP_HOOK__   YSIM_CLOUD_GRUP
+	#define FOREIGN__       YSIM_CLOUD_FOREIGN
+	#define GLOBAL__        YSIM_CLOUD_GLOBAL
+	#define MASTER_FUNC__   YSIM_CLOUD_FUNC
+	#define MASTER_HOOK__   YSIM_CLOUD_HOOK
+	#define MASTER_TASK__   YSIM_CLOUD_TASK
+	#define MASTER_PTASK__  YSIM_CLOUD_PTSK
+	#define GROUP_HOOK__    YSIM_CLOUD_GRUP
+	#define MASTER_REHOOK__ YSIM_CLOUD_REHK
 	#if _MASTER == 0
 		// Less strict (implicit user master).
 		#define YSIM_COMMAND YSIM_CLOUD_ZERO

@@ -390,6 +390,11 @@ MASTER_HOOK__ OnYSIInit()
 	return 1;
 }
 
+MASTER_REHOOK__ OnYSIInit()
+{
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <returns>
  *  Number of unused area slots.
@@ -1722,6 +1727,12 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 			YSI_g_sAreas[i][E_AREA_PLAYERS][slot] |= mask;
 		}
 	}
+	return 1;
+}
+
+MASTER_REHOOK__ OnPlayerConnect(playerid)
+{
+	#pragma unused playerid
 	return 1;
 }
 

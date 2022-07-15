@@ -1371,6 +1371,12 @@ MASTER_HOOK__ OnPlayerText(playerid, text[])
 	return 1;
 }
 
+MASTER_REHOOK__ OnPlayerText(playerid, text[])
+{
+	#pragma unused playerid, text
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who typed a command.</param>
  * <param name="cmdtext">What they typed.</param>
@@ -1396,6 +1402,12 @@ MASTER_HOOK__ OnPlayerCommandText(playerid, cmdtext[])
 	// submit commands without the "/" will still work.  Or you could hook
 	// "OnPlayerText" to call "Command_ReProcess" and still work as well.
 	return Command_ReProcess(playerid, cmdtext, 0);
+}
+
+MASTER_REHOOK__ OnPlayerCommandText(playerid, cmdtext[])
+{
+	#pragma unused playerid, cmdtext
+	return 1;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1515,6 +1527,12 @@ HOOK__ OnScriptExit()
 				}
 			}
 		}
+		return 1;
+	}
+
+	MASTER_REHOOK__ OnMasterSystemClose(id)
+	{
+		#pragma unused id
 		return 1;
 	}
 #endif

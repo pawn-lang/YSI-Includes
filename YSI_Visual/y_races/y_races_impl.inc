@@ -926,6 +926,11 @@ MASTER_HOOK__ OnYSIInit()
 	return 1;
 }
 
+MASTER_REHOOK__ OnYSIInit()
+{
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who entered.</param>
  * Checks a players position in the race and displays the corresponding next
@@ -935,6 +940,12 @@ MASTER_HOOK__ OnYSIInit()
 MASTER_HOOK__ OnPlayerEnterRaceCP(playerid)
 {
 	return Race_DoEnterRaceCP(playerid);
+}
+
+MASTER_REHOOK__ OnPlayerEnterRaceCP(playerid)
+{
+	#pragma unused playerid
+	return 1;
 }
 
 _Y_RACES_STATIC Race_DoEnterRaceCP(playerid)
@@ -1040,6 +1051,12 @@ MASTER_HOOK__ OnPlayerStateChange(playerid, PLAYER_STATE:newstate, PLAYER_STATE:
 	return 1;
 }
 
+MASTER_REHOOK__ OnPlayerStateChange(playerid, PLAYER_STATE:newstate, PLAYER_STATE:oldstate)
+{
+	#pragma unused playerid, newstate, oldstate
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who left.</param>
  * <param name="reason">Why they left.</param>
@@ -1066,6 +1083,12 @@ MASTER_HOOK__ OnPlayerDisconnect(playerid, reason)
 	#pragma unused reason
 }
 
+MASTER_REHOOK__ OnPlayerDisconnect(playerid, reason)
+{
+	#pragma unused playerid, reason
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who joined.</param>
  * Just a fix for IsPlayerInRaceCheckpoint.
@@ -1074,6 +1097,12 @@ MASTER_HOOK__ OnPlayerDisconnect(playerid, reason)
 MASTER_HOOK__ OnPlayerConnect(playerid)
 {
 	DisablePlayerRaceCheckpoint(playerid);
+	return 1;
+}
+
+MASTER_REHOOK__ OnPlayerConnect(playerid)
+{
+	#pragma unused playerid
 	return 1;
 }
 

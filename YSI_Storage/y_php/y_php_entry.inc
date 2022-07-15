@@ -274,6 +274,12 @@ MASTER_HOOK__ OnScriptInit()
 	return 1;
 }
 
+MASTER_REHOOK__ OnScriptInit()
+{
+	#pragma unused playerid
+	return 1;
+}
+
 timer _PHP_FireOne[10](res, to)
 {
 	static
