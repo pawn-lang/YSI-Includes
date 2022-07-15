@@ -714,10 +714,13 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 			// AMX.  I'm slightly concerned that this code assumes that the
 			// hooks are all consecutive, when they might not be thanks to
 			// replacements.
-			namelen += AMX_GetLengthFromEntry(addr);
+			//AMX_GetStringFromEntry(addr, tmpName),
+			//namelen += strlen(tmpName);
+			//printf("%d == %d", strlen(tmpName), AMX_GetLengthFromEntry(addr));
 			Debug_Print6("Hooks_GetAllHooks found: %s %d", YSI_g_sName, idx);
 			// Replace the function pointer to the implementation.
-			AMX_Write(addr, YSI_g_sAddress);
+			namelen += AMX_GetLengthFromEntry(addr),
+			AMX_Write(addr, YSI_g_sAddress),
 			AMX_Write(addr + 4, 0);
 			// Increment and count how many hooks of this type we have.
 			if (++count == sizeof (YSI_g_sHooks))
