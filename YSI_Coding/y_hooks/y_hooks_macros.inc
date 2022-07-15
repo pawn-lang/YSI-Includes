@@ -162,13 +162,13 @@ Optional plugins:
 #define ADDRMKCL_order:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.order=%6)
 #define ADDRMKCL_fallback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
 //#define ADDRMKCL_fallback1__:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
-#define ADDRMKCL_fallback1__:%8$%0()%9(O@A_()?(((%1(%2)),O@V_)?1:2):(O@V_),%9,%9);static%0(%7) %8$UNIQUE_FUNCTION<@yH_%0@...>()return _Hooks_AddPublicHook(O@A_()?(((_:UNIQUE_FUNCTION<%0@...>(%2)),O@V_)?1:2):(O@V_),__COMPILER_PACK"\"%0\"",.fallback=true);static UNIQUE_FUNCTION<%0@...>(%7)
+#define ADDRMKCL_fallback1__:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,%9);static%6(%7) %8$UNIQUE_FUNCTION<@yH_%6@...>()return _Hooks_AddPublicHook(O@A_()?(((_:UNIQUE_FUNCTION<%6@...>(%2))%3)%4):%5,__COMPILER_PACK"\"%6\"",.fallback=true);static UNIQUE_FUNCTION<%6@...>(%7)
 
-#define ADDRMKCL_stock:%8$%0()%9(O@A_()?(((%1(%2))O@V_)?1:2):(O@V_),%9,%9"%6") %8$%0()return _Hooks_AddFuncHook(O@A_()?(((%1(%2)),O@V_)?1:2):(O@V_),O@A_()?(((%6(%2)),O@V_)?1:2):(O@V_))
-#define ADDRMKCL_native:%8$%0()%9(O@A_()?(((%1(%2))O@V_)?1:2):(O@V_),%9,%9"%6") %8$%0()return _Hooks_AddFuncHook(O@A_()?(((%1(%2)),O@V_)?1:2):(O@V_),O@A_()?(((%6(%2)),O@V_)?1:2):(O@V_))
-#define ADDRMKCL_function:%8$%0()%9(O@A_()?(((%1(%2))O@V_)?1:2):(O@V_),%9,%9"%6") %8$%0()return _Hooks_AddFuncHook(O@A_()?(((%1(%2)),O@V_)?1:2):(O@V_),O@A_()?(((%6(%2)),O@V_)?1:2):(O@V_))
+#define ADDRMKCL_stock:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,"%9") %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
+#define ADDRMKCL_native:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,"%9") %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
+#define ADDRMKCL_function:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,"%9") %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
 
-#define ADDRMKCL_fallback2__:%8$%0()%9(O@A_()?(((%1(%2))O@V_)?1:2):(O@V_),%9,%6) %8$%0()return _Hooks_AddFuncHook(O@A_()?(((%1(%2)),O@V_)?1:2):(O@V_),O@A_()?(((%6(%2)),O@V_)?1:2):(O@V_))
+#define ADDRMKCL_fallback2__:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,%9) %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
 
 // Upgrade the old version to the new version, with only defaults.
 #define HOOK__%0(%1) @hook(.fallback1__=true)%0(%1)
