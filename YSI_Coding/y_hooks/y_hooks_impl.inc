@@ -548,11 +548,11 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 	if (callback[0] == 0)
 	{
 		// Derive the callback from the function name.
-		while (name{i} < '0')
+		while (name[i] < '0')
 		{
 			++i;
 		}
-		while ((ch = name{i++}) >= '0' && ch != '@')
+		while ((ch = name[i++]) >= '0' && ch != '@')
 		{
 			tmpName[j++] = ch;
 		}
@@ -567,11 +567,11 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 	else
 	{
 		// Specified an exact callback, use it.
-		while (callback{i} < '0')
+		while (callback[i] < '0')
 		{
 			++i;
 		}
-		while ((ch = callback{i++}) >= '0')
+		while ((ch = callback[i++]) >= '0')
 		{
 			tmpName[j++] = ch;
 		}
@@ -595,9 +595,11 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 
 stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_first>
 {
+	//printf("a, %d", fallback);
 	#pragma unused address, order
 	// Found a new callback to set up.
 	Hooks_ExtractName(YSI_g_sName, name, callback);
+	//printf("Extracted %s from %s, %s", YSI_g_sName, Unpack(name), Unpack(callback));
 	if (fallback)
 	{
 		// Because this function is a fallback type, all the others we want to
@@ -614,17 +616,24 @@ stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", or
 
 stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_fallback>
 {
+	//printf("b, %d", fallback);
 	if (order != cellmin)
 	{
 		Debug_Warning("`.order` is not implemented yet.");
 	}
 	new
 		tmpName[Y_HOOKS_MAX_NAME];
+	//Hooks_ExtractName(tmpName, name, callback);
 	if (fallback)
 	{
 		Hooks_ExtractName(tmpName, name, callback);
 		YSI_g_sAddress = address;
 		return strcmp(tmpName, YSI_g_sName) == 0;
+		//if (strcmp(tmpName, YSI_g_sName) == 0)
+		//{
+		//	//printf("Extracted %s from %s, %s", tmpName, Unpack(name), Unpack(callback));
+		//	return true;
+		//}
 	}
 	else
 	{
