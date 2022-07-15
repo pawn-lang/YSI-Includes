@@ -155,14 +155,14 @@ Optional plugins:
 // I don't actually need the tag, this is purely internal.
 #define ADDRMKCL_END(%0)%8$(,%6)(#%7)return%9_Hooks_AddPublicHook(, ADDRMKCL:%8$UNIQUE_FUNCTION<@yH_%0@...>()return _Hooks_AddPublicHook(O@A_()?(((_:%0(%6)),O@V_)?1:2):(O@V_),
 
-#define @hook(%0)%1(%2) UNIQUE_FUNCTION<@yH_%1@...>();UNIQUE_FUNCTION<%1@...>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _Hooks_AddPublicHook(,_:"\"%1\"",%0);static %1(%2)
+#define @hook(%0)%1(%2) UNIQUE_FUNCTION<@yH_%1@...>();UNIQUE_FUNCTION<%1@...>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _Hooks_AddPublicHook(,_:__COMPILER_PACK"\"%1\"",%0);static %1(%2)
 
 #define ADDRMKCL:%8$%0(%1)%2(%3,%4,.%5=%6) ADDRMKCL_%5:%8$%0(%1)%2(%3,%4,%6)
-#define ADDRMKCL_callback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,%6)
+#define ADDRMKCL_callback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,__COMPILER_PACK%6)
 #define ADDRMKCL_order:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.order=%6)
 #define ADDRMKCL_fallback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
 //#define ADDRMKCL_fallback1__:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
-#define ADDRMKCL_fallback1__:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,%9);static%6(%7) %8$UNIQUE_FUNCTION<@yH_%6@...>()return _Hooks_AddPublicHook(O@A_()?(((_:UNIQUE_FUNCTION<%6@...>(%2))%3)%4):%5,"\"%6\"",.fallback=true);static UNIQUE_FUNCTION<%6@...>(%7)
+#define ADDRMKCL_fallback1__:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,%9);static%6(%7) %8$UNIQUE_FUNCTION<@yH_%6@...>()return _Hooks_AddPublicHook(O@A_()?(((_:UNIQUE_FUNCTION<%6@...>(%2))%3)%4):%5,__COMPILER_PACK"\"%6\"",.fallback=true);static UNIQUE_FUNCTION<%6@...>(%7)
 
 #define ADDRMKCL_stock:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,"%9") %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
 #define ADDRMKCL_native:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,"%9") %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
