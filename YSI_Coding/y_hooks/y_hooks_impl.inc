@@ -306,7 +306,7 @@ _Y_HOOKS_STATIC stock bool:Hooks_GetPublicEntry(&buffer, const pattern[])
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
-		if (AMX_Read(addr) == quick)
+		if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == quick)
 		{
 			AMX_ReadString(addr, str);
 			if (strcmp(str, pattern) == 0)
@@ -751,7 +751,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 			// AMX.  I'm slightly concerned that this code assumes that the
 			// hooks are all consecutive, when they might not be thanks to
 			// replacements.
-			AMX_GetStringFromEntry(YSI_g_sHooks[count], tmpName),
+			AMX_GetStringFromEntry(addr, tmpName),
 			namelen += strlen(tmpName);
 			Debug_Print6("Hooks_GetAllHooks found: %s ?= %s %d", YSI_g_sName, tmpName, idx);
 			// Replace the function pointer to the implementation.
