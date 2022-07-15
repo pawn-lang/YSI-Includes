@@ -548,11 +548,11 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 	if (callback[0] == 0)
 	{
 		// Derive the callback from the function name.
-		while (name[i] < '0')
+		while (name{i} < '0')
 		{
 			++i;
 		}
-		while ((ch = name[i++]) >= '0' && ch != '@')
+		while ((ch = name{i++}) >= '0' && ch != '@')
 		{
 			tmpName[j++] = ch;
 		}
@@ -567,11 +567,11 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 	else
 	{
 		// Specified an exact callback, use it.
-		while (callback[i] < '0')
+		while (callback{i} < '0')
 		{
 			++i;
 		}
-		while ((ch = callback[i++]) >= '0')
+		while ((ch = callback{i++}) >= '0')
 		{
 			tmpName[j++] = ch;
 		}
