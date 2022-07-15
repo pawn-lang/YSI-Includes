@@ -840,6 +840,52 @@ stock AMX_GetPublicIndexFromEntry(tableEntry)
 	return (tableEntry - AMX_HEADER_PUBLICS) / 8;
 }
 
+stock AMX_GetLengthFromEntry(tableEntry)
+{
+	tableEntry += 4;
+	#emit LREF.S.pri                tableEntry
+	#emit LOAD.alt                  AMX_BASE_ADDRESS
+	#emit ADD
+	#emit STOR.S.pri                tableEntry
+	return AMX_ReadLength(tableEntry);
+}
+
+stock AMX_ReadLength(addr)
+{
+	new
+		buffer = 0,
+		len = 0;
+	for ( ; ; )
+	{
+		// Read 4 bytes.
+		#emit LREF.S.pri                addr
+		#emit STOR.S.pri                buffer
+		
+		// https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
+		if (Cell_HasZeroByte(buffer))
+		{
+			if (buffer & 0x0000FF)
+			{
+				++len;
+				if (buffer & 0x00FF00)
+				{
+					++len;
+					if (buffer & 0xFF0000)
+					{
+						++len;
+						// No point checking the last byte, one of them must be
+						// `0`, and it wasn't any of the other three.
+					}
+				}
+			}
+			break;
+		}
+		addr += 4;
+		len += 4;
+	}
+	return len;
+}
+
 stock AMX_GetStringFromEntry(tableEntry, str[], size = sizeof (str))
 {
 	tableEntry += 4;
