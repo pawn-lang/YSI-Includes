@@ -1407,7 +1407,7 @@ MASTER_HOOK__ OnPlayerCommandText(playerid, cmdtext[])
 MASTER_REHOOK__ OnPlayerCommandText(playerid, cmdtext[])
 {
 	#pragma unused playerid, cmdtext
-	return 1;
+	return 0;
 }
 
 /*-------------------------------------------------------------------------*//**

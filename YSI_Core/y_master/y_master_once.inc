@@ -170,6 +170,7 @@ Optional plugins:
 // The global is just the function implementation - doesn't need extra code.
 #define YSIM_SERVER_GLOBAL%0(%1)   %0(%1)
 #define YSIM_SERVER_HOOK%0(%1)     HOOK__%0(%1)
+#define YSIM_SERVER_REHK%0(%1)     static stock _@%0(%1)
 #define YSIM_SERVER_TASK%0[%3](%1) task%0[%3](%1)
 #define YSIM_SERVER_PTSK%0[%3](%1) ptask%0[%3](%1)
 #define YSIM_SERVER_FUNC%0(%1)<%9> forward%0(%1);public%0(%1)
@@ -180,7 +181,8 @@ Optional plugins:
 #define YSIM_CLIENT_FOREIGN%0(%1)  %0(%1);YSIM_PARSER(YSIM_UF)%0(%1)
 // Hide the local implementations.
 #define YSIM_CLIENT_GLOBAL%0(%1)   YSIM_PARSER(YSIM_UG)%0(%1)
-#define YSIM_CLIENT_HOOK%0(%1)     static stock _@%0(%1)
+#define YSIM_CLIENT_HOOK%0(%1)     static stock _@%0(%1) <y_master_unused:y_master_unused_a>
+#define YSIM_CLIENT_REHK%0(%1)     static stock _@%0(%1) <y_master_unused:y_master_unused_b>
 #define YSIM_CLIENT_TASK%0[%3](%1) YSIM_PARSER(YSIM_UG)%0(%1)
 #define YSIM_CLIENT_PTSK%0[%3](%1) YSIM_PARSER(YSIM_UG)%0(%1)
 #define YSIM_CLIENT_FUNC%0(%1)<%9> static stock %0(%1)
@@ -190,7 +192,8 @@ Optional plugins:
 
 #define YSIM_CLOUD_FOREIGN%0(%1)   %0(%1);YSIM_PARSER(YSIM_DF)%0(%1)
 #define YSIM_CLOUD_GLOBAL%0(%1)    YSIM_PARSER(YSIM_DG)%0(%1)
-#define YSIM_CLOUD_HOOK%0(%1)      HOOK__%0(%1)<>return 0;REHOOK__%0(%1)<_YCM:y>
+#define YSIM_CLOUD_HOOK%0(%1)      HOOK__%0(%1)<_YCM:y>
+#define YSIM_CLOUD_REHK%0(%1)      REHOOK__%0(%1)<>
 #define YSIM_CLOUD_TASK%0[%3](%1)  task%0[%3](%1)<>{}public%0(%1)<_YCM:y>
 #define YSIM_CLOUD_PTSK%0[%3](%1)  ptask%0[%3](%1)<>{}public%0(%1)<_YCM:y>
 #define YSIM_CLOUD_FUNC%0(%1)<%9>  %0(%1);public%0(%1)<>{}public%0(%1)<%9>
@@ -205,6 +208,7 @@ Optional plugins:
 // parsing though to give the RIGHT error...
 #define YSIM_STUB_GLOBAL%0(%1)     YSIM_PARSER(YSIM_TG)%0(%1)
 #define YSIM_STUB_HOOK%0(%1)       YSIM_PARSER(YSIM_TG)%0(%1)
+#define YSIM_STUB_REHK%0(%1)       static stock _@%0(%1)
 #define YSIM_STUB_TASK%0[%3](%1)   YSIM_PARSER(YSIM_TG)%0(%1)
 #define YSIM_STUB_PTSK%0[%3](%1)   YSIM_PARSER(YSIM_TG)%0(%1)
 #define YSIM_STUB_FUNC%0(%1)<%9>   YSIM_PARSER(YSIM_TG)%0(%1)
@@ -217,6 +221,7 @@ Optional plugins:
 #define YSIM_NONE_FOREIGN%0(%1)    %0(%1)
 #define YSIM_NONE_GLOBAL%0(%1)     %0(%1)
 #define YSIM_NONE_HOOK%0(%1)       HOOK__%0(%1)
+#define YSIM_NONE_REHK%0(%1)       static stock _@%0(%1)
 #define YSIM_NONE_TASK%0[%3](%1)   task%0[%3](%1)
 #define YSIM_NONE_PTSK%0[%3](%1)   ptask%0[%3](%1)
 #define YSIM_NONE_FUNC%0(%1)<%9>   forward%0(%1);public%0(%1)
