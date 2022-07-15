@@ -285,43 +285,6 @@ stock Hooks_MakeShortName(name[Y_HOOKS_MAX_NAME])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <remarks>
- *  This is the old version of <c>AMX_GetPublicEntry</c> that doesn't use a
- *  binary search, so is slower but more resiliant in this code which shuffles
- *  things around.  Also optimised for the local simple known use-case.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC stock bool:Hooks_GetPublicEntry(&buffer, const pattern[])
-{
-	new
-		quick = (pattern[0]) | (pattern[1] << 8) | (pattern[2] << 16) | (pattern[3] << 24),
-		//tmp,
-		addr = 0,
-		pos = AMX_HEADER_PUBLICS + 4,
-		str[FUNCTION_LENGTH];
-	do
-	{
-		#emit LREF.S.pri                pos
-		#emit LOAD.alt                  AMX_BASE_ADDRESS
-		#emit ADD
-		#emit STOR.S.pri                addr
-		if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == quick)
-		{
-			AMX_ReadString(addr, str);
-			if (strcmp(str, pattern) == 0)
-			{
-				buffer = pos - 4;
-				return true;
-			}
-		}
-		pos += 8;
-	}
-	while (pos < AMX_HEADER_NATIVES);
-	return false;
-}
-
-/*-------------------------------------------------------------------------*//**
  * <param name="preloads">Desination in which to store all the preloads.</param>
  * <param name="precount">Number of found preload libraries.</param>
  * <param name="size">Maximum number of libraries to store.</param>
@@ -426,7 +389,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 		Debug_Print5("Hooks_GetPreHooks: search = %s", Unpack(lfunc));
 		Debug_Code1{new oc = count;}
 		// Needs to be binary search safe, i.e. use fallback code.
-		if (Hooks_GetPublicEntry(hooks[count], lfunc)) ++count;
+		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
 		Debug_Code1{if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[oc] + 4) + AMX_BASE_ADDRESS, buffer); strunpack(buffer, buffer); Debug_Print5("Hooks_GetPreHooks: found = %s", buffer); }}
 		StrCpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
 		strcat(lfunc, __COMPILER_UNPACK"_");
@@ -982,7 +945,7 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
 	new
 		ptr = 0;
 	// Needs to be binary search safe.
-	if (Hooks_GetPublicEntry(ptr, dest))
+	if (AMX_GetPublicEntry(0, ptr, dest, true))
 	{
 		// A "RET_OnWhatever" function exists - rationalise the return.
 		//ptr = AMX_Read(ptr);
