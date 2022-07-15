@@ -719,6 +719,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 			// Replace the function pointer to the implementation.
 			namelen += AMX_GetLengthFromEntry(addr),
 			AMX_Write(addr, YSI_g_sAddress);
+			AMX_Write(addr + 4, 0);
 			// Increment and count how many hooks of this type we have.
 			if (++count == sizeof (YSI_g_sHooks))
 			{
@@ -843,19 +844,27 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, id
 		// and save a step.
 		for (new str[FUNCTION_LENGTH]; ; )
 		{
-			nextPtr = AMX_Read(writePtr + 12),
-			AMX_ReadString(nextPtr + AMX_BASE_ADDRESS, str, sizeof (str));
-			if (strcmp(str, YSI_g_sName) > 0)
+			nextPtr = AMX_Read(writePtr + 12);
+			if (nextPtr == 0)
 			{
-				// Save the new name's address.
-				AMX_Write(writePtr + 4, precount);
-				break;
+				// This is a blank hole, skip it.
+				writePtr += 8;
 			}
-			// Shift this entry up.
-			AMX_Write(writePtr + 4, nextPtr),
-			nextPtr = AMX_Read(writePtr + 8),
-			AMX_Write(writePtr, nextPtr),
-			writePtr += 8;
+			else
+			{
+				AMX_ReadString(nextPtr + AMX_BASE_ADDRESS, str, sizeof (str));
+				if (strcmp(str, YSI_g_sName) > 0)
+				{
+					// Save the new name's address.
+					AMX_Write(writePtr + 4, precount);
+					break;
+				}
+				// Shift this entry up.
+				AMX_Write(writePtr + 4, nextPtr),
+				nextPtr = AMX_Read(writePtr + 8),
+				AMX_Write(writePtr, nextPtr),
+				writePtr += 8;
+			}
 		}
 	}
 	// Save the function pointer again so it can be used by

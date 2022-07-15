@@ -406,11 +406,14 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 			#emit LOAD.alt                  AMX_BASE_ADDRESS
 			#emit ADD
 			#emit STOR.S.pri                addr
-			AMX_ReadString(addr, str);
-			if (strcmp(str, pattern) == 0)
+			if (addr != AMX_BASE_ADDRESS)
 			{
-				buffer = pos - 4;
-				return idx;
+				AMX_ReadString(addr, str);
+				if (strcmp(str, pattern) == 0)
+				{
+					buffer = pos - 4;
+					return idx;
+				}
 			}
 			pos += 8;
 		}
@@ -427,16 +430,19 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 			#emit LOAD.alt                  AMX_BASE_ADDRESS
 			#emit ADD
 			#emit STOR.S.pri                addr
-			if (pattern[0] == '\0')
+			if (addr != AMX_BASE_ADDRESS)
 			{
-				buffer = pos - 4;
-				return idx;
-			}
-			AMX_ReadString(addr, str);
-			if (strfind(str, pattern) != -1)
-			{
-				buffer = pos - 4;
-				return idx;
+				if (pattern[0] == '\0')
+				{
+					buffer = pos - 4;
+					return idx;
+				}
+				AMX_ReadString(addr, str);
+				if (strfind(str, pattern) != -1)
+				{
+					buffer = pos - 4;
+					return idx;
+				}
 			}
 			pos += 8;
 		}
@@ -467,7 +473,7 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
-		if (AMX_Read(addr) == pattern)
+		if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == pattern)
 		{
 			buffer = pos - 4;
 			return idx;
@@ -500,6 +506,10 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
+		if (addr == AMX_BASE_ADDRESS)
+		{
+			continue;
+		}
 		for ( ; ; )
 		{
 			// Find the end of the string.
