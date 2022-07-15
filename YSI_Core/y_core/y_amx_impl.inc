@@ -536,8 +536,9 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 						break;
 					}
 					pos += 8;
+					continue;
 				}
-				else if (swapchars(AMX_Read(addr)) - pattern < 0)
+				if (swapchars(AMX_Read(addr)) - pattern < 0)
 				{
 					idx = mid + 1;
 					break;
@@ -562,15 +563,12 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
-		if (addr == AMX_BASE_ADDRESS)
-		{
-			pos += 8;
-		}
-		else if (AMX_Read(addr) == pattern)
+		if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == pattern)
 		{
 			buffer = pos - 4;
 			return idx;
 		}
+		pos += 8;
 	}
 	return 0;
 }
