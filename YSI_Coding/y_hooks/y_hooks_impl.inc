@@ -905,7 +905,7 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(write, bool:hasprehooks)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_InvalidatePointer(tableEntry)
+_Y_HOOKS_STATIC stock Hooks_InvalidatePointer(tableEntry)
 {
 	Debug_Print4("Hooks_InvalidatePointer called");
 	AMX_Write(tableEntry + 4, 0);
