@@ -402,7 +402,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 		}
 		// Binary search.
 		new
-			quick = (pattern[0]) | (pattern[1] << 8) | (pattern[2] << 16) | (pattern[3] << 24),
+			quick = (pattern[3]) | (pattern[2] << 8) | (pattern[1] << 16) | (pattern[0] << 24),
 			addr = 0,
 			str[FUNCTION_LENGTH],
 			mid,
@@ -413,10 +413,14 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 			pos = mid * 8 + base + 4;
 			for ( ; ; )
 			{
+				Debug_Print7("Looking for: %s, %d, %d, %d", pattern, idx, mid, count);
 				#emit LREF.S.pri                pos
 				#emit LOAD.alt                  AMX_BASE_ADDRESS
 				#emit ADD
 				#emit STOR.S.pri                addr
+				Debug_Code7{AMX_ReadString(addr, str);}
+				Debug_Print7("    %d, %d, %s", pos, addr, unpack(str));
+				Debug_Print7("    %08x, %08x, %d", quick, swapchars(AMX_Read(addr)), swapchars(AMX_Read(addr)) - quick);
 				if (addr == AMX_BASE_ADDRESS)
 				{
 					if (++mid == count)
@@ -428,12 +432,14 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 					pos += 8;
 					continue;
 				}
-				else if (AMX_Read(addr) < quick)
+				// Bad reuse of a variable, but I ran out...
+				table = E_AMX_TABLE:swapchars(AMX_Read(addr));
+				if (_:table < quick)
 				{
 					idx = mid + 1;
 					break;
 				}
-				else if (AMX_Read(addr) > quick)
+				else if (_:table > quick)
 				{
 					count = mid;
 					break;
