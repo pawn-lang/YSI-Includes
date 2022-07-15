@@ -321,7 +321,6 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 				Debug_Error("y_hooks prehook array filled");
 				break;
 			}
-			//addr = AMX_Read(publicTableEntry);
 			AMX_ReadString(AMX_Read(publicTableEntry + 4) + AMX_BASE_ADDRESS + 4, name),
 			strunpack(preloads[precount][E_CHAIN_HOOK_NAME], name, 16);
 			#emit PUSH.C                    0
@@ -335,12 +334,9 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 			preloads[precount][E_CHAIN_HOOK_VALUE] = tmp;
 			++precount;
 			if (strlen(name) > 15)
+			{
 				Debug_Error("Overflow in prehook name \"%s\"", Unpack(name));
-			// {
-				// new buffer[FUNCTION_LENGTH];
-				// strunpack(buffer, name);
-				// printf("preload: %s", buffer);
-			// }
+			}
 		}
 	}
 	// Sort the preload libraries.
@@ -691,7 +687,6 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 	new
 		addr = 0,
 		count = 0,
-		tmpName[Y_HOOKS_MAX_NAME],
 		tmp;
 	// This call is also binary search safe as it accepts `idx` so has a known
 	// start point (thus isn't using a binary search unless `idx` is `0` in
@@ -699,6 +694,12 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 	while ((idx = AMX_GetPublicEntryPrefix(idx, addr, _A<@yH_>)))
 	{
 		YSI_g_sHooks[count] = addr;
+		if (AMX_Read(addr) == 0)
+		{
+			// Not a valid pointer, previously removed.
+			continue;
+		}
+		{}
 		// Call the hook stub, and see if it thinks it is a valid hook.
 		#emit PUSH.C                    0
 		#emit LCTRL                     6
@@ -714,14 +715,10 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 			// AMX.  I'm slightly concerned that this code assumes that the
 			// hooks are all consecutive, when they might not be thanks to
 			// replacements.
-			AMX_GetStringFromEntry(addr, tmpName),
-			namelen += strlen(tmpName);
-			printf("%d == %d", strlen(tmpName), AMX_GetLengthFromEntry(addr));
 			Debug_Print6("Hooks_GetAllHooks found: %s %d", YSI_g_sName, idx);
 			// Replace the function pointer to the implementation.
-			//namelen += AMX_GetLengthFromEntry(addr),
-			AMX_Write(addr, YSI_g_sAddress),
-			AMX_Write(addr + 4, 0);
+			namelen += AMX_GetLengthFromEntry(addr),
+			AMX_Write(addr, YSI_g_sAddress);
 			// Increment and count how many hooks of this type we have.
 			if (++count == sizeof (YSI_g_sHooks))
 			{
@@ -764,6 +761,12 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 		{
 			namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
 		}
+		if (AMX_Read(entry) == 0)
+		{
+			// Not a valid pointer, previously removed.
+			continue;
+		}
+		{}
 		// Invoke the function, which will result in our callback being called
 		// to get the base function name (in to `YSI_g_sName`).
 		state y_hooks_scan : y_hooks_scan_first;
@@ -908,7 +911,7 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(write, bool:hasprehooks)
 _Y_HOOKS_STATIC Hooks_InvalidatePointer(tableEntry)
 {
 	Debug_Print4("Hooks_InvalidatePointer called");
-	AMX_Write(tableEntry + 4, 0);
+	AMX_Write(tableEntry, 0);
 }
 
 /*
@@ -1061,6 +1064,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		{
 			// Get the absolute offset from here.
 			@emit CALL          (AMX_Read(YSI_g_sHooks[i]) + base) // 2
+			Hooks_InvalidatePointer(YSI_g_sHooks[i]);
 			if (skipable)
 			{
 				// =====================================
@@ -1098,6 +1102,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		// Still need this code as they may hook a function that doesn't exist,
 		// but we still need to correctly process -1 or -2.
 		@emit CALL          (AMX_Read(YSI_g_sHooks[0]) + base)
+		Hooks_InvalidatePointer(YSI_g_sHooks[0]);
 		@emit ZERO.alt
 		@emit JSGEQ.label   Hooks_SkipInvert
 		@emit INVERT
@@ -1163,15 +1168,18 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 		tmp;
 	do
 	{
-		read -= 8,
-		// Check if we should skip it anyway (i.e. is it one of the prefixes
-		// we want removed).
-		tmp = AMX_Read(read + 4);
+		read -= 8;
+		tmp = AMX_Read(read);
 		if (tmp == 0)
 		{
 			// No pointer, skip it.
 			continue;
 		}
+		AMX_Write(write - 8, tmp),
+		
+		// Check if we should skip it anyway (i.e. is it one of the prefixes
+		// we want removed).
+		tmp = AMX_Read(read + 4);
 		switch (AMX_Read(tmp + AMX_BASE_ADDRESS))
 		{
 		#if !defined YSI_TESTS
@@ -1192,9 +1200,7 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 		}
 		// Neither an invalid pointer nor a removed name.
 		write -= 8,
-		AMX_Write(write + 4, tmp),
-		tmp = AMX_Read(read),
-		AMX_Write(write, tmp);
+		AMX_Write(write + 4, tmp);
 	}
 	while (read != AMX_HEADER_PUBLICS);
 	// Get the difference from the old to the new publics table.
