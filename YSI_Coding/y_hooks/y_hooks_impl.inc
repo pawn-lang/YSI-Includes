@@ -545,7 +545,7 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
 		i = 0,
 		j = 0;
 	// Extract the name, ignoring any `"`s.
-	if (callback[0] == 0)
+	if (callback{0} == 0)
 	{
 		// Derive the callback from the function name.
 		while (name{i} < '0')
