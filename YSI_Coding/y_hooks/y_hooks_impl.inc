@@ -691,7 +691,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 	new
 		addr = 0,
 		count = 0,
-		//tmpName[Y_HOOKS_MAX_NAME],
+		tmpName[Y_HOOKS_MAX_NAME],
 		tmp;
 	// This call is also binary search safe as it accepts `idx` so has a known
 	// start point (thus isn't using a binary search unless `idx` is `0` in
@@ -714,12 +714,12 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 			// AMX.  I'm slightly concerned that this code assumes that the
 			// hooks are all consecutive, when they might not be thanks to
 			// replacements.
-			//AMX_GetStringFromEntry(addr, tmpName),
-			//namelen += strlen(tmpName);
-			//printf("%d == %d", strlen(tmpName), AMX_GetLengthFromEntry(addr));
+			AMX_GetStringFromEntry(addr, tmpName),
+			namelen += strlen(tmpName);
+			printf("%d == %d", strlen(tmpName), AMX_GetLengthFromEntry(addr));
 			Debug_Print6("Hooks_GetAllHooks found: %s %d", YSI_g_sName, idx);
 			// Replace the function pointer to the implementation.
-			namelen += AMX_GetLengthFromEntry(addr),
+			//namelen += AMX_GetLengthFromEntry(addr),
 			AMX_Write(addr, YSI_g_sAddress),
 			AMX_Write(addr + 4, 0);
 			// Increment and count how many hooks of this type we have.
