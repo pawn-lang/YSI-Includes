@@ -529,10 +529,10 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 				#emit STOR.S.pri                addr
 				if (addr == AMX_BASE_ADDRESS)
 				{
-					if (++mid == count)
+					if (++mid == upper)
 					{
 						// Tested this entire half.
-						count = (idx + count) / 2;
+						upper = (idx + upper) / 2;
 						break;
 					}
 					pos += 8;
