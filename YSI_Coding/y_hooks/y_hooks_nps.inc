@@ -155,8 +155,8 @@ Optional plugins:
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
-#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$forward %7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)_yH@(%4),%0(%6),_@yH();%7YHNPS_U0<%0>(%5)
-#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$forward YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)_yH@(%4),%0(%6),_@yH();YHNPS_U0<%0>(%5)
+#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$forward %7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _@yH(),_yH@(%4),%0(%6);%7YHNPS_U0<%0>(%5)
+#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$forward YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)return _@yH(),_yH@(%4),%0(%6);YHNPS_U0<%0>(%5)
 #define YHNPS_NUL_TAG(%7,%0)%8$()() YHNPS_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS_NUL(%0)%8$()() YHNPS_END(%0)%8$(,)(,)
 
@@ -181,13 +181,13 @@ Optional plugins:
 #define YHNPS2_NUM_DEF YHNPS_NUM_DEF
 #define YHNPS2_BYREF YHNPS_BYREF
 #define YHNPS2_BYVAL YHNPS_BYVAL
-#define YHNPS2_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7@Hy_%0(%5);%7@_Hy%0(%5);%7@_Hy%0(%5)_yH@(%4),%0(%6),_@yH();%7@Hy_%0(%5)
-#define YHNPS2_END(%0)%8$(,%5)(,%6)(%9,%4) %8$@Hy_%0(%5);@_Hy%0(%5);@_Hy%0(%5)_yH@(%4),%0(%6),_@yH();@Hy_%0(%5)
+#define YHNPS2_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7@Hy_%0(%5);%7@_Hy%0(%5);%7@_Hy%0(%5)return _@yH(),_yH@(%4),%0(%6);%7@Hy_%0(%5)
+#define YHNPS2_END(%0)%8$(,%5)(,%6)(%9,%4) %8$@Hy_%0(%5);@_Hy%0(%5);@_Hy%0(%5)return _@yH(),_yH@(%4),%0(%6);@Hy_%0(%5)
 #define YHNPS2_NUL_TAG(%7,%0)%8$()() YHNPS2_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS2_NUL(%0)%8$()() YHNPS2_END(%0)%8$(,)(,)
 
 // Remove specified priorities from the original call.
-#define _yH@(%0),%1@%2(%3),_@yH(); _yH@(%0),%1(%3),_@yH();
+#define _yH@(%0),%1@%2(%3); _yH@(%0),%1(%3);
 
 new
 	YSI_g_sNPSBaseCall = 0,
@@ -309,6 +309,7 @@ _@yH(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0)
 	// increase this to 7 for `-O2`.  Slightly ironic that more optimisation
 	// needs more space, but it is because the resulting code generated is
 	// smaller and we need the space.
+	return 0;
 }
 
 public OnCodeInit()
@@ -781,6 +782,8 @@ stock _yH@(compressedFormat)
 	// parameters.  We call it with none.
 	#emit ZERO.S       8
 	#emit RETN
+
+	__pragma("naked");
 }
 
 static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
