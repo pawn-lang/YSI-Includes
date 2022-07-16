@@ -1361,20 +1361,19 @@ public OnCodeInit()
 	//   From this data we build a list of all calls to replace.
 	while ((idx2 = AMX_GetPublicEntryPrefix(idx2, entry, _A<@_Hy>)))
 	{
-		//state y_hooks_scan : y_hooks_scan_first;
-		//#emit PUSH.C                    0
-		//#emit LCTRL                     6
-		//#emit ADD.C                     44
-		//#emit LCTRL                     8
-		//#emit PUSH.pri
+		state y_hooks_scan : y_hooks_scan_first;
+		#emit PUSH.C                    0
+		#emit LCTRL                     6
+		#emit ADD.C                     44
+		#emit LCTRL                     8
+		#emit PUSH.pri
 		#emit LREF.S.pri                entry
 		#emit STOR.pri                  YSI_g_sNPSTrampoline
-		//#emit SCTRL                     6
-		//#emit STOR.S.pri                entry
-		//printf("entry: %d", entry);
-		//switch (entry)
-		//{
-		//case 2:
+		#emit SCTRL                     6
+		#emit STOR.S.pri                entry
+		switch (entry)
+		{
+		case 2:
 		{
 			if ((idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>)))
 			{
@@ -1393,7 +1392,7 @@ public OnCodeInit()
 				}
 			}
 		}
-		//}
+		}
 	}
 	if (YSI_g_sNPSBaseCall != cellmin)
 	{
