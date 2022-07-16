@@ -1954,8 +1954,9 @@ This function is called, and just needs to insert a new function.
 
 #define continue(%0) Hooks_Continue_(%0)
 
-static stock Hooks_RegisterNPSHook(compressedFormat) //<y_hooks_scan : y_hooks_scan_legacy_hook>
+static stock Hooks_RegisterNPSHook(compressedFormat, order)
 {
+	#pragma unused order
 	// Put us in the frame of the previous function.  Because `compressedFormat`
 	// is in the same location in both this works fine and we can use the
 	// variables as normal.
@@ -2137,10 +2138,11 @@ static stock Hooks_RegisterNPSHook(compressedFormat) //<y_hooks_scan : y_hooks_s
 	__pragma("naked");
 }
 
-stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_determine_type>
+stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0, order = cellmin) <y_hooks_scan : y_hooks_scan_determine_type>
 {
 	#pragma unused compressedFormat
 	#pragma unused a, b, c, d, e, f, g
+	#pragma unused order
 
 	// A double return.  We return `2` from this function to indicate that this
 	// is a function hook, not a public hook.  That's all this state does.
@@ -2151,16 +2153,17 @@ stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g 
 	__pragma("naked");
 }
 
-stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_nps_hook>
+stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0, order = cellmin) <y_hooks_scan : y_hooks_scan_nps_hook>
 {
 	#pragma unused a, b, c, d, e, f, g
-	return Hooks_RegisterNPSHook(compressedFormat);
+	return Hooks_RegisterNPSHook(compressedFormat, order);
 }
 
-stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <>
+stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0, order = cellmin) <>
 {
 	#pragma unused compressedFormat
 	#pragma unused a, b, c, d, e, f, g
+	#pragma unused order
 
 	// A double return.  We return `0` from this function because we don't care
 	// about the current state.
