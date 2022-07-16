@@ -1071,18 +1071,19 @@ hook stock y_hooks_HookedStock(str[], v, &c)
 	// A native function we can easily replicate, in tests only.
 	new ret = continue(str, v, c);
 	c += v;
-	str[1] = 'i';
-	return 10 + ret;
+	str[2] = 't';
+	return 20 + ret;
 }
 
 TEST__ y_hooks_HookedStock()
 {
 	new c = 10;
 	new str[32];
-	ASSERT_EQ(y_hooks_HookedStock(str, 2, c), 15);
-	ASSERT_EQ(c, 9);
+	ASSERT_EQ(y_hooks_HookedStock(str, 2, c), 35);
+	ASSERT_EQ(c, 11);
 	ASSERT_EQ(str[0], 'h');
 	ASSERT_EQ(str[1], 'i');
+	ASSERT_EQ(str[2], 't');
 }
 
 //@hook(.callback = "OnNewHooks") OnNewHooks1(playerid)
