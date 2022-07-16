@@ -2182,7 +2182,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 		ctx[AsmContext],
 		ptr = _:addressof(Hooks_Continue_<>);
 
-	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(Hooks_RegisterNPSHook<i>) - ptr);
+	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(Hooks_RegisterNPSHook<ii>) - ptr);
 
 	@emit PROC
 	@emit ADDR.pri     8

@@ -86,6 +86,8 @@ Optional plugins:
 
 */
 
+#define Y_HOOKS_ADDRESSOF(%0(%1)) O@A_()?(((_:%0(%1)),O@V_)?1:2):(O@V_)
+
 //#define @yH_public%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
 #define @yH_native%9(%9);%9(%9);ADDRESSOF_MAKE_CALL__%9native%1(%2)%9\10; HOOK_STOCK__%1(%2)
 #define @yH_stock%9(%9);%9(%9);ADDRESSOF_MAKE_CALL__%9stock%1(%2)%9\10; HOOK_STOCK__%1(%2)
@@ -152,7 +154,7 @@ Optional plugins:
 
 #define YHLEG_NUL(%0)%8$()(1,0) YHLEG_END(%0)%8$(,)(1,0)
 // I don't actually need the tag, this is purely internal.
-#define YHLEG_END(%0)%8$(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(O@A_()?(((_:%0(%6)),O@V_)?1:2):(O@V_),
+#define YHLEG_END(%0)%8$(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(Y_HOOKS_ADDRESSOF(%0(%6)),
 
 #define @hook(%0)%1(%2) YHNPS_U1<%1>();YHNPS_U2<%1>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _@Hy(,_:__COMPILER_PACK"\"%1\"",%0);static %1(%2)
 
@@ -161,13 +163,13 @@ Optional plugins:
 #define YHLEG_order:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.order=%6)
 #define YHLEG_fallback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
 //#define YHLEG_fallback1__:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
-#define YHLEG_fallback1__:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,%9);static%6(%7) %8$YHNPS_U1<%6>()return _@Hy(O@A_()?(((_:YHNPS_U2<%6>(%2))%3)%4):%5,__COMPILER_PACK"\"%6\"",.fallback=true);static YHNPS_U2<%6>(%7)
+#define YHLEG_fallback1__:%8$%6()%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,%9);static%6(%7) %8$YHNPS_U1<%6>()return _@Hy(Y_HOOKS_ADDRESSOF(YHNPS_U2<%6>(%2)),__COMPILER_PACK"\"%6\"",.fallback=true);static YHNPS_U2<%6>(%7)
 
-#define YHLEG_stock:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,"%9") %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
-#define YHLEG_native:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,"%9") %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
-#define YHLEG_function:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,"%9") %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
+#define YHLEG_stock:%8$%6()%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9") %8$%6()return _Hooks_AddFuncHook(Y_HOOKS_ADDRESSOF(%1(%2)),Y_HOOKS_ADDRESSOF(%9(%2)))
+#define YHLEG_native:%8$%6()%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9") %8$%6()return _Hooks_AddFuncHook(Y_HOOKS_ADDRESSOF(%1(%2)),Y_HOOKS_ADDRESSOF(%9(%2)))
+#define YHLEG_function:%8$%6()%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9") %8$%6()return _Hooks_AddFuncHook(Y_HOOKS_ADDRESSOF(%1(%2)),Y_HOOKS_ADDRESSOF(%9(%2)))
 
-#define YHLEG_fallback2__:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,%9) %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
+#define YHLEG_fallback2__:%8$%6()%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,%9) %8$%6()return _Hooks_AddFuncHook(Y_HOOKS_ADDRESSOF(%1(%2)),Y_HOOKS_ADDRESSOF(%9(%2)))
 
 // Upgrade the old version to the new version, with only defaults.
 #define HOOK__%0(%1) @hook(.fallback1__=true)%0(%1)
