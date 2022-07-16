@@ -189,13 +189,11 @@ Optional plugins:
 // Remove specified priorities from the original call.
 #define _yH@(%0),%1@%2(%3); _yH@(%0),%1(%3);
 
-new
+static
 	YSI_g_sNPSBaseCall = 0,
 	YSI_g_sNPSTrampoline = 0,
 	YSI_g_sNPSReplace = 0,
-	YSI_g_sNPSStack = 0;
-
-static
+	YSI_g_sNPSStack = 0,
 	YSI_g_sTempRet = 0;
 
 static stock YHNPS_Find(heap, end, value)
