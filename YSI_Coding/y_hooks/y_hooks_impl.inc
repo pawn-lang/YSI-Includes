@@ -595,7 +595,7 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
  *//*------------------------------------------------------------------------**/
 
 // Was `_Hooks_AddPublicHook`
-stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_first>
+stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_determine_type>
 {
 	#pragma unused address, order
 	// Found a new callback to set up.
@@ -613,7 +613,7 @@ stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallba
 	}
 }
 
-stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_second>
+stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_legacy_hook>
 {
 	if (order != cellmin)
 	{
@@ -634,12 +634,12 @@ stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallba
 	}
 }
 
-//stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <>
-//{
-//	#pragma unused address, name, callback, order, fallback
-//	// We don't care about these hook types in any other state.
-//	return 0;
-//}
+stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <>
+{
+	#pragma unused address, name, callback, order, fallback
+	// We don't care about these hook types in any other state.
+	return 0;
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="idx">Current position in the AMX header.</param>
@@ -1293,8 +1293,14 @@ public OnCodeInit()
 
 	// Step 2:
 	//
-	//   Now do the legacy hooks.
+	//   Now do the legacy hooks (hook type 1).
 	//
+	// Step 3:
+	//
+	//   Read the AMX header to loop over all the type 2 hook functions.  These
+	//   contain the call to `_yH@` which generates the trambopoline code.
+	//
+	//   From this data we build a list of all calls to replace.
 	new
 		// This records the amount of space available in the nametable currently
 		// taken up by the names of hooks that we are about to destroy, and
@@ -1324,7 +1330,7 @@ public OnCodeInit()
 		}
 		// Invoke the function, which will result in our callback being called
 		// to get the base function name (in to `YSI_g_sName`).
-		state y_hooks_scan : y_hooks_scan_first;
+		state y_hooks_scan : y_hooks_scan_determine_type;
 		#emit PUSH.C                    0
 		#emit LCTRL                     6
 		#emit ADD.C                     36
@@ -1332,13 +1338,13 @@ public OnCodeInit()
 		#emit PUSH.pri
 		#emit LREF.S.pri                entry
 		#emit SCTRL                     6
-		#emit STOR.S.pri                entry
+		#emit STOR.pri                  YSI_g_sTempRet
 		// Determine the callback type.
-		switch (entry)
+		switch (YSI_g_sTempRet)
 		{
 		case 1:
 		{
-			state y_hooks_scan : y_hooks_scan_second;
+			state y_hooks_scan : y_hooks_scan_legacy_hook;
 			// Move back to the first hook in this group (the one we just
 			// called) then collect all the hooks of this function, and rewrite
 			// the call code.
@@ -1359,31 +1365,31 @@ public OnCodeInit()
 	//   contain the call to `_yH@` which generates the trambopoline code.
 	//
 	//   From this data we build a list of all calls to replace.
-	while ((idx2 = AMX_GetPublicEntryPrefix(idx2, entry, _A<@_Hy>)))
+	while ((idx2 = AMX_GetPublicEntryPrefix(idx2, entry, _A<@yH_>)))
 	{
-		state y_hooks_scan : y_hooks_scan_first;
+		state y_hooks_scan : y_hooks_scan_determine_type;
 		#emit PUSH.C                    0
 		#emit LCTRL                     6
-		#emit ADD.C                     44
+		#emit ADD.C                     36
 		#emit LCTRL                     8
 		#emit PUSH.pri
 		#emit LREF.S.pri                entry
-		#emit STOR.pri                  YSI_g_sNPSTrampoline
 		#emit SCTRL                     6
-		#emit STOR.S.pri                entry
-		switch (entry)
+		#emit STOR.pri                  YSI_g_sTempRet
+		switch (YSI_g_sTempRet)
 		{
 		case 2:
 		{
 			if ((idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>)))
 			{
-				state y_hooks_scan : y_hooks_scan_second;
+				state y_hooks_scan : y_hooks_scan_nps_hook;
 				#emit PUSH.C                    0
 				#emit LCTRL                     6
-				#emit ADD.C                     36
+				#emit ADD.C                     44
 				#emit LCTRL                     8
 				#emit PUSH.pri
-				#emit LOAD.pri                  YSI_g_sNPSTrampoline
+				#emit LREF.S.pri                entry
+				#emit STOR.pri                  YSI_g_sNPSTrampoline
 				#emit SCTRL                     6
 				if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
 				{
@@ -1970,7 +1976,7 @@ This function is called, and just needs to insert a new function.
 
 #define continue(%0) Hooks_Continue_(%0)
 
-static stock Hooks_RegisterNPSHook(compressedFormat) //<y_hooks_scan : y_hooks_scan_second>
+static stock Hooks_RegisterNPSHook(compressedFormat) //<y_hooks_scan : y_hooks_scan_legacy_hook>
 {
 	// Put us in the frame of the previous function.  Because `compressedFormat`
 	// is in the same location in both this works fine and we can use the
@@ -2153,7 +2159,7 @@ static stock Hooks_RegisterNPSHook(compressedFormat) //<y_hooks_scan : y_hooks_s
 	__pragma("naked");
 }
 
-stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_first>
+stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_determine_type>
 {
 	#pragma unused compressedFormat
 	#pragma unused a, b, c, d, e, f, g
@@ -2167,10 +2173,24 @@ stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g 
 	__pragma("naked");
 }
 
-stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_second>
+stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_nps_hook>
 {
 	#pragma unused a, b, c, d, e, f, g
 	return Hooks_RegisterNPSHook(compressedFormat);
+}
+
+stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <>
+{
+	#pragma unused compressedFormat
+	#pragma unused a, b, c, d, e, f, g
+
+	// A double return.  We return `0` from this function because we don't care
+	// about the current state.
+	#emit STACK                44 // 12 + 8 * 4
+	#emit ZERO.pri
+	#emit RETN
+
+	__pragma("naked");
 }
 
 static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
