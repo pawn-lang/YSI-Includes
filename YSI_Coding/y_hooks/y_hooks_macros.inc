@@ -87,9 +87,9 @@ Optional plugins:
 */
 
 //#define @yH_public%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
-#define @yH_native%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
-#define @yH_stock%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
-#define @yH_function%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
+#define @yH_native%9(%9);%9(%9);ADDRESSOF_MAKE_CALL__%9native%1(%2)%9\10; HOOK_STOCK__%1(%2)
+#define @yH_stock%9(%9);%9(%9);ADDRESSOF_MAKE_CALL__%9stock%1(%2)%9\10; HOOK_STOCK__%1(%2)
+#define @yH_function%9(%9);%9(%9);ADDRESSOF_MAKE_CALL__%9function%1(%2)%9\10; HOOK_STOCK__%1(%2)
 
 //#define HOOK_PUBLIC__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
 //#define HOOK_public__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
@@ -264,27 +264,6 @@ Optional plugins:
 // generated code multiple times.
 #define YHNPS_U0<%1> UNIQUE_FUNCTION<@Hy_%1@...>
 #define YHNPS_U1<%1> UNIQUE_FUNCTION<@yH_%1@...>
-
-// Doing `hook native` instead of `HOOK_NATIVE__` attaches the `forward` and
-// unique value earlier.  This just does all the same code, but with a reduced
-// ending name generation.
-#define HOOK_REDO__%0(%1) FUNC_PARSER(YHNPS2,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:RET_TAG:)(%0(%1))()()(1,0)
-#define YHNPS2_ARR YHNPS_ARR
-#define YHNPS2_ARR_ARR YHNPS_ARR_ARR
-#define YHNPS2_ARR_ARR_ARR YHNPS_ARR_ARR_ARR
-#define YHNPS2_STR YHNPS_STR
-#define YHNPS2_STR_DEF YHNPS_STR_DEF
-#define YHNPS2_EXT YHNPS_EXT
-#define YHNPS2_REF YHNPS_REF
-#define YHNPS2_REF_DEF YHNPS_REF_DEF
-#define YHNPS2_NUM YHNPS_NUM
-#define YHNPS2_NUM_DEF YHNPS_NUM_DEF
-#define YHNPS2_BYREF YHNPS_BYREF
-#define YHNPS2_BYVAL YHNPS_BYVAL
-#define YHNPS2_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7@Hy_%0(%5);%7@yH_%0(%5);%7@yH_%0(%5)return _yH@(%4),%0(%6);%7@Hy_%0(%5)
-#define YHNPS2_END(%0)%8$(,%5)(,%6)(%9,%4) %8$@Hy_%0(%5);@yH_%0(%5);@yH_%0(%5)return _yH@(%4),%0(%6);@Hy_%0(%5)
-#define YHNPS2_NUL_TAG(%7,%0)%8$()() YHNPS2_END_TAG(%7,%0)%8$(,)(,)
-#define YHNPS2_NUL(%0)%8$()() YHNPS2_END(%0)%8$(,)(,)
 
 // Remove specified priorities from the original call.
 #define _yH@(%0),%1@%2(%3); _yH@(%0),%1(%3);

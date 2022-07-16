@@ -999,6 +999,15 @@ HOOK_NATIVE__ min(a, b)
 		(YSI_g_sMinC = (a < b) ? a : b);
 }
 
+hook native max(a, b)
+{
+	// A native function we can easily replicate, in tests only.
+	return
+		(YSI_g_sMinA = a),
+		(YSI_g_sMinB = b),
+		(YSI_g_sMinC = (a > b) ? a : b);
+}
+
 TEST__ y_hooks_native()
 {
 	// Test that we haven't broken `min`.
@@ -1031,6 +1040,11 @@ TEST__ y_hooks_native()
 	ASSERT_EQ(YSI_g_sMinA, 90);
 	ASSERT_EQ(YSI_g_sMinB, 70);
 	ASSERT_EQ(YSI_g_sMinC, 70);
+	
+	ASSERT_EQ(max(101, 202), 202);
+	ASSERT_EQ(YSI_g_sMinA, 101);
+	ASSERT_EQ(YSI_g_sMinB, 202);
+	ASSERT_EQ(YSI_g_sMinC, 202);
 }
 
 static stock y_hooks_HookedStock(str[], v, &c)
@@ -1041,6 +1055,18 @@ static stock y_hooks_HookedStock(str[], v, &c)
 }
 
 HOOK_STOCK__ y_hooks_HookedStock(str[], v, &c)
+{
+	// A native function we can easily replicate, in tests only.
+	new ret = continue(str, v, c);
+	c += v;
+	str[1] = 'i';
+	return 10 + ret;
+}
+
+#tryinclude "..\YSI_Coding\y_unique"
+#tryinclude "..\..\YSI_Coding\y_unique"
+
+hook stock y_hooks_HookedStock(str[], v, &c)
 {
 	// A native function we can easily replicate, in tests only.
 	new ret = continue(str, v, c);
