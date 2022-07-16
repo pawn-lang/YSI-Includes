@@ -589,7 +589,8 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_first>
+// Was `_Hooks_AddPublicHook`
+stock bool:_@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_first>
 {
 	#pragma unused address, order
 	// Found a new callback to set up.
@@ -608,7 +609,7 @@ stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", or
 	}
 }
 
-stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_fallback>
+stock bool:_@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_fallback>
 {
 	if (order != cellmin)
 	{
@@ -629,7 +630,7 @@ stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", or
 	}
 }
 
-stock bool:_Hooks_AddPublicHook(address, const name[], const callback[] = "", order = cellmin, fallback = false) <>
+stock bool:_@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <>
 {
 	#pragma unused address, name, callback, order, fallback
 	// We don't care about these hook types in any other state.
