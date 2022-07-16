@@ -135,7 +135,7 @@ Optional plugins:
 #include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Coding\y_hooks"
 
-_DoYLock(Debug_Code1{from})
+_DoYLock(Debug_CodeX{from})
 {
 	new
 		arr[][] =

@@ -383,7 +383,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 		strcat(lfunc, YSI_g_sName),
 		Hooks_MakeShortName(lfunc);
 		Debug_Print5("Hooks_GetPreHooks: search = %s", Unpack(lfunc));
-		Debug_Code1{new oc = count;}
+		Debug_CodeX{new oc = count;}
 		// Needs to be binary search safe, i.e. use fallback code.
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
 		Debug_Code1{if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[oc] + 4) + AMX_BASE_ADDRESS, buffer); strunpack(buffer, buffer); Debug_Print5("Hooks_GetPreHooks: found = %s", buffer); }}

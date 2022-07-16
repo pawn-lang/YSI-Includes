@@ -443,7 +443,7 @@ static stock Master_GetCurrentMaster(installState)
 			Debug_Print6("Master_GetCurrentMaster: Uninstalling %d", _MASTER);
 			_Master_UnnameAll(_MASTER);
 		}
-		Debug_Code1{else { Debug_Print6("Master_GetCurrentMaster: Neither %d", _MASTER); }}
+		Debug_CodeX{else { Debug_Print6("Master_GetCurrentMaster: Neither %d", _MASTER); }}
 }
 
 public OnMasterSystemInit(id)

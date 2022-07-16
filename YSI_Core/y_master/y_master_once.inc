@@ -977,7 +977,7 @@ static stock _Master_Unname(const name[])
 		#emit INC.pri
 		#emit SREF.S.pri entry
 	}
-	Debug_Code1{else Debug_Error("_Master_Unname: Could not function \"%s\"", name);}
+	Debug_CodeX{else Debug_Error("_Master_Unname: Could not function \"%s\"", name);}
 }
 
 stock _Master_UnnameAll(master)
@@ -1091,7 +1091,7 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 		YSI_g_sMasterData[YSI_g_sMasterCount++] = library[0] | (library[1] << 8) | (library[2] << 16);
 		Debug_Print4("_Master_Get: Set master string.");
 	}
-	Debug_Code1{else Debug_Error("Too many master scripts");}
+	Debug_CodeX{else Debug_Error("Too many master scripts");}
 	return ret;
 }
 
