@@ -1356,28 +1356,6 @@ public OnCodeInit()
 			// because in that case the `== 0` check above will trigger and skip
 			// the repeat).
 		}
-		}
-	}
-
-	// Step 3:
-	//
-	//   Read the AMX header to loop over all the `@_Hy` functions.  These
-	//   contain the call to `_yH@` which generates the trambopoline code.
-	//
-	//   From this data we build a list of all calls to replace.
-	while ((idx2 = AMX_GetPublicEntryPrefix(idx2, entry, _A<@yH_>)))
-	{
-		state y_hooks_scan : y_hooks_scan_determine_type;
-		#emit PUSH.C                    0
-		#emit LCTRL                     6
-		#emit ADD.C                     36
-		#emit LCTRL                     8
-		#emit PUSH.pri
-		#emit LREF.S.pri                entry
-		#emit SCTRL                     6
-		#emit STOR.pri                  YSI_g_sTempRet
-		switch (YSI_g_sTempRet)
-		{
 		case 2:
 		{
 			if ((idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>)))

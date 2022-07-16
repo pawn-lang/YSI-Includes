@@ -108,8 +108,8 @@ Optional plugins:
 #define DEFINE_HOOK_REPLACEMENT__(%0,%1); forward @_yH%0(); public @_yH%0() { _Hooks_AddReplacement(__COMPILER_PACK#%0, __COMPILER_PACK#%1); }
 
 // Strip spaces from the generated function names.
-#define @yH_%0\32; @yH_ // hook
-#define @_Hy%0\32; @_Hy // extra stock/native info
+#define @yH_%0\32; @yH_ // @hook entry point
+#define @_Hy%0\32; @_Hy // unused
 #define @Hy_%0\32; @Hy_ // hook stock/native
 #define @H_y%0\32; @H_y // hook public
 #define @y_H%0\32; @y_H // DEFINE_HOOK_RETURN
@@ -263,7 +263,7 @@ Optional plugins:
 // Helper macro to generate the unique function name without bloating the
 // generated code multiple times.
 #define YHNPS_U0<%1> UNIQUE_FUNCTION<@Hy_%1@...>
-#define YHNPS_U1<%1> UNIQUE_FUNCTION<@_Hy%1@...>
+#define YHNPS_U1<%1> UNIQUE_FUNCTION<@yH_%1@...>
 
 // Doing `hook native` instead of `HOOK_NATIVE__` attaches the `forward` and
 // unique value earlier.  This just does all the same code, but with a reduced
@@ -281,8 +281,8 @@ Optional plugins:
 #define YHNPS2_NUM_DEF YHNPS_NUM_DEF
 #define YHNPS2_BYREF YHNPS_BYREF
 #define YHNPS2_BYVAL YHNPS_BYVAL
-#define YHNPS2_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7@Hy_%0(%5);%7@_Hy%0(%5);%7@_Hy%0(%5)return _yH@(%4),%0(%6);%7@Hy_%0(%5)
-#define YHNPS2_END(%0)%8$(,%5)(,%6)(%9,%4) %8$@Hy_%0(%5);@_Hy%0(%5);@_Hy%0(%5)return _yH@(%4),%0(%6);@Hy_%0(%5)
+#define YHNPS2_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7@Hy_%0(%5);%7@yH_%0(%5);%7@yH_%0(%5)return _yH@(%4),%0(%6);%7@Hy_%0(%5)
+#define YHNPS2_END(%0)%8$(,%5)(,%6)(%9,%4) %8$@Hy_%0(%5);@yH_%0(%5);@yH_%0(%5)return _yH@(%4),%0(%6);@Hy_%0(%5)
 #define YHNPS2_NUL_TAG(%7,%0)%8$()() YHNPS2_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS2_NUL(%0)%8$()() YHNPS2_END(%0)%8$(,)(,)
 
