@@ -1252,13 +1252,15 @@ static stock Hooks_SortReplacements()
 
 public OnCodeInit()
 {
+	// Step 1:
+	//
+	//   Get the replacements for legacy hooks.
+	//
 	Debug_Print1("Hooks_OnCodeInit called");
 	state _ALS : _ALS_go;
 	new
 		idx = 0,
 		entry = 0;
-	
-	// Get the replacements.
 	if (Server_JITExists())
 	{
 		// Get the indexes of the startup functions that get recorded before the
@@ -1290,7 +1292,10 @@ public OnCodeInit()
 		preloads[32][E_CHAIN_HOOK];
 	Hooks_GetPreloadLibraries(preloads, precount);
 
-	// Main loop
+	// Step 2:
+	//
+	//   Now do the legacy hooks.
+	//
 	new
 		// This records the amount of space available in the nametable currently
 		// taken up by the names of hooks that we are about to destroy, and
@@ -1325,7 +1330,7 @@ public OnCodeInit()
 		// that case the `== 0` check above will trigger and skip the repeat).
 	}
 
-	// Step 1:
+	// Step 3:
 	//
 	//   Read the AMX header to loop over all the `@_Hy` functions.  These
 	//   contain the call to `_yH@` which generates the trambopoline code.
@@ -1364,15 +1369,18 @@ public OnCodeInit()
 		YHNPS_Push(heap, allocated, nativeCount, stockCount, entry, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
 	}
 	
+	// Step 4:
+	//
 	// With `-O2` this can generate invalid code on purpose - our fake `CALL.N`
 	// operation.  Thus ensure all other generation is finished first to avoid
 	// them getting confused.
+	//
 	Debug_Print1("Hooks_OnCodeInit chain");
 	#if defined Hooks_OnCodeInit
 		Hooks_OnCodeInit();
 	#endif
 	
-	// Step 2:
+	// Step 5:
 	//
 	//   Iterate over the entire mode and replace all relevant calls.
 	//
@@ -1567,14 +1575,17 @@ public OnCodeInit()
 				}
 		}
 	}
-	
-	// Step 3:
+
+	// Step 6:
 	//
 	//   Generate `continue`.
 	//
 	Hooks_GenerateContinue();
-	
-	// Clear the stack.
+
+	// Step 7:
+	//
+	//   Clean up and remove our excess publics.
+	//
 	YSI_g_sNPSStack = 0;
 	HeapRelease(heap);
 	
@@ -2108,20 +2119,6 @@ stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g 
 
 	__pragma("naked");
 }
-
-//public OnCodeInit()
-//{
-//	#if defined YHNPS_OnCodeInit
-//		YHNPS_OnCodeInit();
-//	#endif
-//	return 1;
-//}
-//
-//#undef OnCodeInit
-//#define OnCodeInit YHNPS_OnCodeInit
-//#if defined YHNPS_OnCodeInit
-//	forward YHNPS_OnCodeInit();
-//#endif
 
 static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 {
