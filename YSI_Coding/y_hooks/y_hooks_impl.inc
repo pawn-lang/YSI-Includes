@@ -1971,24 +1971,14 @@ This function is called, and just needs to insert a new function.
 
 #define continue(%0) Hooks_Continue_(%0)
 
-//stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_first>
-//{
-//	#pragma unused compressedFormat
-//	#pragma unused a, b, c, d, e, f, g
-//
-//	// A double return.  We return `2` from this function to indicate that this
-//	// is a function hook, not a public hook.  That's all this state does.
-//	#emit STACK                44 // 12 + 8 * 4
-//	#emit CONST.pri            2
-//	#emit RETN
-//
-//	__pragma("naked");
-//}
-
-stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) //<y_hooks_scan : y_hooks_scan_second>
+static stock Hooks_RegisterNPSHook(compressedFormat) //<y_hooks_scan : y_hooks_scan_second>
 {
-	#pragma unused compressedFormat
-	#pragma unused a, b, c, d, e, f, g
+	// Put us in the frame of the previous function.  Because `compressedFormat`
+	// is in the same location in both this works fine and we can use the
+	// variables as normal.
+	#emit LOAD.S.pri   0
+	#emit SCTRL        5
+	#emit SCTRL        4
 	// Get the next function call address, being the original function.  This
 	// can also tell us if it is a native, public, or stock (which is a nice
 	// side-effect I wasn't planning).
@@ -2153,17 +2143,35 @@ stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g 
 	YSI_g_sNPSReplace = YSI_g_sNPSBaseCall; // Find
 	YSI_g_sNPSBaseCall = addr;
 
-	// Do a double return - exit the calling function as well as this function,
-	// so that the next call is never actually made.
+	// Do a triple return - exit the calling function as well as this function,
+	// so that the next call is never actually made.  This only looks like a
+	// double return, but we are operating in the frame of the caller already.
 	#emit LOAD.S.pri   0
 	#emit SCTRL        5
 	#emit SCTRL        4
-	// Clear faked parameter counts.   The outer public (maybe) expects lots of
-	// parameters.  We call it with none.
-	#emit ZERO.S       8
 	#emit RETN
 
 	__pragma("naked");
+}
+
+stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_first>
+{
+	#pragma unused compressedFormat
+	#pragma unused a, b, c, d, e, f, g
+
+	// A double return.  We return `2` from this function to indicate that this
+	// is a function hook, not a public hook.  That's all this state does.
+	#emit STACK                44 // 12 + 8 * 4
+	#emit CONST.pri            2
+	#emit RETN
+
+	__pragma("naked");
+}
+
+stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_second>
+{
+	#pragma unused a, b, c, d, e, f, g
+	return Hooks_RegisterNPSHook(compressedFormat);
 }
 
 static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
@@ -2174,7 +2182,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 		ctx[AsmContext],
 		ptr = _:addressof(Hooks_Continue_<>);
 
-	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(_yH@<i>) - ptr);
+	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(Hooks_RegisterNPSHook<i>) - ptr);
 
 	@emit PROC
 	@emit ADDR.pri     8
