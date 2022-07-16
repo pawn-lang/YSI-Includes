@@ -143,15 +143,16 @@ Optional plugins:
 // Decorator syntax.
 #define YHLEG_%0\32; YHLEG_ // Named parameters.
 
-#define ADDRESSOF_MAKE_CALL__%0(%1) FUNC_PARSER(YHLEG,ARR:NUM_TAG:REF_TAG:)(%0(%1))()(#)
+#define ADDRESSOF_MAKE_CALL__%0(%1) FUNC_PARSER(YHLEG,ARR:NUM_TAG:REF_TAG:EXT:)(%0(%1))()(1,0)
 
-#define YHLEG_ARR(%0,%1,%2,%4)%8$(%6)(%7) %8$(%6,__ARR)(%7a)
-#define YHLEG_NUM(%0,%1,%2)%8$(%6)(%7) %8$(%6,%10)(%7i)
-#define YHLEG_REF(%0,%1,%2)%8$(%6)(%7) %8$(%6,%1__REF)(%7i)
+#define YHLEG_ARR(%0,%1,%2,%9)%8$(%6)(%9,%4) %8$(%6,__ARR)(%9+1,%4)
+#define YHLEG_NUM(%0,%1,%2)%8$(%6)(%9,%4) %8$(%6,%10)(%9+1,1<<%9|%4)
+#define YHLEG_REF(%0,%1,%2)%8$(%6)(%9,%4) %8$(%6,%1__REF)(%9+1,%4)
+#define YHLEG_EXT(%0,%1,%2)%8$(%6)(%9,%4) %8$(%6)(%7)
 
-#define YHLEG_NUL(%0)%8$()(#) YHLEG_END(%0)%8$(,)(#)
+#define YHLEG_NUL(%0)%8$()(1,0) YHLEG_END(%0)%8$(,)(1,0)
 // I don't actually need the tag, this is purely internal.
-#define YHLEG_END(%0)%8$(,%6)(#%7)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(O@A_()?(((_:%0(%6)),O@V_)?1:2):(O@V_),
+#define YHLEG_END(%0)%8$(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(O@A_()?(((_:%0(%6)),O@V_)?1:2):(O@V_),
 
 #define @hook(%0)%1(%2) YHNPS_U1<%1>();YHNPS_U2<%1>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _@Hy(,_:__COMPILER_PACK"\"%1\"",%0);static %1(%2)
 
