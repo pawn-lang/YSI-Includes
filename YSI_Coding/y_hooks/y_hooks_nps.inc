@@ -155,8 +155,8 @@ Optional plugins:
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
-#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$forward %7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _@yH(),_yH@(%4),%0(%6);%7YHNPS_U0<%0>(%5)
-#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$forward YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)return _@yH(),_yH@(%4),%0(%6);YHNPS_U0<%0>(%5)
+#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$forward %7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _yH@(%4),%0(%6);%7YHNPS_U0<%0>(%5)
+#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$forward YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)return _yH@(%4),%0(%6);YHNPS_U0<%0>(%5)
 #define YHNPS_NUL_TAG(%7,%0)%8$()() YHNPS_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS_NUL(%0)%8$()() YHNPS_END(%0)%8$(,)(,)
 
@@ -181,8 +181,8 @@ Optional plugins:
 #define YHNPS2_NUM_DEF YHNPS_NUM_DEF
 #define YHNPS2_BYREF YHNPS_BYREF
 #define YHNPS2_BYVAL YHNPS_BYVAL
-#define YHNPS2_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7@Hy_%0(%5);%7@_Hy%0(%5);%7@_Hy%0(%5)return _@yH(),_yH@(%4),%0(%6);%7@Hy_%0(%5)
-#define YHNPS2_END(%0)%8$(,%5)(,%6)(%9,%4) %8$@Hy_%0(%5);@_Hy%0(%5);@_Hy%0(%5)return _@yH(),_yH@(%4),%0(%6);@Hy_%0(%5)
+#define YHNPS2_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7@Hy_%0(%5);%7@_Hy%0(%5);%7@_Hy%0(%5)return _yH@(%4),%0(%6);%7@Hy_%0(%5)
+#define YHNPS2_END(%0)%8$(,%5)(,%6)(%9,%4) %8$@Hy_%0(%5);@_Hy%0(%5);@_Hy%0(%5)return _yH@(%4),%0(%6);@Hy_%0(%5)
 #define YHNPS2_NUL_TAG(%7,%0)%8$()() YHNPS2_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS2_NUL(%0)%8$()() YHNPS2_END(%0)%8$(,)(,)
 
@@ -299,17 +299,211 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find,
 	}
 }
 
-_@yH(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0)
+/*
+
+Trampoline code, to add the indirection pattern to the start of the parameter
+list.  I.e. change this:
+
+	SetPlayerHealth(playerid, 5.5);
+
+To:
+
+	SetPlayerHealth("if", playerid, 5.5);
+
+This function is called, and just needs to insert a new function.
+
+// No `PROC`, so no adjusted frame yet.
+#emit POP.alt                 // Store return address.
+#emit POP.pri                 // Store parameter count.
+#emit PUSH.C   "param-string" // Pre-get the address.
+#emit ADD.C    4              // Increase the parameter count.
+#emit PUSH.pri
+#emit PUSH.alt
+#emit JUMP     TrueFunction   // Jump to the start of the implementation.
+
+*/
+
+#define continue(%0) Hooks_Continue_(%0)
+
+stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0)
 {
+	#pragma unused compressedFormat
 	#pragma unused a, b, c, d, e, f, g
-	// This function does nothing.  It merely exists to reserve space for
-	// codegen.  According to my experiments, just 4 parameters are enough to
-	// reserve enough space (exactly) for the code generated below, even for a
-	// function with no parameters.  But better to be safe than sorry.  Had to
-	// increase this to 7 for `-O2`.  Slightly ironic that more optimisation
-	// needs more space, but it is because the resulting code generated is
-	// smaller and we need the space.
-	return 0;
+	// Get the next function call address, being the original function.  This
+	// can also tell us if it is a native, public, or stock (which is a nice
+	// side-effect I wasn't planning).
+	new
+		dctx[DisasmContext],
+		ctx[AsmContext],
+		addr = 0,
+		type = 0;
+	DisasmInit(dctx, GetCurrentFrameReturn());
+	while (DisasmNext(dctx))
+	{
+		switch (DisasmGetOpcode(dctx))
+		{
+		case OP_CALL:
+		{
+			addr = DisasmGetOperandReloc(dctx);
+			type = 1;
+			break;
+		}
+		case OP_SYSREQ_C:
+		{
+			addr = -DisasmGetOperand(dctx);
+			type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
+			break;
+		}
+		case OP_SYSREQ_D:
+		{
+			type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
+			break;
+		}
+#if __COMPILER_O2
+		case OP_SYSREQ_N:
+		{
+			addr = -DisasmGetOperand(dctx);
+			type = -(YSI_g_sNPSTrampoline + 48 * cellbytes);
+			break;
+		}
+#endif
+		}
+	}
+	//if (type < 0)
+	//{
+	//	// Native function call.
+	//	addr = -addr;
+	//}
+
+	AsmInitPtr(ctx, YSI_g_sNPSTrampoline + AMX_HEADER_COD, YSI_g_sNPSReplace - YSI_g_sNPSTrampoline);
+	// Forward the function, storing the chain data in the heap.   Note that no
+	// `PROC` is added to this new trambopoline:
+	//
+	//   https://www.youtube.com/watch?v=geHqnV4Mk_4
+	//
+
+	// Build the structure in the stack first.
+#if __COMPILER_O2
+	if (type == -(YSI_g_sNPSTrampoline + 48 * cellbytes))
+	{
+		// Extract the parameter count from the return address.  This is so we
+		// can fake a `CALL.N <addr> <params>` op to replace the `SYSREQ.N` in
+		// the same amount of space.  This is neither JIT nor cache-compatible.
+		// (actually it might be cache-compatible).
+		@emit POP.alt                                                           // 1
+		@emit CONST.pri     AMX_HEADER_COD                                      // 7
+		@emit ADD                                                               // 40
+		static argCountRef = 0;
+		@emit STOR.pri      argCountRef                                         // 42
+		@emit LREF.pri      argCountRef                                         // 44
+		//@emit LOAD.I
+		@emit PUSH.pri                                                          // 45
+
+		// Chain the functions.
+		if (YSI_g_sNPSBaseCall == addr)
+		{
+			@emit PUSH3.C       compressedFormat, YSI_g_sNPSStack, 8            // 5
+			YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
+		}
+		else if (YSI_g_sNPSBaseCall == cellmin)
+		{
+			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), 8   // 5
+			YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+		}
+		else
+		{
+			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), 8   // 5
+		}
+
+		@emit CONST.pri     4                                                   // 47
+		@emit ADD                                                               // 48
+	}
+	else
+#endif
+	{
+		@emit POP.pri                                                           // 1
+		@emit PUSH.C       compressedFormat                                     // 3
+
+		// Chain the functions.
+		if (YSI_g_sNPSBaseCall == addr)
+		{
+			@emit PUSH.C       YSI_g_sNPSStack                                  // 5
+			YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
+		}
+		else if (YSI_g_sNPSBaseCall == cellmin)
+		{
+			@emit PUSH.C       (type < 0 ? type : addr)                         // 5
+			YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+		}
+		else
+		{
+			@emit PUSH.C       (type < 0 ? type : addr)                         // 5
+		}
+		@emit PUSH.C       8                                                    // 7
+	}
+
+	@emit PUSH.pri     // Save the return address again.                        // 8
+	@emit PUSH         AMX_Ref(YSI_g_sNPSStack)                                 // 10
+
+	// Copy 20 bytes over (includes the return address and fake param count).
+	@emit HEAP         20                                                       // 12
+	@emit LCTRL        4                                                        // 14
+	@emit MOVS         20                                                       // 16
+	@emit STOR.alt     AMX_Ref(YSI_g_sNPSStack)                                 // 18
+
+	// Call, and return to here to clean up the heap.
+	@emit STACK        20                                                       // 20
+	@emit CALL.abs     YSI_g_sNPSReplace                                        // 22
+
+	// Put data (and return value) on the stack.
+	@emit STACK        -20                                                      // 24
+	@emit STACK        0                                                        // 26
+	@emit PUSH.pri                                                              // 27
+
+	// Copy from the heap.
+	@emit LOAD.pri     AMX_Ref(YSI_g_sNPSStack)                                 // 29
+	@emit MOVS         20                                                       // 31
+
+	// Restore the return address and `continue` stack.
+	@emit POP.pri                                                               // 32
+	@emit POP.alt                                                               // 33
+	@emit STOR.alt     AMX_Ref(YSI_g_sNPSStack)                                 // 35
+	@emit HEAP         -20                                                      // 37
+
+	// Return from this "function", with our fake parameters and return address.
+	// We do this instead of using `SCTRL 6`, as is the normal way, to preserve
+	// `pri` as the return value.
+	@emit PROC                                                                  // 38
+	@emit RETN                                                                  // 39
+
+	if (type < 0)
+	{
+		// Missed this one apparently...
+		@emit SYSREQ.C     -addr
+		//@emit SYSREQ.pri
+
+		// Returns to here.
+		@emit PUSH.alt
+		@emit PUSH         AMX_Ref(YSI_g_sTempRet)
+		@emit RETN
+	}
+
+	AsmEmitPadding(ctx);
+
+	YSI_g_sNPSReplace = YSI_g_sNPSBaseCall; // Find
+	YSI_g_sNPSBaseCall = addr;
+
+	// Do a double return - exit the calling function as well as this function,
+	// so that the next call is never actually made.
+	#emit LOAD.S.pri   0
+	#emit SCTRL        5
+	#emit SCTRL        4
+	// Clear faked parameter counts.   The outer public (maybe) expects lots of
+	// parameters.  We call it with none.
+	#emit ZERO.S       8
+	#emit RETN
+
+	__pragma("naked");
 }
 
 public OnCodeInit()
@@ -580,212 +774,6 @@ public OnCodeInit()
 	forward YHNPS_OnCodeInit();
 #endif
 
-/*
-
-Trampoline code, to add the indirection pattern to the start of the parameter
-list.  I.e. change this:
-
-	SetPlayerHealth(playerid, 5.5);
-
-To:
-
-	SetPlayerHealth("if", playerid, 5.5);
-
-This function is called, and just needs to insert a new function.
-
-// No `PROC`, so no adjusted frame yet.
-#emit POP.alt                 // Store return address.
-#emit POP.pri                 // Store parameter count.
-#emit PUSH.C   "param-string" // Pre-get the address.
-#emit ADD.C    4              // Increase the parameter count.
-#emit PUSH.pri
-#emit PUSH.alt
-#emit JUMP     TrueFunction   // Jump to the start of the implementation.
-
-*/
-
-#define continue(%0) Hooks_Continue_(%0)
-
-stock _yH@(compressedFormat)
-{
-	#pragma unused compressedFormat
-	// Get the next function call address, being the original function.  This
-	// can also tell us if it is a native, public, or stock (which is a nice
-	// side-effect I wasn't planning).
-	new
-		dctx[DisasmContext],
-		ctx[AsmContext],
-		addr = 0,
-		type = 0;
-	DisasmInit(dctx, GetCurrentFrameReturn());
-	while (DisasmNext(dctx))
-	{
-		switch (DisasmGetOpcode(dctx))
-		{
-		case OP_CALL:
-		{
-			addr = DisasmGetOperandReloc(dctx);
-			type = 1;
-			break;
-		}
-		case OP_SYSREQ_C:
-		{
-			addr = -DisasmGetOperand(dctx);
-			type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
-			break;
-		}
-		case OP_SYSREQ_D:
-		{
-			type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
-			break;
-		}
-#if __COMPILER_O2
-		case OP_SYSREQ_N:
-		{
-			addr = -DisasmGetOperand(dctx);
-			type = -(YSI_g_sNPSTrampoline + 48 * cellbytes);
-			break;
-		}
-#endif
-		}
-	}
-	//if (type < 0)
-	//{
-	//	// Native function call.
-	//	addr = -addr;
-	//}
-
-	AsmInitPtr(ctx, YSI_g_sNPSTrampoline + AMX_HEADER_COD, YSI_g_sNPSReplace - YSI_g_sNPSTrampoline);
-	// Forward the function, storing the chain data in the heap.   Note that no
-	// `PROC` is added to this new trambopoline:
-	//
-	//   https://www.youtube.com/watch?v=geHqnV4Mk_4
-	//
-
-	// Build the structure in the stack first.
-#if __COMPILER_O2
-	if (type == -(YSI_g_sNPSTrampoline + 48 * cellbytes))
-	{
-		// Extract the parameter count from the return address.  This is so we
-		// can fake a `CALL.N <addr> <params>` op to replace the `SYSREQ.N` in
-		// the same amount of space.  This is neither JIT nor cache-compatible.
-		// (actually it might be cache-compatible).
-		@emit POP.alt                                                           // 1
-		@emit CONST.pri     AMX_HEADER_COD                                      // 7
-		@emit ADD                                                               // 40
-		static argCountRef = 0;
-		@emit STOR.pri      argCountRef                                         // 42
-		@emit LREF.pri      argCountRef                                         // 44
-		//@emit LOAD.I
-		@emit PUSH.pri                                                          // 45
-
-		// Chain the functions.
-		if (YSI_g_sNPSBaseCall == addr)
-		{
-			@emit PUSH3.C       compressedFormat, YSI_g_sNPSStack, 8            // 5
-			YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
-		}
-		else if (YSI_g_sNPSBaseCall == cellmin)
-		{
-			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), 8   // 5
-			YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
-		}
-		else
-		{
-			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), 8   // 5
-		}
-
-		@emit CONST.pri     4                                                   // 47
-		@emit ADD                                                               // 48
-	}
-	else
-#endif
-	{
-		@emit POP.pri                                                           // 1
-		@emit PUSH.C       compressedFormat                                     // 3
-
-		// Chain the functions.
-		if (YSI_g_sNPSBaseCall == addr)
-		{
-			@emit PUSH.C       YSI_g_sNPSStack                                  // 5
-			YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
-		}
-		else if (YSI_g_sNPSBaseCall == cellmin)
-		{
-			@emit PUSH.C       (type < 0 ? type : addr)                         // 5
-			YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
-		}
-		else
-		{
-			@emit PUSH.C       (type < 0 ? type : addr)                         // 5
-		}
-		@emit PUSH.C       8                                                    // 7
-	}
-
-	@emit PUSH.pri     // Save the return address again.                        // 8
-	@emit PUSH         AMX_Ref(YSI_g_sNPSStack)                                 // 10
-
-	// Copy 20 bytes over (includes the return address and fake param count).
-	@emit HEAP         20                                                       // 12
-	@emit LCTRL        4                                                        // 14
-	@emit MOVS         20                                                       // 16
-	@emit STOR.alt     AMX_Ref(YSI_g_sNPSStack)                                 // 18
-
-	// Call, and return to here to clean up the heap.
-	@emit STACK        20                                                       // 20
-	@emit CALL.abs     YSI_g_sNPSReplace                                        // 22
-
-	// Put data (and return value) on the stack.
-	@emit STACK        -20                                                      // 24
-	@emit STACK        0                                                        // 26
-	@emit PUSH.pri                                                              // 27
-
-	// Copy from the heap.
-	@emit LOAD.pri     AMX_Ref(YSI_g_sNPSStack)                                 // 29
-	@emit MOVS         20                                                       // 31
-
-	// Restore the return address and `continue` stack.
-	@emit POP.pri                                                               // 32
-	@emit POP.alt                                                               // 33
-	@emit STOR.alt     AMX_Ref(YSI_g_sNPSStack)                                 // 35
-	@emit HEAP         -20                                                      // 37
-
-	// Return from this "function", with our fake parameters and return address.
-	// We do this instead of using `SCTRL 6`, as is the normal way, to preserve
-	// `pri` as the return value.
-	@emit PROC                                                                  // 38
-	@emit RETN                                                                  // 39
-
-	if (type < 0)
-	{
-		// Missed this one apparently...
-		@emit SYSREQ.C     -addr
-		//@emit SYSREQ.pri
-
-		// Returns to here.
-		@emit PUSH.alt
-		@emit PUSH         AMX_Ref(YSI_g_sTempRet)
-		@emit RETN
-	}
-
-	AsmEmitPadding(ctx);
-
-	YSI_g_sNPSReplace = YSI_g_sNPSBaseCall; // Find
-	YSI_g_sNPSBaseCall = addr;
-
-	// Do a double return - exit the calling function as well as this function,
-	// so that the next call is never actually made.
-	#emit LOAD.S.pri   0
-	#emit SCTRL        5
-	#emit SCTRL        4
-	// Clear faked parameter counts.   The outer public (maybe) expects lots of
-	// parameters.  We call it with none.
-	#emit ZERO.S       8
-	#emit RETN
-
-	__pragma("naked");
-}
-
 static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 {
 	// This generates new code in a given location.  That location just happens
@@ -794,7 +782,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 		ctx[AsmContext],
 		ptr = _:addressof(Hooks_Continue_<>);
 
-	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(_@yH<>) - ptr);
+	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(_yH@<i>) - ptr);
 
 	@emit PROC
 	@emit ADDR.pri     8

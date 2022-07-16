@@ -1033,6 +1033,32 @@ TEST__ y_hooks_native()
 	ASSERT_EQ(YSI_g_sMinC, 70);
 }
 
+static stock y_hooks_HookedStock(str[], v, &c)
+{
+	str[0] = 'h';
+	c = v + 5;
+	return 5;
+}
+
+HOOK_STOCK__ y_hooks_HookedStock(str[], v, &c)
+{
+	// A native function we can easily replicate, in tests only.
+	new ret = continue(str, v, c);
+	c += v;
+	str[1] = 'i';
+	return 10 + ret;
+}
+
+TEST__ y_hooks_HookedStock()
+{
+	new c = 10;
+	new str[32];
+	ASSERT_EQ(y_hooks_HookedStock(str, 2, c), 15);
+	ASSERT_EQ(c, 9);
+	ASSERT_EQ(str[0], 'h');
+	ASSERT_EQ(str[1], 'i');
+}
+
 //@hook(.callback = "OnNewHooks") OnNewHooks1(playerid)
 //{
 //	#pragma unused playerid
