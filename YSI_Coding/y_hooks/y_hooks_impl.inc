@@ -1287,48 +1287,6 @@ public OnCodeInit()
 	}
 	Hooks_SortReplacements();
 	
-	// Step 2:
-	//
-	//   Read the AMX header to loop over all the `@_Hy` functions.  These
-	//   contain the call to `_yH@` which generates the trambopoline code.
-	//
-	//   From this data we build a list of all calls to replace.
-	//
-	new
-		heap = GetAmxHeapTop(),
-		allocated = 0,
-		nativeCount = 0,
-		stockCount = 0,
-		idx1 = 0,
-		idx2 = 0;
-	{
-		new hdr[AMX_HDR];
-		GetAmxHeader(hdr);
-		entry = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
-	}
-	{
-		YSI_g_sNPSBaseCall = cellmin;
-		// Needs to be split over multiple lines because macros (`_A`).
-		while (
-			(idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>))
-			&&
-			(idx2 = AMX_GetPublicPointerPrefix(idx2, YSI_g_sNPSTrampoline, _A<@_Hy>))
-		)
-		{
-			@.YSI_g_sNPSTrampoline();
-			if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
-			{
-				YHNPS_Push(heap, allocated, nativeCount, stockCount, entry, YSI_g_sNPSReplace, YSI_g_sNPSStack);
-				YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
-			}
-		}
-	}
-	if (YSI_g_sNPSBaseCall != cellmin)
-	{
-		// Store the final chain.
-		YHNPS_Push(heap, allocated, nativeCount, stockCount, entry, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
-	}
-	
 	// Step 3:
 	//
 	//   Now do the legacy hooks.
@@ -1388,6 +1346,48 @@ public OnCodeInit()
 	#if defined Hooks_OnCodeInit
 		Hooks_OnCodeInit();
 	#endif
+	
+	// Step 2:
+	//
+	//   Read the AMX header to loop over all the `@_Hy` functions.  These
+	//   contain the call to `_yH@` which generates the trambopoline code.
+	//
+	//   From this data we build a list of all calls to replace.
+	//
+	new
+		heap = GetAmxHeapTop(),
+		allocated = 0,
+		nativeCount = 0,
+		stockCount = 0,
+		idx1 = 0,
+		idx2 = 0;
+	{
+		new hdr[AMX_HDR];
+		GetAmxHeader(hdr);
+		entry = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
+	}
+	{
+		YSI_g_sNPSBaseCall = cellmin;
+		// Needs to be split over multiple lines because macros (`_A`).
+		while (
+			(idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>))
+			&&
+			(idx2 = AMX_GetPublicPointerPrefix(idx2, YSI_g_sNPSTrampoline, _A<@_Hy>))
+		)
+		{
+			@.YSI_g_sNPSTrampoline();
+			if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
+			{
+				YHNPS_Push(heap, allocated, nativeCount, stockCount, entry, YSI_g_sNPSReplace, YSI_g_sNPSStack);
+				YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+			}
+		}
+	}
+	if (YSI_g_sNPSBaseCall != cellmin)
+	{
+		// Store the final chain.
+		YHNPS_Push(heap, allocated, nativeCount, stockCount, entry, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
+	}
 	
 	// Step 5:
 	//
