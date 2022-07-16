@@ -151,16 +151,16 @@ Optional plugins:
 
 #define YHLEG_NUL(%0)%8$()(#) YHLEG_END(%0)%8$(,)(#)
 // I don't actually need the tag, this is purely internal.
-#define YHLEG_END(%0)%8$(,%6)(#%7)return%9(, YHLEG:%8$UNIQUE_FUNCTION<@yH_%0@...>()return _@Hy(O@A_()?(((_:%0(%6)),O@V_)?1:2):(O@V_),
+#define YHLEG_END(%0)%8$(,%6)(#%7)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(O@A_()?(((_:%0(%6)),O@V_)?1:2):(O@V_),
 
-#define @hook(%0)%1(%2) UNIQUE_FUNCTION<@yH_%1@...>();UNIQUE_FUNCTION<%1@...>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _@Hy(,_:__COMPILER_PACK"\"%1\"",%0);static %1(%2)
+#define @hook(%0)%1(%2) YHNPS_U1<%1>();YHNPS_U2<%1>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _@Hy(,_:__COMPILER_PACK"\"%1\"",%0);static %1(%2)
 
 #define YHLEG:%8$%0(%1)%2(%3,%4,.%5=%6) YHLEG_%5:%8$%0(%1)%2(%3,%4,%6)
 #define YHLEG_callback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,__COMPILER_PACK%6)
 #define YHLEG_order:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.order=%6)
 #define YHLEG_fallback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
 //#define YHLEG_fallback1__:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
-#define YHLEG_fallback1__:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,%9);static%6(%7) %8$UNIQUE_FUNCTION<@yH_%6@...>()return _@Hy(O@A_()?(((_:UNIQUE_FUNCTION<%6@...>(%2))%3)%4):%5,__COMPILER_PACK"\"%6\"",.fallback=true);static UNIQUE_FUNCTION<%6@...>(%7)
+#define YHLEG_fallback1__:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,%9);static%6(%7) %8$YHNPS_U1<%6>()return _@Hy(O@A_()?(((_:YHNPS_U2<%6>(%2))%3)%4):%5,__COMPILER_PACK"\"%6\"",.fallback=true);static YHNPS_U2<%6>(%7)
 
 #define YHLEG_stock:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,"%9") %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
 #define YHLEG_native:%8$%6()%9(%0?(((%1(%2))%3)%4):%5,%9,"%9") %8$%6()return _Hooks_AddFuncHook(%0?(((%1(%2))%3)%4):%5,%0?(((%9(%2))%3)%4):%5)
@@ -177,9 +177,9 @@ Optional plugins:
 //#define HOOK_NATIVE__%0(%1) @hook(.fallback2__=%0)%0(%1)
 //#define HOOK_FUNCTION__%0(%1) @hook(.fallback2__=%0)%0(%1)
 
-#define REHOOK__%0(%1) static UNIQUE_FUNCTION<%0@...>(%1)
+#define REHOOK__%0(%1) static YHNPS_U2<%0>(%1)
 
-#define HOOK_STOCK__%0(%1) FUNC_PARSER(YHNPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:RET_TAG:)(%0(%1))()()(1,0)
+#define HOOK_STOCK__%0(%1) FUNC_PARSER(YHNPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:RET_TAG:)(%0(%1))()()(1,0)(%0)
 #define HOOK_NATIVE__ HOOK_STOCK__
 #define HOOK_native__ HOOK_STOCK__
 #define HOOK_stock__ HOOK_STOCK__
@@ -255,8 +255,8 @@ Optional plugins:
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
-#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$forward %7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _yH@(%4),%0(%6);%7YHNPS_U0<%0>(%5)
-#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$forward YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)return _yH@(%4),%0(%6);YHNPS_U0<%0>(%5)
+#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4)(%9) %8$forward %7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _yH@(%4),%9(%6);%7YHNPS_U0<%0>(%5)
+#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4)(%9) %8$forward YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)return _yH@(%4),%9(%6);YHNPS_U0<%0>(%5)
 #define YHNPS_NUL_TAG(%7,%0)%8$()() YHNPS_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS_NUL(%0)%8$()() YHNPS_END(%0)%8$(,)(,)
 
@@ -264,6 +264,7 @@ Optional plugins:
 // generated code multiple times.
 #define YHNPS_U0<%1> UNIQUE_FUNCTION<@Hy_%1@...>
 #define YHNPS_U1<%1> UNIQUE_FUNCTION<@yH_%1@...>
+#define YHNPS_U2<%1> UNIQUE_FUNCTION<%1@...>
 
 // Remove specified priorities from the original call.
 #define _yH@(%0),%1@%2(%3); _yH@(%0),%1(%3);
