@@ -595,7 +595,7 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
  *//*------------------------------------------------------------------------**/
 
 // Was `_Hooks_AddPublicHook`
-stock bool:_@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_first>
+stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_first>
 {
 	#pragma unused address, order
 	// Found a new callback to set up.
@@ -604,17 +604,16 @@ stock bool:_@Hy(address, const name[], const callback[] = "", order = cellmin, f
 	{
 		// Because this function is a fallback type, all the others we want to
 		// find should also be fallbacks.
-		state y_hooks_scan : y_hooks_scan_fallback;
-		return true;
+		return 1;
 	}
 	else
 	{
 		Debug_Fatal("`hook public` is not implemented yet.");
-		return false;
+		return 0;
 	}
 }
 
-stock bool:_@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_fallback>
+stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <y_hooks_scan : y_hooks_scan_second>
 {
 	if (order != cellmin)
 	{
@@ -631,16 +630,16 @@ stock bool:_@Hy(address, const name[], const callback[] = "", order = cellmin, f
 	else
 	{
 		// Not a fallback function, but we're in the fallback lookup state.
-		return false;
+		return 0;
 	}
 }
 
-stock bool:_@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <>
-{
-	#pragma unused address, name, callback, order, fallback
-	// We don't care about these hook types in any other state.
-	return false;
-}
+//stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallback = false) <>
+//{
+//	#pragma unused address, name, callback, order, fallback
+//	// We don't care about these hook types in any other state.
+//	return 0;
+//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="idx">Current position in the AMX header.</param>
@@ -1301,7 +1300,20 @@ public OnCodeInit()
 		// taken up by the names of hooks that we are about to destroy, and
 		// where they are located.  Now includes all hooks together.
 		namelen = 0,
-		namewrite = 0;
+		namewrite = 0,
+		heap = GetAmxHeapTop(),
+		allocated = 0,
+		nativeCount = 0,
+		stockCount = 0,
+		idx1 = 0,
+		idx2 = 0,
+		base = 0;
+	{
+		new hdr[AMX_HDR];
+		GetAmxHeader(hdr);
+		base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
+	}
+	YSI_g_sNPSBaseCall = cellmin;
 	// Get the next hook type.  This is binary-search safe because it is the
 	// first call before any name mangling has happened.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
@@ -1320,14 +1332,25 @@ public OnCodeInit()
 		#emit PUSH.pri
 		#emit LREF.S.pri                entry
 		#emit SCTRL                     6
-		// Move back to the first hook in this group (the one we just called).
-		--idx;
-		// Collect all the hooks of this function, and rewrite the call code.
-		Hooks_Collate(preloads, precount, idx, namelen, namewrite);
-		// Because we decremented `idx` this will re-test the same slot but
-		// that's good because we do an insertion sort so some publics may have
-		// been moved up (they also may not, but that's not a problem because in
-		// that case the `== 0` check above will trigger and skip the repeat).
+		#emit STOR.S.pri                entry
+		// Determine the callback type.
+		switch (entry)
+		{
+		case 1:
+		{
+			state y_hooks_scan : y_hooks_scan_second;
+			// Move back to the first hook in this group (the one we just
+			// called) then collect all the hooks of this function, and rewrite
+			// the call code.
+			--idx;
+			Hooks_Collate(preloads, precount, idx, namelen, namewrite);
+			// Because we decremented `idx` this will re-test the same slot but
+			// that's good because we do an insertion sort so some publics may
+			// have been moved up (they also may not, but that's not a problem
+			// because in that case the `== 0` check above will trigger and skip
+			// the repeat).
+		}
+		}
 	}
 
 	// Step 3:
@@ -1336,37 +1359,46 @@ public OnCodeInit()
 	//   contain the call to `_yH@` which generates the trambopoline code.
 	//
 	//   From this data we build a list of all calls to replace.
-	new
-		heap = GetAmxHeapTop(),
-		allocated = 0,
-		nativeCount = 0,
-		stockCount = 0,
-		idx1 = 0,
-		idx2 = 0;
+	while ((idx2 = AMX_GetPublicEntryPrefix(idx2, entry, _A<@_Hy>)))
 	{
-		new hdr[AMX_HDR];
-		GetAmxHeader(hdr);
-		entry = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
-	}
-	YSI_g_sNPSBaseCall = cellmin;
-	// Needs to be split over multiple lines because macros (`_A`).
-	while (
-		(idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>))
-		&&
-		(idx2 = AMX_GetPublicPointerPrefix(idx2, YSI_g_sNPSTrampoline, _A<@_Hy>))
-	)
-	{
-		@.YSI_g_sNPSTrampoline();
-		if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
+		//state y_hooks_scan : y_hooks_scan_first;
+		//#emit PUSH.C                    0
+		//#emit LCTRL                     6
+		//#emit ADD.C                     44
+		//#emit LCTRL                     8
+		//#emit PUSH.pri
+		#emit LREF.S.pri                entry
+		#emit STOR.pri                  YSI_g_sNPSTrampoline
+		//#emit SCTRL                     6
+		//#emit STOR.S.pri                entry
+		//printf("entry: %d", entry);
+		//switch (entry)
+		//{
+		//case 2:
 		{
-			YHNPS_Push(heap, allocated, nativeCount, stockCount, entry, YSI_g_sNPSReplace, YSI_g_sNPSStack);
-			YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+			if ((idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>)))
+			{
+				state y_hooks_scan : y_hooks_scan_second;
+				#emit PUSH.C                    0
+				#emit LCTRL                     6
+				#emit ADD.C                     36
+				#emit LCTRL                     8
+				#emit PUSH.pri
+				#emit LOAD.pri                  YSI_g_sNPSTrampoline
+				#emit SCTRL                     6
+				if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
+				{
+					YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSReplace, YSI_g_sNPSStack);
+					YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+				}
+			}
 		}
+		//}
 	}
 	if (YSI_g_sNPSBaseCall != cellmin)
 	{
 		// Store the final chain.
-		YHNPS_Push(heap, allocated, nativeCount, stockCount, entry, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
+		YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
 	}
 	
 	// Step 4:
@@ -1939,7 +1971,21 @@ This function is called, and just needs to insert a new function.
 
 #define continue(%0) Hooks_Continue_(%0)
 
-stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0)
+//stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_first>
+//{
+//	#pragma unused compressedFormat
+//	#pragma unused a, b, c, d, e, f, g
+//
+//	// A double return.  We return `2` from this function to indicate that this
+//	// is a function hook, not a public hook.  That's all this state does.
+//	#emit STACK                44 // 12 + 8 * 4
+//	#emit CONST.pri            2
+//	#emit RETN
+//
+//	__pragma("naked");
+//}
+
+stock _yH@(compressedFormat, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) //<y_hooks_scan : y_hooks_scan_second>
 {
 	#pragma unused compressedFormat
 	#pragma unused a, b, c, d, e, f, g
