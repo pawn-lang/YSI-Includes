@@ -1954,7 +1954,7 @@ This function is called, and just needs to insert a new function.
 
 #define continue(%0) Hooks_Continue_(%0)
 
-static stock Hooks_RegisterNPSHook(compressedFormat, order)
+static stock Hooks_RegisterNPSHook(compressedFormat, address, order)
 {
 	#pragma unused order
 	// Put us in the frame of the previous function.  Because `compressedFormat`
@@ -2009,6 +2009,7 @@ static stock Hooks_RegisterNPSHook(compressedFormat, order)
 	//	addr = -addr;
 	//}
 
+	YSI_g_sNPSReplace = address;
 	AsmInitPtr(ctx, YSI_g_sNPSTrampoline + AMX_HEADER_COD, YSI_g_sNPSReplace - YSI_g_sNPSTrampoline);
 	// Forward the function, storing the chain data in the heap.   Note that no
 	// `PROC` is added to this new trambopoline:
@@ -2138,34 +2139,34 @@ static stock Hooks_RegisterNPSHook(compressedFormat, order)
 	__pragma("naked");
 }
 
-stock _yH@(compressedFormat, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_determine_type>
+stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_determine_type>
 {
-	#pragma unused compressedFormat, order
+	#pragma unused compressedFormat, address, order
 	#pragma unused a, b, c, d, e, f, g
 
 	// A double return.  We return `2` from this function to indicate that this
 	// is a function hook, not a public hook.  That's all this state does.
-	#emit STACK                48 // 12 + 8 * 4
+	#emit STACK                52 // 12 + 10 * 4
 	#emit CONST.pri            2
 	#emit RETN
 
 	__pragma("naked");
 }
 
-stock _yH@(compressedFormat, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_nps_hook>
+stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_nps_hook>
 {
 	#pragma unused a, b, c, d, e, f, g
-	return Hooks_RegisterNPSHook(compressedFormat, order);
+	return Hooks_RegisterNPSHook(compressedFormat, address, order);
 }
 
-stock _yH@(compressedFormat, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <>
+stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <>
 {
-	#pragma unused compressedFormat, order
+	#pragma unused compressedFormat, address, order
 	#pragma unused a, b, c, d, e, f, g
 
 	// A double return.  We return `0` from this function because we don't care
 	// about the current state.
-	#emit STACK                48 // 12 + 9 * 4
+	#emit STACK                52 // 12 + 10 * 4
 	#emit ZERO.pri
 	#emit RETN
 
@@ -2180,7 +2181,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 		ctx[AsmContext],
 		ptr = _:addressof(Hooks_Continue_<>);
 
-	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(Hooks_RegisterNPSHook<ii>) - ptr);
+	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(Hooks_RegisterNPSHook<iii>) - ptr);
 
 	@emit PROC
 	@emit ADDR.pri     8
