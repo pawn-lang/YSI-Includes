@@ -168,9 +168,9 @@ Optional plugins:
 #define YHLEG_fallback1__:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,%9);public%9YHNPS_U0<%6>(%7) %8$YHNPS_U1<%6>(%7)return _@Hy(Y_HOOKS_ADDRESSOF(YHNPS_U0<%6>(%2)),__COMPILER_PACK"\"%6\"",.fallback=true);public YHNPS_U0<%6>(%7)
 
 //return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);%7YHNPS_U0<%0>(%5)
-#define YHLEG_stock:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
-#define YHLEG_native:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
-#define YHLEG_function:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
+#define YHLEG_stock:%8$%6(%7)%9(%4,Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
+#define YHLEG_native:%8$%6(%7)%9(%4,Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
+#define YHLEG_function:%8$%6(%7)%9(%4,Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
 
 // Upgrade the old version to the new version, with only defaults.
 #define HOOK__%0(%1) @hook(.fallback1__=true)%0(%1)
@@ -260,10 +260,12 @@ Optional plugins:
 // %7  = Prefix0
 // %1  = Prefix1
 //#define YHLEG_END(%0)%8$(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(Y_HOOKS_ADDRESSOF(%0(%6)),
-#define YHLEG_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>(%5)return _@Hy(Y_HOOKS_ADDRESSOF(%0(%6)),
+#define YHLEG_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>(%5)return _@Hy(%4,Y_HOOKS_ADDRESSOF(%0(%6))
 #define YHLEG_END(%0)%8$(,%5)(,%6) YHLEG_END_TAG(,%0)%8$(,%5)(,%6)
 #define YHLEG_NUL_TAG(%7,%0)%8$()() YHLEG_END(,%0)%8$(,)(,)
 #define YHLEG_NUL(%0)%8$()() YHLEG_END(%0)%8$(,)(,)
+
+#define _@Hy(%4, _@Hy(
 
 // Arrays.
 //
