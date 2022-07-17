@@ -1086,9 +1086,9 @@ TEST__ y_hooks_HookedStock()
 	ASSERT_EQ(str[2], 't');
 }
 
-@hook(.native = "IsPlayerConnected", .order = 5) HookIsPlayerConnected(playerid)
+@hook(.native = "swapchars", .order = 5) MySwapCharsHook(ch)
 {
-	return 0 <= playerid < MAX_PLAYERS && continue(playerid);
+	return continue(ch);
 }
 
 //@hook(.callback = "OnNewHooks") OnNewHooks1(playerid)
