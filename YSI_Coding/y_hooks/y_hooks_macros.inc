@@ -113,6 +113,7 @@ Optional plugins:
 #define @yH_%0\32; @yH_ // @hook entry point
 #define @_Hy%0\32; @_Hy // unused
 #define @Hy_%0\32; @Hy_ // hook stock/native
+#define _@yH%0\32; _@yH // hook stock/native
 #define @H_y%0\32; @H_y // hook public
 #define @y_H%0\32; @y_H // DEFINE_HOOK_RETURN
 #define @_yH%0\32; @_yH // DEFINE_HOOK_REPLACEMENT
@@ -258,14 +259,14 @@ Optional plugins:
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
-#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4)(%9) %8$forward %7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%9(%6);%7YHNPS_U0<%0>(%5)
-#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4)(%9) %8$forward YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%9(%6);YHNPS_U0<%0>(%5)
+#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4)(%9) %8$%7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%9(%6);%7YHNPS_U0<%0>(%5)
+#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4)(%9) %8$YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%9(%6);YHNPS_U0<%0>(%5)
 #define YHNPS_NUL_TAG(%7,%0)%8$()() YHNPS_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS_NUL(%0)%8$()() YHNPS_END(%0)%8$(,)(,)
 
 // Helper macro to generate the unique function name without bloating the
 // generated code multiple times.
-#define YHNPS_U0<%1> UNIQUE_FUNCTION<@Hy_%1@...>
+#define YHNPS_U0<%1> UNIQUE_FUNCTION<_@yH%1@...>
 #define YHNPS_U1<%1> UNIQUE_FUNCTION<@yH_%1@...>
 #define YHNPS_U2<%1> UNIQUE_FUNCTION<%1@...>
 

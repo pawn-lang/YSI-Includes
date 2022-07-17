@@ -1144,7 +1144,7 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 			// all on one line (due to line length limits).
 			_A<@_y_>,
 			_A<@CO_>,
-			_A<@Hy_>,
+			_A<_@yH>,
 			_A<@_Hy>,
 			_A<@_yH>:
 			continue;
@@ -1213,7 +1213,7 @@ static stock Hooks_SortReplacements()
 {
 	new
 		idx0 = 0,
-		idx1 = 0,
+		idx = 0,
 		temp = 0;
 	for (new i = YSI_g_sReplacePtr - 1; i > 0; --i)
 	{
@@ -1221,8 +1221,8 @@ static stock Hooks_SortReplacements()
 		{
 			// Sort the strings in order of their short replacement.
 			idx0 = YSI_g_sReplacementsShortOrder[j],
-			idx1 = YSI_g_sReplacementsShortOrder[j + 1];
-			if (YSI_g_sReplacements[idx0][E_HOOK_NAME_REPLACEMENT_MIN] < YSI_g_sReplacements[idx1][E_HOOK_NAME_REPLACEMENT_MIN])
+			idx = YSI_g_sReplacementsShortOrder[j + 1];
+			if (YSI_g_sReplacements[idx0][E_HOOK_NAME_REPLACEMENT_MIN] < YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_MIN])
 			{
 				temp = YSI_g_sReplacementsShortOrder[j],
 				YSI_g_sReplacementsShortOrder[j] = YSI_g_sReplacementsShortOrder[j + 1],
@@ -1230,8 +1230,8 @@ static stock Hooks_SortReplacements()
 			}
 			// Sort the strings in order of their long replacement.
 			idx0 = YSI_g_sReplacementsLongOrder[j],
-			idx1 = YSI_g_sReplacementsLongOrder[j + 1];
-			if (YSI_g_sReplacements[idx0][E_HOOK_NAME_REPLACEMENT_MAX] < YSI_g_sReplacements[idx1][E_HOOK_NAME_REPLACEMENT_MAX])
+			idx = YSI_g_sReplacementsLongOrder[j + 1];
+			if (YSI_g_sReplacements[idx0][E_HOOK_NAME_REPLACEMENT_MAX] < YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_MAX])
 			{
 				temp = YSI_g_sReplacementsLongOrder[j],
 				YSI_g_sReplacementsLongOrder[j] = YSI_g_sReplacementsLongOrder[j + 1],
@@ -1311,8 +1311,6 @@ public OnCodeInit()
 		allocated = 0,
 		nativeCount = 0,
 		stockCount = 0,
-		idx1 = 0,
-		idx2 = 0,
 		base = 0;
 	{
 		new hdr[AMX_HDR];
@@ -1331,19 +1329,23 @@ public OnCodeInit()
 		// Invoke the function, which will result in our callback being called
 		// to get the base function name (in to `YSI_g_sName`).
 		state y_hooks_scan : y_hooks_scan_determine_type;
+		YSI_g_sTempRet = YSI_g_sNPSTrampoline;
 		#emit PUSH.C                    0
 		#emit LCTRL                     6
-		#emit ADD.C                     36
+		#emit ADD.C                     44
 		#emit LCTRL                     8
 		#emit PUSH.pri
 		#emit LREF.S.pri                entry
+		#emit STOR.pri                  YSI_g_sNPSTrampoline
 		#emit SCTRL                     6
-		#emit STOR.pri                  YSI_g_sTempRet
+		#emit STOR.S.pri                entry
 		// Determine the callback type.
-		switch (YSI_g_sTempRet)
+		switch (entry)
 		{
 		case 1:
 		{
+			// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
+			YSI_g_sNPSTrampoline = YSI_g_sTempRet;
 			state y_hooks_scan : y_hooks_scan_legacy_hook;
 			// Move back to the first hook in this group (the one we just
 			// called) then collect all the hooks of this function, and rewrite
@@ -1358,23 +1360,16 @@ public OnCodeInit()
 		}
 		case 2:
 		{
-			if ((idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>)))
+			if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
 			{
-				state y_hooks_scan : y_hooks_scan_nps_hook;
-				#emit PUSH.C                    0
-				#emit LCTRL                     6
-				#emit ADD.C                     44
-				#emit LCTRL                     8
-				#emit PUSH.pri
-				#emit LREF.S.pri                entry
-				#emit STOR.pri                  YSI_g_sNPSTrampoline
-				#emit SCTRL                     6
-				if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
-				{
-					YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSReplace, YSI_g_sNPSStack);
-					YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
-				}
+				YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSReplace, YSI_g_sNPSStack);
+				YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
 			}
+		}
+		default:
+		{
+			// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
+			YSI_g_sNPSTrampoline = YSI_g_sTempRet;
 		}
 		}
 	}
@@ -1420,9 +1415,9 @@ public OnCodeInit()
 							addr += 8;
 							continue;
 						}
-						idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+						idx = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
 				#if __COMPILER_O2
-						idx2 = 0;
+						base = 0;
 				#endif
 					}
 					case OP_SYSREQ_D:
@@ -1432,25 +1427,25 @@ public OnCodeInit()
 							addr += 8;
 							continue;
 						}
-						idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+						idx = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
 				#if __COMPILER_O2
-						idx2 = 0;
+						base = 0;
 				#endif
 					}
 				#if __COMPILER_O2
 					case OP_SYSREQ_N:
 					{
-						idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4)),
-						idx2 = 1;
+						idx = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4)),
+						base = 1;
 					}
 				#endif
 					case OP_CALL:
 					{
-						idx1 = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
-						if (idx1 != cellmin)
+						idx = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
+						if (idx != cellmin)
 						{
 							// Write a different target address.
-							AMX_Write(addr + 4, idx1);
+							AMX_Write(addr + 4, idx);
 						}
 						addr += 8;
 						continue;
@@ -1464,12 +1459,12 @@ public OnCodeInit()
 				// `SYSREQ.C` is always followed by `STACK`, except with `#emit`
 				// usage.  We need to change the pair in to a single `CALL`.
 				// Don't forget `SYSREQ.D`.
-				if (idx1 == cellmin)
+				if (idx == cellmin)
 				{
 					addr += 8;
 				}
 			#if __COMPILER_O2
-				else if (idx2)
+				else if (base)
 				{
 					// sysreq.n
 					// I need to somehow add pushing the number of parameters
@@ -1478,7 +1473,7 @@ public OnCodeInit()
 					// compatible (so we can do clever things with stacks/
 					// addresses if nescessary).
 					AMX_Write(addr, _:call),
-					AMX_Write(addr + 4, idx1),
+					AMX_Write(addr + 4, idx),
 					addr += 12;
 				}
 			#endif
@@ -1486,7 +1481,7 @@ public OnCodeInit()
 				{
 					// Write a different target address.
 					AMX_Write(addr, _:call),
-					AMX_Write(addr + 4, idx1),
+					AMX_Write(addr + 4, idx),
 					addr += 8;
 					if (UnrelocateOpcode(Opcode:ReadAmxMemory(addr)) == OP_STACK)
 					{
@@ -1512,9 +1507,9 @@ public OnCodeInit()
 								addr += 8;
 								continue;
 							}
-							idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+							idx = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
 						#if __COMPILER_O2
-							idx2 = 0;
+							base = 0;
 						#endif
 					}
 					case OP_SYSREQ_D:
@@ -1526,24 +1521,24 @@ public OnCodeInit()
 									addr += 8;
 									continue;
 								}
-								idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+								idx = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
 						#if __COMPILER_O2
-								idx2 = 0;
+								base = 0;
 							}
 							else
 							{
-								idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
-								idx2 = 1;
+								idx = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+								base = 1;
 						#endif
 							}
 					}
 					case OP_CALL:
 					{
-						idx1 = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
-						if (idx1 != cellmin)
+						idx = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
+						if (idx != cellmin)
 						{
 							// Write a different target address.
-							AMX_Write(addr + 4, idx1);
+							AMX_Write(addr + 4, idx);
 						}
 						addr += 8;
 						continue;
@@ -1557,12 +1552,12 @@ public OnCodeInit()
 				// `SYSREQ.C` is always followed by `STACK`, except with `#emit`
 				// usage. We need to change the pair in to a single `CALL`.
 				// Don't forget `SYSREQ.D`.
-				if (idx1 == cellmin)
+				if (idx == cellmin)
 				{
 					addr += 8;
 				}
 			#if __COMPILER_O2
-				else if (idx2)
+				else if (base)
 				{
 					// sysreq.n
 					// I need to somehow add pushing the number of parameters
@@ -1571,7 +1566,7 @@ public OnCodeInit()
 					// compatible (so we can do clever things with stacks/
 					// addresses if nescessary).
 					AMX_Write(addr, _:call),
-					AMX_Write(addr + 4, idx1),
+					AMX_Write(addr + 4, idx),
 					addr += 12;
 				}
 			#endif
@@ -1579,7 +1574,7 @@ public OnCodeInit()
 				{
 					// Write a different target address.
 					AMX_Write(addr, _:call),
-					AMX_Write(addr + 4, idx1),
+					AMX_Write(addr + 4, idx),
 					addr += 8;
 					if (Opcode:ReadAmxMemory(addr) == OP_STACK)
 					{
@@ -2134,26 +2129,13 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, order)
 	#emit LOAD.S.pri   0
 	#emit SCTRL        5
 	#emit SCTRL        4
+	#emit CONST.pri    2
 	#emit RETN
 
 	__pragma("naked");
 }
 
 stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_determine_type>
-{
-	#pragma unused compressedFormat, address, order
-	#pragma unused a, b, c, d, e, f, g
-
-	// A double return.  We return `2` from this function to indicate that this
-	// is a function hook, not a public hook.  That's all this state does.
-	#emit STACK                52 // 12 + 10 * 4
-	#emit CONST.pri            2
-	#emit RETN
-
-	__pragma("naked");
-}
-
-stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_nps_hook>
 {
 	#pragma unused a, b, c, d, e, f, g
 	return Hooks_RegisterNPSHook(compressedFormat, address, order);
