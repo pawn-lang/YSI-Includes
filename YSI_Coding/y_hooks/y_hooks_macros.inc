@@ -183,7 +183,7 @@ Optional plugins:
 
 #define REHOOK__%0(%1) static YHNPS_U2<%0>(%1)
 
-#define HOOK_NATIVE__%0(%1) FUNC_PARSER(YHNPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:RET_TAG:)(%0(%1))()()(1,0)<NATIVE>
+#define HOOK_NATIVE__%0(%1) FUNC_PARSER(YHNPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:RET_TAG:)(%0(%1))()()(1,0)
 #define HOOK_STOCK__ HOOK_NATIVE__
 #define HOOK_native__ HOOK_NATIVE__
 #define HOOK_stock__ HOOK_NATIVE__
@@ -259,12 +259,10 @@ Optional plugins:
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
-#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4)<%9> YHNPS_%9_END(%7,%0)%8$(,%5)(,%6)(,%4)
-#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4)<%9> YHNPS_%9_END(,%0)%8$(,%5)(,%6)(,%4)
+#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);%7YHNPS_U0<%0>(%5)
+#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);YHNPS_U0<%0>(%5)
 #define YHNPS_NUL_TAG(%7,%0)%8$()() YHNPS_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS_NUL(%0)%8$()() YHNPS_END(%0)%8$(,)(,)
-
-#define YHNPS_NATIVE_END(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);%7YHNPS_U0<%0>(%5)
 
 // Helper macro to generate the unique function name without bloating the
 // generated code multiple times.
