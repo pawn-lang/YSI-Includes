@@ -89,9 +89,9 @@ Optional plugins:
 #define Y_HOOKS_ADDRESSOF(%0(%1)) O@A_()?(((_:%0(%1)),O@V_)?1:2):(O@V_)
 
 //#define @yH_public%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
-#define @yH_native%9(%9);%9(%9);ADDRESSOF_MAKE_CALL__%9native%1(%2)%9\10; HOOK_NATIVE__%1(%2)
-#define @yH_stock%9(%9);%9(%9);ADDRESSOF_MAKE_CALL__%9stock%1(%2)%9\10; HOOK_NATIVE__%1(%2)
-#define @yH_function%9(%9);%9(%9);ADDRESSOF_MAKE_CALL__%9function%1(%2)%9\10; HOOK_NATIVE__%1(%2)
+#define @yH_native%9(%9);%9<%9native%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
+#define @yH_stock%9(%9);%9<%9native%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
+#define @yH_function%9(%9);%9<%9native%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
 
 //#define HOOK_PUBLIC__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
 //#define HOOK_public__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
@@ -146,18 +146,19 @@ Optional plugins:
 // Decorator syntax.
 #define YHLEG_%0\32; YHLEG_ // Named parameters.
 
-#define ADDRESSOF_MAKE_CALL__%0(%1) FUNC_PARSER(YHLEG,ARR:NUM_TAG:REF_TAG:EXT:)(%0(%1))()(1,0)
+#define ADDRESSOF_MAKE_CALL__%0(%1) FUNC_PARSER(YHLEG,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:RET_TAG:)(%0(%1))()()(1,0)
 
-#define YHLEG_ARR(%0,%1,%2,%9)%8$(%6)(%9,%4) %8$(%6,__ARR)(%9+1,%4)
-#define YHLEG_NUM(%0,%1,%2)%8$(%6)(%9,%4) %8$(%6,%10)(%9+1,1<<%9|%4)
-#define YHLEG_REF(%0,%1,%2)%8$(%6)(%9,%4) %8$(%6,%1__REF)(%9+1,%4)
-#define YHLEG_EXT(%0,%1,%2)%8$(%6)(%9,%4) %8$(%6)(%7)
+//#define YHLEG_ARR(%0,%1,%2,%9)%8$(%6)(%9,%4) %8$(%6,__ARR)(%9+1,%4)
+//#define YHLEG_NUM(%0,%1,%2)%8$(%6)(%9,%4) %8$(%6,%10)(%9+1,1<<%9|%4)
+//#define YHLEG_REF(%0,%1,%2)%8$(%6)(%9,%4) %8$(%6,%1__REF)(%9+1,%4)
+//#define YHLEG_EXT(%0,%1,%2)%8$(%6)(%9,%4) %8$(%6)(%7)
 
-#define YHLEG_NUL(%0)%8$()(1,0) YHLEG_END(%0)%8$(,)(1,0)
+//#define YHLEG_NUL(%0)%8$()(1,0) YHLEG_END(%0)%8$(,)(1,0)
+//#define YHLEG_NUL(%0)%8$()(1,0) YHLEG_END(%0)%8$(,)(1,0)
 // I don't actually need the tag, this is purely internal.
-#define YHLEG_END(%0)%8$(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(Y_HOOKS_ADDRESSOF(%0(%6)),
+//#define YHLEG_END(%0)%8$(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(Y_HOOKS_ADDRESSOF(%0(%6)),
 
-#define @hook(%0)%1(%2) YHNPS_U1<%1>();YHNPS_U2<%1>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _@Hy(,_:__COMPILER_PACK"\"%1\"",%0);static %1(%2)
+#define @hook(%0)%1(%2) YHNPS_U1<%1>(%2);YHNPS_U2<%1>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _@Hy(,_:__COMPILER_PACK"\"%1\"",%0);static %1(%2)
 
 #define YHLEG:%8$%0(%1)%2(%3,%4,.%5=%6) YHLEG_%5:%8$%0(%1)%2(%3,%4,%6)
 #define YHLEG_callback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,__COMPILER_PACK%6)
@@ -189,6 +190,81 @@ Optional plugins:
 #define HOOK_stock__ HOOK_NATIVE__
 #define HOOK_FUNCTION__ HOOK_NATIVE__
 #define HOOK_function__ HOOK_NATIVE__
+
+// Arrays.
+//
+// %0  = `const`
+// %1  = Tag (unused)
+// %2  = Name
+// %4+ = Dims
+#define YHLEG_ARR(%0,%1,%2,%4)%8$ YHLEG_BYREF(%0%2[%4],%2)%8$
+#define YHLEG_ARR_ARR(%0,%1,%2,%4,%5)%8$ YHLEG_BYREF(%0%2[%4][%5],%2)%8$
+#define YHLEG_ARR_ARR_ARR(%0,%1,%2,%4,%5,%6)%8$ YHLEG_BYREF(%0%2[%4][%5][%6],%2)%8$
+
+// Strings.
+//
+// %0  = `const`
+// %1  = Tag (unused)
+// %2  = Name
+// %4  = Size
+// %3  = Default (unused)
+#define YHLEG_STR(%0,%1,%2,%4)%8$ YHLEG_BYREF(%0%2[%4],%2)%8$
+#define YHLEG_STR_DEF(%0,%1,%2,%4,%3)%8$ YHLEG_BYREF(%0%2[%4],%2)%8$
+
+// Varargs.
+//
+// %0  = `const` (unused)
+// %1  = Tag
+// %2  = Name (unused)
+// %5  = Prototype parameters
+// %6  = Call parameters
+#define YHLEG_EXT(%0,%1,%2)%8$(%5)(%6)(%9,%4) %8$(%5,%1...)(%6)(%9,%4)
+
+// References.
+//
+// %0  = `const` (unused)
+// %1  = Tag (unused)
+// %2  = Name
+// %3  = Default (unused)
+#define YHLEG_REF(%0,%1,%2)%8$ YHLEG_BYREF(&%2,%2)%8$
+#define YHLEG_REF_DEF(%0,%1,%2,%3)%8$ YHLEG_BYREF(&%2,%2)%8$
+
+// Variables.
+//
+// %0  = `const`
+// %1  = Tag (unused)
+// %2  = Name
+// %3  = Default (unused)
+#define YHLEG_NUM(%0,%1,%2)%8$ YHLEG_BYVAL(%0%2,%2)%8$
+#define YHLEG_NUM_DEF(%0,%1,%2,%3)%8$ YHLEG_BYVAL(%0%2,%2)%8$
+
+// Generate the parameter descriptions.
+//
+// %0  = Name in prototype
+// %1  = Name in call
+// %5  = Prototype parameters
+// %6  = Call parameters
+// %9  = Shift
+// %4  = Existing values
+// %7  = Prefix
+#define YHLEG_BYREF(%0,%1)%8$(%5)(%6)(%9,%4) %8$(%5,%0)(%6,%1)(%9+1,%4)
+#define YHLEG_BYVAL(%0,%1)%8$(%5)(%6)(%9,%4) %8$(%5,%0)(%6,%1)(%9+1,1<<%9|%4)
+
+// End, generate the code.
+//
+// %0  = Name
+// %3  = Descriptor
+// %5  = Prototype parameters
+// %6  = Call parameters
+// %9  = Shift
+// %4  = Existing values
+// %7  = Prefix0
+// %1  = Prefix1
+//#define YHLEG_END(%0)%8$(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(Y_HOOKS_ADDRESSOF(%0(%6)),
+#define YHLEG_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(Y_HOOKS_ADDRESSOF(%0(%6)),
+#define YHLEG_END(%0)%8$(,%5)(,%6) YHLEG_END_TAG(,%0)%8$(,%5)(,%6)
+#define YHLEG_NUL_TAG(%7,%0)%8$()() YHLEG_END(,%0)%8$(,)(,)
+#define YHLEG_NUL(%0)%8$()() YHLEG_END(%0)%8$(,)(,)
 
 // Arrays.
 //
@@ -260,9 +336,9 @@ Optional plugins:
 // %7  = Prefix0
 // %1  = Prefix1
 #define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);%7YHNPS_U0<%0>(%5)
-#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);YHNPS_U0<%0>(%5)
+#define YHNPS_END(%0)%8$(,%5)(,%6) YHNPS_END_TAG(,%0)%8$(,%5)(,%6)
 #define YHNPS_NUL_TAG(%7,%0)%8$()() YHNPS_END_TAG(%7,%0)%8$(,)(,)
-#define YHNPS_NUL(%0)%8$()() YHNPS_END(%0)%8$(,)(,)
+#define YHNPS_NUL(%0)%8$()() YHNPS_END_TAG(,%0)%8$(,)(,)
 
 // Helper macro to generate the unique function name without bloating the
 // generated code multiple times.
