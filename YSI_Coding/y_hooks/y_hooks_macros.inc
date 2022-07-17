@@ -90,8 +90,8 @@ Optional plugins:
 
 //#define @yH_public%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
 #define @yH_native%9(%9);%9<%9native%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
-#define @yH_stock%9(%9);%9<%9native%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
-#define @yH_function%9(%9);%9<%9native%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
+#define @yH_stock%9(%9);%9<%9stock%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
+#define @yH_function%9(%9);%9<%9function%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
 
 //#define HOOK_PUBLIC__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
 //#define HOOK_public__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
@@ -158,19 +158,19 @@ Optional plugins:
 // I don't actually need the tag, this is purely internal.
 //#define YHLEG_END(%0)%8$(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(Y_HOOKS_ADDRESSOF(%0(%6)),
 
-#define @hook(%0)%1(%2) YHNPS_U1<%1>(%2);YHNPS_U2<%1>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _@Hy(,_:__COMPILER_PACK"\"%1\"",%0);static %1(%2)
+#define @hook(%0)%1(%2) YHNPS_U1<%1>(%2);YHNPS_U0<%1>(%2);ADDRESSOF_MAKE_CALL__ %1(%2)return _@Hy(,_:__COMPILER_PACK"\"%1\"",%0);public YHNPS_U0<%1>(%2)
 
 #define YHLEG:%8$%0(%1)%2(%3,%4,.%5=%6) YHLEG_%5:%8$%0(%1)%2(%3,%4,%6)
 #define YHLEG_callback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,__COMPILER_PACK%6)
 #define YHLEG_order:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.order=%6)
 #define YHLEG_fallback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
 //#define YHLEG_fallback1__:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
-#define YHLEG_fallback1__:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,%9);static%6(%7) %8$YHNPS_U1<%6>(%7)return _@Hy(Y_HOOKS_ADDRESSOF(YHNPS_U2<%6>(%2)),__COMPILER_PACK"\"%6\"",.fallback=true);static YHNPS_U2<%6>(%7)
+#define YHLEG_fallback1__:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,%9);public%9YHNPS_U0<%6>(%7) %8$YHNPS_U1<%6>(%7)return _@Hy(Y_HOOKS_ADDRESSOF(YHNPS_U0<%6>(%2)),__COMPILER_PACK"\"%6\"",.fallback=true);public YHNPS_U0<%6>(%7)
 
 //return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);%7YHNPS_U0<%0>(%5)
-#define YHLEG_stock:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5) %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(%1(%2))%5),%9(%2)
-#define YHLEG_native:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5) %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(%1(%2))%5),%9(%2)
-#define YHLEG_function:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5) %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(%1(%2))%5),%9(%2)
+#define YHLEG_stock:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
+#define YHLEG_native:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
+#define YHLEG_function:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
 
 // Upgrade the old version to the new version, with only defaults.
 #define HOOK__%0(%1) @hook(.fallback1__=true)%0(%1)
@@ -181,7 +181,7 @@ Optional plugins:
 //#define HOOK_NATIVE__%0(%1) @hook(.fallback2__=%0)%0(%1)
 //#define HOOK_FUNCTION__%0(%1) @hook(.fallback2__=%0)%0(%1)
 
-#define REHOOK__%0(%1) static YHNPS_U2<%0>(%1)
+#define REHOOK__%0(%1) public YHNPS_U0<%0>(%1)
 
 #define HOOK_NATIVE__%0(%1) FUNC_PARSER(YHNPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:RET_TAG:)(%0(%1))()()(1,0)
 #define HOOK_STOCK__ HOOK_NATIVE__
@@ -334,7 +334,7 @@ Optional plugins:
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
-#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);%7YHNPS_U0<%0>(%5)
+#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);static %7YHNPS_U0<%0>(%5)
 #define YHNPS_END(%0)%8$(,%5)(,%6) YHNPS_END_TAG(,%0)%8$(,%5)(,%6)
 #define YHNPS_NUL_TAG(%7,%0)%8$()() YHNPS_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS_NUL(%0)%8$()() YHNPS_END_TAG(,%0)%8$(,)(,)
@@ -343,7 +343,6 @@ Optional plugins:
 // generated code multiple times.
 #define YHNPS_U0<%1> UNIQUE_FUNCTION<_@yH%1@...>
 #define YHNPS_U1<%1> UNIQUE_FUNCTION<@yH_%1@...>
-#define YHNPS_U2<%1> UNIQUE_FUNCTION<%1@...>
 
 // Remove specified priorities from the original call.
 #define _yH@(%0),%1@%2(%3); _yH@(%0),%1(%3);

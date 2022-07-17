@@ -1086,7 +1086,7 @@ TEST__ y_hooks_HookedStock()
 	ASSERT_EQ(str[2], 't');
 }
 
-@hook(.native = "IsPlayerConnected") HookIsPlayerConnected(playerid)
+@hook(.native = "IsPlayerConnected", .order = 5) HookIsPlayerConnected(playerid)
 {
 	return 0 <= playerid < MAX_PLAYERS && continue(playerid);
 }
