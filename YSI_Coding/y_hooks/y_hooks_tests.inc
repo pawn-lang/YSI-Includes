@@ -1086,9 +1086,51 @@ TEST__ y_hooks_HookedStock()
 	ASSERT_EQ(str[2], 't');
 }
 
-@hook(.native = "swapchars", .order = 5) MySwapCharsHook(ch)
+@hook(.native = "clamp", .order = 5) MyClampHook1(value, min, max)
 {
-	return continue(ch);
+	// A native function we can easily replicate, in tests only.
+	return
+		(YSI_g_sMinA = min),
+		(YSI_g_sMinB = max),
+		(YSI_g_sMinC = continue(value, min, max)),
+		min += 5,
+		max -= 5,
+		continue(value, min, max);
+}
+
+@hook(.native = "clamp", .order = 5) MyClampHook2(value, min, max)
+{
+	// A native function we can easily replicate, in tests only.
+	return continue(value, min, max + 5);
+}
+
+@hook(.native = "clamp", .order = 5) MyClampHook3(value, min, max)
+{
+	// A native function we can easily replicate, in tests only.
+	return continue(value, min - 5, max);
+}
+
+TEST__ HookClamp()
+{
+	ASSERT_EQ(clamp(100, 70, 90), 90);
+	ASSERT_EQ(YSI_g_sMinA, 65);
+	ASSERT_EQ(YSI_g_sMinB, 95);
+	ASSERT_EQ(YSI_g_sMinC, 95);
+
+	ASSERT_EQ(clamp(168, 170, 190), 170);
+	ASSERT_EQ(YSI_g_sMinA, 165);
+	ASSERT_EQ(YSI_g_sMinB, 195);
+	ASSERT_EQ(YSI_g_sMinC, 168);
+
+	ASSERT_EQ(clamp(-92, -90, -70), -90);
+	ASSERT_EQ(YSI_g_sMinA, -95);
+	ASSERT_EQ(YSI_g_sMinB, -65);
+	ASSERT_EQ(YSI_g_sMinC, -92);
+
+	ASSERT_EQ(clamp(15, 10, 20), 15);
+	ASSERT_EQ(YSI_g_sMinA, 5);
+	ASSERT_EQ(YSI_g_sMinB, 25);
+	ASSERT_EQ(YSI_g_sMinC, 15);
 }
 
 //@hook(.callback = "OnNewHooks") OnNewHooks1(playerid)
