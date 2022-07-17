@@ -1086,6 +1086,11 @@ TEST__ y_hooks_HookedStock()
 	ASSERT_EQ(str[2], 't');
 }
 
+@hook(.native = "IsPlayerConnected") HookIsPlayerConnected(playerid)
+{
+	return 0 <= playerid < MAX_PLAYERS && continue(playerid);
+}
+
 //@hook(.callback = "OnNewHooks") OnNewHooks1(playerid)
 //{
 //	#pragma unused playerid

@@ -167,11 +167,10 @@ Optional plugins:
 //#define YHLEG_fallback1__:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
 #define YHLEG_fallback1__:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,%9);static%6(%7) %8$YHNPS_U1<%6>(%7)return _@Hy(Y_HOOKS_ADDRESSOF(YHNPS_U2<%6>(%2)),__COMPILER_PACK"\"%6\"",.fallback=true);static YHNPS_U2<%6>(%7)
 
-#define YHLEG_stock:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9") %8$%6(%7)return _Hooks_AddFuncHook(Y_HOOKS_ADDRESSOF(%1(%2)),Y_HOOKS_ADDRESSOF(%9(%2)))
-#define YHLEG_native:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9") %8$%6(%7)return _Hooks_AddFuncHook(Y_HOOKS_ADDRESSOF(%1(%2)),Y_HOOKS_ADDRESSOF(%9(%2)))
-#define YHLEG_function:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9") %8$%6(%7)return _Hooks_AddFuncHook(Y_HOOKS_ADDRESSOF(%1(%2)),Y_HOOKS_ADDRESSOF(%9(%2)))
-
-#define YHLEG_fallback2__:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,%9) %8$%6(%7)return _Hooks_AddFuncHook(Y_HOOKS_ADDRESSOF(%1(%2)),Y_HOOKS_ADDRESSOF(%9(%2)))
+//return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);%7YHNPS_U0<%0>(%5)
+#define YHLEG_stock:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5) %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(%1(%2))%5),%9(%2)
+#define YHLEG_native:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5) %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(%1(%2))%5),%9(%2)
+#define YHLEG_function:%8$%6(%7)%9(Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5) %8$%6(%7)return _yH@(???,Y_HOOKS_ADDRESSOF(%1(%2))%5),%9(%2)
 
 // Upgrade the old version to the new version, with only defaults.
 #define HOOK__%0(%1) @hook(.fallback1__=true)%0(%1)
