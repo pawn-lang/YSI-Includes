@@ -202,3 +202,19 @@ TEST__ StopAndStop()
 	}
 }
 
+new Timer:YSI_g_sKillYourself;
+
+@timer(0) KillYourself()
+{
+	printf("KillYourself start");
+	STOP__ YSI_g_sKillYourself;
+	printf("KillYourself end");
+}
+
+TEST__ KillYourself()
+{
+	printf("KillYourself before");
+	YSI_g_sKillYourself = defer KillYourself();
+	printf("KillYourself after");
+}
+

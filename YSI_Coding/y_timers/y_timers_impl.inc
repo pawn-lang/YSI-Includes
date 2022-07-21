@@ -526,6 +526,7 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 	{
 	case 0:
 	{
+		// Auto stop.
 		if (!(slot = _YSI_g_sCurrentTimer))
 		{
 			return 0;
@@ -547,15 +548,19 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 	}	
 	case 1:
 	{
-		// Given an ID.
+		// Given an ID:  `STOP__ gTimerID;`.
 		if (!(slot = Timer:_Timer_Get(slot)))
 		{
 			return 0;
 		}
+		if (slot == _YSI_g_sCurrentTimer)
+		{
+			_YSI_g_sCurrentTimer = Timer:0;
+		}
 	}
 	case 2:
 	{
-		// Current timer.
+		// Current timer:  `STOP__;`.
 		if (!(slot = _YSI_g_sCurrentTimer))
 		{
 			return 0;
