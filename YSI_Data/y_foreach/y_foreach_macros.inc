@@ -292,7 +292,7 @@ FUNC_PAWNDOC(Iter_FreeMulti(Iterator:iter<,>, ));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(bool:Iter_Contains(Iterator:iter<>, value));
-#define Iter_Contains(%0) (bool:_ITER<Iter_Contains_Internal>(%0))
+#define Iter_Contains _BOOL_ITER<Iter_Contains_Internal>
 #define Iter_Contains_InternalA(%0,%1,%9)     Iter_Contains_InternalC(_:%1,F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 #define Iter_Contains_InternalB(%0,%2,%1,%9)  Iter_Contains_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),-%2+F@s(%1)-1,Iter_Tag(%1,%9))
 #define Iter_Contains_InternalD(%0,%1,%2,-+%8,%3) Iter_Contains_InternalC(%1,%2,%3)
@@ -455,7 +455,7 @@ FUNC_PAWNDOC(Iter_Clear(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Iter_IsEmpty(Iterator:iter<>));
-#define Iter_IsEmpty _ITER<Iter_IsEmpty_Internal>
+#define Iter_IsEmpty _BOOL_ITER<Iter_IsEmpty_Internal>
 #define Iter_IsEmpty_InternalA(%0,%1)    ((%0) == 0)
 #define Iter_IsEmpty_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) == 0)
 
@@ -473,7 +473,7 @@ FUNC_PAWNDOC(Iter_IsEmpty(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Iter_NonEmpty(Iterator:iter<>));
-#define Iter_NonEmpty _ITER<Iter_NonEmpty_Internal>
+#define Iter_NonEmpty _BOOL_ITER<Iter_NonEmpty_Internal>
 #define Iter_NonEmpty_InternalA(%0,%1)    ((%0) != 0)
 #define Iter_NonEmpty_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) != 0)
 
@@ -491,7 +491,7 @@ FUNC_PAWNDOC(Iter_NonEmpty(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Iter_IsFull(Iterator:iter<>));
-#define Iter_IsFull _ITER<Iter_IsFull_Internal>
+#define Iter_IsFull _BOOL_ITER<Iter_IsFull_Internal>
 #define Iter_IsFull_InternalA(%0,%1)    ((%0) == (F@s(%1)-1))
 #define Iter_IsFull_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) == (F@s(%1)-F@s(%0)))
 
@@ -509,7 +509,7 @@ FUNC_PAWNDOC(Iter_IsFull(Iterator:iter<>));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Iter_NonFull(Iterator:iter<>));
-#define Iter_NonFull _ITER<Iter_NonFull_Internal>
+#define Iter_NonFull _BOOL_ITER<Iter_NonFull_Internal>
 #define Iter_NonFull_InternalA(%0,%1)    ((%0) != (F@s(%1)-1))
 #define Iter_NonFull_InternalB(%0,%2,%1) (Iter_Count_InternalB(%0,%2,%1) != (F@s(%1)-F@s(%0)))
 
@@ -817,7 +817,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define Iter_Func@File:         ITER_TAG_FUNC(File)
 #define Iter_Func@Float:        ITER_TAG_FUNC(Float)
 
-#define ITER_TAG(%0)%1={%2,%3,...}%4: using_deprecated_itertag_syntax,%0:Iterator@%1={%0:0,%0:1,...}F@a$,Iter_Single@
+#define ITER_TAG(%0)%1={%2,%3,...}%4: %0:Iterator@%1={%0:0,%0:1,...}F@a$,Iter_Single@
 
 // Many tag types for declared iterators.
 #define Iterator@_:            ITER_TAG(_)
@@ -888,6 +888,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 
 // y_iterate parser.  Takes an array input, and splits up all the components.
 #define _ITER<%5>(%1) (_:F@i:F@j:$%5(%1))
+#define _BOOL_ITER<%5>(%1) (bool:F@i:F@j:$%5(%1))
 
 // Separate "<>"s.  Parameters to the resulting macro/function:
 //  
@@ -1006,8 +1007,8 @@ stock const
 
 #undef Iterator
 FUNC_PAWNDOC(Iterator:Iterator(name));
-#define _no_itertag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
-#define ITERATOR__%1<%2> _no_itertag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={_no_itertag:0,_no_itertag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
+//#define _no_itertag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
+#define ITERATOR__%1<%2> Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={0,1,...}F@a$,Iter_Single@%1 F@a$F@a$
 
 #if YSI_KEYWORD(Iterator)
 	#define Iterator:%1<%2> ITERATOR__ %1<%2>
@@ -1027,38 +1028,4 @@ FUNC_PAWNDOC(Iterator:Iterator(name));
 #if YSI_KEYWORD(List)
 	#define List:%0<%1,%2> ITERATOR__ %0<%1,%2>,%0[%1]
 #endif
-
-/*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Suppress warnings when <c>_:</c> is used (correctly) instead of
- *  <c>_no_itertag:</c>.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-stock operator*(_no_itertag:a, b)
-{
-	#pragma unused a, b
-	return 0;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Suppress warnings when <c>_:</c> is used (correctly) instead of
- *  <c>_no_itertag:</c>.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-stock operator=(_no_itertag:a)
-{
-	return a;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Suppress warnings when <c>_:</c> is used (correctly) instead of
- *  <c>_no_itertag:</c>.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-stock _no_itertag:operator=(a)
-{
-	return _no_itertag:a;
-}
 
