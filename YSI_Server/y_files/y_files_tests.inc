@@ -27,7 +27,7 @@ static stock y_files_Write1000000(File:f)
 	}
 }
 
-TEST__ y_files_SmallCopy()
+@test(.group = "y_files") y_files_SmallCopy()
 {
 	// Make sure this triggers the small copy code.
 	ASSERT_LT(100, YSI_LARGE_FILE_SIZE);
@@ -70,7 +70,7 @@ TEST__ y_files_SmallCopy()
 	}
 }
 
-TEST__ y_files_MediumCopy()
+@test(.group = "y_files") y_files_MediumCopy()
 {
 	// Make sure this triggers the small copy code.
 	ASSERT_LT(1000, YSI_LARGE_FILE_SIZE);
@@ -113,7 +113,7 @@ TEST__ y_files_MediumCopy()
 	}
 }
 
-TEST__ y_files_LargeCopy()
+@test(.group = "y_files") y_files_LargeCopy()
 {
 	// Make sure this triggers the large copy code.
 	ASSERT_GT(10000000, YSI_LARGE_FILE_SIZE);
@@ -167,7 +167,7 @@ TEST__ y_files_LargeCopy()
 	}
 }
 
-TEST__ y_files_SmallMove()
+@test(.group = "y_files") y_files_SmallMove()
 {
 	// Make sure this triggers the small copy code.
 	ASSERT_LT(100, YSI_LARGE_FILE_SIZE);
@@ -200,7 +200,7 @@ TEST__ y_files_SmallMove()
 	}
 }
 
-TEST__ y_files_MediumMove()
+@test(.group = "y_files") y_files_MediumMove()
 {
 	// Make sure this triggers the small copy code.
 	ASSERT_LT(1000, YSI_LARGE_FILE_SIZE);
@@ -233,7 +233,7 @@ TEST__ y_files_MediumMove()
 	}
 }
 
-TEST__ y_files_LargeMove()
+@test(.group = "y_files") y_files_LargeMove()
 {
 	// Make sure this triggers the large copy code.
 	ASSERT_GT(10000000, YSI_LARGE_FILE_SIZE);

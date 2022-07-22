@@ -97,7 +97,7 @@ static e_INI_LINE_TYPE:INI_IDENTIFY_LINE_TYPE(str[MAX_INI_LINE], &p0s, &p0e, &p1
 	return INI_IdentifyLineType(str, p0s, p0e, p1s, p1e, p2s, p2e);
 }
 
-TEST__ INI_IdentifyLineType1()
+@test(.group = "y_ini") INI_IdentifyLineType1()
 {
 	// Comment lines and blank lines may as well be treated as the same thing,
 	// except when rewriting the file.
@@ -117,7 +117,7 @@ TEST__ INI_IdentifyLineType1()
 	ASSERT_EQ(INI_IDENTIFY_LINE_TYPE("\r\n", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
 }
 
-TEST__ INI_IdentifyLineType2()
+@test(.group = "y_ini") INI_IdentifyLineType2()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Invalid lines.
@@ -155,7 +155,7 @@ TEST__ INI_IdentifyLineType2()
 	ASSERT_EQ(result, e_INI_LINE_TYPE_INVALID);
 }
 
-TEST__ INI_IdentifyLineType3()
+@test(.group = "y_ini") INI_IdentifyLineType3()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Entry lines.
@@ -181,7 +181,7 @@ TEST__ INI_IdentifyLineType3()
 	ASSERT(p0s == 1 && p0e == 4 && p1s == 8 && p1e == 13 && p2s == p2e);
 }
 
-TEST__ INI_IdentifyLineType3b()
+@test(.group = "y_ini") INI_IdentifyLineType3b()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Regressions from Discord.
@@ -212,7 +212,7 @@ TEST__ INI_IdentifyLineType3b()
 	ASSERT_EQ(p2s, p2e);
 }
 
-TEST__ INI_IdentifyLineType4()
+@test(.group = "y_ini") INI_IdentifyLineType4()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Tag lines.
@@ -234,7 +234,7 @@ TEST__ INI_IdentifyLineType4()
 	ASSERT(p0s == 4 && p0e == 9 && p1s == p1e && p2s == p2e);
 }
 
-TEST__ INI_IdentifyLineType5()
+@test(.group = "y_ini") INI_IdentifyLineType5()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Inheritance.
@@ -265,7 +265,7 @@ TEST__ INI_IdentifyLineType5()
 	ASSERT(p0s == 3 && p0e == 8 && p1s == 15 && p1e == 26 && p2s == 31 && p2e == 46);
 }
 
-TEST__ INI_IdentifyLineType6a()
+@test(.group = "y_ini") INI_IdentifyLineType6a()
 {
 	state y_ini:y_ini_writing_fast;
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
@@ -314,7 +314,7 @@ TEST__ INI_IdentifyLineType6a()
 	ASSERT(p1s == 5 && p1e == 10);
 }
 
-TEST__ INI_IdentifyLineType6b()
+@test(.group = "y_ini") INI_IdentifyLineType6b()
 {
 	state y_ini:y_ini_reading_yyyn;
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
@@ -368,7 +368,7 @@ TEST__ INI_IdentifyLineType6b()
 	ASSERT(p1s == 5 && p1e == 10);
 }
 
-TEST__ INI_Continuation()
+@test(.group = "y_ini") INI_Continuation()
 {
 	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	INI_IdentifyLineType("hi = hello \\\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
@@ -386,7 +386,7 @@ TEST__ INI_Continuation()
 	#pragma warning pop
 #endif
 
-TEST__ Trim1()
+@test(.group = "y_ini") Trim1()
 {
 	new start = 0, end = 9;
 	Trim("  hello  ", start, end);
@@ -416,7 +416,7 @@ public TestINI_Parse0_test1(key[], value[])
 	++YSI_g_sINI_Parse0;
 }
 
-TEST__ INI_Parse0()
+@test(.group = "y_ini") INI_Parse0()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile(MakeYINITestPath("test1.ini"), "TestINI_Parse0_%s", .bFileFirst = true);
@@ -460,7 +460,7 @@ public TestINI_Parse1_test1_(key[], value[])
 	++YSI_g_sINI_Parse0;
 }
 
-TEST__ INI_Parse1()
+@test(.group = "y_ini") INI_Parse1()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile(MakeYINITestPath("test1.ini"), "TestINI_Parse1_%s_%s", .bFileFirst = true);
@@ -481,7 +481,7 @@ public TestINI_Parse2_test1_tag2(key[], value[])
 	++YSI_g_sINI_Parse0;
 }
 
-TEST__ INI_Parse2()
+@test(.group = "y_ini") INI_Parse2()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile(MakeYINITestPath("test1.ini"), "TestINI_Parse2_%s_%s", .bFileFirst = true);
@@ -509,7 +509,7 @@ public TestINI_Parse3_tag2_test1(key[], value[])
 	++YSI_g_sINI_Parse0;
 }
 
-TEST__ INI_Parse3()
+@test(.group = "y_ini") INI_Parse3()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile(MakeYINITestPath("test1.ini"), "TestINI_Parse3_%s_%s", .bFileFirst = false);
@@ -528,7 +528,7 @@ TEST__ INI_Parse3()
 	ASSERT_EQ(YSI_g_sINI_Parse0, 10);
 }
 
-TEST__ INI_Parse4()
+@test(.group = "y_ini") INI_Parse4()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile(MakeYINITestPath("test1.ini"), "TestINI_Parse3_%s_%s", .bFileFirst = false, .bLocal = false);
@@ -557,7 +557,7 @@ public TestINI_Parse5_test1(tag[], key[], value[])
 	if (IsNull(tag)) ++YSI_g_sINI_Parse0;
 }
 
-TEST__ INI_Parse5()
+@test(.group = "y_ini") INI_Parse5()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile(MakeYINITestPath("test1.ini"), "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true);
@@ -582,7 +582,7 @@ TEST__ INI_Parse5()
 	ASSERT_EQ(YSI_g_sINI_Parse0, 5);
 }
 
-TEST__ INI_Parse6()
+@test(.group = "y_ini") INI_Parse6()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile(MakeYINITestPath("test1.ini"), "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bLocal = false);
@@ -601,7 +601,7 @@ TEST__ INI_Parse6()
 	ASSERT_EQ(YSI_g_sINI_Parse0, 5);
 }
 
-TEST__ INI_Parse7()
+@test(.group = "y_ini") INI_Parse7()
 {
 	inline const F_test1(string:key[], string:value[])
 	{
@@ -613,7 +613,7 @@ TEST__ INI_Parse7()
 	ASSERT_EQ(YSI_g_sINI_Parse0, 10);
 }
 
-TEST__ INI_Parse8()
+@test(.group = "y_ini") INI_Parse8()
 {
 	inline F_test1(string:key[], string:value[])
 	{
@@ -625,7 +625,7 @@ TEST__ INI_Parse8()
 	ASSERT_EQ(YSI_g_sINI_Parse0, 20);
 }
 
-TEST__ INI_Parse9()
+@test(.group = "y_ini") INI_Parse9()
 {
 	inline const F_atag_test1(string:key[], string:value[])
 	{
@@ -637,7 +637,7 @@ TEST__ INI_Parse9()
 	ASSERT_EQ(YSI_g_sINI_Parse0, 9);
 }
 
-TEST__ INI_Parse10()
+@test(.group = "y_ini") INI_Parse10()
 {
 	inline const F_tag2_test1(string:key[], string:value[])
 	{
@@ -649,7 +649,7 @@ TEST__ INI_Parse10()
 	ASSERT_EQ(YSI_g_sINI_Parse0, 8);
 }
 
-TEST__ INI_Parse11()
+@test(.group = "y_ini") INI_Parse11()
 {
 	new
 		a = 0;
@@ -663,7 +663,7 @@ TEST__ INI_Parse11()
 	ASSERT_EQ(a, 0);
 }
 
-TEST__ INI_Parse12()
+@test(.group = "y_ini") INI_Parse12()
 {
 	static
 		a = 0;
@@ -677,7 +677,7 @@ TEST__ INI_Parse12()
 	ASSERT_EQ(a, 8);
 }
 
-TEST__ INI_Parse13()
+@test(.group = "y_ini") INI_Parse13()
 {
 	new
 		a = 0;
@@ -691,7 +691,7 @@ TEST__ INI_Parse13()
 	ASSERT_EQ(a, 8);
 }
 
-TEST__ INI_ParseInline()
+@test(.group = "y_ini") INI_ParseInline()
 {
 	new
 		num = 0,
@@ -735,7 +735,7 @@ TEST__ INI_ParseInline()
 	ASSERT_EQ(ret, 42);
 }
 
-TEST__ INI_Int0()
+@test(.group = "y_ini") INI_Int0()
 {
 	DoINI_Int0();
 }
@@ -765,7 +765,7 @@ static stock DoINI_Int0()
 	return 0;
 }
 
-TEST__ INI_Int2()
+@test(.group = "y_ini") INI_Int2()
 {
 	DoINI_Int2();
 }
@@ -795,7 +795,7 @@ static stock DoINI_Int2()
 	return 0;
 }
 
-TEST__ INI_Int3()
+@test(.group = "y_ini") INI_Int3()
 {
 	DoINI_Int3();
 }
@@ -883,7 +883,7 @@ public INI_ReadRegression_data(string:name[], string:value[])
 	return 0;
 }
 
-TEST__ INI_ReadRegression()
+@test(.group = "y_ini") INI_ReadRegression()
 {
 	INI_ParseFile(MakeYINITestPath("test0.ini"), "INI_ReadRegression_%s");
 	ASSERT_SAME(gs_mFS, "hayran");
@@ -914,7 +914,7 @@ public INI_PUB_Inl_(string:name[], string:value[])
 	return 0;
 }
 
-TEST__ INI_Int1()
+@test(.group = "y_ini") INI_Int1()
 {
 	INI_ParseFile(MakeYINITestPath("test1.ini"), "INI_PUB_Inl_%s");
 	ASSERT_EQ(gs_K0, 42);
@@ -924,7 +924,7 @@ TEST__ INI_Int1()
 	ASSERT_EQ(gs_K4, 46);
 }
 
-TEST__ INI_WriteComments()
+@test(.group = "y_ini") INI_WriteComments()
 {
 	new File:f;
 	new str[32];
@@ -1010,7 +1010,7 @@ public INI_Inher0_tag0(string:tag[], string:name[], string:value[])
 	return 0;
 }
 
-TEST__ INI_Inherit0()
+@test(.group = "y_ini") INI_Inherit0()
 {
 	gs_K0 = 0;
 	gs_K1 = 0;
@@ -1041,7 +1041,7 @@ public INI_Inher1_tag1(string:tag[], string:name[], string:value[])
 	return 0;
 }
 
-TEST__ INI_Inherit1()
+@test(.group = "y_ini") INI_Inherit1()
 {
 	gs_K0 = 0;
 	gs_K1 = 0;
@@ -1072,7 +1072,7 @@ public INI_Inher2_tag2(string:tag[], string:name[], string:value[])
 	return 0;
 }
 
-TEST__ INI_Inherit2()
+@test(.group = "y_ini") INI_Inherit2()
 {
 	gs_K0 = 0;
 	gs_K1 = 0;
@@ -1091,7 +1091,7 @@ TEST__ INI_Inherit2()
 
 // Writing tests.
 
-TEST__ INI_AddToBuffer0()
+@test(.group = "y_ini") INI_AddToBuffer0()
 {
 	new
 		INI:i = INI_Open(MakeYINITestPath("test3.ini"));
@@ -1106,7 +1106,7 @@ TEST__ INI_AddToBuffer0()
 	INI_Close(i);
 }
 
-TEST__ INI_AddToBuffer0a()
+@test(.group = "y_ini") INI_AddToBuffer0a()
 {
 	new
 		INI:i = INI_Open(MakeYINITestPath("test3.ini"));
@@ -1121,7 +1121,7 @@ TEST__ INI_AddToBuffer0a()
 	INI_Close(i);
 }
 
-TEST__ INI_AddToBuffer1()
+@test(.group = "y_ini") INI_AddToBuffer1()
 {
 	new
 		INI:i = INI_Open(MakeYINITestPath("test4.ini"));
@@ -1155,7 +1155,7 @@ public INI_WriteOne(tag[], name[], value[])
 	}
 }
 
-TEST__ fseek()
+@test(.group = "y_ini") fseek()
 {
 	fremove(MakeYINITestPath("fseek.ini"));
 	new File:f = fopen(MakeYINITestPath("fseek.ini"), io_write);
@@ -1173,7 +1173,7 @@ TEST__ fseek()
 	fclose(f);
 }
 
-TEST__ INI_Write3()
+@test(.group = "y_ini") INI_Write3()
 {
 	fremove(MakeYINITestPath("test9.ini"));
 	new
@@ -1209,7 +1209,7 @@ TEST__ INI_Write3()
 	ASSERT_EQ(YSI_g_sINI_Parse0, 100 + 200 + 40 + 43 + 44 + 3);
 }
 
-//TEST__ INI_VariousWriting0()
+//@test(.group = "y_ini") INI_VariousWriting0()
 //{
 //	new
 //		INI:i = INI_Open(MakeYINITestPath("test5.ini"));
@@ -1232,7 +1232,7 @@ TEST__ INI_Write3()
 //	INI_Close(i);
 //}
 //
-//TEST__ INI_VariousWriting1()
+//@test(.group = "y_ini") INI_VariousWriting1()
 //{
 //	new
 //		INI:f = INI_Open(MakeYINITestPath("test5.ini")),
@@ -1291,7 +1291,7 @@ TEST__ INI_Write3()
 //	INI_Close(f);
 //}
 
-TEST__ INI_Write0()
+@test(.group = "y_ini") INI_Write0()
 {
 	new
 		INI:f = INI_Open(MakeYINITestPath("test6.ini")),
@@ -1316,7 +1316,7 @@ TEST__ INI_Write0()
 	INI_Close(f);
 }
 
-TEST__ INI_Write1()
+@test(.group = "y_ini") INI_Write1()
 {
 	new
 		INI:f = INI_Open(MakeYINITestPath("test6.ini")),
@@ -1341,7 +1341,7 @@ TEST__ INI_Write1()
 	INI_Close(f);
 }
 
-TEST__ INI_Write2()
+@test(.group = "y_ini") INI_Write2()
 {
 	new
 		INI:f = INI_Open(MakeYINITestPath("test6.ini"));
@@ -1384,7 +1384,7 @@ public INI_Parents(extra, file[], tag[], name[], value[])
 	return 0;
 }
 
-TEST__ INI_Parents()
+@test(.group = "y_ini") INI_Parents()
 {
 	INI_ParseFile(
 			MakeYINITestPath("test7.ini"),
@@ -1439,7 +1439,7 @@ TEST__ INI_Parents()
 //	return 0;
 //}
 //
-//TEST__ INI_BinaryData()
+//@test(.group = "y_ini") INI_BinaryData()
 //{
 //	INI_ParseFile(
 //			MakeYINITestPath("test8.ini"),

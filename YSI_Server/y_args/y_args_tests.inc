@@ -4,7 +4,7 @@ TEST_INIT__ y_args()
 	Args_LazyInit();
 }
 
-TEST__ y_args()
+@test(.group = "y_args") y_args()
 {
 	new str[32];
 	ASSERT(Args_GetStringImpl('\0', "opt", str, sizeof (str)));

@@ -74,14 +74,14 @@ Optional plugins:
 new
 	g_sRaceID = 0;
 
-TEST__ y_races_Create()
+@test(.group = "y_races") y_races_Create()
 {
 	g_sRaceID = Race_Create();
 	ASSERT_ZE(g_sRaceID);
 	Race_Destroy(g_sRaceID);
 }
 
-TEST__ y_races_Destroy()
+@test(.group = "y_races") y_races_Destroy()
 {
 	g_sRaceID = Race_Create();
 	ASSERT_ZE(g_sRaceID);
@@ -91,7 +91,7 @@ TEST__ y_races_Destroy()
 	Race_Destroy(g_sRaceID);
 }
 
-TEST__ y_races_ArrayAdd0()
+@test(.group = "y_races") y_races_ArrayAdd0()
 {
 	for (new i = 0; i != 10; ++i)
 	{
@@ -110,7 +110,7 @@ TEST__ y_races_ArrayAdd0()
 	YSI_g_sCPIndex = 0;
 }
 
-TEST__ y_races_ArrayAdd1()
+@test(.group = "y_races") y_races_ArrayAdd1()
 {
 	for (new i = 0; i != 10; ++i)
 	{
@@ -138,7 +138,7 @@ TEST__ y_races_ArrayAdd1()
 	YSI_g_sCPIndex = 0;
 }
 
-TEST__ y_races_ArrayShift()
+@test(.group = "y_races") y_races_ArrayShift()
 {
 	new
 		to = 10;
@@ -363,31 +363,31 @@ static y_races_ASSERT(pos)
 	Y_RACES_ASSERT(38, 0);
 }
 
-TEST__ y_races_Position0()
+@test(.group = "y_races") y_races_Position0()
 {
 	y_races_SFD();
 	y_races_ASSERT(y_races_Position0(2, 5, 20.0, 30));
 }
 
-TEST__ y_races_Position1()
+@test(.group = "y_races") y_races_Position1()
 {
 	y_races_SFD();
 	y_races_ASSERT(y_races_Position1(2, 5, 20.0, 30));
 }
 
-TEST__ y_races_Position2()
+@test(.group = "y_races") y_races_Position2()
 {
 	y_races_SFD();
 	y_races_ASSERT(y_races_Position2(2, 5, 20.0, 30));
 }
 
-TEST__ y_races_Position3()
+@test(.group = "y_races") y_races_Position3()
 {
 	y_races_SFD();
 	y_races_ASSERT(y_races_Position3(2, 5, 20.0, 30));
 }
 
-//#define Profile: TEST__ 
+//#define Profile: @test(.group = "y_races") 
 #define Profile: static stock _ // Can't have trailing space.
 
 Profile:y_races_Position()

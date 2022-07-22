@@ -1,7 +1,7 @@
 // This is quite hard to test, since it can be implemented three different ways
 // depending on what exists when compiling.
 
-TEST__ SparseArray()
+@test(.group = "y_sparsearray") SparseArray()
 {
 	new
 		SparseArray:arr<>;

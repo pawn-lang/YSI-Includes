@@ -83,7 +83,7 @@ PTEST_INIT__ GangZonePulse1(playerid)
 	SetPlayerPos(playerid, 0.0, 0.0, 5.0);
 }
 
-PTEST__ GangZonePulse1(playerid)
+P@test(.group = "y_zonepulse") GangZonePulse1(playerid)
 {
 	GangZonePulseForPlayer(playerid, gZone, 0xFF0000AA, 0x00FF00AA, 2000);
 	ASK("Is the zone pulsing from Red to Green?");
@@ -104,7 +104,7 @@ PTEST_INIT__ GangZonePulse2(playerid)
 	SetPlayerPos(playerid, 0.0, 0.0, 5.0);
 }
 
-PTEST__ GangZonePulse2(playerid)
+P@test(.group = "y_zonepulse") GangZonePulse2(playerid)
 {
 	GangZonePulseForPlayer(playerid, gZone, 0xFF0000AA, 0x00FF00AA, 333);
 	ASK("Is the zone pulsing from Red to Green fast?");
@@ -125,7 +125,7 @@ PTEST_INIT__ GangZonePulse3(playerid)
 	SetPlayerPos(playerid, 0.0, 0.0, 5.0);
 }
 
-PTEST__ GangZonePulse3(playerid)
+P@test(.group = "y_zonepulse") GangZonePulse3(playerid)
 {
 	GangZonePulseForPlayer(playerid, gZone, 0xFF0000AA, 0x00FF00AA, 1000, 0, 0);
 	ASK("Is the zone jumping back to Red?");
@@ -146,7 +146,7 @@ PTEST_INIT__ GangZonePulse4(playerid)
 	SetPlayerPos(playerid, 0.0, 0.0, 5.0);
 }
 
-PTEST__ GangZonePulse4(playerid)
+P@test(.group = "y_zonepulse") GangZonePulse4(playerid)
 {
 	GangZonePulseForPlayer(playerid, gZone, 0xFF0000AA, 0x00FF00AA, 500, 3000, 500, 0);
 	ASK("Is the zone stopping on Green?");
@@ -167,7 +167,7 @@ PTEST_INIT__ GangZonePulse7(playerid)
 	SetPlayerPos(playerid, 0.0, 0.0, 5.0);
 }
 
-PTEST__ GangZonePulse7(playerid)
+P@test(.group = "y_zonepulse") GangZonePulse7(playerid)
 {
 	// Regression bug, doing this used to cause a pause at the start - first bug
 	// found and fixed by these unit tests.
@@ -190,7 +190,7 @@ PTEST_INIT__ GangZonePulse5(playerid)
 	SetPlayerPos(playerid, 0.0, 0.0, 5.0);
 }
 
-PTEST__ GangZonePulse5(playerid)
+P@test(.group = "y_zonepulse") GangZonePulse5(playerid)
 {
 	GangZonePulseForPlayer(playerid, gZone, 0xFF0000AA, 0x00FF00AA, 500, 0, 500, 3000);
 	ASK("Is the zone stopping on Red?");
@@ -211,7 +211,7 @@ PTEST_INIT__ GangZonePulse6(playerid)
 	SetPlayerPos(playerid, 0.0, 0.0, 5.0);
 }
 
-PTEST__ GangZonePulse6(playerid)
+P@test(.group = "y_zonepulse") GangZonePulse6(playerid)
 {
 	GangZonePulseForPlayer(playerid, gZone, 0xFF0000AA, 0x00FF00AA, 2000, _, 500, _);
 	ASK("Is Green -> Red faster?");
@@ -232,7 +232,7 @@ PTEST_INIT__ GangZoneStopPulse1(playerid)
 	SetPlayerPos(playerid, 0.0, 0.0, 5.0);
 }
 
-PTEST__ GangZoneStopPulse1(playerid)
+P@test(.group = "y_zonepulse") GangZoneStopPulse1(playerid)
 {
 	GangZonePulseForPlayer(playerid, gZone, 0xFF0000AA, 0x00FF00AA, 2000);
 	GangZoneStopPulse(playerid, gZone);
@@ -253,7 +253,7 @@ PTEST_INIT__ GangZoneStopPulse2(playerid)
 	SetPlayerPos(playerid, 0.0, 0.0, 5.0);
 }
 
-PTEST__ GangZoneStopPulse2(playerid)
+P@test(.group = "y_zonepulse") GangZoneStopPulse2(playerid)
 {
 	GangZonePulseForPlayer(playerid, gZone, 0xFF0000AA, 0x00FF00AA, 1000);
 	YSI_SetTimerEx__("GangZoneStopPulse2", 4000, false, "i", playerid);

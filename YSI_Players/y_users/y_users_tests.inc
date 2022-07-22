@@ -71,7 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-TEST__ Player_Existing()
+@test(.group = "y_users") Player_Existing()
 {
 	new
 		ret[E_USER_PRELOAD];
@@ -87,7 +87,7 @@ TEST__ Player_Existing()
 new
 	gBot = INVALID_PLAYER_ID;
 
-TEST__ Player_ChangeLanguage()
+@test(.group = "y_users") Player_ChangeLanguage()
 {
 	// Connect the bot here so that it is done way before the PTest is run.
 	ConnectNPC("TestPlayer", "npcidle");
@@ -122,7 +122,7 @@ PTEST_INIT__ Player_ChangeLanguage(playerid)
 	Player_ForceLogin(gBot);
 }
 
-PTEST__ Player_ChangeLanguage(playerid)
+P@test(.group = "y_users") Player_ChangeLanguage(playerid)
 {
 	new
 		ret[E_USER_PRELOAD];
@@ -147,7 +147,7 @@ PTEST_INIT__ Player_ChangePassword(playerid)
 	Player_ForceLogin(gBot);
 }
 
-PTEST__ Player_ChangePassword(playerid)
+P@test(.group = "y_users") Player_ChangePassword(playerid)
 {
 	new
 		ret[E_USER_PRELOAD];
@@ -171,7 +171,7 @@ PTEST_INIT__ Player_Preload(playerid)
 	Player_ForceLogin(gBot);
 }
 
-PTEST__ Player_Preload(playerid)
+P@test(.group = "y_users") Player_Preload(playerid)
 {
 	new
 		//name[MAX_PLAYER_NAME],
@@ -190,7 +190,7 @@ PTEST_INIT__ Player_GetID(playerid)
 	Player_ForceLogin(gBot);
 }
 
-PTEST__ Player_GetID(playerid)
+P@test(.group = "y_users") Player_GetID(playerid)
 {
 	ASSERT_ZE(Player_GetYID(gBot));
 	ASSERT(Player_GetYID(playerid) < 0);

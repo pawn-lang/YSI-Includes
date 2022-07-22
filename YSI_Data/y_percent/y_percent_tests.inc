@@ -71,7 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-TEST__ y_percent()
+@test(.group = "y_percent") y_percent()
 {
 	new Percent:TWENTY = Percent:20;
 

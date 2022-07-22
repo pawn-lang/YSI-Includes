@@ -1,4 +1,4 @@
-TEST__ _Sorted_Contains()
+@test(.group = "y_sortedarray") _Sorted_Contains()
 {
 	new
 		arr[32] = { 1, 3, 5, 7, 9, 10, 11, 12, 13, 0 },
@@ -22,7 +22,7 @@ TEST__ _Sorted_Contains()
 	ASSERT(!_Sorted_Contains(arr, size, 14000));
 }
 
-TEST__ _Sorted_FindInsert()
+@test(.group = "y_sortedarray") _Sorted_FindInsert()
 {
 	new
 		arr[32] = { 1, 3, 5, 7, 9, 10, 11, 12, 13, 0 },
@@ -46,7 +46,7 @@ TEST__ _Sorted_FindInsert()
 	ASSERT_EQ(_Sorted_FindInsert(arr, size, 14000), 9);
 }
 
-TEST__ _Sorted_FindInsert2()
+@test(.group = "y_sortedarray") _Sorted_FindInsert2()
 {
 	new
 		arr[32] = { 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 5, 5, 5, 5, 5 },
@@ -62,7 +62,7 @@ TEST__ _Sorted_FindInsert2()
 	ASSERT_EQ(_Sorted_FindInsert(arr, size, 6000), 20);
 }
 
-TEST__ _Sorted_Add()
+@test(.group = "y_sortedarray") _Sorted_Add()
 {
 	new
 		arr[32] = { 10, 20, 30, 40, 0 },

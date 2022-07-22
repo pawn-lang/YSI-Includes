@@ -68,7 +68,7 @@ public y_va_PublicCallFunction(const func[], vara)
 	y_va_PublicTestFunction(vara, 123456);
 }
 
-TEST__ y_va_CallRemoteFunction()
+@test(.group = "y_va") y_va_CallRemoteFunction()
 {
 	YSI_g_sVariable = 5;
 	y_va_CallRemoteFunction(0, 11);
@@ -100,7 +100,7 @@ static stock y_va_printf_3(num, other, const str[], va_args<>)
 	va_printf("", va_start<3>);
 }
 
-TEST__ y_va_printf()
+@test(.group = "y_va") y_va_printf()
 {
 	y_va_printf_0(42, 1, "hi", I@);
 	y_va_printf_1(42, 1, "hi", I@);
@@ -108,7 +108,7 @@ TEST__ y_va_printf()
 	y_va_printf_3(42, 1, "hi", I@);
 }
 
-TEST__ y_va_recurse_local()
+@test(.group = "y_va") y_va_recurse_local()
 {
 	YSI_g_sVariable = 0;
 	y_va_CallLocalFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", true);
@@ -117,7 +117,7 @@ TEST__ y_va_recurse_local()
 	ASSERT_EQ(YSI_g_sVariable, 123457);
 }
 
-TEST__ y_va_recurse_remote()
+@test(.group = "y_va") y_va_recurse_remote()
 {
 	YSI_g_sVariable = 0;
 	y_va_CallRemoteFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", true);
@@ -126,7 +126,7 @@ TEST__ y_va_recurse_remote()
 	ASSERT_EQ(YSI_g_sVariable, 123457);
 }
 
-TEST__ y_va_CallLocalFunction()
+@test(.group = "y_va") y_va_CallLocalFunction()
 {
 	YSI_g_sVariable = 8;
 	y_va_CallLocalFunction(0, 45);
@@ -147,7 +147,7 @@ static stock y_va_SetTimerEx(va_args<>)
 	return va_SetTimerEx("y_va_SetTimerExPublic", 1000, false, "iii", va_start<0>);
 }
 
-TEST__ y_va_SetTimerEx()
+@test(.group = "y_va") y_va_SetTimerEx()
 {
 	ASSERT_NZ(y_va_SetTimerEx(5, 6, 7));
 }
@@ -157,7 +157,7 @@ static stock y_va_format(dest[], size, const fmat[], va_args<>)
 	va_format(dest, size, fmat, va_start<3>);
 }
 
-TEST__ y_va_format()
+@test(.group = "y_va") y_va_format()
 {
 	new
 		str[64];
@@ -170,7 +170,7 @@ static stock y_va_return(dest[], size, const fmat[], va_args<>)
 	StrCpy(dest, va_return(fmat, va_start<3>), size);
 }
 
-TEST__ y_va_return()
+@test(.group = "y_va") y_va_return()
 {
 	new
 		str[YSI_MAX_STRING];
@@ -187,7 +187,7 @@ static stock y_va_DoubleIndirection(dest[YSI_MAX_STRING], const fmat[], var0, va
 	//print(dest);
 }
 
-TEST__ y_va_DoubleIndirection()
+@test(.group = "y_va") y_va_DoubleIndirection()
 {
 	new
 		dest[YSI_MAX_STRING],
@@ -213,7 +213,7 @@ static stock bool:y_va_Locals(const real[], const fmat[], va_args<>)
 	return !strcmp(dest, real);
 }
 
-TEST__ y_va_Locals()
+@test(.group = "y_va") y_va_Locals()
 {
 	ASSERT(y_va_Locals("42", "%d", 42));
 	ASSERT(y_va_Locals("42 43 44", "%d %d %d", 42, 43, 44));
@@ -244,7 +244,7 @@ static stock y_va2_printf_3(num, other, const str[], GLOBAL_TAG_TYPES:...)
 	printf("", ___(3));
 }
 
-TEST__ y_va2_printf()
+@test(.group = "y_va") y_va2_printf()
 {
 	y_va2_printf_0(42, 1, "hi", I@);
 	y_va2_printf_1(42, 1, "hi", I@);
@@ -278,7 +278,7 @@ static stock y_va2_Nest1(...)
 	y_va2_Nest2(y_va2_Extract(1, ___), y_va2_Extract(y_va2_Three(___), ___), y_va2_Extract(2, ___(1)), ___);
 }
 
-TEST__ y_va2_Nesting()
+@test(.group = "y_va") y_va2_Nesting()
 {
 	y_va2_Nest1("final param", "%s %s %s", "third param", "second param");
 }
@@ -288,7 +288,7 @@ static stock y_va2_format(dest[], size, const fmat[], GLOBAL_TAG_TYPES:...)
 	format(dest, size, fmat, ___(3));
 }
 
-TEST__ y_va2_format()
+@test(.group = "y_va") y_va2_format()
 {
 	new
 		str[64];
@@ -312,7 +312,7 @@ static stock y_va2_return(dest[], size, const fmat[], GLOBAL_TAG_TYPES:...)
 	format(dest, size, fmat, ___(3));
 }
 
-TEST__ y_va2_return()
+@test(.group = "y_va") y_va2_return()
 {
 	new
 		str[YSI_MAX_STRING];
@@ -327,7 +327,7 @@ static stock y_va2_DoubleIndirection(dest[1040], const fmat[], var0, var1, var2,
 	format(dest, sizeof (dest), fmat, ___(5));
 }
 
-TEST__ y_va2_DoubleIndirection()
+@test(.group = "y_va") y_va2_DoubleIndirection()
 {
 	new
 		dest[1040],
@@ -362,7 +362,7 @@ static stock y_va2_TripleIndirectionA(dest[1040], const fmat[], var0, var1, var2
 	y_va2_TripleIndirectionB(dest, fmat, var0, var1, var2, ___(5));
 }
 
-TEST__ y_va2_TripleIndirection()
+@test(.group = "y_va") y_va2_TripleIndirection()
 {
 	new
 		dest[1040],
@@ -388,7 +388,7 @@ static stock bool:y_va2_Locals(const real[], const fmat[], GLOBAL_TAG_TYPES:...)
 	return !strcmp(dest, real);
 }
 
-TEST__ y_va2_Locals()
+@test(.group = "y_va") y_va2_Locals()
 {
 	ASSERT(y_va2_Locals("42", "%d", 42));
 	ASSERT(y_va2_Locals("42 43 44", "%d %d %d", 42, 43, 44));
@@ -396,13 +396,13 @@ TEST__ y_va2_Locals()
 	ASSERT(y_va2_Locals("he -1", "%.2s %d", "hello", -1));
 }
 
-TEST__ y_va2_Types()
+@test(.group = "y_va") y_va2_Types()
 {
 	ASSERT(y_va2_Locals("4.67", "%.2f", 4.672));
 	ASSERT(y_va2_Locals("Hello World", "%s", "Hello World"));
 }
 
-TEST__ y_va2_NoParameters()
+@test(.group = "y_va") y_va2_NoParameters()
 {
 	ASSERT(y_va2_Locals("hello", "hello"));
 	ASSERT(y_va2_Locals("Hello World", "Hello World"));
@@ -412,7 +412,7 @@ TEST__ y_va2_NoParameters()
 static stock
 	YSI_g_sDestString[YSI_MAX_STRING];
 
-TEST__ y_va2_PassThree()
+@test(.group = "y_va") y_va2_PassThree()
 {
 	y_va2_MyFunc1("Hello", "there", "world");
 	ASSERT_SAME(YSI_g_sDestString, "woo there world");
@@ -452,7 +452,7 @@ static stock y_va_BlankFormat1(...)
 //	print(string);
 }
 
-TEST__ y_va_BlankFormat1()
+@test(.group = "y_va") y_va_BlankFormat1()
 {
 	new abc[32] = "WAT";
 	y_va_BlankFormat1(abc);
@@ -472,7 +472,7 @@ static stock y_va_BlankFormat2(...)
 //	print(string);
 }
 
-TEST__ y_va_BlankFormat2()
+@test(.group = "y_va") y_va_BlankFormat2()
 {
 	new abc[32] = "WAT";
 	YSI_g_sString[0] = '\0';
@@ -497,7 +497,7 @@ static stock va_return_Pass(const message[], va_args<>)
 	__COMPILER_STRING_RETURN(str);
 }
 
-TEST__ va_return_PassParameters()
+@test(.group = "y_va") va_return_PassParameters()
 {
 	new
 		str[64];

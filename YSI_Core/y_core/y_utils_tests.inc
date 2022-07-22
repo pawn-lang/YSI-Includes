@@ -69,7 +69,7 @@ public y_utils_va_return(const str[])
 	++gCalls_y_utils_va_return;
 }
 
-TEST__ y_utils_va_return()
+@test(.group = "y_utils") y_utils_va_return()
 {
 	gCalls_y_utils_va_return = 0;
 	y_utils_va_return(va_return("Hello %s %d %.3f", "World", 42, 9.4554));
@@ -79,7 +79,7 @@ TEST__ y_utils_va_return()
 	ASSERT_EQ(gCalls_y_utils_va_return, 4);
 }
 
-TEST__ y_utils_LevenshteinDistance()
+@test(.group = "y_utils") y_utils_LevenshteinDistance()
 {
 	ASSERT_EQ(LevenshteinDistance("hello", "hello"), 0);
 	ASSERT_EQ(LevenshteinDistance("Hello", "hello"), 1);
@@ -101,7 +101,7 @@ TEST__ y_utils_LevenshteinDistance()
 	#endif
 }
 
-TEST__ IsRPName1()
+@test(.group = "y_utils") IsRPName1()
 {
 	// Standard names.
 	ASSERT(IsRPName("Bob_Bobson"));
@@ -117,7 +117,7 @@ TEST__ IsRPName1()
 	ASSERT(!IsRPName("Tim_"));
 }
 
-TEST__ IsRPName2()
+@test(.group = "y_utils") IsRPName2()
 {
 	// Casing.
 	ASSERT(IsRPName("Bob_Bobson", false, false));
@@ -130,7 +130,7 @@ TEST__ IsRPName2()
 	ASSERT(!IsRPName("James_bob_bobson", true, false));
 }
 
-TEST__ IsRPName3()
+@test(.group = "y_utils") IsRPName3()
 {
 	// Long.
 	ASSERT(IsRPName("Bob_Bobson", false, true));
@@ -143,7 +143,7 @@ TEST__ IsRPName3()
 	ASSERT(!IsRPName("James_bob_bobson", true, true));
 }
 
-TEST__ Random1()
+@test(.group = "y_utils") Random1()
 {
 	for (new i = 0; i != 10000; ++i)
 	{
@@ -152,7 +152,7 @@ TEST__ Random1()
 	}
 }
 
-TEST__ Random2a()
+@test(.group = "y_utils") Random2a()
 {
 	new values[10];
 	for (new i = 0; i != 10000; ++i)
@@ -167,7 +167,7 @@ TEST__ Random2a()
 	}
 }
 
-TEST__ Random2b()
+@test(.group = "y_utils") Random2b()
 {
 	new values[30];
 	for (new i = 0; i != 10000; ++i)
@@ -182,7 +182,7 @@ TEST__ Random2b()
 	}
 }
 
-TEST__ Random2c()
+@test(.group = "y_utils") Random2c()
 {
 	new values[10];
 	for (new i = 0; i != 10000; ++i)
@@ -197,7 +197,7 @@ TEST__ Random2c()
 	}
 }
 
-TEST__ Random3a()
+@test(.group = "y_utils") Random3a()
 {
 	new values[10];
 	for (new i = 0; i != 10000; ++i)
@@ -220,7 +220,7 @@ TEST__ Random3a()
 	}
 }
 
-TEST__ Random3b()
+@test(.group = "y_utils") Random3b()
 {
 	new values[10];
 	for (new i = 0; i != 10000; ++i)
@@ -235,7 +235,7 @@ TEST__ Random3b()
 	}
 }
 
-TEST__ Random3c()
+@test(.group = "y_utils") Random3c()
 {
 	new values[10];
 	for (new i = 0; i != 10000; ++i)
@@ -250,7 +250,7 @@ TEST__ Random3c()
 	}
 }
 
-TEST__ RandomN()
+@test(.group = "y_utils") RandomN()
 {
 	for (new i = 0; i != 10000; ++i)
 	{
@@ -262,7 +262,7 @@ TEST__ RandomN()
 	}
 }
 
-TEST__ IterativeTextSplitter1A()
+@test(.group = "y_utils") IterativeTextSplitter1A()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter("This is the first line with short words", 20, 0, end, next, hyphen);
@@ -287,7 +287,7 @@ TEST__ IterativeTextSplitter1A()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter2A()
+@test(.group = "y_utils") IterativeTextSplitter2A()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter("This is the secondlinewithlongwords", 20, 0, end, next, hyphen);
@@ -308,7 +308,7 @@ TEST__ IterativeTextSplitter2A()
 	ASSERT_EQ(hyphen, true);
 }
 
-TEST__ IterativeTextSplitter3A()
+@test(.group = "y_utils") IterativeTextSplitter3A()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter("This is the thirdline", 15, 0, end, next, hyphen);
@@ -329,7 +329,7 @@ TEST__ IterativeTextSplitter3A()
 	ASSERT_EQ(hyphen, true);
 }
 
-TEST__ IterativeTextSplitter4A()
+@test(.group = "y_utils") IterativeTextSplitter4A()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter("This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 0, end, next, hyphen);
@@ -366,7 +366,7 @@ TEST__ IterativeTextSplitter4A()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter5A()
+@test(.group = "y_utils") IterativeTextSplitter5A()
 {
 	new end, next, bool:hyphen;
 	ASSERT(IterativeTextSplitter("Trying to find some worst cases       \r\n", 31, 0, end, next, hyphen));
@@ -379,7 +379,7 @@ TEST__ IterativeTextSplitter5A()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter6A()
+@test(.group = "y_utils") IterativeTextSplitter6A()
 {
 	new end, next, bool:hyphen;
 	new str[] = "Generating code, this may take a little bit of time.  Note that this code generation works best with the JIT plugin, which you are not currently using.  Get it here:\n\nhttps://git.io/jit-plugin\n\nPlease wait...";
@@ -421,7 +421,7 @@ TEST__ IterativeTextSplitter6A()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter7A()
+@test(.group = "y_utils") IterativeTextSplitter7A()
 {
 	new end, next, bool:hyphen;
 	new str[] = "Generating code, this may take a little bit of time.  Note that this code generation works best with the JIT plugin, which you are not currently using.  Get it here:\n\nhttps://git.io/jit-plugin\n\nPlease wait...";
@@ -463,7 +463,7 @@ TEST__ IterativeTextSplitter7A()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter1B()
+@test(.group = "y_utils") IterativeTextSplitter1B()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter(!"This is the first line with short words", 20, 0, end, next, hyphen);
@@ -488,7 +488,7 @@ TEST__ IterativeTextSplitter1B()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter2B()
+@test(.group = "y_utils") IterativeTextSplitter2B()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter(!"This is the secondlinewithlongwords", 20, 0, end, next, hyphen);
@@ -509,7 +509,7 @@ TEST__ IterativeTextSplitter2B()
 	ASSERT_EQ(hyphen, true);
 }
 
-TEST__ IterativeTextSplitter3B()
+@test(.group = "y_utils") IterativeTextSplitter3B()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter(!"This is the thirdline", 15, 0, end, next, hyphen);
@@ -530,7 +530,7 @@ TEST__ IterativeTextSplitter3B()
 	ASSERT_EQ(hyphen, true);
 }
 
-TEST__ IterativeTextSplitter4B()
+@test(.group = "y_utils") IterativeTextSplitter4B()
 {
 	new end, next, bool:hyphen;
 	IterativeTextSplitter(!"This is the fifth\r\nand sixth\r\n\n\n\nand seventh           \n     lines", 15, 0, end, next, hyphen);
@@ -567,7 +567,7 @@ TEST__ IterativeTextSplitter4B()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter5B()
+@test(.group = "y_utils") IterativeTextSplitter5B()
 {
 	new end, next, bool:hyphen;
 	ASSERT(IterativeTextSplitter(!"Trying to find some worst cases       \r\n", 31, 0, end, next, hyphen));
@@ -580,7 +580,7 @@ TEST__ IterativeTextSplitter5B()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter6B()
+@test(.group = "y_utils") IterativeTextSplitter6B()
 {
 	new end, next, bool:hyphen;
 	new str[] = !"Generating code, this may take a little bit of time.  Note that this code generation works best with the JIT plugin, which you are not currently using.  Get it here:\n\nhttps://git.io/jit-plugin\n\nPlease wait...";
@@ -622,7 +622,7 @@ TEST__ IterativeTextSplitter6B()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeTextSplitter7B()
+@test(.group = "y_utils") IterativeTextSplitter7B()
 {
 	new end, next, bool:hyphen;
 	new str[] = !"Generating code, this may take a little bit of time.  Note that this code generation works best with the JIT plugin, which you are not currently using.  Get it here:\n\nhttps://git.io/jit-plugin\n\nPlease wait...";
@@ -664,7 +664,7 @@ TEST__ IterativeTextSplitter7B()
 	ASSERT_EQ(hyphen, false);
 }
 
-TEST__ IterativeColouredSkipWUn1()
+@test(.group = "y_utils") IterativeColouredSkipWUn1()
 {
 	new end, bool:hyphen, colour = 8;
 	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACK"alongwordwithnosymbols", 10, 0, hyphen, colour);
@@ -689,7 +689,7 @@ TEST__ IterativeColouredSkipWUn1()
 	ASSERT_EQ(colour, 8);
 }
 
-TEST__ IterativeColouredSkipWUn2()
+@test(.group = "y_utils") IterativeColouredSkipWUn2()
 {
 	new end, bool:hyphen, colour = 8;
 	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACK"{000000}longword", 10, 0, hyphen, colour);
@@ -718,7 +718,7 @@ TEST__ IterativeColouredSkipWUn2()
 	ASSERT_EQ(colour, 5);
 }
 
-TEST__ IterativeColouredSkipWUn3()
+@test(.group = "y_utils") IterativeColouredSkipWUn3()
 {
 	new end, bool:hyphen, colour = 8;
 	end = IterativeColouredSkipWUnpacked(__COMPILER_UNPACK"abcdefg   {000000}longword", 20, 10, hyphen, colour);
@@ -747,7 +747,7 @@ TEST__ IterativeColouredSkipWUn3()
 	ASSERT_EQ(colour, 5);
 }
 
-TEST__ IterativeColouredSkipWS1()
+@test(.group = "y_utils") IterativeColouredSkipWS1()
 {
 	new end, colour = 8;
 	end = IterativeColouredSkipSUnpacked(__COMPILER_UNPACK"    hi", 0, colour);
@@ -767,7 +767,7 @@ TEST__ IterativeColouredSkipWS1()
 	ASSERT_EQ(colour, 0x112233);
 }
 
-TEST__ IterativeColouredSkipWPa1()
+@test(.group = "y_utils") IterativeColouredSkipWPa1()
 {
 	new end, bool:hyphen, colour = 8;
 	end = IterativeColouredSkipWPacked(__COMPILER_PACK"alongwordwithnosymbols", 10, 0, hyphen, colour);
@@ -792,7 +792,7 @@ TEST__ IterativeColouredSkipWPa1()
 	ASSERT_EQ(colour, 8);
 }
 
-TEST__ IterativeColouredSkipWPa2()
+@test(.group = "y_utils") IterativeColouredSkipWPa2()
 {
 	new end, bool:hyphen, colour = 8;
 	end = IterativeColouredSkipWPacked(__COMPILER_PACK"{000000}longword", 10, 0, hyphen, colour);
@@ -821,7 +821,7 @@ TEST__ IterativeColouredSkipWPa2()
 	ASSERT_EQ(colour, 5);
 }
 
-TEST__ IterativeColouredSkipWPa3()
+@test(.group = "y_utils") IterativeColouredSkipWPa3()
 {
 	new end, bool:hyphen, colour = 8;
 	end = IterativeColouredSkipWPacked(__COMPILER_PACK"abcdefg   {000000}longword", 20, 10, hyphen, colour);
@@ -850,7 +850,7 @@ TEST__ IterativeColouredSkipWPa3()
 	ASSERT_EQ(colour, 5);
 }
 
-TEST__ IterativeColouredSkipWS2()
+@test(.group = "y_utils") IterativeColouredSkipWS2()
 {
 	new end, colour = 8;
 	end = IterativeColouredSkipSPacked(__COMPILER_PACK"    hi", 0, colour);
@@ -870,7 +870,7 @@ TEST__ IterativeColouredSkipWS2()
 	ASSERT_EQ(colour, 0x112233);
 }
 
-TEST__ IterativeColouredText1()
+@test(.group = "y_utils") IterativeColouredText1()
 {
 	new end, next, bool:hyphen, colour;
 	new str[] = __COMPILER_UNPACK"Hello, I'm just splitting a string normally.";
@@ -894,7 +894,7 @@ TEST__ IterativeColouredText1()
 	ASSERT(!hyphen);
 }
 
-TEST__ IterativeColouredText2()
+@test(.group = "y_utils") IterativeColouredText2()
 {
 	new end, next, bool:hyphen, colour;
 	new str[] = __COMPILER_UNPACK"Hello, {FFAA11}I'm just splitting a string normally.";
@@ -918,7 +918,7 @@ TEST__ IterativeColouredText2()
 	ASSERT(!hyphen);
 }
 
-TEST__ IterativeColouredText3()
+@test(.group = "y_utils") IterativeColouredText3()
 {
 	new end, next, bool:hyphen, colour;
 	new str[] = __COMPILER_UNPACK"Hello, {FFAA11}I'm      just {123456}splitting a string normally.";
@@ -948,7 +948,7 @@ TEST__ IterativeColouredText3()
 	ASSERT(!hyphen);
 }
 
-TEST__ IterativeColouredText4()
+@test(.group = "y_utils") IterativeColouredText4()
 {
 	new end, next, bool:hyphen, colour;
 	new str[] = __COMPILER_PACK"Hello, I'm just splitting a string normally.";
@@ -972,7 +972,7 @@ TEST__ IterativeColouredText4()
 	ASSERT(!hyphen);
 }
 
-TEST__ IterativeColouredText5()
+@test(.group = "y_utils") IterativeColouredText5()
 {
 	new end, next, bool:hyphen, colour;
 	new str[] = __COMPILER_PACK"Hello, {FFAA11}I'm just splitting a string normally.";
@@ -996,7 +996,7 @@ TEST__ IterativeColouredText5()
 	ASSERT(!hyphen);
 }
 
-TEST__ IterativeColouredText6()
+@test(.group = "y_utils") IterativeColouredText6()
 {
 	new end, next, bool:hyphen, colour;
 	new str[] = __COMPILER_PACK"Hello, {FFAA11}I'm      just {123456}splitting a string normally.";
@@ -1026,7 +1026,7 @@ TEST__ IterativeColouredText6()
 	ASSERT(!hyphen);
 }
 
-TEST__ y_utils_IsNull()
+@test(.group = "y_utils") y_utils_IsNull()
 {
 	new dest[32];
 
@@ -1040,7 +1040,7 @@ TEST__ y_utils_IsNull()
 	ASSERT(IsNull(dest));
 }
 
-TEST__ y_utils_StrCpy()
+@test(.group = "y_utils") y_utils_StrCpy()
 {
 	new dest[32];
 
@@ -1054,7 +1054,7 @@ TEST__ y_utils_StrCpy()
 	ASSERT_SAME(dest, !"hello 4");
 }
 
-TEST__ y_utils_StrToLower()
+@test(.group = "y_utils") y_utils_StrToLower()
 {
 	new dest[32];
 
@@ -1072,7 +1072,7 @@ TEST__ y_utils_StrToLower()
 	ASSERT_SAME(dest, !"hello 4");
 }
 
-TEST__ y_utils_StrToUpper()
+@test(.group = "y_utils") y_utils_StrToUpper()
 {
 	new dest[32];
 
@@ -1090,7 +1090,7 @@ TEST__ y_utils_StrToUpper()
 	ASSERT_SAME(dest, !"HELLO 4");
 }
 
-TEST__ y_utils_StripNL()
+@test(.group = "y_utils") y_utils_StripNL()
 {
 	new dest[32];
 
@@ -1102,7 +1102,7 @@ TEST__ y_utils_StripNL()
 	ASSERT_SAME(dest, "   World 2");
 }
 
-TEST__ y_utils_StripR()
+@test(.group = "y_utils") y_utils_StripR()
 {
 	new dest[32];
 
@@ -1114,7 +1114,7 @@ TEST__ y_utils_StripR()
 	ASSERT_SAME(dest, "   World 2");
 }
 
-TEST__ y_utils_StripL()
+@test(.group = "y_utils") y_utils_StripL()
 {
 	new dest[32];
 
@@ -1126,7 +1126,7 @@ TEST__ y_utils_StripL()
 	ASSERT_SAME(dest, "World 2 \r\n");
 }
 
-TEST__ y_utils_Strip()
+@test(.group = "y_utils") y_utils_Strip()
 {
 	new dest[32];
 
@@ -1138,7 +1138,7 @@ TEST__ y_utils_Strip()
 	ASSERT_SAME(dest, "World 2");
 }
 
-TEST__ y_utils_EndOfLine()
+@test(.group = "y_utils") y_utils_EndOfLine()
 {
 	new dest[32];
 
@@ -1148,7 +1148,7 @@ TEST__ y_utils_EndOfLine()
 	ASSERT(EndOfLine(dest, 10));
 }
 
-TEST__ y_utils_ChrFind()
+@test(.group = "y_utils") y_utils_ChrFind()
 {
 	new dest[32];
 
@@ -1158,7 +1158,7 @@ TEST__ y_utils_ChrFind()
 	ASSERT_EQ(ChrFind('o', dest), 4);
 }
 
-TEST__ y_utils_IPToInt()
+@test(.group = "y_utils") y_utils_IPToInt()
 {
 	ASSERT_EQ(IPToInt("5.6.7.8"), 0x05060708);
 	ASSERT_EQ(IPToInt(!"1.2.3.4"), 0x01020304);
@@ -1166,19 +1166,19 @@ TEST__ y_utils_IPToInt()
 	ASSERT_EQ(IPToInt(!"1.255.113.114"), 0x01FF7172);
 }
 
-TEST__ y_utils_BernsteinHash()
+@test(.group = "y_utils") y_utils_BernsteinHash()
 {
 	ASSERT_EQ(BernsteinHash("Hello World"), BernsteinHash(!"Hello World"));
 	ASSERT_EQ(BernsteinHash("gamemode10"), 0xBA256409);
 	ASSERT_EQ(BernsteinHash(!"logtimeformat"), 0x19BECDF7);
 }
 
-TEST__ y_utils_JenkinsHash()
+@test(.group = "y_utils") y_utils_JenkinsHash()
 {
 	ASSERT_EQ(JenkinsHash("Hello World"), JenkinsHash(!"Hello World"));
 }
 
-TEST__ y_utils_IsHex()
+@test(.group = "y_utils") y_utils_IsHex()
 {
 	ASSERT(IsHex("0xFFAA"));
 	ASSERT(IsHex(!"0x1001123"));
@@ -1193,7 +1193,7 @@ TEST__ y_utils_IsHex()
 	ASSERT(!IsHex("wow"));
 }
 
-TEST__ y_utils_IsNumeric()
+@test(.group = "y_utils") y_utils_IsNumeric()
 {
 	ASSERT(IsNumeric("-7"));
 	ASSERT(IsNumeric(!"1000"));
@@ -1207,7 +1207,7 @@ TEST__ y_utils_IsNumeric()
 	ASSERT(!IsNumeric("hi"));
 }
 
-TEST__ y_utils_HexStr()
+@test(.group = "y_utils") y_utils_HexStr()
 {
 	ASSERT_EQ(HexStr("0xFFAA"), 0xFFAA);
 	ASSERT_EQ(HexStr(!"0x1001123"), 0x1001123);
@@ -1216,7 +1216,7 @@ TEST__ y_utils_HexStr()
 	ASSERT_EQ(HexStr(!"0xFFAA"), 0xFFAA);
 }
 
-TEST__ y_utils_BoolStr()
+@test(.group = "y_utils") y_utils_BoolStr()
 {
 	ASSERT(BoolStr("true"));
 	ASSERT(BoolStr(!"true"));
@@ -1233,7 +1233,7 @@ TEST__ y_utils_BoolStr()
 	ASSERT(!BoolStr(!""));
 }
 
-TEST__ y_utils_BinStr()
+@test(.group = "y_utils") y_utils_BinStr()
 {
 	ASSERT_EQ(BinStr("0101010"), 0b0101010);
 	ASSERT_EQ(BinStr(!"0101010"), 0b0101010);

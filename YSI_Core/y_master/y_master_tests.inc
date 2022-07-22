@@ -38,7 +38,7 @@ YSIM_CLIENT_GLOBAL  stock y_master_test_4(&a, &e, const b[], c, const string:d[]
 
 YSIM_STUB_FOREIGN stock y_master_test_5(&a, &e, const b[], c = sizeof (b), const string:d[] = "hmm");
 
-TEST__ y_master_IntReturn()
+@test(.group = "y_master") y_master_IntReturn()
 {
 	new b1[4], b2[70];
 	new a = 6, e = 11;
@@ -264,7 +264,7 @@ HOOK__ OnMasterSystemInit(id)
 	YSI_g_sTestVar = 6;
 }
 
-TEST__ y_master_Init()
+@test(.group = "y_master") y_master_Init()
 {
 	ASSERT_EQ(YSI_g_sTestVar, 6);
 	ASSERT_NZ(Master_ID());

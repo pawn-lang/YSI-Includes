@@ -97,18 +97,18 @@ task y_timers_Counter[1000]()
 	va_SendClientMessageToAll(0x0000FFAA, "GLOBAL COUNTER: %d", sCounter++);
 }
 
-PTEST__ PCounter1(playerid)
+P@test(.group = "y_timers") PCounter1(playerid)
 {
 	ASK("Is the red PLAYER COUNTER going up?");
 }
 
-PTEST__ PCounter2(playerid)
+P@test(.group = "y_timers") PCounter2(playerid)
 {
 	pause y_timers_PCounter[playerid];
 	ASK("Has the red PLAYER COUNTER stopped?");
 }
 
-PTEST__ Counter(playerid)
+P@test(.group = "y_timers") Counter(playerid)
 {
 	ASK("Is the blue GLOBAL COUNTER going up?");
 }
@@ -123,7 +123,7 @@ timer BigMessage2[4000](playerid)
 	SendClientMessage(playerid, 0x00FF00AA, "BIG MESSAGE appearing repeatedly.");
 }
 
-PTEST__ Timer1(playerid)
+P@test(.group = "y_timers") Timer1(playerid)
 {
 	DEFER__ BigMessage1(playerid);
 	ASK("Is a green BIG MESSAGE appearing once after 4 seconds?");
@@ -132,7 +132,7 @@ PTEST__ Timer1(playerid)
 static
 	Timer:sgTimer = Timer:0;
 
-PTEST__ Timer2(playerid)
+P@test(.group = "y_timers") Timer2(playerid)
 {
 	sgTimer = REPEAT__ BigMessage2(playerid);
 	ASK("Is a green BIG MESSAGE appearing every 4 seconds?");
@@ -144,7 +144,7 @@ timer StopMessage1[4000](playerid)
 	STOP__ sgTimer;
 }
 
-PTEST__ Timer3(playerid)
+P@test(.group = "y_timers") Timer3(playerid)
 {
 	DEFER__ StopMessage1(playerid);
 	ASK("Is the green BIG MESSAGE stopping appearing after 4 seconds?");
@@ -152,7 +152,7 @@ PTEST__ Timer3(playerid)
 
 forward Timer:_yT@ForwardTimer(string:msg[]);
 
-TEST__ ForwardTimer()
+@test(.group = "y_timers") ForwardTimer()
 {
 	DEFER__ ForwardTimer("hi");
 }
@@ -173,7 +173,7 @@ timer StopAndStart[50]()
 	//printf("StopAndStart ended");
 }
 
-TEST__ StopAndStart()
+@test(.group = "y_timers") StopAndStart()
 {
 	YSI_g_sStopAndStart = DEFER__ StopAndStart();
 	ASSERT(Timer_IsRunning(YSI_g_sStopAndStart));
@@ -193,7 +193,7 @@ timer StopAndStop[50]()
 	printf("StopAndStop finished");
 }
 
-TEST__ StopAndStop()
+@test(.group = "y_timers") StopAndStop()
 {
 	YSI_g_sStopAndStart = REPEAT__[5] StopAndStop();
 	for (new i = 0; i != 1000; ++i)
@@ -211,7 +211,7 @@ new Timer:YSI_g_sKillYourself;
 	printf("KillYourself end");
 }
 
-TEST__ KillYourself()
+@test(.group = "y_timers") KillYourself()
 {
 	printf("KillYourself before");
 	YSI_g_sKillYourself = defer KillYourself();

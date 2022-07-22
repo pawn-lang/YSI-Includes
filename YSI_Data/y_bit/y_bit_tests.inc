@@ -71,7 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-TEST__ Bit_Bits()
+@test(.group = "y_bit") Bit_Bits()
 {
 	ASSERT_EQ(Bit_Bits(5), 1);
 	ASSERT_EQ(Bit_Bits(32), 1);
@@ -83,7 +83,7 @@ TEST__ Bit_Bits()
 	ASSERT_EQ(Bit_Bits(1025), 33);
 }
 
-TEST__ Bit_Set()
+@test(.group = "y_bit") Bit_Set()
 {
 	new
 		BitArray:bb<100>;
@@ -113,7 +113,7 @@ TEST__ Bit_Set()
 	ASSERT_ZE(_:bb[0]);
 }
 
-TEST__ Bit_Get()
+@test(.group = "y_bit") Bit_Get()
 {
 	new
 		BitArray:bb<32>;
@@ -132,7 +132,7 @@ TEST__ Bit_Get()
 	ASSERT(!Bit_Get(bb, 31));
 }
 
-TEST__ Bit_SetAll()
+@test(.group = "y_bit") Bit_SetAll()
 {
 	new
 		BitArray:bb<50>;
@@ -154,7 +154,7 @@ TEST__ Bit_SetAll()
 	ASSERT(!Bit_Get(bb, 60));
 }
 
-TEST__ Bit_Count()
+@test(.group = "y_bit") Bit_Count()
 {
 	new
 		BitArray:cc<70>;
@@ -175,7 +175,7 @@ TEST__ Bit_Count()
 	ASSERT_EQ(Bit_GetCount(cc), 13);
 }
 
-TEST__ Bit_Iterators()
+@test(.group = "y_bit") Bit_Iterators()
 {
 	new
 		BitArray:bitArray<32>;

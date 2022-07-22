@@ -85,7 +85,7 @@ static
 	YSI_g_sValue = pri + alt;
 }
 
-TEST__ LCTRL_SCTRL()
+@test(.group = "y_ctrl") LCTRL_SCTRL()
 {
 	new p0, a0, p1, a1;
 	#emit CONST.pri 4
