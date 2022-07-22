@@ -1010,7 +1010,7 @@ stock Testing_SurpressOneFail()
 	--YSI_g_sFails;
 }
 
-TEST__ y_testing_2()
+@test(.group = "y_testing") y_testing_2()
 {
 	new
 		t = YSI_g_sTests,
@@ -1078,7 +1078,7 @@ static stock y_testing_ReturnHello()
 	return ret;
 }
 
-TEST__ y_testing_Asserts()
+@test(.group = "y_testing") y_testing_Asserts()
 {
 	ASSERT_EQ(y_testing_Return7(), 7);
 	ASSERT_NE(y_testing_Return7(), 8);
