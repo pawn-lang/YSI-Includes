@@ -1157,29 +1157,29 @@ hook stock y_hooks_HookedStock(str[], v, &c)
 //	ASSERT_EQ(YSI_g_sValue, 15);
 //}
 
-@hook(.fallback = true) OnPlayerConnect(playerid)
-{
-}
-
-@hook(.public = "OnPlayerConnect", .fallback = true) y_hooks_OnPlayerConnect_0(playerid)
-{
-}
-
-#tryinclude "..\YSI_Coding\y_unique"
-#tryinclude "..\..\YSI_Coding\y_unique"
-
-@hook() OnPlayerConnect(playerid)
-{
-}
-
-@hook(.public = "OnPlayerConnect") y_hooks_OnPlayerConnect_1(playerid)
-{
-}
-
-#tryinclude "..\YSI_Coding\y_unique"
-#tryinclude "..\..\YSI_Coding\y_unique"
-
-hook OnPlayerConnect(playerid)
-{
-}
+//@hook(.fallback = true) OnPlayerConnect(playerid)
+//{
+//}
+//
+//@hook(.public = "OnPlayerConnect", .fallback = true) y_hooks_OnPlayerConnect_0(playerid)
+//{
+//}
+//
+//#tryinclude "..\YSI_Coding\y_unique"
+//#tryinclude "..\..\YSI_Coding\y_unique"
+//
+//@hook() OnPlayerConnect(playerid)
+//{
+//}
+//
+//@hook(.public = "OnPlayerConnect") y_hooks_OnPlayerConnect_1(playerid)
+//{
+//}
+//
+//#tryinclude "..\YSI_Coding\y_unique"
+//#tryinclude "..\..\YSI_Coding\y_unique"
+//
+//hook OnPlayerConnect(playerid)
+//{
+//}
 

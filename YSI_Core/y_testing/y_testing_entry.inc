@@ -225,6 +225,12 @@ static stock const
 
 #define Y_TESTING_S(%0) ((%0) == 1 ? YSI_gscString_ : YSI_gscStringS)
 
+// Use the `PTEST` definitions by default, as they can now detect no `playerid`
+// and fall back to `TEST` when it isn't present.
+#define @testinit(%9) PTEST_INIT__
+#define @test(%9) PTEST__
+#define @testclose(%9) PTEST_CLOSE__
+
 // Each function type has a dedicated three letter prefix associated with it:
 //   
 //   y_Q Init
@@ -241,33 +247,38 @@ static stock const
 // the static function "y_Q@<test>".
 
 #if defined RUN_TESTS
-	#define TEST_INIT__%1(%2) @y_Q%1(%2);@y_Q%1(%2)
+	#define TEST_INIT__%1() @y_Q%1();@y_Q%1()
 	#if !__COMPILER_STRING_PACKING
-		#define TEST__%1(%2) bool:@yQ_%1(%2);bool:@yQ_%1(%2) for(_Testing_Start("  "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1(%2);static yQ_@%1(%2)
+		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1() for(_Testing_Start("  "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
 	#elseif cellbytes == 4
 		// Ensure there is always sufficient space for the failures linked list.
-		#define TEST__%1(%2) bool:@yQ_%1(%2);bool:@yQ_%1(%2) for(_Testing_Start("        "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1(%2);static yQ_@%1(%2)
+		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1() for(_Testing_Start("        "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
 	#elseif cellbytes == 8
-		#define TEST__%1(%2) bool:@yQ_%1(%2);bool:@yQ_%1(%2) for(_Testing_Start("                "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1(%2);static yQ_@%1(%2)
+		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1() for(_Testing_Start("                "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
 	#else
 		#error Unsupported packed string size.
 	#endif
-	#define TEST_CLOSE__%1(%2) @Qy_%1(%2);@Qy_%1(%2)
+	#define TEST_CLOSE__%1() @Qy_%1();@Qy_%1()
 	
-	#define PTEST_INIT__%1(%2) @Q_y%1(%2);@Q_y%1(%2)
+	#define PTEST_INIT__%1(%2) u@(u[_:_TEST_PID0:u@$@Q_y%1(%2);@Q_y%1(%2)
 	#if !__COMPILER_STRING_PACKING
-		#define PTEST__%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(_Testing_Start("  "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+		#define PTEST__%1(%2) u@(u[_:_TEST_PID1:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(_Testing_Start("  "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
 	#elseif cellbytes == 4
 		// Ensure there is always sufficient space for the failures linked list.
-		#define PTEST__%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(_Testing_Start("        "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+		#define PTEST__%1(%2) u@(u[_:_TEST_PID1:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(_Testing_Start("        "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
 	#elseif cellbytes == 8
-		#define PTEST__%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(_Testing_Start("                "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+		#define PTEST__%1(%2) u@(u[_:_TEST_PID1:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(_Testing_Start("                "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
 	#else
 		#error Unsupported packed string size.
 	#endif
-	#define PTEST_CLOSE__%1(%2) @_yQ%1(%2);@_yQ%1(%2)
+	#define PTEST_CLOSE__%1(%2) u@(u[_:_TEST_PID2:u@$@_yQ%1(%2);@_yQ%1(%2)
 	
-	//#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();Debug_Warning("Compile test " #%1 " called.");}static stock Q@_y%1()
+	// Default to having `playerid`, and fall back to no players otherwise.
+	#define _TEST_PID0:%8$@Q_y%0();@Q_y%0() %8$TEST_INIT__ %0()
+	#define _TEST_PID1:%8$bool:@_Qy%0();bool:@_Qy%0()%9(%9)%9;%9(%9) %8$TEST__ %0()
+	#define _TEST_PID2:%8$@_yQ%0();@_yQ%0() %8$TEST_CLOSE__ %0()
+	
+	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();Debug_Warning("Compile test " #%1 " called.");}static stock Q@_y%1()
 #else
 	#define TEST_INIT__%1(%2) static stock y_Q@%1(%2)
 	#define TEST__%1(%2) static stock bool:yQ_@%1(%2)
@@ -316,10 +327,6 @@ static stock const
 #if YSI_KEYWORD(TestCompile)
 	#define TestCompile:%1() TEST_COMPILE__ %1()
 #endif
-
-#define @testinit(%9) TEST_INIT__
-#define @test(%9) TEST__
-#define @testclose(%9) TEST_CLOSE__
 
 #define @y_Q%0\32; @y_Q
 #define @yQ_%0\32; @yQ_
@@ -527,8 +534,6 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 	Debug_Print2("Testing_Run() called");
 	new
 		idx = 0,
-		bidx = 0,
-		buffer2[FUNCTION_LENGTH],
 		buffer[FUNCTION_LENGTH];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST_SEARCH)))

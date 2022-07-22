@@ -71,7 +71,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-@test(.group = "y_cell", .run = false) y_cell()
+//@test(.group = "y_cell", .run = false) y_cell()
+TEST_COMPILE__ y_cell()
 {
 	new masks[5];
 	Cell_ReverseBits(0);

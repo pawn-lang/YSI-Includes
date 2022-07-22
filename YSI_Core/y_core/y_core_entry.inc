@@ -239,6 +239,10 @@ forward bool:DisasmWrite(const filename[]);
 		@_ = -1;
 #endif
 
+// Magical macro.
+#define u@$ 1]);
+//#define MY_THING u@(u[_:%0 u@$
+
 // These three includes are just defines.  They declare no code at all, only
 // variables.
 #include "y_globaltags"
