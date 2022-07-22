@@ -177,9 +177,9 @@ TEST__ StopAndStart()
 {
 	YSI_g_sStopAndStart = DEFER__ StopAndStart();
 	ASSERT(Timer_IsRunning(YSI_g_sStopAndStart));
-	ASSERT(!!_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
+	ASSERT_NZ(_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
 	ASSERT(!Timer_IsRunning(YSI_g_sStopAndStart));
-	ASSERT(!_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
+	ASSERT_ZE(_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
 	ASSERT(!Timer_IsRunning(YSI_g_sStopAndStart));
 	YSI_g_sStopAndStart = DEFER__ StopAndStart();
 }
@@ -198,7 +198,7 @@ TEST__ StopAndStop()
 	YSI_g_sStopAndStart = REPEAT__[5] StopAndStop();
 	for (new i = 0; i != 1000; ++i)
 	{
-		ASSERT(!!DEFER__ StopAndStop());
+		ASSERT_NZ(DEFER__ StopAndStop());
 	}
 }
 
