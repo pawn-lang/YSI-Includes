@@ -87,11 +87,11 @@ TEST__ y_dialog_Compile()
 		{
 			#pragma unused arg0, arg1, arg2, arg3, arg4
 		}
-		Dialog_ShowCallback(0, using inline A, 0, "", "", "");
-		Dialog_ShowCallback(0, using inline B, 0, "", "", "");
-		Dialog_Show(0, 0, "", "", "");
+		Dialog_ShowCallback(0, using inline A, DIALOG_STYLE_MSGBOX, "", "", "");
+		Dialog_ShowCallback(0, using inline B, DIALOG_STYLE_MSGBOX, "", "", "");
+		Dialog_Show(0, DIALOG_STYLE_MSGBOX, "", "", "");
 		Dialog_Hide(0);
-		Dialog_ShowPlayerDialog(0, 0, 0, "", "", "", "");
+		Dialog_ShowPlayerDialog(0, 0, DIALOG_STYLE_MSGBOX, "", "", "", "");
 	}
 }
 

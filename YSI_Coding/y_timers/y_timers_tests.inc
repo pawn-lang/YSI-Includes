@@ -177,7 +177,7 @@ TEST__ StopAndStart()
 {
 	YSI_g_sStopAndStart = DEFER__ StopAndStart();
 	ASSERT(Timer_IsRunning(YSI_g_sStopAndStart));
-	ASSERT(_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
+	ASSERT(!!_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
 	ASSERT(!Timer_IsRunning(YSI_g_sStopAndStart));
 	ASSERT(!_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
 	ASSERT(!Timer_IsRunning(YSI_g_sStopAndStart));
@@ -186,7 +186,7 @@ TEST__ StopAndStart()
 
 timer StopAndStop[50]()
 {
-	printf("StopAndStop started: %d", _YSI_g_sCurrentTimer);
+	printf("StopAndStop started: %d", _:_YSI_g_sCurrentTimer);
 	STOP__;
 	STOP__;
 	STOP__;
@@ -198,7 +198,7 @@ TEST__ StopAndStop()
 	YSI_g_sStopAndStart = REPEAT__[5] StopAndStop();
 	for (new i = 0; i != 1000; ++i)
 	{
-		ASSERT(DEFER__ StopAndStop());
+		ASSERT(!!DEFER__ StopAndStop());
 	}
 }
 
