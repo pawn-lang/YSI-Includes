@@ -162,7 +162,7 @@ TEST_COMPILE__ y_cell()
 	//PRINT(n);
 }
 
-@test(.group = "y_cell") y_cell_ReverseBits1()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBits1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
@@ -180,7 +180,7 @@ TEST_COMPILE__ y_cell()
 	}
 }
 
-@test(.group = "y_cell") y_cell_ReverseBits2()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBits2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
@@ -198,7 +198,7 @@ TEST_COMPILE__ y_cell()
 	}
 }
 
-@test(.group = "y_cell") y_cell_ReverseBits3()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBits3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
@@ -227,7 +227,7 @@ TEST_COMPILE__ y_cell()
 	ASSERT_EQ(Cell_ReverseNibbles(0b1111000001111000011), 0b00111100001110000111000000000000);
 }
 
-@test(.group = "y_cell") y_cell_ReverseNibbles1()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseNibbles1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
@@ -248,7 +248,7 @@ TEST_COMPILE__ y_cell()
 	}
 }
 
-@test(.group = "y_cell") y_cell_ReverseNibbles2()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseNibbles2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
@@ -269,7 +269,7 @@ TEST_COMPILE__ y_cell()
 	}
 }
 
-@test(.group = "y_cell") y_cell_ReverseNibbles3()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseNibbles3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
@@ -301,7 +301,7 @@ TEST_COMPILE__ y_cell()
 	ASSERT_EQ(Cell_ReverseBytes(0b1111000001111000011), 0b11000011100000110000011100000000);
 }
 
-@test(.group = "y_cell") y_cell_ReverseBytes1()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBytes1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
@@ -322,7 +322,7 @@ TEST_COMPILE__ y_cell()
 	}
 }
 
-@test(.group = "y_cell") y_cell_ReverseBytes2()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBytes2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
@@ -343,7 +343,7 @@ TEST_COMPILE__ y_cell()
 	}
 }
 
-@test(.group = "y_cell") y_cell_ReverseBytes3()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBytes3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
@@ -495,7 +495,7 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 	__pragma("naked");
 }
 
-@test(.group = "y_cell") y_cell_CountBits0()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits0()
 {
 	ASSERT_ZE(y_cell_CountBits_v4(0));
 	ASSERT_EQ(y_cell_CountBits_v4(1), 1);
@@ -550,7 +550,7 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 #endif
 }
 
-@test(.group = "y_cell") y_cell_CountBits1()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
@@ -568,7 +568,7 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 	}
 }
 
-@test(.group = "y_cell") y_cell_CountBits2()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
@@ -586,7 +586,7 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 	}
 }
 
-@test(.group = "y_cell") y_cell_CountBits3()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{

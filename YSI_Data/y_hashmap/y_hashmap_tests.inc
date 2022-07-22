@@ -241,7 +241,7 @@ enum E_HASH_MAP_TEST
 	ASSERT_EQ(HashMap_Get(m, "Hello"), -1);
 }
 
-@test(.group = "y_hashmap") y_hashmap_Get100()
+@test(.group = "y_hashmap", .slow = true) y_hashmap_Get100()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -258,7 +258,7 @@ enum E_HASH_MAP_TEST
 	}
 }
 
-@test(.group = "y_hashmap") y_hashmap_Get100Hash()
+@test(.group = "y_hashmap", .slow = true) y_hashmap_Get100Hash()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -275,7 +275,7 @@ enum E_HASH_MAP_TEST
 	}
 }
 
-@test(.group = "y_hashmap") y_hashmap_Remove50()
+@test(.group = "y_hashmap", .slow = true) y_hashmap_Remove50()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -307,7 +307,7 @@ enum E_HASH_MAP_TEST
 	}
 }
 
-@test(.group = "y_hashmap") y_hashmap_RemoveValues()
+@test(.group = "y_hashmap", .slow = true) y_hashmap_RemoveValues()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -337,7 +337,7 @@ enum E_HASH_MAP_TEST
 	}
 }
 
-@test(.group = "y_hashmap") y_hashmap_Get1000()
+@test(.group = "y_hashmap", .slow = true) y_hashmap_Get1000()
 {
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
@@ -355,7 +355,7 @@ enum E_HASH_MAP_TEST
 	}
 }
 
-@test(.group = "y_hashmap") y_hashmap_Remove500()
+@test(.group = "y_hashmap", .slow = true) y_hashmap_Remove500()
 {
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
@@ -410,7 +410,7 @@ enum E_HASH_MAP_TEST
 	ASSERT_EQ(HashMap_Get(m, "hi400"), 400);
 }
 
-@test(.group = "y_hashmap") y_hashmap_Set500()
+@test(.group = "y_hashmap", .slow = true) y_hashmap_Set500()
 {
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
