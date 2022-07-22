@@ -225,12 +225,6 @@ static stock const
 
 #define Y_TESTING_S(%0) ((%0) == 1 ? YSI_gscString_ : YSI_gscStringS)
 
-// Use the `PTEST` definitions by default, as they can now detect no `playerid`
-// and fall back to `TEST` when it isn't present.
-#define @testinit(%9) PTEST_INIT__
-#define @test(%9) PTEST__
-#define @testclose(%9) PTEST_CLOSE__
-
 // Each function type has a dedicated three letter prefix associated with it:
 //   
 //   y_Q Init
@@ -248,37 +242,49 @@ static stock const
 
 #if defined RUN_TESTS
 	#define TEST_INIT__%1() @y_Q%1();@y_Q%1()
+	#define YTEST_PID0:%8$@Q_y%1();@Q_y%1() %8$@y_Q%1();@y_Q%1()
+	
+	// We can't do `#define YTEST_PID1 TEST__` or something similar as then
+	// the result will be compressed in to `TEST__` and `YTEST_ARGS` will be
+	// checked before the expansion of `TEST__`.  Thus we must exactly copy the
+	// results of all these macros, with the addition of `%8$` of course.
 	#if !__COMPILER_STRING_PACKING
-		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1() for(_Testing_Start("  "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
+		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
 	#elseif cellbytes == 4
-		// Ensure there is always sufficient space for the failures linked list.
-		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1() for(_Testing_Start("        "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+		// Ensure there is always sufficient spacefor the failures linked list.
+		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
+		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
 	#elseif cellbytes == 8
-		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1() for(_Testing_Start("                "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
+		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
+		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
 	#else
 		#error Unsupported packed string size.
 	#endif
 	#define TEST_CLOSE__%1() @Qy_%1();@Qy_%1()
+	#define YTEST_PID2:%8$@_yQ%1();@_yQ%1() %8$@Qy_%1();@Qy_%1()
 	
-	#define PTEST_INIT__%1(%2) u@(u[_:_TEST_PID0:u@$@Q_y%1(%2);@Q_y%1(%2)
+	// Default to having `playerid`, and fall back to no players otherwise.
+	#define PTEST_INIT__%1(%2) u@(u[_:YTEST_PID0:YTEST_DROP:u@$@Q_y%1(%2);@Q_y%1(%2)
 	#if !__COMPILER_STRING_PACKING
-		#define PTEST__%1(%2) u@(u[_:_TEST_PID1:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(_Testing_Start("  "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
 	#elseif cellbytes == 4
-		// Ensure there is always sufficient space for the failures linked list.
-		#define PTEST__%1(%2) u@(u[_:_TEST_PID1:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(_Testing_Start("        "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+		// Ensure there is always sufficient spacefor the failures linked list.
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
 	#elseif cellbytes == 8
-		#define PTEST__%1(%2) u@(u[_:_TEST_PID1:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(_Testing_Start("                "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
 	#else
 		#error Unsupported packed string size.
 	#endif
-	#define PTEST_CLOSE__%1(%2) u@(u[_:_TEST_PID2:u@$@_yQ%1(%2);@_yQ%1(%2)
-	
-	// Default to having `playerid`, and fall back to no players otherwise.
-	#define _TEST_PID0:%8$@Q_y%0();@Q_y%0() %8$TEST_INIT__ %0()
-	#define _TEST_PID1:%8$bool:@_Qy%0();bool:@_Qy%0()%9(%9)%9;%9(%9) %8$TEST__ %0()
-	#define _TEST_PID2:%8$@_yQ%0();@_yQ%0() %8$TEST_CLOSE__ %0()
+	#define PTEST_CLOSE__%1(%2) u@(u[_:YTEST_PID2:YTEST_DROP:u@$@_yQ%1(%2);@_yQ%1(%2)
 	
 	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();Debug_Warning("Compile test " #%1 " called.");}static stock Q@_y%1()
+
+	// Use the `PTEST` definitions by default, as they can now detect no
+	// `playerid` and fall back to `TEST` when it isn't present.
+	#define @testinit(%2)%0(%1) PTEST_INIT__ %0(%1)<%2>
+	#define @test(%2)%0(%1) PTEST__ %0(%1)<%2>
+	#define @testclose(%2)%0(%1) PTEST_CLOSE__ %0(%1)<%2>
 #else
 	#define TEST_INIT__%1(%2) static stock y_Q@%1(%2)
 	#define TEST__%1(%2) static stock bool:yQ_@%1(%2)
@@ -287,7 +293,17 @@ static stock const
 	#define PTEST_INIT__%1(%2) static stock Q_y@%1(%2)
 	#define PTEST__%1(%2) static stock bool:_Qy@%1(%2)
 	#define PTEST_CLOSE__%1(%2) static stock _yQ@%1(%2)
+
+	// Use the `PTEST` definitions by default, as they can now detect no
+	// `playerid` and fall back to `TEST` when it isn't present.
+	#define @testinit(%2)%0(%1) PTEST_INIT__ %0(%1)
+	#define @test(%2)%0(%1) PTEST__ %0(%1)
+	#define @testclose(%2)%0(%1) PTEST_CLOSE__ %0(%1)
 #endif
+
+// Deal with extra parameters from `@hook`.
+#define YTEST_DROP:%8$%0(%1);%0(%1)<%9> %8$%0(%1);%0(%1)
+#define YTEST_ARGS:%8$%0(%1);%0(%1)for(%2(%3)%4)%5;%6(%7)<%9> %8$%0(%1);%0(%1)for(%2(%3,%9)%4)%5;%6(%7)
 
 #if defined NO_PLAYER_TESTS
 	#undef PTEST_INIT__
