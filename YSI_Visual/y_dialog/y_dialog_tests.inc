@@ -74,7 +74,7 @@ Optional plugins:
 // Using "y_testing" in here isn't actually possible, because it needs dialogs
 // to ask players for feedback...
 
-@test(.group = "y_dialog") y_dialog_Compile()
+@test(.group = "y_dialog", .run = false) y_dialog_Compile()
 {
 	if (FALSE)
 	{

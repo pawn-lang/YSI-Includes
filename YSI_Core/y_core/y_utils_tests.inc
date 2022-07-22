@@ -2,7 +2,7 @@
 #define Y_UTILS_VALUE (42)
 #define Y_UTILS_INVALID (999999)
 
-TEST_COMPILE__ y_utils()
+@test(.group = "y_utils", .run = false) y_utils()
 {
 #if !__COMPILER_1ST_PASS
 	#assert NO_VALUE(Y_UTILS_NO_VALUE)
