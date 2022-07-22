@@ -162,18 +162,19 @@ Optional plugins:
 
 #define YHLEG:%8$%0(%1)%2(%3,%4,.%5=%6) YHLEG_%5:%8$%0(%1)%2(%3,%4,%6)
 #define YHLEG_callback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,__COMPILER_PACK%6)
+#define YHLEG_public:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,__COMPILER_PACK%6)
 #define YHLEG_order:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.order=%6)
 #define YHLEG_fallback:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
 //#define YHLEG_fallback1__:%8$%0(%1)%2(%3,%4,%6) %8$%0(%1)%2(%3,%4,.fallback=%6)
-#define YHLEG_fallback1__:%8$%6(%7)%9(%9$Y_HOOKS_ADDRESSOF(%1(%2)),%9,%9);public%9YHNPS_U0<%6>(%7) %8$YHNPS_U1<%6>(%7)return _@Hy(Y_HOOKS_ADDRESSOF(YHNPS_U0<%6>(%2)),__COMPILER_PACK"\"%6\"",.fallback=true);public YHNPS_U0<%6>(%7)
+//#define YHLEG_fallback:%8$%6(%7)%9(%9$Y_HOOKS_ADDRESSOF(%1(%2)),%9,%9);public%9YHNPS_U0<%6>(%7) %8$YHNPS_U1<%6>(%7)return _@Hy(Y_HOOKS_ADDRESSOF(YHNPS_U0<%6>(%2)),__COMPILER_PACK"\"%6\"",.fallback=true);public YHNPS_U0<%6>(%7)
 
 //return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6))),%0(%6);%7YHNPS_U0<%0>(%5)
-#define YHLEG_stock:%8$%6(%7)%9(PP_DISCARD%4$Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
-#define YHLEG_native:%8$%6(%7)%9(PP_DISCARD%4$Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
-#define YHLEG_function:%8$%6(%7)%9(PP_DISCARD%4$Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(%4,Y_HOOKS_ADDRESSOF(YHNPS_U0<%1>(%2))%5),%9(%2);static
+#define YHLEG_stock:%8$%6(%7)%9(PP_DISCARD%4$Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(%4,Y_HOOKS_ADDRESSOF(%1(%2))%5),%9(%2);static
+#define YHLEG_native:%8$%6(%7)%9(PP_DISCARD%4$Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(%4,Y_HOOKS_ADDRESSOF(%1(%2))%5),%9(%2);static
+#define YHLEG_function:%8$%6(%7)%9(PP_DISCARD%4$Y_HOOKS_ADDRESSOF(%1(%2)),%9,"%9"%5);public %8$%6(%7)return _yH@(%4,Y_HOOKS_ADDRESSOF(%1(%2))%5),%9(%2);static
 
 // Upgrade the old version to the new version, with only defaults.
-#define HOOK__%0(%1) @hook(.fallback1__=true)%0(%1)
+#define HOOK__%0(%1) @hook(.fallback=true)%0(%1)
 //#define HOOK_PUBLIC__%0(%1) @hook()%0(%1)
 //#define HOOK_CALLBACK__%0(%1) @hook()%0(%1)
 //
@@ -260,7 +261,7 @@ Optional plugins:
 // %7  = Prefix0
 // %1  = Prefix1
 //#define YHLEG_END(%0)%8$(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(Y_HOOKS_ADDRESSOF(%0(%6)),
-#define YHLEG_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>(%5)return _@Hy(PP_DISCARD %4$Y_HOOKS_ADDRESSOF(%0(%6)),
+#define YHLEG_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>(%5)return _@Hy(PP_DISCARD %4$Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%6)),
 #define YHLEG_END(%0)%8$(,%5)(,%6) YHLEG_END_TAG(,%0)%8$(,%5)(,%6)
 #define YHLEG_NUL_TAG(%7,%0)%8$()() YHLEG_END(,%0)%8$(,)(,)
 #define YHLEG_NUL(%0)%8$()() YHLEG_END(%0)%8$(,)(,)

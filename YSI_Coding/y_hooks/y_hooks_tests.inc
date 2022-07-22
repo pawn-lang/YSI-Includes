@@ -1109,7 +1109,6 @@ TEST__ y_hooks_HookedStock()
 	// A native function we can easily replicate, in tests only.
 	return continue(value, min - 5, max);
 }
-
 TEST__ HookClamp()
 {
 	ASSERT_EQ(clamp(100, 70, 90), 90);
@@ -1157,4 +1156,23 @@ TEST__ HookClamp()
 //	CallLocalFunction("OnNewHooks", "i", 0);
 //	ASSERT_EQ(YSI_g_sValue, 15);
 //}
+
+@hook(.fallback = true) OnPlayerConnect(playerid)
+{
+}
+
+@hook(.public = "OnPlayerConnect", .fallback = true) y_hooks_OnPlayerConnect_0(playerid)
+{
+}
+
+#tryinclude "..\YSI_Coding\y_unique"
+#tryinclude "..\..\YSI_Coding\y_unique"
+
+@hook() OnPlayerConnect(playerid)
+{
+}
+
+@hook(.public = "OnPlayerConnect") y_hooks_OnPlayerConnect_1(playerid)
+{
+}
 
