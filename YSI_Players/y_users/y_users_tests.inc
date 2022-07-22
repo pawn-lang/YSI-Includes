@@ -122,7 +122,7 @@ PTEST_INIT__ Player_ChangeLanguage(playerid)
 	Player_ForceLogin(gBot);
 }
 
-P@test(.group = "y_users") Player_ChangeLanguage(playerid)
+@test(.group = "y_users") Player_ChangeLanguage(playerid)
 {
 	new
 		ret[E_USER_PRELOAD];
@@ -147,7 +147,7 @@ PTEST_INIT__ Player_ChangePassword(playerid)
 	Player_ForceLogin(gBot);
 }
 
-P@test(.group = "y_users") Player_ChangePassword(playerid)
+@test(.group = "y_users") Player_ChangePassword(playerid)
 {
 	new
 		ret[E_USER_PRELOAD];
@@ -171,7 +171,7 @@ PTEST_INIT__ Player_Preload(playerid)
 	Player_ForceLogin(gBot);
 }
 
-P@test(.group = "y_users") Player_Preload(playerid)
+@test(.group = "y_users") Player_Preload(playerid)
 {
 	new
 		//name[MAX_PLAYER_NAME],
@@ -190,7 +190,7 @@ PTEST_INIT__ Player_GetID(playerid)
 	Player_ForceLogin(gBot);
 }
 
-P@test(.group = "y_users") Player_GetID(playerid)
+@test(.group = "y_users") Player_GetID(playerid)
 {
 	ASSERT_ZE(Player_GetYID(gBot));
 	ASSERT(Player_GetYID(playerid) < 0);

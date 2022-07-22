@@ -97,18 +97,18 @@ task y_timers_Counter[1000]()
 	va_SendClientMessageToAll(0x0000FFAA, "GLOBAL COUNTER: %d", sCounter++);
 }
 
-P@test(.group = "y_timers") PCounter1(playerid)
+@test(.group = "y_timers") PCounter1(playerid)
 {
 	ASK("Is the red PLAYER COUNTER going up?");
 }
 
-P@test(.group = "y_timers") PCounter2(playerid)
+@test(.group = "y_timers") PCounter2(playerid)
 {
 	pause y_timers_PCounter[playerid];
 	ASK("Has the red PLAYER COUNTER stopped?");
 }
 
-P@test(.group = "y_timers") Counter(playerid)
+@test(.group = "y_timers") Counter(playerid)
 {
 	ASK("Is the blue GLOBAL COUNTER going up?");
 }
@@ -123,7 +123,7 @@ timer BigMessage2[4000](playerid)
 	SendClientMessage(playerid, 0x00FF00AA, "BIG MESSAGE appearing repeatedly.");
 }
 
-P@test(.group = "y_timers") Timer1(playerid)
+@test(.group = "y_timers") Timer1(playerid)
 {
 	DEFER__ BigMessage1(playerid);
 	ASK("Is a green BIG MESSAGE appearing once after 4 seconds?");
@@ -132,7 +132,7 @@ P@test(.group = "y_timers") Timer1(playerid)
 static
 	Timer:sgTimer = Timer:0;
 
-P@test(.group = "y_timers") Timer2(playerid)
+@test(.group = "y_timers") Timer2(playerid)
 {
 	sgTimer = REPEAT__ BigMessage2(playerid);
 	ASK("Is a green BIG MESSAGE appearing every 4 seconds?");
@@ -144,7 +144,7 @@ timer StopMessage1[4000](playerid)
 	STOP__ sgTimer;
 }
 
-P@test(.group = "y_timers") Timer3(playerid)
+@test(.group = "y_timers") Timer3(playerid)
 {
 	DEFER__ StopMessage1(playerid);
 	ASK("Is the green BIG MESSAGE stopping appearing after 4 seconds?");
