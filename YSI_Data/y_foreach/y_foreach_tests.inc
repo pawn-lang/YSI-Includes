@@ -4024,3 +4024,20 @@ TEST__ y_iterate_NestedYield()
 	ASSERT_EQ(sum, 345 + 145 + 95);
 }
 
+TEST__ y_iterate_Tags()
+{
+	new
+		Iterator:iter<20>,
+		n;
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 6);
+	n = Iter_First(iter);
+	ASSERT_EQ(n, 5);
+	n = Iter_Next(iter, n);
+	ASSERT_EQ(n, 6);
+	n = Iter_Prev(iter, n);
+	ASSERT_EQ(n, 5);
+	n = Iter_Last(iter);
+	ASSERT_EQ(n, 6);
+}
+
