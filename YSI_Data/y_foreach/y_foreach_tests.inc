@@ -1144,8 +1144,8 @@ TEST__ y_iter_Iter_Free()
 TEST__ y_iter_Tag()
 {
 	new
-		Iterator:Group:iter1<60>,
-		Iterator:Group:iter2[2]<50>;
+		Iterator:iter1<Group:60>,
+		Iterator:iter2[2]<Group:50>;
 	Iter_Init(iter2);
 	Iter_Add(iter1, Group:33);
 	#pragma tabsize 4
@@ -3837,7 +3837,7 @@ TEST__ y_iter_RemoveMidLoop()
 	{
 		ASSERT_EQ(i, 5);
 		Iter_Remove(iter, i);
-		ASSERT_LT(Iterator@iter[5], 0);
+		ASSERT_LT(Iterator@iter[_no_itertag:5], _no_itertag:0);
 		break;
 	}
 	Iter_Add(iter, 0);
@@ -3845,7 +3845,7 @@ TEST__ y_iter_RemoveMidLoop()
 	{
 		ASSERT_EQ(i, 0);
 		Iter_Remove(iter, i);
-		ASSERT_LT(Iterator@iter[0], 0);
+		ASSERT_LT(Iterator@iter[_no_itertag:0], _no_itertag:0);
 		break;
 	}
 	Iter_Add(iter, 19);
@@ -3853,7 +3853,7 @@ TEST__ y_iter_RemoveMidLoop()
 	{
 		ASSERT_EQ(i, 19);
 		Iter_Remove(iter, i);
-		ASSERT_LT(Iterator@iter[19], 0);
+		ASSERT_LT(Iterator@iter[_no_itertag:19], _no_itertag:0);
 		break;
 	}
 }

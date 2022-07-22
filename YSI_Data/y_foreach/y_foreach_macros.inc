@@ -817,7 +817,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define Iter_Func@File:         ITER_TAG_FUNC(File)
 #define Iter_Func@Float:        ITER_TAG_FUNC(Float)
 
-#define ITER_TAG(%0)%1={%2,%3,...}%4: %0:Iterator@%1={%0:0,%0:1,...}F@a$,Iter_Single@
+#define ITER_TAG(%0)%1={%2,%3,...}%4: using_deprecated_itertag_syntax,%0:Iterator@%1={%0:0,%0:1,...}F@a$,Iter_Single@
 
 // Many tag types for declared iterators.
 #define Iterator@_:            ITER_TAG(_)
@@ -1007,8 +1007,8 @@ stock const
 
 #undef Iterator
 FUNC_PAWNDOC(Iterator:Iterator(name));
-//#define _no_itertag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
-#define ITERATOR__%1<%2> Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={0,1,...}F@a$,Iter_Single@%1 F@a$F@a$
+#define _no_itertag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
+#define ITERATOR__%1<%2> _no_itertag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={_no_itertag:0,_no_itertag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
 
 #if YSI_KEYWORD(Iterator)
 	#define Iterator:%1<%2> ITERATOR__ %1<%2>
@@ -1028,4 +1028,17 @@ FUNC_PAWNDOC(Iterator:Iterator(name));
 #if YSI_KEYWORD(List)
 	#define List:%0<%1,%2> ITERATOR__ %0<%1,%2>,%0[%1]
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Suppress warnings when <c>_:</c> is used (correctly) instead of
+ *  <c>_no_itertag:</c>.  This function is never called, it only exists to
+ *  check tags in <c>Iter_Add</c> et. al, while guarded by <c>FALSE ?</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+stock operator*(_no_itertag:a, b)
+{
+	#pragma unused a, b
+	return 0;
+}
 
