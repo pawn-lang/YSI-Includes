@@ -116,7 +116,7 @@ public OnPlayerConnect(playerid)
 	forward Testing_OnPlayerConnect(playerid);
 #endif
 
-PTEST_INIT__ Player_ChangeLanguage(playerid)
+@testinit() Player_ChangeLanguage(playerid)
 {
 	// So that their language can be changed.
 	Player_ForceLogin(gBot);
@@ -134,14 +134,14 @@ PTEST_INIT__ Player_ChangeLanguage(playerid)
 	ASSERT_EQ(Langs_GetLanguage("NL"), ret[E_USER_PRELOAD_LANG]);
 }
 
-PTEST_CLOSE__ Player_ChangeLanguage(playerid)
+@testclose() Player_ChangeLanguage(playerid)
 {
 	// Reset the player.
 	Player_ChangeLanguage(gBot, "EN");
 	//Kick(gBot);
 }
 
-PTEST_INIT__ Player_ChangePassword(playerid)
+@testinit() Player_ChangePassword(playerid)
 {
 	// So that their password can be changed.
 	Player_ForceLogin(gBot);
@@ -159,14 +159,14 @@ PTEST_INIT__ Player_ChangePassword(playerid)
 	ASSERT_SAME(ret[E_USER_PRELOAD_PASS], "B506FEEEDFB83EF44A5DC2E00BF1535E58E3B37A044730F2A6718497A224B5455A441F39F9EB91967B38607416A9B85E5DE3CBE3A48E7A77AB5808674EF33822");
 }
 
-PTEST_CLOSE__ Player_ChangePassword(playerid)
+@testclose() Player_ChangePassword(playerid)
 {
 	// Reset the player.
 	Player_ChangePassword(gBot, "thisisanOKpass");
 	//Kick(gBot);
 }
 
-PTEST_INIT__ Player_Preload(playerid)
+@testinit() Player_Preload(playerid)
 {
 	Player_ForceLogin(gBot);
 }
@@ -184,7 +184,7 @@ PTEST_INIT__ Player_Preload(playerid)
 	ASSERT(gettime() >= ret[E_USER_PRELOAD_DATE]);
 }
 
-PTEST_INIT__ Player_GetID(playerid)
+@testinit() Player_GetID(playerid)
 {
 	// So that their password can be changed.
 	Player_ForceLogin(gBot);

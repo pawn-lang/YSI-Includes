@@ -75,7 +75,7 @@ static
 	gZone = 0;
 
 // Test pulsing 1.
-PTEST_INIT__ GangZonePulse1(playerid)
+@testinit() GangZonePulse1(playerid)
 {
 	// Create the zone.
 	gZone = GangZoneCreate(-100.0, -100.0, 100.0, 100.0);
@@ -89,14 +89,14 @@ PTEST_INIT__ GangZonePulse1(playerid)
 	ASK("Is the zone pulsing from Red to Green?");
 }
 
-PTEST_CLOSE__ GangZonePulse1(playerid)
+@testclose() GangZonePulse1(playerid)
 {
 	GangZoneStopPulse(playerid, gZone);
 	GangZoneDestroy(gZone);
 }
 
 // Test pulsing 2.
-PTEST_INIT__ GangZonePulse2(playerid)
+@testinit() GangZonePulse2(playerid)
 {
 	// Create the zone.
 	gZone = GangZoneCreate(-100.0, -100.0, 100.0, 100.0);
@@ -110,14 +110,14 @@ PTEST_INIT__ GangZonePulse2(playerid)
 	ASK("Is the zone pulsing from Red to Green fast?");
 }
 
-PTEST_CLOSE__ GangZonePulse2(playerid)
+@testclose() GangZonePulse2(playerid)
 {
 	GangZoneStopPulse(playerid, gZone);
 	GangZoneDestroy(gZone);
 }
 
 // Test pulsing 3.
-PTEST_INIT__ GangZonePulse3(playerid)
+@testinit() GangZonePulse3(playerid)
 {
 	// Create the zone.
 	gZone = GangZoneCreate(-100.0, -100.0, 100.0, 100.0);
@@ -131,14 +131,14 @@ PTEST_INIT__ GangZonePulse3(playerid)
 	ASK("Is the zone jumping back to Red?");
 }
 
-PTEST_CLOSE__ GangZonePulse3(playerid)
+@testclose() GangZonePulse3(playerid)
 {
 	GangZoneStopPulse(playerid, gZone);
 	GangZoneDestroy(gZone);
 }
 
 // Test pulsing 4.
-PTEST_INIT__ GangZonePulse4(playerid)
+@testinit() GangZonePulse4(playerid)
 {
 	// Create the zone.
 	gZone = GangZoneCreate(-100.0, -100.0, 100.0, 100.0);
@@ -152,14 +152,14 @@ PTEST_INIT__ GangZonePulse4(playerid)
 	ASK("Is the zone stopping on Green?");
 }
 
-PTEST_CLOSE__ GangZonePulse4(playerid)
+@testclose() GangZonePulse4(playerid)
 {
 	GangZoneStopPulse(playerid, gZone);
 	GangZoneDestroy(gZone);
 }
 
 // Test pulsing 7.
-PTEST_INIT__ GangZonePulse7(playerid)
+@testinit() GangZonePulse7(playerid)
 {
 	// Create the zone.
 	gZone = GangZoneCreate(-100.0, -100.0, 100.0, 100.0);
@@ -175,14 +175,14 @@ PTEST_INIT__ GangZonePulse7(playerid)
 	ASK("Was there no pause at the start?");
 }
 
-PTEST_CLOSE__ GangZonePulse7(playerid)
+@testclose() GangZonePulse7(playerid)
 {
 	GangZoneStopPulse(playerid, gZone);
 	GangZoneDestroy(gZone);
 }
 
 // Test pulsing 5.
-PTEST_INIT__ GangZonePulse5(playerid)
+@testinit() GangZonePulse5(playerid)
 {
 	// Create the zone.
 	gZone = GangZoneCreate(-100.0, -100.0, 100.0, 100.0);
@@ -196,14 +196,14 @@ PTEST_INIT__ GangZonePulse5(playerid)
 	ASK("Is the zone stopping on Red?");
 }
 
-PTEST_CLOSE__ GangZonePulse5(playerid)
+@testclose() GangZonePulse5(playerid)
 {
 	GangZoneStopPulse(playerid, gZone);
 	GangZoneDestroy(gZone);
 }
 
 // Test pulsing 6.
-PTEST_INIT__ GangZonePulse6(playerid)
+@testinit() GangZonePulse6(playerid)
 {
 	// Create the zone.
 	gZone = GangZoneCreate(-100.0, -100.0, 100.0, 100.0);
@@ -217,14 +217,14 @@ PTEST_INIT__ GangZonePulse6(playerid)
 	ASK("Is Green -> Red faster?");
 }
 
-PTEST_CLOSE__ GangZonePulse6(playerid)
+@testclose() GangZonePulse6(playerid)
 {
 	GangZoneStopPulse(playerid, gZone);
 	GangZoneDestroy(gZone);
 }
 
 // Test stopping 1.
-PTEST_INIT__ GangZoneStopPulse1(playerid)
+@testinit() GangZoneStopPulse1(playerid)
 {
 	// Create the zone.
 	gZone = GangZoneCreate(-100.0, -100.0, 100.0, 100.0);
@@ -239,13 +239,13 @@ PTEST_INIT__ GangZoneStopPulse1(playerid)
 	ASK("Is the zone NOT pulsing?");
 }
 
-PTEST_CLOSE__ GangZoneStopPulse1(playerid)
+@testclose() GangZoneStopPulse1(playerid)
 {
 	GangZoneDestroy(gZone);
 }
 
 // Test stopping 2.
-PTEST_INIT__ GangZoneStopPulse2(playerid)
+@testinit() GangZoneStopPulse2(playerid)
 {
 	// Create the zone.
 	gZone = GangZoneCreate(-100.0, -100.0, 100.0, 100.0);
@@ -266,7 +266,7 @@ public GangZoneStopPulse2(playerid)
 	GangZoneStopPulse(playerid, gZone);
 }
 
-PTEST_CLOSE__ GangZoneStopPulse2(playerid)
+@testclose() GangZoneStopPulse2(playerid)
 {
 	GangZoneDestroy(gZone);
 }

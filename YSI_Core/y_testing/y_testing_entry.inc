@@ -1034,12 +1034,12 @@ TEST__ y_testing_2()
 	Testing_SurpressOneFail(); // Reduce the failure count.
 }
 
-TEST_INIT__ y_testing_1()
+@testinit() y_testing_1()
 {
 	YSI_g_sTestResult = 5;
 }
 
-TEST__ y_testing_1()
+@test(.group = "y_testing") y_testing_1()
 {
 	new
 		x = YSI_g_sTestResult;
@@ -1062,7 +1062,7 @@ TEST__ y_testing_1()
 	ASSERT_EQ(YSI_g_sTestResult, 8);
 }
 
-TEST_CLOSE__ y_testing_1()
+@testclose() y_testing_1()
 {
 	++YSI_g_sTestResult;
 }

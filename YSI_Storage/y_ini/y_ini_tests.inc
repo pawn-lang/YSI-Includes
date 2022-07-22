@@ -976,7 +976,7 @@ public INI_PUB_Inl_(string:name[], string:value[])
 	}
 }
 
-TEST_INIT__ INI_WriteComments()
+@testinit() INI_WriteComments()
 {
 	new INI:i = INI_Open(MakeYINITestPath("test10.ini"));
 	INI_SetTag(i, "tag_with_parent");
@@ -986,7 +986,7 @@ TEST_INIT__ INI_WriteComments()
 	INI_Close(i);
 }
 
-TEST_CLOSE__ INI_WriteComments()
+@testclose() INI_WriteComments()
 {
 	new INI:i = INI_Open(MakeYINITestPath("test10.ini"));
 	INI_SetTag(i, "tag_with_parent");

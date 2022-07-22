@@ -1,5 +1,5 @@
 // .\omp-server.exe args -- test moo --opt=7 positional -c:8 -c:9 -c+ "-i=8,9" -i=10 -i:134 --help "this is a long string yeah" a -- the rest go here#
-TEST_INIT__ y_args()
+@testinit() y_args()
 {
 	Args_LazyInit();
 }
