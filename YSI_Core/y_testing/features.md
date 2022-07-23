@@ -76,7 +76,7 @@ Define this to only run one single test.  Again this requires `RUN_TESTS` to be 
 @test() WontBeRun()
 {
 	ASSERT(FALSE);
-}
+}	
 
 @test() MyNewTest()
 {
@@ -113,6 +113,8 @@ ASSERT_SAME(expr, "string"); // Test if `expr == "string"`, with the actual valu
 ASSERT_DIFF(expr, "string"); // Test if `expr != "string"`, with the actual value given in a failure.
 ASSERT_NEAR(expr, "string"); // Test if `expr == "string"`, ignoring case, with the actual value given in a failure.
 ```
+
+These assertions will also give tag-mismatch warnings when appropriate, and can determine the tag types to customise their comparisons.  For example, using `ASSERT_EQ` on `Float:` variables will check that the two values are very close together, but will not check that they are precisely the same.  They will also use this tag information to more nicely format the different number types in failure messages.
 
 ## `ASK`
 
