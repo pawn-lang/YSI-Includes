@@ -380,8 +380,21 @@ static stock const
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock _Testing_Start(const name[])
+stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 {
+	#pragma unused group, slow
+	// This is a compile-time only test (i.e. tests syntax/warnings etc).
+	if (!run)
+	{
+		YSI_gTestComplete = true;
+		// Subtract the number of tests run, this isn't one.
+		--YSI_g_sTests;
+		// Now double return, to exit the call site as well.
+		#emit LOAD.S.pri       0
+		#emit SCTRL            5
+		#emit SCTRL            4
+		#emit RETN
+	}
 	YSI_gTestComplete = false;
 	// Gets a reference to the name string, which is also an intrusive linked
 	// list of failures.
@@ -390,8 +403,9 @@ stock _Testing_Start(const name[])
 	YSI_g_sCurTest = AMX_Ref(name[0]);
 	// My very first legitimate usage of `heapspace()` for something other than
 	// as a dummy no-op function call!  I'm actually quite happy I found a use
-	// for it!
-	YSI_g_sCurHeap = heapspace();
+	// for it!  Add 12 for the parameters to this function that we're about to
+	// forget about (i.e the stack space we're about to free up).
+	YSI_g_sCurHeap = heapspace() + 12;
 	Debug_Print3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
 	StrCpy(YSI_gCurTestName, name[2]);
@@ -549,6 +563,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 #if defined RUN_TESTS
 	Debug_Print2("Testing_Run() called");
 	new
+		bool:skipped,
 		idx = 0,
 		buffer[FUNCTION_LENGTH];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
@@ -567,7 +582,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 		fails = YSI_g_sFails;
 		Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
 		YSI_g_sInTest = true,
-		R@(buffer, YSI_EMPTY),
+		skipped = bool:R@(buffer, YSI_EMPTY),
 		YSI_g_sInTest = false;
 		++YSI_g_sTests;
 		if (!YSI_gTestComplete)
@@ -577,7 +592,10 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			print("Test did not complete (possible crash).\n");
 #endif
 		}
-		if (YSI_g_sFails != fails)
+		if (skipped)
+		{
+		}
+		else if (YSI_g_sFails != fails)
 		{
 			AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
 			AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - fails),
