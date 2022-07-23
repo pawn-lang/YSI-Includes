@@ -418,10 +418,11 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 	case cellmin:
 	{
 		// Find a new group.
-		format(YSI_g_sCurrentGroup, sizeof (YSI_g_sCurrentGroup), "Group %s", group);
+		YSI_g_sCurrentGroup[0] = '\0',
+		strcat(YSI_g_sCurrentGroup, group);
 		TEST_REPORT("******************************************");
 		TEST_REPORT("****                                  ****");
-		TEST_REPORT("**** %32s ****", YSI_g_sCurrentGroup);
+		TEST_REPORT("**** Group: %25s ****", YSI_g_sCurrentGroup);
 		TEST_REPORT("****                                  ****");
 		TEST_REPORT("******************************************");
 		TEST_REPORT(YSI_SPACE);
@@ -429,7 +430,7 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 	default:
 	{
 		// Any other group.
-		if (strcmp(YSI_g_sCurrentGroup[6], group))
+		if (strcmp(YSI_g_sCurrentGroup, group))
 		{
 			ret = 1;
 		}
@@ -1126,7 +1127,7 @@ stock Testing_RunAll()
 	Server_FinishIntroMessage();
 #endif
 	Testing_Run(tests, checks, fails, _, true);
-#if !defined JUST_TEST && defined YSI_TESTS
+#if !defined JUST_TEST && !defined JUST_TEST_GROUP && defined YSI_TESTS
 	if (YSI_g_sTestResult != 9) print("*** Test system verification failed!");
 	else
 #endif
