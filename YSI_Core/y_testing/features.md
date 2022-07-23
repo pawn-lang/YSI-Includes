@@ -16,7 +16,7 @@ Will ensure this test is never run.  Useful for testing things at compile-time o
 
 ### `.group`
 
-Attach multiple tests together in to a single group.  The (unimplemented) plan is to allow only tests in a specified group to be run, and for all tests in a group to be collated together in the output:
+Attach multiple tests together in to a single group.  Tests in the same group are collected together in the output, and only specific groups can be specified as being run.
 
 ```pawn
 @test(.group = "Message Tests") SendClientMessage1(playerid)
@@ -87,6 +87,35 @@ Define this to only run one single test.  Again this requires `RUN_TESTS` to be 
 ### `YSI_TESTS`
 
 This includes all the YSI tests as well.  You probably don't want this.
+
+### `YSI_DIALOG_ASK`
+
+Use dialogs instead of `y`/`n` keys for getting user `ASK` responses.
+
+### `JUST_TEST_GROUP`
+
+Run all the tests in only one group.  Slow tests are not run by default in this case, unlike the `JUST_TEST` case and require `RUN_SLOW_TESTS`.  This takes a string, not a test name.
+
+```pawn
+#define JUST_TEST_GROUP "Main"
+#define RUN_TESTS
+#include <YSI_Core\y_testing>
+
+@test(.group = "Other") WontBeRun()
+{
+	ASSERT(FALSE);
+}	
+
+@test() AlsoNotRun()
+{
+	ASSERT(FALSE);
+}	
+
+@test(.group = "Main") MyGroupedTest()
+{
+	ASSERT(TRUE);
+}
+```
 
 ## Assertions
 
