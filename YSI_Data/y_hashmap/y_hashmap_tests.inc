@@ -110,7 +110,7 @@ enum E_HASH_MAP_TEST
 	HashMap_Add(m, "Hello", 42);
 	ASSERT(bool:data[42][E_HASH_MAP_TEST_NAME][0]);
 	ASSERT_SAME(data[42][E_HASH_MAP_TEST_NAME], "Hello");
-	ASSERT_EQ(data[42][E_HASH_MAP_TEST_DATA][0], bernstein("Hello"));
+	ASSERT_EQ(data[42][E_HASH_MAP_TEST_DATA][0], BernsteinHash("Hello"));
 	ASSERT_ZE(data[42][E_HASH_MAP_TEST_DATA][1]);
 	ASSERT_ZE(data[42][E_HASH_MAP_TEST_DATA][2]);
 }
@@ -339,6 +339,10 @@ enum E_HASH_MAP_TEST
 
 @test(.group = "y_hashmap", .slow = true) y_hashmap_Get1000()
 {
+	if (heapspace() < 145000)
+	{
+		Debug_Info("y_hashmap tests require a large heap, increase it to at least 145000.");
+	}
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
@@ -357,6 +361,10 @@ enum E_HASH_MAP_TEST
 
 @test(.group = "y_hashmap", .slow = true) y_hashmap_Remove500()
 {
+	if (heapspace() < 145000)
+	{
+		Debug_Info("y_hashmap tests require a large heap, increase it to at least 145000.");
+	}
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
@@ -412,6 +420,10 @@ enum E_HASH_MAP_TEST
 
 @test(.group = "y_hashmap", .slow = true) y_hashmap_Set500()
 {
+	if (heapspace() < 145000)
+	{
+		Debug_Info("y_hashmap tests require a large heap, increase it to at least 145000.");
+	}
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
