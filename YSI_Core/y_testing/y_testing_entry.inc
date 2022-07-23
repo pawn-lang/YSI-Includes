@@ -382,9 +382,14 @@ static stock const
 
 stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 {
-	#pragma unused group, slow
+	#pragma unused group
 	// This is a compile-time only test (i.e. tests syntax/warnings etc).
+#if defined RUN_SLOW_TESTS
+	#pragma unused slow
 	if (!run)
+#else
+	if (!run || slow)
+#endif
 	{
 		YSI_gTestComplete = true;
 		// Subtract the number of tests run, this isn't one.
