@@ -418,13 +418,18 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 	case cellmin:
 	{
 		// Find a new group.
-		YSI_g_sCurrentGroup[0] = '\0',
-		strcat(YSI_g_sCurrentGroup, group);
+		format(YSI_g_sCurrentGroup, sizeof (YSI_g_sCurrentGroup), "Group %s", group);
+		TEST_REPORT("******************************************");
+		TEST_REPORT("****                                  ****");
+		TEST_REPORT("**** %32s ****", YSI_g_sCurrentGroup);
+		TEST_REPORT("****                                  ****");
+		TEST_REPORT("******************************************");
+		TEST_REPORT(YSI_SPACE);
 	}
 	default:
 	{
 		// Any other group.
-		if (strcmp(YSI_g_sCurrentGroup, group))
+		if (strcmp(YSI_g_sCurrentGroup[6], group))
 		{
 			ret = 1;
 		}
