@@ -748,7 +748,8 @@ Testing_Next_retry:
 			{
 				state y_testing_phase : y_testing_phase_determine;
 				#emit PUSH                      YSI_EMPTY
-				#emit PUSH.C                    4
+				#emit PUSH.S                    playerid
+				#emit PUSH.C                    8
 				#emit LCTRL                     6
 				#emit ADD.C                     36
 				#emit LCTRL                     8
