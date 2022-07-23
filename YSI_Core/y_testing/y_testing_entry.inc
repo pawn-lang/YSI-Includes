@@ -723,12 +723,16 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 		for ( ; ; )
 		{
 			// Get the last test (nicely fails for cellmax).
-			if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
+			if ((YSI_g_sPlayer = AMX_GetPublicEntryPrefix(YSI_g_sPlayer, entry, Y_TESTING_PTEST_SEARCH)))
 			{
+				AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
 				// Call the shutdown function if there is one.
 				buffer[0] = Y_TESTING_PSHUT;
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
+				// Remove the test from the header.
+				#emit ZERO.pri
+				#emit SREF.S.pri                entry
 			}
 			// Update fail counts.
 			if (YSI_g_sPlayerFails != YSI_g_sFails)
