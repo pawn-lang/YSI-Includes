@@ -760,6 +760,8 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			skipped,
 			next,
 			buffer[FUNCTION_LENGTH];
+		static
+			bool:grouping;
 		for ( ; ; )
 		{
 			// Get the last test (nicely fails for cellmax).
@@ -803,6 +805,7 @@ Testing_Next_retry:
 				{
 					// Skip for now.
 					YSI_g_sPlayer = next;
+					grouping = true;
 					goto Testing_Next_retry;
 				}
 				case 2:
@@ -835,6 +838,13 @@ Testing_Next_retry:
 				#emit PUSH.pri
 				#emit LREF.S.pri                entry
 				#emit SCTRL                     6
+			}
+			else if (grouping)
+			{
+				grouping = false;
+				YSI_g_sPlayer = 0;
+				YSI_g_sCurrentGroup[0] = cellmin;
+				goto Testing_Next_retry;
 			}
 			else
 			{
@@ -1036,6 +1046,7 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 					YSI_g_sTests = 0;
 					YSI_g_sChecks = 0;
 					YSI_g_sFails = 0;
+					YSI_g_sCurrentGroup[0] = '\0';
 					Testing_Next(playerid);
 				}
 				#if defined Testing_OnPlayerSpawn
