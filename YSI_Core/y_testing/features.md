@@ -77,7 +77,6 @@ Define this to only run one single test.  Again this requires `RUN_TESTS` to be 
 {
 	ASSERT(FALSE);
 }
-```
 
 @test() MyNewTest()
 {
