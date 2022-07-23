@@ -513,12 +513,12 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 			#emit ADD
 			#emit SCTRL            4
 			//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
-		#if defined YSI_NO_DIALOG_ASK
+		#if defined YSI_DIALOG_ASK
+			YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
+		#else
 			// For early open.mp testing
 			format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), "TEST: %s (~k~~CONVERSATION_YES~ / ~k~~CONVERSATION_NO~)", YSI_g_sFailMessage),
 			SendClientMessage(playerid, 0xFF8010FF, YSI_g_sFailMessage);
-		#else
-			YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
 		#endif
 			YSI_g_sAsked = true;
 	}
@@ -850,10 +850,10 @@ Testing_Next_retry:
 			{
 				YSI_g_sAsked = true;
 				// No more tests.
-				#if defined YSI_NO_DIALOG_ASK
-					printf("*** Test%s: %d, Check%s: %d, Fail%s: ???", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails));
-				#else
+				#if defined YSI_DIALOG_ASK
 					printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails), YSI_g_sFails);
+				#else
+					printf("*** Test%s: %d, Check%s: %d, Fail%s: ???", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails));
 				#endif
 				if (YSI_g_sFails)
 				{
@@ -869,11 +869,11 @@ Testing_Next_retry:
 				else
 				{
 					#if !defined LIGHT_TEST_REPORT
-						#if defined YSI_NO_DIALOG_ASK
-							Server_PrintIntroMessage("       PLEASE NOTE FAILED TESTS."),
+						#if defined YSI_DIALOG_ASK
+							Server_PrintIntroMessage("       ALL PLAYER TESTS PASSED!"),
 							Server_FinishIntroMessage();
 						#else
-							Server_PrintIntroMessage("       ALL PLAYER TESTS PASSED!"),
+							Server_PrintIntroMessage("       PLEASE NOTE FAILED TESTS."),
 							Server_FinishIntroMessage();
 						#endif
 					#endif
@@ -894,7 +894,43 @@ Testing_Next_retry:
 		}
 	}
 	
-	#if defined YSI_NO_DIALOG_ASK
+	#if defined YSI_DIALOG_ASK
+		public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+		{
+			if (dialogid == Y_TESTING_DIALOG_ID)
+			{
+				++YSI_g_sChecks;
+				if (response)
+				{
+					// Pass.
+					TEST_REPORT(TEST_PASSED);
+				}
+				else
+				{
+					// Fail.
+					TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
+					++YSI_g_sFails;
+				}
+				Testing_Next(playerid);
+				return 1;
+			}
+			#if defined Testing_OnDialogResponse
+				return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
+			#else
+				return 1;
+			#endif
+		}
+		
+		#if defined _ALS_OnDialogResponse
+			#undef OnDialogResponse
+		#else
+			#define _ALS_OnDialogResponse
+		#endif
+		#define OnDialogResponse Testing_OnDialogResponse
+		#if defined Testing_OnDialogResponse
+			forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
+		#endif
+	#else
 		#if !defined KEY
 			#define KEY: _:
 		#endif
@@ -943,42 +979,6 @@ Testing_Next_retry:
 		#define OnPlayerKeyStateChange Testing_OnPlayerKeyStateChange
 		#if defined Testing_OnPlayerKeyStateChange
 			forward Testing_OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys);
-		#endif
-	#else
-		public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
-		{
-			if (dialogid == Y_TESTING_DIALOG_ID)
-			{
-				++YSI_g_sChecks;
-				if (response)
-				{
-					// Pass.
-					TEST_REPORT(TEST_PASSED);
-				}
-				else
-				{
-					// Fail.
-					TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
-					++YSI_g_sFails;
-				}
-				Testing_Next(playerid);
-				return 1;
-			}
-			#if defined Testing_OnDialogResponse
-				return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
-			#else
-				return 1;
-			#endif
-		}
-		
-		#if defined _ALS_OnDialogResponse
-			#undef OnDialogResponse
-		#else
-			#define _ALS_OnDialogResponse
-		#endif
-		#define OnDialogResponse Testing_OnDialogResponse
-		#if defined Testing_OnDialogResponse
-			forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
 		#endif
 	#endif
 #endif
