@@ -622,7 +622,11 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 		entry,
 		buffer[FUNCTION_LENGTH];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
-	YSI_g_sCurrentGroup = "";
+	#if defined JUST_TEST_GROUP
+		YSI_g_sCurrentGroup = JUST_TEST_GROUP;
+	#else
+		YSI_g_sCurrentGroup[0] = '\0';
+	#endif
 	do
 	{
 		grouping = false;
@@ -640,19 +644,23 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			#emit STOR.S.pri                skipped
 			switch (skipped)
 			{
-			case 1:
-			{
-				// Skip for now.
-				grouping = true;
-				continue;
-			}
-			case 2:
-			{
-				// Skip forever.
-				#emit ZERO.pri
-				#emit SREF.S.pri                entry
-				continue;
-			}
+			#if defined JUST_TEST_GROUP
+				case 1, 2:
+			#else
+				case 1:
+				{
+					// Skip for now.
+					grouping = true;
+					continue;
+				}
+				case 2:
+			#endif
+				{
+					// Skip forever.
+					#emit ZERO.pri
+					#emit SREF.S.pri                entry
+					continue;
+				}
 			}
 			state y_testing_phase : y_testing_phase_call;
 			AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
@@ -801,21 +809,25 @@ Testing_Next_retry:
 				#emit STOR.S.pri                skipped
 				switch (skipped)
 				{
-				case 1:
-				{
-					// Skip for now.
-					YSI_g_sPlayer = next;
-					grouping = true;
-					goto Testing_Next_retry;
-				}
-				case 2:
-				{
-					// Skip forever.
-					#emit ZERO.pri
-					#emit SREF.S.pri                entry
-					YSI_g_sPlayer = next;
-					goto Testing_Next_retry;
-				}
+				#if defined JUST_TEST_GROUP
+					case 1, 2:
+				#else
+					case 1:
+					{
+						// Skip for now.
+						YSI_g_sPlayer = next;
+						grouping = true;
+						goto Testing_Next_retry;
+					}
+					case 2:
+				#endif
+					{
+						// Skip forever.
+						#emit ZERO.pri
+						#emit SREF.S.pri                entry
+						YSI_g_sPlayer = next;
+						goto Testing_Next_retry;
+					}
 				}
 				state y_testing_phase : y_testing_phase_call;
 				AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
@@ -1046,7 +1058,11 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 					YSI_g_sTests = 0;
 					YSI_g_sChecks = 0;
 					YSI_g_sFails = 0;
-					YSI_g_sCurrentGroup[0] = '\0';
+					#if defined JUST_TEST_GROUP
+						YSI_g_sCurrentGroup = JUST_TEST_GROUP;
+					#else
+						YSI_g_sCurrentGroup[0] = '\0';
+					#endif
 					Testing_Next(playerid);
 				}
 				#if defined Testing_OnPlayerSpawn
