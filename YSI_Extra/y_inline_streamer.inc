@@ -136,6 +136,88 @@ Optional plugins:
 	#define Streamer_RemoveIntData( YSI_Streamer_RemoveIntData(
 #endif
 
+stock bool:YSI_Streamer_GetFloatData(type, STREAMER_ALL_TAGS:id, data, &Float:result)
+{
+	if (data & 0x40000000)
+	{
+		// Custom data
+		if (Streamer_HasIntData(type, id, data))
+		{
+			return
+				result = Float:Streamer_GetIntData(type, id, data),
+				true;
+		}
+		return false;
+	}
+	else
+	{
+		return bool:Streamer_GetFloatData(type, id, data, result);
+	}
+}
+
+#if defined _ALS_Streamer_GetFloatData
+	#undef Streamer_GetFloatData
+#endif
+#define _ALS_Streamer_GetFloatData
+#define Streamer_GetFloatData( YSI_Streamer_GetFloatData(
+
+stock bool:YSI_Streamer_SetFloatData(type, STREAMER_ALL_TAGS:id, data, Float:value)
+{
+	if (data & 0x40000000)
+	{
+		// Custom data
+		return bool:Streamer_SetIntData(type, id, data, _:value);
+	}
+	else
+	{
+		return bool:Streamer_SetFloatData(type, id, data, value);
+	}
+}
+
+#if defined _ALS_Streamer_SetFloatData
+	#undef Streamer_SetFloatData
+#endif
+#define _ALS_Streamer_SetFloatData
+#define Streamer_SetFloatData( YSI_Streamer_SetFloatData(
+
+stock bool:YSI_Streamer_HasFloatData(type, STREAMER_ALL_TAGS:id, data)
+{
+	if (data & 0x40000000)
+	{
+		// Custom data
+		return bool:Streamer_HasIntData(type, id, data);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+#if defined _ALS_Streamer_HasFloatData
+	#undef Streamer_HasFloatData
+#endif
+#define _ALS_Streamer_HasFloatData
+#define Streamer_HasFloatData( YSI_Streamer_HasFloatData(
+
+stock bool:YSI_Streamer_RemoveFloatData(type, STREAMER_ALL_TAGS:id, data)
+{
+	if (data & 0x40000000)
+	{
+		// Custom data
+		return Streamer_RemoveIntData(type, id, data);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+#if defined _ALS_Streamer_RemoveFloatData
+	#undef Streamer_RemoveFloatData
+#endif
+#define _ALS_Streamer_RemoveFloatData
+#define Streamer_RemoveFloatData( YSI_Streamer_RemoveFloatData(
+
 #if defined E_STREAMER_CUSTOM
 	#define E_YSI_DYNAMIC_OBJECT_MOVED E_STREAMER_CUSTOM(0x59534921) // YSI!
 
