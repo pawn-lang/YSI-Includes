@@ -384,6 +384,15 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 {
 	#pragma unused group
 	// This is a compile-time only test (i.e. tests syntax/warnings etc).
+#if defined JUST_TEST
+	// Never skip a `JUST_TEST` test, even if it is slow and we don't want
+	// slow tests.  Always `[2]`, even with string packing.
+	if (run && !strcmp(name[2], #JUST_TEST))
+	{
+		// Do nothing, just don't enter the `else` block.
+	}
+	else
+#endif
 #if defined RUN_SLOW_TESTS
 	#pragma unused slow
 	if (!run)
