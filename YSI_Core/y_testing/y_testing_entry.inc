@@ -214,7 +214,8 @@ static stock
 	YSI_g_sTests = 0,
 	YSI_g_sChecks = 0,
 	YSI_g_sPlayerFails = 0,
-	YSI_g_sFails = 0;
+	YSI_g_sFails = 0,
+	YSI_g_sCurrentGroup[32];
 
 stock
 	YSI_gCurTestName[FUNCTION_LENGTH];
@@ -382,7 +383,6 @@ static stock const
 
 stock _Testing_Start(const name[], run = true, const group[] = "", slow = false) <y_testing_phase : y_testing_phase_determine>
 {
-	#pragma unused group
 	new ret = 0;
 #if defined JUST_TEST
 	// Never skip a `JUST_TEST` test, even if it is slow and we don't want
@@ -405,7 +405,31 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 		// Never run.
 		ret = 2;
 	}
-	// TODO: `ret = 1` when the group doesn't match.
+	else switch (YSI_g_sCurrentGroup[0])
+	{
+	case '\0':
+	{
+		// Default (global) group.
+		if (group[0])
+		{
+			ret = 1;
+		}
+	}
+	case cellmin:
+	{
+		// Find a new group.
+		YSI_g_sCurrentGroup[0] = '\0',
+		strcat(YSI_g_sCurrentGroup, group);
+	}
+	default:
+	{
+		// Any other group.
+		if (strcmp(YSI_g_sCurrentGroup, group))
+		{
+			ret = 1;
+		}
+	}
+	}
 	{}
 	// Now double return, to exit the call site as well.
 	#emit LOAD.S.alt       ret
@@ -587,83 +611,94 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 #if defined RUN_TESTS
 	Debug_Print2("Testing_Run() called");
 	new
+		bool:grouping,
 		skipped,
 		idx = 0,
 		entry,
 		buffer[FUNCTION_LENGTH];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, Y_TESTING_TEST_SEARCH)))
+	YSI_g_sCurrentGroup = "";
+	do
 	{
-		state y_testing_phase : y_testing_phase_determine;
-		#emit PUSH                      YSI_EMPTY
-		#emit PUSH.C                    4
-		#emit LCTRL                     6
-		#emit ADD.C                     36
-		#emit LCTRL                     8
-		#emit PUSH.pri
-		#emit LREF.S.pri                entry
-		#emit SCTRL                     6
-		#emit STOR.S.pri                skipped
-		switch (skipped)
+		grouping = false;
+		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, Y_TESTING_TEST_SEARCH)))
 		{
-		case 1:
-			// Skip for now.
-			continue;
-		case 2:
-		{
-			// Skip forever.
+			state y_testing_phase : y_testing_phase_determine;
+			#emit PUSH                      YSI_EMPTY
+			#emit PUSH.C                    4
+			#emit LCTRL                     6
+			#emit ADD.C                     36
+			#emit LCTRL                     8
+			#emit PUSH.pri
+			#emit LREF.S.pri                entry
+			#emit SCTRL                     6
+			#emit STOR.S.pri                skipped
+			switch (skipped)
+			{
+			case 1:
+			{
+				// Skip for now.
+				grouping = true;
+				continue;
+			}
+			case 2:
+			{
+				// Skip forever.
+				#emit ZERO.pri
+				#emit SREF.S.pri                entry
+				continue;
+			}
+			}
+			state y_testing_phase : y_testing_phase_call;
+			AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
+			Server_RestartLongCall();
+			// Call the setup function if there is one.
+			buffer[0] = Y_TESTING_INIT,
+			R@(buffer, YSI_EMPTY),
+			// Call the test.
+			//buffer[0] = Y_TESTING_TEST,
+			fails = YSI_g_sFails;
+			Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
+			YSI_g_sInTest = true;
+			#emit PUSH                      YSI_EMPTY
+			#emit PUSH.C                    4
+			#emit LCTRL                     6
+			#emit ADD.C                     36
+			#emit LCTRL                     8
+			#emit PUSH.pri
+			#emit LREF.S.pri                entry
+			#emit SCTRL                     6
+			YSI_g_sInTest = false;
+			++YSI_g_sTests;
+			if (!YSI_gTestComplete)
+			{
+#if defined INCLUDE_TESTS || defined RUN_TESTS
+				++YSI_g_sFails;
+				print("Test did not complete (possible crash).\n");
+#endif
+			}
+			if (YSI_g_sFails != fails)
+			{
+				AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
+				AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - fails),
+				YSI_g_sFailTests = YSI_g_sCurTest;
+			}
+#if !defined TEST_SHOW_PASSES
+			else
+			{
+				TEST_REPORT(TEST_PASSED);
+				TEST_REPORT(YSI_SPACE);
+			}
+#endif
+			buffer[0] = Y_TESTING_SHUT,
+			R@(buffer, YSI_EMPTY);
+			// Invalidate the pointer.
 			#emit ZERO.pri
 			#emit SREF.S.pri                entry
-			continue;
 		}
-		}
-		state y_testing_phase : y_testing_phase_call;
-		AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
-		Server_RestartLongCall();
-		// Call the setup function if there is one.
-		buffer[0] = Y_TESTING_INIT,
-		R@(buffer, YSI_EMPTY),
-		// Call the test.
-		//buffer[0] = Y_TESTING_TEST,
-		fails = YSI_g_sFails;
-		Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
-		YSI_g_sInTest = true;
-		#emit PUSH                      YSI_EMPTY
-		#emit PUSH.C                    4
-		#emit LCTRL                     6
-		#emit ADD.C                     36
-		#emit LCTRL                     8
-		#emit PUSH.pri
-		#emit LREF.S.pri                entry
-		#emit SCTRL                     6
-		YSI_g_sInTest = false;
-		++YSI_g_sTests;
-		if (!YSI_gTestComplete)
-		{
-#if defined INCLUDE_TESTS || defined RUN_TESTS
-			++YSI_g_sFails;
-			print("Test did not complete (possible crash).\n");
-#endif
-		}
-		if (YSI_g_sFails != fails)
-		{
-			AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
-			AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - fails),
-			YSI_g_sFailTests = YSI_g_sCurTest;
-		}
-#if !defined TEST_SHOW_PASSES
-		else
-		{
-			TEST_REPORT(TEST_PASSED);
-			TEST_REPORT(YSI_SPACE);
-		}
-#endif
-		buffer[0] = Y_TESTING_SHUT,
-		R@(buffer, YSI_EMPTY);
-		// Invalidate the pointer.
-		#emit ZERO.pri
-		#emit SREF.S.pri                entry
+		YSI_g_sCurrentGroup[0] = cellmin;
 	}
+	while (grouping);
 	tests = YSI_g_sTests;
 	checks = YSI_g_sChecks;
 	fails = YSI_g_sFails;
