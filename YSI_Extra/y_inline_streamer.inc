@@ -182,15 +182,8 @@ stock bool:YSI_Streamer_SetFloatData(type, STREAMER_ALL_TAGS:id, data, Float:val
 
 stock bool:YSI_Streamer_HasFloatData(type, STREAMER_ALL_TAGS:id, data)
 {
-	if (data & 0x40000000)
-	{
-		// Custom data
-		return bool:Streamer_HasIntData(type, id, data);
-	}
-	else
-	{
-		return false;
-	}
+	// Custom data
+	return (data & 0x40000000) && bool:Streamer_HasIntData(type, id, data);
 }
 
 #if defined _ALS_Streamer_HasFloatData
@@ -201,15 +194,8 @@ stock bool:YSI_Streamer_HasFloatData(type, STREAMER_ALL_TAGS:id, data)
 
 stock bool:YSI_Streamer_RemoveFloatData(type, STREAMER_ALL_TAGS:id, data)
 {
-	if (data & 0x40000000)
-	{
-		// Custom data
-		return Streamer_RemoveIntData(type, id, data);
-	}
-	else
-	{
-		return false;
-	}
+	// Custom data
+	return (data & 0x40000000) && Streamer_RemoveIntData(type, id, data);
 }
 
 #if defined _ALS_Streamer_RemoveFloatData
