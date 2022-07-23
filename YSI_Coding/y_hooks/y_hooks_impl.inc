@@ -128,12 +128,6 @@ static stock
 	YSI_g_sReplacementsLongOrder[MAX_HOOK_REPLACEMENTS],
 	YSI_g_sReplacementsShortOrder[MAX_HOOK_REPLACEMENTS],
 	YSI_g_sReplacePtr = 0,
-	YSI_g_sInitFSPtr = 0,
-	YSI_g_sInitFSIdx = -1,
-	YSI_g_sInitFSRep = 0,
-	YSI_g_sInitGMPtr = 0,
-	YSI_g_sInitGMIdx = -1,
-	YSI_g_sInitGMRep = 0,
 	YSI_g_sInitPublicDiff = 0,
 	YSI_g_sActiveHooks = 0,
 	bool:YSI_g_sSortedOnce = false,
@@ -1122,7 +1116,71 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 	new
 		read = AMX_HEADER_NATIVES,
 		write = AMX_HEADER_NATIVES,
+		count = -YSI_g_sStupidCount,
 		tmp;
+	do
+	{
+		read -= 8,
+		// Check if we should skip it anyway (i.e. is it one of the prefixes
+		// we want removed).
+		tmp = AMX_Read(read + 4);
+		if (tmp == 0)
+		{
+			// No pointer, skip it.
+			++count;
+			continue;
+		}
+		switch (AMX_Read(tmp + AMX_BASE_ADDRESS))
+		{
+		#if !defined YSI_TESTS
+		case _A<@y_H>:
+		{
+			// This is conditional because some tests use it somewhere.
+			++count;
+			AMX_Write(read + 4, 0);
+			continue;
+		}
+		#endif
+		case
+			// These need to be on separate lines because they're extremely
+			// complex macros that the compiler will give up on if they're
+			// all on one line (due to line length limits).
+			_A<@_y_>,
+			_A<@CO_>,
+			_A<_@yH>,
+			_A<@_Hy>,
+			_A<@_yH>:
+		{
+			++count;
+			AMX_Write(read + 4, 0);
+			continue;
+		}
+		}
+	}
+	while (read != AMX_HEADER_PUBLICS);
+	
+	// Get the difference from the old to the new publics table.
+	YSI_g_sInitPublicDiff = count * 8;
+	
+	if (count < 0)
+	{
+		Debug_Fatal("Unused public count is negative, you're hooking only cached publics.");
+		return;
+	}
+	
+	// Get the number of slots that will be in use after the compression.
+	count = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8 - count;
+	
+	
+	// The number of unused slot bytes, for compression.
+	for (read = 0; read != YSI_g_sStupidCount; ++read)
+	{
+		
+	}
+	
+	// Reset to do the copying.
+	read = AMX_HEADER_NATIVES;
+	write = AMX_HEADER_NATIVES;
 	do
 	{
 		read -= 8,
@@ -1134,24 +1192,6 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 			// No pointer, skip it.
 			continue;
 		}
-		switch (AMX_Read(tmp + AMX_BASE_ADDRESS))
-		{
-		#if !defined YSI_TESTS
-		case _A<@y_H>:
-			// This is conditional because some tests use it somewhere.
-			continue;
-		#endif
-		case
-			// These need to be on separate lines because they're extremely
-			// complex macros that the compiler will give up on if they're
-			// all on one line (due to line length limits).
-			_A<@_y_>,
-			_A<@CO_>,
-			_A<_@yH>,
-			_A<@_Hy>,
-			_A<@_yH>:
-			continue;
-		}
 		// Neither an invalid pointer nor a removed name.
 		write -= 8,
 		AMX_Write(write + 4, tmp),
@@ -1159,8 +1199,6 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 		AMX_Write(write, tmp);
 	}
 	while (read != AMX_HEADER_PUBLICS);
-	// Get the difference from the old to the new publics table.
-	YSI_g_sInitPublicDiff = write - AMX_HEADER_PUBLICS;
 	// Move the start address UP to reduce the VM's search space.
 	if (YSI_g_sInitPublicDiff)
 	{
@@ -1265,7 +1303,7 @@ static stock Hooks_GetPluginCachedFunction(const name[], bool invalidate)
 		++YSI_g_sStupidCount;
 		if (invalidate)
 		{
-			AMX_Write(entry, 0);
+			AMX_Write(entry + 4, 0);
 		}
 	}
 }
@@ -1632,8 +1670,6 @@ public OnCodeInit()
 	
 	Hooks_CompressPublics();
 	Debug_Print1("Hooks_OnCodeInit end");
-	if (Server_JITExists())
-		Hooks_RepairJITInit();
 	return 1;
 }
 
@@ -1642,88 +1678,6 @@ public OnCodeInit()
 #if defined Hooks_OnCodeInit
 	forward Hooks_OnCodeInit();
 #endif
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_RepairJITInit</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	When using the JIT, the initialisation functions may have already had their
-	indexes looked up prior to calling the plugin.  It that case we need to keep
-	the index constant, even if a different public is now in that slot.
-	
-	The stub is the function put in to that index, which redirects the first
-	call to one of those publics to the correct place and restores whatever
-	public was previously in that slot.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC _Hooks_RepairStub()
-{
-	AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8, YSI_g_sInitFSRep);
-	AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8, YSI_g_sInitGMRep);
-	// Move the header up for searching.
-	if (YSI_g_sInitPublicDiff)
-	{
-		new tmp = AMX_Read(AMX_BASE_ADDRESS + 32);
-		AMX_Write(AMX_BASE_ADDRESS + 32, tmp + YSI_g_sInitPublicDiff),
-		AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
-		ResetStaticAmxHeader(),
-		YSI_g_sSortedOnce = true;
-	}
-}
-
-_Y_HOOKS_STATIC _Hooks_RepairStubFS()
-{
-	_Hooks_RepairStub();
-	#emit PUSH.C              0
-	#emit LCTRL               6
-	#emit ADD.C               36
-	#emit LCTRL               8
-	#emit PUSH.pri
-	#emit LOAD.pri            YSI_g_sInitFSPtr
-	#emit SCTRL               6
-	return 1;
-}
-
-_Y_HOOKS_STATIC _Hooks_RepairStubGM()
-{
-	_Hooks_RepairStub();
-	#emit PUSH.C              0
-	#emit LCTRL               6
-	#emit ADD.C               36
-	#emit LCTRL               8
-	#emit PUSH.pri
-	#emit LOAD.pri            YSI_g_sInitGMPtr
-	#emit SCTRL               6
-	return 1;
-}
-
-_Y_HOOKS_STATIC Hooks_RepairJITInit()
-{
-	if (FALSE)
-	{
-		_Hooks_RepairStubFS();
-		_Hooks_RepairStubGM();
-	}
-	// The pointer at this index needs to remain constant.  Replace it with a
-	// pointer to a stub that resets the pointer then calls the real init hook.
-	YSI_g_sInitFSPtr = GetPublicAddressFromName("OnFilterScriptInit");
-	YSI_g_sInitGMPtr = GetPublicAddressFromName("OnGameModeInit");
-	new
-		base = AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8,
-		stub = 0;
-	#emit CONST.pri           _Hooks_RepairStubFS
-	#emit STOR.S.pri          stub
-	YSI_g_sInitFSRep = AMX_Read(base),
-	AMX_Write(base, stub);
-	base = AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8;
-	#emit CONST.pri           _Hooks_RepairStubGM
-	#emit STOR.S.pri          stub
-	YSI_g_sInitGMRep = AMX_Read(base),
-	AMX_Write(base, stub);
-}
 
 #if !defined _ALS_numargs
 	native BAD_numargs() = numargs;

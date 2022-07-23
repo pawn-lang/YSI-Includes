@@ -101,6 +101,8 @@ static stock bool:DumpAMX_WriteAMXHeader(File:file, data[], &offset, compact)
 
 	new plain_amxhdr[AMX_HDR_CELLS];
 	GetRawAmxHeader(plain_amxhdr);
+	// We might clobber this.
+	plain_amxhdr[0] = AMX_HEADER_SIZE;
 
 	// Write the header with masked flags.
 	plain_amxhdr[2] &= 0xFFFF0006;
