@@ -959,8 +959,8 @@ HOOK__ y_hooks_Crash@1()
 {
 }
 
-HOOK__ y_hooks_Crash@2()
-{
+// Test K&R, because people have no taste.
+HOOK__ y_hooks_Crash@2() {
 }
 
 HOOK__ y_hooks_Crash@3()
@@ -999,8 +999,8 @@ HOOK_NATIVE__ min(a, b)
 		(YSI_g_sMinC = (a < b) ? a : b);
 }
 
-hook native max(a, b)
-{
+// Test K&R, because people have no taste.
+hook native max(a, b) {
 	// A native function we can easily replicate, in tests only.
 	return
 		(YSI_g_sMinA = a),

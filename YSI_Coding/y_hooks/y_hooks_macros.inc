@@ -89,9 +89,9 @@ Optional plugins:
 #define Y_HOOKS_ADDRESSOF(%0(%1)) O@A_()?(((_:%0(%1)),O@V_)?1:2):(O@V_)
 
 //#define @yH_public%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
-#define @yH_native%9(%9);%9<%9native%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
-#define @yH_stock%9(%9);%9<%9stock%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
-#define @yH_function%9(%9);%9<%9function%1>(%9);%9(%2)%9\10; HOOK_NATIVE__%1(%2)
+#define @yH_native%9(%9);%9<%9native%1>(%9);%9(%2)%9;%9(%9) HOOK_NATIVE__%1(%2)
+#define @yH_stock%9(%9);%9<%9stock%1>(%9);%9(%2)%9;%9(%9) HOOK_NATIVE__%1(%2)
+#define @yH_function%9(%9);%9<%9function%1>(%9);%9(%2)%9;%9(%9) HOOK_NATIVE__%1(%2)
 
 //#define HOOK_PUBLIC__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
 //#define HOOK_public__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
