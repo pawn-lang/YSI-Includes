@@ -145,7 +145,10 @@ static stock
 	YSI_g_sNPSTrampoline = 0,
 	YSI_g_sNPSReplace = 0,
 	YSI_g_sNPSStack = 0,
-	YSI_g_sTempRet = 0;
+	YSI_g_sTempRet = 0,
+	YSI_g_sStupidPluginsIndex[4],
+	YSI_g_sStupidPluginsPtr[sizeof (YSI_g_sStupidPluginsIndex)],
+	YSI_g_sStupidCount = 0;
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Function name to modify.</param>
@@ -1242,6 +1245,31 @@ static stock Hooks_SortReplacements()
 	Debug_Code1{for (new i = 0 ; i != YSI_g_sReplacePtr; ++i) Debug_Print0("Hook Replacement: %d, %d, %s, %s", YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MIN], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG]);}
 }
 
+static stock Hooks_GetPluginCachedFunction(const name[], bool invalidate)
+{
+	if (YSI_g_sStupidCount == sizeof (YSI_g_sStupidPluginsIndex))
+	{
+		Debug_Fatal("YSI_g_sStupidPluginsIndex full up - this is entirely Y_Less' fault!");
+		return;
+	}
+	new
+		idx = funcidx(name);
+	if (idx != -1)
+	{
+		// Save the pointer, then invalidate it because this slot will be moved
+		// around probably.
+		new
+			entry = AMX_HEADER_PUBLICS + idx * 8;
+		YSI_g_sStupidPluginsIndex[YSI_g_sStupidCount] = idx,
+		YSI_g_sStupidPluginsPtr[YSI_g_sStupidCount] = AMX_Read(entry),
+		++YSI_g_sStupidCount;
+		if (invalidate)
+		{
+			AMX_Write(entry, 0);
+		}
+	}
+}
+
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Call the main hook run code, then advance the ALS chain.
@@ -1260,13 +1288,16 @@ public OnCodeInit()
 	new
 		idx = 0,
 		entry = 0;
+	// Get the pointers for annoying plugins that cache their callbacks.
+	Hooks_GetPluginCachedFunction("OnPlayerActivationKeyPress", true);
+	Hooks_GetPluginCachedFunction("OnPlayerActivationKeyRelease", true);
 	if (Server_JITExists())
 	{
 		// Get the indexes of the startup functions that get recorded before the
 		// JIT plugin compiles, but called after it.  We thus need to fiddle the
 		// hooking to ensure that the correct functions are always called.
-		YSI_g_sInitFSIdx = funcidx("OnFilterScriptInit");
-		YSI_g_sInitGMIdx = funcidx("OnGameModeInit");
+		Hooks_GetPluginCachedFunction("OnFilterScriptInit", false);
+		Hooks_GetPluginCachedFunction("OnGameModeInit", false);
 	}
 	// Loop over the redefinition functions and call them to have them call the
 	// "_Hooks_AddReplacement" function above.  If we were being REALLY clever,
