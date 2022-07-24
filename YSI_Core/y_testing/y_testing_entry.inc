@@ -385,21 +385,16 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 {
 	new ret = 0;
 #if defined JUST_TEST
+	#pragma unused slow
 	// Never skip a `JUST_TEST` test, even if it is slow and we don't want
 	// slow tests.  Always `[2]`, even with string packing.
-	if (run && !strcmp(name[2], #JUST_TEST))
-	{
-		// Do nothing, just don't enter the `else` block.
-	}
-	else
-#else
-	#pragma unused name
-#if defined RUN_SLOW_TESTS
-	#pragma unused slow
+	if (!run || strcmp(name[2], #JUST_TEST))
+#elseif defined RUN_SLOW_TESTS
+	#pragma unused name, slow
 	if (!run)
 #else
+	#pragma unused name
 	if (!run || slow)
-#endif
 #endif
 	{
 		// Never run.
