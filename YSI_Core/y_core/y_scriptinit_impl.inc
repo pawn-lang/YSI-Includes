@@ -133,7 +133,7 @@ static
 		#endif
 
 		// Dump the final assembly of this script so we can inspect it.
-		#define DEBUG_MAYBE_DUMP(%0,%2); PrintAmxHeader(),ScriptInit_Dump(%0,%2);
+		#define DEBUG_MAYBE_DUMP(%0,%2); ScriptInit_Dump(%0,%2);
 	#endif
 #endif
 #if !defined DEBUG_MAYBE_DUMP
@@ -356,6 +356,7 @@ forward bool:fautocleanup(const name[], maxAge);
 
 static stock ScriptInit_Dump(const filename[], const message[])
 {
+		PrintAmxHeader();
 		new file[48];
 		format(file, sizeof (file), "%s%s.%d.asm", GetYSIScriptfilesDir(E_YSI_DIR_DEBUG), filename, YSI_gsStartTime);
 	#if _YSI_SAFE_STARTUP

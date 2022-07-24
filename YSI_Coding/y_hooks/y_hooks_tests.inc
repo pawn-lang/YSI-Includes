@@ -1183,3 +1183,30 @@ hook stock y_hooks_HookedStock(str[], v, &c)
 //{
 //}
 
+#tryinclude "..\YSI_Coding\y_unique"
+#tryinclude "..\..\YSI_Coding\y_unique"
+
+stock TestHookedFunc(a, const string:b[], ...)
+{
+	#pragma unused a
+	return numargs() + strval(b);
+}
+
+hook stock TestHookedFunc(a, const string:b[], ...)
+
+
+//_@yHTestHookedFunc@FI(a, const b[], ...);
+//@yH_TestHookedFunc@FI(&a,const b[]);
+//@yH_TestHookedFunc@FI(&a,const b[])
+//	return _yH@(1<<1|0,O@A_()?(((_:_@yHTestHookedFunc@FI(a,b)),O@V_)?1:2):(O@V_)), TestHookedFunc(a,b);
+//static _@yHTestHookedFunc@FI(a, const b[], ...)
+{
+	printf("TestHookedFunc");
+	return a + continue(a, b, ___(2));
+}
+
+@test(.group = "y_hooks") TestHookedFunc()
+{
+	ASSERT_EQ(TestHookedFunc(5, "100", 9, 8), 109);
+}
+

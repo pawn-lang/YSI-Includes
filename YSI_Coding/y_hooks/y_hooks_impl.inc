@@ -1290,7 +1290,7 @@ public OnCodeInit()
 		precount = 0,
 		preloads[32][E_CHAIN_HOOK];
 	Hooks_GetPreloadLibraries(preloads, precount);
-
+	
 	// Step 2:
 	//
 	//   Now do the legacy hooks (hook type 1).
@@ -1974,6 +1974,12 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, order)
 		case OP_CALL:
 		{
 			addr = DisasmGetOperandReloc(dctx);
+			if (addr == YSI_gYVA2_DoPush__)
+			{
+				// This happens when there's a `___()` in the call.  It should
+				// be ignored for the purpose of determining the next call.
+				continue;
+			}
 			type = 1;
 			break;
 		}
