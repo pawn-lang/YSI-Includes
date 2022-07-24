@@ -400,6 +400,7 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 		// Never run.
 		ret = 2;
 	}
+#if !defined JUST_TEST
 	else switch (YSI_g_sCurrentGroup[0])
 	{
 	case '\0':
@@ -431,6 +432,7 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 		}
 	}
 	}
+#endif
 	{}
 	// Now double return, to exit the call site as well.
 	#emit LOAD.S.alt       ret
@@ -628,6 +630,11 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 		grouping = false;
 		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, Y_TESTING_TEST_SEARCH)))
 		{
+			if (AMX_Read(entry) == 0)
+			{
+				// Previously skipped test.
+				continue;
+			}
 			state y_testing_phase : y_testing_phase_determine;
 			#emit PUSH                      YSI_EMPTY
 			#emit PUSH.C                    4
@@ -672,10 +679,14 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			#emit PUSH                      YSI_EMPTY
 			#emit PUSH.C                    4
 			#emit LCTRL                     6
-			#emit ADD.C                     36
+			#emit ADD.C                     48
 			#emit LCTRL                     8
 			#emit PUSH.pri
 			#emit LREF.S.pri                entry
+			// Invalidate the pointer.  Done here because some y_hooks tests
+			// mess with the headers as well.
+			#emit ZERO.alt
+			#emit SREF.S.alt                entry
 			#emit SCTRL                     6
 			YSI_g_sInTest = false;
 			++YSI_g_sTests;
@@ -701,9 +712,6 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 #endif
 			buffer[0] = Y_TESTING_SHUT,
 			R@(buffer, YSI_EMPTY);
-			// Invalidate the pointer.
-			#emit ZERO.pri
-			#emit SREF.S.pri                entry
 		}
 		YSI_g_sCurrentGroup[0] = cellmin;
 	}
