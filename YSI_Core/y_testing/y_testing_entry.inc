@@ -683,7 +683,9 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			{
 #if defined INCLUDE_TESTS || defined RUN_TESTS
 				++YSI_g_sFails;
-				print("Test did not complete (possible crash).\n");
+				TEST_REPORT(YSI_SPACE);
+				TEST_REPORT("%s %s", TEST_FAILED, "Test did not complete (possible crash).");
+				TEST_REPORT(YSI_SPACE);
 #endif
 			}
 			if (YSI_g_sFails != fails)
