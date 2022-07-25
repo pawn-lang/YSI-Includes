@@ -1208,3 +1208,39 @@ hook stock TestHookedFunc(a, const string:b[], ...)
 	ASSERT_EQ(TestHookedFunc(5, "100", 9, 8), 109);
 }
 
+static HookableFunction1()
+{
+	return 1;
+}
+
+static HookableFunction2()
+{
+	return 100;
+}
+
+@hook(.stock = "HookableFunction1") y_hooks_AAAAA()
+{
+	return continue() + 2;
+}
+
+@hook(.stock = "HookableFunction2") y_hooks_BBBBB()
+{
+	return continue() + 200;
+}
+
+@hook(.stock = "HookableFunction1") y_hooks_CCCCC()
+{
+	return continue() + 4;
+}
+
+@hook(.stock = "HookableFunction2") y_hooks_DDDDD()
+{
+	return continue() + 400;
+}
+
+@test(.group = "y_hooks") y_hooks_DefinitionOrder()
+{
+	ASSERT_EQ(HookableFunction1(), 7);
+	ASSERT_EQ(HookableFunction2(), 700);
+}
+

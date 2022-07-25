@@ -718,7 +718,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 			// Replace the function pointer to the implementation.
 			namelen += AMX_GetLengthFromEntry(addr),
 			AMX_Write(addr, YSI_g_sAddress);
-			AMX_Write(addr + 4, 0);
+			Hooks_InvalidatePointer(addr);
 			// Increment and count how many hooks of this type we have.
 			if (++count == sizeof (YSI_g_sHooks))
 			{
@@ -1311,73 +1311,90 @@ public OnCodeInit()
 		allocated = 0,
 		nativeCount = 0,
 		stockCount = 0,
-		base = 0;
+		base = 0,
+		ret,
+		bool:retry;
 	{
 		new hdr[AMX_HDR];
 		GetAmxHeader(hdr);
 		base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
 	}
-	YSI_g_sNPSBaseCall = cellmin;
 	// Get the next hook type.  This is binary-search safe because it is the
 	// first call before any name mangling has happened.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
+	YSI_g_sNPSBaseCall = cellmin;
+	do
 	{
-		if (namewrite == 0)
+		retry = false;
+		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
 		{
-			namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
-		}
-		// Invoke the function, which will result in our callback being called
-		// to get the base function name (in to `YSI_g_sName`).
-		state y_hooks_scan : y_hooks_scan_determine_type;
-		YSI_g_sTempRet = YSI_g_sNPSTrampoline;
-		#emit PUSH.C                    0
-		#emit LCTRL                     6
-		#emit ADD.C                     44
-		#emit LCTRL                     8
-		#emit PUSH.pri
-		#emit LREF.S.pri                entry
-		#emit STOR.pri                  YSI_g_sNPSTrampoline
-		#emit SCTRL                     6
-		#emit STOR.S.pri                entry
-		// Determine the callback type.
-		switch (entry)
-		{
-		case 1:
-		{
-			// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
-			YSI_g_sNPSTrampoline = YSI_g_sTempRet;
-			state y_hooks_scan : y_hooks_scan_legacy_hook;
-			// Move back to the first hook in this group (the one we just
-			// called) then collect all the hooks of this function, and rewrite
-			// the call code.
-			--idx;
-			Hooks_Collate(preloads, precount, idx, namelen, namewrite);
-			// Because we decremented `idx` this will re-test the same slot but
-			// that's good because we do an insertion sort so some publics may
-			// have been moved up (they also may not, but that's not a problem
-			// because in that case the `== 0` check above will trigger and skip
-			// the repeat).
-		}
-		case 2:
-		{
-			if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
+			if (namewrite == 0)
 			{
-				YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSReplace, YSI_g_sNPSStack);
-				YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+				namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
+			}
+			// Invoke the function, which will result in our callback being called
+			// to get the base function name (in to `YSI_g_sName`).
+			state y_hooks_scan : y_hooks_scan_determine_type;
+			YSI_g_sTempRet = YSI_g_sNPSTrampoline;
+			#emit PUSH.C                    0
+			#emit LCTRL                     6
+			#emit ADD.C                     44
+			#emit LCTRL                     8
+			#emit PUSH.pri
+			#emit LREF.S.pri                entry
+			#emit STOR.pri                  YSI_g_sNPSTrampoline
+			#emit SCTRL                     6
+			#emit STOR.S.pri                ret
+			// Determine the callback type.
+			switch (ret)
+			{
+			case 1:
+			{
+				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
+				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+				state y_hooks_scan : y_hooks_scan_legacy_hook;
+				// Move back to the first hook in this group (the one we just
+				// called) then collect all the hooks of this function, and rewrite
+				// the call code.
+				--idx;
+				Hooks_Collate(preloads, precount, idx, namelen, namewrite);
+				// Because we decremented `idx` this will re-test the same slot but
+				// that's good because we do an insertion sort so some publics may
+				// have been moved up (they also may not, but that's not a problem
+				// because in that case the `== 0` check above will trigger and skip
+				// the repeat).
+			}
+			case 2:
+			{
+				if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
+				{
+					YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSReplace, YSI_g_sNPSStack);
+					YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+				}
+				// An NPS hook we don't need.
+				Hooks_InvalidatePointer(entry);
+			}
+			case 3:
+			{
+				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
+				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+				retry = true;
+			}
+			default:
+			{
+				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
+				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+				Hooks_InvalidatePointer(entry);
+			}
 			}
 		}
-		default:
+		if (YSI_g_sNPSBaseCall != cellmin)
 		{
-			// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
-			YSI_g_sNPSTrampoline = YSI_g_sTempRet;
-		}
+			// Store the final chain.
+			YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
+			YSI_g_sNPSBaseCall = cellmin;
 		}
 	}
-	if (YSI_g_sNPSBaseCall != cellmin)
-	{
-		// Store the final chain.
-		YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
-	}
+	while (retry);
 	
 	// Step 4:
 	//
@@ -1409,7 +1426,10 @@ public OnCodeInit()
 					case OP_SYSREQ_C:
 					{
 						// Check that the previous OP is `PUSH.C`.  That
-						// represents a real native call, not our wrapper.
+						// represents a real native call, not our wrapper.  More
+						// correctly, this code checks that the previous Opcode
+						// isn't `PROC`, which only happens in our wrapper, we
+						// just assume that it is `PUSH.C` otherwise.
 						if (Opcode:AMX_Read(addr - 8) == proc)
 						{
 							addr += 8;
@@ -1838,6 +1858,18 @@ public OnRuntimeError(code, &bool:suppress)
 
 */
 
+/**--------------------------------------------------------------------------**\
+<summary>YHNPS_Find</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	We have a big sorted list of functions and their replacements in the heap.
+	This code checks to see if a given native or function is in that replacement
+	list, and if so finds the new version (the hook stub).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 static stock YHNPS_Find(heap, end, value)
 {
 	new
@@ -1864,6 +1896,18 @@ static stock YHNPS_Find(heap, end, value)
 	}
 	return cellmin;
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>YHNPS_Insert</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	We have a big sorted list of functions and their replacements in the heap.
+	This code checks to see if a given native or function is in that replacement
+	list, and if not adds it, or replaces it with a newer hook.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock YHNPS_Insert(heap, count, value, ptr)
 {
@@ -1965,7 +2009,7 @@ This function is called, and just needs to insert a new function.
 
 #define continue(%0) Hooks_Continue_(%0)
 
-static stock Hooks_RegisterNPSHook(compressedFormat, address, order)
+static stock Hooks_RegisterNPSHook(compressedFormat, address, order, const string:name[])
 {
 	#pragma unused order
 	// Put us in the frame of the previous function.  Because `compressedFormat`
@@ -1978,46 +2022,65 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, order)
 	// can also tell us if it is a native, public, or stock (which is a nice
 	// side-effect I wasn't planning).
 	new
-		dctx[DisasmContext],
 		ctx[AsmContext],
 		addr = 0,
 		type = 0;
-	DisasmInit(dctx, GetCurrentFrameReturn());
-	while (DisasmNext(dctx))
+	// The naming is a bit ambiguous here.  `addr` is the address of the next
+	// function in the chain (i.e. the function we're hooking), while `address`
+	// is the address of the function we're replacing it with.
+	//if (name[0])
+	//{
+	//	// Find the public in the header.
+	//	if (AMX_GetPublicPointer(0, addr, name))
+	//	{
+	//		type = 1;
+	//	}
+	//	else
+	//	{
+	//		// TODO: This is the last item in the chain.
+	//	}
+	//}
+	//else
 	{
-		switch (DisasmGetOpcode(dctx))
+		new
+			dctx[DisasmContext];
+		DisasmInit(dctx, GetCurrentFrameReturn());
+		while (DisasmNext(dctx))
 		{
-		case OP_CALL:
-		{
-			addr = DisasmGetOperandReloc(dctx);
-			if (addr == YSI_gYVA2_DoPush__)
+			switch (DisasmGetOpcode(dctx))
 			{
-				// This happens when there's a `___()` in the call.  It should
-				// be ignored for the purpose of determining the next call.
-				continue;
+			case OP_CALL:
+			{
+				addr = DisasmGetOperandReloc(dctx);
+				if (addr == YSI_gYVA2_DoPush__)
+				{
+					// This happens when there's a `___()` in the call.  It should
+					// be ignored for the purpose of determining the next call.
+					continue;
+				}
+				type = 1;
+				break;
 			}
-			type = 1;
-			break;
-		}
-		case OP_SYSREQ_C:
-		{
-			addr = -DisasmGetOperand(dctx);
-			type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
-			break;
-		}
-		case OP_SYSREQ_D:
-		{
-			type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
-			break;
-		}
+			case OP_SYSREQ_C:
+			{
+				addr = -DisasmGetOperand(dctx);
+				type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
+				break;
+			}
+			case OP_SYSREQ_D:
+			{
+				type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
+				break;
+			}
 #if __COMPILER_O2
-		case OP_SYSREQ_N:
-		{
-			addr = -DisasmGetOperand(dctx);
-			type = -(YSI_g_sNPSTrampoline + 48 * cellbytes);
-			break;
-		}
+			case OP_SYSREQ_N:
+			{
+				addr = -DisasmGetOperand(dctx);
+				type = -(YSI_g_sNPSTrampoline + 48 * cellbytes);
+				break;
+			}
 #endif
+			}
 		}
 	}
 	//if (type < 0)
@@ -2025,6 +2088,21 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, order)
 	//	// Native function call.
 	//	addr = -addr;
 	//}
+	if (YSI_g_sNPSBaseCall == cellmin)
+	{
+		// Newly found function to be hooked.  Carry on.
+	}
+	else if (YSI_g_sNPSBaseCall != addr)
+	{
+		// This is a hook for a different function.  We don't want this one
+		// just yet, wait till the current hook is done with.
+		#emit LOAD.S.pri   0
+		#emit SCTRL        5
+		#emit SCTRL        4
+		// Try this one again later.
+		#emit CONST.pri    3
+		#emit RETN
+	}
 
 	YSI_g_sNPSReplace = address;
 	AsmInitPtr(ctx, YSI_g_sNPSTrampoline + AMX_HEADER_COD, YSI_g_sNPSReplace - YSI_g_sNPSTrampoline);
@@ -2077,20 +2155,29 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, order)
 		@emit PUSH.C       compressedFormat                                     // 3
 
 		// Chain the functions.
-		if (YSI_g_sNPSBaseCall == addr)
-		{
-			@emit PUSH.C       YSI_g_sNPSStack                                  // 5
-			YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
-		}
-		else if (YSI_g_sNPSBaseCall == cellmin)
+		//if (YSI_g_sNPSBaseCall == addr)
+		//{
+		//	@emit PUSH.C       YSI_g_sNPSStack                                  // 5
+		//	YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
+		//}
+		//else if (YSI_g_sNPSBaseCall == cellmin)
+		//{
+		//	@emit PUSH.C       (type < 0 ? type : addr)                         // 5
+		//	YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+		//}
+		//else
+		//{
+		//	@emit PUSH.C       (type < 0 ? type : addr)                         // 5
+		//}
+		if (YSI_g_sNPSBaseCall == cellmin)
 		{
 			@emit PUSH.C       (type < 0 ? type : addr)                         // 5
-			YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
 		}
 		else
 		{
-			@emit PUSH.C       (type < 0 ? type : addr)                         // 5
+			@emit PUSH.C       YSI_g_sNPSStack                                  // 5
 		}
+		YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
 		@emit PUSH.C       8                                                    // 7
 	}
 
@@ -2160,7 +2247,11 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, order)
 stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <y_hooks_scan : y_hooks_scan_determine_type>
 {
 	#pragma unused a, b, c, d, e, f, g
-	return Hooks_RegisterNPSHook(compressedFormat, address, order);
+	// IMPORTANT NOTE:  Because of the way `Hooks_RegisterNPSHook` messes with
+	// the stack the final parameter won't be the string we passed here, but
+	// `a` from the extra parameters above.  But that's fine - either way it
+	// points to nothing.
+	return Hooks_RegisterNPSHook(compressedFormat, address, order, "");
 }
 
 stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <>
@@ -2185,7 +2276,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 		ctx[AsmContext],
 		ptr = _:addressof(Hooks_Continue_<>);
 
-	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(Hooks_RegisterNPSHook<iii>) - ptr);
+	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(Hooks_RegisterNPSHook<iiis>) - ptr);
 
 	@emit PROC
 	@emit ADDR.pri     8
