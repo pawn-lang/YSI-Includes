@@ -673,7 +673,6 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			buffer[0] = Y_TESTING_TEST,
 			fails = YSI_g_sFails;
 			Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
-			printf("Testing_Run(): Calling %s", Unpack(buffer[1]));
 			YSI_g_sInTest = true,
 			// Don't use `entry` here as a pointer directly, because then we
 			// don't get any `amx_Exec` protections against crashes in tests.
