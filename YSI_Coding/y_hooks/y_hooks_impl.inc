@@ -128,6 +128,8 @@ static stock
 	YSI_g_sReplacementsLongOrder[MAX_HOOK_REPLACEMENTS],
 	YSI_g_sReplacementsShortOrder[MAX_HOOK_REPLACEMENTS],
 	YSI_g_sReplacePtr = 0,
+	YSI_g_sBlockStart = 0,
+	YSI_g_sBlockEnd = 0,
 	YSI_g_sInitFSPtr = 0,
 	YSI_g_sInitFSIdx = -1,
 	YSI_g_sInitFSRep = 0,
@@ -428,6 +430,10 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, &
 					str[FUNCTION_LENGTH];
 				strpack(str, YSI_g_sName),
 				AMX_WriteString(namewrite, str, len);
+
+				// Mark that there are now fewer header hook entries because we
+				// reused one for a proper callback.
+				YSI_g_sBlockEnd -= 8;
 				
 				// Update the space available.
 				namelen -= len + 1;
@@ -685,18 +691,19 @@ stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallba
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
+_Y_HOOKS_STATIC stock Hooks_GetAllHooks(addr)
 {
-	Debug_Print4("Hooks_GetAllHooks called: %s %d", YSI_g_sName, idx);
+	Debug_Print4("Hooks_GetAllHooks called: %s %d", YSI_g_sName, addr);
 	// Start from the very start - repeats the first item.
 	new
-		addr = 0,
+		idx,
 		count = 0,
 		tmp;
 	// This call is also binary search safe as it accepts `idx` so has a known
 	// start point (thus isn't using a binary search unless `idx` is `0` in
 	// which case no name mangling has happened yet anyway).
 	while ((idx = AMX_GetPublicEntryPrefix(idx, addr, _A<@yH_>)))
+	//for ( ; addr != YSI_g_sBlockEnd; addr += 8)
 	{
 		if (AMX_Read(addr) == 0)
 		{
@@ -714,13 +721,8 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 		#emit STOR.S.pri                tmp
 		if (tmp)
 		{
-			// Record how much consecutive space we have to play with in the
-			// AMX.  I'm slightly concerned that this code assumes that the
-			// hooks are all consecutive, when they might not be thanks to
-			// replacements.
 			Debug_Print6("Hooks_GetAllHooks found: %s %d", YSI_g_sName, idx);
 			// Replace the function pointer to the implementation.
-			namelen += AMX_GetLengthFromEntry(addr),
 			AMX_Write(addr, YSI_g_sAddress);
 			AMX_Write(addr + 4, 0);
 			// Increment and count how many hooks of this type we have.
@@ -740,7 +742,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 	return count;
 }
 
-_Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, idx, &namelen, &namewrite)
+_Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, entry, &namelen, &namewrite)
 {
 	// For this function, note that:
 	//   
@@ -771,7 +773,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, id
 	//   
 	// Thus expanding common name length reductions.
 	// Get all the hooks of this type.  They are stored alphabetically.
-	YSI_g_sCount = Hooks_GetAllHooks(idx, namelen);
+	YSI_g_sCount = Hooks_GetAllHooks(entry);
 	new
 		writePtr = YSI_g_sHooks[0], // Header for the first found hook.
 		nextPtr = 0,
@@ -871,7 +873,6 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(write, bool:hasprehooks)
 _Y_HOOKS_STATIC stock Hooks_InvalidatePointer(tableEntry)
 {
 	Debug_Print4("Hooks_InvalidatePointer called");
-	//AMX_Write(tableEntry, 0);
 	AMX_Write(tableEntry, 0);
 }
 
@@ -1332,6 +1333,18 @@ public OnCodeInit()
 		GetAmxHeader(hdr);
 		base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
 	}
+	// Get the space of all the publics, then destroy them all.
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
+	{
+		namelen += AMX_GetLengthFromEntry(entry) + 1;
+		if (namewrite == 0)
+		{
+			namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
+			YSI_g_sBlockStart = entry;
+		}
+		//AMX_Write(entry + 4, 0);
+		YSI_g_sBlockEnd = entry + 8;
+	}
 	// Get the next hook type.  This is binary-search safe because it is the
 	// first call before any name mangling has happened.
 	YSI_g_sNPSBaseCall = cellmin;
@@ -1339,14 +1352,11 @@ public OnCodeInit()
 	{
 		retry = false;
 		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
+		//for (entry = YSI_g_sBlockStart; entry != YSI_g_sBlockEnd; entry += 8)
 		{
 			if (AMX_Read(entry) == 0)
 			{
 				continue;
-			}
-			if (namewrite == 0)
-			{
-				namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
 			}
 			// Invoke the function, which will result in our callback being called
 			// to get the base function name (in to `YSI_g_sName`).
@@ -1369,16 +1379,13 @@ public OnCodeInit()
 				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
 				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
 				state y_hooks_scan : y_hooks_scan_legacy_hook;
-				// Move back to the first hook in this group (the one we just
-				// called) then collect all the hooks of this function, and rewrite
-				// the call code.
 				--idx;
-				Hooks_Collate(preloads, precount, idx, namelen, namewrite);
-				// Because we decremented `idx` this will re-test the same slot but
-				// that's good because we do an insertion sort so some publics may
-				// have been moved up (they also may not, but that's not a problem
-				// because in that case the `== 0` check above will trigger and skip
-				// the repeat).
+				Hooks_Collate(preloads, precount, entry, namelen, namewrite);
+				// This will re-test the same slot but that's good because we do
+				// an insertion sort so some publics may have been moved up.
+				// They also may not, but that's not a problem because in that
+				// case the `== 0` check above will trigger and skip the repeat.
+				entry -= 8;
 			}
 			case 2:
 			{

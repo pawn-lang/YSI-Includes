@@ -555,6 +555,8 @@ static stock y_hooks_funcidx2(const str[])
 	return -1;
 }
 
+// We shouldn't be testing internal details like these.  Plus doing so REALLY
+// messes up y_testing (it does deal with it, but it isn't pretty).
 //forward y_hooks_Invalidate1();
 //public y_hooks_Invalidate1() {}
 //
