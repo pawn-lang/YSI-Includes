@@ -385,7 +385,7 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 {
 	new ret = 0;
 #if defined JUST_TEST
-	#pragma unused slow
+	#pragma unused slow, group
 	// Never skip a `JUST_TEST` test, even if it is slow and we don't want
 	// slow tests.  Always `[2]`, even with string packing.
 	if (!run || strcmp(name[2], #JUST_TEST))
@@ -632,12 +632,11 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 		{
 			if (AMX_Read(entry) == 0)
 			{
-				// Previously skipped test.
+				// Previously finished test.
 				continue;
 			}
 			state y_testing_phase : y_testing_phase_determine;
-			#emit PUSH                      YSI_EMPTY
-			#emit PUSH.C                    4
+			#emit PUSH.C                    0
 			#emit LCTRL                     6
 			#emit ADD.C                     36
 			#emit LCTRL                     8
@@ -660,8 +659,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			#endif
 				{
 					// Skip forever.
-					#emit ZERO.pri
-					#emit SREF.S.pri                entry
+					AMX_Write(entry, 0);
 					continue;
 				}
 			}
@@ -672,22 +670,14 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			buffer[0] = Y_TESTING_INIT,
 			R@(buffer, YSI_EMPTY),
 			// Call the test.
-			//buffer[0] = Y_TESTING_TEST,
+			buffer[0] = Y_TESTING_TEST,
 			fails = YSI_g_sFails;
 			Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
-			YSI_g_sInTest = true;
-			#emit PUSH                      YSI_EMPTY
-			#emit PUSH.C                    4
-			#emit LCTRL                     6
-			#emit ADD.C                     48
-			#emit LCTRL                     8
-			#emit PUSH.pri
-			#emit LREF.S.pri                entry
-			// Invalidate the pointer.  Done here because some y_hooks tests
-			// mess with the headers as well.
-			#emit ZERO.alt
-			#emit SREF.S.alt                entry
-			#emit SCTRL                     6
+			printf("Testing_Run(): Calling %s", Unpack(buffer[1]));
+			YSI_g_sInTest = true,
+			// Don't use `entry` here as a pointer directly, because then we
+			// don't get any `amx_Exec` protections against crashes in tests.
+			R@(buffer, YSI_EMPTY),
 			YSI_g_sInTest = false;
 			++YSI_g_sTests;
 			if (!YSI_gTestComplete)
@@ -711,7 +701,15 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			}
 #endif
 			buffer[0] = Y_TESTING_SHUT,
-			R@(buffer, YSI_EMPTY);
+			R@(buffer, YSI_EMPTY),
+			// Delete the pointer, which may have moved due to tests playing
+			// with headers.
+			buffer[0] = Y_TESTING_TEST,
+			strunpack(buffer, buffer);
+			if (AMX_GetPublicEntry(0, entry, buffer))
+			{
+				AMX_Write(entry, 0);
+			}
 		}
 		YSI_g_sCurrentGroup[0] = cellmin;
 	}
@@ -784,7 +782,9 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 				buffer[0] = Y_TESTING_PSHUT;
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
-				// Remove the test from the header.
+				// Remove the test from the header.  This just uses normal
+				// pointer writes, unless any player tests start messing with
+				// the header (they shouldn't, as they are run after codegen).
 				#emit ZERO.pri
 				#emit SREF.S.pri                entry
 			}
@@ -800,10 +800,15 @@ Testing_Next_retry:
 			// Get the new test, but don't store the index.
 			if ((next = AMX_GetPublicEntryPrefix(YSI_g_sPlayer, entry, Y_TESTING_PTEST_SEARCH)))
 			{
+				if (AMX_Read(entry) == 0)
+				{
+					// Previously finished test.
+					YSI_g_sPlayer = next;
+					goto Testing_Next_retry;
+				}
 				state y_testing_phase : y_testing_phase_determine;
-				#emit PUSH                      YSI_EMPTY
 				#emit PUSH.S                    playerid
-				#emit PUSH.C                    8
+				#emit PUSH.C                    4
 				#emit LCTRL                     6
 				#emit ADD.C                     36
 				#emit LCTRL                     8
@@ -827,8 +832,7 @@ Testing_Next_retry:
 				#endif
 					{
 						// Skip forever.
-						#emit ZERO.pri
-						#emit SREF.S.pri                entry
+						AMX_Write(entry, 0);
 						YSI_g_sPlayer = next;
 						goto Testing_Next_retry;
 					}
@@ -842,18 +846,12 @@ Testing_Next_retry:
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 				// Call the test.
-				//buffer[0] = Y_TESTING_PTEST;
+				buffer[0] = Y_TESTING_PTEST;
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
-				YSI_g_sInTest = true;
-				#emit PUSH                      YSI_EMPTY
-				#emit PUSH.S                    playerid
-				#emit PUSH.C                    8
-				#emit LCTRL                     6
-				#emit ADD.C                     36
-				#emit LCTRL                     8
-				#emit PUSH.pri
-				#emit LREF.S.pri                entry
-				#emit SCTRL                     6
+				YSI_g_sInTest = true,
+				// Don't use `entry` here as a pointer directly, because then we
+				// don't get any `amx_Exec` protections against crashes in tests.
+				R@(buffer, "i", playerid);
 			}
 			else if (grouping)
 			{
