@@ -555,43 +555,43 @@ static stock y_hooks_funcidx2(const str[])
 	return -1;
 }
 
-forward y_hooks_Invalidate1();
-public y_hooks_Invalidate1() {}
-
-@test(.group = "y_hooks") y_hooks_Invalidate1()
-{
-	ASSERT_NE(funcidx("y_hooks_Invalidate1"), -1);
-	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate1"));
-	Hooks_CompressPublics();
-	ASSERT_EQ(funcidx("y_hooks_Invalidate1"), -1);
-}
-
-forward y_hooks_Invalidate2();
-public y_hooks_Invalidate2() {}
-
-forward y_hooks_Invalidate3();
-public y_hooks_Invalidate3() {}
-
-@test(.group = "y_hooks") y_hooks_Invalidate23()
-{
-	new
-		base0 = 0,
-		count0 = 0;
-	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base0, count0);
-	ASSERT_NE(funcidx("y_hooks_Invalidate2"), -1);
-	ASSERT_NE(funcidx("y_hooks_Invalidate3"), -1);
-	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate2"));
-	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate3"));
-	Hooks_CompressPublics();
-	ASSERT_EQ(funcidx("y_hooks_Invalidate2"), -1);
-	ASSERT_EQ(funcidx("y_hooks_Invalidate3"), -1);
-	new
-		base1 = 0,
-		count1 = 0;
-	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base1, count1);
-	ASSERT(base1 > base0);
-	ASSERT(count1 < count0);
-}
+//forward y_hooks_Invalidate1();
+//public y_hooks_Invalidate1() {}
+//
+//@test(.group = "y_hooks") y_hooks_Invalidate1()
+//{
+//	ASSERT_NE(funcidx("y_hooks_Invalidate1"), -1);
+//	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate1"));
+//	Hooks_CompressPublics();
+//	ASSERT_EQ(funcidx("y_hooks_Invalidate1"), -1);
+//}
+//
+//forward y_hooks_Invalidate2();
+//public y_hooks_Invalidate2() {}
+//
+//forward y_hooks_Invalidate3();
+//public y_hooks_Invalidate3() {}
+//
+//@test(.group = "y_hooks") y_hooks_Invalidate23()
+//{
+//	new
+//		base0 = 0,
+//		count0 = 0;
+//	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base0, count0);
+//	ASSERT_NE(funcidx("y_hooks_Invalidate2"), -1);
+//	ASSERT_NE(funcidx("y_hooks_Invalidate3"), -1);
+//	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate2"));
+//	Hooks_InvalidatePointer(y_hooks_funcidx2("y_hooks_Invalidate3"));
+//	Hooks_CompressPublics();
+//	ASSERT_EQ(funcidx("y_hooks_Invalidate2"), -1);
+//	ASSERT_EQ(funcidx("y_hooks_Invalidate3"), -1);
+//	new
+//		base1 = 0,
+//		count1 = 0;
+//	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base1, count1);
+//	ASSERT(base1 > base0);
+//	ASSERT(count1 < count0);
+//}
 
 static g_y_hooksVar = 0;
 

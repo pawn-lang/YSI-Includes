@@ -698,6 +698,10 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 	// which case no name mangling has happened yet anyway).
 	while ((idx = AMX_GetPublicEntryPrefix(idx, addr, _A<@yH_>)))
 	{
+		if (AMX_Read(addr) == 0)
+		{
+			continue;
+		}
 		YSI_g_sHooks[count] = addr;
 		// Call the hook stub, and see if it thinks it is a valid hook.
 		#emit PUSH.C                    0
@@ -718,7 +722,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(idx, &namelen)
 			// Replace the function pointer to the implementation.
 			namelen += AMX_GetLengthFromEntry(addr),
 			AMX_Write(addr, YSI_g_sAddress);
-			Hooks_InvalidatePointer(addr);
+			AMX_Write(addr + 4, 0);
 			// Increment and count how many hooks of this type we have.
 			if (++count == sizeof (YSI_g_sHooks))
 			{
@@ -867,7 +871,8 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(write, bool:hasprehooks)
 _Y_HOOKS_STATIC stock Hooks_InvalidatePointer(tableEntry)
 {
 	Debug_Print4("Hooks_InvalidatePointer called");
-	AMX_Write(tableEntry + 4, 0);
+	//AMX_Write(tableEntry, 0);
+	AMX_Write(tableEntry, 0);
 }
 
 /*
@@ -1020,6 +1025,10 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		{
 			// Get the absolute offset from here.
 			@emit CALL          (AMX_Read(YSI_g_sHooks[i]) + base) // 2
+			if (!AMX_Read(YSI_g_sHooks[i] + 4))
+			{
+				Hooks_InvalidatePointer(YSI_g_sHooks[i]);
+			}
 			if (skipable)
 			{
 				// =====================================
@@ -1057,6 +1066,10 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		// Still need this code as they may hook a function that doesn't exist,
 		// but we still need to correctly process -1 or -2.
 		@emit CALL          (AMX_Read(YSI_g_sHooks[0]) + base)
+		if (!AMX_Read(YSI_g_sHooks[0] + 4))
+		{
+			Hooks_InvalidatePointer(YSI_g_sHooks[0]);
+		}
 		@emit ZERO.alt
 		@emit JSGEQ.label   Hooks_SkipInvert
 		@emit INVERT
@@ -1327,6 +1340,10 @@ public OnCodeInit()
 		retry = false;
 		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
 		{
+			if (AMX_Read(entry) == 0)
+			{
+				continue;
+			}
 			if (namewrite == 0)
 			{
 				namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
