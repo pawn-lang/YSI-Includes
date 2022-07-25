@@ -1764,9 +1764,16 @@ public OnRuntimeError(code, &bool:suppress)
 		// This makes a stack of active hooks.  When a crash occurs, we walk
 		// this stack and fix up all the parameter counts.
 		new
-			cur = YSI_g_sActiveHooks;
-		for (new i = 0; cur; cur = AMX_Read(cur))
+			cur = YSI_g_sActiveHooks,
+			i = 0,
+			prev;
+		//for (new i = 0, prev; cur; cur = AMX_Read(cur))
+		for ( ; ; )
 		{
+			if (cur == 0)
+			{
+				break;
+			}
 			if (++i == 1)
 			{
 				print("[debug]");
@@ -1774,12 +1781,19 @@ public OnRuntimeError(code, &bool:suppress)
 				print("[debug]");
 			}
 			// Not 8, because `cur` is `- 8`.
-			printf("[debug] The %s mangled argments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", ValstrWithOrdinal(i), AMX_Read(cur + 16) / 4);
+			printf("[debug] The %s mangled arguments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", ValstrWithOrdinal(i), AMX_Read(cur + 16) / 4);
 			//// Get the current parameter count.
 			//printf("count: %d", count);
 			//// Write this out to the lower parameter count copy.
 			//AMX_Write(cur - count - 4, count);
 			//// Fixed.
+			prev = cur;
+			cur = AMX_Read(cur);
+			if (cur <= prev)
+			{
+				print("[debug] Parameter count loop detected.");
+				break;
+			}
 		}
 		if (YSI_g_sActiveHooks)
 		{
@@ -1789,7 +1803,9 @@ public OnRuntimeError(code, &bool:suppress)
 			// will be reset to a correct value when the next still active hook
 			// ends.  This is only a problem if there are two crashes at once,
 			// then the second corrections won't get displayed.
-			YSI_g_sActiveHooks = 0;
+			//
+			// Now reads the next item from the list again.
+			YSI_g_sActiveHooks = AMX_Read(YSI_g_sActiveHooks);
 		}
 		//new trace[FUNCTION_LENGTH];
 		//GetStackTrace(trace);
