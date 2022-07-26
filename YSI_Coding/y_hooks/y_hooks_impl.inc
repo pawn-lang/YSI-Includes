@@ -1368,7 +1368,7 @@ public OnCodeInit()
 			// Determine the callback type.
 			switch (ret)
 			{
-			case 1:
+			case 1: // `hook`
 			{
 				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
 				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
@@ -1380,7 +1380,7 @@ public OnCodeInit()
 				// case the `== 0` check above will trigger and skip the repeat.
 				entry -= 8;
 			}
-			case 2:
+			case 2: // `hook stock`
 			{
 				if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
 				{
@@ -1390,13 +1390,18 @@ public OnCodeInit()
 				// An NPS hook we don't need.
 				Hooks_InvalidatePointer(entry);
 			}
-			case 3:
+			case 3: // `hook stock`, for an not currently processed function.
 			{
 				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
 				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
 				retry = true;
 			}
-			default:
+			case 4: // `hook public`, which aren't processed in this loop.
+			{
+				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
+				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+			}
+			default: // Anything else, gets dropped.
 			{
 				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
 				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
