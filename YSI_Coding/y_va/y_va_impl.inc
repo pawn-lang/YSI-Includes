@@ -84,8 +84,9 @@ static stock
 	YSI_g_sPassthroughNestings = 0,
 	YSI_g_sInitialised = 0;
 
-stock
-	YSI_gYVA2_DoPush__ = 0;
+#if !defined YSI_gYVA2_DoPush__
+stock YSI_gYVA2_DoPush__ = 0;
+#endif
 
 #define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
 stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)

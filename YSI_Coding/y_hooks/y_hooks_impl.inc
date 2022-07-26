@@ -149,6 +149,10 @@ static stock
 	YSI_g_sNPSStack = 0,
 	YSI_g_sTempRet = 0;
 
+#if !defined YSI_gYVA2_DoPush__
+stock YSI_gYVA2_DoPush__ = 0;
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Function name to modify.</param>
  * <remarks>
