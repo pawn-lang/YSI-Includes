@@ -149,9 +149,9 @@ static stock
 	YSI_g_sNPSStack = 0,
 	YSI_g_sTempRet = 0;
 
-#if !defined YSI_gYVA2_DoPush__
-stock YSI_gYVA2_DoPush__ = 0;
-#endif
+//#if !defined YSI_gYVA2_DoPush__
+//stock YSI_gYVA2_DoPush__ = 0;
+//#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Function name to modify.</param>
@@ -2104,12 +2104,12 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, order, const strin
 			case OP_CALL:
 			{
 				addr = DisasmGetOperandReloc(dctx);
-				if (addr == YSI_gYVA2_DoPush__)
-				{
-					// This happens when there's a `___()` in the call.  It should
-					// be ignored for the purpose of determining the next call.
-					continue;
-				}
+				//if (addr == YSI_gYVA2_DoPush__)
+				//{
+				//	// This happens when there's a `___()` in the call.  It should
+				//	// be ignored for the purpose of determining the next call.
+				//	continue;
+				//}
 				type = 1;
 				break;
 			}

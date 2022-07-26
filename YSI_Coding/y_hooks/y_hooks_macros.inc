@@ -221,7 +221,10 @@ Optional plugins:
 //
 // This does NOT put `...` in to the function parameters with `%1...` because
 // publics can't have variable arguments.  But we can still secretly pass them.
-#define YHLEG_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,YVA2_DummyPush((%9-1)*cellbytes))(%7)(%9,%4)
+// TODO: When you put `___` back, ensure y_hooks still works when y_va is
+// initialised afterwards (since `YSI_gYVA2_DoPush__` will be `0`).
+//#define YHLEG_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,YVA2_DummyPush((%9-1)*cellbytes))(%7)(%9,%4)
+#define YHLEG_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6)(%7)(%9,%4)
 
 // References.
 //
@@ -296,7 +299,11 @@ Optional plugins:
 // %2  = Name (unused)
 // %5  = Prototype parameters
 // %6  = Call parameters
-#define YHNPS_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,YVA2_DummyPush((%9-1)*cellbytes))(%7)(%9,%4)
+//
+// TODO: When you put `___` back, ensure y_hooks still works when y_va is
+// initialised afterwards (since `YSI_gYVA2_DoPush__` will be `0`).
+//#define YHNPS_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,YVA2_DummyPush((%9-1)*cellbytes))(%7)(%9,%4)
+#define YHNPS_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6)(%7)(%9,%4)
 
 // References.
 //
