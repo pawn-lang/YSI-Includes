@@ -105,7 +105,7 @@ Optional plugins:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Random_Internal(count, const array[], start, ...)
+static stock Iter_Random_Impl(count, const array[], start, ...)
 {
 	new
 		numArgs = 0,
@@ -189,14 +189,14 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 	{
 		do
 		{
-Iter_Random_Internal_loop:
+Iter_Random_Impl_loop:
 			// Check if this is an excluded value.
 			start = array[start];
 			for (last = first; last != rewrite; last += 4)
 			{
 				#emit LREF.S.pri   last
 				#emit LOAD.S.alt   start
-				#emit JEQ          Iter_Random_Internal_loop
+				#emit JEQ          Iter_Random_Impl_loop
 			}
 			// The loop ended, all is good.
 		}
@@ -216,6 +216,32 @@ Iter_Random_Internal_loop:
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
+ * <param name="">Excluded elements.</param>
+ * <remarks>
+ *  Returns a random value from an iterator.
+ *  
+ *  If additional parameters are given they are excluded from consideration.
+ *  This allows you to chain calls to get multiple random values so follows:
+ *  
+ *      new president     = Iter_Random(Player);
+ *      new vicePresident = Iter_Random(Player, president);
+ *      new primeMinister = Iter_Random(Player, president, vicePresident);
+ *      new minister      = Iter_Random(Player, president, vicePresident, primeMinister);
+ *  
+ *  None of those values can be the same, and this saves horrible random-
+ *  dependent loops.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_Random_Internal(count, const array[], start, ...)
+{
+	return Iter_Random_Impl(count, array, start, ___(3));
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="count">Number of items in the iterator.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="start">Size of the iterator.</param>
  * <remarks>
  *  Adds a random value to an iterator.
  * </remarks>
@@ -223,7 +249,7 @@ Iter_Random_Internal_loop:
 
 stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 {
-	return Iter_Add_InternalC(count, array, start, Iter_RandomFree_InternalC(count, array, start, ___(3)));
+	return Iter_Add_InternalC(count, array, start, Iter_RandomFree_Impl(count, array, start, ___(3)));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -246,7 +272,7 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 		count = 0;
 	while (slots--)
 		count += counts[slots];
-	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalC(count, array, size, ___(6)));
+	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_Impl(count, array, size, ___(6)));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -260,7 +286,7 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 
 stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
 {
-	return Iter_Remove_InternalC(count, array, start, Iter_Random_Internal(count, array, start, ___(3)));
+	return Iter_Remove_InternalC(count, array, start, Iter_Random_Impl(count, array, start, ___(3)));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -277,7 +303,7 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 {
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
-	return Iter_Remove_InternalD(count, array, start, size, Iter_Random_Internal(count, array, start, ___(4)));
+	return Iter_Remove_InternalD(count, array, start, size, Iter_Random_Impl(count, array, start, ___(4)));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -290,6 +316,20 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
  *//*------------------------------------------------------------------------**/
 
 stock Iter_RandomFree_InternalC(count, const array[], start, ...)
+{
+	return Iter_RandomFree_Impl(count, array, start, ___(3));
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="count">Number of items in the iterator.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="start">Size of the iterator.</param>
+ * <remarks>
+ *  Returns a random unused value from an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Iter_RandomFree_Impl(count, const array[], start, ...)
 {
 	count = start - count;
 	new
@@ -425,7 +465,7 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
 		count = 0;
 	while (slots--)
 		count += counts[slots];
-	return Iter_RandomFree_InternalC(count, array, start, ___(4));
+	return Iter_RandomFree_Impl(count, array, start, ___(4));
 }
 
 /*-------------------------------------------------------------------------*//**

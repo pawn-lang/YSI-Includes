@@ -3714,16 +3714,23 @@ iterfunc stock y_iter_yield7a(x)
 	ASSERT_EQ(idx, sizeof(answers));
 }
 
-//static Iterator:y_iter_huge<100000>;
-//
-//@test(.group = "y_iterate") y_iter_huge()
-//{
-//	for (new i = 0; i < 50000; i++)
-//	{
-//		Iter_Add(y_iter_huge, i);
-//	}
-//	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
-//}
+static Iterator:y_iter_huge<100000>;
+
+@test(.group = "y_iterate", .slow = true) y_iter_huge()
+{
+	// Go backwards.  Forwards works, but hits a serious worst-case because
+	// each addition iterates through all previous entries.
+	for (new i = 50000; i-- > 0; )
+	{
+		Iter_Add(y_iter_huge, i);
+	}
+	// Check forwards anyway, just with a few fewer items added.
+	for (new i = 50000; i < 50100; ++i)
+	{
+		Iter_Add(y_iter_huge, i);
+	}
+	ASSERT_EQ(Iter_Count(y_iter_huge), 50100);
+}
 
 @test(.group = "y_iterate") y_iter_RandomFreeExclude()
 {
