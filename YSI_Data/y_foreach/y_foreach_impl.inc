@@ -242,7 +242,33 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 
 stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 {
-	return Iter_Add_InternalC(count, array, start, Iter_RandomFree_Impl(count, array, start, ___(3)));
+	new
+		n = numargs() - 3,
+		s,
+		e;
+	// Get the range of the dynamic parameters.
+	#emit ADDR.pri             start
+	#emit ADD.C                4
+	#emit STOR.S.pri           s
+	#emit LOAD.S.alt           n
+	#emit SHL.C.alt            2
+	#emit ADD
+	#emit STOR.S.pri           e
+	while (s != e)
+	{
+		#emit LREF.S.pri           s
+		#emit LOAD.I
+		#emit PUSH.pri
+		s += 4;
+	}
+	s = Iter_RandomFree_Impl(count, array, start, n);
+	// Pop the extra parameters.
+	#emit LCTRL                4
+	#emit LOAD.S.alt           n
+	#emit SHL.C.alt            2
+	#emit ADD
+	#emit SCTRL                4
+	return Iter_Add_InternalC(count, array, start, s);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -265,7 +291,33 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 		count = 0;
 	while (slots--)
 		count += counts[slots];
-	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_Impl(count, array, size, ___(6)));
+	new
+		n = numargs() - 6,
+		s,
+		e;
+	// Get the range of the dynamic parameters.
+	#emit ADDR.pri             slot
+	#emit ADD.C                4
+	#emit STOR.S.pri           s
+	#emit LOAD.S.alt           n
+	#emit SHL.C.alt            2
+	#emit ADD
+	#emit STOR.S.pri           e
+	while (s != e)
+	{
+		#emit LREF.S.pri           s
+		#emit LOAD.I
+		#emit PUSH.pri
+		s += 4;
+	}
+	s = Iter_RandomFree_Impl(count, array, start, n);
+	// Pop the extra parameters.
+	#emit LCTRL                4
+	#emit LOAD.S.alt           n
+	#emit SHL.C.alt            2
+	#emit ADD
+	#emit SCTRL                4
+	return Iter_Add_InternalD(counts[slot], array, start, size, s);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -362,7 +414,33 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 
 stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 {
-	return Iter_RandomFree_Impl(count, array, start, ___(3));
+	new
+		n = numargs() - 3,
+		s,
+		e;
+	// Get the range of the dynamic parameters.
+	#emit ADDR.pri             start
+	#emit ADD.C                4
+	#emit STOR.S.pri           s
+	#emit LOAD.S.alt           n
+	#emit SHL.C.alt            2
+	#emit ADD
+	#emit STOR.S.pri           e
+	while (s != e)
+	{
+		#emit LREF.S.pri           s
+		#emit LOAD.I
+		#emit PUSH.pri
+		s += 4;
+	}
+	s = Iter_RandomFree_Impl(count, array, start, n);
+	// Pop the extra parameters.
+	#emit LCTRL                4
+	#emit LOAD.S.alt           n
+	#emit SHL.C.alt            2
+	#emit ADD
+	#emit SCTRL                4
+	return s;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -374,88 +452,55 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Iter_RandomFree_Impl(count, const array[], start, ...)
+static stock Iter_RandomFree_Impl(count, const array[], start, num)
 {
 	count = start - count;
 	new
-		numArgs = 0,
-		rewrite = 0,
 		first = 0,
 		last = 0;
-	// y_hooks can mangle callback parameter counts, thus it redefines `numargs`
-	// to account for this and traverse the stack until it finds a valid value.
-	// However, because this internal function is never called directly from a
-	// callback, we don't need to worry about that here and can instead just use
-	// the previous function's parameter count directly.
-	#emit LOAD.S.pri   8
-	#emit ADD.C        0xFFFFFFF4
-	#emit ADDR.alt     24
+	#emit LOAD.S.pri   num
+	#emit SHL.C.pri    2
+	#emit ADDR.alt     28
 	#emit STOR.S.alt   first
-	#emit XCHG
 	#emit ADD
 	#emit STOR.S.pri   last
-	#emit SHR.C.alt    2
-	#emit STOR.S.alt   numArgs
 	// Short-circuit the common-case where there are no exclusions.
-	if (numArgs)
+	if (num)
 	{
-		for (new value = 0, excluded = rewrite = first; excluded != last; excluded += 4)
+		// Count how many unique values there are.
+		for (new value = 0, ptr = first; ptr != last; ptr += 4)
 		{
-			#emit LREF.S.pri   excluded
-			#emit LOAD.I
+			#emit LREF.S.pri   ptr
 			#emit STOR.S.pri   value
-			#emit SREF.S.pri   excluded
-			// First, check if this is valid and IN the array.
+			// First, check if this is valid and OUT the array.
 			if (0 <= value < start && array[value] <= value)
 			{
-				// It is.  Optimise for the inner loop.  Do this by compressing
-				// valid values to the start of the list and sorting the
-				// dereferenced versions instead of the addresses.
-				for (new i2 = first, v2 = 0; i2 != rewrite; i2 += 4)
+				// Is this unique?
+				for (new i2 = first, v2 = 0; i2 != ptr; i2 += 4)
 				{
 					#emit LREF.S.pri   i2
 					#emit STOR.S.pri   v2
-					if (value < v2)
+					if (value == v2)
 					{
-						// Insert here.
-						do
-						{
-							#emit LOAD.S.pri   value
-							#emit SREF.S.pri   i2
-							value = v2;
-							i2 += 4;
-							#emit LREF.S.pri   i2
-							#emit STOR.S.pri   v2
-						}
-						while (i2 != rewrite);
-						#emit LOAD.S.pri   value
-						#emit SREF.S.pri   i2
+						// Only the first instance of any number is counted.
+						--num;
 						break;
 					}
-					else if (value == v2)
-					{
-						--numArgs;
-						rewrite -= 4;
-						break;
-					}
-					// Otherwise, keep going.
 				}
-				rewrite += 4;
 			}
 			else
 			{
-				// It is not.  Remove from the check.
-				--numArgs;
+				--num;
 			}
 		}
 	}
-	if (count <= numArgs)
+	if (count <= num)
 	{
 		return INVALID_ITERATOR_SLOT;
 	}
 	// There are enough elements to search from after exclusions.
-	count = random(count - numArgs);
-	if (numArgs)
+	count = random(count - num);
+	if (num)
 	{
 		for ( ; ; )
 		{
@@ -466,12 +511,14 @@ Iter_RandomFree_Internal_loop:
 			{
 				continue;
 			}
-			for (last = first; last != rewrite; last += 4)
+			for (num = first; num != last; num += 4)
 			{
-				#emit LREF.S.pri   last
+				#emit LREF.S.pri   num
 				#emit LOAD.S.alt   start
 				#emit JEQ          Iter_RandomFree_Internal_loop
 			}
+			// Don't use `do {} while ();` or this decrement will be run when
+			// the `continue;` above is hit.
 			if (!count--)
 			{
 				return start;
@@ -479,16 +526,13 @@ Iter_RandomFree_Internal_loop:
 		}
 	}
 	// No exclutions, use the old code.
-	for ( ; ; )
+	do
 	{
 		--start;
 		// Check if this value is not included in any iterator.  If it isn't
 		// then decrement the count until we have run out of values to test.
-		if (array[start] <= start && !count--)
-		{
-			break;
-		}
 	}
+	while (array[start] > start || count--);
 	return start;
 }
 
@@ -510,7 +554,33 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
 		count = 0;
 	while (slots--)
 		count += counts[slots];
-	return Iter_RandomFree_Impl(count, array, start, ___(4));
+	new
+		n = numargs() - 4,
+		s,
+		e;
+	// Get the range of the dynamic parameters.
+	#emit ADDR.pri             slots
+	#emit ADD.C                4
+	#emit STOR.S.pri           s
+	#emit LOAD.S.alt           n
+	#emit SHL.C.alt            2
+	#emit ADD
+	#emit STOR.S.pri           e
+	while (s != e)
+	{
+		#emit LREF.S.pri           s
+		#emit LOAD.I
+		#emit PUSH.pri
+		s += 4;
+	}
+	s = Iter_RandomFree_Impl(count, array, start, n);
+	// Pop the extra parameters.
+	#emit LCTRL                4
+	#emit LOAD.S.alt           n
+	#emit SHL.C.alt            2
+	#emit ADD
+	#emit SCTRL                4
+	return s;
 }
 
 /*-------------------------------------------------------------------------*//**
