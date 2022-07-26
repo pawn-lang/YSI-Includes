@@ -431,10 +431,6 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, &
 				strpack(str, YSI_g_sName),
 				AMX_WriteString(namewrite, str, len);
 				
-				// Mark that there are now fewer header hook entries because we
-				// reused one for a proper callback.
-				YSI_g_sBlockEnd -= 8;
-				
 				// Update the space available.
 				namelen -= len + 1;
 				namewrite += len + 1;
@@ -813,6 +809,10 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, en
 			AMX_Write(writePtr, nextPtr),
 			writePtr += 8;
 		}
+		
+		// Mark that there are now fewer header hook entries because we
+		// reused one for a proper callback.
+		YSI_g_sBlockEnd -= 8;
 	}
 	// Save the function pointer again so it can be used by
 	// the rewrite code.
