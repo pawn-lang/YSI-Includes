@@ -1310,130 +1310,134 @@ public OnCodeInit()
 	}
 	Hooks_SortReplacements();
 
-	// Get the preloaders.
-	new
-		precount = 0,
-		preloads[32][E_CHAIN_HOOK];
-	Hooks_GetPreloadLibraries(preloads, precount);
-	
-	// Step 2:
-	//
-	//   Now do the legacy hooks (hook type 1).
-	//
-	// Step 3:
-	//
-	//   Read the AMX header to loop over all the type 2 hook functions.  These
-	//   contain the call to `_yH@` which generates the trambopoline code.
-	//
-	//   From this data we build a list of all calls to replace.
 	new
 		// This records the amount of space available in the nametable currently
 		// taken up by the names of hooks that we are about to destroy, and
 		// where they are located.  Now includes all hooks together.
-		namelen = 0,
-		namewrite = 0,
 		heap = GetAmxHeapTop(),
 		allocated = 0,
 		nativeCount = 0,
 		stockCount = 0,
-		base = 0,
-		ret,
-		bool:retry;
+		base = 0;
 	{
-		new hdr[AMX_HDR];
-		GetAmxHeader(hdr);
-		base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
-	}
-	// Get the space of all the publics, then destroy them all.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
-	{
-		namelen += AMX_GetLengthFromEntry(entry) + 1;
-		if (namewrite == 0)
+		// Get the preloaders.
+		new
+			namelen = 0,
+			namewrite = 0,
+			precount = 0,
+			ret,
+			bool:retry,
+			preloads[32][E_CHAIN_HOOK];
+		Hooks_GetPreloadLibraries(preloads, precount);
+		
+		// Step 2:
+		//
+		//   Now do the legacy hooks (hook type 1).
+		//
+		// Step 3:
+		//
+		//   Read the AMX header to loop over all the type 2 hook functions.
+		//   These contain the call to `_yH@` which generates the trambopoline
+		//   code.
+		//
+		//   From this data we build a list of all calls to replace.
 		{
-			namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
-			YSI_g_sBlockStart = entry;
+			new hdr[AMX_HDR];
+			GetAmxHeader(hdr);
+			base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
 		}
-		AMX_Write(entry + 4, 0);
-	}
-	YSI_g_sBlockEnd = entry + 8;
-	// Get the next hook type.  This is binary-search safe because it is the
-	// first call before any name mangling has happened.
-	YSI_g_sNPSBaseCall = cellmin;
-	do
-	{
-		retry = false;
-		//while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
-		for (entry = YSI_g_sBlockStart; entry != YSI_g_sBlockEnd; entry += 8)
+		// Get the space of all the publics, then destroy them all.
+		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
 		{
-			if (AMX_Read(entry) == 0)
+			namelen += AMX_GetLengthFromEntry(entry) + 1;
+			if (namewrite == 0)
 			{
-				continue;
+				namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
+				YSI_g_sBlockStart = entry;
 			}
-			// Invoke the function, which will result in our callback being called
-			// to get the base function name (in to `YSI_g_sName`).
-			state y_hooks_scan : y_hooks_scan_determine_type;
-			YSI_g_sTempRet = YSI_g_sNPSTrampoline;
-			#emit PUSH.C                    0
-			#emit LCTRL                     6
-			#emit ADD.C                     44
-			#emit LCTRL                     8
-			#emit PUSH.pri
-			#emit LREF.S.pri                entry
-			#emit STOR.pri                  YSI_g_sNPSTrampoline
-			#emit SCTRL                     6
-			#emit STOR.S.pri                ret
-			// Determine the callback type.
-			switch (ret)
+			AMX_Write(entry + 4, 0);
+		}
+		YSI_g_sBlockEnd = entry + 8;
+		// Get the next hook type.  This is binary-search safe because it is the
+		// first call before any name mangling has happened.
+		YSI_g_sNPSBaseCall = cellmin;
+		do
+		{
+			retry = false;
+			//while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
+			for (entry = YSI_g_sBlockStart; entry != YSI_g_sBlockEnd; entry += 8)
 			{
-			case 1: // `hook`
-			{
-				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
-				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
-				state y_hooks_scan : y_hooks_scan_legacy_hook;
-				Hooks_Collate(preloads, precount, entry, namelen, namewrite);
-				// This will re-test the same slot but that's good because we do
-				// an insertion sort so some publics may have been moved up.
-				// They also may not, but that's not a problem because in that
-				// case the `== 0` check above will trigger and skip the repeat.
-				entry -= 8;
-			}
-			case 2: // `hook stock`
-			{
-				if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
+				if (AMX_Read(entry) == 0)
 				{
-					YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSReplace, YSI_g_sNPSStack);
-					YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+					continue;
 				}
-				// An NPS hook we don't need.
-				Hooks_InvalidatePointer(entry);
+				// Invoke the function, which will result in our callback being
+				// called to get the base function name (in to `YSI_g_sName`).
+				state y_hooks_scan : y_hooks_scan_determine_type;
+				YSI_g_sTempRet = YSI_g_sNPSTrampoline;
+				#emit PUSH.C                    0
+				#emit LCTRL                     6
+				#emit ADD.C                     44
+				#emit LCTRL                     8
+				#emit PUSH.pri
+				#emit LREF.S.pri                entry
+				#emit STOR.pri                  YSI_g_sNPSTrampoline
+				#emit SCTRL                     6
+				#emit STOR.S.pri                ret
+				// Determine the callback type.
+				switch (ret)
+				{
+				case 1: // `hook`
+				{
+					// Always restore `YSI_g_sNPSTrampoline` outside case `2`.
+					YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+					state y_hooks_scan : y_hooks_scan_legacy_hook;
+					Hooks_Collate(preloads, precount, entry, namelen, namewrite);
+					// This will re-test the same slot but that's good because
+					// we do an insertion sort so some publics may have been
+					// moved up.  They also may not, but that's not a problem
+					// because in that case the `== 0` check above will trigger
+					// and skip the repeat.
+					entry -= 8;
+				}
+				case 2: // `hook stock`
+				{
+					if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
+					{
+						YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSReplace, YSI_g_sNPSStack);
+						YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+					}
+					// An NPS hook we don't need.
+					Hooks_InvalidatePointer(entry);
+				}
+				case 3: // `hook stock`, for a not currently processed function.
+				{
+					// Always restore `YSI_g_sNPSTrampoline` outside case `2`.
+					YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+					retry = true;
+				}
+				case 4: // `hook public`, which aren't processed in this loop.
+				{
+					// Always restore `YSI_g_sNPSTrampoline` outside case `2`.
+					YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+				}
+				default: // Anything else, gets dropped.
+				{
+					// Always restore `YSI_g_sNPSTrampoline` outside case `2`.
+					YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+					Hooks_InvalidatePointer(entry);
+				}
+				}
 			}
-			case 3: // `hook stock`, for an not currently processed function.
+			if (YSI_g_sNPSBaseCall != cellmin)
 			{
-				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
-				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
-				retry = true;
-			}
-			case 4: // `hook public`, which aren't processed in this loop.
-			{
-				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
-				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
-			}
-			default: // Anything else, gets dropped.
-			{
-				// Always restore `YSI_g_sNPSTrampoline` when it isn't case `2`.
-				YSI_g_sNPSTrampoline = YSI_g_sTempRet;
-				Hooks_InvalidatePointer(entry);
-			}
+				// Store the final chain.
+				YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
+				YSI_g_sNPSBaseCall = cellmin;
 			}
 		}
-		if (YSI_g_sNPSBaseCall != cellmin)
-		{
-			// Store the final chain.
-			YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
-			YSI_g_sNPSBaseCall = cellmin;
-		}
+		while (retry);
 	}
-	while (retry);
 	
 	// Step 4:
 	//
