@@ -1250,6 +1250,18 @@ static stock Hooks_SortReplacements()
 	Debug_Code1{for (new i = 0 ; i != YSI_g_sReplacePtr; ++i) Debug_Print0("Hook Replacement: %d, %d, %s, %s", YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MIN], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG]);}
 }
 
+static stock Hooks_MallocState() <y_malloc_finalise : y_malloc_finalise_disabled>
+{
+}
+
+static stock Hooks_MallocState() <y_malloc_finalise : y_malloc_finalise_enabled>
+{
+}
+
+static stock Hooks_MallocState() <>
+{
+}
+
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Call the main hook run code, then advance the ALS chain.
@@ -1259,6 +1271,7 @@ static stock Hooks_SortReplacements()
 
 public OnCodeInit()
 {
+	state y_malloc_finalise : y_malloc_finalise_disabled;
 	// Step 1:
 	//
 	//   Get the replacements for legacy hooks.
@@ -1645,6 +1658,14 @@ public OnCodeInit()
 	Debug_Print1("Hooks_OnCodeInit end");
 	if (Server_JITExists())
 		Hooks_RepairJITInit();
+
+	// This must be called after y_hooks is finished, but we don't know if it is
+	// included.  So we use states set and cleared both there and here to ensure
+	// that this is only called after one or both are complete.
+	#if defined Malloc_Finalise
+		Malloc_Finalise();
+	#endif
+	state y_malloc_finalise : y_malloc_finalise_enabled;
 	return 1;
 }
 
