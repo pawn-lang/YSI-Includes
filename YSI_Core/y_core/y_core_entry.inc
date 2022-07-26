@@ -266,6 +266,18 @@ stock const YSIM_VERMAX[] = "X";
 #define YSIM_LOG_IN #U
 #define YSIM_VARARG #V
 
+#define Debug_Error(%1); \
+	Debug_Print0("\7\7\7*** YSI Error: " #%1);
+
+#define Debug_Warning(%1); \
+	Debug_Print0("\7*** YSI Warning: " #%1);
+
+#define Debug_Info(%1); \
+	Debug_Print0("*** YSI Info: " #%1);
+
+#define Debug_Fatal(%1); \
+	Debug_Print0("\7\7\7\7\7*** YSI Fatal Error: " #%1),Debug_Kill_();
+
 // New create the `OnScriptInit` and `OnCodeInit` callbacks, which many YSI
 // includes use to start themselves.
 #include "y_scriptinit_impl"
