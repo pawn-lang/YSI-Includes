@@ -586,14 +586,28 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 
 @test(.group = "y_iterate") y_iter_RandomRemove3()
 {
-	new
-		Iterator:iter<2, 10>;
-	Iter_Add(iter<0>, 2);
-	ASSERT_NE(Iter_RandomRemove(iter<0>), cellmin);
-	ASSERT_EQ(Iter_RandomRemove(iter<1>), cellmin);
-	ASSERT_EQ(Iter_RandomRemove(iter<0>), cellmin);
-	ASSERT_ZE(Iter_Count(iter<0>));
-	ASSERT_ZE(Iter_Count(iter<1>));
+	for (new i = 0; i != 100; ++i)
+	{
+		new
+			Iterator:iter<5, 10>;
+		Iter_Add(iter<4>, 2);
+		Iter_Add(iter<4>, 4);
+		Iter_Add(iter<4>, 5);
+		Iter_Add(iter<4>, 9);
+		Iter_Add(iter<4>, 10);
+		ASSERT_EQ(Iter_RandomRemove(iter<0>), cellmin);
+		ASSERT_EQ(Iter_RandomRemove(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomRemove(iter<4>), cellmin);
+		ASSERT_NE(Iter_RandomRemove(iter<4>), cellmin);
+		ASSERT_NE(Iter_RandomRemove(iter<4>), cellmin);
+		ASSERT_NE(Iter_RandomRemove(iter<4>), cellmin);
+		ASSERT_EQ(Iter_RandomRemove(iter<4>), cellmin);
+		ASSERT_EQ(Iter_RandomRemove(iter<1>), cellmin);
+		ASSERT_EQ(Iter_RandomRemove(iter<0>), cellmin);
+		ASSERT_ZE(Iter_Count(iter<0>));
+		ASSERT_ZE(Iter_Count(iter<1>));
+		ASSERT_ZE(Iter_Count(iter<4>));
+	}
 }
 
 @test(.group = "y_iterate") y_iter_RandomAdd1()
@@ -653,23 +667,28 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 
 @test(.group = "y_iterate") y_iter_RandomAdd3()
 {
-	new
-		Iterator:iter<2, 10>;
-	Iter_Add(iter<0>, 2);
-	ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_EQ(Iter_RandomAdd(iter<0>), cellmin);
-	ASSERT_EQ(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_EQ(Iter_RandomAdd(iter<0>), cellmin);
-	ASSERT_EQ(Iter_Count(iter<0>), 4);
-	ASSERT_EQ(Iter_Count(iter<1>), 6);
+	// Loop this many times, because I managed to randomly get an error once,
+	// but with it being random it was hard to reproduce.
+	for (new i = 0; i != 100; ++i)
+	{
+		new
+			Iterator:iter<2, 10>;
+		Iter_Add(iter<0>, 2);
+		ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_EQ(Iter_RandomAdd(iter<0>), cellmin);
+		ASSERT_EQ(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_EQ(Iter_RandomAdd(iter<0>), cellmin);
+		ASSERT_EQ(Iter_Count(iter<0>), 4);
+		ASSERT_EQ(Iter_Count(iter<1>), 6);
+	}
 }
 
 @test(.group = "y_iterate") y_iter_RandomFree1()

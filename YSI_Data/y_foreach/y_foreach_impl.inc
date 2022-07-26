@@ -310,7 +310,7 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 		#emit PUSH.pri
 		s += 4;
 	}
-	s = Iter_RandomFree_Impl(count, array, start, n);
+	s = Iter_RandomFree_Impl(count, array, size, n);
 	// Pop the extra parameters.
 	#emit LCTRL                4
 	#emit LOAD.S.alt           n
@@ -526,13 +526,16 @@ Iter_RandomFree_Internal_loop:
 		}
 	}
 	// No exclutions, use the old code.
-	do
+	for ( ; ; )
 	{
 		--start;
 		// Check if this value is not included in any iterator.  If it isn't
 		// then decrement the count until we have run out of values to test.
+		if (array[start] <= start && !count--)
+		{
+			break;
+		}
 	}
-	while (array[start] > start || count--);
 	return start;
 }
 
