@@ -1464,7 +1464,7 @@ public OnCodeInit()
 	{
 		for (new addr = AMX_HEADER_COD; addr < 0;)
 		{
-				switch ((o = UnrelocateOpcode(Opcode:ReadAmxMemory(addr))))
+				switch ((o = UnrelocateOpcode(Opcode:AMX_Read(addr))))
 				{
 					case OP_SYSREQ_C:
 					{
@@ -1478,7 +1478,7 @@ public OnCodeInit()
 							addr += 8;
 							continue;
 						}
-						idx = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+						idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4));
 				#if __COMPILER_O2
 						base = 0;
 				#endif
@@ -1490,7 +1490,7 @@ public OnCodeInit()
 							addr += 8;
 							continue;
 						}
-						idx = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+						idx = YHNPS_Find(heap + allocated * 16, nativeCount, AMX_Read(addr + 4));
 				#if __COMPILER_O2
 						base = 0;
 				#endif
@@ -1498,13 +1498,13 @@ public OnCodeInit()
 				#if __COMPILER_O2
 					case OP_SYSREQ_N:
 					{
-						idx = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4)),
+						idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4)),
 						base = 1;
 					}
 				#endif
 					case OP_CALL:
 					{
-						idx = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
+						idx = YHNPS_Find(heap + allocated * 8, stockCount, AMX_Read(addr + 4) - reloc);
 						if (idx != cellmin)
 						{
 							// Write a different target address.
@@ -1546,7 +1546,7 @@ public OnCodeInit()
 					AMX_Write(addr, _:call),
 					AMX_Write(addr + 4, idx),
 					addr += 8;
-					if (UnrelocateOpcode(Opcode:ReadAmxMemory(addr)) == OP_STACK)
+					if (UnrelocateOpcode(Opcode:AMX_Read(addr)) == OP_STACK)
 					{
 						AMX_Write(addr, _:nop),
 						AMX_Write(addr + 4, _:nop),
@@ -1559,7 +1559,7 @@ public OnCodeInit()
 	{
 			for (new addr = AMX_HEADER_COD; addr < 0;)
 			{
-				switch ((o = Opcode:ReadAmxMemory(addr)))
+				switch ((o = Opcode:AMX_Read(addr)))
 				{
 					case OP_SYSREQ_C:
 					{
@@ -1570,7 +1570,7 @@ public OnCodeInit()
 								addr += 8;
 								continue;
 							}
-							idx = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+							idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4));
 						#if __COMPILER_O2
 							base = 0;
 						#endif
@@ -1584,20 +1584,20 @@ public OnCodeInit()
 									addr += 8;
 									continue;
 								}
-								idx = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+								idx = YHNPS_Find(heap + allocated * 16, nativeCount, AMX_Read(addr + 4));
 						#if __COMPILER_O2
 								base = 0;
 							}
 							else
 							{
-								idx = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+								idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4));
 								base = 1;
 						#endif
 							}
 					}
 					case OP_CALL:
 					{
-						idx = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
+						idx = YHNPS_Find(heap + allocated * 8, stockCount, AMX_Read(addr + 4) - reloc);
 						if (idx != cellmin)
 						{
 							// Write a different target address.
@@ -1639,7 +1639,7 @@ public OnCodeInit()
 					AMX_Write(addr, _:call),
 					AMX_Write(addr + 4, idx),
 					addr += 8;
-					if (Opcode:ReadAmxMemory(addr) == OP_STACK)
+					if (Opcode:AMX_Read(addr) == OP_STACK)
 					{
 						AMX_Write(addr, _:nop),
 						AMX_Write(addr + 4, _:nop),

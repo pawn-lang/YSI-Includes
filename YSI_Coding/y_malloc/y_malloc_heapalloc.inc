@@ -100,12 +100,11 @@ public OnCodeInit()
 		// Remove all `BOUNDS 0` ops, finally done properly.
 		new
 			dctx[DisasmContext],
-			Opcode:op,
 			Opcode:nop = RelocateOpcode(OP_NOP);
 		DisasmInit(dctx);
-		while ((op = DisasmNextInsn(dctx)) != OP_NONE)
+		while (DisasmNext(dctx) != DISASM_DONE)
 		{
-			if (op == OP_BOUNDS && DisasmGetOperand(dctx) == 0)
+			if (dctx[DisasmContext_opcode] == OP_BOUNDS && DisasmGetOperand(dctx) == 0)
 			{
 				AMX_Write(dctx[DisasmContext_cip], _:nop);
 				AMX_Write(dctx[DisasmContext_cip] + 4, _:nop);
