@@ -221,7 +221,7 @@ Optional plugins:
 //
 // This does NOT put `...` in to the function parameters with `%1...` because
 // publics can't have variable arguments.  But we can still secretly pass them.
-#define YHLEG_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,___(%9-1))(%7)(%9,%4)
+#define YHLEG_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,YVA2_DummyPush((%9-1)*cellbytes))(%7)(%9,%4)
 
 // References.
 //
@@ -296,8 +296,8 @@ Optional plugins:
 // %2  = Name (unused)
 // %5  = Prototype parameters
 // %6  = Call parameters
-#define YHNPS_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,___(%9-1))(%7)(%9,%4)
-	
+#define YHNPS_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,YVA2_DummyPush((%9-1)*cellbytes))(%7)(%9,%4)
+
 // References.
 //
 // %0  = `const` (unused)

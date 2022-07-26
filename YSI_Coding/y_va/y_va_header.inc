@@ -93,7 +93,7 @@ Optional plugins:
 
 #define ___ YVA2_DummyPush()
 // For optional parameter skips.
-#define YVA2_DummyPush()(%1) YVA2_DummyPush((%1) * 4)
+#define YVA2_DummyPush()(%1) YVA2_DummyPush((%1)*cellbytes)
 
 // Shortcuts.
 #define ___0 ___(0)

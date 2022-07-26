@@ -1202,7 +1202,7 @@ hook stock TestHookedFunc(a, const string:b[], ...)
 //static _@yHTestHookedFunc@FI(a, const b[], ...)
 {
 	//printf("TestHookedFunc");
-	return a + continue(a, b, ___(2));
+	return a + continue(a, b, YVA2_DummyPush(2 * cellbytes));
 }
 
 @test(.group = "y_hooks") TestHookedFunc()
