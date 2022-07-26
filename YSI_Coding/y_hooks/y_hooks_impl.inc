@@ -2148,11 +2148,12 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, order, const strin
 	{
 		// This is a hook for a different function.  We don't want this one
 		// just yet, wait till the current hook is done with.
-		#emit LOAD.S.pri   0
-		#emit SCTRL        5
-		#emit SCTRL        4
-		// Try this one again later.
-		#emit CONST.pri    3
+		#emit HEAP                 0xFFFFFFE4 // -28
+		#emit LOAD.S.pri           0
+		#emit SCTRL                5
+		#emit SCTRL                4
+		// Try this one again later.  Double return.
+		#emit CONST.pri            3
 		#emit RETN
 	}
 
@@ -2287,10 +2288,11 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, order, const strin
 	// Do a triple return - exit the calling function as well as this function,
 	// so that the next call is never actually made.  This only looks like a
 	// double return, but we are operating in the frame of the caller already.
-	#emit LOAD.S.pri   0
-	#emit SCTRL        5
-	#emit SCTRL        4
-	#emit CONST.pri    2
+	#emit HEAP                 0xFFFFFFE4 // -28
+	#emit LOAD.S.pri           0
+	#emit SCTRL                5
+	#emit SCTRL                4
+	#emit CONST.pri            2
 	#emit RETN
 
 	__pragma("naked");
@@ -2313,6 +2315,7 @@ stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &
 
 	// A double return.  We return `0` from this function because we don't care
 	// about the current state.
+	#emit HEAP                 0xFFFFFFE4 // -28
 	#emit STACK                52 // 12 + 10 * 4
 	#emit ZERO.pri
 	#emit RETN
