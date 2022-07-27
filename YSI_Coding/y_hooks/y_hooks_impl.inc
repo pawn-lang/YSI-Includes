@@ -1327,6 +1327,7 @@ public OnCodeInit()
 			precount = 0,
 			ret,
 			bool:retry,
+			//bool:newpub,
 			preloads[32][E_CHAIN_HOOK];
 		Hooks_GetPreloadLibraries(preloads, precount);
 		
@@ -1416,11 +1417,12 @@ public OnCodeInit()
 					YSI_g_sNPSTrampoline = YSI_g_sTempRet;
 					retry = true;
 				}
-				case 4: // `hook public`, which aren't processed in this loop.
-				{
-					// Always restore `YSI_g_sNPSTrampoline` outside case `2`.
-					YSI_g_sNPSTrampoline = YSI_g_sTempRet;
-				}
+				//case 4: // `hook public`, which aren't processed in this loop.
+				//{
+				//	// Always restore `YSI_g_sNPSTrampoline` outside case `2`.
+				//	YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+				//	newpub = true;
+				//}
 				default: // Anything else, gets dropped.
 				{
 					// Always restore `YSI_g_sNPSTrampoline` outside case `2`.
@@ -1437,6 +1439,60 @@ public OnCodeInit()
 			}
 		}
 		while (retry);
+		//while (newpub)
+		//{
+		//	newpub = false;
+		//	// Loop backwards through the hooks, because public chains run the
+		//	// other way.
+		//	for (entry = YSI_g_sBlockEnd; entry != YSI_g_sBlockStart; )
+		//	{
+		//		entry -= 8;
+		//		if (AMX_Read(entry) == 0)
+		//		{
+		//			continue;
+		//		}
+		//		// Invoke the function, which will result in our callback being
+		//		// called to get the base function name (in to `YSI_g_sName`).
+		//		state y_hooks_scan : y_hooks_scan_determine_type;
+		//		YSI_g_sTempRet = YSI_g_sNPSTrampoline;
+		//		#emit PUSH.C                    0
+		//		#emit LCTRL                     6
+		//		#emit ADD.C                     44
+		//		#emit LCTRL                     8
+		//		#emit PUSH.pri
+		//		#emit LREF.S.pri                entry
+		//		#emit STOR.pri                  YSI_g_sNPSTrampoline
+		//		#emit SCTRL                     6
+		//		#emit STOR.S.pri                ret
+		//		// Determine the callback type.
+		//		switch (ret)
+		//		{
+		//		case 3: // `hook public`, for a not currently processed function.
+		//		{
+		//			// Always restore `YSI_g_sNPSTrampoline` outside case `2`.
+		//			YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+		//			newpub = true;
+		//		}
+		//		case 4: // `hook public`, which aren't processed in this loop.
+		//		{
+		//			// Always restore `YSI_g_sNPSTrampoline` outside case `2`.
+		//			YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+		//		}
+		//		default: // Anything else, gets dropped.
+		//		{
+		//			// Always restore `YSI_g_sNPSTrampoline` outside case `2`.
+		//			YSI_g_sNPSTrampoline = YSI_g_sTempRet;
+		//			Hooks_InvalidatePointer(entry);
+		//		}
+		//		}
+		//	}
+		//	if (YSI_g_sNPSBaseCall != cellmin)
+		//	{
+		//		// Store the final chain.
+		//		YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
+		//		YSI_g_sNPSBaseCall = cellmin;
+		//	}
+		//}
 	}
 	
 	// Step 4:
