@@ -71,6 +71,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if defined FORMAT_REPLACE_NATIVES
+	#if FORMAT_REPLACE_NATIVES && defined FormatSpecifier
+		// The `formatex` library was included first.  Make the defines nicer so
+		// that they don't conflict with native redefinitions.
+		#undef printf
+		#undef format
+		#define format( formatex(
+		#define printf( printfex(
+		#define _ALS_format
+		#define _ALS_printf
+	#endif
+#endif
+	
 // These should pretty much always exist, but are defined in "a_samp" in SA:MP,
 // when they should really be "core" functions.
 // 
