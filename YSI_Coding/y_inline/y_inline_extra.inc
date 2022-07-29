@@ -71,6 +71,28 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+forward y_inline_HTTPCallback(Func:cb<is>, responseCode, const data[]);
+
+public y_inline_HTTPCallback(Func:cb<is>, responseCode, const data[])
+{
+    @.cb(responseCode, data);
+	Indirect_Release(cb);
+}
+
+stock HTTPCallback(HTTP_METHOD:method, const url[], const data[], Func:cb<is>)
+{
+	if (strcmp(url, "http://", false, 7) == 0)
+	{
+		// SA:MP doesn't like this the protocol being given.
+		YSI_HTTP__(_:cb, method, url[7], data, "y_inline_HTTPCallback");
+	}
+	else
+	{
+		YSI_HTTP__(_:cb, method, url, data, "y_inline_HTTPCallback");
+	}
+	Indirect_Claim(cb);
+}
+
 //
 // These forward, but don't declare the "extra" functions.  The reason for this is simple - they
 // used to be defined in here, but that's incredibly inefficient if these functions aren't actually

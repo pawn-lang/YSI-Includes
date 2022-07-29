@@ -97,7 +97,10 @@ native YSI_PrintF__(const format[], GLOBAL_TAG_TYPES:...) = printf;
 native YSI_SetTimer__(const funcname[], interval, bool:repeating) = SetTimer;
 native YSI_SetTimerEx__(const funcname[], interval, bool:repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
 
-native YSI_HTTP__(index, type, const url[], const data[], const callback[]) = HTTP;
+#if !defined HTTP_METHOD
+	#define HTTP_METHOD: _:
+#endif
+native YSI_HTTP__(index, HTTP_METHOD:method, const url[], const data[], const callback[]) = HTTP;
 native YSI_Format__(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYPES:...) = format;
 
 native YSI_SendRconCommand__(const str[]) = SendRconCommand;
