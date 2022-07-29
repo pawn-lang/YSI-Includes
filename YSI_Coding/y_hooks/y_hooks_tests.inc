@@ -1258,7 +1258,7 @@ stock y_hooks_ALSExtraFunc(var)
 
 #define y_hooks_ALSHookedFunc(%0) y_hooks_ALSHookedFuncImpl(y_hooks_ALSExtraFunc(%0))
 
-hook stock y_hooks_ALSHookedFuncImpl(var)
+hook stock y_hooks_ALSHookedFunc(var)
 {
 	YSI_g_sValue = var;
 	return continue(var + 2);
@@ -1270,4 +1270,738 @@ hook stock y_hooks_ALSHookedFuncImpl(var)
 	ASSERT_EQ(y_hooks_ALSHookedFunc(5), 28);
 	ASSERT_EQ(YSI_g_sValue, 12);
 }
+
+// Dozens of hooks to test the list limits.
+
+static stock y_hooks_Func1(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1") y_hooks_Func1(v)
+{
+	return continue(v) + 1;
+}
+
+static stock y_hooks_Func5(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func5") y_hooks_Func5(v)
+{
+	return continue(v) + 5;
+}
+
+static stock y_hooks_Func4(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func4") y_hooks_Func4(v)
+{
+	return continue(v) + 4;
+}
+
+static stock y_hooks_Func11(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11") y_hooks_Func11(v)
+{
+	return continue(v) + 11;
+}
+
+static stock y_hooks_Func10(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func10") y_hooks_Func10(v)
+{
+	return continue(v) + 10;
+}
+
+static stock y_hooks_Func12(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func12") y_hooks_Func12(v)
+{
+	return continue(v) + 12;
+}
+
+static stock y_hooks_Func18(v)
+{
+	return v;
+}
+
+static stock y_hooks_Func0(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func0") y_hooks_Func0(v)
+{
+	return continue(v) + 0;
+}
+
+static stock y_hooks_Func2(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func2") y_hooks_Func2(v)
+{
+	return continue(v) + 2;
+}
+
+static stock y_hooks_Func8(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func8") y_hooks_Func8(v)
+{
+	return continue(v) + 8;
+}
+
+static stock y_hooks_Func7(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func7") y_hooks_Func7(v)
+{
+	return continue(v) + 7;
+}
+
+static stock y_hooks_Func9(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func9") y_hooks_Func9(v)
+{
+	return continue(v) + 9;
+}
+
+static stock y_hooks_Func6(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func6") y_hooks_Func6(v)
+{
+	return continue(v) + 6;
+}
+
+static stock y_hooks_Func11111(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11111") y_hooks_Func11111(v)
+{
+	return continue(v) + 11111;
+}
+
+static stock y_hooks_Func11110(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11110") y_hooks_Func11110(v)
+{
+	return continue(v) + 11110;
+}
+
+static stock y_hooks_Func11112(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11112") y_hooks_Func11112(v)
+{
+	return continue(v) + 11112;
+}
+
+static stock y_hooks_Func11118(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11118") y_hooks_Func11118(v)
+{
+	return continue(v) + 11118;
+}
+
+static stock y_hooks_Func11117(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11117") y_hooks_Func11117(v)
+{
+	return continue(v) + 11117;
+}
+
+static stock y_hooks_Func11119(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11119") y_hooks_Func11119(v)
+{
+	return continue(v) + 11119;
+}
+
+static stock y_hooks_Func11116(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11116") y_hooks_Func11116(v)
+{
+	return continue(v) + 11116;
+}
+
+static stock y_hooks_Func11113(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11113") y_hooks_Func11113(v)
+{
+	return continue(v) + 11113;
+}
+
+static stock y_hooks_Func11115(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11115") y_hooks_Func11115(v)
+{
+	return continue(v) + 11115;
+}
+
+static stock y_hooks_Func11114(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func11114") y_hooks_Func11114(v)
+{
+	return continue(v) + 11114;
+}
+
+static stock y_hooks_Func1111(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1111") y_hooks_Func1111(v)
+{
+	return continue(v) + 1111;
+}
+
+static stock y_hooks_Func1110(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1110") y_hooks_Func1110(v)
+{
+	return continue(v) + 1110;
+}
+
+static stock y_hooks_Func1112(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1112") y_hooks_Func1112(v)
+{
+	return continue(v) + 1112;
+}
+
+static stock y_hooks_Func1118(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1118") y_hooks_Func1118(v)
+{
+	return continue(v) + 1118;
+}
+
+static stock y_hooks_Func1117(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1117") y_hooks_Func1117(v)
+{
+	return continue(v) + 1117;
+}
+
+static stock y_hooks_Func1119(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1119") y_hooks_Func1119(v)
+{
+	return continue(v) + 1119;
+}
+
+static stock y_hooks_Func1116(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1116") y_hooks_Func1116(v)
+{
+	return continue(v) + 1116;
+}
+
+static stock y_hooks_Func1113(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1113") y_hooks_Func1113(v)
+{
+	return continue(v) + 1113;
+}
+
+static stock y_hooks_Func1115(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1115") y_hooks_Func1115(v)
+{
+	return continue(v) + 1115;
+}
+
+static stock y_hooks_Func1114(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func1114") y_hooks_Func1114(v)
+{
+	return continue(v) + 1114;
+}
+
+static stock y_hooks_Func3(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func3") y_hooks_Func3(v)
+{
+	return continue(v) + 3;
+}
+
+@hook(.stock = "y_hooks_Func18") y_hooks_Func18(v)
+{
+	return continue(v) + 18;
+}
+
+static stock y_hooks_Func17(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func17") y_hooks_Func17(v)
+{
+	return continue(v) + 17;
+}
+
+static stock y_hooks_Func19(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func19") y_hooks_Func19(v)
+{
+	return continue(v) + 19;
+}
+
+static stock y_hooks_Func16(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func16") y_hooks_Func16(v)
+{
+	return continue(v) + 16;
+}
+
+static stock y_hooks_Func13(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func13") y_hooks_Func13(v)
+{
+	return continue(v) + 13;
+}
+
+static stock y_hooks_Func15(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func15") y_hooks_Func15(v)
+{
+	return continue(v) + 15;
+}
+
+static stock y_hooks_Func14(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func14") y_hooks_Func14(v)
+{
+	return continue(v) + 14;
+}
+
+static stock y_hooks_Func111(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func111") y_hooks_Func111(v)
+{
+	return continue(v) + 111;
+}
+
+static stock y_hooks_Func110(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func110") y_hooks_Func110(v)
+{
+	return continue(v) + 110;
+}
+
+static stock y_hooks_Func112(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func112") y_hooks_Func112(v)
+{
+	return continue(v) + 112;
+}
+
+static stock y_hooks_Func118(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func118") y_hooks_Func118(v)
+{
+	return continue(v) + 118;
+}
+
+static stock y_hooks_Func117(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func117") y_hooks_Func117(v)
+{
+	return continue(v) + 117;
+}
+
+static stock y_hooks_Func119(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func119") y_hooks_Func119(v)
+{
+	return continue(v) + 119;
+}
+
+static stock y_hooks_Func116(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func116") y_hooks_Func116(v)
+{
+	return continue(v) + 116;
+}
+
+static stock y_hooks_Func113(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func113") y_hooks_Func113(v)
+{
+	return continue(v) + 113;
+}
+
+static stock y_hooks_Func115(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func115") y_hooks_Func115(v)
+{
+	return continue(v) + 115;
+}
+
+static stock y_hooks_Func114(v)
+{
+	return v;
+}
+
+@hook(.stock = "y_hooks_Func114") y_hooks_Func114(v)
+{
+	return continue(v) + 114;
+}
+
+#define Y_HOOKS_TEST_CONST (1000)
+
+@test(.group = "y_hooks") ManyManyHooks0()
+{
+	ASSERT_EQ(y_hooks_Func0(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 0);
+	ASSERT_EQ(y_hooks_Func1(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1);
+	ASSERT_EQ(y_hooks_Func2(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 2);
+	ASSERT_EQ(y_hooks_Func3(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 3);
+	ASSERT_EQ(y_hooks_Func4(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 4);
+	ASSERT_EQ(y_hooks_Func5(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 5);
+	ASSERT_EQ(y_hooks_Func6(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 6);
+	ASSERT_EQ(y_hooks_Func7(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 7);
+	ASSERT_EQ(y_hooks_Func8(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 8);
+	ASSERT_EQ(y_hooks_Func9(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 9);
+	ASSERT_EQ(y_hooks_Func10(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 10);
+	ASSERT_EQ(y_hooks_Func11(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11);
+	ASSERT_EQ(y_hooks_Func12(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 12);
+	ASSERT_EQ(y_hooks_Func13(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 13);
+	ASSERT_EQ(y_hooks_Func14(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 14);
+	ASSERT_EQ(y_hooks_Func15(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 15);
+	ASSERT_EQ(y_hooks_Func16(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 16);
+	ASSERT_EQ(y_hooks_Func17(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 17);
+	ASSERT_EQ(y_hooks_Func18(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 18);
+	ASSERT_EQ(y_hooks_Func19(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 19);
+	ASSERT_EQ(y_hooks_Func110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 110);
+	ASSERT_EQ(y_hooks_Func111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 111);
+	ASSERT_EQ(y_hooks_Func112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 112);
+	ASSERT_EQ(y_hooks_Func113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 113);
+	ASSERT_EQ(y_hooks_Func114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 114);
+	ASSERT_EQ(y_hooks_Func115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 115);
+	ASSERT_EQ(y_hooks_Func116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 116);
+	ASSERT_EQ(y_hooks_Func117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 117);
+	ASSERT_EQ(y_hooks_Func118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 118);
+	ASSERT_EQ(y_hooks_Func119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 119);
+	ASSERT_EQ(y_hooks_Func1110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1110);
+	ASSERT_EQ(y_hooks_Func1111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1111);
+	ASSERT_EQ(y_hooks_Func1112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1112);
+	ASSERT_EQ(y_hooks_Func1113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1113);
+	ASSERT_EQ(y_hooks_Func1114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1114);
+	ASSERT_EQ(y_hooks_Func1115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1115);
+	ASSERT_EQ(y_hooks_Func1116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1116);
+	ASSERT_EQ(y_hooks_Func1117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1117);
+	ASSERT_EQ(y_hooks_Func1118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1118);
+	ASSERT_EQ(y_hooks_Func1119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1119);
+	ASSERT_EQ(y_hooks_Func11110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11110);
+	ASSERT_EQ(y_hooks_Func11111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11111);
+	ASSERT_EQ(y_hooks_Func11112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11112);
+	ASSERT_EQ(y_hooks_Func11113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11113);
+	ASSERT_EQ(y_hooks_Func11114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11114);
+	ASSERT_EQ(y_hooks_Func11115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11115);
+	ASSERT_EQ(y_hooks_Func11116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11116);
+	ASSERT_EQ(y_hooks_Func11117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11117);
+	ASSERT_EQ(y_hooks_Func11118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11118);
+	ASSERT_EQ(y_hooks_Func11119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11119);
+}
+
+#undef Y_HOOKS_TEST_CONST
+
+#define Y_HOOKS_TEST_CONST (cellmax)
+
+@test(.group = "y_hooks") ManyManyHooks1()
+{
+	ASSERT_EQ(y_hooks_Func0(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 0);
+	ASSERT_EQ(y_hooks_Func1(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1);
+	ASSERT_EQ(y_hooks_Func2(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 2);
+	ASSERT_EQ(y_hooks_Func3(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 3);
+	ASSERT_EQ(y_hooks_Func4(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 4);
+	ASSERT_EQ(y_hooks_Func5(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 5);
+	ASSERT_EQ(y_hooks_Func6(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 6);
+	ASSERT_EQ(y_hooks_Func7(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 7);
+	ASSERT_EQ(y_hooks_Func8(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 8);
+	ASSERT_EQ(y_hooks_Func9(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 9);
+	ASSERT_EQ(y_hooks_Func10(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 10);
+	ASSERT_EQ(y_hooks_Func11(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11);
+	ASSERT_EQ(y_hooks_Func12(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 12);
+	ASSERT_EQ(y_hooks_Func13(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 13);
+	ASSERT_EQ(y_hooks_Func14(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 14);
+	ASSERT_EQ(y_hooks_Func15(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 15);
+	ASSERT_EQ(y_hooks_Func16(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 16);
+	ASSERT_EQ(y_hooks_Func17(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 17);
+	ASSERT_EQ(y_hooks_Func18(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 18);
+	ASSERT_EQ(y_hooks_Func19(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 19);
+	ASSERT_EQ(y_hooks_Func110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 110);
+	ASSERT_EQ(y_hooks_Func111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 111);
+	ASSERT_EQ(y_hooks_Func112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 112);
+	ASSERT_EQ(y_hooks_Func113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 113);
+	ASSERT_EQ(y_hooks_Func114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 114);
+	ASSERT_EQ(y_hooks_Func115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 115);
+	ASSERT_EQ(y_hooks_Func116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 116);
+	ASSERT_EQ(y_hooks_Func117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 117);
+	ASSERT_EQ(y_hooks_Func118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 118);
+	ASSERT_EQ(y_hooks_Func119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 119);
+	ASSERT_EQ(y_hooks_Func1110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1110);
+	ASSERT_EQ(y_hooks_Func1111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1111);
+	ASSERT_EQ(y_hooks_Func1112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1112);
+	ASSERT_EQ(y_hooks_Func1113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1113);
+	ASSERT_EQ(y_hooks_Func1114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1114);
+	ASSERT_EQ(y_hooks_Func1115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1115);
+	ASSERT_EQ(y_hooks_Func1116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1116);
+	ASSERT_EQ(y_hooks_Func1117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1117);
+	ASSERT_EQ(y_hooks_Func1118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1118);
+	ASSERT_EQ(y_hooks_Func1119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1119);
+	ASSERT_EQ(y_hooks_Func11110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11110);
+	ASSERT_EQ(y_hooks_Func11111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11111);
+	ASSERT_EQ(y_hooks_Func11112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11112);
+	ASSERT_EQ(y_hooks_Func11113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11113);
+	ASSERT_EQ(y_hooks_Func11114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11114);
+	ASSERT_EQ(y_hooks_Func11115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11115);
+	ASSERT_EQ(y_hooks_Func11116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11116);
+	ASSERT_EQ(y_hooks_Func11117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11117);
+	ASSERT_EQ(y_hooks_Func11118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11118);
+	ASSERT_EQ(y_hooks_Func11119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11119);
+}
+
+#undef Y_HOOKS_TEST_CONST
+
+#define Y_HOOKS_TEST_CONST (-5)
+
+@test(.group = "y_hooks") ManyManyHooks2()
+{
+	ASSERT_EQ(y_hooks_Func0(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 0);
+	ASSERT_EQ(y_hooks_Func1(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1);
+	ASSERT_EQ(y_hooks_Func2(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 2);
+	ASSERT_EQ(y_hooks_Func3(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 3);
+	ASSERT_EQ(y_hooks_Func4(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 4);
+	ASSERT_EQ(y_hooks_Func5(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 5);
+	ASSERT_EQ(y_hooks_Func6(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 6);
+	ASSERT_EQ(y_hooks_Func7(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 7);
+	ASSERT_EQ(y_hooks_Func8(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 8);
+	ASSERT_EQ(y_hooks_Func9(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 9);
+	ASSERT_EQ(y_hooks_Func10(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 10);
+	ASSERT_EQ(y_hooks_Func11(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11);
+	ASSERT_EQ(y_hooks_Func12(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 12);
+	ASSERT_EQ(y_hooks_Func13(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 13);
+	ASSERT_EQ(y_hooks_Func14(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 14);
+	ASSERT_EQ(y_hooks_Func15(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 15);
+	ASSERT_EQ(y_hooks_Func16(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 16);
+	ASSERT_EQ(y_hooks_Func17(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 17);
+	ASSERT_EQ(y_hooks_Func18(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 18);
+	ASSERT_EQ(y_hooks_Func19(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 19);
+	ASSERT_EQ(y_hooks_Func110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 110);
+	ASSERT_EQ(y_hooks_Func111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 111);
+	ASSERT_EQ(y_hooks_Func112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 112);
+	ASSERT_EQ(y_hooks_Func113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 113);
+	ASSERT_EQ(y_hooks_Func114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 114);
+	ASSERT_EQ(y_hooks_Func115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 115);
+	ASSERT_EQ(y_hooks_Func116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 116);
+	ASSERT_EQ(y_hooks_Func117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 117);
+	ASSERT_EQ(y_hooks_Func118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 118);
+	ASSERT_EQ(y_hooks_Func119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 119);
+	ASSERT_EQ(y_hooks_Func1110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1110);
+	ASSERT_EQ(y_hooks_Func1111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1111);
+	ASSERT_EQ(y_hooks_Func1112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1112);
+	ASSERT_EQ(y_hooks_Func1113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1113);
+	ASSERT_EQ(y_hooks_Func1114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1114);
+	ASSERT_EQ(y_hooks_Func1115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1115);
+	ASSERT_EQ(y_hooks_Func1116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1116);
+	ASSERT_EQ(y_hooks_Func1117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1117);
+	ASSERT_EQ(y_hooks_Func1118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1118);
+	ASSERT_EQ(y_hooks_Func1119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1119);
+	ASSERT_EQ(y_hooks_Func11110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11110);
+	ASSERT_EQ(y_hooks_Func11111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11111);
+	ASSERT_EQ(y_hooks_Func11112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11112);
+	ASSERT_EQ(y_hooks_Func11113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11113);
+	ASSERT_EQ(y_hooks_Func11114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11114);
+	ASSERT_EQ(y_hooks_Func11115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11115);
+	ASSERT_EQ(y_hooks_Func11116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11116);
+	ASSERT_EQ(y_hooks_Func11117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11117);
+	ASSERT_EQ(y_hooks_Func11118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11118);
+	ASSERT_EQ(y_hooks_Func11119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11119);
+}
+
+#undef Y_HOOKS_TEST_CONST
+
+#define Y_HOOKS_TEST_CONST (1003)
+
+@test(.group = "y_hooks") ManyManyHooks3()
+{
+	ASSERT_EQ(y_hooks_Func0(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 0);
+	ASSERT_EQ(y_hooks_Func1(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1);
+	ASSERT_EQ(y_hooks_Func2(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 2);
+	ASSERT_EQ(y_hooks_Func3(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 3);
+	ASSERT_EQ(y_hooks_Func4(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 4);
+	ASSERT_EQ(y_hooks_Func5(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 5);
+	ASSERT_EQ(y_hooks_Func6(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 6);
+	ASSERT_EQ(y_hooks_Func7(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 7);
+	ASSERT_EQ(y_hooks_Func8(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 8);
+	ASSERT_EQ(y_hooks_Func9(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 9);
+	ASSERT_EQ(y_hooks_Func10(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 10);
+	ASSERT_EQ(y_hooks_Func11(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11);
+	ASSERT_EQ(y_hooks_Func12(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 12);
+	ASSERT_EQ(y_hooks_Func13(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 13);
+	ASSERT_EQ(y_hooks_Func14(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 14);
+	ASSERT_EQ(y_hooks_Func15(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 15);
+	ASSERT_EQ(y_hooks_Func16(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 16);
+	ASSERT_EQ(y_hooks_Func17(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 17);
+	ASSERT_EQ(y_hooks_Func18(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 18);
+	ASSERT_EQ(y_hooks_Func19(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 19);
+	ASSERT_EQ(y_hooks_Func110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 110);
+	ASSERT_EQ(y_hooks_Func111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 111);
+	ASSERT_EQ(y_hooks_Func112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 112);
+	ASSERT_EQ(y_hooks_Func113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 113);
+	ASSERT_EQ(y_hooks_Func114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 114);
+	ASSERT_EQ(y_hooks_Func115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 115);
+	ASSERT_EQ(y_hooks_Func116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 116);
+	ASSERT_EQ(y_hooks_Func117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 117);
+	ASSERT_EQ(y_hooks_Func118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 118);
+	ASSERT_EQ(y_hooks_Func119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 119);
+	ASSERT_EQ(y_hooks_Func1110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1110);
+	ASSERT_EQ(y_hooks_Func1111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1111);
+	ASSERT_EQ(y_hooks_Func1112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1112);
+	ASSERT_EQ(y_hooks_Func1113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1113);
+	ASSERT_EQ(y_hooks_Func1114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1114);
+	ASSERT_EQ(y_hooks_Func1115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1115);
+	ASSERT_EQ(y_hooks_Func1116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1116);
+	ASSERT_EQ(y_hooks_Func1117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1117);
+	ASSERT_EQ(y_hooks_Func1118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1118);
+	ASSERT_EQ(y_hooks_Func1119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 1119);
+	ASSERT_EQ(y_hooks_Func11110(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11110);
+	ASSERT_EQ(y_hooks_Func11111(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11111);
+	ASSERT_EQ(y_hooks_Func11112(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11112);
+	ASSERT_EQ(y_hooks_Func11113(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11113);
+	ASSERT_EQ(y_hooks_Func11114(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11114);
+	ASSERT_EQ(y_hooks_Func11115(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11115);
+	ASSERT_EQ(y_hooks_Func11116(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11116);
+	ASSERT_EQ(y_hooks_Func11117(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11117);
+	ASSERT_EQ(y_hooks_Func11118(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11118);
+	ASSERT_EQ(y_hooks_Func11119(Y_HOOKS_TEST_CONST), Y_HOOKS_TEST_CONST + 11119);
+}
+
+#undef Y_HOOKS_TEST_CONST
 
