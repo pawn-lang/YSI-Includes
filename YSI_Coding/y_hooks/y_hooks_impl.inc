@@ -1626,7 +1626,7 @@ public OnCodeInit()
 								addr += 8;
 								continue;
 							}
-							//printf("Find Native: %08x: %08x %d %08x", addr, heap, nativeCount, AMX_Read(addr + 4));
+							printf("Find Native: %08x: %08x %d %08x", addr, heap, nativeCount, AMX_Read(addr + 4));
 							idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4));
 						#if __COMPILER_O2
 							base = 0;
@@ -1654,7 +1654,7 @@ public OnCodeInit()
 					}
 					case OP_CALL:
 					{
-						printf("Find Func: %08x: %08x %d %08x", addr, heap + allocated * 8, stockCount, AMX_Read(addr + 4 - reloc));
+						printf("Find Func: %08x: %08x %d %08x", addr, heap + allocated * 8, stockCount, AMX_Read(addr + 4) - reloc);
 						idx = YHNPS_Find(heap + allocated * 8, stockCount, AMX_Read(addr + 4) - reloc);
 						if (idx != cellmin)
 						{
@@ -2044,19 +2044,13 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 			return;
 		}
 	}
-	if (start == count)
+	if (start != count)
 	{
 		// Shift all the greater values up.
-		AMX_Write(heap + count * 8, value);
-		AMX_Write(heap + count * 8 + 4, ptr);
+		RawMemCpy(heap + start * 8 + 8, heap + start * 8, (count - start) * 8);
 	}
-	else
-	{
-		// Shift all the greater values up.
-		RawMemCpy(heap + mid * 8 + 8, heap + mid * 8, (count - mid) * 8);
-		AMX_Write(heap + mid * 8, value);
-		AMX_Write(heap + mid * 8 + 4, ptr);
-	}
+	AMX_Write(heap + start * 8, value);
+	AMX_Write(heap + start * 8 + 4, ptr);
 }
 
 Hooks_Continue_(GLOBAL_TAG_TYPES:...)
