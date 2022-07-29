@@ -1626,7 +1626,6 @@ public OnCodeInit()
 								addr += 8;
 								continue;
 							}
-							printf("Find Native: %08x: %08x %d %08x", addr, heap, nativeCount, AMX_Read(addr + 4));
 							idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4));
 						#if __COMPILER_O2
 							base = 0;
@@ -1654,7 +1653,6 @@ public OnCodeInit()
 					}
 					case OP_CALL:
 					{
-						printf("Find Func: %08x: %08x %d %08x", addr, heap + allocated * 8, stockCount, AMX_Read(addr + 4) - reloc);
 						idx = YHNPS_Find(heap + allocated * 8, stockCount, AMX_Read(addr + 4) - reloc);
 						if (idx != cellmin)
 						{
@@ -1990,7 +1988,6 @@ static stock YHNPS_Find(heap, end, value)
 		mid = (start + end) / 2;
 		new
 			diff = value - AMX_Read(heap + mid * 8);
-		printf("Find: %d, %d, %d, %08x, %08x, %d", start, mid, end, AMX_Read(heap + mid * 8), value, diff);
 		if (diff < 0)
 		{
 			start = mid + 1;
@@ -2030,7 +2027,6 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 		mid = (start + end) / 2;
 		new
 			diff = value - AMX_Read(heap + mid * 8);
-		printf("Push: %d, %d, %d, %08x, %08x, %d", start, mid, end, AMX_Read(heap + mid * 8), value, diff);
 		if (diff < 0)
 		{
 			start = mid + 1;
@@ -2077,14 +2073,12 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find,
 	}
 	if (find < 0)
 	{
-		printf("Insert Native: %08x, %d, %08x, %08x", heap, nativeCount, -find, replace + base);
 		YHNPS_Insert(heap, nativeCount, -find, replace + base);
-		//YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-find), replace + base);
+		YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-find), replace + base);
 		++nativeCount;
 	}
 	else
 	{
-		printf("Insert Func: %08x, %d, %08x, %08x", heap + allocated * 8, stockCount, find, replace + base);
 		YHNPS_Insert(heap + allocated * 8, stockCount, find, replace + base);
 		++stockCount;
 	}
