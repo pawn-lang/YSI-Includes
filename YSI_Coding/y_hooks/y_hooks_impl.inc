@@ -1315,10 +1315,12 @@ public OnCodeInit()
 		// taken up by the names of hooks that we are about to destroy, and
 		// where they are located.  Now includes all hooks together.
 		heap = GetAmxHeapTop(),
-		allocated = 0,
+		allocated = 32,
 		nativeCount = 0,
 		stockCount = 0,
 		base = 0;
+	// Initial space allocation for storing the NPS function list.
+	HeapAllocCells(6 * 32);
 	{
 		// Get the preloaders.
 		new
@@ -2058,18 +2060,25 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find,
 {
 	if (allocated == max(nativeCount, stockCount))
 	{
-		// Space to insert 32 new values for each hook type.
-		HeapAllocCells(6 * 32);
+		// Space to insert twice as many new hooks for each type.  The three
+		// types each take two cells (old and new pointer) and are:
+		//
+		//   0 * allocated - `SYSREQ.D` true pointers.
+		//   8 * allocated - `CALL` addresses.
+		//  16 * allocated - `SYSREQ.C` indexes.
+		//
+		// The first and last ones are inserted together.
+		HeapAllocCells(6 * allocated);
 		// Move the arrays up in memory.
 		if (nativeCount)
 		{
-			RawMemCpy(heap + allocated * 16 + 32 * 16, heap + allocated * 16, nativeCount * 8);
+			RawMemCpy(heap + allocated * 16 * 2, heap + allocated * 16, nativeCount * 8);
 		}
 		if (stockCount)
 		{
-			RawMemCpy(heap + allocated * 8 + 32 * 8, heap + allocated * 8, stockCount * 8);
+			RawMemCpy(heap + allocated * 8 * 2, heap + allocated * 8, stockCount * 8);
 		}
-		allocated += 32;
+		allocated *= 2;
 	}
 	if (find < 0)
 	{
