@@ -223,8 +223,7 @@ Optional plugins:
 // publics can't have variable arguments.  But we can still secretly pass them.
 // TODO: When you put `___` back, ensure y_hooks still works when y_va is
 // initialised afterwards (since `YSI_gYVA2_DoPush__` will be `0`).
-//#define YHLEG_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,YVA2_DummyPush((%9-1)*cellbytes))(%7)(%9,%4)
-#define YHLEG_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6)(%7)(%9,%4)
+#define YHLEG_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,YVA2_DummyPush((%9-1)*cellbytes))(%7)(%9,%4)
 
 // References.
 //
@@ -266,7 +265,6 @@ Optional plugins:
 // %4  = Existing values
 // %7  = Return tag
 // %1  = Call without `___`
-//#define YHLEG_END(%0)%8$(,%6)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>()return _@Hy(Y_HOOKS_ADDRESSOF(%0(%6)),
 #define YHLEG_END_TAG(%7,%0)%8$(,%5)(,%6)(,%1)(%9,%4)return%9(, YHLEG:%8$YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)return _@Hy(PP_DISCARD %4(%6)$Y_HOOKS_ADDRESSOF(YHNPS_U0<%0>(%1)),
 #define YHLEG_END(%0)%8$(,%5)(,%6)(,%1) YHLEG_END_TAG(,%0)%8$(,%5)(,%6)(,%1)
 #define YHLEG_NUL_TAG(%7,%0)%8$()()() YHLEG_END(,%0)%8$(,)(,)(,)
@@ -302,8 +300,7 @@ Optional plugins:
 //
 // TODO: When you put `___` back, ensure y_hooks still works when y_va is
 // initialised afterwards (since `YSI_gYVA2_DoPush__` will be `0`).
-//#define YHNPS_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,YVA2_DummyPush((%9-1)*cellbytes))(%7)(%9,%4)
-#define YHNPS_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6)(%7)(%9,%4)
+#define YHNPS_EXT(%0,%1,%2)%8$(%5)(%6)(%7)(%9,%4) %8$(%5)(%6,YVA2_DummyPush((%9-1)*cellbytes))(%7)(%9,%4)
 
 // References.
 //

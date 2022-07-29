@@ -720,7 +720,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(addr)
 		#emit STOR.S.pri                tmp
 		if (tmp)
 		{
-			Debug_Print6("Hooks_GetAllHooks found: %s %d", YSI_g_sName, idx);
+			Debug_Print6("Hooks_GetAllHooks found: %s %d", YSI_g_sName, (addr - YSI_g_sBlockStart) / 8);
 			// Replace the function pointer to the implementation.
 			AMX_Write(addr, YSI_g_sAddress);
 			// Increment and count how many hooks of this type we have.
@@ -1626,6 +1626,7 @@ public OnCodeInit()
 								addr += 8;
 								continue;
 							}
+							//printf("Find Native: %08x: %08x %d %08x", addr, heap, nativeCount, AMX_Read(addr + 4));
 							idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4));
 						#if __COMPILER_O2
 							base = 0;
@@ -1653,6 +1654,7 @@ public OnCodeInit()
 					}
 					case OP_CALL:
 					{
+						printf("Find Func: %08x: %08x %d %08x", addr, heap + allocated * 8, stockCount, AMX_Read(addr + 4 - reloc));
 						idx = YHNPS_Find(heap + allocated * 8, stockCount, AMX_Read(addr + 4) - reloc);
 						if (idx != cellmin)
 						{
@@ -1988,6 +1990,7 @@ static stock YHNPS_Find(heap, end, value)
 		mid = (start + end) / 2;
 		new
 			diff = value - AMX_Read(heap + mid * 8);
+		printf("Find: %d, %d, %d, %08x, %08x, %d", start, mid, end, AMX_Read(heap + mid * 8), value, diff);
 		if (diff < 0)
 		{
 			start = mid + 1;
@@ -2027,6 +2030,7 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 		mid = (start + end) / 2;
 		new
 			diff = value - AMX_Read(heap + mid * 8);
+		printf("Push: %d, %d, %d, %08x, %08x, %d", start, mid, end, AMX_Read(heap + mid * 8), value, diff);
 		if (diff < 0)
 		{
 			start = mid + 1;
@@ -2079,12 +2083,14 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find,
 	}
 	if (find < 0)
 	{
+		printf("Insert Native: %08x, %d, %08x, %08x", heap, nativeCount, -find, replace + base);
 		YHNPS_Insert(heap, nativeCount, -find, replace + base);
-		YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-find), replace + base);
+		//YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-find), replace + base);
 		++nativeCount;
 	}
 	else
 	{
+		printf("Insert Func: %08x, %d, %08x, %08x", heap + allocated * 8, stockCount, find, replace + base);
 		YHNPS_Insert(heap + allocated * 8, stockCount, find, replace + base);
 		++stockCount;
 	}
@@ -2116,7 +2122,7 @@ This function is called, and just needs to insert a new function.
 
 #define continue(%0) Hooks_Continue_(%0)
 
-static stock Hooks_RegisterNPSHook(compressedFormat, address, order, const string:name[])
+static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[], order)
 {
 	#pragma unused name
 	#pragma unused order
@@ -2160,34 +2166,30 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, order, const strin
 			case OP_CALL:
 			{
 				addr = DisasmGetOperandReloc(dctx);
-				//if (addr == YSI_gYVA2_DoPush__)
-				//{
-				//	// This happens when there's a `___()` in the call.  It should
-				//	// be ignored for the purpose of determining the next call.
-				//	continue;
-				//}
 				type = 1;
-				break;
 			}
 			case OP_SYSREQ_C:
 			{
 				addr = -DisasmGetOperand(dctx);
 				type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
-				break;
 			}
 			case OP_SYSREQ_D:
 			{
 				type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
-				break;
 			}
 #if __COMPILER_O2
 			case OP_SYSREQ_N:
 			{
 				addr = -DisasmGetOperand(dctx);
 				type = -(YSI_g_sNPSTrampoline + 48 * cellbytes);
-				break;
 			}
 #endif
+			case OP_RETN:
+			{
+				// Loop through the code above until we hit a `RETN`.  At this
+				// point the variables will be set to the most recent call.
+				break;
+			}
 			}
 		}
 	}
@@ -2361,7 +2363,7 @@ stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &
 	// the stack the final parameter won't be the string we passed here, but
 	// `a` from the extra parameters above.  But that's fine - either way it
 	// points to nothing.
-	return Hooks_RegisterNPSHook(compressedFormat, address, order, "");
+	return Hooks_RegisterNPSHook(compressedFormat, address, "", order);
 }
 
 stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <>
@@ -2387,7 +2389,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 		ctx[AsmContext],
 		ptr = _:addressof(Hooks_Continue_<>);
 
-	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(Hooks_RegisterNPSHook<iiis>) - ptr);
+	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(Hooks_RegisterNPSHook<iisi>) - ptr);
 
 	@emit PROC
 	@emit ADDR.pri     8

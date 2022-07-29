@@ -419,7 +419,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 				#emit ADD
 				#emit STOR.S.pri                addr
 				Debug_Code7{AMX_ReadString(addr, str);}
-				Debug_Print7("    %d, %d, %s", pos, addr, unpack(str));
+				Debug_Print7("    %d, %d, %s", pos, addr, Unpack(str));
 				Debug_Print7("    %08x, %08x, %d", quick, swapchars(AMX_Read(addr)), swapchars(AMX_Read(addr)) - quick);
 				if (addr == AMX_BASE_ADDRESS)
 				{

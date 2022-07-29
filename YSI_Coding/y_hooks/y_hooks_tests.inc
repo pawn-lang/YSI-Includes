@@ -1246,3 +1246,28 @@ static HookableFunction2()
 	ASSERT_EQ(HookableFunction2(), 700);
 }
 
+stock y_hooks_ALSHookedFuncImpl(var)
+{
+	return var * 2;
+}
+
+stock y_hooks_ALSExtraFunc(var)
+{
+	return var + 7;
+}
+
+#define y_hooks_ALSHookedFunc(%0) y_hooks_ALSHookedFuncImpl(y_hooks_ALSExtraFunc(%0))
+
+hook stock y_hooks_ALSHookedFuncImpl(var)
+{
+	YSI_g_sValue = var;
+	return continue(var + 2);
+}
+
+@test(.group = "y_hooks") y_hooks_ALSHookedFuncTest()
+{
+	YSI_g_sValue = 123;
+	ASSERT_EQ(y_hooks_ALSHookedFunc(5), 28);
+	ASSERT_EQ(YSI_g_sValue, 12);
+}
+
