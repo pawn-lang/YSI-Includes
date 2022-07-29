@@ -142,7 +142,6 @@ Malloc_Finalise() <y_malloc_finalise : y_malloc_finalise_disabled>
 
 Malloc_Finalise() <>
 {
-	printf("Called");
 	// Check the heap base, to ensure nothing is currently allocated.
 	new heap;
 	// Should also be the same as `LCTRL 2`, but no need for a third
