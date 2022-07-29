@@ -1987,7 +1987,7 @@ static stock YHNPS_Find(heap, end, value)
 	{
 		mid = (start + end) / 2;
 		new
-			diff = value - AMX_Read(heap + mid * 8);
+			diff = AMX_Read(heap + mid * 8) - value;
 		if (diff < 0)
 		{
 			start = mid + 1;
@@ -2026,7 +2026,7 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 	{
 		mid = (start + end) / 2;
 		new
-			diff = value - AMX_Read(heap + mid * 8);
+			diff = AMX_Read(heap + mid * 8) - value;
 		if (diff < 0)
 		{
 			start = mid + 1;
