@@ -933,6 +933,7 @@ Testing_Next_retry:
 			else if (YSI_g_sPlayerFails == YSI_g_sFails)
 			{
 				TEST_REPORT(TEST_PASSED);
+				TEST_REPORT(YSI_SPACE);
 			}
 		}
 	}
@@ -947,6 +948,7 @@ Testing_Next_retry:
 				{
 					// Pass.
 					TEST_REPORT(TEST_PASSED);
+					TEST_REPORT(YSI_SPACE);
 				}
 				else
 				{
@@ -997,6 +999,7 @@ Testing_Next_retry:
 			{
 					// Pass.
 					TEST_REPORT(TEST_PASSED);
+					TEST_REPORT(YSI_SPACE);
 					Testing_Next(playerid);
 				#if defined Testing_OnPlayerKeyStateChange
 					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
