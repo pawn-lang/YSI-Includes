@@ -215,7 +215,8 @@ static stock
 	YSI_g_sChecks = 0,
 	YSI_g_sPlayerFails = 0,
 	YSI_g_sFails = 0,
-	YSI_g_sCurrentGroup[32];
+	YSI_g_sCurrentGroup[32],
+	Text:YSI_g_sQuestionTD = INVALID_TEXT_DRAW;
 
 stock
 	YSI_gCurTestName[FUNCTION_LENGTH];
@@ -514,9 +515,31 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 		#if defined YSI_DIALOG_ASK
 			YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
 		#else
-			// For early open.mp testing
-			format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), "TEST: %s (~k~~CONVERSATION_YES~ / ~k~~CONVERSATION_NO~)", YSI_g_sFailMessage),
-			SendClientMessage(playerid, 0xFF8010FF, YSI_g_sFailMessage);
+			if (YSI_g_sQuestionTD != INVALID_TEXT_DRAW)
+			{
+				TextDrawDestroy(YSI_g_sQuestionTD);
+			}
+			#if !defined TEXT_DRAW_FONT
+				#define TEXT_DRAW_FONT: _:
+			#endif
+			#if !defined TEXT_DRAW_ALIGN
+				#define TEXT_DRAW_ALIGN: _:
+			#endif
+			format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), "%s~n~                   ~r~(~k~~CONVERSATION_YES~/~k~~CONVERSATION_NO~)", YSI_g_sFailMessage),
+			YSI_g_sQuestionTD = TextDrawCreate(400.0, 350.0, YSI_g_sFailMessage),
+			TextDrawFont(YSI_g_sQuestionTD, TEXT_DRAW_FONT:1),
+			TextDrawLetterSize(YSI_g_sQuestionTD, 0.3, 1.0),
+			TextDrawTextSize(YSI_g_sQuestionTD, 600.0, 50.0),
+			TextDrawSetOutline(YSI_g_sQuestionTD, 0),
+			TextDrawSetShadow(YSI_g_sQuestionTD, 0),
+			TextDrawAlignment(YSI_g_sQuestionTD, TEXT_DRAW_ALIGN:1),
+			TextDrawColor(YSI_g_sQuestionTD, 0xFF7F37FF),
+			TextDrawBackgroundColor(YSI_g_sQuestionTD, 0xFFFFFFFF),
+			TextDrawBoxColor(YSI_g_sQuestionTD, 0x000000AA),
+			TextDrawUseBox(YSI_g_sQuestionTD, true),
+			TextDrawSetProportional(YSI_g_sQuestionTD, true),
+			TextDrawSetSelectable(YSI_g_sQuestionTD, false),
+			TextDrawShowForPlayer(playerid, YSI_g_sQuestionTD);
 		#endif
 			YSI_g_sAsked = true;
 	}
@@ -764,6 +787,11 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 	#endif
 	Testing_Next(playerid)
 	{
+		if (YSI_g_sQuestionTD != INVALID_TEXT_DRAW)
+		{
+			TextDrawDestroy(YSI_g_sQuestionTD);
+			YSI_g_sQuestionTD = INVALID_TEXT_DRAW;
+		}
 		Debug_Print2("Testing_Next() called");
 		YSI_g_sInTest = false;
 		new
