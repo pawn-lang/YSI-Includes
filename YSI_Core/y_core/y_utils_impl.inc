@@ -2565,27 +2565,29 @@ stock ReturnPlayerRPName(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock ftouch(const string:filename[])
-{
-	if (fexist(filename))
+#if !defined ftouch
+	stock ftouch(const string:filename[])
 	{
-		return 0;
-	}
-	else
-	{
-		new
-			File:f = fopen(filename, io_write);
-		if (f)
+		if (fexist(filename))
 		{
-			fclose(f);
-			return 1;
+			return 0;
 		}
 		else
 		{
-			return -1;
+			new
+				File:f = fopen(filename, io_write);
+			if (f)
+			{
+				fclose(f);
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
 		}
 	}
-}
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
