@@ -108,9 +108,15 @@ task y_timers_Counter[1000]()
 	ASK("Has the red PLAYER COUNTER stopped?");
 }
 
-@test(.group = "y_timers") Counter(playerid)
+@test(.group = "y_timers") Counter1(playerid)
 {
 	ASK("Is the blue GLOBAL COUNTER going up?");
+}
+
+@test(.group = "y_timers") Counter2(playerid)
+{
+	pause y_timers_Counter;
+	ASK("Has the blue GLOBAL COUNTER stopped?");
 }
 
 timer BigMessage1[4000](playerid)
