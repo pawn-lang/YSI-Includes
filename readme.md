@@ -5,6 +5,7 @@
 * [installation](installation.md)
 * [troubleshooting](troubleshooting.md)
 * [YSI_COMPATIBILTY_MODE](YSI_COMPATIBILTY_MODE.md)
+* [Information on the more consistent YSI syntax ("annotations")](annotations.md)
 
 ## Libraries
 
