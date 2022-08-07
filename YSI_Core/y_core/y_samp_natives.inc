@@ -116,16 +116,6 @@ native _YSI_ConstCpy__(const dst[], const src[], index, numbytes, maxlength) = m
 native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 #define YSI_FGetChar__(%0,%1) _YSI_FGetChar__((%0),_:(%1),(%1))
 
-// open.mp exclusives.  This file might have to be renamed!
-native YSI_ArgCount__() = argcount;
-native bool:YSI_ArgIndex__(index, output[], size = sizeof (output), bool:pack = false) = argindex;
-
-//#if defined NopNative
-//	native YSI_NOP(GLOBAL_TAG_TYPES:...) = nop;
-//#else
-//	native YSI_NOP(GLOBAL_TAG_TYPES:...) = sendpacket;
-//#endif
-
 #if !defined DIALOG_STYLE
 	#define DIALOG_STYLE: _:
 #endif

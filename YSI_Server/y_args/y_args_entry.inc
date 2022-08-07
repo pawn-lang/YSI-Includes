@@ -76,6 +76,13 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#tryinclude <pawn-stdlib\args>
+#tryinclude <args>
+
+#if !defined _args_included
+	#error y_args requires the core `args.inc` pawn include.
+#endif
+
 #include "..\..\YSI_Core\y_utils"
 
 #include "y_args_impl"
