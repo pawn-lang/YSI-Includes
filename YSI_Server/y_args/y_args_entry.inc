@@ -80,7 +80,7 @@ Optional plugins:
 #tryinclude <args>
 
 #if !defined _args_included
-	#error y_args requires the core `args.inc` pawn include.
+	#error y_args requires the core `args.inc` pawn include (included with open.mp).
 #endif
 
 #include "..\..\YSI_Core\y_utils"
