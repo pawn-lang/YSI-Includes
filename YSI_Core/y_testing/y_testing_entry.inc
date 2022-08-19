@@ -127,8 +127,6 @@ static stock const TEST_PASSED[] = "PASS!";
 #define Y_TESTING_PINIT _C<@Q_y>
 #define Y_TESTING_PTEST _C<@_Qy>
 #define Y_TESTING_PSHUT _C<@_yQ>
-#define Y_TESTING_BEFORE _A<y@Q_>
-#define Y_TESTING_AFTER _A<y@_Q>
 
 stock _y@T(GLOBAL_TAG_TYPES:b, tag = tagof (b))
 {
@@ -216,7 +214,9 @@ static stock
 	YSI_g_sTests = 0,
 	YSI_g_sChecks = 0,
 	YSI_g_sPlayerFails = 0,
-	YSI_g_sFails = 0;
+	YSI_g_sFails = 0,
+	YSI_g_sCurrentGroup[32],
+	Text:YSI_g_sQuestionTD = INVALID_TEXT_DRAW;
 
 stock
 	YSI_gCurTestName[FUNCTION_LENGTH];
@@ -243,48 +243,69 @@ static stock const
 // the static function "y_Q@<test>".
 
 #if defined RUN_TESTS
-	#define TEST_INIT__%1() forward @y_Q%1(); public @y_Q%1()
-	#if !__COMPILER_STRING_PACKING
-		#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("  "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
-	#elseif cellbytes == 4
-		// Ensure there is always sufficient space for the failures linked list.
-		#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("        "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
-	#elseif cellbytes == 8
-		#define TEST__%1() forward bool:@yQ_%1(); public bool:@yQ_%1() for(_Testing_Start("                "#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
-	#else
-		#error Unsupported packed string size.
-	#endif
-	#define TEST_CLOSE__%1() forward @Qy_%1(); public @Qy_%1()
-	#define TEST_BEFORE_EACH__%1() forward y@Q_%1(); public y@Q_%1()
-	#define TEST_AFTER_EACH__%1() forward y@_Q%1(); public y@_Q%1()
+	#define TEST_INIT__%1() @y_Q%1();@y_Q%1()
+	#define YTEST_PID0:%8$@Q_y%1();@Q_y%1() %8$@y_Q%1();@y_Q%1()
 	
-	#define PTEST_INIT__%1(%2) forward @Q_y%1(%2); public @Q_y%1(%2)
+	// We can't do `#define YTEST_PID1 TEST__` or something similar as then
+	// the result will be compressed in to `TEST__` and `YTEST_ARGS` will be
+	// checked before the expansion of `TEST__`.  Thus we must exactly copy the
+	// results of all these macros, with the addition of `%8$` of course.
 	#if !__COMPILER_STRING_PACKING
-		#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("  "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
+		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
 	#elseif cellbytes == 4
-		// Ensure there is always sufficient space for the failures linked list.
-		#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("        "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+		// Ensure there is always sufficient spacefor the failures linked list.
+		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
+		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
 	#elseif cellbytes == 8
-		#define PTEST__%1(%2) forward bool:@_Qy%1(%2); public bool:@_Qy%1(%2) for(_Testing_Start("                "#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
+		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
 	#else
 		#error Unsupported packed string size.
 	#endif
-	#define PTEST_CLOSE__%1(%2) forward @_yQ%1(%2); public @_yQ%1(%2)
+	#define TEST_CLOSE__%1() @Qy_%1();@Qy_%1()
+	#define YTEST_PID2:%8$@_yQ%1();@_yQ%1() %8$@Qy_%1();@Qy_%1()
+	
+	// Default to having `playerid`, and fall back to no players otherwise.
+	#define PTEST_INIT__%1(%2) u@(u[_:YTEST_PID0:YTEST_DROP:u@$@Q_y%1(%2);@Q_y%1(%2)
+	#if !__COMPILER_STRING_PACKING
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#elseif cellbytes == 4
+		// Ensure there is always sufficient spacefor the failures linked list.
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#elseif cellbytes == 8
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#else
+		#error Unsupported packed string size.
+	#endif
+	#define PTEST_CLOSE__%1(%2) u@(u[_:YTEST_PID2:YTEST_DROP:u@$@_yQ%1(%2);@_yQ%1(%2)
 	
 	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();Debug_Warning("Compile test " #%1 " called.");}static stock Q@_y%1()
+
+	// Use the `PTEST` definitions by default, as they can now detect no
+	// `playerid` and fall back to `TEST` when it isn't present.
+	#define @testinit(%2)%0(%1) PTEST_INIT__ %0(%1)<%2>
+	#define @test(%2)%0(%1) PTEST__ %0(%1)<%2>
+	#define @testclose(%2)%0(%1) PTEST_CLOSE__ %0(%1)<%2>
 #else
-	#define TEST_INIT__%1() static stock y_Q@%1()
-	#define TEST__%1() static stock bool:yQ_@%1()
-	#define TEST_CLOSE__%1() static stock Qy_@%1()
-	#define TEST_BEFORE_EACH__%1() stock y@Q_%1()
-	#define TEST_AFTER_EACH__%1() stock y@_Q%1()
+	#define TEST_INIT__%1(%2) static stock y_Q@%1(%2)
+	#define TEST__%1(%2) static stock bool:yQ_@%1(%2)
+	#define TEST_CLOSE__%1(%2) static stock Qy_@%1(%2)
 	
 	#define PTEST_INIT__%1(%2) static stock Q_y@%1(%2)
 	#define PTEST__%1(%2) static stock bool:_Qy@%1(%2)
 	#define PTEST_CLOSE__%1(%2) static stock _yQ@%1(%2)
-	
-	#define TEST_COMPILE__%1() static stock Q@_y%1()
+
+	// Use the `PTEST` definitions by default, as they can now detect no
+	// `playerid` and fall back to `TEST` when it isn't present.
+	#define @testinit(%2)%0(%1) PTEST_INIT__ %0(%1)
+	#define @test(%2)%0(%1) PTEST__ %0(%1)
+	#define @testclose(%2)%0(%1) PTEST_CLOSE__ %0(%1)
 #endif
+
+// Deal with extra parameters from `@hook`.
+#define YTEST_DROP:%8$%0(%1);%0(%1)<%9> %8$%0(%1);%0(%1)
+#define YTEST_ARGS:%8$%0(%1);%0(%1)for(%2(%3)%4)%5;%6(%7)<%9> %8$%0(%1);%0(%1)for(%2(%3,%9)%4)%5;%6(%7)
 
 #if defined NO_PLAYER_TESTS
 	#undef PTEST_INIT__
@@ -361,8 +382,71 @@ static stock const
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock _Testing_Start(const name[])
+stock _Testing_Start(const name[], run = true, const group[] = "", slow = false) <y_testing_phase : y_testing_phase_determine>
 {
+	new ret = 0;
+#if defined JUST_TEST
+	#pragma unused slow, group
+	// Never skip a `JUST_TEST` test, even if it is slow and we don't want
+	// slow tests.  Always `[2]`, even with string packing.
+	if (!run || strcmp(name[2], #JUST_TEST))
+#elseif defined RUN_SLOW_TESTS
+	#pragma unused name, slow
+	if (!run)
+#else
+	#pragma unused name
+	if (!run || slow)
+#endif
+	{
+		// Never run.
+		ret = 2;
+	}
+#if !defined JUST_TEST
+	else switch (YSI_g_sCurrentGroup[0])
+	{
+	case '\0':
+	{
+		// Default (global) group.
+		if (group[0])
+		{
+			ret = 1;
+		}
+	}
+	case cellmin:
+	{
+		// Find a new group.
+		YSI_g_sCurrentGroup[0] = '\0',
+		strcat(YSI_g_sCurrentGroup, group);
+		TEST_REPORT("******************************************");
+		TEST_REPORT("****                                  ****");
+		TEST_REPORT("**** Group: %25s ****", YSI_g_sCurrentGroup);
+		TEST_REPORT("****                                  ****");
+		TEST_REPORT("******************************************");
+		TEST_REPORT(YSI_SPACE);
+	}
+	default:
+	{
+		// Any other group.
+		if (strcmp(YSI_g_sCurrentGroup, group))
+		{
+			ret = 1;
+		}
+	}
+	}
+#endif
+	{}
+	// Now double return, to exit the call site as well.
+	#emit LOAD.S.alt       ret
+	#emit LOAD.S.pri       0
+	#emit SCTRL            5
+	#emit SCTRL            4
+	#emit MOVE.pri
+	#emit RETN
+}
+
+stock _Testing_Start(const name[], run = true, const group[] = "", slow = false) <y_testing_phase : y_testing_phase_call>
+{
+	#pragma unused run, group, slow
 	YSI_gTestComplete = false;
 	// Gets a reference to the name string, which is also an intrusive linked
 	// list of failures.
@@ -371,8 +455,9 @@ stock _Testing_Start(const name[])
 	YSI_g_sCurTest = AMX_Ref(name[0]);
 	// My very first legitimate usage of `heapspace()` for something other than
 	// as a dummy no-op function call!  I'm actually quite happy I found a use
-	// for it!
-	YSI_g_sCurHeap = heapspace();
+	// for it!  Add 12 for the parameters to this function that we're about to
+	// forget about (i.e the stack space we're about to free up).
+	YSI_g_sCurHeap = heapspace() + 12;
 	Debug_Print3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
 	StrCpy(YSI_gCurTestName, name[2]);
@@ -427,12 +512,34 @@ stock _Testing_Start(const name[])
 			#emit ADD
 			#emit SCTRL            4
 			//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
-		#if defined YSI_NO_DIALOG_ASK
-			// For early open.mp testing
-			format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), "TEST: %s (~k~~CONVERSATION_YES~ / ~k~~CONVERSATION_NO~)", YSI_g_sFailMessage),
-			SendClientMessage(playerid, 0xFF8010FF, YSI_g_sFailMessage);
-		#else
+		#if defined YSI_DIALOG_ASK
 			YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
+		#else
+			if (YSI_g_sQuestionTD != INVALID_TEXT_DRAW)
+			{
+				TextDrawDestroy(YSI_g_sQuestionTD);
+			}
+			#if !defined TEXT_DRAW_FONT
+				#define TEXT_DRAW_FONT: _:
+			#endif
+			#if !defined TEXT_DRAW_ALIGN
+				#define TEXT_DRAW_ALIGN: _:
+			#endif
+			format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), "%s~n~                   ~r~(~k~~CONVERSATION_YES~/~k~~CONVERSATION_NO~)", YSI_g_sFailMessage),
+			YSI_g_sQuestionTD = TextDrawCreate(400.0, 350.0, YSI_g_sFailMessage),
+			TextDrawFont(YSI_g_sQuestionTD, TEXT_DRAW_FONT:1),
+			TextDrawLetterSize(YSI_g_sQuestionTD, 0.3, 1.0),
+			TextDrawTextSize(YSI_g_sQuestionTD, 600.0, 50.0),
+			TextDrawSetOutline(YSI_g_sQuestionTD, 0),
+			TextDrawSetShadow(YSI_g_sQuestionTD, 0),
+			TextDrawAlignment(YSI_g_sQuestionTD, TEXT_DRAW_ALIGN:1),
+			TextDrawColor(YSI_g_sQuestionTD, 0xFF7F37FF),
+			TextDrawBackgroundColor(YSI_g_sQuestionTD, 0xFFFFFFFF),
+			TextDrawBoxColor(YSI_g_sQuestionTD, 0x000000AA),
+			TextDrawUseBox(YSI_g_sQuestionTD, true),
+			TextDrawSetProportional(YSI_g_sQuestionTD, true),
+			TextDrawSetSelectable(YSI_g_sQuestionTD, false),
+			TextDrawShowForPlayer(playerid, YSI_g_sQuestionTD);
 		#endif
 			YSI_g_sAsked = true;
 	}
@@ -530,73 +637,107 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 #if defined RUN_TESTS
 	Debug_Print2("Testing_Run() called");
 	new
+		bool:grouping,
+		skipped,
 		idx = 0,
-		bidx = 0,
-		buffer2[FUNCTION_LENGTH],
+		entry,
 		buffer[FUNCTION_LENGTH];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
-	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST_SEARCH)))
+	#if defined JUST_TEST_GROUP
+		YSI_g_sCurrentGroup = JUST_TEST_GROUP;
+	#else
+		YSI_g_sCurrentGroup[0] = '\0';
+	#endif
+	do
 	{
-#if defined JUST_TEST
-		if (strcmp(buffer[1], #JUST_TEST))
-			continue;
-#endif
-		Server_RestartLongCall();
-		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_BEFORE)))
+		grouping = false;
+		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, Y_TESTING_TEST_SEARCH)))
 		{
-			for (new i = 4; buffer{i} && buffer2{i}; ++i)
+			if (AMX_Read(entry) == 0)
 			{
-				if (buffer{i} != buffer2{i})
-					goto Testing_Run_before_fail;
+				// Previously finished test.
+				continue;
 			}
-			R@(buffer2, YSI_EMPTY);
-Testing_Run_before_fail:
-		}
-		// Call the setup function if there is one.
-		buffer[0] = Y_TESTING_INIT,
-		R@(buffer, YSI_EMPTY),
-		// Call the test.
-		buffer[0] = Y_TESTING_TEST,
-		fails = YSI_g_sFails;
-		Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
-		YSI_g_sInTest = true,
-		R@(buffer, YSI_EMPTY),
-		YSI_g_sInTest = false;
-		++YSI_g_sTests;
-		if (!YSI_gTestComplete)
-		{
+			state y_testing_phase : y_testing_phase_determine;
+			#emit PUSH.C                    0
+			#emit LCTRL                     6
+			#emit ADD.C                     36
+			#emit LCTRL                     8
+			#emit PUSH.pri
+			#emit LREF.S.pri                entry
+			#emit SCTRL                     6
+			#emit STOR.S.pri                skipped
+			switch (skipped)
+			{
+			#if defined JUST_TEST_GROUP
+				case 1, 2:
+			#else
+				case 1:
+				{
+					// Skip for now.
+					grouping = true;
+					continue;
+				}
+				case 2:
+			#endif
+				{
+					// Skip forever.
+					AMX_Write(entry, 0);
+					continue;
+				}
+			}
+			state y_testing_phase : y_testing_phase_call;
+			AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
+			Server_RestartLongCall();
+			// Call the setup function if there is one.
+			buffer[0] = Y_TESTING_INIT,
+			R@(buffer, YSI_EMPTY),
+			// Call the test.
+			buffer[0] = Y_TESTING_TEST,
+			fails = YSI_g_sFails;
+			Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
+			YSI_g_sInTest = true,
+			// Don't use `entry` here as a pointer directly, because then we
+			// don't get any `amx_Exec` protections against crashes in tests.
+			R@(buffer, YSI_EMPTY),
+			YSI_g_sInTest = false;
+			++YSI_g_sTests;
+			if (!YSI_gTestComplete)
+			{
 #if defined INCLUDE_TESTS || defined RUN_TESTS
-			++YSI_g_sFails;
-			print("Test did not complete (possible crash).\n");
+				++YSI_g_sFails;
+				TEST_REPORT(YSI_SPACE);
+				TEST_REPORT("%s %s", TEST_FAILED, "Test did not complete (possible crash).");
+				TEST_REPORT(YSI_SPACE);
 #endif
-		}
-		if (YSI_g_sFails != fails)
-		{
-			AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
-			AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - fails),
-			YSI_g_sFailTests = YSI_g_sCurTest;
-		}
-#if !defined TEST_SHOW_PASSES
-		else
-		{
-			TEST_REPORT(TEST_PASSED);
-			TEST_REPORT(YSI_SPACE);
-		}
-#endif
-		buffer[0] = Y_TESTING_SHUT,
-		R@(buffer, YSI_EMPTY);
-
-		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_AFTER)))
-		{
-			for (new i = 4; buffer{i} && buffer2{i}; ++i)
-			{
-				if (buffer{i} != buffer2{i})
-					goto Testing_Run_after_fail;
 			}
-			R@(buffer2, YSI_EMPTY);
-Testing_Run_after_fail:
+			if (YSI_g_sFails != fails)
+			{
+				AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
+				AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - fails),
+				YSI_g_sFailTests = YSI_g_sCurTest;
+			}
+#if !defined TEST_SHOW_PASSES
+			else
+			{
+				TEST_REPORT(TEST_PASSED);
+				TEST_REPORT(YSI_SPACE);
+			}
+#endif
+			buffer[0] = Y_TESTING_SHUT,
+			R@(buffer, YSI_EMPTY),
+			// Delete the pointer, which may have moved due to tests playing
+			// with headers.
+			buffer[0] = Y_TESTING_TEST,
+			strunpack(buffer, buffer);
+			if (AMX_GetPublicEntry(0, entry, buffer))
+			{
+				AMX_Write(entry, 0);
+			}
 		}
+		YSI_g_sCurrentGroup[0] = cellmin;
 	}
+	while (grouping);
 	tests = YSI_g_sTests;
 	checks = YSI_g_sChecks;
 	fails = YSI_g_sFails;
@@ -646,19 +787,35 @@ Testing_Run_after_fail:
 	#endif
 	Testing_Next(playerid)
 	{
+		if (YSI_g_sQuestionTD != INVALID_TEXT_DRAW)
+		{
+			TextDrawDestroy(YSI_g_sQuestionTD);
+			YSI_g_sQuestionTD = INVALID_TEXT_DRAW;
+		}
 		Debug_Print2("Testing_Next() called");
 		YSI_g_sInTest = false;
 		new
+			entry,
+			skipped,
+			next,
 			buffer[FUNCTION_LENGTH];
+		static
+			bool:grouping;
 		for ( ; ; )
 		{
 			// Get the last test (nicely fails for cellmax).
-			if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
+			if ((YSI_g_sPlayer = AMX_GetPublicEntryPrefix(YSI_g_sPlayer, entry, Y_TESTING_PTEST_SEARCH)))
 			{
+				AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
 				// Call the shutdown function if there is one.
 				buffer[0] = Y_TESTING_PSHUT;
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
+				// Remove the test from the header.  This just uses normal
+				// pointer writes, unless any player tests start messing with
+				// the header (they shouldn't, as they are run after codegen).
+				#emit ZERO.pri
+				#emit SREF.S.pri                entry
 			}
 			// Update fail counts.
 			if (YSI_g_sPlayerFails != YSI_g_sFails)
@@ -668,21 +825,49 @@ Testing_Run_after_fail:
 				YSI_g_sFailTests = YSI_g_sCurTest,
 				YSI_g_sPlayerFails = YSI_g_sFails;
 			}
-#if defined JUST_TEST
-			new next;
 Testing_Next_retry:
 			// Get the new test, but don't store the index.
-			if ((next = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
+			if ((next = AMX_GetPublicEntryPrefix(YSI_g_sPlayer, entry, Y_TESTING_PTEST_SEARCH)))
 			{
-				if (strcmp(buffer[1], #JUST_TEST))
+				if (AMX_Read(entry) == 0)
 				{
+					// Previously finished test.
 					YSI_g_sPlayer = next;
 					goto Testing_Next_retry;
 				}
-#else
-			if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH))
-			{
-#endif
+				state y_testing_phase : y_testing_phase_determine;
+				#emit PUSH.S                    playerid
+				#emit PUSH.C                    4
+				#emit LCTRL                     6
+				#emit ADD.C                     36
+				#emit LCTRL                     8
+				#emit PUSH.pri
+				#emit LREF.S.pri                entry
+				#emit SCTRL                     6
+				#emit STOR.S.pri                skipped
+				switch (skipped)
+				{
+				#if defined JUST_TEST_GROUP
+					case 1, 2:
+				#else
+					case 1:
+					{
+						// Skip for now.
+						YSI_g_sPlayer = next;
+						grouping = true;
+						goto Testing_Next_retry;
+					}
+					case 2:
+				#endif
+					{
+						// Skip forever.
+						AMX_Write(entry, 0);
+						YSI_g_sPlayer = next;
+						goto Testing_Next_retry;
+					}
+				}
+				state y_testing_phase : y_testing_phase_call;
+				AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
 				++YSI_g_sTests;
 				YSI_g_sAsked = false;
 				// Call the setup function if there is one.
@@ -692,17 +877,26 @@ Testing_Next_retry:
 				// Call the test.
 				buffer[0] = Y_TESTING_PTEST;
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
-				YSI_g_sInTest = true;
+				YSI_g_sInTest = true,
+				// Don't use `entry` here as a pointer directly, because then we
+				// don't get any `amx_Exec` protections against crashes in tests.
 				R@(buffer, "i", playerid);
+			}
+			else if (grouping)
+			{
+				grouping = false;
+				YSI_g_sPlayer = 0;
+				YSI_g_sCurrentGroup[0] = cellmin;
+				goto Testing_Next_retry;
 			}
 			else
 			{
 				YSI_g_sAsked = true;
 				// No more tests.
-				#if defined YSI_NO_DIALOG_ASK
-					printf("*** Test%s: %d, Check%s: %d, Fail%s: ???", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails));
-				#else
+				#if defined YSI_DIALOG_ASK
 					printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails), YSI_g_sFails);
+				#else
+					printf("*** Test%s: %d, Check%s: %d, Fail%s: ???", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails));
 				#endif
 				if (YSI_g_sFails)
 				{
@@ -718,11 +912,11 @@ Testing_Next_retry:
 				else
 				{
 					#if !defined LIGHT_TEST_REPORT
-						#if defined YSI_NO_DIALOG_ASK
-							Server_PrintIntroMessage("       PLEASE NOTE FAILED TESTS."),
+						#if defined YSI_DIALOG_ASK
+							Server_PrintIntroMessage("       ALL PLAYER TESTS PASSED!"),
 							Server_FinishIntroMessage();
 						#else
-							Server_PrintIntroMessage("       ALL PLAYER TESTS PASSED!"),
+							Server_PrintIntroMessage("       PLEASE NOTE FAILED TESTS."),
 							Server_FinishIntroMessage();
 						#endif
 					#endif
@@ -739,61 +933,12 @@ Testing_Next_retry:
 			else if (YSI_g_sPlayerFails == YSI_g_sFails)
 			{
 				TEST_REPORT(TEST_PASSED);
+				TEST_REPORT(YSI_SPACE);
 			}
 		}
 	}
 	
-	#if defined YSI_NO_DIALOG_ASK
-		#if !defined KEY
-			#define KEY: _:
-		#endif
-		public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
-		{
-			// TODO: Test if we are in a test before parsing the keys.
-			if ((newkeys & KEY_NO) && !(oldkeys & KEY_NO))
-			{
-					// Fail.
-					++YSI_g_sChecks;
-					TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
-					++YSI_g_sFails;
-					Testing_Next(playerid);
-				#if defined Testing_OnPlayerKeyStateChange
-					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
-				#else
-					return 1;
-				#endif
-			}
-			else if ((newkeys & KEY_YES) && !(oldkeys & KEY_YES))
-			{
-					// Pass.
-					TEST_REPORT(TEST_PASSED);
-					Testing_Next(playerid);
-				#if defined Testing_OnPlayerKeyStateChange
-					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
-				#else
-					return 1;
-				#endif
-			}
-			else
-			{
-				#if defined Testing_OnPlayerKeyStateChange
-					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
-				#else
-					return 0;
-				#endif
-			}
-		}
-		
-		#if defined _ALS_OnPlayerKeyStateChange
-			#undef OnPlayerKeyStateChange
-		#else
-			#define _ALS_OnPlayerKeyStateChange
-		#endif
-		#define OnPlayerKeyStateChange Testing_OnPlayerKeyStateChange
-		#if defined Testing_OnPlayerKeyStateChange
-			forward Testing_OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys);
-		#endif
-	#else
+	#if defined YSI_DIALOG_ASK
 		public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		{
 			if (dialogid == Y_TESTING_DIALOG_ID)
@@ -803,6 +948,7 @@ Testing_Next_retry:
 				{
 					// Pass.
 					TEST_REPORT(TEST_PASSED);
+					TEST_REPORT(YSI_SPACE);
 				}
 				else
 				{
@@ -828,6 +974,57 @@ Testing_Next_retry:
 		#define OnDialogResponse Testing_OnDialogResponse
 		#if defined Testing_OnDialogResponse
 			forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
+		#endif
+	#else
+		#if !defined KEY
+			#define KEY: _:
+		#endif
+		public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
+		{
+			// TODO: Test if we are in a test before parsing the keys.
+			if ((newkeys & KEY_NO) && !(oldkeys & KEY_NO))
+			{
+					// Fail.
+					++YSI_g_sChecks;
+					TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
+					++YSI_g_sFails;
+					Testing_Next(playerid);
+				#if defined Testing_OnPlayerKeyStateChange
+					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+				#else
+					return 1;
+				#endif
+			}
+			else if ((newkeys & KEY_YES) && !(oldkeys & KEY_YES))
+			{
+					// Pass.
+					TEST_REPORT(TEST_PASSED);
+					TEST_REPORT(YSI_SPACE);
+					Testing_Next(playerid);
+				#if defined Testing_OnPlayerKeyStateChange
+					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+				#else
+					return 1;
+				#endif
+			}
+			else
+			{
+				#if defined Testing_OnPlayerKeyStateChange
+					return Testing_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+				#else
+					return 0;
+				#endif
+			}
+		}
+		
+		#if defined _ALS_OnPlayerKeyStateChange
+			#undef OnPlayerKeyStateChange
+		#else
+			#define _ALS_OnPlayerKeyStateChange
+		#endif
+		#define OnPlayerKeyStateChange Testing_OnPlayerKeyStateChange
+		#if defined Testing_OnPlayerKeyStateChange
+			forward Testing_OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys);
 		#endif
 	#endif
 #endif
@@ -895,6 +1092,11 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 					YSI_g_sTests = 0;
 					YSI_g_sChecks = 0;
 					YSI_g_sFails = 0;
+					#if defined JUST_TEST_GROUP
+						YSI_g_sCurrentGroup = JUST_TEST_GROUP;
+					#else
+						YSI_g_sCurrentGroup[0] = '\0';
+					#endif
 					Testing_Next(playerid);
 				}
 				#if defined Testing_OnPlayerSpawn
@@ -958,7 +1160,7 @@ stock Testing_RunAll()
 	Server_FinishIntroMessage();
 #endif
 	Testing_Run(tests, checks, fails, _, true);
-#if !defined JUST_TEST && defined YSI_TESTS
+#if !defined JUST_TEST && !defined JUST_TEST_GROUP && defined YSI_TESTS
 	if (YSI_g_sTestResult != 9) print("*** Test system verification failed!");
 	else
 #endif
@@ -1010,7 +1212,7 @@ stock Testing_SurpressOneFail()
 	--YSI_g_sFails;
 }
 
-TEST__ y_testing_2()
+@test(.group = "y_testing") y_testing_2()
 {
 	new
 		t = YSI_g_sTests,
@@ -1034,12 +1236,12 @@ TEST__ y_testing_2()
 	Testing_SurpressOneFail(); // Reduce the failure count.
 }
 
-TEST_INIT__ y_testing_1()
+@testinit() y_testing_1()
 {
 	YSI_g_sTestResult = 5;
 }
 
-TEST__ y_testing_1()
+@test(.group = "y_testing") y_testing_1()
 {
 	new
 		x = YSI_g_sTestResult;
@@ -1062,7 +1264,7 @@ TEST__ y_testing_1()
 	ASSERT_EQ(YSI_g_sTestResult, 8);
 }
 
-TEST_CLOSE__ y_testing_1()
+@testclose() y_testing_1()
 {
 	++YSI_g_sTestResult;
 }
@@ -1078,7 +1280,7 @@ static stock y_testing_ReturnHello()
 	return ret;
 }
 
-TEST__ y_testing_Asserts()
+@test(.group = "y_testing") y_testing_Asserts()
 {
 	ASSERT_EQ(y_testing_Return7(), 7);
 	ASSERT_NE(y_testing_Return7(), 8);

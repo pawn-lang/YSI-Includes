@@ -239,6 +239,10 @@ forward bool:DisasmWrite(const filename[]);
 		@_ = -1;
 #endif
 
+// Magical macro.
+#define u@$ 1]);
+//#define MY_THING u@(u[_:%0 u@$
+
 // These three includes are just defines.  They declare no code at all, only
 // variables.
 #include "y_globaltags"
@@ -261,6 +265,18 @@ stock const YSIM_VERMAX[] = "X";
 #define YSIM_TXTIND #I
 #define YSIM_LOG_IN #U
 #define YSIM_VARARG #V
+
+#define Debug_Error(%1); \
+	Debug_Print0("\7\7\7*** YSI Error: " #%1);
+
+#define Debug_Warning(%1); \
+	Debug_Print0("\7*** YSI Warning: " #%1);
+
+#define Debug_Info(%1); \
+	Debug_Print0("*** YSI Info: " #%1);
+
+#define Debug_Fatal(%1); \
+	Debug_Print0("\7\7\7\7\7*** YSI Fatal Error: " #%1),Debug_Kill_();
 
 // New create the `OnScriptInit` and `OnCodeInit` callbacks, which many YSI
 // includes use to start themselves.
@@ -291,7 +307,7 @@ stock const YSIM_VERMAX[] = "X";
 			// This function is copied in `y_utils_impl` to test a compiler bug.
 			new
 				i = -1;
-			if (YSI_IsPacked__(number))
+			if (YSI_IsLocalVarPackedString__(number))
 			{
 				if (number{0} == '-') ++i;
 				while ('0' <= number{++i} <= '9') {}

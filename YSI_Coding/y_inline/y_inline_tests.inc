@@ -93,7 +93,7 @@ static stock bool:y_inline_Restore(ret[E_CALLBACK_DATA])
 	Callback_Restore(ret);
 }
 
-TEST__ y_inline0a()
+@test(.group = "y_inline") y_inline0a()
 {
 	new Func:cc<>;
 	inline const func()
@@ -103,7 +103,7 @@ TEST__ y_inline0a()
 	@.cc();
 }
 
-TEST__ y_inline0b()
+@test(.group = "y_inline") y_inline0b()
 {
 	new Func:cc<>;
 	inline const func()
@@ -115,7 +115,7 @@ TEST__ y_inline0b()
 	@.cc();
 }
 
-TEST__ y_inline0c()
+@test(.group = "y_inline") y_inline0c()
 {
 	new Func:cc<>;
 	inline const func()
@@ -127,7 +127,7 @@ TEST__ y_inline0c()
 	ASSERT_EQ(@.cc(), 42);
 }
 
-TEST__ y_inline0d()
+@test(.group = "y_inline") y_inline0d()
 {
 	new Func:cc<>;
 	inline const func()
@@ -142,7 +142,7 @@ TEST__ y_inline0d()
 	ASSERT_EQ(Callback_Call(dd, 42), 42);
 }
 
-TEST__ y_inline0e()
+@test(.group = "y_inline") y_inline0e()
 {
 	new Func:cc<>;
 	inline func()
@@ -157,7 +157,7 @@ TEST__ y_inline0e()
 	ASSERT_EQ(Callback_Call(dd, 42), 42);
 }
 
-TEST__ y_inline0f()
+@test(.group = "y_inline") y_inline0f()
 {
 	new Func:cc<>;
 	inline func()
@@ -173,7 +173,7 @@ TEST__ y_inline0f()
 	Callback_Restore(cc);
 }
 
-TEST__ y_inline1()
+@test(.group = "y_inline") y_inline1()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -186,7 +186,7 @@ TEST__ y_inline1()
 	Callback_Release(cc);
 }
 
-TEST__ y_inline2()
+@test(.group = "y_inline") y_inline2()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -199,7 +199,7 @@ TEST__ y_inline2()
 	Callback_Release(cc);
 }
 
-TEST__ y_inline3()
+@test(.group = "y_inline") y_inline3()
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -215,7 +215,7 @@ TEST__ y_inline3()
 	Callback_Release(cc);
 }
 
-TEST__ y_inline4()
+@test(.group = "y_inline") y_inline4()
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -231,7 +231,7 @@ TEST__ y_inline4()
 	Callback_Release(cc);
 }
 
-TEST__ y_inline5()
+@test(.group = "y_inline") y_inline5()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -247,7 +247,7 @@ TEST__ y_inline5()
 	Callback_Release(cc);
 }
 
-TEST__ y_inline6()
+@test(.group = "y_inline") y_inline6()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -273,7 +273,7 @@ public y_inline7a()
 	#pragma unused func7a
 }
 
-TEST__ y_inline7b()
+@test(.group = "y_inline") y_inline7b()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -296,7 +296,7 @@ TEST__ y_inline7b()
 	Callback_Release(cc);
 }
 
-TEST__ y_inline8()
+@test(.group = "y_inline") y_inline8()
 {
 	for (new i = 2; i--; )
 	{
@@ -332,7 +332,7 @@ public y_inline9(a)
 	return 12345 + a;
 }
 
-TEST__ y_inline9()
+@test(.group = "y_inline") y_inline9()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -348,7 +348,7 @@ public y_inline10(a, b[])
 	return 12345 + a + b[0];
 }
 
-TEST__ y_inline10()
+@test(.group = "y_inline") y_inline10()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -359,7 +359,7 @@ TEST__ y_inline10()
 	Callback_Release(cc);
 }
 
-TEST__ y_inline11()
+@test(.group = "y_inline") y_inline11()
 {
 	new
 		g = 5,
@@ -377,7 +377,7 @@ TEST__ y_inline11()
 	Callback_Release(cc);
 }
 
-TEST__ y_inline12()
+@test(.group = "y_inline") y_inline12()
 {
 	new
 		g = 5,
@@ -399,7 +399,7 @@ TEST__ y_inline12()
 static stock
 	YSI_g_sRemoteTestVar = 0;
 
-TEST__ y_inline13()
+@test(.group = "y_inline") y_inline13()
 {
 	new
 		g = 5,
@@ -422,7 +422,7 @@ TEST__ y_inline13()
 	Callback_Release(cc);
 }
 
-TEST__ Callback_AA()
+@test(.group = "y_inline") Callback_AA()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -438,7 +438,7 @@ TEST__ Callback_AA()
 	ASSERT_EQ(a, 7);
 }
 
-TEST__ Callback_Arr1()
+@test(.group = "y_inline") Callback_Arr1()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -456,7 +456,7 @@ TEST__ Callback_Arr1()
 	ASSERT_EQ(a, 7);
 }
 
-TEST__ Callback_Arr2()
+@test(.group = "y_inline") Callback_Arr2()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -472,7 +472,7 @@ TEST__ Callback_Arr2()
 	Callback_Call(cc, "hello");
 }
 
-TEST__ Callback_Arr3()
+@test(.group = "y_inline") Callback_Arr3()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -490,7 +490,7 @@ TEST__ Callback_Arr3()
 	ASSERT_ZE(a);
 }
 
-TEST__ Callback_Array0()
+@test(.group = "y_inline") Callback_Array0()
 {
 	new
 		g = 5,
@@ -507,7 +507,7 @@ TEST__ Callback_Array0()
 	Callback_Array(cc, "", 0);
 }
 
-TEST__ Callback_Array1()
+@test(.group = "y_inline") Callback_Array1()
 {
 	#emit LCTRL 6
 	#emit LCTRL 6
@@ -546,7 +546,7 @@ TEST__ Callback_Array1()
 	ASSERT_EQ(a, 7);
 }
 
-TEST__ y_inline_Remote0()
+@test(.group = "y_inline") y_inline_Remote0()
 {
 	new
 		Function:f0 = GetRemoteFunction("MyTesterFunc", "m"),
@@ -563,7 +563,7 @@ public y_inline_Remote1(v)
 	return v - 10;
 }
 
-TEST__ y_inline_Remote1()
+@test(.group = "y_inline") y_inline_Remote1()
 {
 	new
 		ret = 0;
@@ -605,7 +605,7 @@ TEST__ y_inline_Remote1()
 	ASSERT_EQ(YSI_g_sRemoteTestVar, 77);
 }
 
-TEST__ y_inline_Remote2()
+@test(.group = "y_inline") y_inline_Remote2()
 {
 	YSI_g_sRemoteTestVar = 5;
 	new
@@ -624,7 +624,7 @@ TEST__ y_inline_Remote2()
 	ASSERT_EQ(YSI_g_sRemoteTestVar, 9);
 }
 
-TEST__ CallStoredFunction0()
+@test(.group = "y_inline") CallStoredFunction0()
 {
 	ASSERT_ZE(CallStoredFunction(Function:0));
 }
@@ -738,7 +738,7 @@ HOOK__ y_inline_InHook2@1(a, b)
 	Callback_Release(cc);
 }
 
-TEST__ y_inline_InHook0()
+@test(.group = "y_inline") y_inline_InHook0()
 {
 	// DebugLevel(7);
 	YSI_g_sInlineTestVar0 = 0;
@@ -747,7 +747,7 @@ TEST__ y_inline_InHook0()
 	// DebugLevel(0);
 }
 
-TEST__ y_inline_InHook1()
+@test(.group = "y_inline") y_inline_InHook1()
 {
 	YSI_g_sInlineTestVar0 = 0;
 	CallLocalFunction("y_inline_InHook1", "i", 4);
@@ -760,7 +760,7 @@ TEST__ y_inline_InHook1()
 	ASSERT_EQ(YSI_g_sInlineTestVar0, 300);
 }
 
-TEST__ y_inline_InHook2()
+@test(.group = "y_inline") y_inline_InHook2()
 {
 	YSI_g_sInlineTestVar0 = 0;
 	CallLocalFunction("y_inline_InHook2", "ii", 4, 5);
@@ -860,7 +860,7 @@ static stock y_inline_TestFunc_6(lvar)
 	return 7;
 }
 
-TEST__ y_inline_ParameterTypes_0()
+@test(.group = "y_inline") y_inline_ParameterTypes_0()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -871,7 +871,7 @@ TEST__ y_inline_ParameterTypes_0()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-TEST__ y_inline_ParameterTypes_1()
+@test(.group = "y_inline") y_inline_ParameterTypes_1()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -882,7 +882,7 @@ TEST__ y_inline_ParameterTypes_1()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-TEST__ y_inline_ParameterTypes_2()
+@test(.group = "y_inline") y_inline_ParameterTypes_2()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -893,7 +893,7 @@ TEST__ y_inline_ParameterTypes_2()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-TEST__ y_inline_ParameterTypes_3()
+@test(.group = "y_inline") y_inline_ParameterTypes_3()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -904,7 +904,7 @@ TEST__ y_inline_ParameterTypes_3()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-TEST__ y_inline_ParameterTypes_4()
+@test(.group = "y_inline") y_inline_ParameterTypes_4()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -915,7 +915,7 @@ TEST__ y_inline_ParameterTypes_4()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-TEST__ y_inline_ParameterTypes_5()
+@test(.group = "y_inline") y_inline_ParameterTypes_5()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -926,7 +926,7 @@ TEST__ y_inline_ParameterTypes_5()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-TEST__ y_inline_ParameterTypes_6()
+@test(.group = "y_inline") y_inline_ParameterTypes_6()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -993,7 +993,7 @@ static stock y_inline_TestFunc_10(const string:svar0[])
 	return strval(svar0b[6]);
 }
 
-TEST__ y_inline_ParameterTypes_7()
+@test(.group = "y_inline") y_inline_ParameterTypes_7()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -1004,7 +1004,7 @@ TEST__ y_inline_ParameterTypes_7()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-TEST__ y_inline_ParameterTypes_8()
+@test(.group = "y_inline") y_inline_ParameterTypes_8()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -1015,7 +1015,7 @@ TEST__ y_inline_ParameterTypes_8()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-TEST__ y_inline_ParameterTypes_9()
+@test(.group = "y_inline") y_inline_ParameterTypes_9()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -1026,7 +1026,7 @@ TEST__ y_inline_ParameterTypes_9()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-TEST__ y_inline_ParameterTypes_10()
+@test(.group = "y_inline") y_inline_ParameterTypes_10()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -1056,7 +1056,7 @@ y_inline_Fold(array[], Func:callback<ii>, initial, size = sizeof (array))
 	return initial;
 }
 
-TEST__ y_inline_NewAPI1()
+@test(.group = "y_inline") y_inline_NewAPI1()
 {
 	new array[10] = { 0, 5, 1, 5, 2, 3, 4, 5, 5, 0 };
 	new count = 0;
@@ -1069,7 +1069,7 @@ TEST__ y_inline_NewAPI1()
 	ASSERT_EQ(count, 4);
 }
 
-TEST__ y_inline_NewAPI2()
+@test(.group = "y_inline") y_inline_NewAPI2()
 {
 	new array[10] = { 0, 5, 1, 5, 2, 3, 4, 5, 5, 0 };
 	new count = 0;
@@ -1082,7 +1082,7 @@ TEST__ y_inline_NewAPI2()
 	ASSERT_ZE(count);
 }
 
-TEST__ y_inline_NewAPI3()
+@test(.group = "y_inline") y_inline_NewAPI3()
 {
 	new array[10] = { 5, 5, 1, 5, 2, 3, 4, 5, 5, 5 };
 	inline const IsFive(value, count)
@@ -1105,7 +1105,7 @@ y_inline_MetaData(Func:cb<iis>)
 	return ret;
 }
 
-TEST__ y_inline_MetaData()
+@test(.group = "y_inline") y_inline_MetaData()
 {
 	inline Dummy(a, b, string:c[])
 	{
@@ -1121,7 +1121,7 @@ TEST__ y_inline_MetaData()
 // ========================================================================== //
 // ========================================================================== //
 
-TEST__ nu_y_inline1()
+@test(.group = "y_inline") nu_y_inline1()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1134,7 +1134,7 @@ TEST__ nu_y_inline1()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline2()
+@test(.group = "y_inline") nu_y_inline2()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1147,7 +1147,7 @@ TEST__ nu_y_inline2()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline3()
+@test(.group = "y_inline") nu_y_inline3()
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -1163,7 +1163,7 @@ TEST__ nu_y_inline3()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline4()
+@test(.group = "y_inline") nu_y_inline4()
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -1179,7 +1179,7 @@ TEST__ nu_y_inline4()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline5()
+@test(.group = "y_inline") nu_y_inline5()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1195,7 +1195,7 @@ TEST__ nu_y_inline5()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline6()
+@test(.group = "y_inline") nu_y_inline6()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1211,7 +1211,7 @@ TEST__ nu_y_inline6()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline6b()
+@test(.group = "y_inline") nu_y_inline6b()
 {
 	new Func:cc<s>;
 	INLINE_CONST__ func(string:g[])
@@ -1227,7 +1227,7 @@ TEST__ nu_y_inline6b()
 	Indirect_Release(cc);
 }
 
-TEST__ nu_y_inline7b()
+@test(.group = "y_inline") nu_y_inline7b()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1249,7 +1249,7 @@ TEST__ nu_y_inline7b()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline8()
+@test(.group = "y_inline") nu_y_inline8()
 {
 	for (new i = 2; i--; )
 	{
@@ -1278,7 +1278,7 @@ TEST__ nu_y_inline8()
 	}
 }
 
-TEST__ nu_y_inline9()
+@test(.group = "y_inline") nu_y_inline9()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1287,7 +1287,7 @@ TEST__ nu_y_inline9()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline10()
+@test(.group = "y_inline") nu_y_inline10()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1298,7 +1298,7 @@ TEST__ nu_y_inline10()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline11()
+@test(.group = "y_inline") nu_y_inline11()
 {
 	new
 		g = 5,
@@ -1316,7 +1316,7 @@ TEST__ nu_y_inline11()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline12()
+@test(.group = "y_inline") nu_y_inline12()
 {
 	new
 		g = 5,
@@ -1335,7 +1335,7 @@ TEST__ nu_y_inline12()
 	Callback_Release(cc);
 }
 
-TEST__ nu_y_inline13()
+@test(.group = "y_inline") nu_y_inline13()
 {
 	new
 		g = 5,
@@ -1358,7 +1358,7 @@ TEST__ nu_y_inline13()
 	Callback_Release(cc);
 }
 
-TEST__ nu_Callback_AA()
+@test(.group = "y_inline") nu_Callback_AA()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1374,7 +1374,7 @@ TEST__ nu_Callback_AA()
 	ASSERT_EQ(a, 7);
 }
 
-TEST__ nu_Callback_Arr1()
+@test(.group = "y_inline") nu_Callback_Arr1()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1392,7 +1392,7 @@ TEST__ nu_Callback_Arr1()
 	ASSERT_EQ(a, 7);
 }
 
-TEST__ nu_Callback_Arr2()
+@test(.group = "y_inline") nu_Callback_Arr2()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1408,7 +1408,7 @@ TEST__ nu_Callback_Arr2()
 	Callback_Call(cc, "hello");
 }
 
-TEST__ nu_Callback_Arr3()
+@test(.group = "y_inline") nu_Callback_Arr3()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -1426,7 +1426,7 @@ TEST__ nu_Callback_Arr3()
 	ASSERT_ZE(a);
 }
 
-TEST__ nu_Callback_Array0()
+@test(.group = "y_inline") nu_Callback_Array0()
 {
 	new
 		g = 5,
@@ -1443,7 +1443,7 @@ TEST__ nu_Callback_Array0()
 	Callback_Array(cc, "", 0);
 }
 
-TEST__ nu_Callback_Array1()
+@test(.group = "y_inline") nu_Callback_Array1()
 {
 	#emit LCTRL 6
 	#emit LCTRL 6
@@ -1482,7 +1482,7 @@ TEST__ nu_Callback_Array1()
 	ASSERT_EQ(a, 7);
 }
 
-TEST__ nu_y_inline_NewAPI1()
+@test(.group = "y_inline") nu_y_inline_NewAPI1()
 {
 	new array[10] = { 0, 5, 1, 5, 2, 3, 4, 5, 5, 0 };
 	new count = 0;
@@ -1495,7 +1495,7 @@ TEST__ nu_y_inline_NewAPI1()
 	ASSERT_EQ(count, 4);
 }
 
-TEST__ nu_y_inline_NewAPI2()
+@test(.group = "y_inline") nu_y_inline_NewAPI2()
 {
 	new array[10] = { 0, 5, 1, 5, 2, 3, 4, 5, 5, 0 };
 	new count = 0;
@@ -1508,7 +1508,7 @@ TEST__ nu_y_inline_NewAPI2()
 	ASSERT_ZE(count);
 }
 
-TEST__ nu_y_inline_NewAPI3()
+@test(.group = "y_inline") nu_y_inline_NewAPI3()
 {
 	new array[10] = { 5, 5, 1, 5, 2, 3, 4, 5, 5, 5 };
 	INLINE__ const IsFive(value, count)
@@ -1521,7 +1521,7 @@ TEST__ nu_y_inline_NewAPI3()
 	ASSERT_EQ(count, 6);
 }
 
-TEST__ nu_y_inline_MetaData()
+@test(.group = "y_inline") nu_y_inline_MetaData()
 {
 	INLINE__ Dummy(a, b, string:c[])
 	{
@@ -1532,7 +1532,7 @@ TEST__ nu_y_inline_MetaData()
 	ASSERT_EQ(ret, 9);
 }
 
-TEST__ y_inline_DeeplyNested()
+@test(.group = "y_inline") y_inline_DeeplyNested()
 {
 	new k = 0;
 	for (new i = 0; i != 10; ++i)
@@ -1634,7 +1634,7 @@ TEST__ y_inline_DeeplyNested()
 	ASSERT_EQ(k, 8);
 }
 
-TEST__ y_inline_timer()
+@test(.group = "y_inline") y_inline_timer()
 {
 	// This is tricky to test, because we need to test it instantly, but the timer (by definition)
 	// is called in the future.  So we just test that a timer was probably started for now.
@@ -1647,7 +1647,7 @@ TEST__ y_inline_timer()
 	Timer_KillCallback(timer);
 }
 
-TEST__ y_inline_repeating()
+@test(.group = "y_inline") y_inline_repeating()
 {
 	inline const X()
 	{
@@ -1660,7 +1660,7 @@ static stock
 	YSI_gsCounts[sizeof (YSI_gsStarts)],
 	YSI_gsCount = 0;
 
-TEST__ y_inline1000timers()
+@test(.group = "y_inline") y_inline1000timers()
 {
 	//print("y_inline1000timers");
 	inline const Total()

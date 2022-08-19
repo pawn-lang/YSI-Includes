@@ -82,10 +82,11 @@ static stock
 	YSI_g_sContexts[MAX_NESTED_PASSTHROUGHS][AsmContext],
 	YSI_g_sMaxNesting = 0,
 	YSI_g_sPassthroughNestings = 0,
-	YSI_g_sInitialised = 0;
+	YSI_g_sInitialised = 0,
+	YSI_g_sDoPushAddr = 0;
 
 #define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
-static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
+stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 {
 	// We need to tell the real call how many parameters are being pushed, via
 	// the hidden 'numargs' parameter.  The first obvious solution would be
@@ -255,6 +256,7 @@ public OnCodeInit()
 	// correct response is "don't do that"!
 	if (!YSI_g_sInitialised)
 	{
+		YSI_g_sDoPushAddr = addressof (YVA2_DoPush);
 		YVA2_Initalise();
 		YSI_g_sInitialised = -1;
 	}
@@ -276,7 +278,7 @@ static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skip
 	@emit ADDR.pri     offset                  // 8
 	@emit PUSH.pri                             // 12
 	@emit PUSH3.C      pushedBytes - 4, skippedBytes, 12 // 28
-	@emit CALL.abs     addressof (YVA2_DoPush) // 36
+	@emit CALL.abs     YSI_g_sDoPushAddr      // 36
 	@emit HEAP         4                       // 44
 #else
 	// `pushedBytes` is the number of bytes originally pushed to the target
@@ -287,7 +289,7 @@ static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skip
 	@emit PUSH.C       pushedBytes - 4         // 20
 	@emit PUSH.C       skippedBytes            // 28
 	@emit PUSH.C       12                      // 36
-	@emit CALL.abs     addressof (YVA2_DoPush) // 44
+	@emit CALL.abs     YSI_g_sDoPushAddr      // 44
 	// We keep the `HEAP` here since we know that the original code wants to
 	// clean up an extra four bytes from the heap, so it still needs to exist.
 	@emit HEAP         4                       // 52

@@ -151,6 +151,12 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 	return 1;
 }
 
+MASTER_REHOOK__ OnPlayerConnect(playerid)
+{
+	#pragma unused playerid
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who requested a class.</param>
  * <param name="class">Class they requested.</param>
@@ -223,6 +229,12 @@ MASTER_HOOK__ OnPlayerRequestClass(playerid, classid)
 	return -2;
 }
 
+MASTER_REHOOK__ OnPlayerRequestClass(playerid, classid)
+{
+	#pragma unused playerid, classid
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who spawned.</param>
  * <remarks>
@@ -240,6 +252,12 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 		ForceClassSelection(playerid);
 	}
 	YSI_g_sPlayerFlags[playerid] = (YSI_g_sPlayerFlags[playerid] & ~e_SPAWN_FLAGS_INSELECT) | e_SPAWN_FLAGS_HADFIRST;
+	return 1;
+}
+
+MASTER_REHOOK__ OnPlayerSpawn(playerid)
+{
+	#pragma unused playerid
 	return 1;
 }
 

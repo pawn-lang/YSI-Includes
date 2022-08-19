@@ -71,7 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-TEST__ y_punycode_1()
+@test(.group = "y_punycode") y_punycode_1()
 {
 	new
 		dst[32];

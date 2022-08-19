@@ -93,7 +93,6 @@ Optional plugins:
 
 #include "y_hooks_macros"
 #include "y_hooks_impl"
-#include "y_hooks_nps"
 
 #if defined YSI_TESTS
 	// Get a new unique ID for the test hooks.

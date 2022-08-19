@@ -71,6 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+//@test(.group = "y_cell", .run = false) y_cell()
 TEST_COMPILE__ y_cell()
 {
 	new masks[5];
@@ -92,7 +93,7 @@ TEST_COMPILE__ y_cell()
 	Cell_ExpandLeft(0, 0);
 }
 
-TEST__ y_cell_ReverseBits0()
+@test(.group = "y_cell") y_cell_ReverseBits0()
 {
 	ASSERT_EQ(Cell_ReverseBits(0), 0x00000000);
 	ASSERT_EQ(Cell_ReverseBits(1), 0x80000000);
@@ -103,7 +104,7 @@ TEST__ y_cell_ReverseBits0()
 	ASSERT_EQ(Cell_ReverseBits(0b1111000001111000011), 0b11000011110000011110000000000000);
 }
 
-TEST__ y_cell_ExpandCompress()
+@test(.group = "y_cell") y_cell_ExpandCompress()
 {
 	new o = 0, x = 0, m = 0, n = 0;
 	//print("1");
@@ -162,7 +163,7 @@ TEST__ y_cell_ExpandCompress()
 	//PRINT(n);
 }
 
-TEST__ y_cell_ReverseBits1()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBits1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
@@ -180,7 +181,7 @@ TEST__ y_cell_ReverseBits1()
 	}
 }
 
-TEST__ y_cell_ReverseBits2()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBits2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
@@ -198,7 +199,7 @@ TEST__ y_cell_ReverseBits2()
 	}
 }
 
-TEST__ y_cell_ReverseBits3()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBits3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
@@ -216,7 +217,7 @@ TEST__ y_cell_ReverseBits3()
 	}
 }
 
-TEST__ y_cell_ReverseNibbles0()
+@test(.group = "y_cell") y_cell_ReverseNibbles0()
 {
 	ASSERT_ZE(Cell_ReverseNibbles(0));
 	ASSERT_EQ(Cell_ReverseNibbles(1), 0x10000000);
@@ -227,7 +228,7 @@ TEST__ y_cell_ReverseNibbles0()
 	ASSERT_EQ(Cell_ReverseNibbles(0b1111000001111000011), 0b00111100001110000111000000000000);
 }
 
-TEST__ y_cell_ReverseNibbles1()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseNibbles1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
@@ -248,7 +249,7 @@ TEST__ y_cell_ReverseNibbles1()
 	}
 }
 
-TEST__ y_cell_ReverseNibbles2()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseNibbles2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
@@ -269,7 +270,7 @@ TEST__ y_cell_ReverseNibbles2()
 	}
 }
 
-TEST__ y_cell_ReverseNibbles3()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseNibbles3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
@@ -290,7 +291,7 @@ TEST__ y_cell_ReverseNibbles3()
 	}
 }
 
-TEST__ y_cell_ReverseBytes0()
+@test(.group = "y_cell") y_cell_ReverseBytes0()
 {
 	ASSERT_ZE(Cell_ReverseBytes(0));
 	ASSERT_EQ(Cell_ReverseBytes(1), 0x01000000);
@@ -301,7 +302,7 @@ TEST__ y_cell_ReverseBytes0()
 	ASSERT_EQ(Cell_ReverseBytes(0b1111000001111000011), 0b11000011100000110000011100000000);
 }
 
-TEST__ y_cell_ReverseBytes1()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBytes1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
@@ -322,7 +323,7 @@ TEST__ y_cell_ReverseBytes1()
 	}
 }
 
-TEST__ y_cell_ReverseBytes2()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBytes2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
@@ -343,7 +344,7 @@ TEST__ y_cell_ReverseBytes2()
 	}
 }
 
-TEST__ y_cell_ReverseBytes3()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBytes3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
@@ -495,7 +496,7 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 	__pragma("naked");
 }
 
-TEST__ y_cell_CountBits0()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits0()
 {
 	ASSERT_ZE(y_cell_CountBits_v4(0));
 	ASSERT_EQ(y_cell_CountBits_v4(1), 1);
@@ -550,7 +551,7 @@ TEST__ y_cell_CountBits0()
 #endif
 }
 
-TEST__ y_cell_CountBits1()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
@@ -568,7 +569,7 @@ TEST__ y_cell_CountBits1()
 	}
 }
 
-TEST__ y_cell_CountBits2()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
@@ -586,7 +587,7 @@ TEST__ y_cell_CountBits2()
 	}
 }
 
-TEST__ y_cell_CountBits3()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
@@ -604,7 +605,7 @@ TEST__ y_cell_CountBits3()
 	}
 }
 
-TEST__ y_cell_GetLowestComponent()
+@test(.group = "y_cell") y_cell_GetLowestComponent()
 {
 	ASSERT_ZE(Cell_GetLowestComponent(0));
 	ASSERT_EQ(Cell_GetLowestComponent(1), 1);
@@ -626,7 +627,7 @@ TEST__ y_cell_GetLowestComponent()
 	}
 }
 
-TEST__ y_cell_GetLowestBit()
+@test(.group = "y_cell") y_cell_GetLowestBit()
 {
 	ASSERT_ZE(Cell_GetLowestBit(0));
 	ASSERT_ZE(Cell_GetLowestBit(1));
@@ -647,7 +648,7 @@ TEST__ y_cell_GetLowestBit()
 	}
 }
 
-TEST__ y_cell_GetLowestBitEx()
+@test(.group = "y_cell") y_cell_GetLowestBitEx()
 {
 	ASSERT_ZE(Cell_GetLowestBitEx(0));
 	ASSERT_EQ(Cell_GetLowestBitEx(1), 1);

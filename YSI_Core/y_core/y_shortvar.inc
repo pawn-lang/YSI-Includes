@@ -135,9 +135,9 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 #endif
 
 #if !__COMPILER_MODIFIED
-	forward _@_y_shortvar_@_();
+	forward @_y_shortvar_y_@();
 
-	public _@_y_shortvar_@_()
+	public @_y_shortvar_y_@()
 	{
 		new tmp[2];
 		// This function calls any functions used in assembly code in YSI to ensure

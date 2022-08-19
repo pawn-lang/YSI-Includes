@@ -382,6 +382,12 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 	return 1;
 }
 
+MASTER_REHOOK__ OnPlayerSpawn(playerid)
+{
+	#pragma unused playerid
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who joined the server.</param>
  * <remarks>
@@ -403,6 +409,12 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 			YSI_g_sClasses[i][E_CLASS_PLAYERS][slot] |= mask;
 		}
 	}
+	return 1;
+}
+
+MASTER_REHOOK__ OnPlayerConnect(playerid)
+{
+	#pragma unused playerid
 	return 1;
 }
 

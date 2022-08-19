@@ -71,14 +71,14 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-TEST__ y_commands_Simple()
+@test(.group = "y_commands") y_commands_Simple()
 {
 	new
 		id = Command_Find("y_commands_1");
 	ASSERT_NE(id, -1);
 }
 
-TEST__ y_commands_Syntax()
+@test(.group = "y_commands") y_commands_Syntax()
 {
 	new
 		id1 = YCMD:y_commands_1,
@@ -89,14 +89,14 @@ TEST__ y_commands_Syntax()
 	ASSERT_NE(id3, -1);
 }
 
-TEST__ y_commands_Valid()
+@test(.group = "y_commands") y_commands_Valid()
 {
 	ASSERT(Command_IsValid(YCMD:y_commands_1));
 	ASSERT(Command_IsValid(Command_GetID("y_commands_1")));
 	// ASSERT(Command_IsValid(YCMD:y_commands_1));
 }
 
-TEST__ y_commands_YCMD()
+@test(.group = "y_commands") y_commands_YCMD()
 {
 	ASSERT_EQ(Command_GetID("y_commands_1"), _:YCMD:y_commands_1);
 	ASSERT_NE(Command_GetID("y_commands_1"), _:YCMD:y_commands_2);
@@ -104,7 +104,7 @@ TEST__ y_commands_YCMD()
 	ASSERT_EQ(Command_GetID("y_commands_DO_NOT_MAKE"), COMMAND_NOT_FOUND);
 }
 
-TEST__ y_commands_GetName()
+@test(.group = "y_commands") y_commands_GetName()
 {
 	new
 		id = Command_GetID("y_commands_1");
@@ -112,7 +112,7 @@ TEST__ y_commands_GetName()
 	ASSERT_ZE(strlen(Command_GetName(-1)));
 }
 
-TEST__ y_commands_AddAlt()
+@test(.group = "y_commands") y_commands_AddAlt()
 {
 	new
 		id1 = YCMD:y_commands_1,
@@ -123,7 +123,7 @@ TEST__ y_commands_AddAlt()
 	ASSERT_EQ(id2, id3);
 }
 
-TEST__ y_commands_AddAlt2()
+@test(.group = "y_commands") y_commands_AddAlt2()
 {
 	new
 		id1 = YCMD:y_commands_1,
@@ -134,7 +134,7 @@ TEST__ y_commands_AddAlt2()
 	ASSERT_EQ(id2, id3);
 }
 
-TEST__ y_commands_Perms()
+@test(.group = "y_commands") y_commands_Perms()
 {
 	new
 		id = (YCMD:y_commands_1);
@@ -148,7 +148,7 @@ TEST__ y_commands_Perms()
 	ASSERT(Command_GetPlayerNamed("y_commands_1", 101));
 }
 
-TEST__ y_commands_Perms2()
+@test(.group = "y_commands") y_commands_Perms2()
 {
 	new
 		id = Command_Find("y_cómmańds_ąlt");
@@ -169,7 +169,7 @@ YCMD:y_commands_removable(playerid, params[], help)
 	return 1;
 }
 
-TEST__ y_commands_removable()
+@test(.group = "y_commands") y_commands_removable()
 {
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, true);
@@ -198,7 +198,7 @@ YCMD:y_commands_removable2(playerid, params[], help)
 	return 1;
 }
 
-TEST__ y_commands_removable2()
+@test(.group = "y_commands") y_commands_removable2()
 {
 	//printf("%d", YCMD:y_commands_removable2);
 	Command_SetPlayer(YCMD:y_commands_removable2, 103, true);
@@ -207,7 +207,7 @@ TEST__ y_commands_removable2()
 	ASSERT_ZE(call OnPlayerCommandText(103, "/y_commands_removable2"));
 }
 
-TEST__ y_commands_count()
+@test(.group = "y_commands") y_commands_count()
 {
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
@@ -218,7 +218,7 @@ TEST__ y_commands_count()
 	ASSERT_NZ(Command_GetPlayerCommandCount(22));
 }
 
-TEST__ y_commands_display1()
+@test(.group = "y_commands") y_commands_display1()
 {
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
@@ -230,7 +230,7 @@ TEST__ y_commands_display1()
 	ASSERT_SAME(Command_GetDisplayNamed("y_commands_1", 23), "y_commands_1");
 }
 
-TEST__ y_commands_display2()
+@test(.group = "y_commands") y_commands_display2()
 {
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
@@ -242,7 +242,7 @@ TEST__ y_commands_display2()
 	ASSERT_SAME(Command_GetDisplay(YCMD:y_commands_3, 23), "y_commands_3");
 }
 
-TEST__ y_commands_display3()
+@test(.group = "y_commands") y_commands_display3()
 {
 	Command_AddAlt(YCMD:y_commands_3, "y_commands_alt7");
 	Command_AddAlt(YCMD:y_commands_alt7, "y_commands_alt2");
@@ -266,7 +266,7 @@ TEST__ y_commands_display3()
 	ASSERT_SAME(Command_GetDisplay(YCMD:y_commands_alt2, 25), "y_commands_3");
 }
 
-TEST__ y_commands_count3()
+@test(.group = "y_commands") y_commands_count3()
 {
 	Command_AddAlt(YCMD:y_commands_1, "y_commands_alt4");
 	Command_AddAlt(YCMD:y_commands_alt4, "y_commands_alt5");
@@ -286,7 +286,7 @@ TEST__ y_commands_count3()
 	ASSERT_EQ(Command_GetPlayerCommandCount(26), 4);
 }
 
-TEST__ y_commands_Hashing()
+@test(.group = "y_commands") y_commands_Hashing()
 {
 	new
 		dst0[32],
@@ -324,7 +324,7 @@ YCMD:y_commands_1(playerid, cmdtext[], help)
 	return 1;
 }
 
-TEST__ y_commands_1()
+@test(.group = "y_commands") y_commands_1()
 {
 	call OnPlayerConnect(142);
 	ASSERT_NZ(call OnPlayerCommandText(142, "/y_commands_1"));
@@ -334,7 +334,7 @@ TEST__ y_commands_1()
 	ASSERT_NZ(call OnPlayerCommandText(142, "/y_Commands_1"));
 }
 
-TEST__ y_commands_2()
+@test(.group = "y_commands") y_commands_2()
 {
 	call OnPlayerConnect(143);
 	ASSERT_ZE(call OnPlayerCommandText(143, "/y_commands__NONONONO"));
@@ -351,7 +351,7 @@ YCMD:y_commands_3(playerid, cmdtext[], help)
 	return 1;
 }
 
-TEST__ y_commands_3()
+@test(.group = "y_commands") y_commands_3()
 {
 	call OnPlayerConnect(144);
 	gSomeVar = 42;
@@ -372,7 +372,7 @@ YCMD:y_commands_8(playerid, cmdtext[], help) = y_commands_6;
 // TODO: Make this line an error.
 YCMD:y_commands_12(playerid, cmdtext[], help) = y_commands_10;
 
-TEST__ y_commands_4()
+@test(.group = "y_commands") y_commands_4()
 {
 	call OnPlayerConnect(80);
 	gSomeVar = 42;
@@ -407,7 +407,7 @@ YCMD:y_commands_reprocess(playerid, params[], help)
 	return 1;
 }
 
-TEST__ y_commands_ReProcess()
+@test(.group = "y_commands") y_commands_ReProcess()
 {
 	call OnPlayerConnect(33);
 	// 1.
@@ -465,7 +465,7 @@ TEST__ y_commands_ReProcess()
 	ASSERT_EQ(YSI_gsHelp, 1);
 }
 
-TEST__ y_commands_Parameters()
+@test(.group = "y_commands") y_commands_Parameters()
 {
 	call OnPlayerConnect(34);
 	// 1.
@@ -553,7 +553,7 @@ YCMD:y_commands_t111111(playerid, params[], help)
 	return 1;
 }
 
-TEST__ y_commands_iterator0()
+@test(.group = "y_commands") y_commands_iterator0()
 {
 	new
 		found = 0,
@@ -574,7 +574,7 @@ TEST__ y_commands_iterator0()
 	ASSERT_EQ(found, 6);
 }
 
-TEST__ y_commands_iterator1()
+@test(.group = "y_commands") y_commands_iterator1()
 {
 	new
 		found = 0,
@@ -595,7 +595,7 @@ TEST__ y_commands_iterator1()
 	ASSERT_EQ(found, 6);
 }
 
-TEST__ y_commands_lengths()
+@test(.group = "y_commands") y_commands_lengths()
 {
 	call OnPlayerConnect(88);
 	ASSERT_NZ(call OnPlayerCommandText(88, "/y_commands_t1"));
@@ -613,7 +613,7 @@ TEST__ y_commands_lengths()
 		return 1;
 	}
 	
-	TEST__ y_commands_prefix1()
+	@test(.group = "y_commands") y_commands_prefix1()
 	{
 		new
 			a = _C<@_yC>,

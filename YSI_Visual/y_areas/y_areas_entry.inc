@@ -333,7 +333,6 @@ static stock
 	YSI_g_sFreeCount = MAX_AREAS,
 	YSI_g_sAreas[MAX_AREAS][E_AREA],
 	YSI_g_sPlayerArea[MAX_PLAYERS][AREAS_MAX_OVERLAPS], // = {NO_AREA, ...},
-	YSI_g_sHasCallbacks,
 	YSI_g_sZones[AREAS_ZONE_ARRAY * AREAS_ZONE_ARRAY] = {AREA_NO_NEXT, ...},
 	// "Inner" zones.  -4000 <= x, y <= 4000; Z(x) != Z(y)
 	YSI_g_sZoneIN  = AREA_NO_NEXT, // -1
@@ -391,17 +390,10 @@ MASTER_HOOK__ OnYSIInit()
 	return 1;
 }
 
-HOOK__ OnScriptInit()
+MASTER_REHOOK__ OnYSIInit()
 {
-	new
-		buffer = 0;
-	YSI_g_sHasCallbacks = 0;
-	YSI_g_sHasCallbacks |= funcidx("OnPlayerEnterArea") == -1 ? 0 : 1;
-	YSI_g_sHasCallbacks |= funcidx("OnPlayerLeaveArea") == -1 ? 0 : 2;
-	YSI_g_sHasCallbacks |= AMX_GetPublicEntry(0, buffer, "@yH_PlayerEnterArea") ? 4 : 0;
-	YSI_g_sHasCallbacks |= AMX_GetPublicEntry(0, buffer, "@yH_PlayerLeaveArea") ? 8 : 0;
+	return 1;
 }
-
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
@@ -1735,6 +1727,12 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 			YSI_g_sAreas[i][E_AREA_PLAYERS][slot] |= mask;
 		}
 	}
+	return 1;
+}
+
+MASTER_REHOOK__ OnPlayerConnect(playerid)
+{
+	#pragma unused playerid
 	return 1;
 }
 

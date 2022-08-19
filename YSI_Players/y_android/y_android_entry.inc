@@ -92,18 +92,18 @@ Optional plugins:
 
 static stock
 	YSI_g_sTimers[MAX_PLAYERS],
-	bool:YSI_g_sIsAndroid[MAX_PLAYERS] = bool:-1;
+	bool:YSI_g_sIsAndroid[MAX_PLAYERS] = {bool:-1, ...};
 
 forward OnAndroidCheck(playerid, bool:isDisgustingThiefToBeBanned);
 
 stock bool:IsPCPlayer(playerid)
 {
-	return YSI_g_sIsAndroid[playerid] == false;
+	return IsPlayerConnected(playerid) && YSI_g_sIsAndroid[playerid] == false;
 }
 
 stock bool:IsAndroidPlayer(playerid)
 {
-	return YSI_g_sIsAndroid[playerid] == true;
+	return IsPlayerConnected(playerid) && YSI_g_sIsAndroid[playerid] == true;
 }
 
 public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
@@ -148,6 +148,8 @@ public OnPlayerDisconnect(playerid, reason)
 		KillTimer(YSI_g_sTimers[playerid]);
 		YSI_g_sTimers[playerid] = 0;
 	}
+
+	YSI_g_sIsAndroid[playerid] = bool:-1;
 #if defined Android_OnPlayerDisconnect
 	Android_OnPlayerDisconnect(playerid, reason);
 #endif

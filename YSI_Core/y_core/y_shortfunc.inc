@@ -131,7 +131,7 @@ Optional plugins:
 // 
 
 static stock
-	YSI_g_sPropVarArg[3] = YSIM_VARARG,
+	YSI_g_sPropVarArg[3] = __COMPILER_UNPACK YSIM_VARARG,
 	YSI_g_sCallData = 0;
 
 static stock const
@@ -146,7 +146,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	Debug_Print5("K@ called: %s, %s", function, fmat);
 
-	#pragma unused function, fmat
+	#pragma unused function
 	// New implementation of "CallRemoteFunction".  Wraps the old function
 	// efficiently (using assembly stack manipulation tricks, better even than
 	// the ones in "y_va" since we have more control over exactly how this is
@@ -240,11 +240,23 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		
 		// Get all the varargs (without using our corrupted stack).
 		static i = 0, j = 0, ch = 0;
-		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
+		if (YSI_IsLocalVarPackedString__(fmat))
 		{
-			YSI_g_sPropVarArg[1] = '@' + ++j;
-			Debug_Print7("K@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
-			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
+			for (i = j = 0; (ch = fmat{i}); ++i) if (ch == 'd')
+			{
+				YSI_g_sPropVarArg[1] = '@' + ++j;
+				Debug_Print7("K@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
+				setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
+			}
+		}
+		else
+		{
+			for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
+			{
+				YSI_g_sPropVarArg[1] = '@' + ++j;
+				Debug_Print7("K@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
+				setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
+			}
 		}
 	}
 	else
@@ -290,7 +302,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	Debug_Print5("D@ called: %s, %s", function, fmat);
 
-	#pragma unused function, fmat
+	#pragma unused function
 	// New implementation of "CallRemoteFunction".  Wraps the old function
 	// efficiently (using assembly stack manipulation tricks, better even than
 	// the ones in "y_va" since we have more control over exactly how this is
@@ -355,11 +367,23 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		
 		// Get all the varargs (without using our corrupted stack).
 		static i = 0, j = 0, ch = 0;
-		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
+		if (YSI_IsLocalVarPackedString__(fmat))
 		{
-			YSI_g_sPropVarArg[1] = '@' + ++j;
-			Debug_Print7("D@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
-			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
+			for (i = j = 0; (ch = fmat{i}); ++i) if (ch == 'd')
+			{
+				YSI_g_sPropVarArg[1] = '@' + ++j;
+				Debug_Print7("D@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
+				setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
+			}
+		}
+		else
+		{
+			for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
+			{
+				YSI_g_sPropVarArg[1] = '@' + ++j;
+				Debug_Print7("D@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
+				setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
+			}
 		}
 	}
 	{}

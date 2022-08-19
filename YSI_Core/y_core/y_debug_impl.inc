@@ -530,18 +530,6 @@ FUNC_PAWNDOC(Debug_Print7(const str[], GLOBAL_TAG_TYPES:...));
 	#endif
 #endif
 
-#define Debug_Error(%1); \
-	Debug_Print0("\7\7\7*** YSI Error: " #%1);
-
-#define Debug_Warning(%1); \
-	Debug_Print0("\7*** YSI Warning: " #%1);
-
-#define Debug_Info(%1); \
-	Debug_Print0("*** YSI Info: " #%1);
-
-#define Debug_Fatal(%1); \
-	Debug_Print0("\7\7\7\7\7*** YSI Fatal Error: " #%1),Debug_Kill_();
-
 #define Debug_PrintE Debug_Error
 #define Debug_PrintW Debug_Warning
 #define Debug_PrintI Debug_Info

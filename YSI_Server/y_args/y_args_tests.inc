@@ -1,10 +1,10 @@
 // .\omp-server.exe args -- test moo --opt=7 positional -c:8 -c:9 -c+ "-i=8,9" -i=10 -i:134 --help "this is a long string yeah" a -- the rest go here#
-TEST_INIT__ y_args()
+@testinit() y_args()
 {
 	Args_LazyInit();
 }
 
-TEST__ y_args()
+@test(.group = "y_args") y_args()
 {
 	new str[32];
 	ASSERT(Args_GetStringImpl('\0', "opt", str, sizeof (str)));

@@ -115,9 +115,9 @@ static stock CGEN(&a = 1, &b = 1, &c = 1, &d = 1, &e = 1, &f = 1, &g = 1, &h = 1
 	#pragma unused a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 }
 
-forward _@_y_cgen_@_0();
+forward @_y_cgen0_y_@();
 
-public _@_y_cgen_@_0()
+public @_y_cgen0_y_@()
 {
 	// Reserve a huge area of "COD" for our own use!
 	// This is currently many calls to `CGEN()`, which takes up huge amounts of
@@ -191,11 +191,11 @@ public _@_y_cgen_@_0()
 	#endif
 }
 
-forward _@_y_cgen_@_1();
+forward @_y_cgen1_y_@();
 
-public _@_y_cgen_@_1()
+public @_y_cgen1_y_@()
 {
-	// This function SHOULD come straight after "_@_y_hooks_@_0" in both the
+	// This function SHOULD come straight after "@_y_hooks_@_0" in both the
 	// public functions table and code segment if the compiler is true to form.
 }
 
@@ -207,9 +207,9 @@ static stock CGen_GetAddr(const func[])
 static stock CGen_SetupCodeSpace()
 {
 	if (YSI_g_sCodeSpace != -1) return;
-	YSI_g_sCodeSpace = CGen_GetAddr("_@_y_cgen_@_0"),
-	YSI_g_sCodeEnd   = CGen_GetAddr("_@_y_cgen_@_1"),
-	// Rewrite "_@_y_cgen_@_0" to just "return 0;".
+	YSI_g_sCodeSpace = CGen_GetAddr("@_y_cgen0_y_@"),
+	YSI_g_sCodeEnd   = CGen_GetAddr("@_y_cgen1_y_@"),
+	// Rewrite "@_y_cgen0_y_@" to just "return 0;".
 	AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_PROC)),
 	AMX_Write(YSI_g_sCodeSpace + 4, _:RelocateOpcode(OP_ZERO_PRI)),
 	AMX_Write(YSI_g_sCodeSpace + 8, _:RelocateOpcode(OP_RETN)),

@@ -149,7 +149,7 @@ iterfunc stock TestState1_y_iter(&iterstate, cur)
 
 #define Iterator@TestState1_y_iter iterstate(-1, 800)
 
-TEST__ TestState1_y_iter()
+@test(.group = "y_iterate") TestState1_y_iter()
 {
 	new
 		count = 0;
@@ -172,7 +172,7 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 
 #define Iterator@TestState2_y_iter iterstate(-1, 500, 600)
 
-TEST__ TestState2_y_iter()
+@test(.group = "y_iterate") TestState2_y_iter()
 {
 	new
 		count = 0;
@@ -187,7 +187,7 @@ TEST__ TestState2_y_iter()
 	ASSERT_EQ(count, 2);
 }
 
-TEST__ y_iter_Range()
+@test(.group = "y_iterate") y_iter_Range()
 {
 	new
 		count = 0;
@@ -238,7 +238,7 @@ TEST__ y_iter_Range()
 	ASSERT_EQ(count, 1);
 }
 
-TEST__ y_iter_Add1()
+@test(.group = "y_iterate") y_iter_Add1()
 {
 	// Check we can only add a number once, and that we don't mess up the order.
 	new
@@ -275,7 +275,7 @@ TEST__ y_iter_Add1()
 	ASSERT_EQ(count, 1);
 }
 
-TEST__ y_iter_Add2()
+@test(.group = "y_iterate") y_iter_Add2()
 {
 	// Check we can only add a number once, and that we don't mess up the order.
 	new
@@ -327,7 +327,7 @@ TEST__ y_iter_Add2()
 	ASSERT_EQ(count, 2);
 }
 
-TEST__ y_iter_Prev()
+@test(.group = "y_iterate") y_iter_Prev()
 {
 	// Check we can only add a number once, and that we don't mess up the order.
 	new
@@ -370,7 +370,7 @@ TEST__ y_iter_Prev()
 	ASSERT_ZE(Iter_Next(iter, 20));
 }
 
-TEST__ y_iter_Add3()
+@test(.group = "y_iterate") y_iter_Add3()
 {
 	// Check OOB numbers.
 	new
@@ -394,7 +394,7 @@ TEST__ y_iter_Add3()
 	ASSERT_EQ(count, 1);
 }
 
-TEST__ y_iter_Add4()
+@test(.group = "y_iterate") y_iter_Add4()
 {
 	// Check OOB numbers.
 	new
@@ -418,7 +418,7 @@ TEST__ y_iter_Add4()
 	ASSERT_EQ(count, 1);
 }
 
-TEST__ y_iter_Add5()
+@test(.group = "y_iterate") y_iter_Add5()
 {
 	// Add all numbers.
 	new
@@ -444,7 +444,7 @@ TEST__ y_iter_Add5()
 	ASSERT_EQ(count, 20);
 }
 
-TEST__ y_iter_MultiAdd1()
+@test(.group = "y_iterate") y_iter_MultiAdd1()
 {
 	// Add all numbers.
 	new
@@ -478,7 +478,7 @@ TEST__ y_iter_MultiAdd1()
 	ASSERT_EQ(count, 1);
 }
 
-TEST__ y_iter_Remove1()
+@test(.group = "y_iterate") y_iter_Remove1()
 {
 	new
 		Iterator:iter<50>,
@@ -528,7 +528,7 @@ TEST__ y_iter_Remove1()
 	ASSERT_EQ(count, 18);
 }
 
-TEST__ y_iter_Reverse1()
+@test(.group = "y_iterate") y_iter_Reverse1()
 {
 	new
 		count = 0,
@@ -547,7 +547,7 @@ TEST__ y_iter_Reverse1()
 	ASSERT_EQ(count, 5);
 }
 
-TEST__ y_iter_RandomRemove1()
+@test(.group = "y_iterate") y_iter_RandomRemove1()
 {
 	new
 		Iterator:iter<10>;
@@ -559,7 +559,7 @@ TEST__ y_iter_RandomRemove1()
 	ASSERT_ZE(Iter_Count(iter));
 }
 
-TEST__ y_iter_RandomRemove2()
+@test(.group = "y_iterate") y_iter_RandomRemove2()
 {
 	new
 		Iterator:iter[3]<10>;
@@ -584,19 +584,33 @@ TEST__ y_iter_RandomRemove2()
 	ASSERT_ZE(Iter_Count(iter[1]));
 }
 
-TEST__ y_iter_RandomRemove3()
+@test(.group = "y_iterate") y_iter_RandomRemove3()
 {
-	new
-		Iterator:iter<2, 10>;
-	Iter_Add(iter<0>, 2);
-	ASSERT_NE(Iter_RandomRemove(iter<0>), cellmin);
-	ASSERT_EQ(Iter_RandomRemove(iter<1>), cellmin);
-	ASSERT_EQ(Iter_RandomRemove(iter<0>), cellmin);
-	ASSERT_ZE(Iter_Count(iter<0>));
-	ASSERT_ZE(Iter_Count(iter<1>));
+	for (new i = 0; i != 100; ++i)
+	{
+		new
+			Iterator:iter<5, 10>;
+		Iter_Add(iter<4>, 2);
+		Iter_Add(iter<4>, 4);
+		Iter_Add(iter<4>, 5);
+		Iter_Add(iter<4>, 9);
+		Iter_Add(iter<4>, 10);
+		ASSERT_EQ(Iter_RandomRemove(iter<0>), cellmin);
+		ASSERT_EQ(Iter_RandomRemove(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomRemove(iter<4>), cellmin);
+		ASSERT_NE(Iter_RandomRemove(iter<4>), cellmin);
+		ASSERT_NE(Iter_RandomRemove(iter<4>), cellmin);
+		ASSERT_NE(Iter_RandomRemove(iter<4>), cellmin);
+		ASSERT_EQ(Iter_RandomRemove(iter<4>), cellmin);
+		ASSERT_EQ(Iter_RandomRemove(iter<1>), cellmin);
+		ASSERT_EQ(Iter_RandomRemove(iter<0>), cellmin);
+		ASSERT_ZE(Iter_Count(iter<0>));
+		ASSERT_ZE(Iter_Count(iter<1>));
+		ASSERT_ZE(Iter_Count(iter<4>));
+	}
 }
 
-TEST__ y_iter_RandomAdd1()
+@test(.group = "y_iterate") y_iter_RandomAdd1()
 {
 	new
 		Iterator:iter<10>;
@@ -616,7 +630,7 @@ TEST__ y_iter_RandomAdd1()
 	ASSERT_EQ(Iter_Count(iter), 10);
 }
 
-TEST__ y_iter_RandomAdd2()
+@test(.group = "y_iterate") y_iter_RandomAdd2()
 {
 	new
 		Iterator:iter[3]<10>;
@@ -651,28 +665,33 @@ TEST__ y_iter_RandomAdd2()
 	ASSERT_EQ(Iter_Count(iter[1]), 10);
 }
 
-TEST__ y_iter_RandomAdd3()
+@test(.group = "y_iterate") y_iter_RandomAdd3()
 {
-	new
-		Iterator:iter<2, 10>;
-	Iter_Add(iter<0>, 2);
-	ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_EQ(Iter_RandomAdd(iter<0>), cellmin);
-	ASSERT_EQ(Iter_RandomAdd(iter<1>), cellmin);
-	ASSERT_EQ(Iter_RandomAdd(iter<0>), cellmin);
-	ASSERT_EQ(Iter_Count(iter<0>), 4);
-	ASSERT_EQ(Iter_Count(iter<1>), 6);
+	// Loop this many times, because I managed to randomly get an error once,
+	// but with it being random it was hard to reproduce.
+	for (new i = 0; i != 100; ++i)
+	{
+		new
+			Iterator:iter<2, 10>;
+		Iter_Add(iter<0>, 2);
+		ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<0>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_NE(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_EQ(Iter_RandomAdd(iter<0>), cellmin);
+		ASSERT_EQ(Iter_RandomAdd(iter<1>), cellmin);
+		ASSERT_EQ(Iter_RandomAdd(iter<0>), cellmin);
+		ASSERT_EQ(Iter_Count(iter<0>), 4);
+		ASSERT_EQ(Iter_Count(iter<1>), 6);
+	}
 }
 
-TEST__ y_iter_RandomFree1()
+@test(.group = "y_iterate") y_iter_RandomFree1()
 {
 	new
 		Iterator:iter<10>,
@@ -706,7 +725,7 @@ TEST__ y_iter_RandomFree1()
 	ASSERT_EQ(Iter_RandomFree(iter), cellmin);
 }
 
-TEST__ y_iter_RandomFree2()
+@test(.group = "y_iterate") y_iter_RandomFree2()
 {
 	new
 		Iterator:iter<2, 10>,
@@ -741,7 +760,7 @@ TEST__ y_iter_RandomFree2()
 	ASSERT_EQ(Iter_RandomFree(iter<1>), cellmin);
 }
 
-TEST__ y_iter_RandomFree3()
+@test(.group = "y_iterate") y_iter_RandomFree3()
 {
 	new
 		Iterator:iter[2]<10>,
@@ -804,7 +823,7 @@ TEST__ y_iter_RandomFree3()
 	ASSERT_EQ(Iter_RandomFree(iter[1]), cellmin);
 }
 
-TEST__ y_iter_Reverse2()
+@test(.group = "y_iterate") y_iter_Reverse2()
 {
 	new
 		count = 0,
@@ -830,7 +849,7 @@ TEST__ y_iter_Reverse2()
 	ASSERT_EQ(count, 3);
 }
 
-TEST__ y_iter_Remove2()
+@test(.group = "y_iterate") y_iter_Remove2()
 {
 	new
 		Iterator:iter<5, 10>;
@@ -875,7 +894,7 @@ TEST__ y_iter_Remove2()
 	ASSERT_EQ(Iter_Count(iter<2>), 2);
 }
 
-TEST__ y_iter_Tags()
+@test(.group = "y_iterate") y_iter_Tags()
 {
 	new
 		Iterator:iter[5]<4>,
@@ -886,7 +905,7 @@ TEST__ y_iter_Tags()
 	Iter_Clear(iter[_:gg]);
 }
 
-TEST__ y_iter_Iter_Init1()
+@test(.group = "y_iterate") y_iter_Iter_Init1()
 {
 	new
 		Iterator:iter[10]<20>;
@@ -900,7 +919,7 @@ TEST__ y_iter_Iter_Init1()
 	ASSERT(Iter_TrueArray(iter)[9][19] <= 19);
 }
 
-TEST__ y_iter_Iter_Init2()
+@test(.group = "y_iterate") y_iter_Iter_Init2()
 {
 	new
 		Iterator:iter[10]<5, 20>;
@@ -917,7 +936,7 @@ TEST__ y_iter_Iter_Init2()
 	ASSERT(Iter_TrueArray(iter)[8][19] <= 19);
 }
 
-TEST__ y_iter_Starting()
+@test(.group = "y_iterate") y_iter_Starting()
 {
 	new
 		Iterator:Test1_y_iter<100>,
@@ -951,7 +970,7 @@ TEST__ y_iter_Starting()
 	#pragma unused i
 }
 
-TEST__ y_iter_Iter_Contains1()
+@test(.group = "y_iterate") y_iter_Iter_Contains1()
 {
 	new
 		Iterator:iter1<60>;
@@ -970,7 +989,7 @@ TEST__ y_iter_Iter_Contains1()
 	ASSERT(Iter_Contains(iter2<4>, 5));
 }
 
-TEST__ y_iter_Iter_Contains2()
+@test(.group = "y_iterate") y_iter_Iter_Contains2()
 {
 	new
 		Iterator:iter1[4]<60>;
@@ -997,7 +1016,7 @@ TEST__ y_iter_Iter_Contains2()
 	ASSERT(!Iter_Contains(iter2[5]<4>, 5));
 }
 
-TEST__ y_iter_Iter_IsEmpty1()
+@test(.group = "y_iterate") y_iter_Iter_IsEmpty1()
 {
 	new
 		Iterator:iter1<30>;
@@ -1025,7 +1044,7 @@ TEST__ y_iter_Iter_IsEmpty1()
 	ASSERT(!Iter_NonFull(iter1));
 }
 
-TEST__ y_iter_Iter_IsEmpty2()
+@test(.group = "y_iterate") y_iter_Iter_IsEmpty2()
 {
 	new
 		Iterator:iter1<5, 30>;
@@ -1085,7 +1104,7 @@ TEST__ y_iter_Iter_IsEmpty2()
 	ASSERT(!Iter_NonFull(iter1<2>));
 }
 
-TEST__ y_iter_Iter_IsEmpty3()
+@test(.group = "y_iterate") y_iter_Iter_IsEmpty3()
 {
 	new
 		Iterator:iter1<5, 30>;
@@ -1123,7 +1142,7 @@ TEST__ y_iter_Iter_IsEmpty3()
 	ASSERT(Iter_NonFull(iter1<2>));
 }
 
-TEST__ y_iter_Iter_Free()
+@test(.group = "y_iterate") y_iter_Iter_Free()
 {
 	new
 		Iterator:iter1<60>;
@@ -1141,7 +1160,7 @@ TEST__ y_iter_Iter_Free()
 	ASSERT_NZ(Iter_Free(iter2<3>));
 }
 
-TEST__ y_iter_Tag()
+@test(.group = "y_iterate") y_iter_Tag()
 {
 	new
 		Iterator:iter1<Group:60>,
@@ -1195,7 +1214,7 @@ TEST__ y_iter_Tag()
 	#pragma unused Iter_Single@iter3, Iterator@iter3, using_deprecated_itertag_syntax
 }
 
-TEST__ y_iter_Iter_Alloc()
+@test(.group = "y_iterate") y_iter_Iter_Alloc()
 {
 	new
 		Iterator:iter1<60>;
@@ -1220,7 +1239,7 @@ TEST__ y_iter_Iter_Alloc()
 	ASSERT_EQ(Iter_Alloc(iter1), 10);
 }
 
-TEST__ y_iter_Normal()
+@test(.group = "y_iterate") y_iter_Normal()
 {
 	new
 		Iterator: Test1_y_iter<100>;
@@ -1257,7 +1276,7 @@ TEST__ y_iter_Normal()
 	}
 }
 
-TEST__ y_iter_InfiniteLoop()
+@test(.group = "y_iterate") y_iter_InfiniteLoop()
 {
     new Iterator:iter<20>;
     Iter_Add(iter, 1);
@@ -1272,7 +1291,7 @@ TEST__ y_iter_InfiniteLoop()
 	ASSERT(true);
 }
 
-TEST__ y_iter_Syntax1()
+@test(.group = "y_iterate") y_iter_Syntax1()
 {
 	new
 		Iterator:Test1_y_iter <100>;
@@ -1354,7 +1373,7 @@ TEST__ y_iter_Syntax1()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax5a()
+@test(.group = "y_iterate") y_iter_Syntax5a()
 {
 	new
 		Iterator:Test5a_y_iter[4]< 20, 100>;
@@ -1437,7 +1456,7 @@ TEST__ y_iter_Syntax5a()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax5b()
+@test(.group = "y_iterate") y_iter_Syntax5b()
 {
 	new
 		Iterator:Test5b_y_iter[4]<20, 100 >;
@@ -1520,7 +1539,7 @@ TEST__ y_iter_Syntax5b()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax5c()
+@test(.group = "y_iterate") y_iter_Syntax5c()
 {
 	new
 		Iterator: Test5c_y_iter[4]< 20, 100>;
@@ -1603,7 +1622,7 @@ TEST__ y_iter_Syntax5c()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax5d()
+@test(.group = "y_iterate") y_iter_Syntax5d()
 {
 	new
 		Iterator: Test5d_y_iter [ 4 ] < 20, 100 >;
@@ -1686,7 +1705,7 @@ TEST__ y_iter_Syntax5d()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax4a()
+@test(.group = "y_iterate") y_iter_Syntax4a()
 {
 	new
 		Iterator:Test4a_y_iter[ 4 ] < 100 >;
@@ -1769,7 +1788,7 @@ TEST__ y_iter_Syntax4a()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax4b()
+@test(.group = "y_iterate") y_iter_Syntax4b()
 {
 	new
 		Iterator: Test4b_y_iter [4]<100>;
@@ -1852,7 +1871,7 @@ TEST__ y_iter_Syntax4b()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax4c()
+@test(.group = "y_iterate") y_iter_Syntax4c()
 {
 	new
 		Iterator: Test4c_y_iter[4 ]<100 >;
@@ -1935,7 +1954,7 @@ TEST__ y_iter_Syntax4c()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax4d()
+@test(.group = "y_iterate") y_iter_Syntax4d()
 {
 	new
 		Iterator: Test4d_y_iter[ 4]< 100>;
@@ -2018,7 +2037,7 @@ TEST__ y_iter_Syntax4d()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax3a()
+@test(.group = "y_iterate") y_iter_Syntax3a()
 {
 	new
 		Iterator: Test3a_y_iter <10, 100>;
@@ -2100,7 +2119,7 @@ TEST__ y_iter_Syntax3a()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax3b()
+@test(.group = "y_iterate") y_iter_Syntax3b()
 {
 	new
 		Iterator:Test3b_y_iter< 10, 100 >;
@@ -2182,7 +2201,7 @@ TEST__ y_iter_Syntax3b()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax3c()
+@test(.group = "y_iterate") y_iter_Syntax3c()
 {
 	new
 		Iterator: Test3c_y_iter <10, 100>;
@@ -2264,7 +2283,7 @@ TEST__ y_iter_Syntax3c()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax3d()
+@test(.group = "y_iterate") y_iter_Syntax3d()
 {
 	new
 		Iterator:Test3d_y_iter < 10, 100 >;
@@ -2354,7 +2373,7 @@ stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
 
 #define Iterator@y_iter_Syntax6 iterstate(0, 1024)
 
-TEST__ y_iter_Syntax6a()
+@test(.group = "y_iterate") y_iter_Syntax6a()
 {
 	new
 		count = 0;
@@ -2366,7 +2385,7 @@ TEST__ y_iter_Syntax6a()
 	ASSERT_EQ(count, 4095);
 }
 
-TEST__ y_iter_Syntax6b()
+@test(.group = "y_iterate") y_iter_Syntax6b()
 {
 	new
 		count = 0;
@@ -2441,7 +2460,7 @@ TEST__ y_iter_Syntax6b()
 //	ASSERT_EQ(count, 4095 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax6c()
+@test(.group = "y_iterate") y_iter_Syntax6c()
 {
 	new
 		count = 0;
@@ -2516,7 +2535,7 @@ TEST__ y_iter_Syntax6c()
 //	ASSERT_EQ(count, 4095 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax2a()
+@test(.group = "y_iterate") y_iter_Syntax2a()
 {
 	new
 		count = 0;
@@ -2589,7 +2608,7 @@ TEST__ y_iter_Syntax2a()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax2e()
+@test(.group = "y_iterate") y_iter_Syntax2e()
 {
 	new
 		count = 0;
@@ -2662,7 +2681,7 @@ TEST__ y_iter_Syntax2e()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax2b()
+@test(.group = "y_iterate") y_iter_Syntax2b()
 {
 	new
 		count = 0;
@@ -2735,7 +2754,7 @@ TEST__ y_iter_Syntax2b()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax2c()
+@test(.group = "y_iterate") y_iter_Syntax2c()
 {
 	new
 		count = 0;
@@ -2808,7 +2827,7 @@ TEST__ y_iter_Syntax2c()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Syntax2d()
+@test(.group = "y_iterate") y_iter_Syntax2d()
 {
 	new
 		count = 0;
@@ -2881,7 +2900,7 @@ TEST__ y_iter_Syntax2d()
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
-TEST__ y_iter_Array()
+@test(.group = "y_iterate") y_iter_Array()
 {
 	new
 		Iterator:Test3[5]<20>;
@@ -2896,7 +2915,7 @@ TEST__ y_iter_Array()
 	ASSERT_ZE(count);
 }
 
-TEST__ y_iter_Multi()
+@test(.group = "y_iterate") y_iter_Multi()
 {
 	new
 		Iterator: Test4<7, 11>;
@@ -2910,7 +2929,7 @@ TEST__ y_iter_Multi()
 	ASSERT_ZE(count);
 }
 
-TEST__ y_iter_Clear()
+@test(.group = "y_iterate") y_iter_Clear()
 {
 	new
 		Iterator:a<30>,
@@ -2967,7 +2986,7 @@ TEST__ y_iter_Clear()
 	ASSERT_EQ(Iter_Count(a), 3);
 }
 
-TEST__ y_iter_ArrayMulti()
+@test(.group = "y_iterate") y_iter_ArrayMulti()
 {
 	new Iterator : Test5 [ 10 ] < 50, 25 >;
 	new
@@ -3050,7 +3069,7 @@ TEST__ y_iter_ArrayMulti()
 }
 
 #if _FOREACH_PLAYERS
-	TEST__ y_iter_Deprecate()
+	@test(.group = "y_iterate") y_iter_Deprecate()
 	{
 		#pragma tabsize 4
 		/* ================================================================== */
@@ -3066,7 +3085,7 @@ TEST__ y_iter_ArrayMulti()
 	}
 #endif
 
-TEST__ y_iter_Random()
+@test(.group = "y_iterate") y_iter_Random()
 {
 	new
 		c = 0;
@@ -3083,7 +3102,7 @@ TEST__ y_iter_Random()
 	ASSERT_EQ(c, 1010);
 }
 
-TEST__ y_iter_RandomNested()
+@test(.group = "y_iterate") y_iter_RandomNested()
 {
 	new
 		c = 0;
@@ -3099,7 +3118,7 @@ TEST__ y_iter_RandomNested()
 	ASSERT_EQ(c, 100);
 }
 
-TEST__ y_iter_Powers()
+@test(.group = "y_iterate") y_iter_Powers()
 {
 	new
 		c = 1;
@@ -3111,7 +3130,7 @@ TEST__ y_iter_Powers()
 	ASSERT_EQ(c, 0x40000000 * 2);
 }
 
-TEST__ y_iter_Fib()
+@test(.group = "y_iterate") y_iter_Fib()
 {
 	new
 		a = 0,
@@ -3124,7 +3143,7 @@ TEST__ y_iter_Fib()
 	}
 }
 
-TEST__ y_iter_Null()
+@test(.group = "y_iterate") y_iter_Null()
 {
 	new
 		c = 0,
@@ -3137,7 +3156,7 @@ TEST__ y_iter_Null()
 	ASSERT_EQ(c, 4);
 }
 
-TEST__ y_iter_Filter1()
+@test(.group = "y_iterate") y_iter_Filter1()
 {
 	new
 		c = 0,
@@ -3150,7 +3169,7 @@ TEST__ y_iter_Filter1()
 	ASSERT_EQ(c, 4);
 }
 
-TEST__ y_iter_Filter2()
+@test(.group = "y_iterate") y_iter_Filter2()
 {
 	new
 		c = 0,
@@ -3163,7 +3182,7 @@ TEST__ y_iter_Filter2()
 	ASSERT_EQ(c, 3);
 }
 
-TEST__ y_iter_NonNull()
+@test(.group = "y_iterate") y_iter_NonNull()
 {
 	new
 		c = 0,
@@ -3176,7 +3195,7 @@ TEST__ y_iter_NonNull()
 	ASSERT_EQ(c, 6);
 }
 
-TEST__ y_iter_Until()
+@test(.group = "y_iterate") y_iter_Until()
 {
 	new
 		c = 0,
@@ -3189,7 +3208,7 @@ TEST__ y_iter_Until()
 	ASSERT_EQ(c, 6);
 }
 
-TEST__ y_iter_All1()
+@test(.group = "y_iterate") y_iter_All1()
 {
 	new Iterator:a<10>;
 	Iter_Add(a, 3);
@@ -3205,7 +3224,7 @@ TEST__ y_iter_All1()
 	ASSERT_EQ(count, 4);
 }
 
-TEST__ y_iter_None1()
+@test(.group = "y_iterate") y_iter_None1()
 {
 	new Iterator:a<10>;
 	Iter_Add(a, 3);
@@ -3221,7 +3240,7 @@ TEST__ y_iter_None1()
 	ASSERT_EQ(count, 6);
 }
 
-TEST__ y_iter_All2()
+@test(.group = "y_iterate") y_iter_All2()
 {
 	new Iterator:a<3, 10>;
 	Iter_Add(a<0>, 3);
@@ -3237,7 +3256,7 @@ TEST__ y_iter_All2()
 	ASSERT_EQ(count, 4);
 }
 
-TEST__ y_iter_None2()
+@test(.group = "y_iterate") y_iter_None2()
 {
 	new Iterator:a<3, 10>;
 	Iter_Add(a<2>, 3);
@@ -3253,7 +3272,7 @@ TEST__ y_iter_None2()
 	ASSERT_EQ(count, 6);
 }
 
-TEST__ y_iter_Index1()
+@test(.group = "y_iterate") y_iter_Index1()
 {
 	new Iterator:a<20>;
 	Iter_Add(a, 6);
@@ -3298,7 +3317,7 @@ TEST__ y_iter_Index1()
 	ASSERT_EQ(Iter_Index(a, 130, true), 17);
 }
 
-TEST__ y_iter_Index2()
+@test(.group = "y_iterate") y_iter_Index2()
 {
 	new Iterator:a<5, 20>;
 	Iter_Add(a<3>, 0);
@@ -3402,7 +3421,7 @@ static iterfunc stock y_iterDecl4X(cur) { return cur == 0 ? 5 : 0; }
 iterfunc stock static y_iterDecl6X(&iterstate, cur) { return cur == -1 ? iterstate : -1; }
 #define iterstart@y_iterDecl6X iterstate(-1, 5)
 
-TEST__ y_iter_MacroLess()
+@test(.group = "y_iterate") y_iter_MacroLess()
 {
 	new i = 0;
 	FOREACH__ (i : y_iterDecl1()) { ASSERT_EQ(i, 5); }
@@ -3424,7 +3443,7 @@ iterfunc stock y_iter_yield0()
 }
 #define Iterator@y_iter_yield0 iteryield
 
-TEST__ y_iter_yield0a()
+@test(.group = "y_iterate") y_iter_yield0a()
 {
 	new
 		count = 0;
@@ -3459,7 +3478,7 @@ iterfunc stock y_iter_yield1()
 }
 #define Iterator@y_iter_yield1 iteryield
 
-TEST__ y_iter_yield1a()
+@test(.group = "y_iterate") y_iter_yield1a()
 {
 	new
 		count = 0;
@@ -3497,7 +3516,7 @@ iterfunc stock y_iter_yield2(step, target = 100)
 }
 #define Iterator@y_iter_yield2 iteryield
 
-TEST__ y_iter_yield2a()
+@test(.group = "y_iterate") y_iter_yield2a()
 {
 	new
 		count = 0;
@@ -3537,7 +3556,7 @@ iterfunc stock y_iter_yield3(step, target = 100)
 }
 #define Iterator@y_iter_yield3 iteryield
 
-TEST__ y_iter_yield3a()
+@test(.group = "y_iterate") y_iter_yield3a()
 {
 	new
 		count = 0;
@@ -3572,7 +3591,7 @@ iterfunc stock y_iter_yield4(const arr[], size = sizeof (arr))
 }
 #define Iterator@y_iter_yield4 iteryield
 
-TEST__ y_iter_yield4a()
+@test(.group = "y_iterate") y_iter_yield4a()
 {
 	new
 		count = 0,
@@ -3603,7 +3622,7 @@ TEST__ y_iter_yield4a()
 	}
 	#define Iterator@y_iter_yield5 iteryield
 	
-	TEST__ y_iter_yield5a()
+	@test(.group = "y_iterate") y_iter_yield5a()
 	{
 		new
 			k = 0;
@@ -3647,7 +3666,7 @@ iterfunc stock y_iter_yield6()
 }
 #define Iterator@y_iter_yield6 iteryield
 
-TEST__ y_iter_yield6a()
+@test(.group = "y_iterate") y_iter_yield6a()
 {
 	new
 		answers[] = { 0, 1, 2, 10, 20, 501, 502, 503, 504 },
@@ -3694,7 +3713,7 @@ iterfunc stock y_iter_yield7a(x)
 }
 #define Iterator@y_iter_yield7a iteryield
 
-TEST__ y_iter_yield7a()
+@test(.group = "y_iterate") y_iter_yield7a()
 {
 	new
 		answers[] = {
@@ -3714,18 +3733,25 @@ TEST__ y_iter_yield7a()
 	ASSERT_EQ(idx, sizeof(answers));
 }
 
-//static Iterator:y_iter_huge<100000>;
-//
-//TEST__ y_iter_huge()
-//{
-//	for (new i = 0; i < 50000; i++)
-//	{
-//		Iter_Add(y_iter_huge, i);
-//	}
-//	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
-//}
+static Iterator:y_iter_huge<100000>;
 
-TEST__ y_iter_RandomFreeExclude()
+@test(.group = "y_iterate", .slow = true) y_iter_huge()
+{
+	// Go backwards.  Forwards works, but hits a serious worst-case because
+	// each addition iterates through all previous entries.
+	for (new i = 50000; i-- > 0; )
+	{
+		Iter_Add(y_iter_huge, i);
+	}
+	// Check forwards anyway, just with a few fewer items added.
+	for (new i = 50000; i < 50100; ++i)
+	{
+		Iter_Add(y_iter_huge, i);
+	}
+	ASSERT_EQ(Iter_Count(y_iter_huge), 50100);
+}
+
+@test(.group = "y_iterate") y_iter_RandomFreeExclude()
 {
 	new
 		Iterator:rand<20>;
@@ -3742,7 +3768,7 @@ TEST__ y_iter_RandomFreeExclude()
 	}
 }
 
-TEST__ y_iter_RandomAddExclude()
+@test(.group = "y_iterate") y_iter_RandomAddExclude()
 {
 	new
 		Iterator:rand<20>;
@@ -3756,7 +3782,7 @@ TEST__ y_iter_RandomAddExclude()
 	}
 }
 
-TEST__ y_iter_RandomRepeatExclude()
+@test(.group = "y_iterate") y_iter_RandomRepeatExclude()
 {
 	new
 		Iterator:rand<20>;
@@ -3777,7 +3803,7 @@ TEST__ y_iter_RandomRepeatExclude()
 	}
 }
 
-TEST__ y_iter_RandomExclude()
+@test(.group = "y_iterate") y_iter_RandomExclude()
 {
 	new
 		Iterator:rand<20>;
@@ -3828,7 +3854,7 @@ TEST__ y_iter_RandomExclude()
 	ASSERT_FALSE(selected[19]);
 }
 
-TEST__ y_iter_RemoveMidLoop()
+@test(.group = "y_iterate") y_iter_RemoveMidLoop()
 {
 	new
 		Iterator:iter<20>;
@@ -3837,7 +3863,7 @@ TEST__ y_iter_RemoveMidLoop()
 	{
 		ASSERT_EQ(i, 5);
 		Iter_Remove(iter, i);
-		ASSERT_LT(Iterator@iter[5], 0);
+		ASSERT_LT(Iterator@iter[_no_itertag:5], _no_itertag:0);
 		break;
 	}
 	Iter_Add(iter, 0);
@@ -3845,7 +3871,7 @@ TEST__ y_iter_RemoveMidLoop()
 	{
 		ASSERT_EQ(i, 0);
 		Iter_Remove(iter, i);
-		ASSERT_LT(Iterator@iter[0], 0);
+		ASSERT_LT(Iterator@iter[_no_itertag:0], _no_itertag:0);
 		break;
 	}
 	Iter_Add(iter, 19);
@@ -3853,12 +3879,12 @@ TEST__ y_iter_RemoveMidLoop()
 	{
 		ASSERT_EQ(i, 19);
 		Iter_Remove(iter, i);
-		ASSERT_LT(Iterator@iter[19], 0);
+		ASSERT_LT(Iterator@iter[_no_itertag:19], _no_itertag:0);
 		break;
 	}
 }
 
-TEST__ y_iter_RemoveThenReverse()
+@test(.group = "y_iterate") y_iter_RemoveThenReverse()
 {
 	new
 		Iterator:iter<20>;
@@ -4001,7 +4027,7 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 }
 #define Iterator@y_iterate_NestedInner iteryield
 
-TEST__ y_iterate_NestedYield()
+@test(.group = "y_iterate") y_iterate_NestedYield()
 {
 	new sum = 0;
 	foreach (new i : y_iterate_NestedYield(30, 40))
@@ -4022,5 +4048,22 @@ TEST__ y_iterate_NestedYield()
 		ASSERT(5 <= i < 15);
 	}
 	ASSERT_EQ(sum, 345 + 145 + 95);
+}
+
+@test(.group = "y_iterate") y_iterate_Tags()
+{
+	new
+		Iterator:iter<20>,
+		n;
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 6);
+	n = Iter_First(iter);
+	ASSERT_EQ(n, 5);
+	n = Iter_Next(iter, n);
+	ASSERT_EQ(n, 6);
+	n = Iter_Prev(iter, n);
+	ASSERT_EQ(n, 5);
+	n = Iter_Last(iter);
+	ASSERT_EQ(n, 6);
 }
 

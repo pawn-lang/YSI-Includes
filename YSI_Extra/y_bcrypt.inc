@@ -141,7 +141,7 @@ Optional plugins:
 	stock bool:BCrypt_Check(extra, const callback[], const password[], const hash[])
 	{
 		new ptr;
-		return AMX_GetPublicPointer(0, ptr, callback) && _YSI_BCryptCheck(password, hash, "_YSI_BCryptCheckDone", "ii", extra, ptr);
+		return AMX_GetPublicPointer(0, ptr, callback, true) && _YSI_BCryptCheck(password, hash, "_YSI_BCryptCheckDone", "ii", extra, ptr);
 	}
 
 	stock BCrypt_Hash(extra, const callback[], const password[], cost)
@@ -149,7 +149,7 @@ Optional plugins:
 		new ptr;
 		return
 			++_YSI_gHashID,
-			AMX_GetPublicPointer(0, ptr, callback) && _YSI_BCryptHash(password, cost, "_YSI_BCryptHashDone", "iii", extra, ptr, _YSI_gHashID) ? _YSI_gHashID : 0;
+			AMX_GetPublicPointer(0, ptr, callback, true) && _YSI_BCryptHash(password, cost, "_YSI_BCryptHashDone", "iii", extra, ptr, _YSI_gHashID) ? _YSI_gHashID : 0;
 	}
 #elseif defined _samp_bcrypt_included
 	// I've never had to de-const a native before!

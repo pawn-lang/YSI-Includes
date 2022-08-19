@@ -344,7 +344,7 @@ HOOK__ OnYSIInit()
 	// I just spent another long debugging session tracking down another bug
 	// where the solution, in another totally unrelated file entirely, was
 	// adding this line here:
-	format(Q@, sizeof (Q@), YSI_EMPTY, AMX_HEADER_COD - AMX_BASE_ADDRESS);
+	format(Q@, sizeof (Q@), "%d", AMX_HEADER_COD - AMX_BASE_ADDRESS);
 	// WHY!?
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(ni, na, nu);
 	//CallLocalFunction("_Group_SpecialInit", YSI_EMPTY);

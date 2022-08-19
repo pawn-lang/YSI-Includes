@@ -71,7 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-TEST__ y_punycode_1()
+@test(.group = "y_punycode") y_punycode_1()
 {
 	new
 		dst[32];
@@ -95,7 +95,7 @@ TEST__ y_punycode_1()
 	ASSERT_SAME(dst, "bcher-jvab");
 }
 
-TEST__ y_punycode_2()
+@test(.group = "y_punycode") y_punycode_2()
 {
 	new
 		dst[32],
@@ -120,7 +120,7 @@ TEST__ y_punycode_2()
 	ASSERT_SAME(dst, "bcher@kva");
 }
 
-TEST__ y_punycode_hash()
+@test(.group = "y_punycode") y_punycode_hash()
 {
 	new
 		dst[32],

@@ -71,7 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-TEST__ y_stringhash__Empty()
+@test(.group = "y_stringhash") y_stringhash__Empty()
 {
 	new
 		h0 = _H@b<>,
@@ -120,7 +120,7 @@ TEST__ y_stringhash__Empty()
 	ASSERT_EQ(h0, 5381);
 }
 
-TEST__ y_stringhash__Chars0()
+@test(.group = "y_stringhash") y_stringhash__Chars0()
 {
 	new
 		hh = 0;
@@ -191,7 +191,7 @@ TEST__ y_stringhash__Chars0()
 	ASSERT_EQ(hh, YHash("yyzz  @@__yh", .sensitive = false, .type = hash_bernstein));
 }
 
-TEST__ y_stringhash__Chars1()
+@test(.group = "y_stringhash") y_stringhash__Chars1()
 {
 	new
 		hh = 0;
@@ -262,7 +262,7 @@ TEST__ y_stringhash__Chars1()
 	ASSERT_EQ(hh, YHash("yyzz  @@__yh", .sensitive = false, .type = hash_fnv1));
 }
 
-TEST__ y_stringhash__Chars2()
+@test(.group = "y_stringhash") y_stringhash__Chars2()
 {
 	new
 		hh = 0;
@@ -333,7 +333,7 @@ TEST__ y_stringhash__Chars2()
 	ASSERT_EQ(hh, YHash("yyzz  @@__yh", .sensitive = false, .type = hash_fnv1a));
 }
 
-TEST__ y_stringhash__Letters1()
+@test(.group = "y_stringhash") y_stringhash__Letters1()
 {
 	new
 		hh = 0;
@@ -353,7 +353,7 @@ TEST__ y_stringhash__Letters1()
 	ASSERT_EQ(hh, YHash("@", .sensitive = false));
 }
 
-TEST__ y_stringhash__Letters2()
+@test(.group = "y_stringhash") y_stringhash__Letters2()
 {
 	new
 		hh = 0;
@@ -373,7 +373,7 @@ TEST__ y_stringhash__Letters2()
 	ASSERT_EQ(hh, YHash("@"));
 }
 
-TEST__ y_stringhash__case()
+@test(.group = "y_stringhash") y_stringhash__case()
 {
 	new
 		h0 = 0,
@@ -404,7 +404,7 @@ TEST__ y_stringhash__case()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H1()
+@test(.group = "y_stringhash") y_stringhash__H1()
 {
 	new
 		h0 = _H<hello>,
@@ -412,7 +412,7 @@ TEST__ y_stringhash__H1()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I1()
+@test(.group = "y_stringhash") y_stringhash__I1()
 {
 	new
 		h0 = _I<hello>,
@@ -420,7 +420,7 @@ TEST__ y_stringhash__I1()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H2()
+@test(.group = "y_stringhash") y_stringhash__H2()
 {
 	new
 		h0 = _H(h,e,l,l,o),
@@ -428,7 +428,7 @@ TEST__ y_stringhash__H2()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I2()
+@test(.group = "y_stringhash") y_stringhash__I2()
 {
 	new
 		h0 = _I(h,e,l,l,o),
@@ -436,7 +436,7 @@ TEST__ y_stringhash__I2()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H3()
+@test(.group = "y_stringhash") y_stringhash__H3()
 {
 	new
 		h0 = _H@b<hello>,
@@ -444,7 +444,7 @@ TEST__ y_stringhash__H3()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I3()
+@test(.group = "y_stringhash") y_stringhash__I3()
 {
 	new
 		h0 = _I@b<hello>,
@@ -452,7 +452,7 @@ TEST__ y_stringhash__I3()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H4()
+@test(.group = "y_stringhash") y_stringhash__H4()
 {
 	new
 		h0 = _H@b(h,e,l,l,o),
@@ -460,7 +460,7 @@ TEST__ y_stringhash__H4()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I4()
+@test(.group = "y_stringhash") y_stringhash__I4()
 {
 	new
 		h0 = _I@b(h,e,l,l,o),
@@ -468,7 +468,7 @@ TEST__ y_stringhash__I4()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H5()
+@test(.group = "y_stringhash") y_stringhash__H5()
 {
 	new
 		h0 = _H@f<hello>,
@@ -476,7 +476,7 @@ TEST__ y_stringhash__H5()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I5()
+@test(.group = "y_stringhash") y_stringhash__I5()
 {
 	new
 		h0 = _I@f<hello>,
@@ -484,7 +484,7 @@ TEST__ y_stringhash__I5()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H6()
+@test(.group = "y_stringhash") y_stringhash__H6()
 {
 	new
 		h0 = _H@f(h,e,l,l,o),
@@ -492,7 +492,7 @@ TEST__ y_stringhash__H6()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I6()
+@test(.group = "y_stringhash") y_stringhash__I6()
 {
 	new
 		h0 = _I@f(h,e,l,l,o),
@@ -500,7 +500,7 @@ TEST__ y_stringhash__I6()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H7()
+@test(.group = "y_stringhash") y_stringhash__H7()
 {
 	new
 		h0 = _H@a<hello>,
@@ -508,7 +508,7 @@ TEST__ y_stringhash__H7()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I7()
+@test(.group = "y_stringhash") y_stringhash__I7()
 {
 	new
 		h0 = _I@a<hello>,
@@ -516,7 +516,7 @@ TEST__ y_stringhash__I7()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H8()
+@test(.group = "y_stringhash") y_stringhash__H8()
 {
 	new
 		h0 = _H@a(h,e,l,l,o),
@@ -524,7 +524,7 @@ TEST__ y_stringhash__H8()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I8()
+@test(.group = "y_stringhash") y_stringhash__I8()
 {
 	new
 		h0 = _I@a(h,e,l,l,o),
@@ -532,7 +532,7 @@ TEST__ y_stringhash__I8()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H3e()
+@test(.group = "y_stringhash") y_stringhash__H3e()
 {
 	new
 		h0 = _H@b<hello>,
@@ -540,7 +540,7 @@ TEST__ y_stringhash__H3e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I3e()
+@test(.group = "y_stringhash") y_stringhash__I3e()
 {
 	new
 		h0 = _I@b<hello>,
@@ -549,7 +549,7 @@ TEST__ y_stringhash__I3e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H4e()
+@test(.group = "y_stringhash") y_stringhash__H4e()
 {
 	new
 		h0 = _H@b(h,e,l,l,o),
@@ -557,7 +557,7 @@ TEST__ y_stringhash__H4e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I4e()
+@test(.group = "y_stringhash") y_stringhash__I4e()
 {
 	new
 		h0 = _I@b(h,e,l,l,o),
@@ -565,7 +565,7 @@ TEST__ y_stringhash__I4e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H5e()
+@test(.group = "y_stringhash") y_stringhash__H5e()
 {
 	new
 		h0 = _H@f<hello>,
@@ -573,7 +573,7 @@ TEST__ y_stringhash__H5e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I5e()
+@test(.group = "y_stringhash") y_stringhash__I5e()
 {
 	new
 		h0 = _I@f<hello>,
@@ -581,7 +581,7 @@ TEST__ y_stringhash__I5e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H6e()
+@test(.group = "y_stringhash") y_stringhash__H6e()
 {
 	new
 		h0 = _H@f(h,e,l,l,o),
@@ -589,7 +589,7 @@ TEST__ y_stringhash__H6e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I6e()
+@test(.group = "y_stringhash") y_stringhash__I6e()
 {
 	new
 		h0 = _I@f(h,e,l,l,o),
@@ -597,7 +597,7 @@ TEST__ y_stringhash__I6e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H7e()
+@test(.group = "y_stringhash") y_stringhash__H7e()
 {
 	new
 		h0 = _H@a<hello>,
@@ -605,7 +605,7 @@ TEST__ y_stringhash__H7e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I7e()
+@test(.group = "y_stringhash") y_stringhash__I7e()
 {
 	new
 		h0 = _I@a<hello>,
@@ -613,7 +613,7 @@ TEST__ y_stringhash__I7e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H8e()
+@test(.group = "y_stringhash") y_stringhash__H8e()
 {
 	new
 		h0 = _H@a(h,e,l,l,o),
@@ -621,7 +621,7 @@ TEST__ y_stringhash__H8e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I8e()
+@test(.group = "y_stringhash") y_stringhash__I8e()
 {
 	new
 		h0 = _I@a(h,e,l,l,o),
@@ -629,7 +629,7 @@ TEST__ y_stringhash__I8e()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H3d()
+@test(.group = "y_stringhash") y_stringhash__H3d()
 {
 	new
 		h0 = HASH:bernstein<hello>,
@@ -637,7 +637,7 @@ TEST__ y_stringhash__H3d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I3d()
+@test(.group = "y_stringhash") y_stringhash__I3d()
 {
 	new
 		h0 = HASHi:bernstein<hello>,
@@ -645,7 +645,7 @@ TEST__ y_stringhash__I3d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H4d()
+@test(.group = "y_stringhash") y_stringhash__H4d()
 {
 	new
 		h0 = HASH(bernstein,h,e,l,l,o),
@@ -653,7 +653,7 @@ TEST__ y_stringhash__H4d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I4d()
+@test(.group = "y_stringhash") y_stringhash__I4d()
 {
 	new
 		h0 = HASHi(bernstein,h,e,l,l,o),
@@ -661,7 +661,7 @@ TEST__ y_stringhash__I4d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H5d()
+@test(.group = "y_stringhash") y_stringhash__H5d()
 {
 	new
 		h0 = HASH:fnv1<hello>,
@@ -669,7 +669,7 @@ TEST__ y_stringhash__H5d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I5d()
+@test(.group = "y_stringhash") y_stringhash__I5d()
 {
 	new
 		h0 = HASHi:fnv1<hello>,
@@ -677,7 +677,7 @@ TEST__ y_stringhash__I5d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H6d()
+@test(.group = "y_stringhash") y_stringhash__H6d()
 {
 	new
 		h0 = HASH(fnv1,h,e,l,l,o),
@@ -685,7 +685,7 @@ TEST__ y_stringhash__H6d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I6d()
+@test(.group = "y_stringhash") y_stringhash__I6d()
 {
 	new
 		h0 = HASHi(fnv1,h,e,l,l,o),
@@ -693,7 +693,7 @@ TEST__ y_stringhash__I6d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H7d()
+@test(.group = "y_stringhash") y_stringhash__H7d()
 {
 	new
 		h0 = HASH:fnv1a<hello>,
@@ -701,7 +701,7 @@ TEST__ y_stringhash__H7d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I7d()
+@test(.group = "y_stringhash") y_stringhash__I7d()
 {
 	new
 		h0 = HASHi:fnv1a<hello>,
@@ -709,7 +709,7 @@ TEST__ y_stringhash__I7d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H8d()
+@test(.group = "y_stringhash") y_stringhash__H8d()
 {
 	new
 		h0 = HASH(fnv1a,h,e,l,l,o),
@@ -717,7 +717,7 @@ TEST__ y_stringhash__H8d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I8d()
+@test(.group = "y_stringhash") y_stringhash__I8d()
 {
 	new
 		h0 = HASHi(fnv1a,h,e,l,l,o),
@@ -725,7 +725,7 @@ TEST__ y_stringhash__I8d()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H3c()
+@test(.group = "y_stringhash") y_stringhash__H3c()
 {
 	new
 		h0 = HASH:bernstein<hello>,
@@ -733,7 +733,7 @@ TEST__ y_stringhash__H3c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I3c()
+@test(.group = "y_stringhash") y_stringhash__I3c()
 {
 	new
 		h0 = HASHi:bernstein<hello>,
@@ -741,7 +741,7 @@ TEST__ y_stringhash__I3c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H4c()
+@test(.group = "y_stringhash") y_stringhash__H4c()
 {
 	new
 		h0 = HASH(bernstein,h,e,l,l,o),
@@ -749,7 +749,7 @@ TEST__ y_stringhash__H4c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I4c()
+@test(.group = "y_stringhash") y_stringhash__I4c()
 {
 	new
 		h0 = HASHi(bernstein,h,e,l,l,o),
@@ -757,7 +757,7 @@ TEST__ y_stringhash__I4c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H5c()
+@test(.group = "y_stringhash") y_stringhash__H5c()
 {
 	new
 		h0 = HASH:fnv1<hello>,
@@ -765,7 +765,7 @@ TEST__ y_stringhash__H5c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I5c()
+@test(.group = "y_stringhash") y_stringhash__I5c()
 {
 	new
 		h0 = HASHi:fnv1<hello>,
@@ -773,7 +773,7 @@ TEST__ y_stringhash__I5c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H6c()
+@test(.group = "y_stringhash") y_stringhash__H6c()
 {
 	new
 		h0 = HASH(fnv1,h,e,l,l,o),
@@ -781,7 +781,7 @@ TEST__ y_stringhash__H6c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I6c()
+@test(.group = "y_stringhash") y_stringhash__I6c()
 {
 	new
 		h0 = HASHi(fnv1,h,e,l,l,o),
@@ -789,7 +789,7 @@ TEST__ y_stringhash__I6c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H7c()
+@test(.group = "y_stringhash") y_stringhash__H7c()
 {
 	new
 		h0 = HASH:fnv1a<hello>,
@@ -797,7 +797,7 @@ TEST__ y_stringhash__H7c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I7c()
+@test(.group = "y_stringhash") y_stringhash__I7c()
 {
 	new
 		h0 = HASHi:fnv1a<hello>,
@@ -805,7 +805,7 @@ TEST__ y_stringhash__I7c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H8c()
+@test(.group = "y_stringhash") y_stringhash__H8c()
 {
 	new
 		h0 = HASH(fnv1a,h,e,l,l,o),
@@ -813,7 +813,7 @@ TEST__ y_stringhash__H8c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__I8c()
+@test(.group = "y_stringhash") y_stringhash__I8c()
 {
 	new
 		h0 = HASHi(fnv1a,h,e,l,l,o),
@@ -821,7 +821,7 @@ TEST__ y_stringhash__I8c()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H3b()
+@test(.group = "y_stringhash") y_stringhash__H3b()
 {
 	new
 		h0 = HASH:bernstein<hello>,
@@ -829,7 +829,7 @@ TEST__ y_stringhash__H3b()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I3b()
+@test(.group = "y_stringhash") y_stringhash__I3b()
 {
 	new
 		h0 = HASHi:bernstein<hello>,
@@ -837,7 +837,7 @@ TEST__ y_stringhash__I3b()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H4b()
+@test(.group = "y_stringhash") y_stringhash__H4b()
 {
 	new
 		h0 = HASH(bernstein,h,e,l,l,o),
@@ -845,7 +845,7 @@ TEST__ y_stringhash__H4b()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I4b()
+@test(.group = "y_stringhash") y_stringhash__I4b()
 {
 	new
 		h0 = HASHi(bernstein,h,e,l,l,o),
@@ -853,7 +853,7 @@ TEST__ y_stringhash__I4b()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H5b()
+@test(.group = "y_stringhash") y_stringhash__H5b()
 {
 	new
 		h0 = HASH:fnv1<hello>,
@@ -861,7 +861,7 @@ TEST__ y_stringhash__H5b()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I5b()
+@test(.group = "y_stringhash") y_stringhash__I5b()
 {
 	new
 		h0 = HASHi:fnv1<hello>,
@@ -869,7 +869,7 @@ TEST__ y_stringhash__I5b()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H6b()
+@test(.group = "y_stringhash") y_stringhash__H6b()
 {
 	new
 		h0 = HASH(fnv1,h,e,l,l,o),
@@ -877,7 +877,7 @@ TEST__ y_stringhash__H6b()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I6b()
+@test(.group = "y_stringhash") y_stringhash__I6b()
 {
 	new
 		h0 = HASHi(fnv1,h,e,l,l,o),
@@ -885,7 +885,7 @@ TEST__ y_stringhash__I6b()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H7b()
+@test(.group = "y_stringhash") y_stringhash__H7b()
 {
 	new
 		h0 = HASH:fnv1a<hello>,
@@ -893,7 +893,7 @@ TEST__ y_stringhash__H7b()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I7b()
+@test(.group = "y_stringhash") y_stringhash__I7b()
 {
 	new
 		h0 = HASHi:fnv1a<hello>,
@@ -901,7 +901,7 @@ TEST__ y_stringhash__I7b()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash__H8b()
+@test(.group = "y_stringhash") y_stringhash__H8b()
 {
 	new
 		h0 = HASH(fnv1a,h,e,l,l,o),
@@ -909,7 +909,7 @@ TEST__ y_stringhash__H8b()
 	ASSERT_NE(h0, h1);
 }
 
-TEST__ y_stringhash__I8b()
+@test(.group = "y_stringhash") y_stringhash__I8b()
 {
 	new
 		h0 = HASHi(fnv1a,h,e,l,l,o),
@@ -917,7 +917,7 @@ TEST__ y_stringhash__I8b()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash_PackedS()
+@test(.group = "y_stringhash") y_stringhash_PackedS()
 {
 	new
 		h0 = YHash("hello", true),
@@ -925,7 +925,7 @@ TEST__ y_stringhash_PackedS()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash_PackedI()
+@test(.group = "y_stringhash") y_stringhash_PackedI()
 {
 	new
 		h0 = YHash(!"HEllo", false),
@@ -933,7 +933,7 @@ TEST__ y_stringhash_PackedI()
 	ASSERT_EQ(h0, h1);
 }
 
-TEST__ y_stringhash_PackedP()
+@test(.group = "y_stringhash") y_stringhash_PackedP()
 {
 	new
 		h0 = YHash("HEllo", false),
@@ -957,7 +957,7 @@ static stock _FIXES_Bernstein(const name[])
 	return hash;
 }
 
-TEST__ y_stringhash__fixes_switch()
+@test(.group = "y_stringhash") y_stringhash__fixes_switch()
 {
 	// Lower-case.
 	ASSERT_EQ(YHash("gamemode0", false), 0x6A7D4118);

@@ -497,9 +497,9 @@ Optional plugins:
 //#endif
 
 #if defined AMX_INCLUDING_FAILED
-	#error Download `https://github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
+	#error Download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #elseif !defined HasSysreqD
-	#error Re-download `https://github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
+	#error Re-download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
 //#tryinclude <md-sort\md-sort>
@@ -514,9 +514,9 @@ Optional plugins:
 //#tryinclude "md-sort"
 //#tryinclude <md-sort>
 //#if !defined _INC_md_sort
-//	#error Download `https://github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
+//	#error Download `github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
 //#elseif !defined ResetDeepArray_Entry
-//	#error Re-download `https://github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
+//	#error Re-download `github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
 //#endif
 
 //#tryinclude <formatex\formatex>
@@ -531,9 +531,9 @@ Optional plugins:
 //#tryinclude "formatex"
 //#tryinclude <formatex>
 //#if !defined _INC_md_sort
-//	#error Download `https://github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
+//	#error Download `github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
 //#elseif !defined FormatFlags
-//	#error Re-download `https://github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
+//	#error Re-download `github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
 //#endif
 
 // Manually fix earlier versions.
@@ -557,9 +557,9 @@ Optional plugins:
 #if defined _INC_code_parse_inc
 	#undef u@
 #else
-	#error Download `https://github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
+	#error Download `github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
 //#elseif !defined __code_parse_u@_1
-//	#error Re-download `https://github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
+//	#error Re-download `github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 #define u@$ 1]);
 
@@ -575,9 +575,9 @@ Optional plugins:
 #tryinclude "indirection"
 #tryinclude <indirection>
 #if !defined _INC_indirection
-	#error Download `https://github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
+	#error Download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
 #elseif !defined Indirect_Init || defined TAGOF@ || defined __TAGOF
-	#error Re-download `https://github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
+	#error Re-download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
 // "y_thirdpartyinclude_tests" is NOT included here when tests are active, because it complicates

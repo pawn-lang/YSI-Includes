@@ -331,7 +331,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
 		{
 			return Malloc_GetData(_:array, index);
 		}
-		Debug_Code1{else Debug_Error("Array read index out of bounds: %d[%d]", _:array, index);}
+		Debug_CodeX{else Debug_Error("Array read index out of bounds: %d[%d]", _:array, index);}
 		return 0;
 	}
 
@@ -360,7 +360,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
 		{
 			return Malloc_SetData(_:array, index, value);
 		}
-		Debug_Code1{else Debug_Error("Array write index out of bounds: %d[%d]", _:array, index);}
+		Debug_CodeX{else Debug_Error("Array write index out of bounds: %d[%d]", _:array, index);}
 		return 0;
 	}
 
@@ -545,7 +545,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 		//strcat(YSI_gMallocMemory[index], str, cellmax);
 	}
 	#if defined YSI_MALLOC_SECURE
-		Debug_Code1{else Debug_Error("String copy failed (%s)", str);}
+		Debug_CodeX{else Debug_Error("String copy failed (%s)", str);}
 	#endif
 }
 
@@ -658,7 +658,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 		#emit STACK      24
 	}
 	#if defined YSI_MALLOC_SECURE
-		Debug_Code1{else Debug_Error("Array copy out of memory.");}
+		Debug_CodeX{else Debug_Error("Array copy out of memory.");}
 	#endif
 }
 

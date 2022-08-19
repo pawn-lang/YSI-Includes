@@ -1,6 +1,6 @@
 # y_testing
 
-Provides the `Test:` macro for defining unit tests and automatically running them when compiled with `RUN_TESTS` defined.
+Provides the `@test()` decorator for defining unit tests and automatically running them when compiled with `RUN_TESTS` defined.
 
 ## YSI
 

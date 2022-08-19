@@ -82,7 +82,7 @@ Optional plugins:
 #include "y_hashmap_impl"
 
 // The hashmap tests are vast.  Only include them when explicitly requested.
-#if defined YSI_TESTS && defined YSI_HASHMAP_TESTS
+#if defined YSI_TESTS
 	#include "y_hashmap_tests"
 #endif
 

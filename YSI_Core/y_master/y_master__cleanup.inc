@@ -79,6 +79,7 @@ Optional plugins:
 
 // New hooks
 #undef MASTER_HOOK__
+#undef MASTER_REHOOK__
 #undef MASTER_TASK__
 #undef MASTER_PTASK__
 #undef MASTER_FUNC__

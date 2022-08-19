@@ -121,7 +121,7 @@ static stock y_unique_GetNumber2()
 #undef UNIQUE_FUNCTION
 #include "y_unique_1024_1087"
 
-TEST__ y_unique()
+@test(.group = "y_unique") y_unique()
 {
 	new n = UNIQUE_SYMBOL;
 	ASSERT_EQ(y_unique_GetNumber0(), 1031);

@@ -1,4 +1,4 @@
-TEST__ y_ascii_Prints0()
+@test(.group = "y_ascii") y_ascii_Prints0()
 {
 	ASCII_PrintLinePart("Hello World!", 12, false, ASCII_BORDER_STYLE_SMALL, ASCII_ALIGNMENT_STYLE_LEFT);
 	ASCII_PrintLinePart("Hello World!", 12, false, ASCII_BORDER_STYLE_SMALL, ASCII_ALIGNMENT_STYLE_CENTRE);
@@ -15,7 +15,7 @@ TEST__ y_ascii_Prints0()
 	ASCII_PrintSection("This is some long text that I hope will wrap.  To that end I am including a variety of relatively verbose verbiage and excessively long words.", ASCII_BORDER_STYLE_PILLARS, ASCII_ALIGNMENT_STYLE_LEFT, 2);
 }
 
-TEST__ y_ascii_Prints1()
+@test(.group = "y_ascii") y_ascii_Prints1()
 {
 	printf(" ");
 	printf(" ");
@@ -48,7 +48,7 @@ TEST__ y_ascii_Prints1()
 	ASCII_EndDisplay(ASCII_BORDER_STYLE_PILLARS);
 }
 
-TEST__ y_ascii_Prints2()
+@test(.group = "y_ascii") y_ascii_Prints2()
 {
 	ASCII_StartDisplay(ASCII_BORDER_STYLE_PILLARS);
 	ASCII_StartSection(ASCII_BORDER_STYLE_PILLARS);

@@ -71,7 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-TEST__ y_malloc_100()
+@test(.group = "y_malloc") y_malloc_100()
 {
 	new
 		Alloc:a = malloc(1000);
@@ -79,7 +79,7 @@ TEST__ y_malloc_100()
 	free(a);
 }
 
-TEST__ y_malloc_2_100()
+@test(.group = "y_malloc") y_malloc_2_100()
 {
 	new
 		Alloc:a = malloc(100);
@@ -92,7 +92,7 @@ TEST__ y_malloc_2_100()
 	ASSERT_EQ(_:a, _:b);
 }
 
-TEST__ y_malloc_2000()
+@test(.group = "y_malloc") y_malloc_2000()
 {
 	new
 		Alloc:a = malloc(2000);
@@ -100,7 +100,7 @@ TEST__ y_malloc_2000()
 	free(a);
 }
 
-TEST__ y_malloc_clear()
+@test(.group = "y_malloc") y_malloc_clear()
 {
 	new Alloc:mem[3];
 	mem[0] = malloc(2);
@@ -114,7 +114,7 @@ TEST__ y_malloc_clear()
 	free(mem[0]);
 }
 
-TEST__ y_malloc_Loads()
+@test(.group = "y_malloc") y_malloc_Loads()
 {
 	// Allocate slightly more memory than we have room for.
 	new
@@ -125,7 +125,7 @@ TEST__ y_malloc_Loads()
 
 #define MALLOC_TEST(%0) for (new Alloc:a = malloc(%0); __once && a; free(a))
 
-TEST__ y_malloc_mset()
+@test(.group = "y_malloc") y_malloc_mset()
 {
 	MALLOC_TEST(10)
 	{
@@ -135,7 +135,7 @@ TEST__ y_malloc_mset()
 	}
 }
 
-TEST__ y_malloc_mget()
+@test(.group = "y_malloc") y_malloc_mget()
 {
 	MALLOC_TEST(10)
 	{
@@ -147,7 +147,7 @@ TEST__ y_malloc_mget()
 	}
 }
 
-TEST__ y_malloc_SlotSize()
+@test(.group = "y_malloc") y_malloc_SlotSize()
 {
 	MALLOC_TEST(10)
 	{
@@ -189,7 +189,7 @@ TEST__ y_malloc_SlotSize()
 	}
 }
 
-TEST__ y_malloc_msets()
+@test(.group = "y_malloc") y_malloc_msets()
 {
 	static const
 		str0[] = "1111   ",
@@ -207,7 +207,7 @@ TEST__ y_malloc_msets()
 	}
 }
 
-TEST__ y_malloc_mgets()
+@test(.group = "y_malloc") y_malloc_mgets()
 {
 	static const
 		str0[] = "1111   ";
@@ -231,28 +231,28 @@ TEST__ y_malloc_mgets()
 }
 
 /*
-TEST__ y_malloc_()
+@test(.group = "y_malloc") y_malloc_()
 {
 	MALLOC_TEST(10)
 	{
 	}
 }
 
-TEST__ y_malloc_()
+@test(.group = "y_malloc") y_malloc_()
 {
 	MALLOC_TEST(10)
 	{
 	}
 }
 
-TEST__ y_malloc_()
+@test(.group = "y_malloc") y_malloc_()
 {
 	MALLOC_TEST(10)
 	{
 	}
 }
 
-TEST__ y_malloc_()
+@test(.group = "y_malloc") y_malloc_()
 {
 	MALLOC_TEST(10)
 	{
@@ -260,7 +260,7 @@ TEST__ y_malloc_()
 }
 */
 
-TEST__ y_malloc_NewS_0()
+@test(.group = "y_malloc") y_malloc_NewS_0()
 {
 	new
 		Alloc:a = Malloc_NewS("Hello There", false);
@@ -274,7 +274,7 @@ TEST__ y_malloc_NewS_0()
 	}
 }
 
-TEST__ y_malloc_NewS_1()
+@test(.group = "y_malloc") y_malloc_NewS_1()
 {
 	new
 		Alloc:a = Malloc_NewS(__COMPILER_UNPACK"Hello There", true);
@@ -311,7 +311,7 @@ public y_malloc_Deferred(Alloc:alloc)
 	free(alloc);
 }
 
-TEST__ y_malloc_Deferred()
+@test(.group = "y_malloc") y_malloc_Deferred()
 {
 	new
 		Alloc:alloc = malloc(1000);

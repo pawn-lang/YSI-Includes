@@ -425,5 +425,11 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 	return 0;
 }
 
+MASTER_REHOOK__ OnPlayerConnect(playerid)
+{
+	#pragma unused playerid
+	return 1;
+}
+
 #include "..\..\YSI_Core\y_master"
 

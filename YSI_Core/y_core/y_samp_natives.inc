@@ -71,6 +71,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if defined FORMAT_REPLACE_NATIVES
+	#if FORMAT_REPLACE_NATIVES && defined FormatSpecifier
+		// The `formatex` library was included first.  Make the defines nicer so
+		// that they don't conflict with native redefinitions.
+		#undef printf
+		#undef format
+		#define format( formatex(
+		#define printf( printfex(
+		#define _ALS_format
+		#define _ALS_printf
+	#endif
+#endif
+	
 // These should pretty much always exist, but are defined in "a_samp" in SA:MP,
 // when they should really be "core" functions.
 // 
@@ -84,7 +97,10 @@ native YSI_PrintF__(const format[], GLOBAL_TAG_TYPES:...) = printf;
 native YSI_SetTimer__(const funcname[], interval, bool:repeating) = SetTimer;
 native YSI_SetTimerEx__(const funcname[], interval, bool:repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
 
-native YSI_HTTP__(index, type, const url[], const data[], const callback[]) = HTTP;
+#if !defined HTTP_METHOD
+	#define HTTP_METHOD: _:
+#endif
+native YSI_HTTP__(index, HTTP_METHOD:method, const url[], const data[], const callback[]) = HTTP;
 native YSI_Format__(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYPES:...) = format;
 
 native YSI_SendRconCommand__(const str[]) = SendRconCommand;
@@ -100,16 +116,6 @@ native _YSI_ConstCpy__(const dst[], const src[], index, numbytes, maxlength) = m
 native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 #define YSI_FGetChar__(%0,%1) _YSI_FGetChar__((%0),_:(%1),(%1))
 
-// open.mp exclusives.  This file might have to be renamed!
-native YSI_ArgCount__() = argcount;
-native bool:YSI_ArgIndex__(index, output[], size = sizeof (output), bool:pack = false) = argindex;
-
-//#if defined NopNative
-//	native YSI_NOP(GLOBAL_TAG_TYPES:...) = nop;
-//#else
-//	native YSI_NOP(GLOBAL_TAG_TYPES:...) = sendpacket;
-//#endif
-
 #if !defined DIALOG_STYLE
 	#define DIALOG_STYLE: _:
 #endif
@@ -122,7 +128,7 @@ native bool:YSI_ArgIndex__(index, output[], size = sizeof (output), bool:pack = 
 
 #if __COMPILER___EMIT_U
 	#if cellbytes == 4
-		#define YSI_IsPacked__(%0) \
+		#define YSI_IsLocalVarPackedString__(%0) \
 			__emit(                         \
 				LREF.S.pri  %0             ,\
 				CONST.alt   0x01000000     ,\
@@ -130,7 +136,7 @@ native bool:YSI_ArgIndex__(index, output[], size = sizeof (output), bool:pack = 
 			)
 		#endinput
 	#elseif cellbytes == 8
-		#define YSI_IsPacked__(%0) \
+		#define YSI_IsLocalVarPackedString__(%0) \
 			__emit(                         \
 				LREF.S.pri  %0             ,\
 				CONST.alt   0x0100000000000000,\
@@ -158,7 +164,7 @@ native bool:YSI_ArgIndex__(index, output[], size = sizeof (output), bool:pack = 
 #if cellbytes != 4
 	#error Unsupported packed string size.
 #endif
-stock bool:YSI_IsPacked__(const string:str[])
+stock bool:YSI_IsLocalVarPackedString__(const string:str[])
 {
 	#emit LREF.S.pri           str
 	#emit CONST.alt            0x01000000
