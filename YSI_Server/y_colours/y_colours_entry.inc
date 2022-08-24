@@ -79,7 +79,6 @@ Optional plugins:
 #include "..\..\YSI_Core\y_utils"
 
 #include "..\..\YSI_Coding\y_stringhash"
-#include "..\..\YSI_Coding\y_remote"
 
 #if !defined MAX_TEXT_COLOURS
 	#if defined MAX_TEXT_COLORS
@@ -131,7 +130,9 @@ static stock
 	YSI_g_sColours[MAX_TEXT_COLOURS][2],
 	bool:YSI_g_sCheckSpaces = X11_ALLOW_SPACES;
 
-remotefunc static stock void:_SetColoursCanHaveSpaces(bool:set)
+forward void:_SetColoursCanHaveSpaces(bool:set);
+
+public void:_SetColoursCanHaveSpaces(bool:set)
 {
 	YSI_g_sCheckSpaces = set;
 }
@@ -140,7 +141,7 @@ remotefunc static stock void:_SetColoursCanHaveSpaces(bool:set)
 stock SetColoursCanHaveSpaces(bool:set)
 {
 	// Set this true/false in ALL scripts, since the text system is distributed.
-	broadcastfunc _SetColoursCanHaveSpaces(set);
+	CallRemoteFunction("_SetColoursCanHaveSpaces", "i", set);
 	//return 1;
 }
 
@@ -170,11 +171,13 @@ stock SetColour(const name[], color)
 
 stock SetColourHash(hash, color)
 {
-	broadcastfunc _SetColourHash(hash, color);
+	CallRemoteFunction("_SetColourHash", "ii", hash, color);
 }
 
 #define SetColorHash SetColourHash
-remotefunc static stock void:_SetColourHash(hash, color)
+forward void:_SetColourHash(hash, color);
+
+public void:_SetColourHash(hash, color)
 {
 	Debug_Print3("SetColourHash called: %i, %i", hash, color);
 	color &= 0xFFFFFF00;
