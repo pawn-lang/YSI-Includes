@@ -185,9 +185,9 @@ HOOK__ OnYSIInit()
 		{
 			// This code placement is not generic.
 			new
-				classLeft = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0),
-				classMiddle = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0),
-				classRight = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
+				classLeft = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, WEAPON_FIST, 0, WEAPON_FIST, 0, WEAPON_FIST, 0),
+				classMiddle = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, WEAPON_FIST, 0, WEAPON_FIST, 0, WEAPON_FIST, 0),
+				classRight = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, WEAPON_FIST, 0, WEAPON_FIST, 0, WEAPON_FIST, 0);
 			if (classLeft != 0 || classMiddle != 1 || classRight != 2)
 			{
 				Debug_Error("y_classes assumptions failed.  Do you have \"AddPlayerClass\" in your modes?");
@@ -267,7 +267,7 @@ GLOBAL__ void:Class_Goto(playerid, playerclass)
 {
 	Debug_Print2("Class_Goto called: %i, %i", playerid, playerclass);
 	// This now sets the REAL spawn information, including spawn location.
-	SetSpawnInfo(playerid, NO_TEAM, Class_Skin(e_PLAYER_CLASS:playerclass), Class_X(e_PLAYER_CLASS:playerclass), Class_Y(e_PLAYER_CLASS:playerclass), Class_Z(e_PLAYER_CLASS:playerclass), Class_A(e_PLAYER_CLASS:playerclass), 0, 0, 0, 0, 0, 0);
+	SetSpawnInfo(playerid, NO_TEAM, Class_Skin(e_PLAYER_CLASS:playerclass), Class_X(e_PLAYER_CLASS:playerclass), Class_Y(e_PLAYER_CLASS:playerclass), Class_Z(e_PLAYER_CLASS:playerclass), Class_A(e_PLAYER_CLASS:playerclass), WEAPON_FIST, 0, WEAPON_FIST, 0, WEAPON_FIST, 0);
 	SetPlayerSkin(playerid, Class_Skin(e_PLAYER_CLASS:playerclass));
 	YSI_g_sPlayerClass[playerid] = playerclass; //(YSI_g_sPlayerClass[playerid] & ~e_PLAYER_CLASS_SKIN) | (e_PLAYER_CLASS:playerclass);
 }
@@ -720,7 +720,7 @@ stock Class_Reprocess(playerid)
 	else
 	{
 		Debug_Error("No YSI classes found");
-		SetSpawnInfo(playerid, NO_TEAM, 0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0),
+		SetSpawnInfo(playerid, NO_TEAM, 0, 1958.0, 1343.0, 15.0, 269.0, WEAPON_FIST, 0, WEAPON_FIST, 0, WEAPON_FIST, 0),
 		SetPlayerSkin(playerid, 0);
 	}
 	return CallRemoteFunction("Class_OnPlayerRequestClass", "ii", playerid, classid);
@@ -786,7 +786,7 @@ public OnPlayerRequestClass(playerid, classid)
 			else
 			{
 				Debug_Error("No YSI classes found");
-				SetSpawnInfo(playerid, NO_TEAM, 0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0),
+				SetSpawnInfo(playerid, NO_TEAM, 0, 1958.0, 1343.0, 15.0, 269.0, WEAPON_FIST, 0, WEAPON_FIST, 0, WEAPON_FIST, 0),
 				SetPlayerSkin(playerid, 0),
 				classid = -1;
 			}

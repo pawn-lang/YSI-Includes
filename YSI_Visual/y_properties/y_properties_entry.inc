@@ -1175,7 +1175,7 @@ Property_OnPlayerEnterCheckpointEx(playerid, cpid)
 		case e_PROP_FLAGS_TYPE_AMMU:
 		{
 			Property_GenerateAmmuMenu(playerid, prop, 0, 0);
-			TogglePlayerControllable(playerid, 0);
+			TogglePlayerControllable(playerid, false);
 		}
 		case e_PROP_FLAGS_TYPE_BANK:
 		{
@@ -1323,7 +1323,7 @@ Property_OnPlayerExitedMenu(playerid)
 		}
 	}
 	YSI_g_sShopMenu[playerid][E_PROP_AMMU_MENU] = Menu:-1;
-	TogglePlayerControllable(playerid, 1);
+	TogglePlayerControllable(playerid, true);
 	YSI_g_sShopMenu[playerid][E_PROP_AMMU_DATA] = 0;
 	return 0;
 }

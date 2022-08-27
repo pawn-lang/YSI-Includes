@@ -260,14 +260,14 @@ MASTER_HOOK__ OnScriptInit()
 	Debug_Info("Starting PHP Connection...");
 	Debug_Info("Note that messages may take a few seconds to get going.");
 	//YSI_g_sLen = strlen(PHP_RECEIVE) + 4;
-	//SetTimer("_PHP_FireOne", 50, 0);
+	//SetTimer("_PHP_FireOne", 50, false);
 	// Send '0' only once at server start to reset PHP.
 	YSI_HTTP__(0, HTTP_HEAD, PHP_RECEIVE "?ID=0", YSI_EMPTY, "_PHP_Result");
 	//new TODO;
 	DEFER__ _PHP_FireOne[500](0, 0);
 	DEFER__ _PHP_FireOne[5500](0, 0);
-	//SetTimer("_PHP_FireOne", 500, 0);
-	//SetTimer("_PHP_FireOne", 5500, 0);
+	//SetTimer("_PHP_FireOne", 500, false);
+	//SetTimer("_PHP_FireOne", 5500, false);
 	//PHP_FireOne();
 	//PHP_FireOne();
 	//PHP_FireOne();

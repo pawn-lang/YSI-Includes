@@ -182,7 +182,7 @@ stock ZoneNames_Show(playerid, id)
 		td = Text_GetLastID();
 	if (td != -1)
 	{
-		SetTimerEx("ZoneNames_Hide", 3000, 0, "i", playerid),
+		SetTimerEx("ZoneNames_Hide", 3000, false, "i", playerid),
 		YSI_g_sZNTD[playerid] = td;
 	}
 }
