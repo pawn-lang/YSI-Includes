@@ -71,9 +71,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-// Using "y_testing" in here isn't actually possible, because it needs dialogs
-// to ask players for feedback...
-
 //@test(.group = "y_dialog", .run = false) y_dialog_Compile()
 TEST_COMPILE__ y_dialog_Compile()
 {
@@ -94,5 +91,50 @@ TEST_COMPILE__ y_dialog_Compile()
 		Dialog_Hide(0);
 		Dialog_ShowPlayerDialog(0, 0, DIALOG_STYLE_MSGBOX, "", "", "", "");
 	}
+}
+
+
+#if defined YSI_DIALOG_ASK
+	// Using "y_testing" in here isn't actually possible, because it needs dialogs
+	// to ask players for feedback...
+	#endinput
+#endif
+
+@test() Dialog_ShowCallback(playerid)
+{
+	inline const Ignore(arg0, arg1, string:arg2[])
+	{
+		#pragma unused arg0, arg1, arg2
+	}
+	Dialog_ShowCallback(playerid, using inline Ignore, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK");
+	ASK("Did the dialog show up (you may need to close it before answering)?");
+}
+
+@test() Dialog_CallbackOK(playerid)
+{
+	inline const Ignore(response, arg1, string:arg2[])
+	{
+		if (response)
+		{
+			SendClientMessage(playerid, 0xFF0000AA, "HI!");
+		}
+		#pragma unused arg1, arg2
+	}
+	Dialog_ShowCallback(playerid, using inline Ignore, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK", "CANCEL");
+	ASK("Does clicking OK send `HI!`?");
+}
+
+@test() Dialog_CallbackCancel(playerid)
+{
+	inline const Ignore(response, arg1, string:arg2[])
+	{
+		if (!response)
+		{
+			SendClientMessage(playerid, 0xFF0000AA, "BYE!");
+		}
+		#pragma unused arg1, arg2
+	}
+	Dialog_ShowCallback(playerid, using inline Ignore, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK", "CANCEL");
+	ASK("Does clicking CANCEL send `BYE!`?");
 }
 
