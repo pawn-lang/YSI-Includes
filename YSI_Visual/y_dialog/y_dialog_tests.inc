@@ -102,17 +102,17 @@ TEST_COMPILE__ y_dialog_Compile()
 
 @test() Dialog_ShowCallback(playerid)
 {
-	inline const Ignore(arg0, arg1, string:arg2[])
+	inline const Response(arg0, arg1, string:arg2[])
 	{
 		#pragma unused arg0, arg1, arg2
 	}
-	Dialog_ShowCallback(playerid, using inline Ignore, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK");
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK");
 	ASK("Did the dialog show up (you may need to close it before answering)?");
 }
 
 @test() Dialog_CallbackOK(playerid)
 {
-	inline const Ignore(response, arg1, string:arg2[])
+	inline const Response(response, arg1, string:arg2[])
 	{
 		if (response)
 		{
@@ -120,13 +120,13 @@ TEST_COMPILE__ y_dialog_Compile()
 		}
 		#pragma unused arg1, arg2
 	}
-	Dialog_ShowCallback(playerid, using inline Ignore, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK", "CANCEL");
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK", "CANCEL");
 	ASK("Does clicking OK send `HI!`?");
 }
 
 @test() Dialog_CallbackCancel(playerid)
 {
-	inline const Ignore(response, arg1, string:arg2[])
+	inline const Response(response, arg1, string:arg2[])
 	{
 		if (!response)
 		{
@@ -134,7 +134,37 @@ TEST_COMPILE__ y_dialog_Compile()
 		}
 		#pragma unused arg1, arg2
 	}
-	Dialog_ShowCallback(playerid, using inline Ignore, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK", "CANCEL");
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK", "CANCEL");
 	ASK("Does clicking CANCEL send `BYE!`?");
+}
+
+@test() Dialog_CallbackInput(playerid)
+{
+	inline const Response(response, arg1, string:arg2[])
+	{
+		SendClientMessage(playerid, 0xFF0000AA, "Your input:");
+		if (response)
+		{
+			SendClientMessage(playerid, 0xFF0000AA, arg2);
+		}
+		#pragma unused arg1
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_INPUT, "Dialog", "Input:", "OK", "CANCEL");
+	ASK("Does clicking OK send your input?");
+}
+
+@test() Dialog_CallbackIgnore(playerid)
+{
+	inline const Response(response, arg1, string:arg2[])
+	{
+		SendClientMessage(playerid, 0xFF0000AA, "Your input:");
+		if (response)
+		{
+			SendClientMessage(playerid, 0xFF0000AA, arg2);
+		}
+		#pragma unused arg1
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_INPUT, "Dialog", "Input:", "OK", "CANCEL");
+	ASK("Does clicking CANCEL NOT send your input?");
 }
 
