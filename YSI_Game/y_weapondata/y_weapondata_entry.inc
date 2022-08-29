@@ -583,8 +583,8 @@ stock WeaponType:Weapon_GetType(weaponid)
 		case 28, 29, 32: return WEAPON_TYPE_SUBMACHINEGUN;
 		case 33, 34: return WEAPON_TYPE_RIFLE;
 		case 16, 17, 18, 39: return WEAPON_TYPE_THROWABLE;
-		case 35, 36: return WEAPON_TYPE_PROJECTILE;
-		case 
+		case 35, 36, 41, 42: return WEAPON_TYPE_PROJECTILE;
+		case 43 .. 46: return WEAPON_TYPE_USEABLE;
 	}
 	return WEAPON_TYPE_UNKNOWN; 
 }
