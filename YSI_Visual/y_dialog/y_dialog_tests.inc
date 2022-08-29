@@ -71,8 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-//@test(.group = "y_dialog", .run = false) y_dialog_Compile()
-TEST_COMPILE__ y_dialog_Compile()
+@test(.group = "y_dialog", .run = false) y_dialog_Compile()
 {
 	if (FALSE)
 	{
