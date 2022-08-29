@@ -641,7 +641,7 @@ static stock Float:YSI_g_WeaponDamage[47] = {
 
 stock Float:Weapon_GetDamage(weaponid)
 {
-	return YSI_g_WeaponDamage[weaponid];
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponDamage[weaponid] : WEAPONDATA_INVALID_RETURN;
 }
 
 static stock YSI_g_WeaponClipSize[47] = {
@@ -696,5 +696,5 @@ static stock YSI_g_WeaponClipSize[47] = {
 
 stock Float:Weapon_GetClipSize(weaponid)
 {
-	return YSI_g_WeaponClipSize[weaponid];
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponClipSize[weaponid] : WEAPONDATA_INVALID_RETURN;
 }
