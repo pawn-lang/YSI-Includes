@@ -100,7 +100,7 @@ TEST_COMPILE__ y_dialog_Compile()
 	#endinput
 #endif
 
-@test() Dialog_ShowCallback(playerid)
+@test(.group = "y_dialog") Dialog_ShowCallback(playerid)
 {
 	inline const Response(arg0, arg1, string:arg2[])
 	{
@@ -110,7 +110,7 @@ TEST_COMPILE__ y_dialog_Compile()
 	ASK("Did the dialog show up (you may need to close it before answering)?");
 }
 
-@test() Dialog_CallbackOK(playerid)
+@test(.group = "y_dialog") Dialog_CallbackOK(playerid)
 {
 	inline const Response(response, arg1, string:arg2[])
 	{
@@ -124,7 +124,7 @@ TEST_COMPILE__ y_dialog_Compile()
 	ASK("Does clicking OK send `HI!`?");
 }
 
-@test() Dialog_CallbackCancel(playerid)
+@test(.group = "y_dialog") Dialog_CallbackCancel(playerid)
 {
 	inline const Response(response, arg1, string:arg2[])
 	{
@@ -138,7 +138,7 @@ TEST_COMPILE__ y_dialog_Compile()
 	ASK("Does clicking CANCEL send `BYE!`?");
 }
 
-@test() Dialog_CallbackInput(playerid)
+@test(.group = "y_dialog") Dialog_CallbackInput(playerid)
 {
 	inline const Response(response, arg1, string:input[])
 	{
@@ -153,7 +153,7 @@ TEST_COMPILE__ y_dialog_Compile()
 	ASK("Does clicking OK send your input?");
 }
 
-@test() Dialog_CallbackIgnore(playerid)
+@test(.group = "y_dialog") Dialog_CallbackIgnore(playerid)
 {
 	inline const Response(response, arg1, string:input[])
 	{
@@ -175,7 +175,7 @@ public Dialog_TestHide(playerid)
 	Dialog_Hide(playerid);
 }
 
-@test() Dialog_Hide(playerid)
+@test(.group = "y_dialog") Dialog_Hide(playerid)
 {
 	inline const Response(arg0, arg1, string:arg2[])
 	{
