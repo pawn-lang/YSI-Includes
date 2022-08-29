@@ -140,12 +140,12 @@ TEST_COMPILE__ y_dialog_Compile()
 
 @test() Dialog_CallbackInput(playerid)
 {
-	inline const Response(response, arg1, string:arg2[])
+	inline const Response(response, arg1, string:input[])
 	{
 		SendClientMessage(playerid, 0xFF0000AA, "Your input:");
 		if (response)
 		{
-			SendClientMessage(playerid, 0xFF0000AA, arg2);
+			SendClientMessage(playerid, 0xFF0000AA, input);
 		}
 		#pragma unused arg1
 	}
@@ -155,16 +155,34 @@ TEST_COMPILE__ y_dialog_Compile()
 
 @test() Dialog_CallbackIgnore(playerid)
 {
-	inline const Response(response, arg1, string:arg2[])
+	inline const Response(response, arg1, string:input[])
 	{
 		SendClientMessage(playerid, 0xFF0000AA, "Your input:");
 		if (response)
 		{
-			SendClientMessage(playerid, 0xFF0000AA, arg2);
+			SendClientMessage(playerid, 0xFF0000AA, input);
 		}
 		#pragma unused arg1
 	}
 	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_INPUT, "Dialog", "Input:", "OK", "CANCEL");
 	ASK("Does clicking CANCEL NOT send your input?");
+}
+
+forward Dialog_TestHide(playerid);
+
+public Dialog_TestHide(playerid)
+{
+	Dialog_Hide(playerid);
+}
+
+@test() Dialog_Hide(playerid)
+{
+	inline const Response(arg0, arg1, string:arg2[])
+	{
+		#pragma unused arg0, arg1, arg2
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_INPUT, "Dialog", "Input:", "OK", "CANCEL");
+	SetTimerEx("Dialog_TestHide", 5000, false, "i", playerid);
+	ASK("Does the dialog disappear after 5 seconds?");
 }
 
