@@ -636,18 +636,65 @@ static stock Float:YSI_g_WeaponDamage[47] = {
 	0.0, // 43 - Camera
 	0.0, // 44 - Night vision
 	0.0, // 45 - Infrared
-	0.0, // 46 - Parachute
-	0.0, // 47 - Fake pistol
-	2.64, // 48 - Pistol whip (custom)
-	9.9, // 49 - Vehicle
-	330.0, // 50 - Helicopter blades
-	82.5, // 51 - Explosion
-	1.0, // 52 - Car park (custom)
-	1.0, // 53 - Drowning
-	165.0  // 54 - Splat
+	0.0 // 46 - Parachute
 };
 
 stock Float:Weapon_GetDamage(weaponid)
 {
 	return YSI_g_WeaponDamage[weaponid];
+}
+
+static stock YSI_g_WeaponClipSize[47] = {
+	1, // 0 - Fist
+	1, // 1 - Brass knuckles
+	1, // 2 - Golf club
+	1, // 3 - Nitestick
+	1, // 4 - Knife
+	1, // 5 - Bat
+	1, // 6 - Shovel
+	1, // 7 - Pool cue
+	1, // 8 - Katana
+	1, // 9 - Chainsaw
+	1, // 10 - Dildo
+	1, // 11 - Dildo 2
+	1, // 12 - Vibrator
+	1, // 13 - Vibrator 2
+	1, // 14 - Flowers
+	1, // 15 - Cane
+	1, // 16 - Grenade
+	1, // 17 - Teargas
+	1, // 18 - Molotov
+	0, // 19 - Vehicle M4 (custom)
+	0, // 20 - Vehicle minigun (custom)
+	0, // 21 - Vehicle rocket (custom)
+	17, // 22 - Colt 45
+	17, // 23 - Silenced
+	7, // 24 - Deagle
+	1, // 25 - Shotgun
+	2, // 26 - Sawed-off
+	7, // 27 - Spas
+	50, // 28 - UZI
+	30, // 29 - MP5
+	30, // 30 - AK47
+	50, // 31 - M4
+	50, // 32 - Tec9
+	1, // 33 - Cuntgun
+	1, // 34 - Sniper
+	1, // 35 - Rocket launcher
+	1, // 36 - Heatseeker
+	500, // 37 - Flamethrower
+	500, // 38 - Minigun
+	1, // 39 - Satchel
+	1, // 40 - Detonator
+	500, // 41 - Spraycan
+	500, // 42 - Fire extinguisher
+	36, // 43 - Camera
+	1, // 44 - Night vision
+	1, // 45 - Infrared
+	1 // 46 - Parachute
+};
+
+stock Float:Weapon_GetClipSize(weaponid)
+{
+	return YSI_g_WeaponClipSize[weaponid];
 }
