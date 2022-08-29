@@ -22,7 +22,6 @@ Legal:
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-
 Contributors:
 	Y_Less
 	koolk
@@ -49,7 +48,6 @@ Contributors:
 	udan111
 	Cheaterman
 	DEntisT
-
 Thanks:
 	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 	ZeeX - Very productive conversations.
@@ -65,12 +63,10 @@ Thanks:
 		me to strive to better.
 	Pixels^ - Running XScripters where the idea was born.
 	Matite - Pestering me to release it and using it.
-
 Very special thanks to:
 	Thiadmer - PAWN, whose limits continue to amaze me!
 	Kye/Kalcor - SA:MP.
 	SA:MP Team past, present and future - SA:MP.
-
 Optional plugins:
 	Gamer_Z - GPS.
 	Incognito - Streamer.
@@ -78,7 +74,6 @@ Optional plugins:
 */
 
 /*
-
 	88b           d88            88                       db        88888888ba  88  
 	888b         d888            ""                      d88b       88      "8b 88  
 	88`8b       d8'88                                   d8'`8b      88      ,8P 88  
@@ -87,7 +82,6 @@ Optional plugins:
 	88   `8b d8'   88 ,adPPPPP88 88 88       88      d8""""""""8b   88          88  
 	88    `888'    88 88,    ,88 88 88       88     d8'        `8b  88          88  
 	88     `8'     88 `"8bbdP"Y8 88 88       88    d8'          `8b 88          88  
-
 */
 
 #define WEAPONDATA_NO_AMMO 	" "
@@ -565,4 +559,32 @@ stock Weapon_GetIDFromModelID(modelid)
 		}
 	}
 	return WEAPONDATA_INVALID_RETURN;
+}
+
+#define WEAPON_TYPE_UNKNOWN				WeaponType:0
+#define WEAPON_TYPE_MEELE 				WeaponType:1
+#define WEAPON_TYPE_PISTOL 				WeaponType:2
+#define WEAPON_TYPE_ASSAULTRIFLE 		WeaponType:3
+#define WEAPON_TYPE_SHOTGUN 			WeaponType:4
+#define WEAPON_TYPE_SUBMACHINEGUN 		WeaponType:5
+#define WEAPON_TYPE_RIFLE 				WeaponType:6
+#define WEAPON_TYPE_PROJECTILE 			WeaponType:7
+#define WEAPON_TYPE_THROWABLE 			WeaponType:8
+#define WEAPON_TYPE_USEABLE				WeaponType:9
+
+stock WeaponType:Weapon_GetType(weaponid)
+{
+	switch(weaponid)
+	{
+		case 0 .. 15: return WEAPON_TYPE_MEELE;
+		case 22, 23, 24: return WEAPON_TYPE_PISTOL;
+		case 30, 31: return WEAPON_TYPE_ASSAULTRIFLE;
+		case 25, 26, 27: return WEAPON_TYPE_SHOTGUN;
+		case 28, 29, 32: return WEAPON_TYPE_SUBMACHINEGUN;
+		case 33, 34: return WEAPON_TYPE_RIFLE;
+		case 16, 17, 18, 39: return WEAPON_TYPE_THROWABLE;
+		case 35, 36: return WEAPON_TYPE_PROJECTILE;
+		case 
+	}
+	return WEAPON_TYPE_UNKNOWN; 
 }
