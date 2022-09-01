@@ -159,7 +159,6 @@ Optional plugins:
 #define Vehicle_IsFlowerpot(%0)    (_Vehicle_Is(Flowerpot  , %0))
 #define Vehicle_IsTransport(%0)    (_Vehicle_Is(Transport  , %0))
 #define Vehicle_IsArmed(%0)        (_Vehicle_Is(Armed      , %0))
-#define Vehicle_IsTrailer(%0)      (_Vehicle_Is(Trailer    , %0))
 #define Vehicle_HasNumberPlate(%0) (_Vehicle_Is(NumberPlate, %0))
 
 #define Model_GetCategory(%0)  VIM_GetCategory(Model_ToVIM((%0)))
@@ -191,7 +190,6 @@ Optional plugins:
 #define Model_IsFlowerpot(%0)    (_Model_Is(Flowerpot  , %0))
 #define Model_IsTransport(%0)    (_Model_Is(Transport  , %0))
 #define Model_IsArmed(%0)        (_Model_Is(Armed      , %0))
-#define Model_IsTrailer(%0)      (_Model_Is(Trailer    , %0))
 #define Model_HasNumberPlate(%0) (_Model_Is(NumberPlate, %0))
 
 #define VIM_GetCategory(%0)  (YSI_gVehicleFlags[(%0)] & e_VEHICLE_FLAGS_CATEGORY)
@@ -223,7 +221,6 @@ Optional plugins:
 #define VIM_IsFlowerpot(%0)    (_VIM_Is(Flowerpot  , %0))
 #define VIM_IsTransport(%0)    (_VIM_Is(Transport  , %0))
 #define VIM_IsArmed(%0)        (_VIM_Is(Armed      , %0))
-#define VIM_IsTrailer(%0)      (_VIM_Is(Trailer    , %0))
 #define VIM_HasNumberPlate(%0) (_VIM_Is(NumberPlate, %0))
 
 #define Vehicle_GetVIM(%0) (Model_ToVIM(GetVehicleModel((%0))))
@@ -310,8 +307,7 @@ enum e_VEHICLE_FLAGS:(<<= 1)
 	e_VEHICLE_FLAGS_Flowerpot,     // 0x08000000
 	e_VEHICLE_FLAGS_Transport,     // 0x10000000
 	e_VEHICLE_FLAGS_Armed,         // 0x20000000
-	e_VEHICLE_FLAGS_Trailer,       // 0x40000000
-	e_VEHICLE_FLAGS_NumberPlate    // 0x80000000
+	e_VEHICLE_FLAGS_NumberPlate    // 0x40000000
 }
 
 #define _VEHICLE_FLAGS<%0> e_VEHICLE_FLAGS_NONE| CAT_%0| END|
