@@ -310,6 +310,16 @@ enum e_VEHICLE_FLAGS:(<<= 1)
 	e_VEHICLE_FLAGS_NumberPlate    // 0x40000000
 }
 
+// These macros just prepend `e_VEHICLE_FLAGS_` to every entry inside
+// `_VEHICLE_FLAGS` so that:
+//
+//    _VEHICLE_FLAGS<Saloon | Car>
+//
+// Becomes:
+//
+//    e_VEHICLE_FLAGS_Saloon | e_VEHICLE_FLAGS_Car
+//
+// Which is more correct but less readable.
 #define _VEHICLE_FLAGS<%0> e_VEHICLE_FLAGS_NONE| CAT_%0| END|
 #define e_VEHICLE_FLAGS_NONE|%0\32;%1| e_VEHICLE_FLAGS_%1|e_VEHICLE_FLAGS_NONE|
 #define e_VEHICLE_FLAGS_END|e_VEHICLE_FLAGS_NONE| e_VEHICLE_FLAGS_NONE
@@ -373,25 +383,15 @@ This comment can be collapsed - it pushes line numbers down to match models.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 This comment can be collapsed - it pushes line numbers down to match models.
 
 */
+
+#if defined __line
+	#if __line != 391
+		#error Model IDs not aligned with line numbers.
+	#endif
+#endif
 
 stock
 	e_VEHICLE_FLAGS:YSI_gVehicleFlags[VIM:VIM_MODEL_COUNT] =
