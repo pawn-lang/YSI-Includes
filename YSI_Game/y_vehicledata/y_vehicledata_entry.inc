@@ -385,6 +385,10 @@ This comment can be collapsed - it pushes line numbers down to match models.
 
 
 
+
+
+
+
 This comment can be collapsed - it pushes line numbers down to match models.
 
 */
@@ -392,7 +396,7 @@ This comment can be collapsed - it pushes line numbers down to match models.
 stock
 	e_VEHICLE_FLAGS:YSI_gVehicleFlags[VIM:VIM_MODEL_COUNT] =
 		{
-			e_VEHICLE_FLAGS_NONE,
+			e_VEHICLE_FLAGS_NONE, // This should remain on line 399 forever.
 			_VEHICLE_FLAGS<OffRoad     | Car       >,
 			_VEHICLE_FLAGS<Saloon      | Car       >,
 			_VEHICLE_FLAGS<Sport       | Car       >,
