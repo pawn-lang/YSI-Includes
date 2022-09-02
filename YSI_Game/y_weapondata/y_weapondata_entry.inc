@@ -100,12 +100,11 @@ Optional plugins:
 #define WEAPON_FIRE_TYPE_AREA_EFFECT 3
 #define WEAPON_FIRE_TYPE_USE 4
 #define WEAPON_FIRE_TYPE_CAMERA 5
-//P:D(Weapon_IsValid(weaponid));
-//#define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
-stock bool:Weapon_IsValid(weaponid)
-{
-	return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46);
-}
+
+// Many libraries already have `Weapon_IsValid` defined.
+#if !defined Weapon_IsValid
+	#define Weapon_IsValid(%0) (%0>=1&&%0<=18||%0>=21&&%0<=46)
+#endif
 
 #if !defined YSI_WEAPDATA_MAX_STRING_SIZE
 	#define YSI_WEAPDATA_MAX_STRING_SIZE (24)
@@ -561,32 +560,27 @@ stock Weapon_GetIDFromModelID(modelid)
 	return WEAPONDATA_INVALID_RETURN;
 }
 
-#define WEAPON_TYPE_UNKNOWN				WeaponType:0
-#define WEAPON_TYPE_MEELE 				WeaponType:1
-#define WEAPON_TYPE_PISTOL 				WeaponType:2
-#define WEAPON_TYPE_ASSAULTRIFLE 		WeaponType:3
-#define WEAPON_TYPE_SHOTGUN 			WeaponType:4
-#define WEAPON_TYPE_SUBMACHINEGUN 		WeaponType:5
-#define WEAPON_TYPE_RIFLE 				WeaponType:6
-#define WEAPON_TYPE_PROJECTILE 			WeaponType:7
-#define WEAPON_TYPE_THROWABLE 			WeaponType:8
-#define WEAPON_TYPE_USEABLE				WeaponType:9
+enum WeaponType:YSI_e_WeaponType
+{
+    WEAPON_TYPE_UNKNOWN                        = -1,
+    WEAPON_TYPE_UNARMED                        =  0,
+    WEAPON_TYPE_MELEE                          =  1,
+    WEAPON_TYPE_PISTOL                         =  2,
+    WEAPON_TYPE_SHOTGUN                        =  3,
+    WEAPON_TYPE_MACHINE_GUN                    =  4,
+    WEAPON_TYPE_ASSAULT_RIFLE                  =  5,
+    WEAPON_TYPE_LONG_RIFLE                     =  6,
+    WEAPON_TYPE_ARTILLERY                      =  7,
+    WEAPON_TYPE_EXPLOSIVES                     =  8,
+    WEAPON_TYPE_EQUIPMENT                      =  9,
+    WEAPON_TYPE_GIFT                           = 10,
+    WEAPON_TYPE_APPAREL                        = 11,
+    WEAPON_TYPE_DETONATOR                      = 12
+}
 
 stock WeaponType:Weapon_GetType(weaponid)
 {
-	switch(weaponid)
-	{
-		case 0 .. 15: return WEAPON_TYPE_MEELE;
-		case 22, 23, 24: return WEAPON_TYPE_PISTOL;
-		case 30, 31: return WEAPON_TYPE_ASSAULTRIFLE;
-		case 25, 26, 27: return WEAPON_TYPE_SHOTGUN;
-		case 28, 29, 32: return WEAPON_TYPE_SUBMACHINEGUN;
-		case 33, 34: return WEAPON_TYPE_RIFLE;
-		case 16, 17, 18, 39: return WEAPON_TYPE_THROWABLE;
-		case 35, 36, 41, 42: return WEAPON_TYPE_PROJECTILE;
-		case 43 .. 46: return WEAPON_TYPE_USEABLE;
-	}
-	return WEAPON_TYPE_UNKNOWN; 
+	return WeaponType:Weapon_GetSlot(weaponid); 
 }
 
 static stock Float:YSI_g_WeaponDamage[47] = {
