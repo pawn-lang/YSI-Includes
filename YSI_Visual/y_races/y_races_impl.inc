@@ -839,7 +839,7 @@ GLOBAL__ Race_Start(race)
 			SetVehiclePos(vehicleid, YSI_g_sRaceStarts[race][j % MAX_RACE_STARTS][0], YSI_g_sRaceStarts[race][j % MAX_RACE_STARTS][1], YSI_g_sRaceStarts[race][j % MAX_RACE_STARTS][2]);
 			SetVehicleZAngle(vehicleid, YSI_g_sRaceStarts[race][j % MAX_RACE_STARTS][3]);
 			SetCameraBehindPlayer(i);
-			TogglePlayerControllable(i, 0);
+			TogglePlayerControllable(i, false);
 			++j;
 		}
 		else
@@ -898,7 +898,7 @@ public Race_Countdown(race, time)
 		{
 			if ((vehicleid = GetPlayerVehicleID(i)))
 			{
-				TogglePlayerControllable(i, 1);
+				TogglePlayerControllable(i, true);
 				Race_DoEnterRaceCP(i);
 				SetVehiclePos(vehicleid, YSI_g_sRaceStarts[race][pos % MAX_RACE_STARTS][0], YSI_g_sRaceStarts[race][pos % MAX_RACE_STARTS][1], YSI_g_sRaceStarts[race][pos % MAX_RACE_STARTS][2] + 0.1);
 				SetVehicleZAngle(vehicleid, YSI_g_sRaceStarts[race][pos % MAX_RACE_STARTS][3]);

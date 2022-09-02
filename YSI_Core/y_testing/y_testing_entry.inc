@@ -477,7 +477,7 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 #endif
 
 #if !defined NO_PLAYER_TESTS
-	native YSI_ShowPlayerDialog(playerid, dialogid, DIALOG_STYLE:style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
+	native bool:YSI_ShowPlayerDialog(playerid, dialogid, DIALOG_STYLE:style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
 
 	stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 	{
