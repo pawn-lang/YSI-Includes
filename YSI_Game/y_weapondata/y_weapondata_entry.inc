@@ -103,7 +103,7 @@ Optional plugins:
 
 // Many libraries already have `Weapon_IsValid` defined.
 #if !defined Weapon_IsValid
-	#define Weapon_IsValid(%0) (%0>=1&&%0<=18||%0>=21&&%0<=46)
+	stock Weapon_IsValid(weaponid) return (weaponid>=1&&weaponid<=18||weaponid>=21&&weaponid<=46);
 #endif
 
 #if !defined YSI_WEAPDATA_MAX_STRING_SIZE
@@ -560,7 +560,7 @@ stock Weapon_GetIDFromModelID(modelid)
 	return WEAPONDATA_INVALID_RETURN;
 }
 
-enum WeaponType:YSI_e_WeaponType
+enum WeaponType
 {
     WEAPON_TYPE_UNKNOWN                        = -1,
     WEAPON_TYPE_UNARMED                        =  0,
@@ -579,8 +579,8 @@ enum WeaponType:YSI_e_WeaponType
 }
 
 stock WeaponType:Weapon_GetType(weaponid)
-{
-	return WeaponType:Weapon_GetSlot(weaponid); 
+{ 
+	return WeaponType:Weapon_GetSlot(weaponid);
 }
 
 static stock Float:YSI_g_WeaponDamage[47] = {
