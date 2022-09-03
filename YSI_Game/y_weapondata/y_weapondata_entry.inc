@@ -580,7 +580,33 @@ enum WeaponType
 
 stock WeaponType:Weapon_GetType(weaponid)
 { 
-	return WeaponType:Weapon_GetSlot(weaponid);
+	if(Weapon_GetSlot(weaponid) == 0)
+		return WEAPON_TYPE_UNARMED;
+	if(Weapon_GetSlot(weaponid) == 1)
+		return WEAPON_TYPE_MELEE;
+	if(Weapon_GetSlot(weaponid) == 2)
+		return WEAPON_TYPE_PISTOL;
+	if(Weapon_GetSlot(weaponid) == 3)
+		return WEAPON_TYPE_SHOTGUN;
+	if(Weapon_GetSlot(weaponid) == 4)
+		return WEAPON_TYPE_MACHINE_GUN;
+	if(Weapon_GetSlot(weaponid) == 5)
+		return WEAPON_TYPE_ASSAULT_RIFLE;
+	if(Weapon_GetSlot(weaponid) == 6)
+		return WEAPON_TYPE_LONG_RIFLE;
+	if(Weapon_GetSlot(weaponid) == 7)
+		return WEAPON_TYPE_ARTILLERY;
+	if(Weapon_GetSlot(weaponid) == 8)
+		return WEAPON_TYPE_EXPLOSIVES;
+	if(Weapon_GetSlot(weaponid) == 9)
+		return WEAPON_TYPE_EQUIPMENT;
+	if(Weapon_GetSlot(weaponid) == 10)
+		return WEAPON_TYPE_GIFT;
+	if(Weapon_GetSlot(weaponid) == 11)
+		return WEAPON_TYPE_APPAREL;
+	if(Weapon_GetSlot(weaponid) == 12)
+		return WEAPON_TYPE_DETONATOR;
+	return WEAPON_TYPE_UNKNOWN;
 }
 
 static stock Float:YSI_g_WeaponDamage[47] = {
