@@ -108,6 +108,7 @@ Optional plugins:
 		new success = _YSI_BCryptIsEqual();
 		// See below for why this line is commented.  It IS passed, secretly.
 		//#emit PUSH.S       success
+		#pragma unused success
 		#emit PUSH.S       extra
 		#emit PUSH.C       8
 		#emit LCTRL        6
