@@ -2083,7 +2083,10 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find,
 	if (find < 0)
 	{
 		YHNPS_Insert(heap, nativeCount, -find, replace + base);
-		YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-find), replace + base);
+		if (HasSysreqD())
+		{
+			YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-find), replace + base);
+		}
 		++nativeCount;
 	}
 	else
