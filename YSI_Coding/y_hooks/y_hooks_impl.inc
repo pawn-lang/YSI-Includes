@@ -2063,9 +2063,9 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find,
 		// Space to insert twice as many new hooks for each type.  The three
 		// types each take two cells (old and new pointer) and are:
 		//
-		//   0 * allocated - `SYSREQ.D` true pointers.
+		//   0 * allocated - `SYSREQ.C` indexes.
 		//   8 * allocated - `CALL` addresses.
-		//  16 * allocated - `SYSREQ.C` indexes.
+		//  16 * allocated - `SYSREQ.D` true pointers.
 		//
 		// The first and last ones are inserted together.
 		HeapAllocCells(6 * allocated);
