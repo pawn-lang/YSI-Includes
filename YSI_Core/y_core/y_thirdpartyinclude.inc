@@ -498,7 +498,7 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
-#elseif !defined HasSysreqD
+#elseif !defined HasReloc
 	#error Re-download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
