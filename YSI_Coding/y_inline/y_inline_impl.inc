@@ -1671,7 +1671,7 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], const parameters[], coun
 			@emit PUSH.S           input
 			@emit PUSH.alt
 			@emit PUSH.C           12
-			@emit SYSREQ           "strunpack"
+			@emit SYSREQ.C         nativeidxof(YSI_StrUnpack__<aai>)
 			@emit STACK            16
 		}
 		default:

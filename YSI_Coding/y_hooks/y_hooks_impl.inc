@@ -996,7 +996,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		@emit PUSH.pri
 		@emit PUSH.alt
 		@emit PUSH.C        20
-		@emit SYSREQ        "memcpy"
+		@emit SYSREQ.C      nativeidxof(_YSI_ConstCpy__<aaiii>)
 		@emit STACK         24
 	}
 	else
