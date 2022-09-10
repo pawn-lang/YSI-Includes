@@ -3988,8 +3988,8 @@ stock bool:Files_Move(const string:src[], const string:dst[])
 	if (i)
 	{
 		return
-			I@ = _:(Files_CopyRange(i, flength(i), dst) && fremove(src)),
-			fclose(i) && I@;
+			I@ = _:Files_CopyRange(i, flength(i), dst),
+			fclose(i) && I@ && fremove(src);
 	}
 	return false;
 }
