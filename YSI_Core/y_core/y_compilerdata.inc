@@ -374,11 +374,14 @@ static stock const
 #endif
 
 #if !__COMPILER_NAMEOF
-	// Allow `__nameof(Float:)` `CoMPiler REMove CoLoN`.
-	#define __CMPREMCLN:tagof(%0:),%0:) tagof(%0),%0)
+	// Allow `__nameof(Float:)` as `__nameof(Float)` and
+	// `__nameof(Float:Function)` as `__nameof(Function)`.
+	#define __CMPRC:tagof(%0:%1),%0:%1) __CMPRA:__CMPRB:tagof(%0:%1:),%0:%1:)
+	#define __CMPRA:__CMPRB:tagof(%0::),%0::) %0)
+	#define __CMPRB:tagof(%0:%1:),%0:%1:) tagof(%1),#%1)
 	
 	// Check the symbol exists with `tagof`, then return the name as a string.
-	#define __nameof(%0) (__CMPREMCLN:tagof(%0),#%0)
+	#define __nameof(%0) (__CMPRC:tagof(%0),#%0)
 #endif
 
 #define __COMPILER_DECL (0)
