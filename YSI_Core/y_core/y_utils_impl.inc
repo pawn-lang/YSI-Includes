@@ -2566,7 +2566,7 @@ stock ReturnPlayerRPName(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#if !defined ftouch
+#if !defined ftouch || defined y_utils_ftouch
 	stock ftouch(const string:filename[])
 	{
 		if (fexist(filename))
@@ -2588,6 +2588,10 @@ stock ReturnPlayerRPName(playerid)
 			}
 		}
 	}
+
+	static stock y_utils_ftouch()
+	{
+	}	
 #endif
 
 /*-------------------------------------------------------------------------*//**
