@@ -786,10 +786,6 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 // Should be an inbuilt constant!
 #define cellbytes (cellbits / charbits)
 
-#if cellbits != 32
-	#error YSI assumes `cellbits` is 32.
-#endif
-
 #if charbits != 8
 	#error YSI assumes `charbits` is 8.
 #endif
@@ -800,15 +796,26 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
 // How much to adjust a cell count by to get a byte count.
 #if cellbits == 8
-	#define __COMPILER_CELL_SHIFT (0)
+	const __COMPILER_CELL_SHIFT = 0;
+	const __COMPILER_BIT_SHIFT = 3;
+	const __COMPILER_BIT_MASK = 7;
+	#error YSI assumes `cellbits` is 32 or 64.
 #elseif cellbits == 16
-	#define __COMPILER_CELL_SHIFT (1)
+	const __COMPILER_CELL_SHIFT = 1;
+	const __COMPILER_BIT_SHIFT = 4;
+	const __COMPILER_BIT_MASK = 15;
+	#error YSI assumes `cellbits` is 32 or 64.
 #elseif cellbits == 32
-	#define __COMPILER_CELL_SHIFT (2)
+	const __COMPILER_CELL_SHIFT = 2;
+	const __COMPILER_BIT_SHIFT = 5;
+	const __COMPILER_BIT_MASK = 31;
 #elseif cellbits == 64
-	#define __COMPILER_CELL_SHIFT (3)
+	const __COMPILER_CELL_SHIFT = 3;
+	const __COMPILER_BIT_SHIFT = 6;
+	const __COMPILER_BIT_MASK = 63;
+	#error YSI assumes `cellbits` is 32.
 #else
-	#error Unknown cellbits size.
+	#error Unknown `cellbits` size.
 #endif
 
 #define FUNCTION_LENGTH (__COMPILER_sNAMEMAX + 1)

@@ -75,20 +75,6 @@ Optional plugins:
 // prototypes can use a familiar syntax.
 #define BitArray:%1<%2> Bit:%1[%2]
 
-#if cellbits == 32
-	#define CELLSHIFT (5)
-#else
-	#if cellbits == 64
-		#define CELLSHIFT (6)
-	#else
-		#if cellbits == 16
-			#define CELLSHIFT (4)
-		#else
-			#error Unkown cell size
-		#endif
-	#endif
-#endif
-
 /*-------------------------------------------------------------------------*//**
  * <param name="size">Number of bits required.</param>
  * <returns>
@@ -98,7 +84,7 @@ Optional plugins:
 
 // If this ever changes, update the size reference in y_users.
 FUNC_PAWNDOC(Bit_Bits(size));
-#define Bit_Bits(%1) (((%1)+cellbits-1)/cellbits)
+#define Bit_Bits(%1) (((%1)+__COMPILER_BIT_MASK)/cellbits)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to get the slot for.</param>
@@ -108,7 +94,7 @@ FUNC_PAWNDOC(Bit_Bits(size));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Bit_Slot(value));
-#define Bit_Slot(%1) ((_:%1)>>>CELLSHIFT)
+#define Bit_Slot(%1) ((_:%1)>>>__COMPILER_BIT_SHIFT)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to get the mask for</param>
@@ -118,7 +104,7 @@ FUNC_PAWNDOC(Bit_Slot(value));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Bit_Mask(value));
-#define Bit_Mask(%1) (Bit:(1<<((_:%1)&cellbits-1)))
+#define Bit_Mask(%1) (Bit:(1<<((_:%1)&__COMPILER_BIT_MASK)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Array of bits.</param>
@@ -132,7 +118,7 @@ FUNC_PAWNDOC(Bit_Mask(value));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(bool:Bit_GetBit(BitArray:array<>,slot));
-#define Bit_GetBit(%1,%2) (%1[(%2)>>>CELLSHIFT]>>>Bit:((%2)&cellbits-1)&Bit:1)
+#define Bit_GetBit(%1,%2) (%1[(%2)>>>__COMPILER_BIT_SHIFT]>>>Bit:((%2)&__COMPILER_BIT_MASK)&Bit:1)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Array of bits.</param>
@@ -161,7 +147,7 @@ FUNC_PAWNDOC(bool:Bit_Get(BitArray:array<>,slot));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Bit_Let(BitArray:array<>,slot));
-#define Bit_Let(%1,%2) (%1[(%2)>>>CELLSHIFT]|=Bit:(1<<((%2)&cellbits-1)))
+#define Bit_Let(%1,%2) (%1[(%2)>>>__COMPILER_BIT_SHIFT]|=Bit:(1<<((%2)&__COMPILER_BIT_MASK)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Array of bits.</param>
@@ -172,7 +158,7 @@ FUNC_PAWNDOC(Bit_Let(BitArray:array<>,slot));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Bit_Vet(BitArray:array<>,slot));
-#define Bit_Vet(%1,%2) (%1[(%2)>>>CELLSHIFT]&=Bit:~(1<<((%2)&cellbits-1)))
+#define Bit_Vet(%1,%2) (%1[(%2)>>>__COMPILER_BIT_SHIFT]&=Bit:~(1<<((%2)&__COMPILER_BIT_MASK)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Array of bits.</param>
@@ -183,7 +169,7 @@ FUNC_PAWNDOC(Bit_Vet(BitArray:array<>,slot));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Bit_Toggle(BitArray:array<>,slot));
-#define Bit_Toggle(%1,%2) (%1[(%2)>>>CELLSHIFT]^=Bit:(1<<((%2)&cellbits-1)))
+#define Bit_Toggle(%1,%2) (%1[(%2)>>>__COMPILER_BIT_SHIFT]^=Bit:(1<<((%2)&__COMPILER_BIT_MASK)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Array of bits.</param>
@@ -194,7 +180,7 @@ FUNC_PAWNDOC(Bit_Toggle(BitArray:array<>,slot));
 
 stock Bit_Set(BitArray:array<>, slot, bool:set)//, size = sizeof (array))
 {
-	//if (slot >>> CELLSHIFT >= size) return;
+	//if (slot >>> __COMPILER_BIT_SHIFT >= size) return;
 	if (set) Bit_Let(array, slot);
 	else Bit_Vet(array, slot);
 }
@@ -284,13 +270,13 @@ stock Iter_Func@Bits(start, const BitArray:data<>, size = sizeof (data))
 	{
 		Debug_Print7("Iter_Func@Bits: %d %d %d %d", cur, _:data[i], start, _:~(Bit_Mask(start) - Bit:1));
 		// Bits left in the current cell.
-		return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
+		return Cell_GetLowestBit(cur) + (i << __COMPILER_BIT_SHIFT);
 	}
 	while (++i != size)
 	{
 		if ((cur = _:data[i]))
 		{
-			return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
+			return Cell_GetLowestBit(cur) + (i << __COMPILER_BIT_SHIFT);
 		}
 	}
 	return -1;
@@ -311,13 +297,13 @@ stock Iter_Func@Blanks(start, const BitArray:data<>, size = sizeof (data))
 	if ((cur = _:(~data[i] & ~(Bit_Mask(start) - Bit:1))))
 	{
 		// Bits left in the current cell.
-		return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
+		return Cell_GetLowestBit(cur) + (i << __COMPILER_BIT_SHIFT);
 	}
 	while (++i != size)
 	{
 		if ((cur = ~_:data[i]))
 		{
-			return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
+			return Cell_GetLowestBit(cur) + (i << __COMPILER_BIT_SHIFT);
 		}
 	}
 	return -1;
