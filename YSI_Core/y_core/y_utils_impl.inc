@@ -110,60 +110,6 @@ Optional plugins:
 
 #define ALS_MRET_(%0) forward PP_MRET();public PP_MRET(%0)(0,0,YSI_EMPTY)(NT_US)
 
-/// <library>y_utils</library>
-/// <summary>
-///   -1, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_1 = -1;
-
-/// <library>y_utils</library>
-/// <summary>
-///   -4, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_4 = -4;
-
-/// <library>y_utils</library>
-/// <summary>
-///   -8, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_8 = -8;
-
-/// <library>y_utils</library>
-/// <summary>
-///   -12, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_12 = -12;
-
-/// <library>y_utils</library>
-/// <summary>
-///   -16, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_16 = -16;
-
-/// <library>y_utils</library>
-/// <summary>
-///   -20, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_20 = -20;
-
-/// <library>y_utils</library>
-/// <summary>
-///   -24, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_24 = -24;
-
-/// <library>y_utils</library>
-/// <summary>
-///   -28, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_28 = -28;
-
-/// <library>y_utils</library>
-/// <summary>
-///   -32, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_32 = -32;
-
 /*-------------------------------------------------------------------------*//**
  * <param name="t">The time in ms.</param>
  * <param name="iters">The number of iterations completed in this time.</param>
