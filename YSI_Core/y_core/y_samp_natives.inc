@@ -127,8 +127,8 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 	native bool:Dialog_ShowPlayerNative(playerid, dialogid, DIALOG_STYLE:style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
 #endif
 
-#if __COMPILER___EMIT_U
-	#if cellbytes == 4
+#if cellbytes == 4
+	#if __COMPILER___EMIT_U
 		#define YSI_IsLocalVarPackedString__(%0) \
 			__emit(                         \
 				LREF.S.pri  %0             ,\
@@ -136,7 +136,11 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 				GEQ                         \
 			)
 		#endinput
-	#elseif cellbytes == 8
+	#else
+		const YSI_PackedStringMax__ = 0x01000000;
+	#endif
+#elseif cellbytes == 8
+	#if __COMPILER___EMIT_U
 		#define YSI_IsLocalVarPackedString__(%0) \
 			__emit(                         \
 				LREF.S.pri  %0             ,\
@@ -145,8 +149,10 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 			)
 		#endinput
 	#else
-		#error Unsupported packed string size.
+		const YSI_PackedStringMax__ = 0x0100000000000000;
 	#endif
+#else
+	#error Unsupported packed string size.
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -161,14 +167,10 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
  *   version above is actually faster than the native for locals.
  * </remarks>
  *//*------------------------------------------------------------------------**/
-
-#if cellbytes != 4
-	#error Unsupported packed string size.
-#endif
 stock bool:YSI_IsLocalVarPackedString__(const string:str[])
 {
 	#emit LREF.S.pri           str
-	#emit CONST.alt            0x01000000
+	#emit CONST.alt            YSI_PackedStringMax__
 	#emit GEQ
 	#emit RETN
 

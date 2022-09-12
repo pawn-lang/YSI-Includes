@@ -293,7 +293,11 @@ stock const YSIM_VERMAX[] = "X";
 
 // More common utilities and user-facing functions.
 #include "y_debug_impl"
-#include "y_cell_impl"
+#if cellbits == 32
+	#include "y_cell32"
+#else
+	#include "y_cell64"
+#endif
 #include "y_amx_impl"
 #include "y_shortfunc"
 #include "..\..\YSI_Players\y_android\y_android_entry"

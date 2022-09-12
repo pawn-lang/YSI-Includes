@@ -100,7 +100,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	// data = ((data >>> 1) & 0b01010101010101010101010101010101) | ((data & 0b01010101010101010101010101010101) << 1);
 	#emit LOAD.S.pri           data
 	#emit PUSH.pri
-	#emit CONST.alt            0b01010101010101010101010101010101
+	#emit CONST.alt            0b0101010101010101010101010101010101010101010101010101010101010101
 	#emit SHR.C.pri            1
 	#emit AND
 	#emit SWAP.pri
@@ -112,7 +112,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	// Swap adjacent pairs.
 	// data = ((data >>> 2) & 0b00110011001100110011001100110011) | ((data & 0b00110011001100110011001100110011) << 2);
 	#emit PUSH.pri
-	#emit CONST.alt            0b00110011001100110011001100110011
+	#emit CONST.alt            0b0011001100110011001100110011001100110011001100110011001100110011
 	#emit SHR.C.pri            2
 	#emit AND
 	#emit SWAP.pri
@@ -124,7 +124,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	// Swap adjacent nibbles.
 	// data = ((data >>> 4) & 0b00001111000011110000111100001111) | ((data & 0b00001111000011110000111100001111) << 4);
 	#emit PUSH.pri
-	#emit CONST.alt            0b00001111000011110000111100001111
+	#emit CONST.alt            0b0000111100001111000011110000111100001111000011110000111100001111
 	#emit SHR.C.pri            4
 	#emit AND
 	#emit SWAP.pri
@@ -176,7 +176,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	// Swap adjacent nibbles.
 	// data = ((data >>> 4) & 0b00001111000011110000111100001111) | ((data & 0b00001111000011110000111100001111) << 4);
 	#emit PUSH.pri
-	#emit CONST.alt            0b00001111000011110000111100001111
+	#emit CONST.alt            0b0000111100001111000011110000111100001111000011110000111100001111
 	#emit SHR.C.pri            4
 	#emit AND
 	#emit SWAP.pri
@@ -257,7 +257,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	#emit LOAD.S.pri           data // From this point on, just use registers!
 	#emit PUSH.pri
 	#emit SHR.C.pri            1
-	#emit CONST.alt            0x55555555
+	#emit CONST.alt            0x5555555555555555
 	#emit AND                  // No "AND.C" annoyingly.
 	#emit POP.alt
 	#emit SUB.alt
@@ -265,7 +265,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	// data = (data & 0x33333333) + ((data >>> 2) & 0x33333333);
 	#emit PUSH.pri
 	#emit SHR.C.pri            2
-	#emit CONST.alt            0x33333333
+	#emit CONST.alt            0x3333333333333333
 	#emit AND
 	#emit SWAP.pri             // Put the second half of the code on the stack.
 	#emit AND                  // "alt" is already the correct value.
@@ -276,10 +276,10 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	#emit MOVE.alt
 	#emit SHR.C.pri            4
 	#emit ADD
-	#emit CONST.alt            0xF0F0F0F
+	#emit CONST.alt            0x0F0F0F0F0F0F0F0F
 	#emit AND
-	#emit SMUL.C               0x1010101
-	#emit SHR.C.pri            24
+	#emit SMUL.C               0x0101010101010101
+	#emit SHR.C.pri            56
 	#emit RETN
 	
 	__pragma("naked");
@@ -319,17 +319,19 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	static const
 		scDeBruijn[] =
 			{
-				 0,  1, 28,  2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17,  4,  8, 
-				31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18,  6, 11,  5, 10,  9
+				 0,  1,  2,  4,  8, 17, 34,  5, 11, 23, 47, 31, 63, 62, 61, 59,
+				55, 46, 29, 58, 53, 43, 22, 44, 24, 49, 35,  7, 15, 30, 60, 57,
+				51, 38, 12, 25, 50, 36,  9, 18, 37, 10, 21, 42, 20, 41, 19, 39,
+				14, 28, 56, 48, 33,  3,  6, 13, 27, 54, 45, 26, 52, 40, 16, 32
 			};
 	
-	// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
+	// return scDeBruijn[((data & -data) * 0x022FDD63CC95386D) >>> 58];
 	#emit LOAD.S.pri           data
 	#emit MOVE.alt
 	#emit NEG
 	#emit AND
-	#emit SMUL.C               0x077CB531
-	#emit SHR.C.pri            27
+	#emit SMUL.C               0x022FDD63CC95386D
+	#emit SHR.C.pri            58
 	
 	#emit CONST.alt            scDeBruijn
 	#emit LIDX
@@ -380,8 +382,10 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	static const
 		scDeBruijn[] =
 			{
-				 1,  2, 29,  3, 30, 15, 25,  4, 31, 23, 21, 16, 26, 18,  5,  9, 
-				32, 28, 14, 24, 22, 20, 17,  8, 27, 13, 19,  7, 12,  6, 11, 10
+				 1,  2,  3,  5,  9, 18, 35,  6, 12, 24, 48, 32, 64, 63, 62, 60,
+				56, 47, 30, 59, 54, 44, 23, 45, 25, 50, 36,  8, 16, 31, 61, 58,
+				52, 39, 13, 26, 51, 37, 10, 19, 38, 11, 22, 43, 21, 42, 20, 40,
+				15, 29, 57, 49, 34,  4,  7, 14, 28, 55, 46, 27, 53, 41, 17, 33
 			};
 	// We load "data" in to "pri" here, so we don't do it within the "if"
 	// statement.  This, combined with the "RETN" straight after, makes this
@@ -399,8 +403,8 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 		#emit MOVE.alt
 		#emit NEG
 		#emit AND
-		#emit SMUL.C               0x077CB531
-		#emit SHR.C.pri            27
+		#emit SMUL.C               0x022FDD63CC95386D
+		#emit SHR.C.pri            58
 		
 		#emit CONST.alt            scDeBruijn
 		#emit LIDX
@@ -432,7 +436,7 @@ stock Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
 	#emit INVERT
 	#emit PUSH.pri
 	#emit SHR.C.pri            1
-	#emit CONST.alt            0x55555555
+	#emit CONST.alt            0x5555555555555555
 	#emit AND                  // No "AND.C" annoyingly.
 	#emit POP.alt
 	#emit SUB.alt
@@ -440,7 +444,7 @@ stock Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
 	// data = (data & 0x33333333) + ((data >>> 2) & 0x33333333);
 	#emit PUSH.pri
 	#emit SHR.C.pri            2
-	#emit CONST.alt            0x33333333
+	#emit CONST.alt            0x3333333333333333
 	#emit AND
 	#emit SWAP.pri             // Put the second half of the code on the stack.
 	#emit AND                  // "alt" is already the correct value.
@@ -451,10 +455,10 @@ stock Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
 	#emit MOVE.alt
 	#emit SHR.C.pri            4
 	#emit ADD
-	#emit CONST.alt            0xF0F0F0F
+	#emit CONST.alt            0xF0F0F0FF0F0F0F
 	#emit AND
-	#emit SMUL.C               0x1010101
-	#emit SHR.C.pri            24
+	#emit SMUL.C               0x10101011010101
+	#emit SHR.C.pri            56
 	#emit RETN
 	
 	__pragma("naked");
@@ -478,8 +482,10 @@ stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
 	static const
 		scDeBruijn[] =
 			{
-				 0,  1, 28,  2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17,  4,  8, 
-				31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18,  6, 11,  5, 10,  9
+				 0,  1,  2,  4,  8, 17, 34,  5, 11, 23, 47, 31, 63, 62, 61, 59,
+				55, 46, 29, 58, 53, 43, 22, 44, 24, 49, 35,  7, 15, 30, 60, 57,
+				51, 38, 12, 25, 50, 36,  9, 18, 37, 10, 21, 42, 20, 41, 19, 39,
+				14, 28, 56, 48, 33,  3,  6, 13, 27, 54, 45, 26, 52, 40, 16, 32
 			};
 	
 	// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
@@ -488,8 +494,8 @@ stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
 	#emit MOVE.alt
 	#emit NEG
 	#emit AND
-	#emit SMUL.C               0x077CB531
-	#emit SHR.C.pri            27
+	#emit SMUL.C               0x022FDD63CC95386D
+	#emit SHR.C.pri            58
 	
 	#emit CONST.alt            scDeBruijn
 	#emit LIDX
@@ -517,8 +523,10 @@ stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
 	static const
 		scDeBruijn[] =
 			{
-				 1,  2, 29,  3, 30, 15, 25,  4, 31, 23, 21, 16, 26, 18,  5,  9, 
-				32, 28, 14, 24, 22, 20, 17,  8, 27, 13, 19,  7, 12,  6, 11, 10
+				 1,  2,  3,  5,  9, 18, 35,  6, 12, 24, 48, 32, 64, 63, 62, 60,
+				56, 47, 30, 59, 54, 44, 23, 45, 25, 50, 36,  8, 16, 31, 61, 58,
+				52, 39, 13, 26, 51, 37, 10, 19, 38, 11, 22, 43, 21, 42, 20, 40,
+				15, 29, 57, 49, 34,  4,  7, 14, 28, 55, 46, 27, 53, 41, 17, 33
 			};
 	data = ~data;
 	if (data)
@@ -526,8 +534,8 @@ stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
 		#emit MOVE.alt
 		#emit NEG
 		#emit AND
-		#emit SMUL.C               0x077CB531
-		#emit SHR.C.pri            27
+		#emit SMUL.C               0x022FDD63CC95386D
+		#emit SHR.C.pri            58
 		
 		#emit CONST.alt            scDeBruijn
 		#emit LIDX
@@ -540,7 +548,7 @@ stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5]);
+ *  Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[6]);
  * </summary>
  * <param name="x">The number to compress.</param>
  * <param name="m">The mask for which bits to compress.</param>
@@ -569,7 +577,7 @@ stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[5])
+stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[6])
 {
 	new t = 0;
 	return
@@ -578,12 +586,13 @@ stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[5])
 		t = x & masks[1], x = x ^ t | (t >>>  2),
 		t = x & masks[2], x = x ^ t | (t >>>  4),
 		t = x & masks[3], x = x ^ t | (t >>>  8),
-		t = x & masks[4],     x ^ t | (t >>> 16);
+		t = x & masks[4], x = x ^ t | (t >>> 16),
+		t = x & masks[5],     x ^ t | (t >>> 32);
 }
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
+ *  Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[6])
  * </summary>
  * <param name="x">The number to expand.</param>
  * <param name="m">The mask for which bits to expand to.</param>
@@ -598,10 +607,11 @@ stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[5])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[5])
+stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[6])
 {
 	new t = 0;
 	return
+		t = x << 32, x = (((x ^ t) & masks[5]) ^ x),
 		t = x << 16, x = (((x ^ t) & masks[4]) ^ x),
 		t = x <<  8, x = (((x ^ t) & masks[3]) ^ x),
 		t = x <<  4, x = (((x ^ t) & masks[2]) ^ x),
@@ -632,9 +642,9 @@ stock Cell_PrecomputeMaskPermutation(m)
 		mk = ~m << 1,
 		mp = 0,
 		mv = 0,
-		masks[5];
+		masks[6];
 	// We will count 0's to right.
-	for (new i = 0; i != 5; ++i)
+	for (new i = 0; i != 6; ++i)
 	{
 		// Parallel prefix.
 		mp = mk ^ (mk <<  1),
@@ -642,6 +652,7 @@ stock Cell_PrecomputeMaskPermutation(m)
 		mp = mp ^ (mp <<  4),
 		mp = mp ^ (mp <<  8),
 		mp = mp ^ (mp << 16),
+		mp = mp ^ (mp << 32),
 		// Bits to move.
 		masks[i] = mv = mp & m,
 		// Compress m.
@@ -719,7 +730,7 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 
 stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 {
-	return (tag == _:tagof (Float:)) ? (number & 0x7FFFFFFF) : ((number >> 30 | 1) * number);
+	return (tag == _:tagof (Float:)) ? (number & cellmax) : ((number >> 30 | 1) * number);
 }
 
 #if __COMPILER___EMIT_U
@@ -746,9 +757,9 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 			INVERT                     ,\
 			MOVE.alt                   ,\
 			INVERT                     ,\
-			ADD.C       0xFEFEFEFE     ,\
+			ADD.C       0xFEFEFEFEFEFEFEFE,\
 			AND                        ,\
-			CONST.alt   0x80808080     ,\
+			CONST.alt   0x8080808080808080,\
 			AND                         \
 		)
 	#endinput
@@ -843,9 +854,9 @@ stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
 	#emit INVERT
 	#emit MOVE.alt
 	#emit INVERT
-	#emit ADD.C                0xFEFEFEFE
+	#emit ADD.C                0xFEFEFEFEFEFEFEFE
 	#emit AND
-	#emit CONST.alt            0x80808080
+	#emit CONST.alt            0x8080808080808080
 	#emit AND
 	#emit RETN
 	
