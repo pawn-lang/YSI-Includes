@@ -298,6 +298,7 @@ stock const YSIM_VERMAX[] = "X";
 #else
 	#include "y_cell64"
 #endif
+#include "y_cell_impl"
 #include "y_amx_impl"
 #include "y_shortfunc"
 #include "..\..\YSI_Players\y_android\y_android_entry"

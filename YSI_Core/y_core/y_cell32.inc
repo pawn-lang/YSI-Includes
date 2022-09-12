@@ -71,6 +71,21 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+// Sadly these two arrays can't be shared because they have marginally different
+// values.  We could write this code to use the other array and do `+ 1`, but
+// that adds a WHOLE EXTRA INSTRUCTION!  OH NOES!
+static stock const
+	YSI_g_scDeBruijn1[] =
+		{
+			 0,  1, 28,  2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17,  4,  8, 
+			31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18,  6, 11,  5, 10,  9
+		}
+	YSI_g_scDeBruijn2[] =
+		{
+			 1,  2, 29,  3, 30, 15, 25,  4, 31, 23, 21, 16, 26, 18,  5,  9, 
+			32, 28, 14, 24, 22, 20, 17,  8, 27, 13, 19,  7, 12,  6, 11, 10
+		};
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  Cell_ReverseBits(number);
@@ -200,31 +215,6 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Cell_ReverseBytes(number);
- * </summary>
- * <param name="data">The number to manipulate.</param>
- * <returns>
- *  All the bytes in the input reversed.
- * </returns>
- * <remarks>
- *  1)
- *  Example: 0x12345678
- *  Becomes: 0x78563412
- *
- *  2)
- *  Example: 0x01020304
- *  Becomes: 0x04030201
- *
- *  3)
- *  Example: 0xFF00FF00
- *  Becomes: 0x00FF00FF
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-native Cell_ReverseBytes(GLOBAL_TAG_TYPES:data) = swapchars;
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
  *  Cell_CountBits(number);
  * </summary>
  * <param name="data">The number to get the number of 1s in.</param>
@@ -316,13 +306,6 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 
 stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 {
-	static const
-		scDeBruijn[] =
-			{
-				 0,  1, 28,  2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17,  4,  8, 
-				31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18,  6, 11,  5, 10,  9
-			};
-	
 	// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
 	#emit LOAD.S.pri           data
 	#emit MOVE.alt
@@ -331,7 +314,7 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	#emit SMUL.C               0x077CB531
 	#emit SHR.C.pri            27
 	
-	#emit CONST.alt            scDeBruijn
+	#emit CONST.alt            YSI_g_scDeBruijn1
 	#emit LIDX
 	
 	#emit RETN
@@ -374,15 +357,6 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 
 stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 {
-	// Sadly these two arrays can't be shared because they have marginally
-	// different values.  We could write this code to use the other array and
-	// do "+ 1", but that adds a WHOLE EXTRA INSTRUCTION!  OH NOES!
-	static const
-		scDeBruijn[] =
-			{
-				 1,  2, 29,  3, 30, 15, 25,  4, 31, 23, 21, 16, 26, 18,  5,  9, 
-				32, 28, 14, 24, 22, 20, 17,  8, 27, 13, 19,  7, 12,  6, 11, 10
-			};
 	// We load "data" in to "pri" here, so we don't do it within the "if"
 	// statement.  This, combined with the "RETN" straight after, makes this
 	// code as optimal as I can manage!  In fact, despite the fact that using
@@ -402,7 +376,7 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 		#emit SMUL.C               0x077CB531
 		#emit SHR.C.pri            27
 		
-		#emit CONST.alt            scDeBruijn
+		#emit CONST.alt            YSI_g_scDeBruijn2
 		#emit LIDX
 	}
 	{} // Zero-cost bug fix.
@@ -475,13 +449,6 @@ stock Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
 
 stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
 {
-	static const
-		scDeBruijn[] =
-			{
-				 0,  1, 28,  2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17,  4,  8, 
-				31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18,  6, 11,  5, 10,  9
-			};
-	
 	// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
 	#emit LOAD.S.pri           data
 	#emit INVERT
@@ -491,7 +458,7 @@ stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
 	#emit SMUL.C               0x077CB531
 	#emit SHR.C.pri            27
 	
-	#emit CONST.alt            scDeBruijn
+	#emit CONST.alt            YSI_g_scDeBruijn1
 	#emit LIDX
 	
 	#emit RETN
@@ -514,12 +481,6 @@ stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
 
 stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
 {
-	static const
-		scDeBruijn[] =
-			{
-				 1,  2, 29,  3, 30, 15, 25,  4, 31, 23, 21, 16, 26, 18,  5,  9, 
-				32, 28, 14, 24, 22, 20, 17,  8, 27, 13, 19,  7, 12,  6, 11, 10
-			};
 	data = ~data;
 	if (data)
 	{
@@ -529,7 +490,7 @@ stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
 		#emit SMUL.C               0x077CB531
 		#emit SHR.C.pri            27
 		
-		#emit CONST.alt            scDeBruijn
+		#emit CONST.alt            YSI_g_scDeBruijn2
 		#emit LIDX
 	}
 	{} // Zero-cost bug fix.
@@ -649,206 +610,5 @@ stock Cell_PrecomputeMaskPermutation(m)
 		mk = mk & ~mp;
 	}
 	return masks;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
- *  Cell_CompressRight(GLOBAL_TAG_TYPES:x, m);
- * </summary>
- * <param name="x">The number to compress.</param>
- * <param name="m">The mask for which bits to compress.</param>
- * <returns>
- *  Selected bits from "x", shifted to be LSBs.
- * </returns>
- * <remarks>
- *  Doesn't require precomputation.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
-{
-	// Compress the result so that all the masked bits are next to each other,
-	// regardless of their value.
-	// 
-	// <a href="http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb" />
-	// Also Hackers Delight, section 7-4.
-	// 
-	return Cell_CompressRightPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
- *  Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
- * </summary>
- * <param name="x">The number to expand.</param>
- * <param name="m">The mask for which bits to expand to.</param>
- * <returns>
- *  LSBs from "x", shifted to selected bit positions.
- * </returns>
- * <remarks>
- *  Doesn't require precomputation.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
-{
-	// Compress the result so that all the masked bits are next to each other,
-	// regardless of their value.
-	// 
-	// <a href="http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb" />
-	// Also Hackers Delight, section 7-5 (2nd edition only, which it turns out I
-	// don't have...)
-	// 
-	return Cell_ExpandLeftPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
- *  Cell_Abs(GLOBAL_TAG_TYPES:x, m)
- * </summary>
- * <param name="number">The number to get the absolute value of.</param>
- * <param name="tag">The tag of the number, in case its <c>Float</c>.</param>
- * <returns>
- *  The absolute value of a number.
- * </returns>
- * <remarks>
- *  Get the absolute value of a number.  Floats just remove MSB.  For ints,
- *  multiply the whole number by the MSB shifted OR 1 (1 or -1).
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
-{
-	return (tag == _:tagof (Float:)) ? (number & cellmax) : ((number >> 30 | 1) * number);
-}
-
-#if __COMPILER___EMIT_U
-	#define Cell_GetLowestComponent(%0) \
-		__emit(                         \
-			LOAD.U.pri  %0             ,\
-			MOVE.alt                   ,\
-			NEG                        ,\
-			AND                         \
-		)
-
-	#define Cell_GetLowestEmpty(%0) \
-		__emit(                         \
-			LOAD.U.pri  %0             ,\
-			INVERT                     ,\
-			MOVE.alt                   ,\
-			NEG                        ,\
-			AND                         \
-		)
-
-	#define Cell_HasZeroByte(%0) \
-		__emit(                         \
-			LOAD.U.pri  %0             ,\
-			INVERT                     ,\
-			MOVE.alt                   ,\
-			INVERT                     ,\
-			ADD.C       0xFEFEFEFE     ,\
-			AND                        ,\
-			CONST.alt   0x80808080     ,\
-			AND                         \
-		)
-	#endinput
-#endif
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
- *  Cell_GetLowestComponent(number);
- * </summary>
- * <param name="data">The number to get the lowest 1 in.</param>
- * <returns>
- *  The lowest set bit.
- * </returns>
- * <remarks>
- *  Similar to Cell_GetLowestBit, but returns the bit, not the position of the
- *  bit.
- *
- *  1)
- *  Example: 0b00000000000000000000000000000001
- *  Returns: 0b00000000000000000000000000000001
- *
- *  2)
- *  Example: 0b00000000000000000000000000001000
- *  Returns: 0b00000000000000000000000000001000
- *
- *  3)
- *  Example: 0b00010001100011000011100010001000
- *  Returns: 0b00000000000000000000000000001000
- *
- *  4)
- *  Example: 0b00000000000000000000000000000000
- *  Returns: 0b00000000000000000000000000000000
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
-{
-	// return data & -data;
-	#emit LOAD.S.pri           data
-	#emit MOVE.alt
-	#emit NEG
-	#emit AND
-	#emit RETN
-	
-	__pragma("naked");
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
- *  Cell_GetLowestEmpty(number);
- * </summary>
- * <param name="data">The number to get the lowest 0 in.</param>
- * <returns>
- *  The lowest unset bit.
- * </returns>
- * <remarks>
- *  Like Cell_GetLowestComponent, but for 0s not 1s.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
-{
-	// return ~data & -~data;
-	#emit LOAD.S.pri           data
-	#emit INVERT
-	#emit MOVE.alt
-	#emit NEG
-	#emit AND
-	#emit RETN
-	
-	__pragma("naked");
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
- *  Cell_HasZeroByte(number);
- * </summary>
- * <param name="data">The number to get the lowest 0 in.</param>
- * <returns>
- *  The lowest unset bit.
- * </returns>
- * <remarks>
- *  Check if any of the 4 bytes are zero:
- *  https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
-{
-	// return (data - 0x01010101) & ~data & 0x80808080;
-	#emit LOAD.S.pri           data
-	#emit INVERT
-	#emit MOVE.alt
-	#emit INVERT
-	#emit ADD.C                0xFEFEFEFE
-	#emit AND
-	#emit CONST.alt            0x80808080
-	#emit AND
-	#emit RETN
-	
-	__pragma("naked");
 }
 
