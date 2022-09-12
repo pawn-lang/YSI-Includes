@@ -214,7 +214,7 @@ stock bool:Iter_YieldLoop()
 		#emit SYSREQ.C     memcpy
 		// Restore the stack.
 		#emit LOAD.alt     YSI_g_sPtr
-		#emit CONST.pri    0xFFFFFFFF // -1
+		#emit CONST.pri    EMIT_MINUS_1
 		#emit LIDX
 		#emit SCTRL        4
 		#emit LREF.pri     YSI_g_sPtr // Or ZERO.pri, LIDX
@@ -249,6 +249,7 @@ stock bool:Iter_YieldLoop()
 
 stock Iter_YieldReturn(value)
 {
+	const minus5 = -5;
 	// This does the return through the global scope.
 	I@ = value;
 	// Load a pointer to the first address.  We know we are in range, so there's
@@ -334,10 +335,10 @@ stock Iter_YieldReturn(value)
 	#emit CONST.pri    1
 	#emit LIDX
 	#emit SCTRL        5
-	#emit CONST.pri    0xFFFFFFF8 // -8
+	#emit CONST.pri    EMIT_MINUS_8
 	#emit LIDX
 	#emit SCTRL        4
-	#emit CONST.pri    0xFFFFFFFB // -5
+	#emit CONST.pri    minus5
 	#emit LIDX
 	#emit SCTRL        2
 	// No longer in this iterator.

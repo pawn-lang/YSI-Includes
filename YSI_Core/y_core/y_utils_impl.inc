@@ -110,6 +110,60 @@ Optional plugins:
 
 #define ALS_MRET_(%0) forward PP_MRET();public PP_MRET(%0)(0,0,YSI_EMPTY)(NT_US)
 
+/// <library>y_utils</library>
+/// <summary>
+///   -1, for use in <c>#emit</c> which fails with <c>-</c>.
+/// </summary>
+const EMIT_MINUS_1 = -1;
+
+/// <library>y_utils</library>
+/// <summary>
+///   -4, for use in <c>#emit</c> which fails with <c>-</c>.
+/// </summary>
+const EMIT_MINUS_4 = -4;
+
+/// <library>y_utils</library>
+/// <summary>
+///   -8, for use in <c>#emit</c> which fails with <c>-</c>.
+/// </summary>
+const EMIT_MINUS_8 = -8;
+
+/// <library>y_utils</library>
+/// <summary>
+///   -12, for use in <c>#emit</c> which fails with <c>-</c>.
+/// </summary>
+const EMIT_MINUS_12 = -12;
+
+/// <library>y_utils</library>
+/// <summary>
+///   -16, for use in <c>#emit</c> which fails with <c>-</c>.
+/// </summary>
+const EMIT_MINUS_16 = -16;
+
+/// <library>y_utils</library>
+/// <summary>
+///   -20, for use in <c>#emit</c> which fails with <c>-</c>.
+/// </summary>
+const EMIT_MINUS_20 = -20;
+
+/// <library>y_utils</library>
+/// <summary>
+///   -24, for use in <c>#emit</c> which fails with <c>-</c>.
+/// </summary>
+const EMIT_MINUS_24 = -24;
+
+/// <library>y_utils</library>
+/// <summary>
+///   -28, for use in <c>#emit</c> which fails with <c>-</c>.
+/// </summary>
+const EMIT_MINUS_28 = -28;
+
+/// <library>y_utils</library>
+/// <summary>
+///   -32, for use in <c>#emit</c> which fails with <c>-</c>.
+/// </summary>
+const EMIT_MINUS_32 = -32;
+
 /*-------------------------------------------------------------------------*//**
  * <param name="t">The time in ms.</param>
  * <param name="iters">The number of iterations completed in this time.</param>
@@ -1727,8 +1781,9 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 	len = num % 3;
 	num /= 3;
 	// Set up the array for preincrement.
+	const minus3 = -3;
 	#emit LOAD.S.pri   src
-	#emit ADD.C        0xFFFFFFFD // -3
+	#emit ADD.C        minus3
 	#emit LOAD.S.alt   offset
 	#emit ADD
 	#emit PUSH.pri
@@ -1751,7 +1806,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 		#emit SREF.S.pri   dest
 		#emit INC.S        dest
 		
-		#emit LOAD.S.pri   0xFFFFFFF8
+		#emit LOAD.S.pri   EMIT_MINUS_8
 		#emit MOVE.alt
 		#emit SHL.C.pri     8 // (pri >> 22) & 0x03
 		#emit SHR.C.pri    30 // Would be just `SHR.C.pri` with `LODB.I 3`...
@@ -1765,7 +1820,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 		#emit SREF.S.pri   dest
 		#emit INC.S        dest
 		
-		#emit LOAD.S.pri   0xFFFFFFF8
+		#emit LOAD.S.pri   EMIT_MINUS_8
 		#emit MOVE.alt
 		#emit SHL.C.pri    30 // (pri << 4) & 0x30
 		#emit SHR.C.pri    26 //
@@ -1852,7 +1907,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 			#emit LODB.I       1
 			#emit STRB.I       1
 			
-			#emit LOAD.S.pri   0xFFFFFFFC
+			#emit LOAD.S.pri   EMIT_MINUS_4
 			#emit MOVE.alt
 			#emit SHL.C.pri    30 // (pri << 4) & 0x30
 			#emit SHR.C.pri    26 //
@@ -1930,12 +1985,12 @@ stock Base64Decode(dest[], const string:src[], len = sizeof (dest), offset = 0)
 	{}
 	// x - 1 - 3
 	#emit LOAD.S.pri   dest
-	#emit ADD.C        0xFFFFFFFC // -4
+	#emit ADD.C        EMIT_MINUS_4
 	#emit LOAD.S.alt   offset
 	#emit ADD
 	#emit STOR.S.pri   dest
 	#emit LOAD.S.pri   src
-	#emit ADD.C        0xFFFFFFFC // -4
+	#emit ADD.C        EMIT_MINUS_4
 	#emit STOR.S.pri   src
 	while (blocks--)
 	{

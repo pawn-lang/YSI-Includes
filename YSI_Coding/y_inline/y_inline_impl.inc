@@ -330,7 +330,7 @@ stock operator~(I@T:inlines[], size)
 	#emit MOVE.alt
 	#emit LCTRL            1
 	#emit SUB.alt
-	#emit ADD.C            0xFFFFFFFC
+	#emit ADD.C            EMIT_MINUS_4
 	#emit STOR.S.pri       size
 	#emit LREF.S.pri       size
 	#emit STOR.S.pri       size
@@ -1490,17 +1490,17 @@ static Callback_CallHandler_(...)
 	#emit SCTRL            4                   // 15
 	// Grow the stack.
 	// Call memcpy (put the native's parameters on the stack beyond `dest`).
-	#emit PUSH.S           0xFFFFFFF8          // 17
-	#emit PUSH.S           0xFFFFFFF8          // 19
+	#emit PUSH.S           EMIT_MINUS_8         // 17
+	#emit PUSH.S           EMIT_MINUS_8         // 19
 	#emit PUSH.C           0                   // 21
-	#emit PUSH.S           0xFFFFFFFC          // 23
+	#emit PUSH.S           EMIT_MINUS_4         // 23
 	#emit PUSH.pri                             // 24
 	#emit PUSH.C           20                  // 26
 	#emit SYSREQ.C         memcpy              // 28
 	#emit STACK            24                  // 30
 	// "jump" in to the code.
-	#emit LOAD.S.pri       0xFFFFFFFC          // 32
-	#emit ADD.C            0xFFFFFFFC          // 34
+	#emit LOAD.S.pri       EMIT_MINUS_4         // 32
+	#emit ADD.C            EMIT_MINUS_4         // 34
 	#emit LOAD.I                               // 35
 	#emit SCTRL            6                   // 37
 	
@@ -1511,11 +1511,11 @@ static Callback_CallHandler_(...)
 	// Padding to account for debug builds.
 	// If the code decides to jump back to here, save the stack out again.
 	#emit LCTRL            4                   // 41
-	#emit PUSH.S           0xFFFFFFF8          // 43
-	#emit PUSH.S           0xFFFFFFF8          // 45
+	#emit PUSH.S           EMIT_MINUS_8         // 43
+	#emit PUSH.S           EMIT_MINUS_8         // 45
 	#emit PUSH.C           0                   // 47
 	#emit PUSH.pri                             // 48
-	#emit PUSH.S           0xFFFFFFFC          // 50
+	#emit PUSH.S           EMIT_MINUS_4         // 50
 	#emit PUSH.C           20                  // 52
 	#emit SYSREQ.C         memcpy              // 54
 	
@@ -1523,8 +1523,8 @@ static Callback_CallHandler_(...)
 	// Indicate to the original user that this is the case by clearing
 	// `e_INLINE_FLAG_CONST` from the flags (actually clears all the flags,
 	// since `e_INLINE_FLAG_PUBLIC` isn't set here either).
-	#emit LOAD.S.pri       0xFFFFFFFC          // 56
-	#emit ADD.C            0xFFFFFFF0          // 58 , E_INLINE_CALL_FLAGS - E_INLINE_CALL_PARAMS
+	#emit LOAD.S.pri       EMIT_MINUS_4         // 56
+	#emit ADD.C            EMIT_MINUS_16        // 58 , E_INLINE_CALL_FLAGS - E_INLINE_CALL_PARAMS
 	#emit MOVE.alt                             // 59
 	#emit ZERO.pri                             // 60
 	#emit STOR.I                               // 61
@@ -1802,7 +1802,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			// However, that was brittle (it has already been changed in the
 			// official distribution), and was inaccurate if there were extra
 			// locals declared in the inline.
-			@emit LOAD.S.pri       0xFFFFFFF8
+			@emit LOAD.S.pri       EMIT_MINUS_8
 			@emit STACK            0
 			@emit ADD.C            locals - inlineParams
 			@emit SUB.alt
@@ -1830,7 +1830,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 		@emit STOR.pri         AMX_Ref(I@)
 		if (needStore)
 		{
-			@emit LOAD.S.alt       0xFFFFFFF8
+			@emit LOAD.S.alt       EMIT_MINUS_8
 			@emit LCTRL            4
 			@emit ADD.C            inlineParams - locals
 			@emit SUB
@@ -1848,7 +1848,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			// but not including them.  This will set us up the bomb (sorry,
 			// couldn't resist).  This will set us up nicely for the jump in to
 			// `Callback_CallHandler` for copying the stack back out again.
-			@emit LOAD.S.alt       0xFFFFFFF8
+			@emit LOAD.S.alt       EMIT_MINUS_8
 			@emit LCTRL            4
 			@emit SUB
 			@emit SCTRL            4

@@ -288,7 +288,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 			{
 				// It doesn't matter which way we go on matching hashes, as long
 				// as the direction is consistent.
-				#emit PUSH.C      0x7FFFFFFF
+				#emit PUSH.C      cellmax
 				#emit PUSH.S      ignorecase
 				#emit PUSH.S      str
 				#emit LOAD.S.pri  m
@@ -420,7 +420,7 @@ stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = fals
 		{
 			// It doesn't matter which way we go on matching hashes, as long
 			// as the direction is consistent.
-			#emit PUSH.C      0x7FFFFFFF
+			#emit PUSH.C      cellmax
 			#emit PUSH.S      ignorecase
 			#emit PUSH.S      str
 			#emit LOAD.S.pri  m
@@ -481,7 +481,7 @@ stock bool:HashMap_RemoveKeyWithHash(HashMap:m<>, const str[], hash, bool:ignore
 		{
 			// It doesn't matter which way we go on matching hashes, as long
 			// as the direction is consistent.
-			#emit PUSH.C      0x7FFFFFFF
+			#emit PUSH.C      cellmax
 			#emit PUSH.S      ignorecase
 			#emit PUSH.S      str
 			#emit LOAD.S.pri  m

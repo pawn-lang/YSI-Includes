@@ -163,10 +163,10 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit PUSH.pri
 	#emit ADD.C        4
 	#emit PUSH.pri
-	#emit LREF.S.pri   0xFFFFFFFC
-	#emit LREF.S.alt   0xFFFFFFF8
-	#emit SREF.S.pri   0xFFFFFFF8
-	#emit SREF.S.alt   0xFFFFFFFC
+	#emit LREF.S.pri   EMIT_MINUS_4
+	#emit LREF.S.alt   EMIT_MINUS_8
+	#emit SREF.S.pri   EMIT_MINUS_8
+	#emit SREF.S.alt   EMIT_MINUS_4
 	#emit STACK        8
 	
 	// Push the current master ID on to the master stack.  Returns the old
@@ -181,7 +181,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	
 	// Back up the frame header information and the return value.  "MOVS" copies
 	// from "pri" to "alt".
-	#emit STOR.S.pri   0xFFFFFFF8 // -8
+	#emit STOR.S.pri   EMIT_MINUS_8
 	#emit HEAP         28
 	#emit LCTRL        4
 	#emit MOVS         28
@@ -202,12 +202,12 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	{}
 	
 	// Restore the stack.
-	#emit STACK        0xFFFFFFE4 // -28
+	#emit STACK        EMIT_MINUS_28
 	#emit STACK        0          // Load new stack pointer in to "alt".
 	#emit LCTRL        2
-	#emit ADD.C        0xFFFFFFE4
+	#emit ADD.C        EMIT_MINUS_28
 	#emit MOVS         28
-	#emit HEAP         0xFFFFFFE4
+	#emit HEAP         EMIT_MINUS_28
 	
 	// Restore the master caller.  Already pushed the parameters earlier, before
 	// backing them up on the heap (saved extra work now sorting out which saved
@@ -219,9 +219,9 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		// Get the return value.  Already have most of the parameters pushed,
 		// just modify one of them (the name).
 		#emit CONST.pri    YSI_g_sPropEmpty
-		#emit STOR.S.pri   0xFFFFFFF4 // -12
+		#emit STOR.S.pri   EMIT_MINUS_12
 		#emit LOAD.pri     YSI_g_sYSIM_STRING
-		#emit STOR.S.pri   0xFFFFFFF8 // -8
+		#emit STOR.S.pri   EMIT_MINUS_8
 		#emit SYSREQ.C     getproperty
 		
 		// Unpack the return to the previous function's return string.
@@ -279,7 +279,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// doing this we know out string return fix/optimisation will apply.
 	#emit LOAD.S.pri   0
 	#emit SCTRL        5
-	#emit LOAD.S.alt   0xFFFFFFFC
+	#emit LOAD.S.alt   EMIT_MINUS_4
 	#emit SCTRL        4
 	#emit MOVE.pri
 	#emit SCTRL        2
@@ -323,7 +323,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	
 	// Back up the frame header information and the return value.  "MOVS" copies
 	// from "pri" to "alt".
-	#emit STOR.S.pri   0xFFFFFFF8 // -8
+	#emit STOR.S.pri   EMIT_MINUS_8
 	#emit HEAP         28
 	#emit LCTRL        4
 	#emit MOVS         28
@@ -344,12 +344,12 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	{}
 	
 	// Restore the stack.
-	#emit STACK        0xFFFFFFE4 // -28
+	#emit STACK        EMIT_MINUS_28
 	#emit STACK        0          // Load new stack pointer in to "alt".
 	#emit LCTRL        2
-	#emit ADD.C        0xFFFFFFE4
+	#emit ADD.C        EMIT_MINUS_28
 	#emit MOVS         28
-	#emit HEAP         0xFFFFFFE4
+	#emit HEAP         EMIT_MINUS_28
 	
 	// Restore the master caller.  Already pushed the parameters earlier, before
 	// backing them up on the heap (saved extra work now sorting out which saved
@@ -361,7 +361,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		// Get the return value.  Already have most of the parameters pushed,
 		// just modify one of them (the name).
 		#emit CONST.pri    YSI_g_sPropReturn
-		#emit STOR.S.pri   0xFFFFFFF4 // -12
+		#emit STOR.S.pri   EMIT_MINUS_12
 		#emit SYSREQ.C     getproperty
 		#emit STOR.pri     YSI_g_sCallData
 		
@@ -390,7 +390,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	
 	#emit LOAD.S.pri   0
 	#emit SCTRL        5
-	#emit LOAD.S.alt   0xFFFFFFFC
+	#emit LOAD.S.alt   EMIT_MINUS_4
 	#emit SCTRL        4
 	#emit MOVE.pri
 	#emit SCTRL        2

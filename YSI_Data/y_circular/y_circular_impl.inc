@@ -80,7 +80,7 @@ stock bool:Circular_IsFull_(s1, s2, ...)
 	#emit LOAD.S.alt   s1
 	#emit LOAD.S.pri   20
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC
+	#emit ADD.C        EMIT_MINUS_4
 	// Load the data there.
 	#emit STOR.S.pri   s2
 	#emit LREF.S.pri   s2
@@ -97,7 +97,7 @@ stock Circular_GetCount_(s1, s2, ...)
 	#emit LOAD.S.alt   s1
 	#emit LOAD.S.pri   20
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC
+	#emit ADD.C        EMIT_MINUS_4
 	// Load the data there.
 	#emit STOR.S.pri   s2
 	#emit LREF.S.pri   s2
@@ -132,7 +132,7 @@ stock void:Circular_Init_(s1, s2, ...)
 	#emit LOAD.S.alt   s1
 	#emit LOAD.S.pri   20
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC
+	#emit ADD.C        EMIT_MINUS_4
 	#emit STOR.S.pri   s2
 	#emit ZERO.pri
 	#emit SUB
@@ -147,7 +147,7 @@ stock Circular_Push_(s1, s2, ...)
 	#emit LOAD.S.alt   s1
 	#emit LOAD.S.pri   20
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC
+	#emit ADD.C        EMIT_MINUS_4
 	// Load the data there.
 	#emit STOR.S.pri   count
 	#emit LREF.S.pri   count
@@ -175,7 +175,7 @@ stock Circular_Push_(s1, s2, ...)
 		#emit LOAD.S.pri   s1
 		#emit LOAD.S.alt   20
 		#emit ADD
-		#emit ADD.C        0xFFFFFFFC
+		#emit ADD.C        EMIT_MINUS_4
 		#emit STOR.S.pri   count
 		#emit STOR.S.alt   s2
 		// Load the first value, adjusted for its new slot.
@@ -200,7 +200,7 @@ stock Circular_Push_(s1, s2, ...)
 		// We overwrote slot 0 earlier, when writing the new data, so NOW we move it to the end.
 		#emit LOAD.S.pri   s1
 		#emit LOAD.S.alt   20
-		#emit ADD.C        0xFFFFFFFC
+		#emit ADD.C        EMIT_MINUS_4
 		#emit ADD
 		#emit STOR.S.pri   count
 		#emit LOAD.S.alt   s1
@@ -246,7 +246,7 @@ stock Circular_Push_(s1, s2, ...)
 			// The array is full.  Reset the final slot pointer.
 			#emit LOAD.S.pri   s1
 			#emit LOAD.S.alt   20
-			#emit ADD.C        0xFFFFFFFC
+			#emit ADD.C        EMIT_MINUS_4
 			#emit XCHG
 			#emit ADD
 			#emit STOR.S.pri   count
@@ -266,7 +266,7 @@ stock Circular_Push_(s1, s2, ...)
 			#emit LOAD.S.alt   s1
 			#emit LOAD.S.pri   20
 			#emit ADD
-			#emit ADD.C        0xFFFFFFFC
+			#emit ADD.C        EMIT_MINUS_4
 			#emit LOAD.S.alt   count
 			#emit STOR.S.pri   count
 			#emit SREF.S.alt   count
@@ -289,7 +289,7 @@ stock Circular_Rotate_(s1, s2, ...)
 	#emit LOAD.S.alt   s1
 	#emit LOAD.S.pri   20
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC
+	#emit ADD.C        EMIT_MINUS_4
 	// Load the data there.
 	#emit STOR.S.pri   count
 	#emit LREF.S.pri   count
@@ -303,7 +303,7 @@ stock Circular_Rotate_(s1, s2, ...)
 		#emit LOAD.S.pri   s1
 		#emit LOAD.S.alt   20
 		#emit ADD
-		#emit ADD.C        0xFFFFFFFC
+		#emit ADD.C        EMIT_MINUS_4
 		#emit STOR.S.pri   count
 		#emit STOR.S.alt   s2
 		// Load the first value, adjusted for its new slot.
@@ -327,7 +327,7 @@ stock Circular_Rotate_(s1, s2, ...)
 		// We overwrote slot 0 earlier, when writing the new data, so NOW we move it to the end.
 		#emit LOAD.S.pri   s1
 		#emit LOAD.S.alt   20
-		#emit ADD.C        0xFFFFFFFC
+		#emit ADD.C        EMIT_MINUS_4
 		#emit ADD
 		#emit STOR.S.pri   count
 		#emit LOAD.S.alt   s1
@@ -351,7 +351,7 @@ stock Circular_Rotate_(s1, s2, ...)
 			// The array is full.  Reset the final slot pointer.
 			#emit LOAD.S.pri   s1
 			#emit LOAD.S.alt   20
-			#emit ADD.C        0xFFFFFFFC
+			#emit ADD.C        EMIT_MINUS_4
 			#emit XCHG
 			#emit ADD
 			#emit STOR.S.pri   count
@@ -371,7 +371,7 @@ stock Circular_Rotate_(s1, s2, ...)
 			#emit LOAD.S.alt   s1
 			#emit LOAD.S.pri   20
 			#emit ADD
-			#emit ADD.C        0xFFFFFFFC
+			#emit ADD.C        EMIT_MINUS_4
 			#emit LOAD.S.alt   count
 			#emit STOR.S.pri   count
 			#emit SREF.S.alt   count

@@ -176,7 +176,7 @@ stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 	//   
 	// We know we MUST have enough space on the stack since we allocated it!
 	#emit STACK        0
-	#emit PUSH.C       0x10000000
+	#emit PUSH.C       cellmax
 	#emit PUSH         sPushedParameters
 	#emit PUSH.C       0
 	#emit PUSH         sParametersBase

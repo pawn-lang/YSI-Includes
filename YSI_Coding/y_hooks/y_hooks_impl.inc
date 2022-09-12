@@ -2206,7 +2206,7 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[
 	{
 		// This is a hook for a different function.  We don't want this one
 		// just yet, wait till the current hook is done with.
-		#emit HEAP                 0xFFFFFFE4 // -28
+		#emit HEAP                 EMIT_MINUS_28
 		#emit LOAD.S.pri           0
 		#emit SCTRL                5
 		#emit SCTRL                4
@@ -2346,7 +2346,7 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[
 	// Do a triple return - exit the calling function as well as this function,
 	// so that the next call is never actually made.  This only looks like a
 	// double return, but we are operating in the frame of the caller already.
-	#emit HEAP                 0xFFFFFFE4 // -28
+	#emit HEAP                 EMIT_MINUS_28
 	#emit LOAD.S.pri           0
 	#emit SCTRL                5
 	#emit SCTRL                4
@@ -2373,7 +2373,7 @@ stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &
 
 	// A double return.  We return `0` from this function because we don't care
 	// about the current state.
-	#emit HEAP                 0xFFFFFFE4 // -28
+	#emit HEAP                 EMIT_MINUS_28
 	#emit STACK                52 // 12 + 10 * 4
 	#emit ZERO.pri
 	#emit RETN

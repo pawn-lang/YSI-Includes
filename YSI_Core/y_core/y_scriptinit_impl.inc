@@ -567,10 +567,10 @@ stock bool:Server_IsDetectAddr0Enabled() {
 
 stock bool:Server_HasDetectAddr0() {
 	// Is the check possible?
-	#emit CONST.pri     0xFFFFFFFF // -1
-	#emit LCTRL 0xFD               // 0, 1, or -2
+	#emit CONST.pri     EMIT_MINUS_1 // -1
+	#emit LCTRL 0xFD                 // 0, 1, or -2
 	#emit CONST.alt     0
-	#emit SGEQ                     // >= 0
+	#emit SGEQ                       // >= 0
 	#emit RETN
 	return false;
 }

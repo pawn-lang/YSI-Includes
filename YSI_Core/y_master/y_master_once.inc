@@ -904,7 +904,7 @@ static stock _Master_Rename(const name[])
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
-		#emit ADD.C      0xFFFFFFFF
+		#emit ADD.C      EMIT_MINUS_1
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry
@@ -970,7 +970,7 @@ static stock _Master_Unname(const name[])
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
-		#emit ADD.C      0xFFFFFFFF
+		#emit ADD.C      EMIT_MINUS_1
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry

@@ -414,7 +414,7 @@ stock _Jagged_Empty(array[][], size1, size2)
 		#emit ADD.C      4
 		#emit MOVE.alt
 		#emit LOAD.S.pri size2
-		#emit ADD.C      0xFFFFFFFC // -4
+		#emit ADD.C      EMIT_MINUS_4
 		#emit STOR.I
 		#emit STOR.S.pri size2
 		#emit STOR.S.alt array
@@ -456,8 +456,8 @@ stock Jagged_UnsafeResizeOne(array[][], slot, newSize)
 	#emit IDXADDR
 	// Subtract 4 to make it the offset for the next slot, save it to the
 	// pointer we pushed earlier.
-	#emit ADD.C 0xFFFFFFFC
-	#emit SREF.S.pri 0xFFFFFFFC
+	#emit ADD.C      EMIT_MINUS_4
+	#emit SREF.S.pri EMIT_MINUS_4
 	// End.
 	#emit POP.pri
 	#emit RETN

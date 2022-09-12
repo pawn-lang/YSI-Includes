@@ -103,7 +103,7 @@ public OnCodeInit()
 			Debug_Print7("Timer_OnYSIInit: pointer: %d", pointer);
 			// Push the address of the current function.
 			#emit PUSH.S     pointer
-			#emit PUSH.C     0xFFFFFFFF // -1: Initial list action for `_Timer_D`.
+			#emit PUSH.C     EMIT_MINUS_1 // -1: Initial list action for `_Timer_D`.
 			#emit PUSH.C     8
 			#emit LCTRL      6
 			#emit ADD.C      36
@@ -131,7 +131,7 @@ public OnCodeInit()
 				{
 					// Call the functions a second time to guarantee getting
 					#emit PUSH.C     0
-					#emit PUSH.C     0xFFFFFFFF
+					#emit PUSH.C     EMIT_MINUS_1
 					#emit PUSH.C     8
 					#emit LCTRL      6
 					#emit ADD.C      36
