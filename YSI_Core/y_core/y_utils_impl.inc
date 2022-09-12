@@ -1052,19 +1052,19 @@ stock IPToInt(const string:ip[])
 	if (YSI_IsLocalVarPackedString__(ip))
 	{
 		new
-			ipv = strval(ip) << 24,
-			pos = 0,
-			tmp[4];
-		while (pos < 15 && ip{pos++} != '.') {}
-		// This is the only way to extract part of a packed string.
-		strmid(tmp, ip, pos, cellmax);
-		ipv += strval(tmp) << 16;
-		while (pos < 15 && ip{pos++} != '.') {}
-		strmid(tmp, ip, pos, cellmax);
-		ipv += strval(tmp) << 8;
-		while (pos < 15 && ip{pos++} != '.') {}
-		strmid(tmp, ip, pos, cellmax);
-		return ipv + strval(tmp);
+			ipv = 0;
+		// `strmid` doesn't seem to work correctly on packed strings in SA:MP.
+		// Do this the hard way...
+		for (new i = 0, ch, tmp, pos = 0; i != 4; ++i)
+		{
+			tmp = 0;
+			while ((ch = ip{pos++}) && ch != '.')
+			{
+				tmp = tmp * 10 + ch - '0';
+			}
+			ipv = ipv << 8 | tmp;
+		}
+		return ipv;
 	}
 	else
 	{
