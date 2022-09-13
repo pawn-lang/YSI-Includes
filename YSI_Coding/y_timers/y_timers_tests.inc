@@ -199,7 +199,7 @@ timer StopAndStop[50]()
 	printf("StopAndStop finished");
 }
 
-@test(.group = "y_timers") StopAndStop()
+@test(.group = "y_timers", .run = false) StopAndStop()
 {
 	YSI_g_sStopAndStart = REPEAT__[5] StopAndStop();
 	for (new i = 0; i != 1000; ++i)

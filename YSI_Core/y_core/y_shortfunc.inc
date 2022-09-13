@@ -279,7 +279,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// doing this we know out string return fix/optimisation will apply.
 	#emit LOAD.S.pri   __frame_offset
 	#emit SCTRL        5
-	#emit LOAD.S.alt   __local3_offset
+	#emit LOAD.S.alt   __local0_offset
 	#emit SCTRL        4
 	#emit MOVE.pri
 	#emit SCTRL        2
