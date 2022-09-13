@@ -89,7 +89,7 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit STOR.S.pri       end
 	// Get the stack position after everything.
 	#emit ADDR.pri         result
-	#emit LOAD.S.alt       __parameter_count
+	#emit LOAD.S.alt       __args_offset
 	#emit ADD
 	#emit STOR.S.pri       i
 	while (i > end)
@@ -101,7 +101,7 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 	{}
 	#emit PUSH.C           512
 	#emit PUSH.ADR         msg
-	#emit LOAD.S.pri       __parameter_count
+	#emit LOAD.S.pri       __args_offset
 	#emit ADD.C            __1_cell
 	#emit PUSH.pri
 	#emit SYSREQ.C         format
