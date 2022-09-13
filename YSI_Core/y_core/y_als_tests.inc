@@ -78,6 +78,9 @@ Optional plugins:
 
 static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
+	const cells0 = 8 * cellbytes;
+	const cells1 = 8 * cellbytes;
+	const cells2 = 4 * cellbytes;
 	#pragma unused fmat
 	// This function formats the incoming data and compares it to the reference.
 	new
@@ -85,24 +88,24 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 		i = 0,
 		end = 0; // 12 + 4 + 4.
 	// Get the stack position after `result`.
-	#emit ADDR.pri         16
+	#emit ADDR.pri         fmat
 	#emit STOR.S.pri       end
 	// Get the stack position after everything.
-	#emit ADDR.pri         12
-	#emit LOAD.S.alt       8
+	#emit ADDR.pri         result
+	#emit LOAD.S.alt       cells0
 	#emit ADD
 	#emit STOR.S.pri       i
 	while (i > end)
 	{
-		i -= 4;
+		i -= cellbytes;
 		#emit LREF.S.pri       i
 		#emit PUSH.pri
 	}
 	{}
 	#emit PUSH.C           512
 	#emit PUSH.ADR         msg
-	#emit LOAD.S.pri       8
-	#emit ADD.C            4
+	#emit LOAD.S.pri       cells1
+	#emit ADD.C            cells2
 	#emit PUSH.pri
 	#emit SYSREQ.C         format
 	// Remove the data from the stack.

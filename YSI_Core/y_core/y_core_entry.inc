@@ -252,6 +252,7 @@ forward bool:DisasmWrite(const filename[]);
 
 #include "y_shortvar"
 #include "y_pp"
+#include "y_emit"
 #include "y_als_impl"
 
 // A few nicely named short strings used for properties.
