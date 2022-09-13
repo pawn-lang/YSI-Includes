@@ -112,7 +112,7 @@ static stock Iter_Random_Impl(count, const array[], start, num)
 		last = 0;
 	#emit LOAD.S.pri   num
 	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
-	#emit ADDR.alt     __param3_offset
+	#emit ADDR.alt     __param4_offset
 	#emit STOR.S.alt   first
 	#emit ADD
 	#emit STOR.S.pri   last
