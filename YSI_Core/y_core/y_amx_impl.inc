@@ -318,8 +318,7 @@ static AMX_GetGlobal()
 	// Call dummy function and read its (absolute) address from code.
 	AMX_DoNothing();
 	#emit LCTRL        6
-	#emit CONST.alt    __3_cells
-	#emit SUB
+	#emit ADD.C        __m3_cells
 	#emit LOAD.alt     AMX_HEADER_COD
 	#emit ADD
 	#emit STOR.S.pri   addr
