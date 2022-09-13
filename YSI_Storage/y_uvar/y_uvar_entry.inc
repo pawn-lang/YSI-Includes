@@ -322,12 +322,12 @@ public OnCodeInit()
 	while ((idx = AMX_GetPublicPointerSuffix(idx, buffer, _A<@yA_>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
+		#emit LCTRL      __cip
 		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri buffer
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 	
 	#if defined UVar_OnCodeInit
@@ -431,13 +431,13 @@ stock _Uvar_DoSavePlayer(playerid)
 			// Now push the size of data put on the stack.
 			#emit PUSH.C     12
 			// Now get the return address and push it.
-			#emit LCTRL      6
+			#emit LCTRL      __cip
 			#emit ADD.C      36
-			#emit LCTRL      8
+			#emit LCTRL      __jit
 			#emit PUSH.pri
 			// Call "Player_WriteArray" directly.
 			#emit CONST.pri  Player_WriteArray
-			#emit SCTRL      6
+			#emit SCTRL      __cip
 			// DO NOT CHANGE THE CODE ABOVE HERE!!!
 		}
 	}
@@ -490,13 +490,13 @@ HOOK__ OnPlayerConnect(playerid)
 			// Now push the size of data put on the stack.
 			#emit PUSH.C     12
 			// Now get the return address and push it.
-			#emit LCTRL      6
+			#emit LCTRL      __cip
 			#emit ADD.C      36
-			#emit LCTRL      8
+			#emit LCTRL      __jit
 			#emit PUSH.pri
 			// Call "MemSet" directly.
 			#emit CONST.pri  MemSet
-			#emit SCTRL      6
+			#emit SCTRL      __cip
 			// DO NOT CHANGE THE CODE ABOVE HERE!!!
 		}
 	}

@@ -642,7 +642,7 @@ public OnCodeInit()
 	Debug_Fatal("@_ == 0");
 	while (s != 10000000) ++s;
 	#emit CONST.pri 0
-	#emit SCTRL     6
+	#emit SCTRL     __cip
 	return 1;
 }
 

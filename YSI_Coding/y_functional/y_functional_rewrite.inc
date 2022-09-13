@@ -387,7 +387,7 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		
 		// Dump this bit of excess stack to the heap.
 		@emit HEAP             excess
-		@emit LCTRL            4
+		@emit LCTRL            __stk
 		@emit MOVS             excess
 		@emit STACK            excess
 	}
@@ -404,10 +404,10 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 		// Dump this bit of excess stack to the heap.
 		@emit STACK            -excess
 		@emit STACK            0
-		@emit LCTRL            2
+		@emit LCTRL            __hea
 		@emit ADD.C            -excess
 		@emit MOVS             excess
-		@emit SCTRL            2
+		@emit SCTRL            __hea
 		
 		@emit JUMP.rel         (callPos - YSI_g_sFunctionalAfterPos - 48)
 	}

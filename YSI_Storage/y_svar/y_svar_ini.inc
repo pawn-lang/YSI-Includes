@@ -330,13 +330,13 @@ Svar_Save()
 		#emit PUSH.S     __fwrite
 		#emit PUSH.C     16
 		// Now get the return address and push it.
-		#emit LCTRL      6
+		#emit LCTRL      __cip
 		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __jit
 		#emit PUSH.pri
 		// Call "Player_WriteArray" directly.
 		#emit CONST.pri  INI_WriteArray
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 		// DO NOT CHANGE THE CODE ABOVE HERE!!!
 	}
 	INI_Close(__fwrite);
@@ -354,12 +354,12 @@ public OnCodeInit()
 	while ((idx = AMX_GetPublicPointerSuffix(idx, buffer, _A<@yS_>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
+		#emit LCTRL      __cip
 		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri buffer
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 	// We don't need any of the reset code, but we do need the loading code.
 	#if !defined _YSI_ONLY_ONE_CONFIG_LOAD

@@ -107,9 +107,9 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit SYSREQ.C         format
 	// Remove the data from the stack.
 	#emit POP.alt
-	#emit LCTRL            4
+	#emit LCTRL            __stk
 	#emit ADD
-	#emit SCTRL            4
+	#emit SCTRL            __stk
 	//format(msg, sizeof (msg), fmat, ___2);
 	new
 		bool:cmp = !strcmp(result, msg);

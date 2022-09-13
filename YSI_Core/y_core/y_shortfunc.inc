@@ -183,7 +183,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// from "pri" to "alt".
 	#emit STOR.S.pri   __local1_offset
 	#emit HEAP         __7_cells
-	#emit LCTRL        4
+	#emit LCTRL        __stk
 	#emit MOVS         __7_cells
 	
 	// Call "CallRemoteFunction".
@@ -204,7 +204,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// Restore the stack.
 	#emit STACK        __m7_cells
 	#emit STACK        0          // Load new stack pointer in to "alt".
-	#emit LCTRL        2
+	#emit LCTRL        __hea
 	#emit ADD.C        __m7_cells
 	#emit MOVS         __7_cells
 	#emit HEAP         __m7_cells
@@ -278,11 +278,11 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// Return from two functions at once, while unpopping all our data.  By
 	// doing this we know out string return fix/optimisation will apply.
 	#emit LOAD.S.pri   __frame_offset
-	#emit SCTRL        5
+	#emit SCTRL        __frm
 	#emit LOAD.S.alt   __local0_offset
-	#emit SCTRL        4
+	#emit SCTRL        __stk
 	#emit MOVE.pri
-	#emit SCTRL        2
+	#emit SCTRL        __hea
 	#emit ZERO.pri
 	#emit RETN
 	
@@ -325,7 +325,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// from "pri" to "alt".
 	#emit STOR.S.pri   __local1_offset
 	#emit HEAP         __7_cells
-	#emit LCTRL        4
+	#emit LCTRL        __stk
 	#emit MOVS         __7_cells
 	
 	// Call "CallRemoteFunction".
@@ -346,7 +346,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// Restore the stack.
 	#emit STACK        __m7_cells
 	#emit STACK        0          // Load new stack pointer in to "alt".
-	#emit LCTRL        2
+	#emit LCTRL        __hea
 	#emit ADD.C        __m7_cells
 	#emit MOVS         __7_cells
 	#emit HEAP         __m7_cells
@@ -389,11 +389,11 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	{}
 	
 	#emit LOAD.S.pri   __frame_offset
-	#emit SCTRL        5
+	#emit SCTRL        __frm
 	#emit LOAD.S.alt   __local0_offset
-	#emit SCTRL        4
+	#emit SCTRL        __stk
 	#emit MOVE.pri
-	#emit SCTRL        2
+	#emit SCTRL        __hea
 	#emit LOAD.pri     YSI_g_sCallData
 	#emit RETN
 	
@@ -418,7 +418,7 @@ stock F@(calltype = 1, master = -1, heapptr = 0)
 	// This function stores the heap size before certain calls so that we can
 	// revert afterwards.  It puts the size on the stack, then lies about the
 	// stack size for the return, so that the value stays on.
-	#emit LCTRL        2
+	#emit LCTRL        __hea
 	#emit STOR.S.pri   heapptr
 	#emit ZERO.S       __args_offset
 	#emit RETN

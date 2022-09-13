@@ -111,12 +111,12 @@ Optional plugins:
 		#pragma unused success
 		#emit PUSH.S       extra
 		#emit PUSH.C       8
-		#emit LCTRL        6
+		#emit LCTRL        __cip
 		#emit ADD.C        36
-		#emit LCTRL        8
+		#emit LCTRL        __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri   ptr
-		#emit SCTRL        6
+		#emit SCTRL        __cip
 		// Fun fact.  If we just got rid of `PUSH.S success` and added `RETN` right here, the code
 		// would still work because the `new` pushes the result on to the stack, then we push it a
 		// second time.
@@ -131,12 +131,12 @@ Optional plugins:
 		#emit PUSH.S       hashid
 		#emit PUSH.S       extra
 		#emit PUSH.C       8
-		#emit LCTRL        6
+		#emit LCTRL        __cip
 		#emit ADD.C        36
-		#emit LCTRL        8
+		#emit LCTRL        __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri   ptr
-		#emit SCTRL        6
+		#emit SCTRL        __cip
 	}
 
 	stock bool:BCrypt_Check(extra, const callback[], const password[], const hash[])

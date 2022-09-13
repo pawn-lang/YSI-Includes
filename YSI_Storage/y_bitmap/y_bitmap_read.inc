@@ -386,7 +386,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			// We now have all the colours pushed on to the stack.
 
 			// Copy them to `dest` in one go.
-			#emit LCTRL                4
+			#emit LCTRL                __stk
 			#emit LOAD.S.alt           dest
 			#emit MOVS                 128
 			#emit CONST.pri            128
@@ -433,7 +433,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			// We now have all the colours pushed on to the stack.
 
 			// Copy them to `dest` in one go.
-			#emit LCTRL                4
+			#emit LCTRL                __stk
 			#emit LOAD.S.alt           dest
 			#emit MOVS                 16
 			#emit CONST.pri            16

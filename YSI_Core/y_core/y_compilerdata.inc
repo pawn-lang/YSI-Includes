@@ -738,8 +738,8 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		#emit PUSH.C       12     // Push the parameters for `StrCpy`.
 		#emit SYSREQ.C     strcat // Call `strcat`.
 		#emit LOAD.S.pri   0      // Reload the previous frame pointer.
-		#emit SCTRL        4      // Wipe out the stack.
-		#emit SCTRL        5      // Wipe out the frame (go to parent context).
+		#emit SCTRL        __stk      // Wipe out the stack.
+		#emit SCTRL        __frm      // Wipe out the frame (go to parent context).
 		#emit RETN                // Return (now within the parent context).
 		return 0;
 	}

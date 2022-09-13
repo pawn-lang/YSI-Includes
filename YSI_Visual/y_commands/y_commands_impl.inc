@@ -532,13 +532,13 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 			#emit PUSH.pri
 			#emit PUSH.S      p
 			#emit PUSH.C      12
-			#emit LCTRL       6
+			#emit LCTRL       __cip
 			#emit ADD.C       44
-			#emit LCTRL       8
+			#emit LCTRL       __jit
 			#emit PUSH.pri
 			#emit LOAD.pri    sHash
-			#emit SCTRL       8
-			#emit SCTRL       6
+			#emit SCTRL       __jit
+			#emit SCTRL       __cip
 			#emit STOR.pri    sRet
 			Debug_Print5("Command_ReProces: Result = %d %d %d", sRet, Command_Error(p, e_COMMAND_ERRORS:sRet), _:COMMAND_OK);
 		}

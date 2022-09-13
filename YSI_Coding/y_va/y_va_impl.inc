@@ -139,14 +139,14 @@ stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 	// This means there is 24 bytes of information we need to move to globals,
 	// since we are about to totally destroy our own stack.
 	#emit POP.pri
-	#emit SCTRL        5 // Go back to the previous frame.
+	#emit SCTRL        __frm // Go back to the previous frame.
 	// The frame is now the same.
 	#emit POP.pri
 	#emit MOVE.alt
 	#emit STOR.pri     sReturnAddress
 	#emit POP.pri        // Don't care about this parameter count (don't save).
 	#emit POP.alt                        // skippedBytes
-	#emit LCTRL        5                 // frame
+	#emit LCTRL        __frm                 // frame
 	#emit ADD.C        12                // frame + 12
 	#emit ADD                            // frame + 12 + skippedBytes
 	#emit STOR.pri     sParametersBase
@@ -166,10 +166,10 @@ stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 	#emit LOAD.pri     sTotalParameters
 	#emit STOR.I
 	// Move the stack down enough for the new parameters.  `[stk]` is in `pri`.
-	#emit LCTRL        4
+	#emit LCTRL        __stk
 	#emit LOAD.alt     sPushedParameters
 	#emit SUB
-	#emit SCTRL        4 // Move the stack down a load at once.
+	#emit SCTRL        __stk // Move the stack down a load at once.
 	// The stack pointer should be in `alt`.  This code is just:
 	//   
 	//	 memcpy(&stack, sParametersBase, 0, sPushedParameters, cellmax);
@@ -187,8 +187,8 @@ stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 	// Return from this function.  We are already in the parent frame and have
 	// no parameters on the stack, so function postamble is not required.
 	#emit LOAD.pri     sReturnAddress
-	#emit SCTRL        8
-	#emit SCTRL        6
+	#emit SCTRL        __jit
+	#emit SCTRL        __cip
 }
 
 // Enable `&YVA2_DummyPush` WITHOUT matching it within the scanner itself.
@@ -327,11 +327,11 @@ static stock YVA2_CodeGenMainCleanup(ctx[AsmContext])
 	// Save the return value.
 	@emit STOR.pri     AMX_Ref(sTemp) // 12
 	// Load the stack pointer.
-	@emit LCTRL        4          // 20
+	@emit LCTRL        __stk          // 20
 	// Remove the number of pushed parameters.
 	@emit ADD                     // 24
 	// Store the stack pointer.
-	@emit SCTRL        4          // 32
+	@emit SCTRL        __stk          // 32
 	// Restore the return value.
 	@emit LOAD.pri     AMX_Ref(sTemp) // 40
 }

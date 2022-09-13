@@ -438,8 +438,8 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 	// Now double return, to exit the call site as well.
 	#emit LOAD.S.alt       ret
 	#emit LOAD.S.pri       0
-	#emit SCTRL            5
-	#emit SCTRL            4
+	#emit SCTRL            __frm
+	#emit SCTRL            __stk
 	#emit MOVE.pri
 	#emit RETN
 }
@@ -508,9 +508,9 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 			#emit SYSREQ.C         format
 			// Remove the data from the stack.
 			#emit POP.alt
-			#emit LCTRL            4
+			#emit LCTRL            __stk
 			#emit ADD
-			#emit SCTRL            4
+			#emit SCTRL            __stk
 			//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
 		#if defined YSI_DIALOG_ASK
 			YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
@@ -660,12 +660,12 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			}
 			state y_testing_phase : y_testing_phase_determine;
 			#emit PUSH.C                    0
-			#emit LCTRL                     6
+			#emit LCTRL                     __cip
 			#emit ADD.C                     __9_cells
-			#emit LCTRL                     8
+			#emit LCTRL                     __jit
 			#emit PUSH.pri
 			#emit LREF.S.pri                entry
-			#emit SCTRL                     6
+			#emit SCTRL                     __cip
 			#emit STOR.S.pri                skipped
 			switch (skipped)
 			{
@@ -838,12 +838,12 @@ Testing_Next_retry:
 				state y_testing_phase : y_testing_phase_determine;
 				#emit PUSH.S                    playerid
 				#emit PUSH.C                    __1_cell
-				#emit LCTRL                     6
+				#emit LCTRL                     __cip
 				#emit ADD.C                     __9_cells
-				#emit LCTRL                     8
+				#emit LCTRL                     __jit
 				#emit PUSH.pri
 				#emit LREF.S.pri                entry
-				#emit SCTRL                     6
+				#emit SCTRL                     __cip
 				#emit STOR.S.pri                skipped
 				switch (skipped)
 				{

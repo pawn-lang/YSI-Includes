@@ -102,14 +102,14 @@ stock bool:Iter_YieldEnter()
 	#emit ZERO.pri
 	#emit FILL         44
 	// Save the stack size after this function ends.
-	#emit LCTRL        4
+	#emit LCTRL        __stk
 	#emit ADD.C        12
 	#emit STOR.I
 	#emit XCHG
 	#emit ADD.C        12  // Move on to `E_ITER_YIELD_HEAP_START`.
 	#emit XCHG
 	// Save the heap size.
-	#emit LCTRL        2
+	#emit LCTRL        __hea
 	#emit STOR.I
 	#emit XCHG
 	#emit ADD.C        24 // Move on to `E_ITER_YIELD_FRAME`.
@@ -209,14 +209,14 @@ stock bool:Iter_YieldLoop()
 		#emit PUSH.pri
 		#emit CONST.pri    2
 		#emit LIDX
-		#emit SCTRL        2
+		#emit SCTRL        __hea
 		#emit PUSH.C       20
 		#emit SYSREQ.C     memcpy
 		// Restore the stack.
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit CONST.pri    EMIT_MINUS_1
 		#emit LIDX
-		#emit SCTRL        4
+		#emit SCTRL        __stk
 		#emit LREF.pri     YSI_g_sPtr // Or ZERO.pri, LIDX
 		#emit PUSH.pri
 		#emit PUSH.pri
@@ -227,7 +227,7 @@ stock bool:Iter_YieldLoop()
 		#emit SREF.alt     YSI_g_sPtr
 		#emit PUSH.pri
 		#emit STOR.pri     YSI_g_sStackPtr
-		#emit LCTRL        4
+		#emit LCTRL        __stk
 		#emit ADD.C        16
 		#emit PUSH.pri
 		#emit PUSH.C       20
@@ -237,11 +237,11 @@ stock bool:Iter_YieldLoop()
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit CONST.pri    5
 		#emit LIDX
-		#emit SCTRL        5
+		#emit SCTRL        __frm
 		#emit CONST.pri    6
 		#emit LIDX
-		#emit SCTRL        8
-		#emit SCTRL        6
+		#emit SCTRL        __jit
+		#emit SCTRL        __cip
 		// Technically, we never return from here, but the compiler can't know!
 	}
 	return true;
@@ -264,7 +264,7 @@ stock Iter_YieldReturn(value)
 	// Stack (excluding this function and intermediate results).
 	#emit ADD.C        4
 	#emit MOVE.alt
-	#emit LCTRL        4
+	#emit LCTRL        __stk
 	#emit ADD.C        16
 	#emit STOR.I
 	#emit LREF.alt     YSI_g_sPtr
@@ -277,7 +277,7 @@ stock Iter_YieldReturn(value)
 	#emit ADD.C        8
 	#emit XCHG
 	#emit STOR.I
-	#emit LCTRL        4
+	#emit LCTRL        __stk
 	#emit ADD.C        28
 	#emit PUSH.pri
 	#emit LOAD.alt     YSI_g_sStackPtr
@@ -295,7 +295,7 @@ stock Iter_YieldReturn(value)
 	// Heap.
 	#emit ADD.C        4
 	#emit MOVE.alt
-	#emit LCTRL        2
+	#emit LCTRL        __hea
 	#emit STOR.I
 	// Using `LCTRL 2` is faster than saving and restoring the value.
 	#emit LREF.alt     YSI_g_sPtr
@@ -308,7 +308,7 @@ stock Iter_YieldReturn(value)
 	#emit ADD.C        8
 	#emit XCHG
 	#emit STOR.I
-	#emit LCTRL        2
+	#emit LCTRL        __hea
 	#emit PUSH.pri
 	#emit LOAD.alt     YSI_g_sStackPtr
 	#emit PUSH.alt
@@ -334,18 +334,18 @@ stock Iter_YieldReturn(value)
 	// storage, because we just destroyed the stack!
 	#emit CONST.pri    1
 	#emit LIDX
-	#emit SCTRL        5
+	#emit SCTRL        __frm
 	#emit CONST.pri    EMIT_MINUS_8
 	#emit LIDX
-	#emit SCTRL        4
+	#emit SCTRL        __stk
 	#emit CONST.pri    minus5
 	#emit LIDX
-	#emit SCTRL        2
+	#emit SCTRL        __hea
 	// No longer in this iterator.
 	#emit DEC          YSI_gIteratorDepth
 	#emit CONST.pri    2
 	#emit LIDX
-	#emit SCTRL        8
-	#emit SCTRL        6
+	#emit SCTRL        __jit
+	#emit SCTRL        __cip
 }
 

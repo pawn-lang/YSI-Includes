@@ -1345,12 +1345,12 @@ GLOBAL__ Group:Iter_Func@GroupChild(start, Group:parent)
 stock _Y_G@C_0(func)
 {
 	#emit PUSH.C     0
-	#emit LCTRL      6
+	#emit LCTRL      __cip
 	#emit ADD.C      36
-	#emit LCTRL      8
+	#emit LCTRL      __jit
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
-	#emit SCTRL      6
+	#emit SCTRL      __cip
 	// ALWAYS return 0;
 	return 0;
 }
@@ -1359,12 +1359,12 @@ stock _Y_G@C_1(func, GLOBAL_TAG_TYPES:...)
 {
 	#emit PUSH.S     16
 	#emit PUSH.C     4
-	#emit LCTRL      6
+	#emit LCTRL      __cip
 	#emit ADD.C      36
-	#emit LCTRL      8
+	#emit LCTRL      __jit
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
-	#emit SCTRL      6
+	#emit SCTRL      __cip
 	//#emit RETN
 	return 0;
 }
@@ -1374,12 +1374,12 @@ stock _Y_G@C_2(func, GLOBAL_TAG_TYPES:...)
 	#emit PUSH.S     20
 	#emit PUSH.S     16
 	#emit PUSH.C     8
-	#emit LCTRL      6
+	#emit LCTRL      __cip
 	#emit ADD.C      36
-	#emit LCTRL      8
+	#emit LCTRL      __jit
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
-	#emit SCTRL      6
+	#emit SCTRL      __cip
 	//#emit RETN
 	return 0;
 }
@@ -1390,12 +1390,12 @@ stock _Y_G@C_3(func, GLOBAL_TAG_TYPES:...)
 	#emit PUSH.S     20
 	#emit PUSH.S     16
 	#emit PUSH.C     12
-	#emit LCTRL      6
+	#emit LCTRL      __cip
 	#emit ADD.C      36
-	#emit LCTRL      8
+	#emit LCTRL      __jit
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
-	#emit SCTRL      6
+	#emit SCTRL      __cip
 	//#emit RETN
 	return 0;
 }

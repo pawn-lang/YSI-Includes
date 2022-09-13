@@ -223,11 +223,11 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 	}
 	s = Iter_Random_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
 	#emit SHL.C.alt            2
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return s;
 }
 
@@ -263,11 +263,11 @@ stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 	}
 	s = Iter_RandomFree_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
 	#emit SHL.C.alt            2
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return Iter_Add_InternalC(count, array, start, s);
 }
 
@@ -312,11 +312,11 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 	}
 	s = Iter_RandomFree_Impl(count, array, size, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
 	#emit SHL.C.alt            2
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return Iter_Add_InternalD(counts[slot], array, start, size, s);
 }
 
@@ -352,11 +352,11 @@ stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
 	}
 	s = Iter_Random_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
 	#emit SHL.C.alt            2
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return Iter_Remove_InternalC(count, array, start, s);
 }
 
@@ -393,11 +393,11 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 	}
 	s = Iter_Random_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
 	#emit SHL.C.alt            2
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
 	return Iter_Remove_InternalD(count, array, start, size, s);
@@ -435,11 +435,11 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 	}
 	s = Iter_RandomFree_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
 	#emit SHL.C.alt            2
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return s;
 }
 
@@ -578,11 +578,11 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
 	}
 	s = Iter_RandomFree_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
 	#emit SHL.C.alt            2
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return s;
 }
 

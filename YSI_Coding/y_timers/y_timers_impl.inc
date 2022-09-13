@@ -105,12 +105,12 @@ public OnCodeInit()
 			#emit PUSH.S     pointer
 			#emit PUSH.C     EMIT_MINUS_1 // -1: Initial list action for `_Timer_D`.
 			#emit PUSH.C     8
-			#emit LCTRL      6
+			#emit LCTRL      __cip
 			#emit ADD.C      36
-			#emit LCTRL      8
+			#emit LCTRL      __jit
 			#emit PUSH.pri
 			#emit LOAD.S.pri pointer
-			#emit SCTRL      6
+			#emit SCTRL      __cip
 			#emit STOR.S.pri time
 			//YSI_g_sCurFunc = 0;
 			Debug_Print7("Timer_OnYSIInit: time: %d", time);
@@ -133,12 +133,12 @@ public OnCodeInit()
 					#emit PUSH.C     0
 					#emit PUSH.C     EMIT_MINUS_1
 					#emit PUSH.C     8
-					#emit LCTRL      6
+					#emit LCTRL      __cip
 					#emit ADD.C      36
-					#emit LCTRL      8
+					#emit LCTRL      __jit
 					#emit PUSH.pri
 					#emit LOAD.S.pri pointer2
-					#emit SCTRL      6
+					#emit SCTRL      __cip
 					#emit STOR.S.pri time2
 					// Check if the new time is a FACTOR, SAME, or MULTIPLE of
 					// this task, so we don't start different timers together.
@@ -203,12 +203,12 @@ HOOK__ OnPlayerConnect(playerid)
 		// Call the function currently in the list to trigger the repeating
 		// timer.  This involves getting the current "cip" address, modifying it
 		// to get the return address then modifying "cip" to call the function.
-		#emit LCTRL      6
+		#emit LCTRL      __cip
 		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri data
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 		// Returned, get the next list element.
 		cur += 4;
 		#emit LREF.S.pri  cur
@@ -241,12 +241,12 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 		// Call the function currently in the list to trigger the repeating
 		// timer.  This involves getting the current "cip" address, modifying it
 		// to get the return address then modifying "cip" to call the function.
-		#emit LCTRL      6
+		#emit LCTRL      __cip
 		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri data
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 		// Returned, get the next list element.
 		cur += 4;
 		#emit LREF.S.pri  cur

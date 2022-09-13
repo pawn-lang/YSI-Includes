@@ -351,12 +351,12 @@ ScriptInit_PreInitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@yI_>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
+		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      8
+		#emit LCTRL      __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -368,12 +368,12 @@ ScriptInit_PostInitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_yI>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
+		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      8
+		#emit LCTRL      __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -385,12 +385,12 @@ ScriptInit_PreExitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@Iy_>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
+		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      8
+		#emit LCTRL      __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -402,12 +402,12 @@ ScriptInit_PostExitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_Iy>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
+		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      8
+		#emit LCTRL      __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 

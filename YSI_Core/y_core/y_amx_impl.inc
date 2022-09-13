@@ -180,7 +180,7 @@ public OnCodeInit()
 	new
 		addr = 0,
 		data = 0;
-	#emit LCTRL                     1
+	#emit LCTRL                     __dat
 	#emit STOR.S.pri                addr
 	// Invert to get the prefix offset relative to the data.
 	// Get all the script data.
@@ -317,7 +317,7 @@ static AMX_GetGlobal()
 		addr = -1;
 	// Call dummy function and read its (absolute) address from code.
 	AMX_DoNothing();
-	#emit LCTRL        6
+	#emit LCTRL        __cip
 	#emit ADD.C        __m3_cells
 	#emit LOAD.alt     AMX_HEADER_COD
 	#emit ADD
@@ -328,7 +328,7 @@ static AMX_GetGlobal()
 	#emit CONST.alt    AMX_DoNothing
 	#emit SUB
 	#emit MOVE.alt
-	#emit LCTRL        1
+	#emit LCTRL        __dat
 	#emit XCHG
 	#emit SUB
 	// Return

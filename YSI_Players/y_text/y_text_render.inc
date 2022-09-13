@@ -1466,7 +1466,7 @@ Format_Render_start:
 									}
 									else
 									{
-										#emit LCTRL        5
+										#emit LCTRL        __frm
 										#emit LOAD.S.alt   curArg
 										#emit SHL.C.alt    2
 										#emit ADD
@@ -1477,11 +1477,11 @@ Format_Render_start:
 									// Far more parameters that Slice's.
 									#emit PUSH.C       24 // 4 * 6.
 									// This code is almost common now!
-									#emit LCTRL        6
+									#emit LCTRL        __cip
 									#emit ADD.C        28
 									#emit PUSH.pri
 									#emit LOAD.S.pri   fidx
-									#emit SCTRL        6
+									#emit SCTRL        __cip
 									// Now we have returned from the custom
 									// function.
 									Y_RENDER_ADD(ts)
