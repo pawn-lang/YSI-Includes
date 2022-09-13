@@ -786,15 +786,17 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #endif
 
 // Should be an inbuilt constant!
-#define cellbytes (cellbits / charbits)
+#if !defined cellbytes
+	const cellbytes = cellbits / charbits;
+#endif
 
 #if charbits != 8
 	#error YSI assumes `charbits` is 8.
 #endif
 
-#define __COMPILER_CELL_BYTES cellbytes
-#define __COMPILER_CELL_BITS  cellbits
-#define __COMPILER_CHAR_BITS  charbits
+const __COMPILER_CELL_BYTES = cellbytes;
+const __COMPILER_CELL_BITS  = cellbits;
+const __COMPILER_CHAR_BITS  = charbits;
 
 // How much to adjust a cell count by to get a byte count.
 #if cellbits == 8
@@ -820,7 +822,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#error Unknown `cellbits` size.
 #endif
 
-#define FUNCTION_LENGTH (__COMPILER_sNAMEMAX + 1)
+const FUNCTION_LENGTH = __COMPILER_sNAMEMAX + 1;
 
 // Core tags.
 #if defined _INC_indirection
