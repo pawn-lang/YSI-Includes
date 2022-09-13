@@ -157,17 +157,17 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	
 	// Swap the last two parameters - one is the hidden return value, the other
 	// is the hidden master ID pointer.
-	#emit LOAD.S.pri   8
-	#emit ADDR.alt     12
+	#emit LOAD.S.pri   __args_offset
+	#emit ADDR.alt     __param0_offset
 	#emit ADD
 	#emit PUSH.pri
-	#emit ADD.C        4
+	#emit ADD.C        __1_cell
 	#emit PUSH.pri
-	#emit LREF.S.pri   EMIT_MINUS_4
-	#emit LREF.S.alt   EMIT_MINUS_8
-	#emit SREF.S.pri   EMIT_MINUS_8
-	#emit SREF.S.alt   EMIT_MINUS_4
-	#emit STACK        8
+	#emit LREF.S.pri   __local0_offset
+	#emit LREF.S.alt   __local1_offset
+	#emit SREF.S.pri   __local1_offset
+	#emit SREF.S.alt   __local0_offset
+	#emit STACK        __2_cells
 	
 	// Push the current master ID on to the master stack.  Returns the old
 	// master ID stored in the property, which we can shove on to the heap to
@@ -175,39 +175,39 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit PUSH.C       Q@
 	#emit PUSH         @_
 	#emit PUSH.C       YSI_g_sPropCaller
-	#emit PUSH.C       8
-	#emit PUSH.C       16
+	#emit PUSH.C       8          // Property group, not in cells.
+	#emit PUSH.C       __4_cells
 	#emit SYSREQ.C     setproperty
 	
 	// Back up the frame header information and the return value.  "MOVS" copies
 	// from "pri" to "alt".
-	#emit STOR.S.pri   EMIT_MINUS_8
-	#emit HEAP         28
+	#emit STOR.S.pri   __local1_offset
+	#emit HEAP         __7_cells
 	#emit LCTRL        4
-	#emit MOVS         28
+	#emit MOVS         __7_cells
 	
 	// Call "CallRemoteFunction".
 	if (YSI_g_sCallData)
 	{
-		#emit STACK        28
+		#emit STACK        __7_cells
 		#emit SYSREQ.C     CallRemoteFunction
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	else
 	{
-		#emit STACK        28
+		#emit STACK        __7_cells
 		#emit SYSREQ.C     CallLocalFunction
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
 	
 	// Restore the stack.
-	#emit STACK        EMIT_MINUS_28
+	#emit STACK        __m7_cells
 	#emit STACK        0          // Load new stack pointer in to "alt".
 	#emit LCTRL        2
-	#emit ADD.C        EMIT_MINUS_28
-	#emit MOVS         28
-	#emit HEAP         EMIT_MINUS_28
+	#emit ADD.C        __m7_cells
+	#emit MOVS         __7_cells
+	#emit HEAP         __m7_cells
 	
 	// Restore the master caller.  Already pushed the parameters earlier, before
 	// backing them up on the heap (saved extra work now sorting out which saved
@@ -219,23 +219,23 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		// Get the return value.  Already have most of the parameters pushed,
 		// just modify one of them (the name).
 		#emit CONST.pri    YSI_g_sPropEmpty
-		#emit STOR.S.pri   EMIT_MINUS_12
+		#emit STOR.S.pri   __local2_offset
 		#emit LOAD.pri     YSI_g_sYSIM_STRING
-		#emit STOR.S.pri   EMIT_MINUS_8
+		#emit STOR.S.pri   __local1_offset
 		#emit SYSREQ.C     getproperty
 		
 		// Unpack the return to the previous function's return string.
 		#emit PUSH         YSI_g_sYSI_MAX_STRING
 		#emit PUSH.C       Q@
-		#emit LOAD.S.pri   0
+		#emit LOAD.S.pri   __frame_offset
 		#emit MOVE.alt
-		#emit ADD.C        8
+		#emit ADD.C        __2_cells
 		#emit LOAD.I
-		#emit ADD.C        12
+		#emit ADD.C        __3_cells
 		#emit ADD
 		#emit LOAD.I
 		#emit PUSH.pri
-		#emit PUSH.C       12
+		#emit PUSH.C       __3_cells
 		#emit SYSREQ.C     strunpack
 		
 		// Get all the varargs (without using our corrupted stack).
@@ -262,11 +262,11 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	else
 	{
 		// NULL the return.
-		#emit LOAD.S.pri   0
+		#emit LOAD.S.pri   __frame_offset
 		#emit MOVE.alt
-		#emit ADD.C        8
+		#emit ADD.C        __2_cells
 		#emit LOAD.I
-		#emit ADD.C        12
+		#emit ADD.C        __3_cells
 		#emit ADD
 		#emit LOAD.I
 		#emit MOVE.alt
@@ -277,9 +277,9 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	
 	// Return from two functions at once, while unpopping all our data.  By
 	// doing this we know out string return fix/optimisation will apply.
-	#emit LOAD.S.pri   0
+	#emit LOAD.S.pri   __frame_offset
 	#emit SCTRL        5
-	#emit LOAD.S.alt   EMIT_MINUS_4
+	#emit LOAD.S.alt   __local3_offset
 	#emit SCTRL        4
 	#emit MOVE.pri
 	#emit SCTRL        2
@@ -317,39 +317,39 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit PUSH.C       YSI_g_sPropEmpty
 	#emit PUSH         @_
 	#emit PUSH.C       YSI_g_sPropCaller
-	#emit PUSH.C       8
-	#emit PUSH.C       16
+	#emit PUSH.C       8 // Property group, not in cells.
+	#emit PUSH.C       __4_cells
 	#emit SYSREQ.C     setproperty
 	
 	// Back up the frame header information and the return value.  "MOVS" copies
 	// from "pri" to "alt".
-	#emit STOR.S.pri   EMIT_MINUS_8
-	#emit HEAP         28
+	#emit STOR.S.pri   __local1_offset
+	#emit HEAP         __7_cells
 	#emit LCTRL        4
-	#emit MOVS         28
+	#emit MOVS         __7_cells
 	
 	// Call "CallRemoteFunction".
 	if (YSI_g_sCallData)
 	{
-		#emit STACK        28
+		#emit STACK        __7_cells
 		#emit SYSREQ.C     CallRemoteFunction
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	else
 	{
-		#emit STACK        28
+		#emit STACK        __7_cells
 		#emit SYSREQ.C     CallLocalFunction
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
 	
 	// Restore the stack.
-	#emit STACK        EMIT_MINUS_28
+	#emit STACK        __m7_cells
 	#emit STACK        0          // Load new stack pointer in to "alt".
 	#emit LCTRL        2
-	#emit ADD.C        EMIT_MINUS_28
-	#emit MOVS         28
-	#emit HEAP         EMIT_MINUS_28
+	#emit ADD.C        __m7_cells
+	#emit MOVS         __7_cells
+	#emit HEAP         __m7_cells
 	
 	// Restore the master caller.  Already pushed the parameters earlier, before
 	// backing them up on the heap (saved extra work now sorting out which saved
@@ -361,7 +361,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		// Get the return value.  Already have most of the parameters pushed,
 		// just modify one of them (the name).
 		#emit CONST.pri    YSI_g_sPropReturn
-		#emit STOR.S.pri   EMIT_MINUS_12
+		#emit STOR.S.pri   __local2_offset
 		#emit SYSREQ.C     getproperty
 		#emit STOR.pri     YSI_g_sCallData
 		
@@ -388,9 +388,9 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	}
 	{}
 	
-	#emit LOAD.S.pri   0
+	#emit LOAD.S.pri   __frame_offset
 	#emit SCTRL        5
-	#emit LOAD.S.alt   EMIT_MINUS_4
+	#emit LOAD.S.alt   __local0_offset
 	#emit SCTRL        4
 	#emit MOVE.pri
 	#emit SCTRL        2
@@ -420,7 +420,7 @@ stock F@(calltype = 1, master = -1, heapptr = 0)
 	// stack size for the return, so that the value stays on.
 	#emit LCTRL        2
 	#emit STOR.S.pri   heapptr
-	#emit ZERO.S       8
+	#emit ZERO.S       __args_offset
 	#emit RETN
 	return 0;
 }

@@ -838,7 +838,7 @@ stock Debug_PrintQ_IMPL(Debug_PrintQ_TAG:tag, Debug_PrintQ_SIZEOF:size, const ex
 	else if (tag == Debug_PrintQ_TAG:tagof (_:))
 	{
 		// Reuse `line` because we no longer need it.
-		#emit LOAD.S.pri 32
+		#emit LOAD.S.pri __param5_offset
 		#emit STOR.S.pri line
 		if (Debug_IsStringLike(line, _:size))
 			Debug_PrintQ_PRINT("    %s[%d] = \"%s\"", expr, size, line);

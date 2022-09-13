@@ -719,6 +719,8 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	
 	stock __CompilerStringReturn(const str[], size = sizeof (str), dummy = 0)
 	{
+		// Only needed on old compilers.
+		assert(cellbits == 32);
 		#pragma unused dummy
 		#emit PUSH.S       size   // Push the first parameter.
 		#emit PUSH.S       str    // Push the second parameter.
