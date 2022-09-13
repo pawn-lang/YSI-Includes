@@ -5256,17 +5256,15 @@ FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 #define _ALS_FloatAbs
 
 #if __COMPILER___EMIT_U
-	// Stops 1 bit short because we `| 1` it, so the LSB is set anyway.
+	// Basically `x - (2 * x)`, if x is negative.
 	#define Abs(%0) \
 		__emit(                            \
-			LOAD.U.pri  %0                ,\
-			PUSH.pri                      ,\
-			CONST.alt   y_utils_abs_shift ,\
-			SSHR                          ,\
-			CONST.alt   1                 ,\
-			OR                            ,\
-			POP.alt                       ,\
-			SMUL                           \
+			LOAD.U.alt  %0                ,\
+			MOVE.pri                      ,\
+			SHR.C.pri   y_utils_abs_shift ,\
+			SHL.C.pri   1                 ,\
+			SMUL                          ,\
+			SUB.alt                        \
 		)
 	#endinput
 #endif

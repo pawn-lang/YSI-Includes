@@ -148,7 +148,7 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 }
 
 // `- 1` also works.
-const y_utils_abs_shift = cellbits - 2;
+const y_utils_abs_shift = cellbits - 1;
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
