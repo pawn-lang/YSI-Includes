@@ -179,12 +179,12 @@ static stock CTRL_LCTRLStub()
 	#emit PUSH.C           8
 
 	// And set up a second function call.
-	#emit LCTRL            6
+	#emit LCTRL            __cip
 	#emit ADD.C            36
-	#emit LCTRL            8
+	#emit LCTRL            __jit
 	#emit PUSH.pri
 	#emit LOAD.S.pri       20
-	#emit SCTRL            6
+	#emit SCTRL            __cip
 
 	// We return to here, from which cleanup is easy.
 	#emit LOAD.S.alt       16
@@ -214,12 +214,12 @@ static stock CTRL_SCTRLStub()
 	#emit PUSH.C           8
 
 	// And set up a second function call.
-	#emit LCTRL            6
+	#emit LCTRL            __cip
 	#emit ADD.C            36
-	#emit LCTRL            8
+	#emit LCTRL            __jit
 	#emit PUSH.pri
 	#emit LOAD.S.pri       20
-	#emit SCTRL            6
+	#emit SCTRL            __cip
 
 	// We return to here, from which cleanup is easy.
 	#emit LOAD.S.alt       16

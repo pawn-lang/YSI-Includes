@@ -217,9 +217,9 @@ stock bool:Server_IsLinuxHost()
 	new
 		val = 0;
 	// The code at address 0 is always `HALT`.
-	#emit LCTRL                0
+	#emit LCTRL                __cod
 	#emit MOVE.alt
-	#emit LCTRL                1
+	#emit LCTRL                __dat
 	#emit SUB.alt
 	#emit STOR.S.pri           val
 	#emit LREF.S.alt           val
@@ -233,9 +233,9 @@ stock bool:Server_IsWindowsHost()
 	new
 		val = 0;
 	// The code at address 0 is always `HALT`.
-	#emit LCTRL                0
+	#emit LCTRL                __cod
 	#emit MOVE.alt
-	#emit LCTRL                1
+	#emit LCTRL                __dat
 	#emit SUB.alt
 	#emit STOR.S.pri           val
 	#emit LREF.S.alt           val
@@ -429,7 +429,7 @@ stock Server_PrintIntroMessage(...)
 		// Body.
 		for (new i = 3 * cellbytes, j = (numargs() << __COMPILER_CELL_SHIFT) + (3 * cellbytes), a = 0; i != j; i += cellbytes)
 		{
-			#emit LCTRL          5
+			#emit LCTRL          __frm
 			#emit LOAD.S.alt     i
 			#emit ADD
 			#emit LOAD.I
@@ -472,7 +472,7 @@ stock Server_PrintIntroPart(...)
 		// Body.
 		for (new i = 3 * cellbytes, j = 3 * cellbytes + (numargs() << __COMPILER_CELL_SHIFT), a = 0; i != j; i += cellbytes)
 		{
-			#emit LCTRL          5
+			#emit LCTRL          __frm
 			#emit LOAD.S.alt     i
 			#emit ADD
 			#emit LOAD.I

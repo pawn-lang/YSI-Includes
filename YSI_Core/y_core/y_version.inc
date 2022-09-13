@@ -122,9 +122,9 @@ stock Server_GetJITVersion()
 {
 	if (Script_JITComplete())
 	{
-		#emit LCTRL     6
+		#emit LCTRL     __cip
 		#emit MOVE.alt
-		#emit LCTRL     8
+		#emit LCTRL     __jit
 		#emit NEQ
 		#emit CONST.alt 1
 		#emit XCHG

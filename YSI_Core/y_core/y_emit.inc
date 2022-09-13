@@ -22,8 +22,19 @@ const __local7_offset   =  -8 * cellbytes;
 const __local8_offset   =  -9 * cellbytes;
 const __local9_offset   = -10 * cellbytes;
 
+// General values.
 const __defsize_cells   =   2 * cellbytes;
 const __minus1 = -1;
+
+// Control registers.
+const __cod = 0;
+const __dat = 1;
+const __hea = 2;
+const __stp = 3;
+const __stk = 4;
+const __frm = 5;
+const __cip = 6;
+const __jit = 8;
 
 const __m20_cells = -20 * cellbytes;
 const __m19_cells = -19 * cellbytes;
