@@ -5256,17 +5256,34 @@ FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 #define _ALS_FloatAbs
 
 #if __COMPILER___EMIT_U
-	#define Abs(%0) \
-		__emit(                         \
-			LOAD.U.pri  %0             ,\
-			PUSH.pri                   ,\
-			CONST.alt   30             ,\
-			SSHR                       ,\
-			CONST.alt   1              ,\
-			OR                         ,\
-			POP.alt                    ,\
-			SMUL                        \
-		)
+	#if cellbits == 32
+	#error
+		// Stops 1 bit short because we `| 1` it, so the LSB is set anyway.
+		#define Abs(%0) \
+			__emit(                         \
+				LOAD.U.pri  %0             ,\
+				PUSH.pri                   ,\
+				SHR.C.pri   30             ,\
+				CONST.alt   1              ,\
+				OR                         ,\
+				POP.alt                    ,\
+				SMUL                        \
+			)
+	#elseif cellbits == 64
+		// Stops 1 bit short because we `| 1` it, so the LSB is set anyway.
+		#define Abs(%0) \
+			__emit(                         \
+				LOAD.U.pri  %0             ,\
+				PUSH.pri                   ,\
+				SHR.C.pri   62             ,\
+				CONST.alt   1              ,\
+				OR                         ,\
+				POP.alt                    ,\
+				SMUL                        \
+			)
+	#else
+		#error Unsupported `cellbits`.
+	#endif
 	#endinput
 #endif
 
@@ -5283,9 +5300,8 @@ FUNC_PAWNDOC(Float:FloatAbs(Float:value));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Abs(number)
+stock Abs({Float, _}:number)
 {
-	// 31 also works.
-	return (number >> 30 | 1) * number;
+	return (number >> y_utils_abs_shift | 1) * number;
 }
 

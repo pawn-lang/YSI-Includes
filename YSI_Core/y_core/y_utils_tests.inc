@@ -1242,3 +1242,23 @@ public y_utils_va_return(const str[])
 	ASSERT_EQ(BinStr(!"0b1010"), 0b1010);
 }
 
+@test(.group = "y_utils") y_utils_Abs()
+{
+	ASSERT_EQ(Abs(10), 10);
+	ASSERT_EQ(Abs(20), 20);
+	ASSERT_EQ(Abs(cellmin), cellmin);
+	ASSERT_EQ(Abs(cellmax), cellmax);
+	ASSERT_EQ(Abs(-10), 10);
+	ASSERT_EQ(Abs(0), 0);
+	ASSERT_EQ(Abs(999999999),  999999999);
+	ASSERT_EQ(Abs(-999999999), 999999999);
+	ASSERT_EQ(Abs(-500), 500);
+	ASSERT_EQ(Abs(-600), 600);
+	ASSERT_EQ(Abs(500), 500);
+	ASSERT_EQ(Abs(600), 600);
+	ASSERT_EQ(Float:Abs(1.2), 1.2);
+	ASSERT_EQ(Float:Abs(10.3), 10.3);
+	ASSERT_EQ(Float:Abs(-10.4), 10.4);
+	ASSERT_EQ(Float:Abs(-100.5), 100.5);
+}
+
