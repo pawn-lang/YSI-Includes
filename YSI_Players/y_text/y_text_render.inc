@@ -701,7 +701,7 @@ static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fak
 	if (len <= orem)
 	{
 		Debug_Print5("Format_DoStringSCM: p0.");
-		memcpy(out[oidx], in, 0, len * 4, orem);
+		memcpy(out[oidx], in, 0, len * cellbytes, orem);
 		orem -= len;
 		oidx += len;
 		// The whole string fit in - return true.
@@ -713,7 +713,7 @@ static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fak
 		// Change state to ignore future inputs.
 		Debug_Print5("Format_DoStringSCM: p1.");
 		// Copy as much data as possible.
-		memcpy(out[oidx], in, 0, orem * 4, orem);
+		memcpy(out[oidx], in, 0, orem * cellbytes, orem);
 		//orem -= orem;
 		//oidx += orem;
 		// Don't need to adjust this further down as all the characters will be
@@ -1456,10 +1456,7 @@ Format_Render_start:
 										{
 											++curArg;
 											// Fix the stack.
-											#emit POP.pri
-											#emit POP.pri
-											#emit POP.pri
-											#emit POP.pri
+											#emit STACK        __4_cells
 											break;
 										}
 										#emit PUSH.C       Q@
@@ -1468,17 +1465,17 @@ Format_Render_start:
 									{
 										#emit LCTRL        __frm
 										#emit LOAD.S.alt   curArg
-										#emit SHL.C.alt    2
+										#emit SHL.C.alt    __COMPILER_CELL_SHIFT
 										#emit ADD
 										#emit LOAD.I
 										#emit PUSH.pri
 									}
 									#emit PUSH.C       ts
 									// Far more parameters that Slice's.
-									#emit PUSH.C       24 // 4 * 6.
+									#emit PUSH.C       __6_cells
 									// This code is almost common now!
 									#emit LCTRL        __cip
-									#emit ADD.C        28
+									#emit ADD.C        __7_cells
 									#emit PUSH.pri
 									#emit LOAD.S.pri   fidx
 									#emit SCTRL        __cip

@@ -298,13 +298,13 @@ stock N@(volatile const vardata[], playerCount, dataSize, &pointer)
 	#emit LOAD.pri   YSI_g_sFirstUVarData
 	#emit SREF.S.pri sAddr
 	YSI_g_sFirstUVarData = sAddr;
-	sAddr += 4;
+	sAddr += cellbytes;
 	#emit LOAD.S.pri pointer
 	#emit SREF.S.pri sAddr
-	sAddr += 4;
+	sAddr += cellbytes;
 	#emit LOAD.S.pri playerCount
 	#emit SREF.S.pri sAddr
-	sAddr += 4;
+	sAddr += cellbytes;
 	#emit LOAD.S.pri dataSize
 	#emit SREF.S.pri sAddr
 	Debug_Print5("N@: %d %d %d %d %s", vardata[0], vardata[1], vardata[2], vardata[3], vardata[4]);
@@ -323,7 +323,7 @@ public OnCodeInit()
 	{
 		#emit PUSH.C     0
 		#emit LCTRL      __cip
-		#emit ADD.C      36
+		#emit ADD.C      __9_cells
 		#emit LCTRL      __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri buffer
@@ -397,7 +397,7 @@ stock _Uvar_DoSavePlayer(playerid)
 		// as an array to a function.
 		#emit LOAD.S.pri p
 		// Get the max players.
-		#emit ADD.C      8
+		#emit ADD.C      __2_cells
 		#emit STOR.S.pri temp
 		#emit LREF.S.pri temp
 		#emit STOR.S.pri temp
@@ -405,34 +405,34 @@ stock _Uvar_DoSavePlayer(playerid)
 		{
 			// Get the data size.
 			#emit LOAD.S.pri p
-			#emit ADD.C      12
+			#emit ADD.C      __3_cells
 			#emit STOR.S.pri temp
 			#emit LREF.S.pri temp
 			#emit PUSH.pri
 			// Get the data offset.
 			#emit LOAD.S.alt playerid
 			#emit SMUL
-			#emit SMUL.C     4
+			#emit SMUL.C     __1_cell
 			#emit MOVE.alt
 			// Get the data pointer.
 			#emit LOAD.S.pri p
-			#emit ADD.C      4
+			#emit ADD.C      __1_cell
 			#emit STOR.S.pri temp
 			#emit LREF.S.pri temp
 			#emit ADD
 			#emit PUSH.pri
 			// Get the function name.
 			#emit LOAD.S.pri p
-			#emit ADD.C      16
+			#emit ADD.C      __4_cells
 			#emit PUSH.pri
 			// Save the next pointer.
 			#emit LREF.S.pri p
 			#emit STOR.S.pri p
 			// Now push the size of data put on the stack.
-			#emit PUSH.C     12
+			#emit PUSH.C     __3_cells
 			// Now get the return address and push it.
 			#emit LCTRL      __cip
-			#emit ADD.C      36
+			#emit ADD.C      __9_cells
 			#emit LCTRL      __jit
 			#emit PUSH.pri
 			// Call "Player_WriteArray" directly.
@@ -456,7 +456,7 @@ HOOK__ OnPlayerConnect(playerid)
 		// as an array to a function.
 		#emit LOAD.S.pri p
 		// Get the max players.
-		#emit ADD.C      8
+		#emit ADD.C      __2_cells
 		#emit STOR.S.pri temp
 		#emit LREF.S.pri temp
 		#emit STOR.S.pri temp
@@ -464,9 +464,9 @@ HOOK__ OnPlayerConnect(playerid)
 		{
 			// It might be faster here to just use "FILL"...
 			// Get the data enum size.
-			//#emit PUSH.C     8
+			//#emit PUSH.C     __2_cells
 			#emit LOAD.S.pri p
-			#emit ADD.C      12
+			#emit ADD.C      __3_cells
 			#emit STOR.S.pri temp
 			#emit LREF.S.pri temp
 			#emit PUSH.pri
@@ -475,11 +475,11 @@ HOOK__ OnPlayerConnect(playerid)
 			// Get the data offset.
 			#emit LOAD.S.alt playerid
 			#emit SMUL
-			#emit SMUL.C     4
+			#emit SMUL.C     __1_cell
 			#emit MOVE.alt
 			// Get the data pointer.
 			#emit LOAD.S.pri p
-			#emit ADD.C      4
+			#emit ADD.C      __1_cell
 			#emit STOR.S.pri temp
 			#emit LREF.S.pri temp
 			#emit ADD
@@ -488,10 +488,10 @@ HOOK__ OnPlayerConnect(playerid)
 			#emit LREF.S.pri p
 			#emit STOR.S.pri p
 			// Now push the size of data put on the stack.
-			#emit PUSH.C     12
+			#emit PUSH.C     __3_cells
 			// Now get the return address and push it.
 			#emit LCTRL      __cip
-			#emit ADD.C      36
+			#emit ADD.C      __9_cells
 			#emit LCTRL      __jit
 			#emit PUSH.pri
 			// Call "MemSet" directly.

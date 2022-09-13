@@ -151,7 +151,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		// data of interest.
 		#emit CONST.pri            YSI_gMallocMemory
 		#emit LOAD.S.pri           input
-		#emit SHL.C.pri            2
+		#emit SHL.C.pri            __COMPILER_CELL_SHIFT
 		#emit ADD
 		#emit STOR.S.pri           ctx
 		Bitmap_FBlockReadAddr(bmp, _:ctx--, size);
@@ -159,6 +159,8 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		// Go through the array backwards (bottom to top).
 		while (dest != w2)
 		{
+			const cells0 = 32 * cellbytes;
+			const cells1 = 24 * cellbytes;
 			#emit CONST.alt            0xFF
 
 			// Load the next value.
@@ -388,16 +390,16 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			// Copy them to `dest` in one go.
 			#emit LCTRL                __stk
 			#emit LOAD.S.alt           dest
-			#emit MOVS                 128
-			#emit CONST.pri            128
+			#emit MOVS                 cells0
+			#emit CONST.pri            cells0
 			#emit ADD
 			#emit STOR.S.pri           dest
 
 			// Remove them.
-			#emit STACK                128
+			#emit STACK                cells0
 
 			#emit LOAD.S.pri           ctx
-			#emit ADD.C                96
+			#emit ADD.C                cells1
 			#emit STOR.S.pri           ctx
 		}
 		while (dest != w3)
@@ -435,16 +437,16 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			// Copy them to `dest` in one go.
 			#emit LCTRL                __stk
 			#emit LOAD.S.alt           dest
-			#emit MOVS                 16
-			#emit CONST.pri            16
+			#emit MOVS                 __4_cells
+			#emit CONST.pri            __4_cells
 			#emit ADD
 			#emit STOR.S.pri           dest
 
 			// Remove them.
-			#emit STACK                16
+			#emit STACK                __4_cells
 
 			#emit LOAD.S.pri           ctx
-			#emit ADD.C                12
+			#emit ADD.C                __3_cells
 			#emit STOR.S.pri           ctx
 		}
 		switch (width & (BITMAP_TO_32(4) - 1))

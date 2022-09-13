@@ -110,9 +110,9 @@ Optional plugins:
 		//#emit PUSH.S       success
 		#pragma unused success
 		#emit PUSH.S       extra
-		#emit PUSH.C       8
+		#emit PUSH.C       __2_cells
 		#emit LCTRL        __cip
-		#emit ADD.C        36
+		#emit ADD.C        __9_cells
 		#emit LCTRL        __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri   ptr
@@ -130,9 +130,9 @@ Optional plugins:
 		// Call the original function.
 		#emit PUSH.S       hashid
 		#emit PUSH.S       extra
-		#emit PUSH.C       8
+		#emit PUSH.C       __2_cells
 		#emit LCTRL        __cip
-		#emit ADD.C        36
+		#emit ADD.C        __9_cells
 		#emit LCTRL        __jit
 		#emit PUSH.pri
 		#emit LOAD.S.pri   ptr

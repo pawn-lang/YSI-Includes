@@ -400,7 +400,7 @@ public _PHP_Result(index, response, data[])
 										sFormat[params] = 'i';
 										// Number.
 										#emit LOAD.S.pri flen
-										#emit HEAP 4
+										#emit HEAP __1_cell
 										#emit STOR.I
 										#emit PUSH.alt
 										heap += 4;
@@ -451,7 +451,7 @@ public _PHP_Result(index, response, data[])
 							#emit LCTRL          __stk
 							#emit LOAD.S.alt     n
 							#emit ADD
-							#emit ADD.C          4
+							#emit ADD.C          __1_cell
 							#emit SCTRL          __stk
 							
 							// Clear the heap.
