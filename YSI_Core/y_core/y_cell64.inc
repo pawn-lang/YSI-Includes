@@ -155,9 +155,9 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
 	// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
 	#emit PUSH.pri
-	#emit PUSH.C               4
+	#emit PUSH.C               8
 	#emit SYSREQ.C             swapchars
-	#emit STACK                8
+	#emit STACK                16
 
 	// return data;
 	#emit RETN
@@ -207,9 +207,9 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
 	// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
 	#emit PUSH.pri
-	#emit PUSH.C               4
+	#emit PUSH.C               8
 	#emit SYSREQ.C             swapchars
-	#emit STACK                8
+	#emit STACK                16
 
 	// return data;
 	#emit RETN
