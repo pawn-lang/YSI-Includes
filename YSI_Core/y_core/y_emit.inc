@@ -27,14 +27,18 @@ const __defsize_cells   =   2 * cellbytes;
 const __minus1 = -1;
 
 // Control registers.
-const __cod = 0;
-const __dat = 1;
-const __hea = 2;
-const __stp = 3;
-const __stk = 4;
-const __frm = 5;
-const __cip = 6;
-const __jit = 8;
+#if !defined __register_names
+	const __cod = 0;
+	const __dat = 1;
+	const __hea = 2;
+	const __stp = 3;
+	const __stk = 4;
+	const __frm = 5;
+	const __cip = 6;
+	const __jit = 8;
+	const __flg = 9;
+	#define __register_names
+#endif
 
 const __m20_cells = -20 * cellbytes;
 const __m19_cells = -19 * cellbytes;

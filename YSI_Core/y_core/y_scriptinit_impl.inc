@@ -1395,7 +1395,7 @@ stock bool:Server_IsOpenMP()
 	// `pri` is 0 it wasn't set by the control register.
 	#emit ZERO.pri
 	#emit ZERO.alt
-	#emit LCTRL                9
+	#emit LCTRL                __flg
 	#emit NEQ
 	#emit RETN
 
@@ -1407,7 +1407,7 @@ stock bool:Server_IsSAMP()
 	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
 	// `pri` is 0 it wasn't set by the control register.
 	#emit ZERO.pri
-	#emit LCTRL                9
+	#emit LCTRL                __flg
 	#emit EQ.C.pri             0
 	#emit RETN
 
