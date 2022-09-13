@@ -531,9 +531,9 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 			#emit IDXADDR
 			#emit PUSH.pri
 			#emit PUSH.S      p
-			#emit PUSH.C      12
+			#emit PUSH.C      __3_cells
 			#emit LCTRL       __cip
-			#emit ADD.C       44
+			#emit ADD.C       __11_cells
 			#emit LCTRL       __jit
 			#emit PUSH.pri
 			#emit LOAD.pri    sHash
