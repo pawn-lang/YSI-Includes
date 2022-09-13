@@ -1469,8 +1469,8 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 	static
 		sFrm = 0,
 		sRet = 0,
-		sCnt = 0,
-		scSize = YSI_MAX_STRING;
+		sCnt = 0;
+	const size = YSI_MAX_STRING;
 	
 	// Store the function preamble.
 	#emit POP.pri
@@ -1483,7 +1483,7 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 	#emit STOR.pri     sCnt
 	
 	// Put the secret return parameter on the stack again to format in to.
-	#emit PUSH         scSize
+	#emit PUSH.C       size
 	#emit ADD
 	#emit LOAD.I
 	#emit PUSH.pri
