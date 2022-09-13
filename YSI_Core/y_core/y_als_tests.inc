@@ -80,8 +80,9 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused fmat
 	// This function formats the incoming data and compares it to the reference.
+	const size = 512;
 	new
-		msg[512],
+		msg[size],
 		i = 0,
 		end = 0; // 12 + 4 + 4.
 	// Get the stack position after `result`.
@@ -99,7 +100,7 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 		#emit PUSH.pri
 	}
 	{}
-	#emit PUSH.C           512
+	#emit PUSH.C           size
 	#emit PUSH.ADR         msg
 	#emit LOAD.S.pri       __args_offset
 	#emit ADD.C            __1_cell

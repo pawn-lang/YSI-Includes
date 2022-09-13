@@ -4139,6 +4139,9 @@ stock bool:TryPercentage(percentage)
 	return random(100) < percentage;
 }
 
+#define TryPercentage(%0) (random(100) < (%0))
+#define _ALS_TryPercentage
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  TryPermille(permille);
@@ -4160,6 +4163,9 @@ stock bool:TryPermille(permille)
 	return random(1000) < permille;
 }
 
+#define TryPermille(%0) (random(1000) < (%0))
+#define _ALS_TryPermille
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  TryPPM(ppm);
@@ -4180,6 +4186,9 @@ stock bool:TryPPM(ppm)
 {
 	return random(1000000) < ppm;
 }
+
+#define TryPPM(%0) (random(1000000) < (%0))
+#define _ALS_TryPPM
 
 _Y_CORE_STATIC stock IterativeColouredSkipSUnpacked(const string:text[], start, &colour)
 {
