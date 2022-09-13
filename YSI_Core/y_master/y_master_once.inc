@@ -898,13 +898,13 @@ static stock _Master_Rename(const name[])
 		// It is possible that this will result in an invalid function name, but
 		// we don't care about that because the function isn't to be called
 		// anyway.
-		entry += 4;
+		entry += cellbytes;
 		#emit LREF.S.pri entry
 		#emit LOAD.alt   AMX_BASE_ADDRESS
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
-		#emit ADD.C      EMIT_MINUS_1
+		#emit ADD.C      __minus1
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry
@@ -928,11 +928,11 @@ static stock _Master_Unname(const name[])
 		new
 			len = strlen(name);
 		// This check isn't needed if this is the very last function.
-		if (idx < (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8)
+		if (idx < (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / __defsize_cells)
 		{
 			// Load the NEXT string entry for comparison.
 			new
-				addr = entry + 12;
+				addr = entry + 3 * cellbytes;
 			#emit LREF.S.pri addr
 			#emit LOAD.alt   AMX_BASE_ADDRESS
 			#emit ADD
@@ -964,13 +964,13 @@ static stock _Master_Unname(const name[])
 		// It is possible that this will result in an invalid function name, but
 		// we don't care about that because the function isn't to be called
 		// anyway
-		entry += 4;
+		entry += cellbytes;
 		#emit LREF.S.pri entry
 		#emit LOAD.alt   AMX_BASE_ADDRESS
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
-		#emit ADD.C      EMIT_MINUS_1
+		#emit ADD.C      __minus1
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry

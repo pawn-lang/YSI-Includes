@@ -567,8 +567,7 @@ stock bool:Server_IsDetectAddr0Enabled() {
 
 stock bool:Server_HasDetectAddr0() {
 	// Is the check possible?
-	const minus1 = -1;
-	#emit CONST.pri     minus1       // -1
+	#emit CONST.pri     __minus1     // -1
 	#emit LCTRL 0xFD                 // 0, 1, or -2
 	#emit CONST.alt     0
 	#emit SGEQ                       // >= 0

@@ -23,6 +23,7 @@ const __local8_offset   =  -9 * cellbytes;
 const __local9_offset   = -10 * cellbytes;
 
 const __defsize_cells   =   2 * cellbytes;
+const __minus1 = -1;
 
 const __m20_cells = -20 * cellbytes;
 const __m19_cells = -19 * cellbytes;

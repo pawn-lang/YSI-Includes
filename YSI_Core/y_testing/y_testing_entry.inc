@@ -486,24 +486,24 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 				i = 0,
 				end = 0; // 12 + 4 + 4.
 			// Get the stack position after `playerid`.
-			#emit ADDR.pri         16
+			#emit ADDR.pri         __param1_offset
 			#emit STOR.S.pri       end
 			// Get the stack position after everything.
-			#emit ADDR.pri         12
-			#emit LOAD.S.alt       8
+			#emit ADDR.pri         __param0_offset
+			#emit LOAD.S.alt       __args_offset
 			#emit ADD
 			#emit STOR.S.pri       i
 			while (i > end)
 			{
-				i -= 4;
+				i -= cellbytes;
 				#emit LREF.S.pri       i
 				#emit PUSH.pri
 			}
 			{}
 			#emit PUSH.C           512
 			#emit PUSH.C           YSI_g_sFailMessage
-			#emit LOAD.S.pri       8
-			#emit ADD.C            4
+			#emit LOAD.S.pri       __args_offset
+			#emit ADD.C            __1_cell
 			#emit PUSH.pri
 			#emit SYSREQ.C         format
 			// Remove the data from the stack.
@@ -578,10 +578,10 @@ stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 	//  
 	//  Debug_PrintT(str, msg, ___(2));
 	//  
-	#emit LOAD.S.pri       16
-	#emit STOR.S.pri       12
+	#emit LOAD.S.pri       __param1_offset
+	#emit STOR.S.pri       __param0_offset
 	#emit CONST.pri        Testing_Test_msg
-	#emit STOR.S.pri       16
+	#emit STOR.S.pri       __param1_offset
 	#emit POP.pri
 	#emit STOR.pri         Testing_Test_FRM
 	#emit POP.pri
@@ -661,7 +661,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			state y_testing_phase : y_testing_phase_determine;
 			#emit PUSH.C                    0
 			#emit LCTRL                     6
-			#emit ADD.C                     36
+			#emit ADD.C                     __9_cells
 			#emit LCTRL                     8
 			#emit PUSH.pri
 			#emit LREF.S.pri                entry
@@ -687,7 +687,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 				}
 			}
 			state y_testing_phase : y_testing_phase_call;
-			AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
+			AMX_ReadString(AMX_Read(entry + cellbytes) + AMX_BASE_ADDRESS, buffer);
 			Server_RestartLongCall();
 			// Call the setup function if there is one.
 			buffer[0] = Y_TESTING_INIT,
@@ -714,7 +714,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			if (YSI_g_sFails != fails)
 			{
 				AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
-				AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - fails),
+				AMX_Write(YSI_g_sCurTest + cellbytes, YSI_g_sFails - fails),
 				YSI_g_sFailTests = YSI_g_sCurTest;
 			}
 #if !defined TEST_SHOW_PASSES
@@ -806,7 +806,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			// Get the last test (nicely fails for cellmax).
 			if ((YSI_g_sPlayer = AMX_GetPublicEntryPrefix(YSI_g_sPlayer, entry, Y_TESTING_PTEST_SEARCH)))
 			{
-				AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
+				AMX_ReadString(AMX_Read(entry + cellbytes) + AMX_BASE_ADDRESS, buffer);
 				// Call the shutdown function if there is one.
 				buffer[0] = Y_TESTING_PSHUT;
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
@@ -821,7 +821,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			if (YSI_g_sPlayerFails != YSI_g_sFails)
 			{
 				AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
-				AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - YSI_g_sPlayerFails),
+				AMX_Write(YSI_g_sCurTest + cellbytes, YSI_g_sFails - YSI_g_sPlayerFails),
 				YSI_g_sFailTests = YSI_g_sCurTest,
 				YSI_g_sPlayerFails = YSI_g_sFails;
 			}
@@ -837,9 +837,9 @@ Testing_Next_retry:
 				}
 				state y_testing_phase : y_testing_phase_determine;
 				#emit PUSH.S                    playerid
-				#emit PUSH.C                    4
+				#emit PUSH.C                    __1_cell
 				#emit LCTRL                     6
-				#emit ADD.C                     36
+				#emit ADD.C                     __9_cells
 				#emit LCTRL                     8
 				#emit PUSH.pri
 				#emit LREF.S.pri                entry
@@ -867,7 +867,7 @@ Testing_Next_retry:
 					}
 				}
 				state y_testing_phase : y_testing_phase_call;
-				AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
+				AMX_ReadString(AMX_Read(entry + cellbytes) + AMX_BASE_ADDRESS, buffer);
 				++YSI_g_sTests;
 				YSI_g_sAsked = false;
 				// Call the setup function if there is one.
@@ -904,7 +904,7 @@ Testing_Next_retry:
 					// that didn't pass.
 					while (YSI_g_sFailTests != 0)
 					{
-						printf("    - %s (%d)", AMX_Deref(YSI_g_sFailTests + 8), AMX_Read(YSI_g_sFailTests + 4)),
+						printf("    - %s (%d)", AMX_Deref(YSI_g_sFailTests + 2 * cellbytes), AMX_Read(YSI_g_sFailTests + cellbytes)),
 						YSI_g_sFailTests = AMX_Read(YSI_g_sFailTests);
 					}
 					print(YSI_SPACE);
@@ -1172,7 +1172,7 @@ stock Testing_RunAll()
 			// that didn't pass.
 			while (YSI_g_sFailTests != 0)
 			{
-				printf("    - %s (%d)", AMX_Deref(YSI_g_sFailTests + 8), AMX_Read(YSI_g_sFailTests + 4)),
+				printf("    - %s (%d)", AMX_Deref(YSI_g_sFailTests + 2 * cellbytes), AMX_Read(YSI_g_sFailTests + cellbytes)),
 				YSI_g_sFailTests = AMX_Read(YSI_g_sFailTests);
 			}
 			print(YSI_SPACE);
