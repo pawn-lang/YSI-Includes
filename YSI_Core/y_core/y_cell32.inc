@@ -88,6 +88,31 @@ static stock const
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
+ *  Cell_Reverse32(number);
+ * </summary>
+ * <param name="data">The number to manipulate.</param>
+ * <returns>
+ *  The lower four bytes in the input reversed.
+ * </returns>
+ * <remarks>
+ *  1)
+ *  Example: 0x1234567812345678
+ *  Becomes: 0x0000000078563412
+ *
+ *  2)
+ *  Example: 0x0000000001020304
+ *  Becomes: 0x0000000004030201
+ *
+ *  3)
+ *  Example: 0xFFFFFFFFFF00FF00
+ *  Becomes: 0x0000000000FF00FF
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+native Cell_Reverse32(GLOBAL_TAG_TYPES:data) = swapchars;
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
  *  Cell_ReverseBits(number);
  * </summary>
  * <param name="data">The number to manipulate.</param>

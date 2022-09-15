@@ -96,7 +96,9 @@ const __local8_offset   =  -9 * cellbytes;
 const __local9_offset   = -10 * cellbytes;
 
 // General values.
-const __defsize_cells   =   2 * cellbytes;
+// This is NOT `2 * cellbytes`, the internal pointer is always 32 bits, while
+// the external pointer is whatever native size is needed.
+const __defsize_cells = 4 + cellbytes;
 const __minus1 = -1;
 
 // Control registers.

@@ -173,6 +173,12 @@ enum E_AMX_TABLE
 	AMX_TABLE_TAGS
 }
 
+#if cellbits == 64
+	#define Y_AMX_MASK(%0) (0xFFFFFFFF & (%0))
+#else
+	#define Y_AMX_MASK(%0) (%0)
+#endif
+
 // This is based on the AMX version used in SA:MP - it DOES NOT match the code
 // found in the PAWN documentation as that's for a later version.
 public OnCodeInit()
@@ -188,66 +194,66 @@ public OnCodeInit()
 	// Now read in all the data.
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_SIZE         = data;
-	addr += cellbytes;
+	AMX_HEADER_SIZE = Y_AMX_MASK(data);
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
 	AMX_HEADER_MAGIC        = data & 0xFFFF;
 	AMX_HEADER_FILE_VERSION = data >>> 16 & 0xFF;
-	AMX_HEADER_AMX_VERSION  = data >>> 24;
-	addr += cellbytes;
+	AMX_HEADER_AMX_VERSION  = Y_AMX_MASK(data) >>> 24;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
 	AMX_HEADER_FLAGS        = data & 0xFFFF;
-	AMX_HEADER_DEFSIZE      = data >>> 16;
+	AMX_HEADER_DEFSIZE      = Y_AMX_MASK(data) >>> 16;
 	assert(AMX_HEADER_DEFSIZE == __defsize_cells);
-	addr += cellbytes;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_COD          = data;
-	addr += cellbytes;
+	AMX_HEADER_COD          = Y_AMX_MASK(data);
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
 	//dat = data;
 	AMX_HEADER_DAT          = 0;
-	AMX_BASE_ADDRESS = -data;
+	AMX_BASE_ADDRESS = -Y_AMX_MASK(data);
 	AMX_HEADER_COD += AMX_BASE_ADDRESS;
-	addr += cellbytes;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_HEA          = data + AMX_BASE_ADDRESS;
-	addr += cellbytes;
+	AMX_HEADER_HEA          = Y_AMX_MASK(data) + AMX_BASE_ADDRESS;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_STP          = data + AMX_BASE_ADDRESS;
-	addr += cellbytes;
+	AMX_HEADER_STP          = Y_AMX_MASK(data) + AMX_BASE_ADDRESS;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_CIP          = data + AMX_BASE_ADDRESS;
-	addr += cellbytes;
+	AMX_HEADER_CIP          = Y_AMX_MASK(data) + AMX_BASE_ADDRESS;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_PUBLICS      = data + AMX_BASE_ADDRESS;
-	addr += cellbytes;
+	AMX_HEADER_PUBLICS      = Y_AMX_MASK(data) + AMX_BASE_ADDRESS;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_NATIVES      = data + AMX_BASE_ADDRESS;
-	addr += cellbytes;
+	AMX_HEADER_NATIVES      = Y_AMX_MASK(data) + AMX_BASE_ADDRESS;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_LIBRARIES    = data + AMX_BASE_ADDRESS;
-	addr += cellbytes;
+	AMX_HEADER_LIBRARIES    = Y_AMX_MASK(data) + AMX_BASE_ADDRESS;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_PUBVARS      = data + AMX_BASE_ADDRESS;
-	addr += cellbytes;
+	AMX_HEADER_PUBVARS      = Y_AMX_MASK(data) + AMX_BASE_ADDRESS;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_TAGS         = data + AMX_BASE_ADDRESS;
-	addr += cellbytes;
+	AMX_HEADER_TAGS         = Y_AMX_MASK(data) + AMX_BASE_ADDRESS;
+	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_NAMETABLE    = data + AMX_BASE_ADDRESS;
+	AMX_HEADER_NAMETABLE    = Y_AMX_MASK(data) + AMX_BASE_ADDRESS;
 	// Now find the AMX's base address in global memory.  This is VERY handy to
 	// have for more advanced functionality (none of which actually exists yet).
 	AMX_REAL_ADDRESS = AMX_GetGlobal();
@@ -471,12 +477,14 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 			{
 				Debug_Print7("Looking for: %s, %d, %d, %d", pattern, idx, mid, count);
 				#emit LREF.S.pri                pos
+				#emit CONST.alt                 0xFFFFFFFF
+				#emit AND
 				#emit LOAD.alt                  AMX_BASE_ADDRESS
 				#emit ADD
 				#emit STOR.S.pri                addr
 				Debug_Code7{AMX_ReadString(addr, str);}
 				Debug_Print7("    %d, %d, %s", pos, addr, Unpack(str));
-				Debug_Print7("    %08x, %08x, %d", quick, swapchars(AMX_Read(addr)), swapchars(AMX_Read(addr)) - quick);
+				Debug_Print7("    %08x, %08x, %d", quick, Cell_Reverse32(AMX_Read(addr)), Cell_Reverse32(AMX_Read(addr)) - quick);
 				if (addr == AMX_BASE_ADDRESS)
 				{
 					if (++mid == count)
@@ -489,7 +497,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 					continue;
 				}
 				// Bad reuse of a variable, but I ran out...
-				table = E_AMX_TABLE:swapchars(AMX_Read(addr)) & 0xFFFFFFFF;
+				table = E_AMX_TABLE:Y_AMX_MASK(Cell_Reverse32(AMX_Read(addr)));
 				if (_:table < quick)
 				{
 					idx = mid + 1;
@@ -528,6 +536,8 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 		while (idx++ < count)
 		{
 			#emit LREF.S.pri                pos
+			#emit CONST.alt                 0xFFFFFFFF
+			#emit AND
 			#emit LOAD.alt                  AMX_BASE_ADDRESS
 			#emit ADD
 			#emit STOR.S.pri                addr
@@ -569,7 +579,7 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	if (idx == 0)
 	{
 		// Binary search for the start of the prefixes.
-		pattern = swapchars(pattern); // Little-endian for comparisons.
+		new p2 = Cell_Reverse32(pattern); // Little-endian for comparisons.
 		new
 			upper = count,
 			mid;
@@ -580,6 +590,8 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 			for ( ; ; )
 			{
 				#emit LREF.S.pri                pos
+				#emit CONST.alt                 0xFFFFFFFF
+				#emit AND
 				#emit LOAD.alt                  AMX_BASE_ADDRESS
 				#emit ADD
 				#emit STOR.S.pri                addr
@@ -594,7 +606,7 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 					pos += __defsize_cells;
 					continue;
 				}
-				if (swapchars(AMX_Read(addr)) - pattern < 0)
+				if (Cell_Reverse32(AMX_Read(addr)) - p2 < 0)
 				{
 					idx = mid + 1;
 					break;
@@ -609,17 +621,19 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		}
     
 		// Now we re-check the value at `idx`.
-		pattern = swapchars(pattern);
 	}
 	// Get the address of the string.
 	pos = idx * __defsize_cells + base + cellbytes;
 	while (idx++ < count)
 	{
 		#emit LREF.S.pri                pos
+		#emit CONST.alt                 0xFFFFFFFF
+		#emit AND
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
-		if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == pattern)
+		//addr = Y_AMX_MASK(addr);
+		if (addr != AMX_BASE_ADDRESS && Y_AMX_MASK(AMX_Read(addr)) == pattern)
 		{
 			buffer = pos - cellbytes;
 			return idx;
@@ -649,14 +663,16 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		++idx;
 		// Get the address of the string.
 		#emit LREF.S.pri                pos
+		#emit CONST.alt                 0xFFFFFFFF
+		#emit AND
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
+		//addr = Y_AMX_MASK(addr);
 		if (addr == AMX_BASE_ADDRESS)
 		{
 			continue;
 		}
-		assert(cellbytes == 4);
 		for ( ; ; )
 		{
 			// Find the end of the string.
@@ -681,7 +697,7 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 			else addr -= 4;
 			break;
 		}
-		if (AMX_Read(addr) == pattern)
+		if (Y_AMX_MASK(AMX_Read(addr)) == pattern)
 		{
 			buffer = pos - cellbytes;
 			return idx;
@@ -704,7 +720,7 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern
 	idx = AMX_GetEntry(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
-		AMX_ReadString(AMX_Read(pointer + cellbytes) + AMX_BASE_ADDRESS, buffer);
+		AMX_ReadString(Y_AMX_MASK(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
 	}
 	return idx;
 }
@@ -723,7 +739,7 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 	idx = AMX_GetEntryPrefix(table, idx, pointer, pattern);
 	if (idx)
 	{
-		AMX_ReadString(AMX_Read(pointer + cellbytes) + AMX_BASE_ADDRESS, buffer);
+		AMX_ReadString(Y_AMX_MASK(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
 	}
 	return idx;
 }
@@ -742,7 +758,7 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 	idx = AMX_GetEntrySuffix(table, idx, pointer, pattern);
 	if (idx)
 	{
-		AMX_ReadString(AMX_Read(pointer + cellbytes) + AMX_BASE_ADDRESS, buffer);
+		AMX_ReadString(Y_AMX_MASK(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
 	}
 	return idx;
 }
@@ -899,6 +915,8 @@ stock AMX_GetLengthFromEntry(tableEntry)
 {
 	tableEntry += cellbytes;
 	#emit LREF.S.pri                tableEntry
+	#emit CONST.alt                 0xFFFFFFFF
+	#emit AND
 	#emit LOAD.alt                  AMX_BASE_ADDRESS
 	#emit ADD
 	#emit STOR.S.pri                tableEntry
@@ -965,6 +983,8 @@ stock AMX_GetStringFromEntry(tableEntry, str[], size = sizeof (str))
 {
 	tableEntry += cellbytes;
 	#emit LREF.S.pri                tableEntry
+	#emit CONST.alt                 0xFFFFFFFF
+	#emit AND
 	#emit LOAD.alt                  AMX_BASE_ADDRESS
 	#emit ADD
 	#emit STOR.S.pri                tableEntry
@@ -980,34 +1000,8 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 	{
 		// Read 4 bytes.
 		#emit LREF.S.pri                addr
-		
-		// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
-		#emit PUSH.pri
-		#emit CONST.alt            0b11111111000000001111111100000000
-		#emit AND
-		#emit SHR.C.pri            8
-		#emit SWAP.pri
-		#emit CONST.alt            0b00000000111111110000000011111111
-		#emit AND
-		#emit SHL.C.pri            8
-		#emit POP.alt
-		#emit OR
-		
-		// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
-		#emit PUSH.pri
-		#emit CONST.alt            0b11111111111111110000000000000000
-		#emit AND
-		#emit SHR.C.pri            16
-		#emit SWAP.pri
-		#emit CONST.alt            0b00000000000000001111111111111111
-		#emit AND
-		#emit SHL.C.pri            16
-		#emit POP.alt
-		#emit OR
-		
-		// Write PACKED strings.
 		#emit STOR.S.pri                buffer
-		str[idx] = buffer;
+		str[idx] = swapchars(buffer);
 		
 		// https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
 		if (Cell_HasZeroByte(buffer))
@@ -1096,60 +1090,60 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 				return;
 			}
 		//#if cellbits == 64
-		//	else if (!(buffer & 0x00000000FF000000))
-		//	{
-		//		#emit LREF.S.pri                addr
-		//		#emit STOR.S.pri                old
-		//		buffer = (old & (-1 << 32)) | (buffer & 0x0000000000FFFFFF);
-		//		#emit LOAD.S.pri                buffer
-		//		#emit SREF.S.pri                addr
-		//		return;
-		//	}
-		//	else if (!(buffer & 0x000000FF00000000))
-		//	{
-		//		#emit LREF.S.pri                addr
-		//		#emit STOR.S.pri                old
-		//		buffer = (old & (-1 << 40)) | (buffer & 0x00000000FFFFFFFF);
-		//		#emit LOAD.S.pri                buffer
-		//		#emit SREF.S.pri                addr
-		//		return;
-		//	}
-		//	else if (!(buffer & 0x0000FF0000000000))
-		//	{
-		//		#emit LREF.S.pri                addr
-		//		#emit STOR.S.pri                old
-		//		buffer = (old & (-1 << 48)) | (buffer & 0x000000FFFFFFFFFF);
-		//		#emit LOAD.S.pri                buffer
-		//		#emit SREF.S.pri                addr
-		//		return;
-		//	}
-		//	else if (!(buffer & 0x00FF000000000000))
-		//	{
-		//		#emit LREF.S.pri                addr
-		//		#emit STOR.S.pri                old
-		//		buffer = (old & (-1 << 56)) | (buffer & 0x0000FFFFFFFFFFFF);
-		//		#emit LOAD.S.pri                buffer
-		//		#emit SREF.S.pri                addr
-		//		return;
-		//	}
-		//	else if (!(buffer & 0xFF00000000000000))
-		//	{
-		//		#emit LOAD.S.pri                buffer
-		//		#emit SREF.S.pri                addr
-		//		return;
-		//	}
-		//#else
-			else if (!(buffer & 0xFF000000))
+			else if (!(buffer & 0x00000000FF000000))
 			{
-				// This:
-				//  '\0', '3', '2', '1'.
-				// Becomes:
-				//  '1', '2', '3', '\0'.
-				// Write 3 bytes.
+				#emit LREF.S.pri                addr
+				#emit STOR.S.pri                old
+				buffer = (old & (-1 << 32)) | (buffer & 0x0000000000FFFFFF);
 				#emit LOAD.S.pri                buffer
 				#emit SREF.S.pri                addr
 				return;
 			}
+			else if (!(buffer & 0x000000FF00000000))
+			{
+				#emit LREF.S.pri                addr
+				#emit STOR.S.pri                old
+				buffer = (old & (-1 << 40)) | (buffer & 0x00000000FFFFFFFF);
+				#emit LOAD.S.pri                buffer
+				#emit SREF.S.pri                addr
+				return;
+			}
+			else if (!(buffer & 0x0000FF0000000000))
+			{
+				#emit LREF.S.pri                addr
+				#emit STOR.S.pri                old
+				buffer = (old & (-1 << 48)) | (buffer & 0x000000FFFFFFFFFF);
+				#emit LOAD.S.pri                buffer
+				#emit SREF.S.pri                addr
+				return;
+			}
+			else if (!(buffer & 0x00FF000000000000))
+			{
+				#emit LREF.S.pri                addr
+				#emit STOR.S.pri                old
+				buffer = (old & (-1 << 56)) | (buffer & 0x0000FFFFFFFFFFFF);
+				#emit LOAD.S.pri                buffer
+				#emit SREF.S.pri                addr
+				return;
+			}
+			else if (!(buffer & 0xFF00000000000000))
+			{
+				#emit LOAD.S.pri                buffer
+				#emit SREF.S.pri                addr
+				return;
+			}
+		//#else
+		//	else if (!(buffer & 0xFF000000))
+		//	{
+		//		// This:
+		//		//  '\0', '3', '2', '1'.
+		//		// Becomes:
+		//		//  '1', '2', '3', '\0'.
+		//		// Write 3 bytes.
+		//		#emit LOAD.S.pri                buffer
+		//		#emit SREF.S.pri                addr
+		//		return;
+		//	}
 		//#endif
 			else
 			{
@@ -1224,6 +1218,8 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 			// Found the tag, get the name.
 			buffer += cellbytes;
 			#emit LREF.S.pri                buffer
+			#emit CONST.alt                 0xFFFFFFFF
+			#emit AND
 			#emit LOAD.alt                  AMX_BASE_ADDRESS
 			#emit ADD
 			#emit STOR.S.pri                buffer
@@ -1257,7 +1253,7 @@ stock AMX_DumpHeader()
 	print("================================");
 }
 
-#define _A<%0> (_:H_Re(%0,0))
+#define _A<%0> Y_AMX_MASK(_:H_Re(%0,0))
 
 // Do the next character test as this one failed.
 #define H_Se(%0,%1,%3) H_Ne%1(%0,%3)
@@ -1412,7 +1408,7 @@ stock AMX_DumpHeader()
 #define H_Ne8(%0,%3) @E9:H_Se(%0,9,%3)
 #define H_Ne9(%0,%3) ()
 
-#define _C<%0> (_:H_Rc(%0,24))
+#define _C<%0> Y_AMX_MASK(_:H_Rc(%0,24))
 
 // Do the next character test as this one failed.
 #define H_Sc(%0,%1,%3) H_Nc%1(%0,%3)

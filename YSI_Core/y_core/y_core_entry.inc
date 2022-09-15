@@ -106,11 +106,6 @@ Optional plugins:
 // Similar to `YSI_KEYWORD`, but disabled by default.
 #define YSI_OPTIONAL(%0) (defined YSI_KEYWORD_%0 && !defined YSI_NO_KEYWORD_%0)
 
-// Define `cellbytes` as a symbol that really should exist already!
-#if !defined cellbytes
-	#define cellbytes (cellbits / charbits)
-#endif
-
 // Define "volatile" as nothing.
 #if !defined volatile
 	#define volatile

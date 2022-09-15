@@ -817,7 +817,6 @@ const __COMPILER_CHAR_BITS  = charbits;
 	const __COMPILER_CELL_SHIFT = 3;
 	const __COMPILER_BIT_SHIFT = 6;
 	const __COMPILER_BIT_MASK = 63;
-	#error YSI assumes `cellbits` is 32.
 #else
 	#error Unknown `cellbits` size.
 #endif

@@ -92,6 +92,84 @@ static stock const
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
+ *  Cell_Reverse32(number);
+ * </summary>
+ * <param name="data">The number to manipulate.</param>
+ * <returns>
+ *  The lower four bytes in the input reversed.
+ * </returns>
+ * <remarks>
+ *  1)
+ *  Example: 0x1234567812345678
+ *  Becomes: 0x0000000078563412
+ *
+ *  2)
+ *  Example: 0x0000000001020304
+ *  Becomes: 0x0000000004030201
+ *
+ *  3)
+ *  Example: 0xFFFFFFFFFF00FF00
+ *  Becomes: 0x0000000000FF00FF
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Cell_Reverse32(GLOBAL_TAG_TYPES:data)
+{
+	// Swap adjacent bytes.
+	// data = ((data >>> 8) & 0b00000000111111110000000011111111) | ((data & 0b00000000111111110000000011111111) << 8);
+	#emit LOAD.S.pri           data
+	#emit PUSH.pri
+	#emit CONST.alt            0b00000000111111110000000011111111
+	#emit SHR.C.pri            8
+	#emit AND
+	#emit SWAP.pri
+	#emit AND
+	#emit SHL.C.pri            8
+	#emit POP.alt
+	#emit OR
+    
+	// data = ((data >>> 16) & 0b00000000000000001111111111111111) | ((data & 0b00000000000000001111111111111111) << 16);
+	#emit PUSH.pri
+	#emit CONST.alt            0b00000000000000001111111111111111
+	#emit SHR.C.pri            16
+	#emit AND
+	#emit SWAP.pri
+	#emit AND
+	#emit SHL.C.pri            16
+	#emit POP.alt
+	#emit OR
+
+	//// This is one instruction and one cell shorter than the old version.
+	//// Sadly it doesn't work because it doesn't mask out the upper 32 bits.
+	//#emit LOAD.S.alt           data
+	//#emit CONST.pri            0b00000000000000000000000011111111
+	//#emit AND
+	//#emit SHL.C.pri            24
+	//#emit PUSH.pri
+	//#emit CONST.pri            0b00000000000000001111111100000000
+	//#emit PUSH.pri
+	//#emit AND
+	//#emit SHL.C.pri            8
+	//#emit SWAP.pri
+	////#emit PUSH.pri
+	////#emit CONST.pri            0b00000000111111110000000000000000
+	//#emit SHR.C.alt            8
+	//#emit AND
+	//#emit SHR.C.alt            16
+	//#emit OR
+	//#emit POP.alt
+	//#emit OR
+	//#emit POP.alt
+	//#emit OR
+
+	// return data;
+	#emit RETN
+	
+	__pragma("naked");
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
  *  Cell_ReverseBits(number);
  * </summary>
  * <param name="data">The number to manipulate.</param>
