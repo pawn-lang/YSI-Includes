@@ -457,7 +457,7 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 	// as a dummy no-op function call!  I'm actually quite happy I found a use
 	// for it!  Add 12 for the parameters to this function that we're about to
 	// forget about (i.e the stack space we're about to free up).
-	YSI_g_sCurHeap = heapspace() + 12;
+	YSI_g_sCurHeap = heapspace() + 3 * cellbytes;
 	Debug_Print3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
 	StrCpy(YSI_gCurTestName, name[2]);
@@ -500,7 +500,8 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 				#emit PUSH.pri
 			}
 			{}
-			#emit PUSH.C           512
+			const size = sizeof (YSI_g_sFailMessage);
+			#emit PUSH.C           size
 			#emit PUSH.C           YSI_g_sFailMessage
 			#emit LOAD.S.pri       __args_offset
 			#emit ADD.C            __1_cell
@@ -638,7 +639,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 	Debug_Print2("Testing_Run() called");
 	new
 		bool:grouping,
-		skipped,
+		tmp,
 		idx = 0,
 		entry,
 		buffer[FUNCTION_LENGTH];
@@ -653,6 +654,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 		grouping = false;
 		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, Y_TESTING_TEST_SEARCH)))
 		{
+			AMX_GetStringFromEntry(entry, buffer);
 			if (AMX_Read(entry) == 0)
 			{
 				// Previously finished test.
@@ -666,8 +668,8 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			#emit PUSH.pri
 			#emit LREF.S.pri                entry
 			#emit SCTRL                     __cip
-			#emit STOR.S.pri                skipped
-			switch (skipped)
+			#emit STOR.S.pri                tmp
+			switch (tmp)
 			{
 			#if defined JUST_TEST_GROUP
 				case 1, 2:
@@ -687,13 +689,24 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 				}
 			}
 			state y_testing_phase : y_testing_phase_call;
-			AMX_ReadString(AMX_Read(entry + cellbytes) + AMX_BASE_ADDRESS, buffer);
+			AMX_GetStringFromEntry(entry, buffer);
 			Server_RestartLongCall();
 			// Call the setup function if there is one.
-			buffer[0] = Y_TESTING_INIT,
-			R@(buffer, YSI_EMPTY),
+			#if cellbits == 64
+				tmp = buffer[0] & 0xFFFFFFFF;
+			#endif
+			#if cellbits == 64
+				buffer[0] = Y_TESTING_INIT | tmp;
+			#else
+				buffer[0] = Y_TESTING_INIT;
+			#endif
+			R@(buffer, YSI_EMPTY);
 			// Call the test.
-			buffer[0] = Y_TESTING_TEST,
+			#if cellbits == 64
+				buffer[0] = Y_TESTING_TEST | tmp;
+			#else
+				buffer[0] = Y_TESTING_TEST;
+			#endif
 			fails = YSI_g_sFails;
 			Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
 			YSI_g_sInTest = true,
@@ -724,11 +737,19 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 				TEST_REPORT(YSI_SPACE);
 			}
 #endif
-			buffer[0] = Y_TESTING_SHUT,
-			R@(buffer, YSI_EMPTY),
+			#if cellbits == 64
+				buffer[0] = Y_TESTING_SHUT | tmp;
+			#else
+				buffer[0] = Y_TESTING_SHUT;
+			#endif
+			R@(buffer, YSI_EMPTY);
 			// Delete the pointer, which may have moved due to tests playing
 			// with headers.
-			buffer[0] = Y_TESTING_TEST,
+			#if cellbits == 64
+				buffer[0] = Y_TESTING_TEST | tmp;
+			#else
+				buffer[0] = Y_TESTING_TEST;
+			#endif
 			strunpack(buffer, buffer);
 			if (AMX_GetPublicEntry(0, entry, buffer))
 			{
@@ -796,7 +817,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 		YSI_g_sInTest = false;
 		new
 			entry,
-			skipped,
+			tmp,
 			next,
 			buffer[FUNCTION_LENGTH];
 		static
@@ -806,9 +827,13 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			// Get the last test (nicely fails for cellmax).
 			if ((YSI_g_sPlayer = AMX_GetPublicEntryPrefix(YSI_g_sPlayer, entry, Y_TESTING_PTEST_SEARCH)))
 			{
-				AMX_ReadString(AMX_Read(entry + cellbytes) + AMX_BASE_ADDRESS, buffer);
+				AMX_GetStringFromEntry(entry, buffer);
 				// Call the shutdown function if there is one.
-				buffer[0] = Y_TESTING_PSHUT;
+				#if cellbits == 64
+					buffer[0] = (buffer[0] & 0xFFFFFFFF) | Y_TESTING_PSHUT;
+				#else
+					buffer[0] = Y_TESTING_PSHUT;
+				#endif
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 				// Remove the test from the header.  This just uses normal
@@ -844,8 +869,8 @@ Testing_Next_retry:
 				#emit PUSH.pri
 				#emit LREF.S.pri                entry
 				#emit SCTRL                     __cip
-				#emit STOR.S.pri                skipped
-				switch (skipped)
+				#emit STOR.S.pri                tmp
+				switch (tmp)
 				{
 				#if defined JUST_TEST_GROUP
 					case 1, 2:
@@ -867,15 +892,26 @@ Testing_Next_retry:
 					}
 				}
 				state y_testing_phase : y_testing_phase_call;
-				AMX_ReadString(AMX_Read(entry + cellbytes) + AMX_BASE_ADDRESS, buffer);
+				AMX_GetStringFromEntry(entry, buffer);
 				++YSI_g_sTests;
 				YSI_g_sAsked = false;
 				// Call the setup function if there is one.
-				buffer[0] = Y_TESTING_PINIT;
+				#if cellbits == 64
+					tmp = buffer[0] & 0xFFFFFFFF;
+				#endif
+				#if cellbits == 64
+					buffer[0] = Y_TESTING_PINIT | tmp;
+				#else
+					buffer[0] = Y_TESTING_PINIT;
+				#endif
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				R@(buffer, "i", playerid);
 				// Call the test.
-				buffer[0] = Y_TESTING_PTEST;
+				#if cellbits == 64
+					buffer[0] = Y_TESTING_PTEST | tmp;
+				#else
+					buffer[0] = Y_TESTING_PTEST;
+				#endif
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
 				YSI_g_sInTest = true,
 				// Don't use `entry` here as a pointer directly, because then we
