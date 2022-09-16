@@ -167,6 +167,7 @@ const y_utils_abs_shift = cellbits - 1;
 
 stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 {
+	Debug_Print4("Cell_Abs: %d %016x %016x %d %d %d", tag == _:tagof (Float:), number, number & cellmax, y_utils_abs_shift, number >> y_utils_abs_shift | 1, (number >> y_utils_abs_shift | 1) * number);
 	return (tag == _:tagof (Float:)) ? (number & cellmax) : ((number >> y_utils_abs_shift | 1) * number);
 }
 

@@ -253,11 +253,11 @@ static stock const
 	#if !__COMPILER_STRING_PACKING
 		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
 		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
-	#elseif cellbytes == 4
+	#elseif cellbits == 32
 		// Ensure there is always sufficient spacefor the failures linked list.
 		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
 		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
-	#elseif cellbytes == 8
+	#elseif cellbits == 64
 		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
 		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
 	#else
@@ -270,10 +270,10 @@ static stock const
 	#define PTEST_INIT__%1(%2) u@(u[_:YTEST_PID0:YTEST_DROP:u@$@Q_y%1(%2);@Q_y%1(%2)
 	#if !__COMPILER_STRING_PACKING
 		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
-	#elseif cellbytes == 4
+	#elseif cellbits == 32
 		// Ensure there is always sufficient spacefor the failures linked list.
 		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
-	#elseif cellbytes == 8
+	#elseif cellbits == 64
 		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
 	#else
 		#error Unsupported packed string size.

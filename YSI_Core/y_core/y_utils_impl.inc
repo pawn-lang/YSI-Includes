@@ -460,13 +460,7 @@ FUNC_PAWNDOC(floordiv(numerator, denominator));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(bool:IsNull(const string:str[]));
-#if cellbytes == 4
-	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x01000000)
-#elseif cellbytes == 8
-	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x0100000000000000)
-#else
-	#error Unsupported packed string size.
-#endif
+#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==YSI_PackedStringMax__)
 
 #if defined isnull
 	#undef isnull
@@ -1042,7 +1036,7 @@ stock StripL(string:str[])
 		while (IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1)) ++i;
 		// The byte offsets in `memcpy` are broken, and packed strings aren't
 		// even in order.  Thus we do it the slow way.
-		//if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
+		//if (i) memcpy(str[0], str[i], 0, (len - i) * cellbytes, len);
 		//Debug_Error("Cannot use `StripL` on a packed string");
 		if (i)
 		{
@@ -1054,7 +1048,7 @@ stock StripL(string:str[])
 		while (IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1)) ++i;
 		if (i)
 		{
-			memcpy(str[0], str[i], 0, (len - i + 1) * 4, len);
+			memcpy(str[0], str[i], 0, (len - i + 1) * cellbytes, len);
 		}
 	}
 }
@@ -1084,7 +1078,7 @@ stock Strip(string:str[])
 		for (i = 0; IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1); ++i) {}
 		if (i)
 		{
-			memcpy(str[0], str[i], 0, (len - i + 1) * 4, len);
+			memcpy(str[0], str[i], 0, (len - i + 1) * cellbytes, len);
 		}
 	}
 }
@@ -2371,14 +2365,15 @@ stock RawMemSet(address /* 12 */, value /* 16 */, size /* 20 */)
 			#emit FILL       16
 			address += 16;
 		}
-		if (size & 8)
+		// Might be `0` or `8`.
+		if (size & (8 / cellbytes / 2 * 8))
 		{
 			#emit LOAD.S.pri value
 			#emit LOAD.S.alt address
 			#emit FILL       8
 			address += 8;
 		}
-		if (size & 4)
+		if (size & cellbytes)
 		{
 			#emit LOAD.S.pri value
 			#emit SREF.S.pri address
