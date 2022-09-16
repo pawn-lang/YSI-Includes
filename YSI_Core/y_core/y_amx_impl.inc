@@ -1252,18 +1252,22 @@ stock AMX_DumpHeader()
 	print("================================");
 }
 
-#define _A<%0> __32(_:H_Re(%0,0))
+#define _A<%0> (_:H_Re(%0,))
 
 // Do the next character test as this one failed.
 #define H_Se(%0,%1,%3) H_Ne%1(%0,%3)
 // End of string test failed.
 #define H_Ee(%0,%3)    @E_:H_Se(%0,_,%3)
 // Do the single addition.
-#define H_De(%0,%1,%3) (_:H_Re(%0,%3+8))|%1<<%3
+#define H_De(%0,%1,%3) (_:H_Re(%0,%31))<<8|%1
 // Recurse through the string.
 #define H_Re(%0,%3)    he:H_Ee(%0,%3)
 // Test for the end of a string (4 characters only).
-#define he:H_Ee(%0,0+8+8+8+8)   0
+#if cellbits == 64
+	#define he:H_Ee(%0,1111)   808464432 // '0000' in decimal, to be short.
+#else
+	#define he:H_Ee(%0,1111)   0
+#endif
 
 // Test for the current character.
 
@@ -1410,7 +1414,7 @@ stock AMX_DumpHeader()
 #if cellbits == 64
 	#define _C<%0> (_:H_Rc(%0,56))
 	// Test for the end of a string (4 characters only).
-	#define hc:H_Ec(%0,56-8-8-8-8)   0
+	#define hc:H_Ec(%0,56-8-8-8-8)   808464432
 #else
 	#define _C<%0> (_:H_Rc(%0,24))
 	// Test for the end of a string (4 characters only).
