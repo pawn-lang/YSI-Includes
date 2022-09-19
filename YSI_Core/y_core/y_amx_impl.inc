@@ -497,7 +497,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 					continue;
 				}
 				// Bad reuse of a variable, but I ran out...
-				table = E_AMX_TABLE:__32(Cell_Reverse32(AMX_Read(addr)));
+				table = E_AMX_TABLE:Cell_ReverseBytes(AMX_Read(addr));
 				if (_:table < quick)
 				{
 					idx = mid + 1;
@@ -579,7 +579,7 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	if (idx == 0)
 	{
 		// Binary search for the start of the prefixes.
-		new p2 = Cell_Reverse32(pattern); // Little-endian for comparisons.
+		new p2 = Cell_ReverseBytes(pattern); // Little-endian for comparisons.
 		new
 			upper = count,
 			mid;
@@ -606,7 +606,7 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 					pos += __defsize_cells;
 					continue;
 				}
-				if (Cell_Reverse32(AMX_Read(addr)) - p2 < 0)
+				if (Cell_ReverseBytes(AMX_Read(addr)) - p2 < 0)
 				{
 					idx = mid + 1;
 					break;
@@ -633,7 +633,7 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		#emit ADD
 		#emit STOR.S.pri                addr
 		//addr = __32(addr);
-		if (addr != AMX_BASE_ADDRESS && __32(AMX_Read(addr)) == pattern)
+		if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == pattern)
 		{
 			buffer = pos - cellbytes;
 			return idx;
@@ -697,7 +697,7 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 			else addr -= 4;
 			break;
 		}
-		if (__32(AMX_Read(addr)) == pattern)
+		if (AMX_Read(addr) == pattern)
 		{
 			buffer = pos - cellbytes;
 			return idx;
@@ -1284,6 +1284,15 @@ stock AMX_DumpHeader()
 	print("================================");
 }
 
+#if cellbits == 64
+	// Extend the prefix to 8 bytes as simply as possible.
+	#define _F<%0,%1> %00000%1
+#elseif cellbits == 32
+	#define _F<%0,%1> %0%1
+#else
+	#error Unsupported `cellbits`.
+#endif
+
 #define _A<%0> (_:H_Re(%0,))
 
 // Do the next character test as this one failed.
@@ -1297,8 +1306,10 @@ stock AMX_DumpHeader()
 // Test for the end of a string (4 characters only).
 #if cellbits == 64
 	#define he:H_Ee(%0,1111)   808464432 // '0000' in decimal, to be short.
-#else
+#elseif cellbits == 32
 	#define he:H_Ee(%0,1111)   0
+#else
+	#error Unsupported `cellbits`.
 #endif
 
 // Test for the current character.
@@ -1447,10 +1458,12 @@ stock AMX_DumpHeader()
 	#define _C<%0> (_:H_Rc(%0,56))
 	// Test for the end of a string (4 characters only).
 	#define hc:H_Ec(%0,56-8-8-8-8)   808464432
-#else
+#elseif cellbits == 32
 	#define _C<%0> (_:H_Rc(%0,24))
 	// Test for the end of a string (4 characters only).
 	#define hc:H_Ec(%0,24-8-8-8-8)   0
+#else
+	#error Unsupported `cellbits`.
 #endif
 
 // Do the next character test as this one failed.

@@ -146,8 +146,6 @@ Optional plugins:
 #define INLINE_RETURN__%0; {Callback_Return_(_:(%0));continue;}
 #define callback: F@_@:
 
-#define _F<%0> (#%0)
-
 stock
 	InlineRet:YSI_gInlineRet = InlineRet:0;
 

@@ -188,6 +188,8 @@ iterfunc stock Fib(&iterstate, cur)
 	#elseif cellbits == 64
 		case 7540113804746346429:
 			return -1;
+	#else
+		#error Unsupported `cellbits`.
 	#endif
 	}
 	// Based on the "+--" swap method (like "^^^"), but without the last one.
