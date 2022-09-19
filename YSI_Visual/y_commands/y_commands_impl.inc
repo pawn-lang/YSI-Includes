@@ -557,6 +557,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	#endif
 	if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP)
 		sRet = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sRet);
+	Debug_Print5("Command_ReProces: Return = %d %d %d", p, sRet, Command_Error(p, e_COMMAND_ERRORS:sRet));
 	return Command_Error(p, e_COMMAND_ERRORS:sRet);
 }
 

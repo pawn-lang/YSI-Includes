@@ -321,6 +321,7 @@ static
 
 YCMD:y_commands_1(playerid, cmdtext[], help)
 {
+	//printf("%08x", addressof)
 	return 1;
 }
 
