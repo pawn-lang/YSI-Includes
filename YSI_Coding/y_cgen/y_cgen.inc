@@ -211,9 +211,9 @@ static stock CGen_SetupCodeSpace()
 	YSI_g_sCodeEnd   = CGen_GetAddr("@_y_cgen1_y_@"),
 	// Rewrite "@_y_cgen0_y_@" to just "return 0;".
 	AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_PROC)),
-	AMX_Write(YSI_g_sCodeSpace + 1 * cellbytes, _:RelocateOpcode(OP_ZERO_PRI)),
-	AMX_Write(YSI_g_sCodeSpace + 2 * cellbytes, _:RelocateOpcode(OP_RETN)),
-	YSI_g_sCodeSpace += 3 * cellbytes;
+	AMX_Write(YSI_g_sCodeSpace + __1_cell, _:RelocateOpcode(OP_ZERO_PRI)),
+	AMX_Write(YSI_g_sCodeSpace + __2_cells, _:RelocateOpcode(OP_RETN)),
+	YSI_g_sCodeSpace += __3_cells;
 }
 
 public OnCodeInit()
