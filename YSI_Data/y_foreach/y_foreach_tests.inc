@@ -2371,13 +2371,15 @@ stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
 	return cur;
 }
 
-#define Iterator@y_iter_Syntax6 iterstate(0, 1024)
+// sqrt(max/4096)
+#define y_iter_Syntax6a_num (1024<<((cellbits/64)*16))
+#define Iterator@y_iter_Syntax6 iterstate(0, y_iter_Syntax6a_num)
 
 @test(.group = "y_iterate") y_iter_Syntax6a()
 {
 	new
 		count = 0;
-	FOREACH__ (new i : y_iter_Syntax6(1024))
+	FOREACH__ (new i : y_iter_Syntax6(y_iter_Syntax6a_num))
 	{
 		ASSERT_ZE(i % 1048576);
 		++count;
@@ -2389,74 +2391,74 @@ stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
 {
 	new
 		count = 0;
-	FOREACH__(new i:y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__(new i:y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__(new i: y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__(new i: y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__(new i :y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__(new i :y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__(new i : y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__(new i : y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__( new i:y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__( new i:y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__( new i: y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__( new i: y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__( new i :y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__( new i :y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__( new i : y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__( new i : y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__ (new i:y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__ (new i:y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__ (new i: y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__ (new i: y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__ (new i :y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__ (new i :y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__ (new i : y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__ (new i : y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__ ( new i:y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__ ( new i:y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__ ( new i: y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__ ( new i: y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__ ( new i :y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__ ( new i :y_iter_Syntax6(1024) ) { ++count; }
-	FOREACH__ ( new i : y_iter_Syntax6(1024)) { ++count; }
-	FOREACH__ ( new i : y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__(new i:y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__(new i:y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__(new i: y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__(new i: y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__(new i :y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__(new i :y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__(new i : y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__(new i : y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__( new i:y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__( new i:y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__( new i: y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__( new i: y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__( new i :y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__( new i :y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__( new i : y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__( new i : y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__ (new i:y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__ (new i:y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__ (new i: y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__ (new i: y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__ (new i :y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__ (new i :y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__ (new i : y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__ (new i : y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__ ( new i:y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__ ( new i:y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__ ( new i: y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__ ( new i: y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__ ( new i :y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__ ( new i :y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+	FOREACH__ ( new i : y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+	FOREACH__ ( new i : y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
 	ASSERT_EQ(count, 4095 * 1 * 32);
 	TODO(217, "Iterators with state in `FOREACH__` without `new`.");
 //	new
 //		j;
-//	FOREACH__(j:y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__(j:y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__(j: y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__(j: y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__(j :y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__(j :y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__(j : y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__(j : y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__( j:y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__( j:y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__( j: y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__( j: y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__( j :y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__( j :y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__( j : y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__( j : y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__ (j:y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__ (j:y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__ (j: y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__ (j: y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__ (j :y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__ (j :y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__ (j : y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__ (j : y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__ ( j:y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__ ( j:y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__ ( j: y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__ ( j: y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__ ( j :y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__ ( j :y_iter_Syntax6(1024) ) { ++count; }
-//	FOREACH__ ( j : y_iter_Syntax6(1024)) { ++count; }
-//	FOREACH__ ( j : y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__(j:y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__(j:y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__(j: y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__(j: y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__(j :y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__(j :y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__(j : y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__(j : y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__( j:y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__( j:y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__( j: y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__( j: y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__( j :y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__( j :y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__( j : y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__( j : y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__ (j:y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__ (j:y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__ (j: y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__ (j: y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__ (j :y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__ (j :y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__ (j : y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__ (j : y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__ ( j:y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__ ( j:y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__ ( j: y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__ ( j: y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__ ( j :y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__ ( j :y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
+//	FOREACH__ ( j : y_iter_Syntax6(y_iter_Syntax6a_num)) { ++count; }
+//	FOREACH__ ( j : y_iter_Syntax6(y_iter_Syntax6a_num) ) { ++count; }
 //	ASSERT_EQ(count, 4095 * 2 * 32);
 }
 
@@ -2464,74 +2466,74 @@ stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
 {
 	new
 		count = 0;
-	FOREACH__(new i:y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__(new i:y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__(new i: y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__(new i: y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__(new i :y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__(new i :y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__(new i : y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__(new i : y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__( new i:y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__( new i:y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__( new i: y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__( new i: y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__( new i :y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__( new i :y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__( new i : y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__( new i : y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__ (new i:y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__ (new i:y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__ (new i: y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__ (new i: y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__ (new i :y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__ (new i :y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__ (new i : y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__ (new i : y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__ ( new i:y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__ ( new i:y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__ ( new i: y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__ ( new i: y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__ ( new i :y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__ ( new i :y_iter_Syntax6[1024] ) { ++count; }
-	FOREACH__ ( new i : y_iter_Syntax6[1024]) { ++count; }
-	FOREACH__ ( new i : y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__(new i:y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__(new i:y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__(new i: y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__(new i: y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__(new i :y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__(new i :y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__(new i : y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__(new i : y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__( new i:y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__( new i:y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__( new i: y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__( new i: y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__( new i :y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__( new i :y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__( new i : y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__( new i : y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__ (new i:y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__ (new i:y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__ (new i: y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__ (new i: y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__ (new i :y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__ (new i :y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__ (new i : y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__ (new i : y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__ ( new i:y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__ ( new i:y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__ ( new i: y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__ ( new i: y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__ ( new i :y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__ ( new i :y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+	FOREACH__ ( new i : y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+	FOREACH__ ( new i : y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
 	ASSERT_EQ(count, 4095 * 1 * 32);
 	TODO(217, "Iterators with state in `FOREACH__` without `new`.");
 //	new
 //		j;
-//	FOREACH__(j:y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__(j:y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__(j: y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__(j: y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__(j :y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__(j :y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__(j : y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__(j : y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__( j:y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__( j:y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__( j: y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__( j: y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__( j :y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__( j :y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__( j : y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__( j : y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__ (j:y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__ (j:y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__ (j: y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__ (j: y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__ (j :y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__ (j :y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__ (j : y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__ (j : y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__ ( j:y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__ ( j:y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__ ( j: y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__ ( j: y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__ ( j :y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__ ( j :y_iter_Syntax6[1024] ) { ++count; }
-//	FOREACH__ ( j : y_iter_Syntax6[1024]) { ++count; }
-//	FOREACH__ ( j : y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__(j:y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__(j:y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__(j: y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__(j: y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__(j :y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__(j :y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__(j : y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__(j : y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__( j:y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__( j:y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__( j: y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__( j: y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__( j :y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__( j :y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__( j : y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__( j : y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__ (j:y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__ (j:y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__ (j: y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__ (j: y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__ (j :y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__ (j :y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__ (j : y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__ (j : y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__ ( j:y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__ ( j:y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__ ( j: y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__ ( j: y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__ ( j :y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__ ( j :y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
+//	FOREACH__ ( j : y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
+//	FOREACH__ ( j : y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
 //	ASSERT_EQ(count, 4095 * 2 * 32);
 }
 
@@ -3127,7 +3129,7 @@ stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
 		ASSERT_EQ(i, c);
 		c *= 2;
 	}
-	ASSERT_EQ(c, 0x40000000 * 2);
+	ASSERT_EQ(c, cellmin);
 }
 
 @test(.group = "y_iterate") y_iter_Fib()

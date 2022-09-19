@@ -1089,7 +1089,7 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 				#emit SREF.S.pri                addr
 				return;
 			}
-		//#if cellbits == 64
+		/*#if cellbits == 64
 			else if (!(buffer & 0x00000000FF000000))
 			{
 				const mask0 = -1 << 32;
@@ -1164,18 +1164,18 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 				#emit SREF.S.pri                addr
 				return;
 			}
-		//#else
-		//	else if (!(buffer & 0xFF000000))
-		//	{
-		//		// This:
-		//		//  '\0', '3', '2', '1'.
-		//		// Becomes:
-		//		//  '1', '2', '3', '\0'.
-		//		// Write 3 bytes.
-		//		#emit LOAD.S.pri                buffer
-		//		#emit SREF.S.pri                addr
-		//		return;
-		//	}
+		#else*/
+			else if (!(buffer & 0xFF000000))
+			{
+				// This:
+				//  '\0', '3', '2', '1'.
+				// Becomes:
+				//  '1', '2', '3', '\0'.
+				// Write 3 bytes.
+				#emit LOAD.S.pri                buffer
+				#emit SREF.S.pri                addr
+				return;
+			}
 		//#endif
 			else
 			{
