@@ -463,69 +463,75 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 			return 0;
 		}
 		// Binary search.
-		new
-			quick = (pattern[3]) | (pattern[2] << 8) | (pattern[1] << 16) | (pattern[0] << 24),
-			addr = 0,
-			str[FUNCTION_LENGTH],
-			mid,
-			pos;
-		while (idx < count)
-		{
-			mid = (idx + count) / 2;
-			pos = mid * __defsize_cells + base + cellbytes;
-			for ( ; ; )
+		#if cellbits == 32
+			new quick = (pattern[3]) | (pattern[2] << 8) | (pattern[1] << 16) | (pattern[0] << 24);
+		#elseif cellbits == 64
+			new quick = (pattern[7]) | (pattern[6] << 8) | (pattern[5] << 16) | (pattern[4] << 24) | (pattern[3] << 32) | (pattern[2] << 40) | (pattern[1] << 48) | (pattern[0] << 56);
+		#else
+			#error Unsupported `cellbits`.
+		#endif
+			new
+				addr = 0,
+				str[FUNCTION_LENGTH],
+				mid,
+				pos;
+			while (idx < count)
 			{
-				Debug_Print7("Looking for: %s, %d, %d, %d", pattern, idx, mid, count);
-				#emit LREF.S.pri                pos
-				#emit CONST.alt                 0xFFFFFFFF
-				#emit AND
-				#emit LOAD.alt                  AMX_BASE_ADDRESS
-				#emit ADD
-				#emit STOR.S.pri                addr
-				Debug_Code7{AMX_ReadString(addr, str);}
-				Debug_Print7("    %d, %d, %s", pos, addr, Unpack(str));
-				Debug_Print7("    %08x, %08x, %d", quick, Cell_Reverse32(AMX_Read(addr)), Cell_Reverse32(AMX_Read(addr)) - quick);
-				if (addr == AMX_BASE_ADDRESS)
+				mid = (idx + count) / 2;
+				pos = mid * __defsize_cells + base + cellbytes;
+				for ( ; ; )
 				{
-					if (++mid == count)
+					Debug_Print7("Looking for: %s, %d, %d, %d", pattern, idx, mid, count);
+					#emit LREF.S.pri                pos
+					#emit CONST.alt                 0xFFFFFFFF
+					#emit AND
+					#emit LOAD.alt                  AMX_BASE_ADDRESS
+					#emit ADD
+					#emit STOR.S.pri                addr
+					Debug_Code7{AMX_ReadString(addr, str);}
+					Debug_Print7("    %d, %d, %s", pos, addr, Unpack(str));
+					Debug_Print7("    %08x, %08x, %d", quick, Cell_ReverseBytes(AMX_Read(addr)), Cell_ReverseBytes(AMX_Read(addr)) - quick);
+					if (addr == AMX_BASE_ADDRESS)
 					{
-						// Tested this entire half.
-						count = (idx + count) / 2;
+						if (++mid == count)
+						{
+							// Tested this entire half.
+							count = (idx + count) / 2;
+							break;
+						}
+						pos += __defsize_cells;
+						continue;
+					}
+					// Bad reuse of a variable, but I ran out...
+					table = E_AMX_TABLE:Cell_ReverseBytes(AMX_Read(addr));
+					if (_:table < quick)
+					{
+						idx = mid + 1;
 						break;
 					}
-					pos += __defsize_cells;
-					continue;
-				}
-				// Bad reuse of a variable, but I ran out...
-				table = E_AMX_TABLE:Cell_ReverseBytes(AMX_Read(addr));
-				if (_:table < quick)
-				{
-					idx = mid + 1;
+					else if (_:table > quick)
+					{
+						count = mid;
+						break;
+					}
+					AMX_ReadString(addr, str);
+					addr = strcmp(str, pattern);
+					if (addr < 0)
+					{
+						idx = mid + 1;
+					}
+					else if (addr > 0)
+					{
+						count = mid;
+					}
+					else
+					{
+						buffer = pos - cellbytes;
+						return cellmax;
+					}
 					break;
 				}
-				else if (_:table > quick)
-				{
-					count = mid;
-					break;
-				}
-				AMX_ReadString(addr, str);
-				addr = strcmp(str, pattern);
-				if (addr < 0)
-				{
-					idx = mid + 1;
-				}
-				else if (addr > 0)
-				{
-					count = mid;
-				}
-				else
-				{
-					buffer = pos - 4;
-					return cellmax;
-				}
-				break;
 			}
-		}
 	}
 	else
 	{

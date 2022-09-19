@@ -307,19 +307,21 @@ static stock CTRL_WriteSCTRLStub(addr)
 
 static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
 {
+	Debug_Print6("CTRL_FoundLCTRL: Found LCTRL");
 	new reg = CodeScanGetMatchHole(scanner, 0);
 	if (0 <= reg <= 255)
 	{
 		// Reserved registers (VM and plugins).  Do nothing.
 		return;
 	}
+	Debug_Print4("CTRL_FoundLCTRL Valid: %d", reg);
 	new
 		ctx[AsmContext];
 	AsmInitPtr(ctx, CodeScanGetMatchAddress(scanner) + AMX_HEADER_COD, __2_cells);
 	new
 		ptr,
 		name[FUNCTION_LENGTH];
-	format(name, sizeof (name), "@y_L%d", reg);
+	format(name, sizeof (name), #_F<@y_L,%d>,reg);//NOSPACE!
 	if (AMX_GetPublicPointer(0, ptr, name, true))
 	{
 		@emit CALL.abs         ptr + __4_cells
@@ -329,23 +331,26 @@ static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
 		@emit NOP
 		@emit NOP
 	}
+	Debug_Print5("CTRL_FoundLCTRL Name: %s, Index: %d, %d", name, ptr, AMX_GetPublicPointer(0, ptr, name, true));
 }
 
 static stock CTRL_FoundSCTRL(const scanner[CodeScanner])
 {
+	Debug_Print6("CTRL_FoundSCTRL: Found SCTRL");
 	new reg = CodeScanGetMatchHole(scanner, 0);
 	if (0 <= reg <= 255)
 	{
 		// Reserved registers (VM and plugins).  Do nothing.
 		return;
 	}
+	Debug_Print4("CTRL_FoundSCTRL Valid: %d", reg);
 	new
 		ctx[AsmContext];
 	AsmInitPtr(ctx, CodeScanGetMatchAddress(scanner) + AMX_HEADER_COD, __2_cells);
 	new
 		ptr,
 		name[FUNCTION_LENGTH];
-	format(name, sizeof (name), "@y_S%d", reg);
+	format(name, sizeof (name), #_F<@y_S,%d>,reg);//NOSPACE!
 	if (AMX_GetPublicPointer(0, ptr, name, true))
 	{
 		@emit CALL.abs         ptr + __4_cells
@@ -355,5 +360,6 @@ static stock CTRL_FoundSCTRL(const scanner[CodeScanner])
 		@emit NOP
 		@emit NOP
 	}
+	Debug_Print5("CTRL_FoundSCTRL Name: %s, Index: %d, %d", name, ptr, AMX_GetPublicPointer(0, ptr, name, true));
 }
 
