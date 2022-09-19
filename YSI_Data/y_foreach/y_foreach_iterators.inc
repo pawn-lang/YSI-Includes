@@ -178,13 +178,17 @@ iterfunc stock Fib(&iterstate, cur)
 	//   
 	switch (cur)
 	{
-	case -1:
-		return 0;
-	case 1836311903:
-		// End point (statically calculated largest Fibaonacci number that can
-		// be stored in a signed 32-bit integer.  Does make this not totally
-		// portable, because it can't be used in the 64-bit version quickly.
-		return -1;
+		case -1:
+			return 0;
+	#if cellbits == 32
+		case 1836311903:
+			// End point (statically calculated largest Fibaonacci number that can
+			// be stored in a signed 32-bit integer).
+			return -1;
+	#elseif cellbits == 64
+		case 7540113804746346429:
+			return -1;
+	#endif
 	}
 	// Based on the "+--" swap method (like "^^^"), but without the last one.
 	return (iterstate = iterstate + cur) - cur;

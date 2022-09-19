@@ -534,10 +534,10 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 			#emit PUSH.C      __3_cells
 			#emit LCTRL       __cip
 			#emit ADD.C       __11_cells
-			#emit LCTRL       __jit
+			#emit LCTRL       __jmp
 			#emit PUSH.pri
 			#emit LOAD.pri    sHash
-			#emit SCTRL       __jit
+			#emit SCTRL       __jmp
 			#emit SCTRL       __cip
 			#emit STOR.pri    sRet
 			Debug_Print5("Command_ReProces: Result = %d %d %d", sRet, Command_Error(p, e_COMMAND_ERRORS:sRet), _:COMMAND_OK);

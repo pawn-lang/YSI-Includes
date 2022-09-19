@@ -110,7 +110,8 @@ const __minus1 = -1;
 	const __stk = 4;
 	const __frm = 5;
 	const __cip = 6;
-	const __jit = 8;
+	const __jit = 7;
+	const __jmp = 8;
 	const __flg = 9;
 	#define __register_names
 #endif

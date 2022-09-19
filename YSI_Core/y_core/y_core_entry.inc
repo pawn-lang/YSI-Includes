@@ -348,7 +348,7 @@ ScriptInit_PreInitFuncs_()
 		#emit PUSH.C     0
 		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      __jit
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
 		#emit SCTRL      __cip
@@ -365,7 +365,7 @@ ScriptInit_PostInitFuncs_()
 		#emit PUSH.C     0
 		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      __jit
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
 		#emit SCTRL      __cip
@@ -382,7 +382,7 @@ ScriptInit_PreExitFuncs_()
 		#emit PUSH.C     0
 		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      __jit
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
 		#emit SCTRL      __cip
@@ -399,7 +399,7 @@ ScriptInit_PostExitFuncs_()
 		#emit PUSH.C     0
 		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      __jit
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
 		#emit SCTRL      __cip

@@ -113,7 +113,7 @@ Optional plugins:
 		#emit PUSH.C       __2_cells
 		#emit LCTRL        __cip
 		#emit ADD.C        __9_cells
-		#emit LCTRL        __jit
+		#emit LCTRL        __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri   ptr
 		#emit SCTRL        __cip
@@ -133,7 +133,7 @@ Optional plugins:
 		#emit PUSH.C       __2_cells
 		#emit LCTRL        __cip
 		#emit ADD.C        __9_cells
-		#emit LCTRL        __jit
+		#emit LCTRL        __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri   ptr
 		#emit SCTRL        __cip

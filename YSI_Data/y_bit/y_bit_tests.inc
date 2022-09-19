@@ -87,30 +87,55 @@ Optional plugins:
 {
 	new
 		BitArray:bb<100>;
-	Bit_Set(bb, 10, true);
-	ASSERT_EQ(_:bb[0], 1 << 10);
-	ASSERT_ZE(_:bb[1]);
-	Bit_Set(bb, 32, true);
-	ASSERT_EQ(_:bb[0], 1 << 10);
-	ASSERT_EQ(_:bb[1], 1);
-	Bit_Let(bb, 99);
-	ASSERT_EQ(_:bb[0], 1 << 10);
-	ASSERT_EQ(_:bb[1], 1);
-	ASSERT_EQ(_:bb[3], 8);
-	Bit_Vet(bb, 99);
-	ASSERT_EQ(_:bb[0], 1 << 10);
-	ASSERT_EQ(_:bb[1], 1);
-	ASSERT_ZE(_:bb[3]);
-	Bit_Let(bb, 11);
-	ASSERT_EQ(_:bb[0], 3 << 10);
-	ASSERT_EQ(_:bb[1], 1);
-	ASSERT_ZE(_:bb[3]);
-	Bit_Vet(bb, 10);
-	ASSERT_EQ(_:bb[0], 2 << 10);
-	ASSERT_EQ(_:bb[1], 1);
-	ASSERT_ZE(_:bb[3]);
-	Bit_Vet(bb, 11);
-	ASSERT_ZE(_:bb[0]);
+	#if cellbits == 32
+		Bit_Set(bb, 10, true);
+		ASSERT_EQ(_:bb[0], 1 << 10);
+		ASSERT_ZE(_:bb[1]);
+		Bit_Set(bb, 32, true);
+		ASSERT_EQ(_:bb[0], 1 << 10);
+		ASSERT_EQ(_:bb[1], 1);
+		Bit_Let(bb, 99);
+		ASSERT_EQ(_:bb[0], 1 << 10);
+		ASSERT_EQ(_:bb[1], 1);
+		ASSERT_EQ(_:bb[3], 8);
+		Bit_Vet(bb, 99);
+		ASSERT_EQ(_:bb[0], 1 << 10);
+		ASSERT_EQ(_:bb[1], 1);
+		ASSERT_ZE(_:bb[3]);
+		Bit_Let(bb, 11);
+		ASSERT_EQ(_:bb[0], 3 << 10);
+		ASSERT_EQ(_:bb[1], 1);
+		ASSERT_ZE(_:bb[3]);
+		Bit_Vet(bb, 10);
+		ASSERT_EQ(_:bb[0], 2 << 10);
+		ASSERT_EQ(_:bb[1], 1);
+		ASSERT_ZE(_:bb[3]);
+		Bit_Vet(bb, 11);
+		ASSERT_ZE(_:bb[0]);
+	#elseif cellbits == 64
+		Bit_Set(bb, 10, true);
+		ASSERT_EQ(_:bb[0], 1 << 10);
+		ASSERT_ZE(_:bb[1]);
+		Bit_Set(bb, 64, true);
+		ASSERT_EQ(_:bb[0], 1 << 10);
+		ASSERT_EQ(_:bb[1], 1);
+		Bit_Let(bb, 99);
+		ASSERT_EQ(_:bb[0], 1 << 10);
+		ASSERT_EQ(_:bb[1], 0x800000001);
+		Bit_Vet(bb, 99);
+		ASSERT_EQ(_:bb[0], 1 << 10);
+		ASSERT_EQ(_:bb[1], 1);
+		Bit_Let(bb, 11);
+		ASSERT_EQ(_:bb[0], 3 << 10);
+		ASSERT_EQ(_:bb[1], 1);
+		Bit_Vet(bb, 10);
+		ASSERT_EQ(_:bb[0], 2 << 10);
+		ASSERT_EQ(_:bb[1], 1);
+		Bit_Vet(bb, 11);
+		ASSERT_ZE(_:bb[0]);
+	#else
+		#error Unsupported `cellbits`.
+	#endif
 }
 
 @test(.group = "y_bit") Bit_Get()

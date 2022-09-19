@@ -181,7 +181,7 @@ static stock CTRL_LCTRLStub()
 	// And set up a second function call.
 	#emit LCTRL            __cip
 	#emit ADD.C            36
-	#emit LCTRL            __jit
+	#emit LCTRL            __jmp
 	#emit PUSH.pri
 	#emit LOAD.S.pri       20
 	#emit SCTRL            __cip
@@ -216,7 +216,7 @@ static stock CTRL_SCTRLStub()
 	// And set up a second function call.
 	#emit LCTRL            __cip
 	#emit ADD.C            36
-	#emit LCTRL            __jit
+	#emit LCTRL            __jmp
 	#emit PUSH.pri
 	#emit LOAD.S.pri       20
 	#emit SCTRL            __cip

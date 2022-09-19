@@ -1092,42 +1092,74 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 		//#if cellbits == 64
 			else if (!(buffer & 0x00000000FF000000))
 			{
+				const mask0 = -1 << 32;
+				const mask1 = 0x0000000000FFFFFF;
 				#emit LREF.S.pri                addr
-				#emit STOR.S.pri                old
-				buffer = (old & (-1 << 32)) | (buffer & 0x0000000000FFFFFF);
+				#emit CONST.alt                 mask0
+				#emit AND
+				#emit PUSH.pri
 				#emit LOAD.S.pri                buffer
+				#emit CONST.alt                 mask1
+				#emit AND
+				#emit POP.alt
+				#emit OR
 				#emit SREF.S.pri                addr
 				return;
 			}
 			else if (!(buffer & 0x000000FF00000000))
 			{
+				const mask0 = -1 << 40;
+				const mask1 = 0x00000000FFFFFFFF;
 				#emit LREF.S.pri                addr
-				#emit STOR.S.pri                old
-				buffer = (old & (-1 << 40)) | (buffer & 0x00000000FFFFFFFF);
+				#emit CONST.alt                 mask0
+				#emit AND
+				#emit PUSH.pri
 				#emit LOAD.S.pri                buffer
+				#emit CONST.alt                 mask1
+				#emit AND
+				#emit POP.alt
+				#emit OR
 				#emit SREF.S.pri                addr
 				return;
 			}
 			else if (!(buffer & 0x0000FF0000000000))
 			{
+				const mask0 = -1 << 48;
+				const mask1 = 0x000000FFFFFFFFFF;
 				#emit LREF.S.pri                addr
-				#emit STOR.S.pri                old
-				buffer = (old & (-1 << 48)) | (buffer & 0x000000FFFFFFFFFF);
+				#emit CONST.alt                 mask0
+				#emit AND
+				#emit PUSH.pri
 				#emit LOAD.S.pri                buffer
+				#emit CONST.alt                 mask1
+				#emit AND
+				#emit POP.alt
+				#emit OR
 				#emit SREF.S.pri                addr
 				return;
 			}
 			else if (!(buffer & 0x00FF000000000000))
 			{
+				const mask0 = -1 << 56;
+				const mask1 = 0x0000FFFFFFFFFFFF;
 				#emit LREF.S.pri                addr
-				#emit STOR.S.pri                old
-				buffer = (old & (-1 << 56)) | (buffer & 0x0000FFFFFFFFFFFF);
+				#emit CONST.alt                 mask0
+				#emit AND
+				#emit PUSH.pri
 				#emit LOAD.S.pri                buffer
+				#emit CONST.alt                 mask1
+				#emit AND
+				#emit POP.alt
+				#emit OR
 				#emit SREF.S.pri                addr
 				return;
 			}
 			else if (!(buffer & 0xFF00000000000000))
 			{
+				// The code seems to skip a step in `0x00FFFFFFFFFFFFFF`, but
+				// that would normally mask out the null byte and add nothing of
+				// the original contents.  But masking out a null byte is
+				// pointless in that case.
 				#emit LOAD.S.pri                buffer
 				#emit SREF.S.pri                addr
 				return;

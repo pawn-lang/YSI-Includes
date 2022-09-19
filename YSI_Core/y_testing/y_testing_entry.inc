@@ -664,7 +664,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			#emit PUSH.C                    0
 			#emit LCTRL                     __cip
 			#emit ADD.C                     __9_cells
-			#emit LCTRL                     __jit
+			#emit LCTRL                     __jmp
 			#emit PUSH.pri
 			#emit LREF.S.pri                entry
 			#emit SCTRL                     __cip
@@ -865,7 +865,7 @@ Testing_Next_retry:
 				#emit PUSH.C                    __1_cell
 				#emit LCTRL                     __cip
 				#emit ADD.C                     __9_cells
-				#emit LCTRL                     __jit
+				#emit LCTRL                     __jmp
 				#emit PUSH.pri
 				#emit LREF.S.pri                entry
 				#emit SCTRL                     __cip

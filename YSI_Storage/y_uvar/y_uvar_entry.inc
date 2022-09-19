@@ -324,7 +324,7 @@ public OnCodeInit()
 		#emit PUSH.C     0
 		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      __jit
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri buffer
 		#emit SCTRL      __cip
@@ -433,7 +433,7 @@ stock _Uvar_DoSavePlayer(playerid)
 			// Now get the return address and push it.
 			#emit LCTRL      __cip
 			#emit ADD.C      __9_cells
-			#emit LCTRL      __jit
+			#emit LCTRL      __jmp
 			#emit PUSH.pri
 			// Call "Player_WriteArray" directly.
 			#emit CONST.pri  Player_WriteArray
@@ -492,7 +492,7 @@ HOOK__ OnPlayerConnect(playerid)
 			// Now get the return address and push it.
 			#emit LCTRL      __cip
 			#emit ADD.C      __9_cells
-			#emit LCTRL      __jit
+			#emit LCTRL      __jmp
 			#emit PUSH.pri
 			// Call "MemSet" directly.
 			#emit CONST.pri  MemSet

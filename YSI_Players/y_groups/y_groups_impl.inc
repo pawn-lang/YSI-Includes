@@ -1347,7 +1347,7 @@ stock _Y_G@C_0(func)
 	#emit PUSH.C     0
 	#emit LCTRL      __cip
 	#emit ADD.C      __9_cells
-	#emit LCTRL      __jit
+	#emit LCTRL      __jmp
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
 	#emit SCTRL      __cip
@@ -1361,7 +1361,7 @@ stock _Y_G@C_1(func, GLOBAL_TAG_TYPES:...)
 	#emit PUSH.C     __1_cell
 	#emit LCTRL      __cip
 	#emit ADD.C      __9_cells
-	#emit LCTRL      __jit
+	#emit LCTRL      __jmp
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
 	#emit SCTRL      __cip
@@ -1376,7 +1376,7 @@ stock _Y_G@C_2(func, GLOBAL_TAG_TYPES:...)
 	#emit PUSH.C     __2_cells
 	#emit LCTRL      __cip
 	#emit ADD.C      __9_cells
-	#emit LCTRL      __jit
+	#emit LCTRL      __jmp
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
 	#emit SCTRL      __cip
@@ -1392,7 +1392,7 @@ stock _Y_G@C_3(func, GLOBAL_TAG_TYPES:...)
 	#emit PUSH.C     __3_cells
 	#emit LCTRL      __cip
 	#emit ADD.C      __9_cells
-	#emit LCTRL      __jit
+	#emit LCTRL      __jmp
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
 	#emit SCTRL      __cip

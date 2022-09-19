@@ -209,7 +209,7 @@ FUNC_PAWNDOC(Bit_FastSet(BitArray:array<>,slot,bool:set,size = sizeof (array)));
 
 stock Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array))
 {
-	MemSet(_:array, set ? 0xFFFFFFFF : 0, size);
+	MemSet(_:array, set ? -1 : 0, size);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -247,7 +247,13 @@ stock Bit_Display(const BitArray:array<>, size = sizeof (array))
 	while (size--)
 	{
 		val = _:array[size];
-		format(ret, sizeof (ret), "%s%016b%016b", ret, val >>> 16, val & 0xFFFF);
+		#if cellbits == 32
+			format(ret, sizeof (ret), "%s%016b%016b", ret, val >>> 16, val & 0xFFFF);
+		#elseif cellbits == 64
+			format(ret, sizeof (ret), "%s%032b%032b", ret, val >>> 32, val & 0xFFFFFFFF);
+		#else
+			#error Unsupported `cellbits`.
+		#endif
 	}
 	//Debug_Print7("Bit_Display called: %s, %i", ret, size);
 	return ret;

@@ -124,7 +124,7 @@ stock Server_GetJITVersion()
 	{
 		#emit LCTRL     __cip
 		#emit MOVE.alt
-		#emit LCTRL     __jit
+		#emit LCTRL     __jmp
 		#emit NEQ
 		#emit CONST.alt 1
 		#emit XCHG

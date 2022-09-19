@@ -201,7 +201,7 @@ public @_y_cgen1_y_@()
 
 static stock CGen_GetAddr(const func[])
 {
-	return AMX_Read(funcidx(func) * 8 + AMX_HEADER_PUBLICS) + AMX_HEADER_COD;
+	return AMX_Read(funcidx(func) * __defsize_cells + AMX_HEADER_PUBLICS) + AMX_HEADER_COD;
 }
 
 static stock CGen_SetupCodeSpace()
@@ -211,9 +211,9 @@ static stock CGen_SetupCodeSpace()
 	YSI_g_sCodeEnd   = CGen_GetAddr("@_y_cgen1_y_@"),
 	// Rewrite "@_y_cgen0_y_@" to just "return 0;".
 	AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_PROC)),
-	AMX_Write(YSI_g_sCodeSpace + 4, _:RelocateOpcode(OP_ZERO_PRI)),
-	AMX_Write(YSI_g_sCodeSpace + 8, _:RelocateOpcode(OP_RETN)),
-	YSI_g_sCodeSpace += 12;
+	AMX_Write(YSI_g_sCodeSpace + 1 * cellbytes, _:RelocateOpcode(OP_ZERO_PRI)),
+	AMX_Write(YSI_g_sCodeSpace + 2 * cellbytes, _:RelocateOpcode(OP_RETN)),
+	YSI_g_sCodeSpace += 3 * cellbytes;
 }
 
 public OnCodeInit()

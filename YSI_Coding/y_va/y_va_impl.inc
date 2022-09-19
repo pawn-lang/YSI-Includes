@@ -187,7 +187,7 @@ stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 	// Return from this function.  We are already in the parent frame and have
 	// no parameters on the stack, so function postamble is not required.
 	#emit LOAD.pri     sReturnAddress
-	#emit SCTRL        __jit
+	#emit SCTRL        __jmp
 	#emit SCTRL        __cip
 }
 
