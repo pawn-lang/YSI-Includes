@@ -224,3 +224,15 @@ new Timer:YSI_g_sKillYourself;
 	printf("KillYourself after");
 }
 
+@timer(500) y_timers_syntax2()
+{
+}
+
+@timer(500, .auto = true) y_timers_syntax3(playerid)
+{
+}
+
+@timer(500, true)y_timers_syntax4()
+{
+}
+
