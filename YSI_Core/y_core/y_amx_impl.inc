@@ -1045,6 +1045,8 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 	new
 		buffer = 0,
 		idx = 0;
+	// These have to go up here because for some reason older compilers give
+	// weird warnings when they're more tightly scoped and have the same names.
 	const mask0 = -1 << 8;
 	const mask1 = -1 << 16;
 	const mask2 = 0x000000FF;
