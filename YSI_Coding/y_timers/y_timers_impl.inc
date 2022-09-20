@@ -103,10 +103,10 @@ public OnCodeInit()
 			Debug_Print7("Timer_OnYSIInit: pointer: %d", pointer);
 			// Push the address of the current function.
 			#emit PUSH.S     pointer
-			#emit PUSH.C     EMIT_MINUS_1 // -1: Initial list action for `_Timer_D`.
-			#emit PUSH.C     8
+			#emit PUSH.C     __minus1 // -1: Initial list action for `_Timer_D`.
+			#emit PUSH.C     __2_cells
 			#emit LCTRL      __cip
-			#emit ADD.C      36
+			#emit ADD.C      __9_cells
 			#emit LCTRL      __jmp
 			#emit PUSH.pri
 			#emit LOAD.S.pri pointer
@@ -131,10 +131,10 @@ public OnCodeInit()
 				{
 					// Call the functions a second time to guarantee getting
 					#emit PUSH.C     0
-					#emit PUSH.C     EMIT_MINUS_1
-					#emit PUSH.C     8
+					#emit PUSH.C     __minus1
+					#emit PUSH.C     __2_cells
 					#emit LCTRL      __cip
-					#emit ADD.C      36
+					#emit ADD.C      __9_cells
 					#emit LCTRL      __jmp
 					#emit PUSH.pri
 					#emit LOAD.S.pri pointer2
@@ -199,18 +199,18 @@ HOOK__ OnPlayerConnect(playerid)
 		#emit PUSH.C     1
 		// Push the parameter count (in bytes).  This is actually passed to
 		// native functions directly.
-		#emit PUSH.C     8
+		#emit PUSH.C     __2_cells
 		// Call the function currently in the list to trigger the repeating
 		// timer.  This involves getting the current "cip" address, modifying it
 		// to get the return address then modifying "cip" to call the function.
 		#emit LCTRL      __cip
-		#emit ADD.C      36
+		#emit ADD.C      __9_cells
 		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri data
 		#emit SCTRL      __cip
 		// Returned, get the next list element.
-		cur += 4;
+		cur += cellbytes;
 		#emit LREF.S.pri  cur
 		#emit STOR.S.pri  cur
 	}
@@ -237,18 +237,18 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 		#emit PUSH.C     0
 		// Push the parameter count (in bytes).  This is actually passed to
 		// native functions directly.
-		#emit PUSH.C     8
+		#emit PUSH.C     __2_cells
 		// Call the function currently in the list to trigger the repeating
 		// timer.  This involves getting the current "cip" address, modifying it
 		// to get the return address then modifying "cip" to call the function.
 		#emit LCTRL      __cip
-		#emit ADD.C      36
+		#emit ADD.C      __9_cells
 		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri data
 		#emit SCTRL      __cip
 		// Returned, get the next list element.
-		cur += 4;
+		cur += cellbytes;
 		#emit LREF.S.pri  cur
 		#emit STOR.S.pri  cur
 	}
@@ -256,10 +256,10 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
-stock _Timer_I(const func[], interval, action, &result)
+stock _Timer_I(const func[], interval, {_, _@yT}:action, &result)
 {
 	Debug_Print3("_Timer_I called");
-	switch (action)
+	switch (_:action)
 	{
 		case 0:
 		{
@@ -281,10 +281,10 @@ stock _Timer_I(const func[], interval, action, &result)
 }
 
 // Attempt to stop or start a task, possibly for a single player.
-stock _Timer_D(const func[], interval, const action, who, results[], a[2])
+stock _Timer_D(const func[], interval, const {_, _@yT}:action, who, results[], a[2])
 {
 	Debug_Print3("_Timer_D called");
-	switch (action)
+	switch (_:action)
 	{
 		case -1:
 		{
@@ -599,18 +599,18 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 	return 1;
 }
 
-#define TASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public%0()
+#define TASK__%0[%1](%2) _F<@yT_,%0>(g,p);_F<@yT_,%0>(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public%0()
 
 // 
-#define PTASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
+#define PTASK__%0[%1](%2) _F<@yT_,%0>(g,p);_F<@yT_,%0>(g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
 
 #define _yT@%0\32; _yT@
 #define @_yT%0\32; @_yT
 #define @yT_%0\32; @yT_
 
-#define PAUSE__%0; {J@=_:@Ym:@yT_%0(0,-1);}
-#define RESUME__%0; {J@=_:@Ym:@yT_%0(1,-1);}
-#define @Ym:%0[%1](%2,-1) %0(%2,%1)
+#define PAUSE__%0; {J@=_:@Ym:_F<@yT_,%0>(0,-1);}
+#define RESUME__%0; {J@=_:@Ym:_F<@yT_,%0>(1,-1);}
+#define @Ym:_F<%8,%0[%1]>(%2,-1) _F<%8,%0>(%2,%1)
 
 #if YSI_KEYWORD(stop)
 	#define stop STOP__
@@ -639,4 +639,33 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 #if YSI_KEYWORD(timer)
 	#define timer%0[%1]%3(%2) TIMER__%0[%1]%3(%2)
 #endif
+
+// Decorator syntax.  We don't have `@task` and `@ptask`, it determines the
+// type automatically from having parameters or not.
+#define @timer(%1)%0(%2) _y@T:_F<@yT_,%0>(_@yT:g,p);_y@T:_F<@yT_,%0>(_@yT:g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public %0(%2)
+#define _@yT:g,p);%9(%9){%9;%9_Timer_D(%9,%1,%9);}%0()%9() g,p);_F<@yT_,%0>(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public %0()
+
+#define _Timer_I(%0,%1,%9,g,s) _Timer_I(%0,%1,g,s)
+#define _Timer_D(%0,%1,%9,g,p,s,a) _Timer_D(%0,%1,g,p,s,a)
+
+// Normal timer, not a task.
+#define _y@T:%9(%9);%9(%9){%9;%9_Timer_D(%9,%1,g,p,s,a);}%0(%2)%9(%9) TIMER__ %0[%1](%2)
+
+#endinput
+
+// Use:
+// `timer`
+@timer(100) A()
+{
+}
+
+// `task`
+@timer(100, .auto = true) B()
+{
+}
+
+// `ptask`
+@timer(100, true) C(playerid)
+{
+}
 
