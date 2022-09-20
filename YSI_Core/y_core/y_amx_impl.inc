@@ -76,6 +76,10 @@ Optional plugins:
 // the code that uses this file still operates corectly given how differently
 // the two systems do things.  I fully admit that his is FAR more general but
 // there are legacy libraries to consider.
+//
+// Update: I'm using both in parallel because they do different things well.
+// That has a more complete API for most things, but this is way better for
+// looping over functions.
 
 #define AMX_FastString(%1,%2,%3,%4) \
 	(((%1) << 0) | ((%2) << 8) | ((%3) << 16) | ((%4) << 24))
