@@ -1251,7 +1251,7 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 		#emit LREF.S.pri buffer
 		#emit STOR.S.pri value
 		// Ignore the top two bits - they're flags we don't need.
-		if (value & (-1 >>> 2) == tag & (-1 >>> 2))
+		if (value & 0x3FFFFFFF == tag & 0x3FFFFFFF)
 		{
 			// Found the tag, get the name.
 			buffer += cellbytes;
