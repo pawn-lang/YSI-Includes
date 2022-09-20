@@ -743,8 +743,8 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				ScriptInit_OnYSIInit();
 			#endif
 			#if !defined YSI_NO_MODE_CACHE
-				E_SCRIPTINIT_STATE
-					tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
+				new
+					E_SCRIPTINIT_STATE:tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
 				// Set the variable to something unique for next load.  This will be
 				// written out, thus loaded in next time.
 				YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
