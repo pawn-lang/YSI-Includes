@@ -256,7 +256,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
-stock _Timer_I(const func[], interval, {_, _@yT}:action, &result)
+stock _y@T:_Timer_I(const func[], interval, {_, _@yT}:action, &result)
 {
 	Debug_Print3("_Timer_I called");
 	switch (_:action)
@@ -277,11 +277,11 @@ stock _Timer_I(const func[], interval, {_, _@yT}:action, &result)
 			}
 		}
 	}
-	return interval;
+	return _y@T:interval;
 }
 
 // Attempt to stop or start a task, possibly for a single player.
-stock _Timer_D(const func[], interval, const {_, _@yT}:action, who, results[], a[2])
+stock _y@T:_Timer_D(const func[], interval, const {_, _@yT}:action, who, results[], a[2])
 {
 	Debug_Print3("_Timer_D called");
 	switch (_:action)
@@ -338,7 +338,7 @@ stock _Timer_D(const func[], interval, const {_, _@yT}:action, who, results[], a
 		}
 	}
 	// No global interval for per-player timers.
-	return -1;
+	return _y@T:-1;
 }
 
 static stock Alloc:Timer_GetSingleSlot(len)
@@ -643,7 +643,7 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 // Decorator syntax.  We don't have `@task` and `@ptask`, it determines the
 // type automatically from having parameters or not.
 #define @timer(%1)%0(%2) _y@T:_F<@yT_,%0>(_@yT:g,p);_y@T:_F<@yT_,%0>(_@yT:g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public %0(%2)
-#define _@yT:g,p);%9(%9){%9;%9_Timer_D(%9,%1,%9);}%0()%9() g,p);_F<@yT_,%0>(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public %0()
+#define _@yT:g,p);%9(%9){%9;%9_Timer_D(%9,%1,%9);}%0()%9() g,p);_y@T:_F<@yT_,%0>(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public %0()
 
 #define _Timer_I(%0,%1,%9,g,s) _Timer_I(%0,%1,g,s)
 #define _Timer_D(%0,%1,%9,g,p,s,a) _Timer_D(%0,%1,g,p,s,a)
