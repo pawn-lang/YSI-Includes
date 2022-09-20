@@ -1045,6 +1045,11 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 	new
 		buffer = 0,
 		idx = 0;
+	const mask0 = -1 << 8;
+	const mask1 = -1 << 16;
+	const mask2 = 0x000000FF;
+	const mask3 = -1 << 24;
+	const mask4 = 0x0000FFFF;
 	do
 	{
 			buffer = str[idx];
@@ -1052,7 +1057,6 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 			buffer = swapchars(buffer);
 			if      (!(buffer & 0x000000FF))
 			{
-				const mask0 = -1 << 8;
 				#emit LREF.S.pri                addr
 				#emit CONST.alt                 mask0
 				#emit AND
@@ -1065,14 +1069,12 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 				//            '\0', '1'.
 				// Becomes:
 				//  '1', '\0', ???, ???.
-				const mask0 = -1 << 16;
-				const mask1 = 0x000000FF;
 				#emit LREF.S.pri                addr
-				#emit CONST.alt                 mask0
+				#emit CONST.alt                 mask1
 				#emit AND
 				#emit PUSH.pri
 				#emit LOAD.S.pri                buffer
-				#emit CONST.alt                 mask1
+				#emit CONST.alt                 mask2
 				#emit AND
 				#emit POP.alt
 				#emit OR
@@ -1085,14 +1087,12 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 				//       '\0', '2', '1'.
 				// Becomes:
 				//  '1', '2', '\0', ???.
-				const mask0 = -1 << 24;
-				const mask1 = 0x0000FFFF;
 				#emit LREF.S.pri                addr
-				#emit CONST.alt                 mask0
+				#emit CONST.alt                 mask3
 				#emit AND
 				#emit PUSH.pri
 				#emit LOAD.S.pri                buffer
-				#emit CONST.alt                 mask1
+				#emit CONST.alt                 mask4
 				#emit AND
 				#emit POP.alt
 				#emit OR
