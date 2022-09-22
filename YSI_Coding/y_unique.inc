@@ -89,26 +89,24 @@ Optional plugins:
 	#undef _inc_y_unique
 #endif
 
-static y_unique_has_moved_to_YSI_Compiler = 0;
-
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "..\YSI_Compiler\y_unique\y_unique_entry"
+	#tryinclude "y_unique\y_unique_entry"
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "YSI_Compiler\y_unique\y_unique_entry"
+	#tryinclude "YSI_Coding\y_unique\y_unique_entry"
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "YSI\YSI_Compiler\y_unique\y_unique_entry"
+	#tryinclude "YSI\YSI_Coding\y_unique\y_unique_entry"
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude <YSI_Compiler\y_unique\y_unique_entry>
+	#tryinclude <YSI_Coding\y_unique\y_unique_entry>
 #endif
 #if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude <YSI\YSI_Compiler\y_unique\y_unique_entry>
+	#tryinclude <YSI\YSI_Coding\y_unique\y_unique_entry>
 #endif
 #if defined _Y_UNIQUE_INCLUDED
 	#undef _Y_UNIQUE_INCLUDED
 #else
-	#error Did you use `YSI_Coding/y_unique` instead of `YSI_Compiler\y_unique`?
+	#error Did you use `YSI_Coding/y_unique` instead of `YSI_Coding\y_unique`?
 #endif
 
