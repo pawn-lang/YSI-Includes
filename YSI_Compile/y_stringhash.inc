@@ -98,22 +98,20 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-static y_stringhas_has_moved_to_YSI_Compiler = 0;
-
 #if !defined _INC_y_stringhash
-	#tryinclude "..\YSI_Compiler\y_stringhash\y_stringhash_entry"
+	#tryinclude "y_stringhash\y_stringhash_entry"
 #endif
 #if !defined _INC_y_stringhash
-	#tryinclude "YSI_Compiler\y_stringhash\y_stringhash_entry"
+	#tryinclude "YSI_Coding\y_stringhash\y_stringhash_entry"
 #endif
 #if !defined _INC_y_stringhash
-	#tryinclude "YSI\YSI_Compiler\y_stringhash\y_stringhash_entry"
+	#tryinclude "YSI\YSI_Coding\y_stringhash\y_stringhash_entry"
 #endif
 #if !defined _INC_y_stringhash
-	#tryinclude <YSI_Compiler\y_stringhash\y_stringhash_entry>
+	#tryinclude <YSI_Coding\y_stringhash\y_stringhash_entry>
 #endif
 #if !defined _INC_y_stringhash
-	#tryinclude <YSI\YSI_Compiler\y_stringhash\y_stringhash_entry>
+	#tryinclude <YSI\YSI_Coding\y_stringhash\y_stringhash_entry>
 #endif
 #if !defined _INC_y_stringhash
 	#error Could not find y_stringhash

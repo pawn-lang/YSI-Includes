@@ -90,20 +90,23 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+// Use `#include <YSI_Visual\y_td>` instead.
+static y_td_has_moved_to_YSI_Visual = 0;
+
 #if !defined _INC_y_td
-	#tryinclude "y_td\y_td_entry"
+	#tryinclude "..\YSI_Visual\y_td\y_td_entry"
 #endif
 #if !defined _INC_y_td
-	#tryinclude "YSI_Server\y_td\y_td_entry"
+	#tryinclude "YSI_Visual\y_td\y_td_entry"
 #endif
 #if !defined _INC_y_td
-	#tryinclude "YSI\YSI_Server\y_td\y_td_entry"
+	#tryinclude "YSI\YSI_Visual\y_td\y_td_entry"
 #endif
 #if !defined _INC_y_td
-	#tryinclude <YSI_Server\y_td\y_td_entry>
+	#tryinclude <YSI_Visual\y_td\y_td_entry>
 #endif
 #if !defined _INC_y_td
-	#tryinclude <YSI\YSI_Server\y_td\y_td_entry>
+	#tryinclude <YSI\YSI_Visual\y_td\y_td_entry>
 #endif
 #if !defined _INC_y_td
 	#error Could not find y_td

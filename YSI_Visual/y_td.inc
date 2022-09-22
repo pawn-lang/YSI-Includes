@@ -1,9 +1,8 @@
 /**
  * <library
- *   name="y_stringhash"
- *   version="2.0"
+ *   name="y_td"
+ *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary="Allows you to hash strings at compile time to use them in a switch."
  * >
  *   <summary pawndoc="true">
  *     This library uses the enhanced <em>pawndoc.xsl</em> from
@@ -11,19 +10,12 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *   <section>
- *     Functions
- *   </section>
- *   <subsection>
- *     Stock
- *   </subsection><ul>
- *     <symbol name="YHash">Generate a string hash at run time.</symbol>
- *   </ul><section>
- *     Definitions
- *   </section><ul>
- *     <symbol name="_H">Generate a string hash at compile time.</symbol>
- *     <symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
- *   </ul>
+ *   <remarks>
+ *     Provides a wrapper to the SA:MP text_draw functions offering much
+ *     improved functionality including XML definable styles, safe display,
+ *     timed displays, styles and text separated, styles updateable dynamically
+ *     and more.
+ *   </remarks>
  * </library>
  *//** *//*
 Legal:
@@ -98,24 +90,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-static y_stringhas_has_moved_to_YSI_Compiler = 0;
-
-#if !defined _INC_y_stringhash
-	#tryinclude "..\YSI_Compiler\y_stringhash\y_stringhash_entry"
+#if !defined _INC_y_td
+	#tryinclude "y_td\y_td_entry"
 #endif
-#if !defined _INC_y_stringhash
-	#tryinclude "YSI_Compiler\y_stringhash\y_stringhash_entry"
+#if !defined _INC_y_td
+	#tryinclude "YSI_Visual\y_td\y_td_entry"
 #endif
-#if !defined _INC_y_stringhash
-	#tryinclude "YSI\YSI_Compiler\y_stringhash\y_stringhash_entry"
+#if !defined _INC_y_td
+	#tryinclude "YSI\YSI_Visual\y_td\y_td_entry"
 #endif
-#if !defined _INC_y_stringhash
-	#tryinclude <YSI_Compiler\y_stringhash\y_stringhash_entry>
+#if !defined _INC_y_td
+	#tryinclude <YSI_Visual\y_td\y_td_entry>
 #endif
-#if !defined _INC_y_stringhash
-	#tryinclude <YSI\YSI_Compiler\y_stringhash\y_stringhash_entry>
+#if !defined _INC_y_td
+	#tryinclude <YSI\YSI_Visual\y_td\y_td_entry>
 #endif
-#if !defined _INC_y_stringhash
-	#error Could not find y_stringhash
+#if !defined _INC_y_td
+	#error Could not find y_td
 #endif
 
