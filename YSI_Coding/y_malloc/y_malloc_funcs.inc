@@ -99,8 +99,7 @@ FUNC_PAWNDOC(Malloc_GetSlotSize(Alloc:slot));
 #else
 
 	FUNC_PAWNDOC(Malloc_SlotSize(Alloc:slot));
-	#define Malloc_SlotSize(%1) \
-		Malloc_GetSlotSize(%1)
+	#define Malloc_SlotSize Malloc_GetSlotSize
 
 #endif
 
@@ -176,8 +175,7 @@ FUNC_PAWNDOC(Malloc_SetData(Alloc:slot,index,value));
 
 FUNC_PAWNDOC(mget(Alloc:slot, index));
 #if !defined YSI_MALLOC_NO_SHORT
-	#define mget(%1) \
-		Malloc_Get(%1)
+	#define mget Malloc_Get
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -192,8 +190,7 @@ FUNC_PAWNDOC(mget(Alloc:slot, index));
  *//*------------------------------------------------------------------------**/
 FUNC_PAWNDOC(mgetf(Alloc:slot, index));
 #if !defined YSI_MALLOC_NO_SHORT
-	#define mgetf(%1) \
-		Malloc_GetFloat(%1)
+	#define mgetf Malloc_GetFloat
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -207,8 +204,7 @@ FUNC_PAWNDOC(mgetf(Alloc:slot, index));
 
 FUNC_PAWNDOC(mset(Alloc:slot, index, value));
 #if !defined YSI_MALLOC_NO_SHORT
-	#define mset(%1) \
-		Malloc_Set(%1)
+	#define mset Malloc_Set
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -222,8 +218,7 @@ FUNC_PAWNDOC(mset(Alloc:slot, index, value));
 
 FUNC_PAWNDOC(msetf(Alloc:slot, index, value));
 #if !defined YSI_MALLOC_NO_SHORT
-	#define msetf(%1) \
-		Malloc_SetFloat(%1)
+	#define msetf Malloc_SetFloat
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -243,8 +238,7 @@ FUNC_PAWNDOC(msetf(Alloc:slot, index, value));
 
 FUNC_PAWNDOC(mgets(target[], length, Alloc:array, const index, const bool:pack = false));
 #if !defined YSI_MALLOC_NO_SHORT
-	#define mgets(%1) \
-		Malloc_GetS(%1)
+	#define mgets Malloc_GetS
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -263,8 +257,7 @@ FUNC_PAWNDOC(mgets(target[], length, Alloc:array, const index, const bool:pack =
 
 FUNC_PAWNDOC(mgeta(target[], length, Alloc:array, index));
 #if !defined YSI_MALLOC_NO_SHORT
-	#define mgeta(%1) \
-		Malloc_GetA(%1)
+	#define mgeta Malloc_GetA
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -280,8 +273,7 @@ FUNC_PAWNDOC(mgeta(target[], length, Alloc:array, index));
 
 FUNC_PAWNDOC(msets(Alloc:array, const index, const str[], const bool:pack = false));
 #if !defined YSI_MALLOC_NO_SHORT
-	#define msets(%1) \
-		Malloc_SetS(%1)
+	#define msets Malloc_SetS
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -297,8 +289,7 @@ FUNC_PAWNDOC(msets(Alloc:array, const index, const str[], const bool:pack = fals
 
 FUNC_PAWNDOC(mseta(Alloc:array, index, const str[], len));
 #if !defined YSI_MALLOC_NO_SHORT
-	#define mseta(%1) \
-		Malloc_SetA(%1)
+	#define mseta Malloc_SetA
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -338,8 +329,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
 #else
 
 	FUNC_PAWNDOC(Malloc_Get(Alloc:array, index));
-	#define Malloc_Get(%1,%2) \
-		Malloc_GetData(%1, %2)
+	#define Malloc_Get Malloc_GetData
 
 #endif
 
@@ -367,8 +357,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
 #else
 
 	FUNC_PAWNDOC(Malloc_Set(Alloc:array,index,value));
-	#define Malloc_Set(%1,%2,%3) \
-		Malloc_SetData(%1, %2, %3)
+	#define Malloc_Set Malloc_SetData
 
 #endif
 
