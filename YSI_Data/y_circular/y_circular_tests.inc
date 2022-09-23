@@ -77,7 +77,7 @@ GetHeaderValue(...)
 	return getarg(0, idx);
 }
 
-Test:Circular_Init()
+@test(.group = "y_circular") Circular_Init()
 {
 	new arr[5][5];
 	Circular_Init(arr);
@@ -88,7 +88,7 @@ Test:Circular_Init()
 	ASSERT_EQ(GetHeaderValue(arr, 4), -20);
 }
 
-Test:Circular_Capacity()
+@test(.group = "y_circular") Circular_Capacity()
 {
 	new arr[5][5];
 	new data[5];
@@ -108,7 +108,7 @@ Test:Circular_Capacity()
 	ASSERT_EQ(Circular_Capacity(arr), 5);
 }
 
-Test:Circular_Push1()
+@test(.group = "y_circular") Circular_Push1()
 {
 	new arr[5][5];
 	new data[5];
@@ -121,7 +121,7 @@ Test:Circular_Push1()
 	ASSERT_EQ(GetHeaderValue(arr, 4), -16);
 }
 
-Test:Circular_Push4()
+@test(.group = "y_circular") Circular_Push4()
 {
 	new arr[5][5];
 	new data[5];
@@ -137,7 +137,7 @@ Test:Circular_Push4()
 	ASSERT_EQ(GetHeaderValue(arr, 4), -4);
 }
 
-Test:Circular_Push5()
+@test(.group = "y_circular") Circular_Push5()
 {
 	new arr[5][5];
 	new data[5];
@@ -154,7 +154,7 @@ Test:Circular_Push5()
 	ASSERT_EQ(GetHeaderValue(arr, 4),  4 + 5 * 4 * 4);
 }
 
-Test:Circular_Push6()
+@test(.group = "y_circular") Circular_Push6()
 {
 	new arr[5][5];
 	new data[5];
@@ -177,7 +177,7 @@ Test:Circular_Push6()
 	ASSERT_EQ(GetHeaderValue(arr, 4),  4 + 5 * 4 * 0);
 }
 
-Test:Circular_Slot()
+@test(.group = "y_circular") Circular_Slot()
 {
 	new arr[5][5];
 	new data[5];
@@ -193,7 +193,7 @@ Test:Circular_Slot()
 	ASSERT_EQ(Circular_Push(arr, data), 4);
 }
 
-Test:Circular_Rotate()
+@test(.group = "y_circular") Circular_Rotate()
 {
 	new arr[5][5];
 	Circular_Init(arr);
@@ -208,7 +208,7 @@ Test:Circular_Rotate()
 	ASSERT_EQ(Circular_Rotate(arr), 4);
 }
 
-Test:Circular_RotateContent()
+@test(.group = "y_circular") Circular_RotateContent()
 {
 	new buffer[5][5];
 	Circular_Init(buffer);
@@ -254,14 +254,14 @@ Test:Circular_RotateContent()
 	ASSERT_SAME(buffer[4], "h 4");
 }
 
-Test:Circular_IsFull1()
+@test(.group = "y_circular") Circular_IsFull1()
 {
 	new arr[5][5];
 	Circular_Init(arr);
 	ASSERT_ZE(Circular_Full(arr));
 }
 
-Test:Circular_IsFull2()
+@test(.group = "y_circular") Circular_IsFull2()
 {
 	new arr[5][5];
 	new data[5];
@@ -274,14 +274,14 @@ Test:Circular_IsFull2()
 	ASSERT_NZ(Circular_Full(arr));
 }
 
-Test:Circular_GetCount0()
+@test(.group = "y_circular") Circular_GetCount0()
 {
 	new arr[5][5];
 	Circular_Init(arr);
 	ASSERT_EQ(Circular_Count(arr), 0);
 }
 
-Test:Circular_GetCount1()
+@test(.group = "y_circular") Circular_GetCount1()
 {
 	new arr[5][5];
 	new data[5];
@@ -290,7 +290,7 @@ Test:Circular_GetCount1()
 	ASSERT_EQ(Circular_Count(arr), 1);
 }
 
-Test:Circular_GetCount4()
+@test(.group = "y_circular") Circular_GetCount4()
 {
 	new arr[5][5];
 	new data[5];
@@ -302,7 +302,7 @@ Test:Circular_GetCount4()
 	ASSERT_EQ(Circular_Count(arr), 4);
 }
 
-Test:Circular_GetCount5()
+@test(.group = "y_circular") Circular_GetCount5()
 {
 	new arr[5][5];
 	new data[5];
@@ -315,7 +315,7 @@ Test:Circular_GetCount5()
 	ASSERT_EQ(Circular_Count(arr), 5);
 }
 
-Test:Circular_GetCount6()
+@test(.group = "y_circular") Circular_GetCount6()
 {
 	new arr[5][5];
 	new data[5];
@@ -329,7 +329,7 @@ Test:Circular_GetCount6()
 	ASSERT_EQ(Circular_Count(arr), 5);
 }
 
-Test:Circular_PushFull()
+@test(.group = "y_circular") Circular_PushFull()
 {
 	// This is really the only test that is needed.  Checks that the arrays do a full loop.
 	new arr[5][5];
@@ -404,7 +404,7 @@ Test:Circular_PushFull()
 	ASSERT_EQ(Circular_Count(arr), 5);
 }
 
-Test:Circular_PushContent()
+@test(.group = "y_circular") Circular_PushContent()
 {
 	new strings[6][32];
 	Circular_Init(strings);
@@ -451,7 +451,7 @@ Test:Circular_PushContent()
 	ASSERT_SAME(strings[5], "String 8");
 }
 
-Test:Circular_Contents()
+@test(.group = "y_circular") Circular_Contents()
 {
 	new arr[5][5];
 	new data[5] = { 5, 6, 7, 8, 9 };

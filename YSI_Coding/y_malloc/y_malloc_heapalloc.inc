@@ -158,10 +158,10 @@ Malloc_Finalise() <>
 	// Allocate the heap space initially.
 	heap = MALLOC_MEMORY * 4;
 	Debug_Print6("Malloc_OnCodeInit: allocate %d", heap);
-	#emit LCTRL        2
+	#emit LCTRL        __hea
 	#emit LOAD.S.alt   heap
 	#emit ADD
-	#emit SCTRL        2
+	#emit SCTRL        __hea
 	// Get the offset to the heap relative to the access var
 	// `YSI_gMallocMemory`.
 	#emit CONST.alt    YSI_gMallocMemory
@@ -192,7 +192,7 @@ Malloc_Finalise() <>
 		ctx[AsmContext];
 	CGen_UseCodeSpace(ctx);
 	// Get the pointer to `main` as well - don't forget that one!
-	#emit LCTRL                     1
+	#emit LCTRL                     __dat
 	#emit STOR.S.pri                addr
 	entry = -addr + 28;
 	Debug_Print6("Malloc_OnCodeInit: main = %d", entry);
@@ -207,7 +207,7 @@ Malloc_Finalise() <>
 		@emit HEAP         0                                    // Get heap location in `alt`.
 		@emit CONST.pri    (AMX_HEADER_HEA + MALLOC_MEMORY * 4) // Get the end of malloc data.
 		@emit JSLEQ        addr + offset                        // Already allocated.
-		@emit SCTRL        2                                    // Store the new end.
+		@emit SCTRL        __hea                                // Store the new end.
 		@emit JUMP         addr + offset                        // Continue with code.
 	}
 	while ((idx = AMX_GetPublicEntry(idx, entry)));

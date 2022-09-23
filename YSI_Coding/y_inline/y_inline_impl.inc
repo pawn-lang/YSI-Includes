@@ -146,8 +146,6 @@ Optional plugins:
 #define INLINE_RETURN__%0; {Callback_Return_(_:(%0));continue;}
 #define callback: F@_@:
 
-#define _F<%0> (#%0)
-
 stock
 	InlineRet:YSI_gInlineRet = InlineRet:0;
 
@@ -325,10 +323,10 @@ stock operator~(I@T:inlines[], size)
 	// Get the return address.
 	#emit LOAD.S.alt       4
 	// Read the code before the return.
-	#emit LCTRL            0
+	#emit LCTRL            __cod
 	#emit ADD
 	#emit MOVE.alt
-	#emit LCTRL            1
+	#emit LCTRL            __dat
 	#emit SUB.alt
 	#emit ADD.C            EMIT_MINUS_4
 	#emit STOR.S.pri       size
@@ -1487,7 +1485,7 @@ static Callback_CallHandler_(...)
 	#emit PUSH.pri                             // 10
 	#emit STACK            0                   // 12
 	#emit SUB.alt                              // 13
-	#emit SCTRL            4                   // 15
+	#emit SCTRL            __stk                   // 15
 	// Grow the stack.
 	// Call memcpy (put the native's parameters on the stack beyond `dest`).
 	#emit PUSH.S           EMIT_MINUS_8         // 17
@@ -1502,7 +1500,7 @@ static Callback_CallHandler_(...)
 	#emit LOAD.S.pri       EMIT_MINUS_4         // 32
 	#emit ADD.C            EMIT_MINUS_4         // 34
 	#emit LOAD.I                               // 35
-	#emit SCTRL            6                   // 37
+	#emit SCTRL            __cip                   // 37
 	
 //Callback_Call_restore_stack:
 	// The stack hasn't been restored yet, and we need it.
@@ -1510,7 +1508,7 @@ static Callback_CallHandler_(...)
 	#emit NOP                                  // 39
 	// Padding to account for debug builds.
 	// If the code decides to jump back to here, save the stack out again.
-	#emit LCTRL            4                   // 41
+	#emit LCTRL            __stk                   // 41
 	#emit PUSH.S           EMIT_MINUS_8         // 43
 	#emit PUSH.S           EMIT_MINUS_8         // 45
 	#emit PUSH.C           0                   // 47
@@ -1529,8 +1527,8 @@ static Callback_CallHandler_(...)
 	#emit ZERO.pri                             // 60
 	#emit STOR.I                               // 61
 	
-	#emit LCTRL            5                   // 63
-	#emit SCTRL            4                   // 65
+	#emit LCTRL            __frm                   // 63
+	#emit SCTRL            __stk                   // 65
 	#emit LOAD.pri         I@                  // 67
 	#emit RETN                                 // 68
 	__pragma("naked");
@@ -1550,9 +1548,9 @@ static Callback_CallHandler_(...)
 static stock Callback_RemoteHandler_(...)
 {
 	#emit LOAD.S.alt       8
-	#emit LCTRL            4
+	#emit LCTRL            __stk
 	#emit SUB
-	#emit SCTRL            4
+	#emit SCTRL            __stk
 	
 	// Call `memcpy` to make a new copy of the parameters for
 	// `CallRemoteFunction`.
@@ -1578,8 +1576,8 @@ static stock Callback_RemoteHandler_(...)
 	
 	// Store the return, then do the return.
 	#emit MOVE.alt
-	#emit LCTRL            5
-	#emit SCTRL            4
+	#emit LCTRL            __frm
+	#emit SCTRL            __stk
 	#emit MOVE.pri
 	#emit RETN
 	__pragma("naked");
@@ -1598,9 +1596,9 @@ static stock Callback_RemoteHandler_(...)
 static stock Callback_LocalHandler_(...)
 {
 	#emit LOAD.S.alt       8
-	#emit LCTRL            4
+	#emit LCTRL            __stk
 	#emit SUB
-	#emit SCTRL            4
+	#emit SCTRL            __stk
 	
 	// Call `memcpy` to make a new copy of the parameters for
 	// `CallLocalFunction`.
@@ -1626,8 +1624,8 @@ static stock Callback_LocalHandler_(...)
 	
 	// Store the return, then do the return.
 	#emit MOVE.alt
-	#emit LCTRL            5
-	#emit SCTRL            4
+	#emit LCTRL            __frm
+	#emit SCTRL            __stk
 	#emit MOVE.pri
 	#emit RETN
 	__pragma("naked");
@@ -1761,10 +1759,10 @@ static stock Inline_GeneratePreamble(ctx[AsmContext], locals)
 	@emit Inline_Start:
 	// Set the local frame.
 	@emit STACK            0
-	@emit LCTRL            5
+	@emit LCTRL            __frm
 	@emit XCHG
 	@emit ADD.C            locals + 4
-	@emit SCTRL            5
+	@emit SCTRL            __frm
 	@emit STOR.S.alt       0
 	// Get the return address.
 	@emit POP.pri
@@ -1806,14 +1804,14 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			@emit STACK            0
 			@emit ADD.C            locals - inlineParams
 			@emit SUB.alt
-			@emit SCTRL            4
+			@emit SCTRL            __stk
 			// We will remove everything from the stack later, as well as the
 			// two values on the stack for `memcpy` restoration.
 			@emit CONST.pri        8
 			@emit ADD
 			Inline_GenerateLocalsStore(ctx, parameters, count);
 			// Restore the return value.
-			@emit SCTRL            4
+			@emit SCTRL            __stk
 			@emit LOAD.pri         AMX_Ref(I@)
 			@emit RETN
 		}
@@ -1831,10 +1829,10 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 		if (needStore)
 		{
 			@emit LOAD.S.alt       EMIT_MINUS_8
-			@emit LCTRL            4
+			@emit LCTRL            __stk
 			@emit ADD.C            inlineParams - locals
 			@emit SUB
-			@emit SCTRL            4
+			@emit SCTRL            __stk
 			new
 				accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
 			if (accumulate)
@@ -1849,9 +1847,9 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			// couldn't resist).  This will set us up nicely for the jump in to
 			// `Callback_CallHandler` for copying the stack back out again.
 			@emit LOAD.S.alt       EMIT_MINUS_8
-			@emit LCTRL            4
+			@emit LCTRL            __stk
 			@emit SUB
-			@emit SCTRL            4
+			@emit SCTRL            __stk
 		}
 		// Jump to `Callback_Call_restore_stack:` to perform common cleanup.
 		@emit JUMP             YSI_g_sCallbackCallAddress + 39 * cellbytes

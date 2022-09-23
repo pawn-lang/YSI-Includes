@@ -274,10 +274,10 @@ stock M@(volatile const vardata[], dataSize, &pointer, ds2 = 1)
 	#emit LOAD.pri   YSI_g_sFirstUVarData
 	#emit SREF.S.pri sAddr
 	YSI_g_sFirstUVarData = sAddr;
-	sAddr += 4;
+	sAddr += cellbytes;
 	#emit LOAD.S.pri pointer
 	#emit SREF.S.pri sAddr
-	sAddr += 4;
+	sAddr += cellbytes;
 	#emit LOAD.S.pri dataSize
 	#emit SREF.S.pri sAddr
 	Debug_Print5("M@: %d %d %d %d %s", vardata[0], vardata[1], vardata[2], vardata[3], vardata[4]);
@@ -309,34 +309,34 @@ Svar_Save()
 		// DO NOT CHANGE THE CODE BELOW HERE!!!
 		// Get the data size.
 		#emit LOAD.S.pri p
-		#emit ADD.C      8
+		#emit ADD.C      __2_cells
 		#emit STOR.S.pri temp
 		#emit LREF.S.pri temp
 		#emit PUSH.pri
 		// Get the data pointer.
 		#emit LOAD.S.pri p
-		#emit ADD.C      4
+		#emit ADD.C      __1_cell
 		#emit STOR.S.pri temp
 		#emit LREF.S.pri temp
 		#emit PUSH.pri
 		// Get the function name.
 		#emit LOAD.S.pri p
-		#emit ADD.C      12
+		#emit ADD.C      __3_cells
 		#emit PUSH.pri
 		// Save the next pointer.
 		#emit LREF.S.pri p
 		#emit STOR.S.pri p
 		// Now push the size of data put on the stack.
 		#emit PUSH.S     __fwrite
-		#emit PUSH.C     16
+		#emit PUSH.C     __4_cells
 		// Now get the return address and push it.
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		// Call "Player_WriteArray" directly.
 		#emit CONST.pri  INI_WriteArray
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 		// DO NOT CHANGE THE CODE ABOVE HERE!!!
 	}
 	INI_Close(__fwrite);
@@ -354,12 +354,12 @@ public OnCodeInit()
 	while ((idx = AMX_GetPublicPointerSuffix(idx, buffer, _A<@yS_>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri buffer
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 	// We don't need any of the reset code, but we do need the loading code.
 	#if !defined _YSI_ONLY_ONE_CONFIG_LOAD

@@ -137,7 +137,7 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 	if (0 < ++slot < size1)
 	{
 		// Get the slot's current size and address.
-		newSize *= 4;
+		newSize *= cellbytes;
 		new
 			newEnd = _Jagged_Address(array, slot - 1) + newSize,
 			arrayEnd = _Jagged_End(array, size1, size2);
@@ -160,12 +160,12 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 			// we can't have "BOUNDS" here because there's no way for the
 			// compiler to know the array's size in advance.  This works even
 			// when "shift" is negative.
-			memcpy(array[slot][shift / 4], array[slot], 0, remain, remain / 4);
+			memcpy(array[slot][shift / cellbytes], array[slot], 0, remain, remain / cellbytes);
 			// Now shift all the subsequent slots.
-			size2 = size2 * size1 * 4;
+			size2 = size2 * size1 * cellbytes;
 			while (slot < size1)
 			{
-				Jagged_MovePtr(array, size2 + (size1 - slot) * 4, slot, shift);
+				Jagged_MovePtr(array, size2 + (size1 - slot) * cellbytes, slot, shift);
 				++slot;
 			}
 			if (shift > 0)
@@ -208,7 +208,7 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 //	if (0 < ++slot <= size1)
 //	{
 //		// Get the slot's current size and address.
-//		newSize *= 4;
+//		newSize *= cellbytes;
 //		new
 //			newEnd = _Jagged_Address(array, slot - 1) + newSize,
 //			arrayEnd = _Jagged_End(array, size1, size2);
@@ -231,12 +231,12 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 //			// we can't have "BOUNDS" here because there's no way for the
 //			// compiler to know the array's size in advance.  This works even
 //			// when "shift" is negative.
-//			memcpy(array[slot][shift / 4], array[slot], 0, remain, remain / 4);
+//			memcpy(array[slot][shift / cellbytes], array[slot], 0, remain, remain / cellbytes);
 //			// Now shift all the subsequent slots.
-//			size2 = size2 * size1 * 4;
+//			size2 = size2 * size1 * cellbytes;
 //			while (slot < size1)
 //			{
-//				Jagged_MovePtr(array, size2 + (size1 - slot) * 4, slot, shift);
+//				Jagged_MovePtr(array, size2 + (size1 - slot) * cellbytes, slot, shift);
 //				++slot;
 //			}
 //			if (shift > 0)
@@ -335,7 +335,7 @@ stock bool:Jagged_MoveOne(array[][], size1, size2, slot, newSize)
 	if (0 < ++slot < size1)
 	{
 		// Get the slot's current size and address.
-		newSize *= 4;
+		newSize *= cellbytes;
 		new
 			newEnd = _Jagged_Address(array, slot - 1) + newSize,
 			arrayEnd = _Jagged_End(array, size1, size2);
@@ -351,10 +351,10 @@ stock bool:Jagged_MoveOne(array[][], size1, size2, slot, newSize)
 		if (shift != 0)
 		{
 			// Shift all the subsequent slots.
-			size2 = size2 * size1 * 4;
+			size2 = size2 * size1 * cellbytes;
 			while (slot < size1)
 			{
-				Jagged_MovePtr(array, size2 + (size1 - slot) * 4, slot, shift);
+				Jagged_MovePtr(array, size2 + (size1 - slot) * cellbytes, slot, shift);
 				++slot;
 			}
 		}
@@ -411,10 +411,10 @@ stock _Jagged_Empty(array[][], size1, size2)
 	while (--size1)
 	{
 		#emit LOAD.S.pri array
-		#emit ADD.C      4
+		#emit ADD.C      __1_cell
 		#emit MOVE.alt
 		#emit LOAD.S.pri size2
-		#emit ADD.C      EMIT_MINUS_4
+		#emit ADD.C      __m1_cell
 		#emit STOR.I
 		#emit STOR.S.pri size2
 		#emit STOR.S.alt array
@@ -456,8 +456,8 @@ stock Jagged_UnsafeResizeOne(array[][], slot, newSize)
 	#emit IDXADDR
 	// Subtract 4 to make it the offset for the next slot, save it to the
 	// pointer we pushed earlier.
-	#emit ADD.C      EMIT_MINUS_4
-	#emit SREF.S.pri EMIT_MINUS_4
+	#emit ADD.C      __m1_cell
+	#emit SREF.S.pri __local0_offset
 	// End.
 	#emit POP.pri
 	#emit RETN
@@ -596,7 +596,7 @@ stock _Jagged_PrintHeader(array[][], size1, size2)
 		#emit LOAD.S.pri                slot
 		#emit LOAD.S.alt                size1
 		#emit SUB.alt
-		#emit SHL.C.pri                 2
+		#emit SHL.C.pri                 __COMPILER_CELL_SHIFT
 		// Adjust the output to absolute.
 		#emit POP.alt
 		#emit SUB.alt

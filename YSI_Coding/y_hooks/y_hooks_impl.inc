@@ -335,12 +335,12 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 			AMX_ReadString(AMX_Read(publicTableEntry + 4) + AMX_BASE_ADDRESS + 4, name),
 			strunpack(preloads[precount][E_CHAIN_HOOK_NAME], name, 16);
 			#emit PUSH.C                    0
-			#emit LCTRL                     6
+			#emit LCTRL                     __cip
 			#emit ADD.C                     36
-			#emit LCTRL                     8
+			#emit LCTRL                     __jmp
 			#emit PUSH.pri
 			#emit LREF.S.pri                publicTableEntry
-			#emit SCTRL                     6
+			#emit SCTRL                     __cip
 			#emit STOR.S.pri                tmp
 			preloads[precount][E_CHAIN_HOOK_VALUE] = tmp;
 			++precount;
@@ -711,12 +711,12 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(addr)
 		YSI_g_sHooks[count] = addr;
 		// Call the hook stub, and see if it thinks it is a valid hook.
 		#emit PUSH.C                    0
-		#emit LCTRL                     6
+		#emit LCTRL                     __cip
 		#emit ADD.C                     36
-		#emit LCTRL                     8
+		#emit LCTRL                     __jmp
 		#emit PUSH.pri
 		#emit LREF.S.pri                addr
-		#emit SCTRL                     6
+		#emit SCTRL                     __cip
 		#emit STOR.S.pri                tmp
 		if (tmp)
 		{
@@ -909,12 +909,12 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
 		// A "RET_OnWhatever" function exists - rationalise the return.
 		//ptr = AMX_Read(ptr);
 		#emit PUSH.C                    0
-		#emit LCTRL                     6
+		#emit LCTRL                     __cip
 		#emit ADD.C                     36
-		#emit LCTRL                     8
+		#emit LCTRL                     __jmp
 		#emit PUSH.pri
 		#emit LREF.S.pri                ptr
-		#emit SCTRL                     6
+		#emit SCTRL                     __cip
 		#emit EQ.C.pri                  1
 		#emit STOR.S.pri                ptr
 		return ptr;
@@ -980,9 +980,9 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 	@emit LOAD.S.pri    8               // 11
 	@emit JZER.label    Hooks_NoStackCopy // 13
 	@emit MOVE.alt                      // 14
-	@emit LCTRL         4               // 16
+	@emit LCTRL         __stk               // 16
 	@emit SUB                           // 17
-	@emit SCTRL         4               // 19
+	@emit SCTRL         __stk               // 19
 	@emit XCHG                          // 20
 	
 	if (Server_JITExists())
@@ -991,7 +991,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		@emit PUSH.C        4096
 		@emit PUSH.pri
 		@emit PUSH.C        0
-		@emit LCTRL         5
+		@emit LCTRL         __frm
 		@emit ADD.C         12
 		@emit PUSH.pri
 		@emit PUSH.alt
@@ -1008,7 +1008,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		@emit STOR.pri      (CGen_GetCodeSpace() + (27 * 4)) // 22
 		
 		// Do the copying.  "alt" is already "STK", load the "FRM" offset.
-		@emit LCTRL         5           // 24
+		@emit LCTRL         __frm           // 24
 		@emit ADD.C         12          // 26
 		// This is the instruction we want to modify...
 		@emit MOVS          0           // 28 (- 1) = 27 (see above).
@@ -1090,8 +1090,8 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 	@emit STOR.pri      AMX_Ref(YSI_g_sActiveHooks)
 	
 	// Remove the whole stack then get the return value.
-	@emit LCTRL         5
-	@emit SCTRL         4
+	@emit LCTRL         __frm
+	@emit SCTRL         __stk
 	@emit MOVE.pri
 	
 	// Return.
@@ -1301,12 +1301,12 @@ public OnCodeInit()
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@_yH>)))
 	{
 		#emit PUSH.C                    0
-		#emit LCTRL                     6
+		#emit LCTRL                     __cip
 		#emit ADD.C                     36
-		#emit LCTRL                     8
+		#emit LCTRL                     __jmp
 		#emit PUSH.pri
 		#emit LREF.S.pri                entry
-		#emit SCTRL                     6
+		#emit SCTRL                     __cip
 	}
 	Hooks_SortReplacements();
 
@@ -1379,13 +1379,13 @@ public OnCodeInit()
 				state y_hooks_scan : y_hooks_scan_determine_type;
 				YSI_g_sTempRet = YSI_g_sNPSTrampoline;
 				#emit PUSH.C                    0
-				#emit LCTRL                     6
+				#emit LCTRL                     __cip
 				#emit ADD.C                     44
-				#emit LCTRL                     8
+				#emit LCTRL                     __jmp
 				#emit PUSH.pri
 				#emit LREF.S.pri                entry
 				#emit STOR.pri                  YSI_g_sNPSTrampoline
-				#emit SCTRL                     6
+				#emit SCTRL                     __cip
 				#emit STOR.S.pri                ret
 				// Determine the callback type.
 				switch (ret)
@@ -1458,13 +1458,13 @@ public OnCodeInit()
 		//		state y_hooks_scan : y_hooks_scan_determine_type;
 		//		YSI_g_sTempRet = YSI_g_sNPSTrampoline;
 		//		#emit PUSH.C                    0
-		//		#emit LCTRL                     6
+		//		#emit LCTRL                     __cip
 		//		#emit ADD.C                     44
-		//		#emit LCTRL                     8
+		//		#emit LCTRL                     __jmp
 		//		#emit PUSH.pri
 		//		#emit LREF.S.pri                entry
 		//		#emit STOR.pri                  YSI_g_sNPSTrampoline
-		//		#emit SCTRL                     6
+		//		#emit SCTRL                     __cip
 		//		#emit STOR.S.pri                ret
 		//		// Determine the callback type.
 		//		switch (ret)
@@ -1776,12 +1776,12 @@ _Y_HOOKS_STATIC _Hooks_RepairStubFS()
 {
 	_Hooks_RepairStub();
 	#emit PUSH.C              0
-	#emit LCTRL               6
+	#emit LCTRL               __cip
 	#emit ADD.C               36
-	#emit LCTRL               8
+	#emit LCTRL               __jmp
 	#emit PUSH.pri
 	#emit LOAD.pri            YSI_g_sInitFSPtr
-	#emit SCTRL               6
+	#emit SCTRL               __cip
 	return 1;
 }
 
@@ -1789,12 +1789,12 @@ _Y_HOOKS_STATIC _Hooks_RepairStubGM()
 {
 	_Hooks_RepairStub();
 	#emit PUSH.C              0
-	#emit LCTRL               6
+	#emit LCTRL               __cip
 	#emit ADD.C               36
-	#emit LCTRL               8
+	#emit LCTRL               __jmp
 	#emit PUSH.pri
 	#emit LOAD.pri            YSI_g_sInitGMPtr
-	#emit SCTRL               6
+	#emit SCTRL               __cip
 	return 1;
 }
 
@@ -2130,8 +2130,8 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[
 	// is in the same location in both this works fine and we can use the
 	// variables as normal.
 	#emit LOAD.S.pri   0
-	#emit SCTRL        5
-	#emit SCTRL        4
+	#emit SCTRL        __frm
+	#emit SCTRL        __stk
 	// Get the next function call address, being the original function.  This
 	// can also tell us if it is a native, public, or stock (which is a nice
 	// side-effect I wasn't planning).
@@ -2208,8 +2208,8 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[
 		// just yet, wait till the current hook is done with.
 		#emit HEAP                 EMIT_MINUS_28
 		#emit LOAD.S.pri           0
-		#emit SCTRL                5
-		#emit SCTRL                4
+		#emit SCTRL                __frm
+		#emit SCTRL                __stk
 		// Try this one again later.  Double return.
 		#emit CONST.pri            3
 		#emit RETN
@@ -2297,7 +2297,7 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[
 
 	// Copy 20 bytes over (includes the return address and fake param count).
 	@emit HEAP         20                                                       // 12
-	@emit LCTRL        4                                                        // 14
+	@emit LCTRL        __stk                                                        // 14
 	@emit MOVS         20                                                       // 16
 	@emit STOR.alt     AMX_Ref(YSI_g_sNPSStack)                                 // 18
 
@@ -2348,8 +2348,8 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[
 	// double return, but we are operating in the frame of the caller already.
 	#emit HEAP                 EMIT_MINUS_28
 	#emit LOAD.S.pri           0
-	#emit SCTRL                5
-	#emit SCTRL                4
+	#emit SCTRL                __frm
+	#emit SCTRL                __stk
 	#emit CONST.pri            2
 	#emit RETN
 
@@ -2434,11 +2434,11 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 
 	@emit MOVE.alt
 	@emit POP.pri
-	@emit SCTRL        5
+	@emit SCTRL        __frm
 
 	// Jump to the function that calls the original native.
 	@emit MOVE.pri
-	@emit SCTRL        6
+	@emit SCTRL        __cip
 
 	@emit Hooks_Continue_native:
 
@@ -2449,7 +2449,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 
 	// Jump to the next function in the chain.
 	@emit NEG
-	@emit SCTRL        6
+	@emit SCTRL        __cip
 
 	//// Missed this one apparently...
 	//AsmEmitSysreqPri(ctx);

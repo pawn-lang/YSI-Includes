@@ -498,7 +498,7 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
-#elseif !defined nativeidxof
+#elseif !defined AMX_TAG_LOCAL
 	#error Re-download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 

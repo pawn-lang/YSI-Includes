@@ -578,7 +578,7 @@ stock _Text_GetPointer(master, id)
 	#emit LOAD.S.pri  id
 	#emit IDXADDR
 	#emit MOVE.alt
-	#emit LOAD.i
+	#emit LOAD.I
 	#emit ADD
 	#emit RETN
 	return 0;
@@ -851,7 +851,7 @@ static stock Text_GetCurNextOffset(i, &cur, &next)
 {
 	// Get the address of the previous slot's pointer.
 	#emit LOAD.S.pri    i
-	#emit SHL.C.pri     2
+	#emit SHL.C.pri     __COMPILER_CELL_SHIFT
 	#emit CONST.alt     YSI_g_sTextStrings
 	#emit ADD
 	// Get the pointer to the start of the data.
@@ -860,7 +860,7 @@ static stock Text_GetCurNextOffset(i, &cur, &next)
 	// Get the address of the previous slot's pointer.
 	#emit LOAD.S.pri    i
 	#emit ADD.C         0x1
-	#emit SHL.C.pri     2
+	#emit SHL.C.pri     __COMPILER_CELL_SHIFT
 	#emit CONST.alt     YSI_g_sTextStrings
 	#emit ADD
 	// Get the pointer to the start of the data.

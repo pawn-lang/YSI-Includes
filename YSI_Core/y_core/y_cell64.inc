@@ -75,20 +75,98 @@ Optional plugins:
 // values.  We could write this code to use the other array and do `+ 1`, but
 // that adds a WHOLE EXTRA INSTRUCTION!  OH NOES!
 static stock const
-	YSI_g_scDeBruijn1[] =
+	YSI_g_scDeBruijn1[64] =
 		{
-			 0,  1,  2,  4,  8, 17, 34,  5, 11, 23, 47, 31, 63, 62, 61, 59,
-			55, 46, 29, 58, 53, 43, 22, 44, 24, 49, 35,  7, 15, 30, 60, 57,
-			51, 38, 12, 25, 50, 36,  9, 18, 37, 10, 21, 42, 20, 41, 19, 39,
-			14, 28, 56, 48, 33,  3,  6, 13, 27, 54, 45, 26, 52, 40, 16, 32
+			0,  1,  2, 53,  3,  7, 54, 27,  4, 38, 41,  8, 34, 55, 48, 28,
+		   62,  5, 39, 46, 44, 42, 22,  9, 24, 35, 59, 56, 49, 18, 29, 11,
+		   63, 52,  6, 26, 37, 40, 33, 47, 61, 45, 43, 21, 23, 58, 17, 10,
+		   51, 25, 36, 32, 60, 20, 57, 16, 50, 31, 19, 15, 30, 14, 13, 12
 		},
-	YSI_g_scDeBruijn2[] =
+	YSI_g_scDeBruijn2[64] =
 		{
-			 1,  2,  3,  5,  9, 18, 35,  6, 12, 24, 48, 32, 64, 63, 62, 60,
-			56, 47, 30, 59, 54, 44, 23, 45, 25, 50, 36,  8, 16, 31, 61, 58,
-			52, 39, 13, 26, 51, 37, 10, 19, 38, 11, 22, 43, 21, 42, 20, 40,
-			15, 29, 57, 49, 34,  4,  7, 14, 28, 55, 46, 27, 53, 41, 17, 33
+			1,  2,  3, 54,  4,  8, 55, 28,  5, 39, 42,  9, 35, 56, 49, 29,
+		   63,  6, 40, 47, 45, 43, 23, 10, 25, 36, 60, 57, 50, 19, 30, 12,
+		   64, 53,  7, 27, 38, 41, 34, 48, 62, 46, 44, 22, 24, 59, 18, 11,
+		   52, 26, 37, 33, 61, 21, 58, 17, 51, 32, 20, 16, 31, 15, 14, 13
 		};
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_Reverse32(number);
+ * </summary>
+ * <param name="data">The number to manipulate.</param>
+ * <returns>
+ *  The lower four bytes in the input reversed.
+ * </returns>
+ * <remarks>
+ *  1)
+ *  Example: 0x1234567812345678
+ *  Becomes: 0x0000000078563412
+ *
+ *  2)
+ *  Example: 0x0000000001020304
+ *  Becomes: 0x0000000004030201
+ *
+ *  3)
+ *  Example: 0xFFFFFFFFFF00FF00
+ *  Becomes: 0x0000000000FF00FF
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Cell_Reverse32(GLOBAL_TAG_TYPES:data)
+{
+	// Swap adjacent bytes.
+	// data = ((data >>> 8) & 0b00000000111111110000000011111111) | ((data & 0b00000000111111110000000011111111) << 8);
+	#emit LOAD.S.pri           data
+	#emit PUSH.pri
+	#emit CONST.alt            0b00000000111111110000000011111111
+	#emit SHR.C.pri            8
+	#emit AND
+	#emit SWAP.pri
+	#emit AND
+	#emit SHL.C.pri            8
+	#emit POP.alt
+	#emit OR
+    
+	// data = ((data >>> 16) & 0b00000000000000001111111111111111) | ((data & 0b00000000000000001111111111111111) << 16);
+	#emit PUSH.pri
+	#emit CONST.alt            0b00000000000000001111111111111111
+	#emit SHR.C.pri            16
+	#emit AND
+	#emit SWAP.pri
+	#emit AND
+	#emit SHL.C.pri            16
+	#emit POP.alt
+	#emit OR
+
+	//// This is one instruction and one cell shorter than the old version.
+	//// Sadly it doesn't work because it doesn't mask out the upper 32 bits.
+	//#emit LOAD.S.alt           data
+	//#emit CONST.pri            0b00000000000000000000000011111111
+	//#emit AND
+	//#emit SHL.C.pri            24
+	//#emit PUSH.pri
+	//#emit CONST.pri            0b00000000000000001111111100000000
+	//#emit PUSH.pri
+	//#emit AND
+	//#emit SHL.C.pri            8
+	//#emit SWAP.pri
+	////#emit PUSH.pri
+	////#emit CONST.pri            0b00000000111111110000000000000000
+	//#emit SHR.C.alt            8
+	//#emit AND
+	//#emit SHR.C.alt            16
+	//#emit OR
+	//#emit POP.alt
+	//#emit OR
+	//#emit POP.alt
+	//#emit OR
+
+	// return data;
+	#emit RETN
+	
+	__pragma("naked");
+}
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
@@ -155,9 +233,9 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
 	// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
 	#emit PUSH.pri
-	#emit PUSH.C               4
+	#emit PUSH.C               8
 	#emit SYSREQ.C             swapchars
-	#emit STACK                8
+	#emit STACK                16
 
 	// return data;
 	#emit RETN
@@ -207,9 +285,9 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
 	// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
 	#emit PUSH.pri
-	#emit PUSH.C               4
+	#emit PUSH.C               8
 	#emit SYSREQ.C             swapchars
-	#emit STACK                8
+	#emit STACK                16
 
 	// return data;
 	#emit RETN
@@ -373,7 +451,7 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	// would do.
 	if (data)
 	{
-		// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
+		// return scDeBruijn[((data & -data) * 0x022FDD63CC95386D) >>> 27];
 		#emit MOVE.alt
 		#emit NEG
 		#emit AND
@@ -453,7 +531,7 @@ stock Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
 
 stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
 {
-	// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
+	// return scDeBruijn[((data & -data) * 0x022FDD63CC95386D) >>> 27];
 	#emit LOAD.S.pri           data
 	#emit INVERT
 	#emit MOVE.alt

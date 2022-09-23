@@ -199,7 +199,7 @@ timer StopAndStop[50]()
 	printf("StopAndStop finished");
 }
 
-@test(.group = "y_timers") StopAndStop()
+@test(.group = "y_timers", .run = false) StopAndStop()
 {
 	YSI_g_sStopAndStart = REPEAT__[5] StopAndStop();
 	for (new i = 0; i != 1000; ++i)
@@ -222,5 +222,17 @@ new Timer:YSI_g_sKillYourself;
 	printf("KillYourself before");
 	YSI_g_sKillYourself = defer KillYourself();
 	printf("KillYourself after");
+}
+
+@timer(500) y_timers_syntax2()
+{
+}
+
+@timer(500, .auto = true) y_timers_syntax3(playerid)
+{
+}
+
+@timer(500, true)y_timers_syntax4()
+{
 }
 

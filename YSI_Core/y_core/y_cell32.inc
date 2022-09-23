@@ -75,16 +75,41 @@ Optional plugins:
 // values.  We could write this code to use the other array and do `+ 1`, but
 // that adds a WHOLE EXTRA INSTRUCTION!  OH NOES!
 static stock const
-	YSI_g_scDeBruijn1[] =
+	YSI_g_scDeBruijn1[32] =
 		{
 			 0,  1, 28,  2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17,  4,  8, 
 			31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18,  6, 11,  5, 10,  9
 		},
-	YSI_g_scDeBruijn2[] =
+	YSI_g_scDeBruijn2[32] =
 		{
 			 1,  2, 29,  3, 30, 15, 25,  4, 31, 23, 21, 16, 26, 18,  5,  9, 
 			32, 28, 14, 24, 22, 20, 17,  8, 27, 13, 19,  7, 12,  6, 11, 10
 		};
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_Reverse32(number);
+ * </summary>
+ * <param name="data">The number to manipulate.</param>
+ * <returns>
+ *  The lower four bytes in the input reversed.
+ * </returns>
+ * <remarks>
+ *  1)
+ *  Example: 0x1234567812345678
+ *  Becomes: 0x0000000078563412
+ *
+ *  2)
+ *  Example: 0x0000000001020304
+ *  Becomes: 0x0000000004030201
+ *
+ *  3)
+ *  Example: 0xFFFFFFFFFF00FF00
+ *  Becomes: 0x0000000000FF00FF
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+native Cell_Reverse32(GLOBAL_TAG_TYPES:data) = swapchars;
 
 /*-------------------------------------------------------------------------*//**
  * <summary>

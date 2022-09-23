@@ -147,6 +147,9 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 	return Cell_ExpandLeftPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
 }
 
+// `- 1` also works.
+const y_utils_abs_shift = cellbits - 1;
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  Cell_Abs(GLOBAL_TAG_TYPES:x, m)
@@ -164,7 +167,8 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 
 stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 {
-	return (tag == _:tagof (Float:)) ? (number & cellmax) : ((number >> 30 | 1) * number);
+	Debug_Print4("Cell_Abs: %d %016x %016x %d %d %d", tag == _:tagof (Float:), number, number & cellmax, y_utils_abs_shift, number >> y_utils_abs_shift | 1, (number >> y_utils_abs_shift | 1) * number);
+	return (tag == _:tagof (Float:)) ? (number & cellmax) : ((number >> y_utils_abs_shift | 1) * number);
 }
 
 #if cellbits == 32

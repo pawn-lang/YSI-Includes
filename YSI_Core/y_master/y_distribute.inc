@@ -150,12 +150,12 @@ stock Distribute_Do(const func[], GLOBAL_TAG_TYPES:...)
 		scArgs[] = "ai";
 	#emit PUSH.ADR    size
 	// Get the actual data pointer.
-	#emit PUSH.S      16
+	#emit PUSH.S      __param1_offset
 	#emit PUSH.C      scArgs
 	#emit PUSH.S      func
-	#emit PUSH.C      16
+	#emit PUSH.C      __4_cells
 	#emit SYSREQ.C    CallRemoteFunction
-	#emit STACK       20
+	#emit STACK       __5_cells
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -190,14 +190,14 @@ stock Distribute_So(const func[], idx, const Bit:masters[], GLOBAL_TAG_TYPES:...
 			scArgs[] = "iiai";
 		#emit PUSH.ADR    size
 		// Get the actual data pointer.
-		#emit PUSH.S      24
+		#emit PUSH.S      __param3_offset
 		#emit PUSH.ADR    m
 		#emit PUSH.ADR    idx
 		#emit PUSH.C      scArgs
 		#emit PUSH.S      func
-		#emit PUSH.C      24
+		#emit PUSH.C      __6_cells
 		#emit SYSREQ.C    CallRemoteFunction
-		#emit STACK       28
+		#emit STACK       __7_cells
 	}
 }
 
@@ -224,13 +224,13 @@ stock Distribute_To(const from[], ss, GLOBAL_TAG_TYPES:...)
 	ss = min(ss, size);
 	#emit PUSH.S      size
 	#emit LOAD.S.pri  ss
-	#emit SHL.C.pri   2
+	#emit SHL.C.pri   __COMPILER_CELL_SHIFT
 	#emit PUSH.pri
 	#emit PUSH.C      0
 	#emit PUSH.S      from
-	#emit PUSH.S      20
-	#emit PUSH.C      20
+	#emit PUSH.S      __param2_offset
+	#emit PUSH.C      __5_cells
 	#emit SYSREQ.C    memcpy
-	#emit STACK       24
+	#emit STACK       __6_cells
 }
 

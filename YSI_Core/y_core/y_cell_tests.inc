@@ -74,7 +74,12 @@ Optional plugins:
 //@test(.group = "y_cell", .run = false) y_cell()
 @test(.group = "y_cell", .run = false) y_cell()
 {
-	new masks[5];
+	#if cellbits == 32
+		new masks[5];
+	#endif
+	#if cellbits == 64
+		new masks[6];
+	#endif
 	Cell_ReverseBits(0);
 	Cell_ReverseNibbles(0);
 	Cell_ReverseBytes(0);

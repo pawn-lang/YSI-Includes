@@ -111,8 +111,8 @@ static stock Iter_Random_Impl(count, const array[], start, num)
 		first = 0,
 		last = 0;
 	#emit LOAD.S.pri   num
-	#emit SHL.C.pri    2
-	#emit ADDR.alt     28
+	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit ADDR.alt     __param4_offset
 	#emit STOR.S.alt   first
 	#emit ADD
 	#emit STOR.S.pri   last
@@ -120,7 +120,7 @@ static stock Iter_Random_Impl(count, const array[], start, num)
 	if (num)
 	{
 		// Count how many unique values there are.
-		for (new value = 0, ptr = first; ptr != last; ptr += 4)
+		for (new value = 0, ptr = first; ptr != last; ptr += cellbytes)
 		{
 			#emit LREF.S.pri   ptr
 			#emit STOR.S.pri   value
@@ -128,7 +128,7 @@ static stock Iter_Random_Impl(count, const array[], start, num)
 			if (0 <= value < start && array[value] > value)
 			{
 				// Is this unique?
-				for (new i2 = first, v2 = 0; i2 != ptr; i2 += 4)
+				for (new i2 = first, v2 = 0; i2 != ptr; i2 += cellbytes)
 				{
 					#emit LREF.S.pri   i2
 					#emit STOR.S.pri   v2
@@ -159,7 +159,7 @@ static stock Iter_Random_Impl(count, const array[], start, num)
 Iter_Random_Impl_loop:
 			// Check if this is an excluded value.
 			start = array[start];
-			for (num = first; num != last; num += 4)
+			for (num = first; num != last; num += cellbytes)
 			{
 				#emit LREF.S.pri   num
 				#emit LOAD.S.alt   start
@@ -207,11 +207,10 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 		s,
 		e;
 	// Get the range of the dynamic parameters.
-	#emit ADDR.pri             start
-	#emit ADD.C                4
+	#emit ADDR.pri             __param3_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -219,15 +218,15 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 		#emit LREF.S.pri           s
 		#emit LOAD.I
 		#emit PUSH.pri
-		s += 4;
+		s += cellbytes;
 	}
 	s = Iter_Random_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return s;
 }
 
@@ -247,11 +246,10 @@ stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 		s,
 		e;
 	// Get the range of the dynamic parameters.
-	#emit ADDR.pri             start
-	#emit ADD.C                4
+	#emit ADDR.pri             __param3_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -259,15 +257,15 @@ stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 		#emit LREF.S.pri           s
 		#emit LOAD.I
 		#emit PUSH.pri
-		s += 4;
+		s += cellbytes;
 	}
 	s = Iter_RandomFree_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return Iter_Add_InternalC(count, array, start, s);
 }
 
@@ -296,11 +294,10 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 		s,
 		e;
 	// Get the range of the dynamic parameters.
-	#emit ADDR.pri             slot
-	#emit ADD.C                4
+	#emit ADDR.pri             __param6_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -308,15 +305,15 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 		#emit LREF.S.pri           s
 		#emit LOAD.I
 		#emit PUSH.pri
-		s += 4;
+		s += cellbytes;
 	}
 	s = Iter_RandomFree_Impl(count, array, size, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return Iter_Add_InternalD(counts[slot], array, start, size, s);
 }
 
@@ -336,11 +333,10 @@ stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
 		s,
 		e;
 	// Get the range of the dynamic parameters.
-	#emit ADDR.pri             start
-	#emit ADD.C                4
+	#emit ADDR.pri             __param3_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -348,15 +344,15 @@ stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
 		#emit LREF.S.pri           s
 		#emit LOAD.I
 		#emit PUSH.pri
-		s += 4;
+		s += cellbytes;
 	}
 	s = Iter_Random_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return Iter_Remove_InternalC(count, array, start, s);
 }
 
@@ -377,11 +373,10 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 		s,
 		e;
 	// Get the range of the dynamic parameters.
-	#emit ADDR.pri             start
-	#emit ADD.C                4
+	#emit ADDR.pri             __param4_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -389,15 +384,15 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 		#emit LREF.S.pri           s
 		#emit LOAD.I
 		#emit PUSH.pri
-		s += 4;
+		s += cellbytes;
 	}
 	s = Iter_Random_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
 	return Iter_Remove_InternalD(count, array, start, size, s);
@@ -419,11 +414,10 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 		s,
 		e;
 	// Get the range of the dynamic parameters.
-	#emit ADDR.pri             start
-	#emit ADD.C                4
+	#emit ADDR.pri             __param3_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -431,15 +425,15 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 		#emit LREF.S.pri           s
 		#emit LOAD.I
 		#emit PUSH.pri
-		s += 4;
+		s += cellbytes;
 	}
 	s = Iter_RandomFree_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return s;
 }
 
@@ -459,8 +453,8 @@ static stock Iter_RandomFree_Impl(count, const array[], start, num)
 		first = 0,
 		last = 0;
 	#emit LOAD.S.pri   num
-	#emit SHL.C.pri    2
-	#emit ADDR.alt     28
+	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit ADDR.alt     __param4_offset
 	#emit STOR.S.alt   first
 	#emit ADD
 	#emit STOR.S.pri   last
@@ -468,7 +462,7 @@ static stock Iter_RandomFree_Impl(count, const array[], start, num)
 	if (num)
 	{
 		// Count how many unique values there are.
-		for (new value = 0, ptr = first; ptr != last; ptr += 4)
+		for (new value = 0, ptr = first; ptr != last; ptr += cellbytes)
 		{
 			#emit LREF.S.pri   ptr
 			#emit STOR.S.pri   value
@@ -476,7 +470,7 @@ static stock Iter_RandomFree_Impl(count, const array[], start, num)
 			if (0 <= value < start && array[value] <= value)
 			{
 				// Is this unique?
-				for (new i2 = first, v2 = 0; i2 != ptr; i2 += 4)
+				for (new i2 = first, v2 = 0; i2 != ptr; i2 += cellbytes)
 				{
 					#emit LREF.S.pri   i2
 					#emit STOR.S.pri   v2
@@ -511,7 +505,7 @@ Iter_RandomFree_Internal_loop:
 			{
 				continue;
 			}
-			for (num = first; num != last; num += 4)
+			for (num = first; num != last; num += cellbytes)
 			{
 				#emit LREF.S.pri   num
 				#emit LOAD.S.alt   start
@@ -562,11 +556,10 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
 		s,
 		e;
 	// Get the range of the dynamic parameters.
-	#emit ADDR.pri             slots
-	#emit ADD.C                4
+	#emit ADDR.pri             __param4_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -574,15 +567,15 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
 		#emit LREF.S.pri           s
 		#emit LOAD.I
 		#emit PUSH.pri
-		s += 4;
+		s += cellbytes;
 	}
 	s = Iter_RandomFree_Impl(count, array, start, n);
 	// Pop the extra parameters.
-	#emit LCTRL                4
+	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            2
+	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
 	#emit ADD
-	#emit SCTRL                4
+	#emit SCTRL                __stk
 	return s;
 }
 
@@ -976,7 +969,7 @@ stock Iter_Clear_InternalC(array[], size, entries, ...)
 	//	while (tmp != size);
 	//	{}
 	//	#emit ZERO.pri
-	//	#emit SREF.S.pri 24
+	//	#emit SREF.S.pri __param3_offset
 	//}
 	//else
 	//{
@@ -1052,7 +1045,7 @@ stock
 	}
 	while (++i != s0)
 	{
-		memcpy(array[i], first, 0, s1 * 4, s1);
+		memcpy(array[i], first, 0, s1 * cellbytes, s1);
 	}
 }
 

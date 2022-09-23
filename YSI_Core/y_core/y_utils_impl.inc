@@ -460,13 +460,7 @@ FUNC_PAWNDOC(floordiv(numerator, denominator));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(bool:IsNull(const string:str[]));
-#if cellbytes == 4
-	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x01000000)
-#elseif cellbytes == 8
-	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x0100000000000000)
-#else
-	#error Unsupported packed string size.
-#endif
+#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==YSI_PackedStringMax__)
 
 #if defined isnull
 	#undef isnull
@@ -589,7 +583,11 @@ stock StrToUpper(string:str[], len = sizeof (str))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomMulberry32()
+#if cellbits == 32
+	stock RandomMulberry32()
+#else
+	static stock RandomMulberry32__()
+#endif
 {
 	static s = 0;
 
@@ -633,11 +631,73 @@ stock RandomMulberry32()
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
+ *   Relatively high quality 32-bit PRNG.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#if cellbits == 64
+	stock RandomMulberry32()
+#else
+	static stock RandomMulberry32__()
+#endif
+{
+	static s = 0;
+
+	// z = (s += 0x6D2B79F5);
+	#emit LOAD.pri     s
+	#emit ADD.C        0x6D2B79F5
+	#emit STOR.pri     s
+
+	// z = (z ^ z >>> 15) * (1 | z);
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
+	#emit MOVE.alt
+	#emit SHR.C.pri    15
+	#emit XOR
+	#emit PUSH.pri
+	#emit CONST.pri    1
+	#emit OR
+	#emit POP.alt
+	#emit UMUL
+
+	// z ^= z + (z ^ z >>> 7) * (61 | z);
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
+	#emit PUSH.pri
+	#emit MOVE.alt
+	#emit SHR.C.pri    7
+	#emit XOR
+	#emit PUSH.pri
+	#emit CONST.pri    61
+	#emit OR
+	#emit POP.alt
+	#emit UMUL
+	#emit POP.alt
+	#emit ADD
+	#emit XOR
+
+	// return z ^ z >>> 14;
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
+	#emit MOVE.alt
+	#emit SHR.C.pri    14
+	#emit XOR
+	#emit RETN
+
+	__pragma("naked");
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
  *   Slightly lower quality 32-bit PRNG.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomSplitMix32()
+#if cellbits == 32
+	stock RandomSplitMix32()
+#else
+	static stock RandomSplitMix32__()
+#endif
 {
 	static s = 0;
 
@@ -665,6 +725,58 @@ stock RandomSplitMix32()
 	#emit UMUL
 
 	// return z ^= z >> 16;
+	#emit MOVE.alt
+	#emit SHR.C.pri    16
+	#emit XOR
+	#emit RETN
+
+	__pragma("naked");
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *   Slightly lower quality 32-bit PRNG.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#if cellbits == 64
+	stock RandomSplitMix32()
+#else
+	static stock RandomSplitMix32__()
+#endif
+{
+	static s = 0;
+
+	// z = (s += 0x9E3779B9);
+	#emit LOAD.pri     s
+	#emit ADD.C        0x9E3779B9
+	#emit STOR.pri     s
+
+	// z ^= z >> 15;
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
+	#emit MOVE.alt
+	#emit SHR.C.pri    15
+	#emit XOR
+
+	// z *= 0x85EBCA6B;
+	#emit CONST.alt    0x85EBCA6B
+	#emit UMUL
+
+	// z ^= z >> 13;
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
+	#emit MOVE.alt
+	#emit SHR.C.pri    13
+	#emit XOR
+
+	// z *= 0xC2B2AE35;
+	#emit CONST.alt    0xC2B2AE35
+	#emit UMUL
+
+	// return z ^= z >> 16;
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
 	#emit MOVE.alt
 	#emit SHR.C.pri    16
 	#emit XOR
@@ -924,7 +1036,7 @@ stock StripL(string:str[])
 		while (IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1)) ++i;
 		// The byte offsets in `memcpy` are broken, and packed strings aren't
 		// even in order.  Thus we do it the slow way.
-		//if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
+		//if (i) memcpy(str[0], str[i], 0, (len - i) * cellbytes, len);
 		//Debug_Error("Cannot use `StripL` on a packed string");
 		if (i)
 		{
@@ -936,7 +1048,7 @@ stock StripL(string:str[])
 		while (IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1)) ++i;
 		if (i)
 		{
-			memcpy(str[0], str[i], 0, (len - i + 1) * 4, len);
+			memcpy(str[0], str[i], 0, (len - i + 1) * cellbytes, len);
 		}
 	}
 }
@@ -966,7 +1078,7 @@ stock Strip(string:str[])
 		for (i = 0; IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1); ++i) {}
 		if (i)
 		{
-			memcpy(str[0], str[i], 0, (len - i + 1) * 4, len);
+			memcpy(str[0], str[i], 0, (len - i + 1) * cellbytes, len);
 		}
 	}
 }
@@ -1114,39 +1226,43 @@ stock IPToInt(const string:ip[])
 
 stock BernsteinHash(const string:str[] /* 12 */)
 {
+	new h = 5381, i = 0, j = 0;
 	if (YSI_IsLocalVarPackedString__(str))
 	{
-		new h = 5381, i = 0, j = 0;
 		while ((j = str{i++}))
 			h = h * 33 ^ j;
-		return h;
 	}
 	else
 	{
-		new h = 5381, i = 0, j = 0;
 		while ((j = str[i++]))
 			h = h * 33 ^ j;
-		return h;
 	}
+	#if cellbits == 64
+		return h & 0xFFFFFFFF;
+	#else
+		return h;
+	#endif
 }
 
 #pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
 stock bernstein(const string:str[] /* 12 */)
 {
+	new h = 5381, i = 0, j = 0;
 	if (YSI_IsLocalVarPackedString__(str))
 	{
-		new h = 5381, i = 0, j = 0;
 		while ((j = str{i++}))
 			h = h * 33 ^ j;
-		return h;
 	}
 	else
 	{
-		new h = 5381, i = 0, j = 0;
 		while ((j = str[i++]))
 			h = h * 33 ^ j;
-		return h;
 	}
+	#if cellbits == 64
+		return h & 0xFFFFFFFF;
+	#else
+		return h;
+	#endif
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1288,7 +1404,7 @@ stock ReturnStringArg(idx)
 	// the argument required.
 	#emit LOAD.S.pri idx
 	// Then convert that number to bytes from cells.
-	#emit SMUL.C     4
+	#emit SMUL.C     cellbytes
 	// Get the previous function's frame.  Stored in variable 0 (in the current
 	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
 	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
@@ -1298,7 +1414,7 @@ stock ReturnStringArg(idx)
 	// Add the frame pointer to the argument offset in bytes.
 	#emit ADD
 	// Add 12 to skip over the function header.
-	#emit ADD.C      12
+	#emit ADD.C      __param0_offset
 	// Load the address stored in the specified address.
 	#emit LOAD.I
 	// Push the length for "strcat".
@@ -1306,7 +1422,7 @@ stock ReturnStringArg(idx)
 	// Push the address we just determined was the source.
 	#emit PUSH.pri
 	// Load the address of the secret destination.
-	#emit LOAD.S.alt 16
+	#emit LOAD.S.alt __param1_offset
 	// Blank the first cell so "strcat" behaves like "StrCpy".
 	#emit CONST.pri  0
 	// Store the loaded number 0 to the loaded address.
@@ -1314,11 +1430,11 @@ stock ReturnStringArg(idx)
 	// Push the loaded address.
 	#emit PUSH.alt
 	// Push the number of parameters passed (in bytes) to the function.
-	#emit PUSH.C     12
+	#emit PUSH.C     __3_cells
 	// Call the function.
 	#emit SYSREQ.C   strcat
 	// Restore the stack to its level before we called this native.
-	#emit STACK      16
+	#emit STACK      __4_cells
 	// Return without more string copying.
 	#emit RETN
 	
@@ -1347,8 +1463,8 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 	static
 		sFrm = 0,
 		sRet = 0,
-		sCnt = 0,
-		scSize = YSI_MAX_STRING;
+		sCnt = 0;
+	const size = YSI_MAX_STRING;
 	
 	// Store the function preamble.
 	#emit POP.pri
@@ -1357,11 +1473,11 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 	#emit POP.pri
 	#emit STOR.pri     sRet
 	#emit POP.pri
-	#emit ADD.C        8
+	#emit ADD.C        __2_cells
 	#emit STOR.pri     sCnt
 	
 	// Put the secret return parameter on the stack again to format in to.
-	#emit PUSH         scSize
+	#emit PUSH.C       size
 	#emit ADD
 	#emit LOAD.I
 	#emit PUSH.pri
@@ -1752,7 +1868,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 		#emit SREF.S.pri   dest
 		#emit INC.S        dest
 		
-		#emit LOAD.S.pri   EMIT_MINUS_8
+		#emit LOAD.S.pri   __local1_offset
 		#emit MOVE.alt
 		#emit SHL.C.pri     8 // (pri >> 22) & 0x03
 		#emit SHR.C.pri    30 // Would be just `SHR.C.pri` with `LODB.I 3`...
@@ -1766,7 +1882,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 		#emit SREF.S.pri   dest
 		#emit INC.S        dest
 		
-		#emit LOAD.S.pri   EMIT_MINUS_8
+		#emit LOAD.S.pri   __local1_offset
 		#emit MOVE.alt
 		#emit SHL.C.pri    30 // (pri << 4) & 0x30
 		#emit SHR.C.pri    26 //
@@ -1853,7 +1969,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 			#emit LODB.I       1
 			#emit STRB.I       1
 			
-			#emit LOAD.S.pri   EMIT_MINUS_4
+			#emit LOAD.S.pri   __local0_offset
 			#emit MOVE.alt
 			#emit SHL.C.pri    30 // (pri << 4) & 0x30
 			#emit SHR.C.pri    26 //
@@ -1931,12 +2047,12 @@ stock Base64Decode(dest[], const string:src[], len = sizeof (dest), offset = 0)
 	{}
 	// x - 1 - 3
 	#emit LOAD.S.pri   dest
-	#emit ADD.C        EMIT_MINUS_4
+	#emit ADD.C        __m1_cells
 	#emit LOAD.S.alt   offset
 	#emit ADD
 	#emit STOR.S.pri   dest
 	#emit LOAD.S.pri   src
-	#emit ADD.C        EMIT_MINUS_4
+	#emit ADD.C        __m1_cells
 	#emit STOR.S.pri   src
 	while (blocks--)
 	{
@@ -2249,14 +2365,15 @@ stock RawMemSet(address /* 12 */, value /* 16 */, size /* 20 */)
 			#emit FILL       16
 			address += 16;
 		}
-		if (size & 8)
+		// Might be `0` or `8`.
+		if (size & (8 / cellbytes / 2 * 8))
 		{
 			#emit LOAD.S.pri value
 			#emit LOAD.S.alt address
 			#emit FILL       8
 			address += 8;
 		}
-		if (size & 4)
+		if (size & cellbytes)
 		{
 			#emit LOAD.S.pri value
 			#emit SREF.S.pri address
@@ -3626,15 +3743,15 @@ stock ValstrWithOrdinal(n)
 stock PrintArg(n)
 {
 	#emit LOAD.S.pri   n
-	#emit SHL.C.pri    2
-	#emit ADD.C        12
-	#emit LOAD.S.alt   0
+	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit ADD.C        __3_cells
+	#emit LOAD.S.alt   __frame_offset
 	#emit ADD
 	#emit LOAD.I
 	#emit PUSH.pri
-	#emit PUSH.C       4
+	#emit PUSH.C       __1_cell
 	#emit SYSREQ.C     print
-	#emit STACK        8
+	#emit STACK        __2_cells
 	#emit RETN
 	__pragma("naked");
 }
@@ -4017,6 +4134,9 @@ stock bool:TryPercentage(percentage)
 	return random(100) < percentage;
 }
 
+#define TryPercentage(%0) (random(100) < (%0))
+#define _ALS_TryPercentage
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  TryPermille(permille);
@@ -4038,6 +4158,9 @@ stock bool:TryPermille(permille)
 	return random(1000) < permille;
 }
 
+#define TryPermille(%0) (random(1000) < (%0))
+#define _ALS_TryPermille
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  TryPPM(ppm);
@@ -4058,6 +4181,9 @@ stock bool:TryPPM(ppm)
 {
 	return random(1000000) < ppm;
 }
+
+#define TryPPM(%0) (random(1000000) < (%0))
+#define _ALS_TryPPM
 
 _Y_CORE_STATIC stock IterativeColouredSkipSUnpacked(const string:text[], start, &colour)
 {
@@ -5125,16 +5251,15 @@ FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 #define _ALS_FloatAbs
 
 #if __COMPILER___EMIT_U
+	// Basically `x - (2 * x)`, if x is negative.
 	#define Abs(%0) \
-		__emit(                         \
-			LOAD.U.pri  %0             ,\
-			PUSH.pri                   ,\
-			CONST.alt   30             ,\
-			SSHR                       ,\
-			CONST.alt   1              ,\
-			OR                         ,\
-			POP.alt                    ,\
-			SMUL                        \
+		__emit(                            \
+			LOAD.U.alt  %0                ,\
+			MOVE.pri                      ,\
+			SHR.C.pri   y_utils_abs_shift ,\
+			SHL.C.pri   1                 ,\
+			SMUL                          ,\
+			SUB.alt                        \
 		)
 	#endinput
 #endif
@@ -5154,7 +5279,6 @@ FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 
 stock Abs(number)
 {
-	// 31 also works.
-	return (number >> 30 | 1) * number;
+	return (number >> y_utils_abs_shift | 1) * number;
 }
 
