@@ -380,8 +380,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
 #else 
 
 	FUNC_PAWNDOC(Float:Malloc_GetFloat(Alloc:array, index));
-	#define Malloc_GetFloat(%1,%2) \
-		Float:Malloc_Get(%1,%2)
+	#define Malloc_GetFloat Float:Malloc_Get
 
 #endif
 
@@ -407,8 +406,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
 #else 
 
 	FUNC_PAWNDOC(Malloc_SetFloat(Alloc:array, index, Float:value));
-	#define Malloc_SetFloat(%1,%2,%3) \
-		Malloc_Set(%1,%2,%3)
+	#define Malloc_SetFloat Malloc_Set
 
 #endif
 
@@ -674,8 +672,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 #else
 
 	FUNC_PAWNDOC(Alloc:malloc(size));
-	#define malloc(%1) \
-		Malloc_Allocate(%1)
+	#define malloc Malloc_Allocate
 
 #endif
 
@@ -730,8 +727,7 @@ stock Alloc:calloc(size)
 #else
 
 	FUNC_PAWNDOC(free(Alloc:slot));
-	#define free(%1) \
-		Malloc_Free(%1)
+	#define free Malloc_Free
 
 #endif
 
