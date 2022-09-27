@@ -86,19 +86,19 @@ Optional plugins:
 */
 
 #if !defined _INC_y_thirdpartyinclude
-	#tryinclude "y_thirdpartyinclude\y_thirdpartyinclude"
+	#tryinclude "y_thirdpartyinclude\y_thirdpartyinclude_entry"
 #endif
 #if !defined _INC_y_thirdpartyinclude
-	#tryinclude "YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude"
+	#tryinclude "YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude_entry"
 #endif
 #if !defined _INC_y_thirdpartyinclude
-	#tryinclude "YSI\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude"
+	#tryinclude "YSI\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude_entry"
 #endif
 #if !defined _INC_y_thirdpartyinclude
-	#tryinclude <YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude>
+	#tryinclude <YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude_entry>
 #endif
 #if !defined _INC_y_thirdpartyinclude
-	#tryinclude <YSI\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude>
+	#tryinclude <YSI\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude_entry>
 #endif
 #if !defined _INC_y_thirdpartyinclude
 	#error Could not find y_thirdpartyinclude
