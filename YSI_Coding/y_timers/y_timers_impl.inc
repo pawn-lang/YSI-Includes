@@ -181,7 +181,7 @@ public OnCodeInit()
 	forward Timers_OnCodeInit();
 #endif
 
-HOOK__ OnPlayerConnect(playerid)
+public OnPlayerConnect(playerid)
 {
 	Debug_Print1("hook Timers_OnPlayerConnect called: %d", playerid);
 	// Loop through all the per-player timers.  Correctly finds them all from a
@@ -215,10 +215,20 @@ HOOK__ OnPlayerConnect(playerid)
 		#emit STOR.S.pri  cur
 	}
 	Debug_Print1("hook Timers_OnPlayerConnect ended");
+
+	#if defined Timers_OnPlayerConnect
+		Timers_OnPlayerConnect(playerid);
+	#endif
 	return 1;
 }
 
-HOOK__ OnPlayerDisconnect(playerid, reason)
+#undef OnPlayerConnect
+#define OnPlayerConnect Timers_OnPlayerConnect
+#if defined Timers_OnPlayerConnect
+	forward Timers_OnPlayerConnect(playerid);
+#endif
+
+public OnPlayerDisconnect(playerid, reason)
 {
 	#pragma unused reason
 	Debug_Print1("hook Timers_OnPlayerDisconnect called: %d, %d", playerid, reason);
@@ -253,8 +263,18 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 		#emit STOR.S.pri  cur
 	}
 	Debug_Print1("hook Timers_OnPlayerDisconnect ended");
+
+	#if defined Timers_OnPlayerDisconnect
+		Timers_OnPlayerDisconnect(playerid, reason);
+	#endif
 	return 1;
 }
+
+#undef OnPlayerDisconnect
+#define OnPlayerDisconnect Timers_OnPlayerDisconnect
+#if defined Timers_OnPlayerDisconnect
+	forward Timers_OnPlayerDisconnect(playerid, reason);
+#endif
 
 stock _y@T:_Timer_I(const func[], interval, {_, _@yT}:action, &result)
 {
