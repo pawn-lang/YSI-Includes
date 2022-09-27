@@ -84,22 +84,22 @@ Optional plugins:
 	88     `8'     88 `"8bbdP"Y8 88 88       88    d8'          `8b 88          88  
 */
 
-#define WEAPONDATA_NO_AMMO 	" "
-#define WEAPONDATA_45ACP 		".45 ACP"
-#define WEAPONDATA_9MM 		"9mm"
-#define WEAPONDATA_12GUAGE	"12 Guage"
-#define WEAPONDATA_556MM		"5.56mm"
-#define WEAPONDATA_762MM		"7.62mm"
-#define WEAPONDATA_300MAGNUM	".300 Magnum"
-#define WEAPONDATA_ROCKET		"Rocket"
-#define WEAPONDATA_INVALID_RETURN -1
+#define WEAPONDATA_NO_AMMO 				" "
+#define WEAPONDATA_45ACP 				".45 ACP"
+#define WEAPONDATA_9MM 					"9mm"
+#define WEAPONDATA_12GUAGE				"12 Guage"
+#define WEAPONDATA_556MM				"5.56mm"
+#define WEAPONDATA_762MM				"7.62mm"
+#define WEAPONDATA_300MAGNUM			".300 Magnum"
+#define WEAPONDATA_ROCKET				"Rocket"
+#define WEAPONDATA_INVALID_RETURN 		-1
 
-#define WEAPON_FIRE_TYPE_MELEE 0
-#define WEAPON_FIRE_TYPE_PROJECTILE 1
-#define WEAPON_FIRE_TYPE_INSTANT_HIT 2
-#define WEAPON_FIRE_TYPE_AREA_EFFECT 3
-#define WEAPON_FIRE_TYPE_USE 4
-#define WEAPON_FIRE_TYPE_CAMERA 5
+#define WEAPON_FIRE_TYPE_MELEE 			0
+#define WEAPON_FIRE_TYPE_PROJECTILE 	1
+#define WEAPON_FIRE_TYPE_INSTANT_HIT 	2
+#define WEAPON_FIRE_TYPE_AREA_EFFECT 	3
+#define WEAPON_FIRE_TYPE_USE 			4
+#define WEAPON_FIRE_TYPE_CAMERA 		5
 
 // Many libraries already have `Weapon_IsValid` defined.
 #if !defined Weapon_IsValid
