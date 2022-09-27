@@ -1,8 +1,3 @@
-#if defined _INC_y_cgen
-	#endinput
-#endif
-#define _INC_y_cgen
-
 /*+
  * <library
  *   name="y_cgen"
@@ -89,8 +84,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
 
 CHAIN_HOOK(CGen)
 #undef CHAIN_ORDER
@@ -187,7 +180,7 @@ public @_y_cgen0_y_@()
 		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
 	#endif
 	#if CGEN_MEMORY >= 200000
-		#error Too much codespace requested, please edit YSI_Coding\y_cgen\y_cgen
+		#error Too much codespace requested, please edit YSI_Coding\y_cgen\y_cgen_impl.inc
 	#endif
 }
 

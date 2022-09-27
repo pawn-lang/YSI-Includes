@@ -94,7 +94,7 @@ Optional plugins:
 
 #if !defined _INC_y_master
 	#include "..\y_utils"
-	#include "..\y_core\y_codeparse"
+	#include "..\..\YSI_Server\y_thirdpartyinclude\y_codeparse"
 
 	CHAIN_HOOK(Master)
 	#undef CHAIN_ORDER

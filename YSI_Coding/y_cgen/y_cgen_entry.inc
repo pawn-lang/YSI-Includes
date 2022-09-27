@@ -1,9 +1,23 @@
-#if defined _INC_y_hooks
+#if defined _INC_y_cgen
 	#endinput
 #endif
-#define _INC_y_hooks
+#define _INC_y_cgen
 
-/*
+/*+
+ * <library
+ *   name="y_cgen"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Large chunks of code that isn't used, so that the space can be reclaimed and reused by other code generating functions."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -78,26 +92,5 @@ Optional plugins:
 
 #include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Server\y_thirdpartyinclude"
-#include "..\y_cgen"
-
-#if defined YSI_TESTS
-	#define _Y_HOOKS_STATIC
-#else
-	#define _Y_HOOKS_STATIC static
-#endif
-
-#if !defined MAX_Y_HOOKS
-	#define MAX_Y_HOOKS (128)
-#endif
-
-#define Y_HOOKS_MAX_NAME (__COMPILER_sNAMEMAX * 2 + 1)
-
-#include "y_hooks_macros"
-#include "y_hooks_impl"
-
-#if defined YSI_TESTS
-	// Get a new unique ID for the test hooks.
-	#include "..\y_unique\y_unique_entry"
-	#include "y_hooks_tests"
-#endif
+#include "y_cgen_impl"
 

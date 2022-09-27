@@ -1505,6 +1505,7 @@ public OnCodeInit()
 	//
 	Debug_Print1("Hooks_OnCodeInit chain");
 	#if defined Hooks_OnCodeInit
+		Hooks_CompressPublics();
 		Hooks_OnCodeInit();
 	#endif
 	
