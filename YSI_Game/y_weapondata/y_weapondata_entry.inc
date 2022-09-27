@@ -101,19 +101,20 @@ Optional plugins:
 #define WEAPON_FIRE_TYPE_USE 			4
 #define WEAPON_FIRE_TYPE_CAMERA 		5
 
+stock YSI_Weapon_IsValid__(weaponid)
+{
+	switch(weaponid)
+	{
+		case 1 .. 18:
+			return true;
+		case 21 .. 46:
+			return true;
+	}
+	return false;
+}
+
 // Many libraries already have `Weapon_IsValid` defined.
 #if !defined Weapon_IsValid
-	/*stock Weapon_IsValid(weaponid)
-	{
-		switch(weaponid)
-		{
-			case 1..18:
-				return true;
-			case 21..46:
-				return true;
-		}
-		return false;
-	}*/
 	#define Weapon_IsValid(%0) (%0>=1&&%0<=18||%0>=21&&%0<=46)
 #endif
 
@@ -208,7 +209,7 @@ static stock YSI_g_WeaponFireType[47] = {
 
 stock Weapon_GetFireType(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponFireType[weaponid] : (-1);
+	return YSI_Weapon_IsValid__(weaponid) ? YSI_g_WeaponFireType[weaponid] : (-1);
 }
 
 static stock Float:YSI_g_MinWeaponRange[47] = {
@@ -263,7 +264,7 @@ static stock Float:YSI_g_MinWeaponRange[47] = {
 
 stock Float:Weapon_GetMinRange(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_MinWeaponRange[weaponid] : (-1);
+	return YSI_Weapon_IsValid__(weaponid) ? YSI_g_MinWeaponRange[weaponid] : (-1);
 }
 
 static stock Float:YSI_g_MaxWeaponRange[47] = {
@@ -318,7 +319,7 @@ static stock Float:YSI_g_MaxWeaponRange[47] = {
 
 stock Float:Weapon_GetMaxRange(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (-1);
+	return YSI_Weapon_IsValid__(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (-1);
 }
 
 static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
@@ -374,7 +375,7 @@ static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 stock bool:Weapon_GetAmmoName(weaponid, dest[], size = sizeof (dest))
 {
 	dest[0] = '\0';
-    if (Weapon_IsValid(weaponid))
+    if (YSI_Weapon_IsValid__(weaponid))
     {
         strcat(dest, YSI_g_WeaponAmmoNames[weaponid], size);
         return true;
@@ -435,7 +436,7 @@ static stock YSI_g_WeaponAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 stock bool:Weapon_GetAnimGroup(weaponid, dest[], size = sizeof (dest))
 {
 	dest[0] = '\0';
-    if (Weapon_IsValid(weaponid))
+    if (YSI_Weapon_IsValid__(weaponid))
     {
         strcat(dest, YSI_g_WeaponAnimGroups[weaponid], size);
         return true;
@@ -496,7 +497,7 @@ static stock YSI_g_WeaponProAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 stock bool:Weapon_GetProAnimGroup(weaponid, dest[], size = sizeof (dest))
 {
 	dest[0] = '\0';
-    if (Weapon_IsValid(weaponid))
+    if (YSI_Weapon_IsValid__(weaponid))
     {
         strcat(dest, YSI_g_WeaponProAnimGroups[weaponid], size);
         return true;
@@ -551,12 +552,12 @@ stock bool:Weapon_IsRifle(weaponid)
 
 stock Weapon_GetSlot(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (WEAPONDATA_INVALID_RETURN);
+	return YSI_Weapon_IsValid__(weaponid) ? YSI_g_WeaponSlots[weaponid] : (WEAPONDATA_INVALID_RETURN);
 }
 
 stock Weapon_GetModelID(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (WEAPONDATA_INVALID_RETURN);
+	return YSI_Weapon_IsValid__(weaponid) ? YSI_g_WeaponModels[weaponid] : (WEAPONDATA_INVALID_RETURN);
 }
 
 stock Weapon_GetIDFromModelID(modelid)
@@ -676,7 +677,7 @@ static stock Float:YSI_g_WeaponDamage[47] = {
 
 stock Float:Weapon_GetDamage(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponDamage[weaponid] : WEAPONDATA_INVALID_RETURN;
+	return YSI_Weapon_IsValid__(weaponid) ? YSI_g_WeaponDamage[weaponid] : WEAPONDATA_INVALID_RETURN;
 }
 
 static stock YSI_g_WeaponClipSize[47] = {
@@ -731,5 +732,5 @@ static stock YSI_g_WeaponClipSize[47] = {
 
 stock Float:Weapon_GetClipSize(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponClipSize[weaponid] : WEAPONDATA_INVALID_RETURN;
+	return YSI_Weapon_IsValid__(weaponid) ? YSI_g_WeaponClipSize[weaponid] : WEAPONDATA_INVALID_RETURN;
 }
