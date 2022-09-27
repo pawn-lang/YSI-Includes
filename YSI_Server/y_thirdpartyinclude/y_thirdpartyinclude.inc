@@ -579,5 +579,5 @@ public OnCodeInit()
 	#pragma warning pop
 #endif
 
-#include "y_dumpamx"
+#include "..\..\YSI_Core\y_core\y_dumpamx"
 

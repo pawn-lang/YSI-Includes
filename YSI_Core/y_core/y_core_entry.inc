@@ -443,7 +443,7 @@ stock _YSI_ConstMod(const &var, const val)
 #endif
 
 #if defined YSI_YES_MODE_CACHE
-	#include "y_thirdpartyinclude"
+	#include "..\..\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude"
 #endif
 
 //
