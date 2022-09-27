@@ -99,6 +99,7 @@ Libraries for controlling the server.
 * [y_scriptinit](YSI_Server/y_scriptinit.md)
 * [y_stringise](YSI_Server/y_stringise.md) (AKA y_stringize)
 * [y_td](YSI_Server/y_td.md)
+* [y_thirdpartyinclude](YSI_Server/y_thirdpartyinclude.md)
 
 ### Storage
 
