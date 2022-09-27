@@ -106,11 +106,6 @@ Optional plugins:
 // Similar to `YSI_KEYWORD`, but disabled by default.
 #define YSI_OPTIONAL(%0) (defined YSI_KEYWORD_%0 && !defined YSI_NO_KEYWORD_%0)
 
-// Define `cellbytes` as a symbol that really should exist already!
-#if !defined cellbytes
-	#define cellbytes (cellbits / charbits)
-#endif
-
 // Define "volatile" as nothing.
 #if !defined volatile
 	#define volatile
@@ -252,6 +247,7 @@ forward bool:DisasmWrite(const filename[]);
 
 #include "y_shortvar"
 #include "y_pp"
+#include "y_emit"
 #include "y_als_impl"
 
 // A few nicely named short strings used for properties.
@@ -293,6 +289,11 @@ stock const YSIM_VERMAX[] = "X";
 
 // More common utilities and user-facing functions.
 #include "y_debug_impl"
+#if cellbits == 32
+	#include "y_cell32"
+#else
+	#include "y_cell64"
+#endif
 #include "y_cell_impl"
 #include "y_amx_impl"
 #include "y_shortfunc"
@@ -345,12 +346,12 @@ ScriptInit_PreInitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@yI_>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -362,12 +363,12 @@ ScriptInit_PostInitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_yI>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -379,12 +380,12 @@ ScriptInit_PreExitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@Iy_>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -396,12 +397,12 @@ ScriptInit_PostExitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_Iy>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -442,7 +443,7 @@ stock _YSI_ConstMod(const &var, const val)
 #endif
 
 #if defined YSI_YES_MODE_CACHE
-	#include "y_thirdpartyinclude"
+	#include "..\..\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude"
 #endif
 
 //

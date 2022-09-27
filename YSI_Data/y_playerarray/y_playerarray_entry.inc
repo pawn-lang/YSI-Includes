@@ -110,13 +110,13 @@ stock PA_Init(Bit:a[], bool:init = false, s = bits<MAX_PLAYERS>)
 
 #define PA_FastInit(%0) %0[0]=Bit:PA_TYPE_PA
 
-#define PA_GetBit(%1,%2) (%1[((%2)>>>CELLSHIFT)+1]>>>Bit:((%2)&cellbits-1)&Bit:1)
+#define PA_GetBit(%1,%2) (%1[((%2)>>>__COMPILER_BIT_SHIFT)+1]>>>Bit:((%2)&__COMPILER_BIT_MASK)&Bit:1)
 
 #define PA_Get(%1,%2) bool:PA_GetBit(%1,_:%2)
 
-#define PA_Let(%1,%2) (%1[((%2)>>>CELLSHIFT)+1]|=Bit:(1<<((%2)&cellbits-1)))
+#define PA_Let(%1,%2) (%1[((%2)>>>__COMPILER_BIT_SHIFT)+1]|=Bit:(1<<((%2)&__COMPILER_BIT_MASK)))
 
-#define PA_Vet(%1,%2) (%1[((%2)>>>CELLSHIFT)+1]&=Bit:~(1<<((%2)&cellbits-1)))
+#define PA_Vet(%1,%2) (%1[((%2)>>>__COMPILER_BIT_SHIFT)+1]&=Bit:~(1<<((%2)&__COMPILER_BIT_MASK)))
 
 #define PA_GetCount(%1) Bit_GetCount(%1[1],bits<MAX_PLAYERS>)
 

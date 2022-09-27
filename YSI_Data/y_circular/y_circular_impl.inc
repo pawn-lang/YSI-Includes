@@ -78,9 +78,9 @@ stock bool:Circular_IsFull_(s1, s2, ...)
 {
 	// Get the address of the final slot.
 	#emit LOAD.S.alt   s1
-	#emit LOAD.S.pri   20
+	#emit LOAD.S.pri   __param2_offset
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC
+	#emit ADD.C        __m1_cells
 	// Load the data there.
 	#emit STOR.S.pri   s2
 	#emit LREF.S.pri   s2
@@ -95,9 +95,9 @@ stock Circular_GetCount_(s1, s2, ...)
 {
 	// Get the address of the final slot.
 	#emit LOAD.S.alt   s1
-	#emit LOAD.S.pri   20
+	#emit LOAD.S.pri   __param2_offset
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC
+	#emit ADD.C        __m1_cells
 	// Load the data there.
 	#emit STOR.S.pri   s2
 	#emit LREF.S.pri   s2
@@ -106,7 +106,7 @@ stock Circular_GetCount_(s1, s2, ...)
 	{
 		// Full.  Return the size (adjusted to cells).
 		#emit LOAD.S.pri   s1
-		#emit SHR.C.pri    2
+		#emit SHR.C.pri    __COMPILER_CELL_SHIFT
 		#emit RETN
 	}
 	{}
@@ -114,7 +114,7 @@ stock Circular_GetCount_(s1, s2, ...)
 	#emit LOAD.S.alt   s1
 	#emit LOAD.S.pri   s2
 	#emit ADD
-	#emit SHR.C.pri    2
+	#emit SHR.C.pri    __COMPILER_CELL_SHIFT
 	#emit RETN
 	return 0; //__COMPILER_NAKED
 }
@@ -130,9 +130,9 @@ stock Circular_GetCount_(s1, s2, ...)
 stock void:Circular_Init_(s1, s2, ...)
 {
 	#emit LOAD.S.alt   s1
-	#emit LOAD.S.pri   20
+	#emit LOAD.S.pri   __param2_offset
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC
+	#emit ADD.C        __m1_cells
 	#emit STOR.S.pri   s2
 	#emit ZERO.pri
 	#emit SUB
@@ -145,9 +145,9 @@ stock Circular_Push_(s1, s2, ...)
 		count = 0;
 	// Get the address of the final slot.
 	#emit LOAD.S.alt   s1
-	#emit LOAD.S.pri   20
+	#emit LOAD.S.pri   __param2_offset
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC
+	#emit ADD.C        __m1_cells
 	// Load the data there.
 	#emit STOR.S.pri   count
 	#emit LREF.S.pri   count
@@ -157,60 +157,60 @@ stock Circular_Push_(s1, s2, ...)
 	{
 		// Just rotate.
 		// Simple copy to the first slot
-		#emit LREF.S.alt   20 // NOT s1
-		#emit LOAD.S.pri   20
+		#emit LREF.S.alt   __param2_offset // NOT s1
+		#emit LOAD.S.pri   __param2_offset
 		#emit ADD
 		#emit LOAD.S.alt   s2
 		#emit PUSH.alt
-		#emit SHL.C.alt    2
+		#emit SHL.C.alt    __COMPILER_CELL_SHIFT
 		#emit PUSH.alt
 		#emit PUSH.C       0
-		#emit PUSH.S       24
+		#emit PUSH.S       __param3_offset
 		#emit PUSH.pri
-		#emit PUSH.C       20
+		#emit PUSH.C       __5_cells
 		#emit SYSREQ.C     memcpy
-		#emit STACK        24
+		#emit STACK        __6_cells
 		// And rotate the numbers.
 		// Get the start end end pointers.
 		#emit LOAD.S.pri   s1
-		#emit LOAD.S.alt   20
+		#emit LOAD.S.alt   __param2_offset
 		#emit ADD
-		#emit ADD.C        0xFFFFFFFC
+		#emit ADD.C        __m1_cells
 		#emit STOR.S.pri   count
 		#emit STOR.S.alt   s2
 		// Load the first value, adjusted for its new slot.
 		#emit LREF.S.pri   count
-		#emit ADD.C        4
+		#emit ADD.C        __1_cell
 		// 24 (`src`) is clobbered from this point on.  But it saves a stack allocation.
-		#emit STOR.S.pri   24
+		#emit STOR.S.pri   __param3_offset
 		while (count != s2)
 		{
 			// Move to the next slot.
-			count -= 4;
+			count -= cellbytes;
 			// `start` is actually a pointer to an array header index.
 			// Load the offset here.  Swap slots through the registers.
 			#emit LREF.S.pri   count
-			#emit LOAD.S.alt   24
+			#emit LOAD.S.alt   __param3_offset
 			#emit SREF.S.alt   count
-			#emit ADD.C        4
-			#emit STOR.S.pri   24
+			#emit ADD.C        __1_cell
+			#emit STOR.S.pri   __param3_offset
 		}
 		{}
 		// `count` now contains the value from slot 0, ready to be moved to the end of the array.
 		// We overwrote slot 0 earlier, when writing the new data, so NOW we move it to the end.
 		#emit LOAD.S.pri   s1
-		#emit LOAD.S.alt   20
-		#emit ADD.C        0xFFFFFFFC
+		#emit LOAD.S.alt   __param2_offset
+		#emit ADD.C        __m1_cells
 		#emit ADD
 		#emit STOR.S.pri   count
 		#emit LOAD.S.alt   s1
-		#emit LOAD.S.pri   24
+		#emit LOAD.S.pri   __param3_offset
 		#emit SUB
 		#emit SREF.S.pri   count
 		#emit POP.pri
 		// Return the final slot.
 		#emit MOVE.pri
-		#emit SHR.C.pri    2
+		#emit SHR.C.pri    __COMPILER_CELL_SHIFT
 		#emit DEC.pri
 		#emit RETN
 	}
@@ -224,56 +224,56 @@ stock Circular_Push_(s1, s2, ...)
 		#emit LOAD.S.alt   s2
 		#emit SMUL
 		// `pri` is now an offset in the main data.
-		#emit LOAD.S.alt   20
+		#emit LOAD.S.alt   __param2_offset
 		#emit ADD
 		#emit LOAD.S.alt   s1
 		#emit ADD
 		// `pri` is now the full address of the destination.  Copy it.
 		#emit LOAD.S.alt   s2
 		#emit PUSH.alt
-		#emit SHL.C.alt    2
+		#emit SHL.C.alt    __COMPILER_CELL_SHIFT
 		#emit PUSH.alt
 		#emit PUSH.C       0
-		#emit PUSH.S       24
+		#emit PUSH.S       __param3_offset
 		#emit PUSH.pri
-		#emit PUSH.C       20
+		#emit PUSH.C       __5_cells
 		#emit SYSREQ.C     memcpy
-		#emit STACK        24
+		#emit STACK        __6_cells
 		// Adjust the final count.
-		count += 4;
+		count += cellbytes;
 		if (count == 0)
 		{
 			// The array is full.  Reset the final slot pointer.
 			#emit LOAD.S.pri   s1
-			#emit LOAD.S.alt   20
-			#emit ADD.C        0xFFFFFFFC
+			#emit LOAD.S.alt   __param2_offset
+			#emit ADD.C        __m1_cells
 			#emit XCHG
 			#emit ADD
 			#emit STOR.S.pri   count
 			#emit LOAD.S.pri   s2
 			#emit SMUL
-			#emit ADD.C        4
+			#emit ADD.C        __1_cell
 			#emit SREF.S.pri   count
 			#emit POP.pri
 			// Return the final slot ID.
 			#emit MOVE.pri
-			#emit SHR.C.pri    2
+			#emit SHR.C.pri    __COMPILER_CELL_SHIFT
 			#emit RETN
 		}
 		else
 		{
 			// Store the new count in the final slot.
 			#emit LOAD.S.alt   s1
-			#emit LOAD.S.pri   20
+			#emit LOAD.S.pri   __param2_offset
 			#emit ADD
-			#emit ADD.C        0xFFFFFFFC
+			#emit ADD.C        __m1_cells
 			#emit LOAD.S.alt   count
 			#emit STOR.S.pri   count
 			#emit SREF.S.alt   count
 			#emit POP.pri
 			#emit LOAD.S.pri   s1
 			#emit ADD
-			#emit SHR.C.pri    2
+			#emit SHR.C.pri    __COMPILER_CELL_SHIFT
 			#emit DEC.pri
 			#emit RETN
 		}
@@ -287,9 +287,9 @@ stock Circular_Rotate_(s1, s2, ...)
 		count = 0;
 	// Get the address of the final slot.
 	#emit LOAD.S.alt   s1
-	#emit LOAD.S.pri   20
+	#emit LOAD.S.pri   __param2_offset
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC
+	#emit ADD.C        __m1_cells
 	// Load the data there.
 	#emit STOR.S.pri   count
 	#emit LREF.S.pri   count
@@ -301,33 +301,33 @@ stock Circular_Rotate_(s1, s2, ...)
 		// Just rotate the numbers.
 		// Get the start end end pointers.
 		#emit LOAD.S.pri   s1
-		#emit LOAD.S.alt   20
+		#emit LOAD.S.alt   __param2_offset
 		#emit ADD
-		#emit ADD.C        0xFFFFFFFC
+		#emit ADD.C        __m1_cells
 		#emit STOR.S.pri   count
 		#emit STOR.S.alt   s2
 		// Load the first value, adjusted for its new slot.
 		#emit LREF.S.pri   count
-		#emit ADD.C        4
+		#emit ADD.C        __1_cell
 		#emit STOR.S.pri   data
 		while (count != s2)
 		{
 			// Move to the next slot.
-			count -= 4;
+			count -= cellbytes;
 			// `start` is actually a pointer to an array header index.
 			// Load the offset here.  Swap slots through the registers.
 			#emit LREF.S.pri   count
 			#emit LOAD.S.alt   data
 			#emit SREF.S.alt   count
-			#emit ADD.C        4
+			#emit ADD.C        __1_cell
 			#emit STOR.S.pri   data
 		}
 		{}
 		// `count` now contains the value from slot 0, ready to be moved to the end of the array.
 		// We overwrote slot 0 earlier, when writing the new data, so NOW we move it to the end.
 		#emit LOAD.S.pri   s1
-		#emit LOAD.S.alt   20
-		#emit ADD.C        0xFFFFFFFC
+		#emit LOAD.S.alt   __param2_offset
+		#emit ADD.C        __m1_cells
 		#emit ADD
 		#emit STOR.S.pri   count
 		#emit LOAD.S.alt   s1
@@ -338,47 +338,47 @@ stock Circular_Rotate_(s1, s2, ...)
 		// Return the final slot.
 		#emit POP.pri
 		#emit MOVE.pri
-		#emit SHR.C.pri    2
+		#emit SHR.C.pri    __COMPILER_CELL_SHIFT
 		#emit DEC.pri
 		#emit RETN
 	}
 	else
 	{
 		// Just adjust the final count.
-		count += 4;
+		count += cellbytes;
 		if (count == 0)
 		{
 			// The array is full.  Reset the final slot pointer.
 			#emit LOAD.S.pri   s1
-			#emit LOAD.S.alt   20
-			#emit ADD.C        0xFFFFFFFC
+			#emit LOAD.S.alt   __param2_offset
+			#emit ADD.C        __m1_cells
 			#emit XCHG
 			#emit ADD
 			#emit STOR.S.pri   count
 			#emit LOAD.S.pri   s2
 			#emit SMUL
-			#emit ADD.C        4
+			#emit ADD.C        __1_cell
 			#emit SREF.S.pri   count
 			#emit POP.pri
 			// Return the final slot ID.
 			#emit MOVE.pri
-			#emit SHR.C.pri    2
+			#emit SHR.C.pri    __COMPILER_CELL_SHIFT
 			#emit RETN
 		}
 		else
 		{
 			// Store the new count in the final slot.
 			#emit LOAD.S.alt   s1
-			#emit LOAD.S.pri   20
+			#emit LOAD.S.pri   __param2_offset
 			#emit ADD
-			#emit ADD.C        0xFFFFFFFC
+			#emit ADD.C        __m1_cells
 			#emit LOAD.S.alt   count
 			#emit STOR.S.pri   count
 			#emit SREF.S.alt   count
 			#emit POP.pri
 			#emit LOAD.S.pri   s1
 			#emit ADD
-			#emit SHR.C.pri    2
+			#emit SHR.C.pri    __COMPILER_CELL_SHIFT
 			#emit DEC.pri
 			#emit RETN
 		}

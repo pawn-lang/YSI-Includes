@@ -77,7 +77,7 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
+#include "..\..\YSI_Server\y_thirdpartyinclude"
 
 #if !defined YSI_MAX_INLINE_STRING
 	#define YSI_MAX_INLINE_STRING YSI_MAX_STRING

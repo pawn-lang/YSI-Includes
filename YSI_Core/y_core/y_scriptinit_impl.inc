@@ -217,9 +217,9 @@ stock bool:Server_IsLinuxHost()
 	new
 		val = 0;
 	// The code at address 0 is always `HALT`.
-	#emit LCTRL                0
+	#emit LCTRL                __cod
 	#emit MOVE.alt
-	#emit LCTRL                1
+	#emit LCTRL                __dat
 	#emit SUB.alt
 	#emit STOR.S.pri           val
 	#emit LREF.S.alt           val
@@ -233,9 +233,9 @@ stock bool:Server_IsWindowsHost()
 	new
 		val = 0;
 	// The code at address 0 is always `HALT`.
-	#emit LCTRL                0
+	#emit LCTRL                __cod
 	#emit MOVE.alt
-	#emit LCTRL                1
+	#emit LCTRL                __dat
 	#emit SUB.alt
 	#emit STOR.S.pri           val
 	#emit LREF.S.alt           val
@@ -429,7 +429,7 @@ stock Server_PrintIntroMessage(...)
 		// Body.
 		for (new i = 3 * cellbytes, j = (numargs() << __COMPILER_CELL_SHIFT) + (3 * cellbytes), a = 0; i != j; i += cellbytes)
 		{
-			#emit LCTRL          5
+			#emit LCTRL          __frm
 			#emit LOAD.S.alt     i
 			#emit ADD
 			#emit LOAD.I
@@ -472,7 +472,7 @@ stock Server_PrintIntroPart(...)
 		// Body.
 		for (new i = 3 * cellbytes, j = 3 * cellbytes + (numargs() << __COMPILER_CELL_SHIFT), a = 0; i != j; i += cellbytes)
 		{
-			#emit LCTRL          5
+			#emit LCTRL          __frm
 			#emit LOAD.S.alt     i
 			#emit ADD
 			#emit LOAD.I
@@ -567,10 +567,10 @@ stock bool:Server_IsDetectAddr0Enabled() {
 
 stock bool:Server_HasDetectAddr0() {
 	// Is the check possible?
-	#emit CONST.pri     0xFFFFFFFF // -1
-	#emit LCTRL 0xFD               // 0, 1, or -2
+	#emit CONST.pri     __minus1     // -1
+	#emit LCTRL 0xFD                 // 0, 1, or -2
 	#emit CONST.alt     0
-	#emit SGEQ                     // >= 0
+	#emit SGEQ                       // >= 0
 	#emit RETN
 	return false;
 }
@@ -743,8 +743,8 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				ScriptInit_OnYSIInit();
 			#endif
 			#if !defined YSI_NO_MODE_CACHE
-				E_SCRIPTINIT_STATE
-					tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
+				new
+					E_SCRIPTINIT_STATE:tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
 				// Set the variable to something unique for next load.  This will be
 				// written out, thus loaded in next time.
 				YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
@@ -1395,7 +1395,7 @@ stock bool:Server_IsOpenMP()
 	// `pri` is 0 it wasn't set by the control register.
 	#emit ZERO.pri
 	#emit ZERO.alt
-	#emit LCTRL                9
+	#emit LCTRL                __flg
 	#emit NEQ
 	#emit RETN
 
@@ -1407,7 +1407,7 @@ stock bool:Server_IsSAMP()
 	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
 	// `pri` is 0 it wasn't set by the control register.
 	#emit ZERO.pri
-	#emit LCTRL                9
+	#emit LCTRL                __flg
 	#emit EQ.C.pri             0
 	#emit RETN
 

@@ -816,7 +816,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 				// I think this is always generated, because `#emit` is not
 				// affected by `#if`.  The print isn't though, and it is just
 				// two extra instructions - not a huge burden!
-				#emit LCTRL         2
+				#emit LCTRL         __hea
 				#emit STOR.S.alt    cs
 				printf("Malloc_Allocate: heap = %d", cs);
 			#endif

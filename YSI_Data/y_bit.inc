@@ -43,7 +43,7 @@
  *   </ul><section>
  *     Definitions
  *   </section><ul>
- *     <symbol name="CELLSHIFT">Number of bits that can hold "cellbits"</symbol>
+ *     <symbol name="__COMPILER_BIT_SHIFT">Number of bits that can hold "cellbits"</symbol>
  *   </ul><section>
  *     Tags
  *   </section><ul>

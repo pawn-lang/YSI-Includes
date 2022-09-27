@@ -1345,57 +1345,57 @@ GLOBAL__ Group:Iter_Func@GroupChild(start, Group:parent)
 stock _Y_G@C_0(func)
 {
 	#emit PUSH.C     0
-	#emit LCTRL      6
-	#emit ADD.C      36
-	#emit LCTRL      8
+	#emit LCTRL      __cip
+	#emit ADD.C      __9_cells
+	#emit LCTRL      __jmp
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
-	#emit SCTRL      6
+	#emit SCTRL      __cip
 	// ALWAYS return 0;
 	return 0;
 }
 
 stock _Y_G@C_1(func, GLOBAL_TAG_TYPES:...)
 {
-	#emit PUSH.S     16
-	#emit PUSH.C     4
-	#emit LCTRL      6
-	#emit ADD.C      36
-	#emit LCTRL      8
+	#emit PUSH.S     __param1_offset
+	#emit PUSH.C     __1_cell
+	#emit LCTRL      __cip
+	#emit ADD.C      __9_cells
+	#emit LCTRL      __jmp
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
-	#emit SCTRL      6
+	#emit SCTRL      __cip
 	//#emit RETN
 	return 0;
 }
 
 stock _Y_G@C_2(func, GLOBAL_TAG_TYPES:...)
 {
-	#emit PUSH.S     20
-	#emit PUSH.S     16
-	#emit PUSH.C     8
-	#emit LCTRL      6
-	#emit ADD.C      36
-	#emit LCTRL      8
+	#emit PUSH.S     __param2_offset
+	#emit PUSH.S     __param1_offset
+	#emit PUSH.C     __2_cells
+	#emit LCTRL      __cip
+	#emit ADD.C      __9_cells
+	#emit LCTRL      __jmp
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
-	#emit SCTRL      6
+	#emit SCTRL      __cip
 	//#emit RETN
 	return 0;
 }
 
 stock _Y_G@C_3(func, GLOBAL_TAG_TYPES:...)
 {
-	#emit PUSH.S     24
-	#emit PUSH.S     20
-	#emit PUSH.S     16
-	#emit PUSH.C     12
-	#emit LCTRL      6
-	#emit ADD.C      36
-	#emit LCTRL      8
+	#emit PUSH.S     __param3_offset
+	#emit PUSH.S     __param2_offset
+	#emit PUSH.S     __param1_offset
+	#emit PUSH.C     __3_cells
+	#emit LCTRL      __cip
+	#emit ADD.C      __9_cells
+	#emit LCTRL      __jmp
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
-	#emit SCTRL      6
+	#emit SCTRL      __cip
 	//#emit RETN
 	return 0;
 }

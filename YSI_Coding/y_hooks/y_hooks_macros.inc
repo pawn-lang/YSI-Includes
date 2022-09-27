@@ -137,7 +137,7 @@ Optional plugins:
 	#define hook HOOK__
 #endif
 #if YSI_KEYWORD(rehook)
-	#define rehook HOOK__
+	#define rehook REHOOK__
 #endif
 #if YSI_KEYWORD(Hook)
 	#define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)

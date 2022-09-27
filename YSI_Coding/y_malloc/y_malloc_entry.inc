@@ -77,7 +77,7 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
+#include "..\..\YSI_Server\y_thirdpartyinclude"
 
 #if defined YSI_MALLOC_SECURE
 	#error YSI_MALLOC_SECURE has been removed.
@@ -204,7 +204,8 @@ forward Alloc:calloc(size);
 	new
 		YSI_gMallocMemory[1];
 	
-	#include "..\y_cgen\y_cgen"
+	#include "..\..\YSI_Server\y_thirdpartyinclude"
+	#include "..\y_cgen"
 	
 	// Allocate space on the heap permanently.
 	#if !defined YSI_YES_HEAP_MALLOC

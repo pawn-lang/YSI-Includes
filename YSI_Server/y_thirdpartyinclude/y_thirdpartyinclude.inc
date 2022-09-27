@@ -90,6 +90,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\..\YSI_Core\y_utils"
+
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning push
 	#pragma warning disable 231
@@ -498,7 +500,7 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
-#elseif !defined HasSysreqD
+#elseif !defined AMX_TAG_LOCAL
 	#error Re-download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
@@ -536,32 +538,7 @@ Optional plugins:
 //	#error Re-download `github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
 //#endif
 
-// Manually fix earlier versions.
-#if !defined _INC_code_parse_inc
-	#undef u@
-#endif
-#tryinclude <code-parse\code-parse>
-#tryinclude <code-parse.inc\code-parse>
-#tryinclude <code-parse.inc-master\code-parse>
-#tryinclude <code-parse.inc-master\code-parse.inc-master\code-parse>
-#tryinclude "..\..\code-parse\code-parse"
-#tryinclude "..\..\code-parse.inc\code-parse"
-#tryinclude "..\..\code-parse.inc-master\code-parse"
-#tryinclude "..\..\code-parse.inc-master\code-parse.inc-master\code-parse"
-#tryinclude "..\..\..\code-parse\code-parse"
-#tryinclude "..\..\..\code-parse.inc\code-parse"
-#tryinclude "..\..\..\code-parse.inc-master\code-parse"
-#tryinclude "..\..\..\code-parse.inc-master\code-parse.inc-master\code-parse"
-#tryinclude "code-parse"
-#tryinclude <code-parse>
-#if defined _INC_code_parse_inc
-	#undef u@
-#else
-	#error Download `github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
-//#elseif !defined __code_parse_u@_1
-//	#error Re-download `github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
-#endif
-#define u@$ 1]);
+#include "y_codeparse"
 
 #tryinclude <indirection\indirection>
 #tryinclude <indirection-master\indirection>
@@ -604,6 +581,5 @@ public OnCodeInit()
 	#pragma warning pop
 #endif
 
-#include "y_codeparse"
-#include "y_dumpamx"
+#include "..\..\YSI_Core\y_core\y_dumpamx"
 

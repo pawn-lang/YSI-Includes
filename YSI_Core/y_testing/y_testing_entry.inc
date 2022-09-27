@@ -119,14 +119,14 @@ static stock const TEST_PASSED[] = "PASS!";
 
 #define ASK(%0) Testing_Ask(playerid,%0)
 
-#define Y_TESTING_TEST_SEARCH _A<@yQ_>
-#define Y_TESTING_PTEST_SEARCH _A<@_Qy>
-#define Y_TESTING_INIT  _C<@y_Q>
-#define Y_TESTING_TEST  _C<@yQ_>
-#define Y_TESTING_SHUT  _C<@Qy_>
-#define Y_TESTING_PINIT _C<@Q_y>
-#define Y_TESTING_PTEST _C<@_Qy>
-#define Y_TESTING_PSHUT _C<@_yQ>
+const Y_TESTING_TEST_SEARCH = _A<@yQ_>;
+const Y_TESTING_PTEST_SEARCH = _A<@_Qy>;
+const Y_TESTING_INIT  = _C<@y_Q>;
+const Y_TESTING_TEST  = _C<@yQ_>;
+const Y_TESTING_SHUT  = _C<@Qy_>;
+const Y_TESTING_PINIT = _C<@Q_y>;
+const Y_TESTING_PTEST = _C<@_Qy>;
+const Y_TESTING_PSHUT = _C<@_yQ>;
 
 stock _y@T(GLOBAL_TAG_TYPES:b, tag = tagof (b))
 {
@@ -243,44 +243,44 @@ static stock const
 // the static function "y_Q@<test>".
 
 #if defined RUN_TESTS
-	#define TEST_INIT__%1() @y_Q%1();@y_Q%1()
-	#define YTEST_PID0:%8$@Q_y%1();@Q_y%1() %8$@y_Q%1();@y_Q%1()
+	#define TEST_INIT__%1() _F<@y_Q,%1>();_F<@y_Q,%1>()
+	#define YTEST_PID0:%8$_F<@Q_y,%1>();_F<@Q_y,%1>() %8$_F<@y_Q,%1>();_F<@y_Q,%1>()
 	
 	// We can't do `#define YTEST_PID1 TEST__` or something similar as then
 	// the result will be compressed in to `TEST__` and `YTEST_ARGS` will be
 	// checked before the expansion of `TEST__`.  Thus we must exactly copy the
 	// results of all these macros, with the addition of `%8$` of course.
 	#if !__COMPILER_STRING_PACKING
-		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
-		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
-	#elseif cellbytes == 4
+		#define TEST__%1() bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
+		#define YTEST_PID1:%8$bool:_F<@_Qy,%1>();bool:_F<@_Qy,%1>()%9(%9)%9;%9(%9) %8$bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
+	#elseif cellbits == 32
 		// Ensure there is always sufficient spacefor the failures linked list.
-		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
-		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
-	#elseif cellbytes == 8
-		#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
-		#define YTEST_PID1:%8$bool:@_Qy%1();bool:@_Qy%1()%9(%9)%9;%9(%9) %8$bool:@yQ_%1();bool:@yQ_%1()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())yQ_@%1();static yQ_@%1()
+		#define TEST__%1() bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
+		#define YTEST_PID1:%8$bool:_F<@_Qy,%1>();bool:_F<@_Qy,%1>()%9(%9)%9;%9(%9) %8$bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
+	#elseif cellbits == 64
+		#define TEST__%1() bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
+		#define YTEST_PID1:%8$bool:_F<@_Qy,%1>();bool:_F<@_Qy,%1>()%9(%9)%9;%9(%9) %8$bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
 	#else
 		#error Unsupported packed string size.
 	#endif
-	#define TEST_CLOSE__%1() @Qy_%1();@Qy_%1()
-	#define YTEST_PID2:%8$@_yQ%1();@_yQ%1() %8$@Qy_%1();@Qy_%1()
+	#define TEST_CLOSE__%1() _F<@Qy_,%1>();_F<@Qy_,%1>()
+	#define YTEST_PID2:%8$_F<@_yQ,%1>();_F<@_yQ,%1>() %8$_F<@Qy_,%1>();_F<@Qy_,%1>()
 	
 	// Default to having `playerid`, and fall back to no players otherwise.
-	#define PTEST_INIT__%1(%2) u@(u[_:YTEST_PID0:YTEST_DROP:u@$@Q_y%1(%2);@Q_y%1(%2)
+	#define PTEST_INIT__%1(%2) u@(u[_:YTEST_PID0:YTEST_DROP:u@$_F<@Q_y,%1>(%2);_F<@Q_y,%1>(%2)
 	#if !__COMPILER_STRING_PACKING
-		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
-	#elseif cellbytes == 4
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:_F<@_Qy,%1>(%2);bool:_F<@_Qy,%1>(%2)for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<_Qy@,%1>(%2);static _F<_Qy@,%1>(%2)
+	#elseif cellbits == 32
 		// Ensure there is always sufficient spacefor the failures linked list.
-		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
-	#elseif cellbytes == 8
-		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:@_Qy%1(%2);bool:@_Qy%1(%2)for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:_F<@_Qy,%1>(%2);bool:_F<@_Qy,%1>(%2)for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<_Qy@,%1>(%2);static _F<_Qy@,%1>(%2)
+	#elseif cellbits == 64
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:_F<@_Qy,%1>(%2);bool:_F<@_Qy,%1>(%2)for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<_Qy@,%1>(%2);static _F<_Qy@,%1>(%2)
 	#else
 		#error Unsupported packed string size.
 	#endif
-	#define PTEST_CLOSE__%1(%2) u@(u[_:YTEST_PID2:YTEST_DROP:u@$@_yQ%1(%2);@_yQ%1(%2)
+	#define PTEST_CLOSE__%1(%2) u@(u[_:YTEST_PID2:YTEST_DROP:u@$_F<@_yQ,%1>(%2);_F<@_yQ,%1>(%2)
 	
-	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();Debug_Warning("Compile test " #%1 " called.");}static stock Q@_y%1()
+	#define TEST_COMPILE__%1() forward _F<Q@y_,%1>();public _F<Q@y_,%1>(){if(FALSE)_F<Q@_y,%1>();Debug_Warning("Compile test " #%1 " called.");}static stock _F<Q@_y,%1>()
 
 	// Use the `PTEST` definitions by default, as they can now detect no
 	// `playerid` and fall back to `TEST` when it isn't present.
@@ -288,13 +288,13 @@ static stock const
 	#define @test(%2)%0(%1) PTEST__ %0(%1)<%2>
 	#define @testclose(%2)%0(%1) PTEST_CLOSE__ %0(%1)<%2>
 #else
-	#define TEST_INIT__%1(%2) static stock y_Q@%1(%2)
-	#define TEST__%1(%2) static stock bool:yQ_@%1(%2)
-	#define TEST_CLOSE__%1(%2) static stock Qy_@%1(%2)
+	#define TEST_INIT__%1(%2) static stock _F<y_Q@,%1>(%2)
+	#define TEST__%1(%2) static stock bool:_F<yQ_@,%1>(%2)
+	#define TEST_CLOSE__%1(%2) static stock _F<Qy_@,%1>(%2)
 	
-	#define PTEST_INIT__%1(%2) static stock Q_y@%1(%2)
-	#define PTEST__%1(%2) static stock bool:_Qy@%1(%2)
-	#define PTEST_CLOSE__%1(%2) static stock _yQ@%1(%2)
+	#define PTEST_INIT__%1(%2) static stock _F<Q_y@,%1>(%2)
+	#define PTEST__%1(%2) static stock bool:_F<_Qy@,%1>(%2)
+	#define PTEST_CLOSE__%1(%2) static stock _F<_yQ@,%1>(%2)
 
 	// Use the `PTEST` definitions by default, as they can now detect no
 	// `playerid` and fall back to `TEST` when it isn't present.
@@ -346,6 +346,7 @@ static stock const
 	#define TestCompile:%1() TEST_COMPILE__ %1()
 #endif
 
+// 32-bit prefixes.
 #define @y_Q%0\32; @y_Q
 #define @yQ_%0\32; @yQ_
 #define @Qy_%0\32; @Qy_
@@ -365,6 +366,26 @@ static stock const
 #define Q@_y%0\32; Q@_y
 #define Q@y_%0\32; Q@y_
 
+// 64-bit prefixes.
+#define @y_Q0000%0\32; @y_Q0000
+#define @yQ_0000%0\32; @yQ_0000
+#define @Qy_0000%0\32; @Qy_0000
+#define y_Q@0000%0\32; y_Q@0000
+#define yQ_@0000%0\32; yQ_@0000
+#define Qy_@0000%0\32; Qy_@0000
+
+#define @Q_y0000%0\32; @Q_y0000
+#define @_Qy0000%0\32; @_Qy0000
+#define @_yQ0000%0\32; @_yQ0000
+#define Q_y@0000%0\32; Q_y@0000
+#define _Qy@0000%0\32; _Qy@0000
+#define _yQ@0000%0\32; _yQ@0000
+
+#define y@Q_0000%0\32; y@Q_000
+#define y@_Q0000%0\32; y@_Q000
+#define Q@_y0000%0\32; Q@_y000
+#define Q@y_0000%0\32; Q@y_000
+
 // Currently unused.
 //#define _@Qy%0\32; _@Qy
 //#define _@yQ%0\32; _@yQ
@@ -374,6 +395,15 @@ static stock const
 //#define Q_@y%0\32; Q_@y
 //#define _Q@y%0\32; _Q@y
 //#define _y@Q%0\32; _y@Q
+//
+//#define _@Qy0000%0\32; _@Qy0000
+//#define _@yQ0000%0\32; _@yQ0000
+//#define y_@Q0000%0\32; y_@Q0000
+//#define yQ@_0000%0\32; yQ@_0000
+//#define Qy@_0000%0\32; Qy@_0000
+//#define Q_@y0000%0\32; Q_@y0000
+//#define _Q@y0000%0\32; _Q@y0000
+//#define _y@Q0000%0\32; _y@Q0000
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Name of the current function.</param>
@@ -438,8 +468,8 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 	// Now double return, to exit the call site as well.
 	#emit LOAD.S.alt       ret
 	#emit LOAD.S.pri       0
-	#emit SCTRL            5
-	#emit SCTRL            4
+	#emit SCTRL            __frm
+	#emit SCTRL            __stk
 	#emit MOVE.pri
 	#emit RETN
 }
@@ -457,7 +487,7 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 	// as a dummy no-op function call!  I'm actually quite happy I found a use
 	// for it!  Add 12 for the parameters to this function that we're about to
 	// forget about (i.e the stack space we're about to free up).
-	YSI_g_sCurHeap = heapspace() + 12;
+	YSI_g_sCurHeap = heapspace() + 3 * cellbytes;
 	Debug_Print3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
 	StrCpy(YSI_gCurTestName, name[2]);
@@ -486,31 +516,32 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 				i = 0,
 				end = 0; // 12 + 4 + 4.
 			// Get the stack position after `playerid`.
-			#emit ADDR.pri         16
+			#emit ADDR.pri         __param1_offset
 			#emit STOR.S.pri       end
 			// Get the stack position after everything.
-			#emit ADDR.pri         12
-			#emit LOAD.S.alt       8
+			#emit ADDR.pri         __param0_offset
+			#emit LOAD.S.alt       __args_offset
 			#emit ADD
 			#emit STOR.S.pri       i
 			while (i > end)
 			{
-				i -= 4;
+				i -= cellbytes;
 				#emit LREF.S.pri       i
 				#emit PUSH.pri
 			}
 			{}
-			#emit PUSH.C           512
+			const size = sizeof (YSI_g_sFailMessage);
+			#emit PUSH.C           size
 			#emit PUSH.C           YSI_g_sFailMessage
-			#emit LOAD.S.pri       8
-			#emit ADD.C            4
+			#emit LOAD.S.pri       __args_offset
+			#emit ADD.C            __1_cell
 			#emit PUSH.pri
 			#emit SYSREQ.C         format
 			// Remove the data from the stack.
 			#emit POP.alt
-			#emit LCTRL            4
+			#emit LCTRL            __stk
 			#emit ADD
-			#emit SCTRL            4
+			#emit SCTRL            __stk
 			//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
 		#if defined YSI_DIALOG_ASK
 			YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
@@ -578,10 +609,10 @@ stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 	//  
 	//  Debug_PrintT(str, msg, ___(2));
 	//  
-	#emit LOAD.S.pri       16
-	#emit STOR.S.pri       12
+	#emit LOAD.S.pri       __param1_offset
+	#emit STOR.S.pri       __param0_offset
 	#emit CONST.pri        Testing_Test_msg
-	#emit STOR.S.pri       16
+	#emit STOR.S.pri       __param1_offset
 	#emit POP.pri
 	#emit STOR.pri         Testing_Test_FRM
 	#emit POP.pri
@@ -638,7 +669,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 	Debug_Print2("Testing_Run() called");
 	new
 		bool:grouping,
-		skipped,
+		tmp,
 		idx = 0,
 		entry,
 		buffer[FUNCTION_LENGTH];
@@ -653,6 +684,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 		grouping = false;
 		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, Y_TESTING_TEST_SEARCH)))
 		{
+			AMX_GetStringFromEntry(entry, buffer);
 			if (AMX_Read(entry) == 0)
 			{
 				// Previously finished test.
@@ -660,14 +692,14 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			}
 			state y_testing_phase : y_testing_phase_determine;
 			#emit PUSH.C                    0
-			#emit LCTRL                     6
-			#emit ADD.C                     36
-			#emit LCTRL                     8
+			#emit LCTRL                     __cip
+			#emit ADD.C                     __9_cells
+			#emit LCTRL                     __jmp
 			#emit PUSH.pri
 			#emit LREF.S.pri                entry
-			#emit SCTRL                     6
-			#emit STOR.S.pri                skipped
-			switch (skipped)
+			#emit SCTRL                     __cip
+			#emit STOR.S.pri                tmp
+			switch (tmp)
 			{
 			#if defined JUST_TEST_GROUP
 				case 1, 2:
@@ -687,13 +719,13 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 				}
 			}
 			state y_testing_phase : y_testing_phase_call;
-			AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
+			AMX_GetStringFromEntry(entry, buffer);
 			Server_RestartLongCall();
 			// Call the setup function if there is one.
-			buffer[0] = Y_TESTING_INIT,
-			R@(buffer, YSI_EMPTY),
+			buffer[0] = Y_TESTING_INIT;
+			R@(buffer, YSI_EMPTY);
 			// Call the test.
-			buffer[0] = Y_TESTING_TEST,
+			buffer[0] = Y_TESTING_TEST;
 			fails = YSI_g_sFails;
 			Debug_Print5("Testing_Run(): Calling %s", Unpack(buffer[1]));
 			YSI_g_sInTest = true,
@@ -714,7 +746,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			if (YSI_g_sFails != fails)
 			{
 				AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
-				AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - fails),
+				AMX_Write(YSI_g_sCurTest + cellbytes, YSI_g_sFails - fails),
 				YSI_g_sFailTests = YSI_g_sCurTest;
 			}
 #if !defined TEST_SHOW_PASSES
@@ -724,11 +756,11 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 				TEST_REPORT(YSI_SPACE);
 			}
 #endif
-			buffer[0] = Y_TESTING_SHUT,
-			R@(buffer, YSI_EMPTY),
+			buffer[0] = Y_TESTING_SHUT;
+			R@(buffer, YSI_EMPTY);
 			// Delete the pointer, which may have moved due to tests playing
 			// with headers.
-			buffer[0] = Y_TESTING_TEST,
+			buffer[0] = Y_TESTING_TEST;
 			strunpack(buffer, buffer);
 			if (AMX_GetPublicEntry(0, entry, buffer))
 			{
@@ -796,7 +828,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 		YSI_g_sInTest = false;
 		new
 			entry,
-			skipped,
+			tmp,
 			next,
 			buffer[FUNCTION_LENGTH];
 		static
@@ -806,7 +838,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			// Get the last test (nicely fails for cellmax).
 			if ((YSI_g_sPlayer = AMX_GetPublicEntryPrefix(YSI_g_sPlayer, entry, Y_TESTING_PTEST_SEARCH)))
 			{
-				AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
+				AMX_GetStringFromEntry(entry, buffer);
 				// Call the shutdown function if there is one.
 				buffer[0] = Y_TESTING_PSHUT;
 				Debug_Print5("Testing_Next(): Calling %s", Unpack(buffer));
@@ -821,7 +853,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			if (YSI_g_sPlayerFails != YSI_g_sFails)
 			{
 				AMX_Write(YSI_g_sCurTest, YSI_g_sFailTests),
-				AMX_Write(YSI_g_sCurTest + 4, YSI_g_sFails - YSI_g_sPlayerFails),
+				AMX_Write(YSI_g_sCurTest + cellbytes, YSI_g_sFails - YSI_g_sPlayerFails),
 				YSI_g_sFailTests = YSI_g_sCurTest,
 				YSI_g_sPlayerFails = YSI_g_sFails;
 			}
@@ -837,15 +869,15 @@ Testing_Next_retry:
 				}
 				state y_testing_phase : y_testing_phase_determine;
 				#emit PUSH.S                    playerid
-				#emit PUSH.C                    4
-				#emit LCTRL                     6
-				#emit ADD.C                     36
-				#emit LCTRL                     8
+				#emit PUSH.C                    __1_cell
+				#emit LCTRL                     __cip
+				#emit ADD.C                     __9_cells
+				#emit LCTRL                     __jmp
 				#emit PUSH.pri
 				#emit LREF.S.pri                entry
-				#emit SCTRL                     6
-				#emit STOR.S.pri                skipped
-				switch (skipped)
+				#emit SCTRL                     __cip
+				#emit STOR.S.pri                tmp
+				switch (tmp)
 				{
 				#if defined JUST_TEST_GROUP
 					case 1, 2:
@@ -867,7 +899,7 @@ Testing_Next_retry:
 					}
 				}
 				state y_testing_phase : y_testing_phase_call;
-				AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, buffer);
+				AMX_GetStringFromEntry(entry, buffer);
 				++YSI_g_sTests;
 				YSI_g_sAsked = false;
 				// Call the setup function if there is one.
@@ -904,7 +936,7 @@ Testing_Next_retry:
 					// that didn't pass.
 					while (YSI_g_sFailTests != 0)
 					{
-						printf("    - %s (%d)", AMX_Deref(YSI_g_sFailTests + 8), AMX_Read(YSI_g_sFailTests + 4)),
+						printf("    - %s (%d)", AMX_Deref(YSI_g_sFailTests + 2 * cellbytes), AMX_Read(YSI_g_sFailTests + cellbytes)),
 						YSI_g_sFailTests = AMX_Read(YSI_g_sFailTests);
 					}
 					print(YSI_SPACE);
@@ -1172,7 +1204,7 @@ stock Testing_RunAll()
 			// that didn't pass.
 			while (YSI_g_sFailTests != 0)
 			{
-				printf("    - %s (%d)", AMX_Deref(YSI_g_sFailTests + 8), AMX_Read(YSI_g_sFailTests + 4)),
+				printf("    - %s (%d)", AMX_Deref(YSI_g_sFailTests + 2 * cellbytes), AMX_Read(YSI_g_sFailTests + cellbytes)),
 				YSI_g_sFailTests = AMX_Read(YSI_g_sFailTests);
 			}
 			print(YSI_SPACE);

@@ -336,7 +336,7 @@ public y_inline9(a)
 {
 	new
 		cc[E_CALLBACK_DATA];
-	ASSERT(y_inline_Get(using public y_inline9, cc, _F<i>));
+	ASSERT(y_inline_Get(using public y_inline9, cc, "i"));
 	ASSERT_EQ(Callback_Call(cc, 67), 12345 + 67);
 	Callback_Release(cc);
 }
@@ -352,7 +352,7 @@ public y_inline10(a, b[])
 {
 	new
 		cc[E_CALLBACK_DATA];
-	ASSERT(y_inline_Get(using callback y_inline10, cc, _F<is>));
+	ASSERT(y_inline_Get(using callback y_inline10, cc, "is"));
 	ASSERT_EQ(Callback_Call(cc, 67, "50"), 12345 + 67 + '5');
 	ASSERT(y_inline_Get(using callback y_inline10<is>, cc));
 	ASSERT_EQ(Callback_Call(cc, 67, "50"), 12345 + 67 + '5');
@@ -1282,7 +1282,7 @@ y_inline_MetaData(Func:cb<iis>)
 {
 	new
 		cc[E_CALLBACK_DATA];
-	ASSERT(y_inline_Get(USING__ public y_inline9, cc, _F<i>));
+	ASSERT(y_inline_Get(USING__ public y_inline9, cc, "i"));
 	ASSERT_EQ(Callback_Call(cc, 67), 12345 + 67);
 	Callback_Release(cc);
 }
@@ -1291,7 +1291,7 @@ y_inline_MetaData(Func:cb<iis>)
 {
 	new
 		cc[E_CALLBACK_DATA];
-	ASSERT(y_inline_Get(USING_CALLBACK__ y_inline10, cc, _F<is>));
+	ASSERT(y_inline_Get(USING_CALLBACK__ y_inline10, cc, "is"));
 	ASSERT_EQ(Callback_Call(cc, 67, "50"), 12345 + 67 + '5');
 	ASSERT(y_inline_Get(USING__ callback y_inline10<is>, cc));
 	ASSERT_EQ(Callback_Call(cc, 67, "50"), 12345 + 67 + '5');

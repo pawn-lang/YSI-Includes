@@ -87,13 +87,9 @@ Optional plugins:
 
 #include "..\y_malloc"
 #include "..\..\YSI_Data\y_iterate"
-#include "..\y_hooks"
 
 #include "y_timers_impl"
 #include "y_timers_macros"
-
-// Decorator syntax.
-#define @timer(%0)%1(%2) TIMER__ %1[%0](%2)
 
 #if defined YSI_TESTS
 	#include "..\..\YSI_Coding\y_va"

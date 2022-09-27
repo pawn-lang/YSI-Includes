@@ -110,6 +110,7 @@ native YSI_SHA256Hash_BAD_DONT_USE__(const password[], const salt[], output[], s
 // Proper casing.
 native YSI_Random__(max) = random;
 native _YSI_ConstCpy__(const dst[], const src[], index, numbytes, maxlength) = memcpy;
+native YSI_StrUnpack__(dest[], const source[], maxlength = sizeof (dest)) = strunpack;
 
 #define YSI_JOIN(%0,%1,%2) %0And%1And%2
 
@@ -126,27 +127,17 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 	native bool:Dialog_ShowPlayerNative(playerid, dialogid, DIALOG_STYLE:style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
 #endif
 
-#if __COMPILER___EMIT_U
-	#if cellbytes == 4
-		#define YSI_IsLocalVarPackedString__(%0) \
-			__emit(                         \
-				LREF.S.pri  %0             ,\
-				CONST.alt   0x01000000     ,\
-				GEQ                         \
-			)
-		#endinput
-	#elseif cellbytes == 8
-		#define YSI_IsLocalVarPackedString__(%0) \
-			__emit(                         \
-				LREF.S.pri  %0             ,\
-				CONST.alt   0x0100000000000000,\
-				GEQ                         \
-			)
-		#endinput
-	#else
-		#error Unsupported packed string size.
-	#endif
-#endif
+const YSI_PackedStringMax__ = 1 << (cellbits - charbits);
+
+//#if __COMPILER___EMIT_U
+//	#define YSI_IsLocalVarPackedString__(%0) \
+//		__emit(                                \
+//			LREF.S.pri  %0                   , \
+//			CONST.alt   YSI_PackedStringMax__, \
+//			GEQ                                \
+//		)
+//	#endinput
+//#endif
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
@@ -160,14 +151,10 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
  *   version above is actually faster than the native for locals.
  * </remarks>
  *//*------------------------------------------------------------------------**/
-
-#if cellbytes != 4
-	#error Unsupported packed string size.
-#endif
 stock bool:YSI_IsLocalVarPackedString__(const string:str[])
 {
 	#emit LREF.S.pri           str
-	#emit CONST.alt            0x01000000
+	#emit CONST.alt            YSI_PackedStringMax__
 	#emit GEQ
 	#emit RETN
 

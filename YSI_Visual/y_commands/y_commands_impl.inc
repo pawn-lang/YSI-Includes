@@ -531,14 +531,14 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 			#emit IDXADDR
 			#emit PUSH.pri
 			#emit PUSH.S      p
-			#emit PUSH.C      12
-			#emit LCTRL       6
-			#emit ADD.C       44
-			#emit LCTRL       8
+			#emit PUSH.C      __3_cells
+			#emit LCTRL       __cip
+			#emit ADD.C       __11_cells
+			#emit LCTRL       __jmp
 			#emit PUSH.pri
 			#emit LOAD.pri    sHash
-			#emit SCTRL       8
-			#emit SCTRL       6
+			#emit SCTRL       __jmp
+			#emit SCTRL       __cip
 			#emit STOR.pri    sRet
 			Debug_Print5("Command_ReProces: Result = %d %d %d", sRet, Command_Error(p, e_COMMAND_ERRORS:sRet), _:COMMAND_OK);
 		}
@@ -557,6 +557,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	#endif
 	if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP)
 		sRet = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sRet);
+	Debug_Print5("Command_ReProces: Return = %d %d %d", p, sRet, Command_Error(p, e_COMMAND_ERRORS:sRet));
 	return Command_Error(p, e_COMMAND_ERRORS:sRet);
 }
 

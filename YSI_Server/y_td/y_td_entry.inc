@@ -1845,7 +1845,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 		new
 			Bit:s = YSI_g_sPlayerDraws[playerid][i],
 			j = 0,
-			ix = i << 5;
+			ix = i << __COMPILER_BIT_SHIFT;
 		while (s)
 		{
 			// Get rid of data for textdraws which this player can see.  We

@@ -1,9 +1,18 @@
-#if defined _INC_y_hooks
-	#endinput
-#endif
-#define _INC_y_hooks
-
-/*
+/**
+ * <library
+ *   name="y_thirdpartyinclude"
+ *   version="0.2"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Include a load of other libraries that YSI depends on, looking in about 27 different likely locations."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -76,28 +85,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Server\y_thirdpartyinclude"
-#include "..\y_cgen"
-
-#if defined YSI_TESTS
-	#define _Y_HOOKS_STATIC
-#else
-	#define _Y_HOOKS_STATIC static
+#if !defined _INC_y_thirdpartyinclude
+	#tryinclude "y_thirdpartyinclude\y_thirdpartyinclude"
 #endif
-
-#if !defined MAX_Y_HOOKS
-	#define MAX_Y_HOOKS (128)
+#if !defined _INC_y_thirdpartyinclude
+	#tryinclude "YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude"
 #endif
-
-#define Y_HOOKS_MAX_NAME (__COMPILER_sNAMEMAX * 2 + 1)
-
-#include "y_hooks_macros"
-#include "y_hooks_impl"
-
-#if defined YSI_TESTS
-	// Get a new unique ID for the test hooks.
-	#include "..\y_unique\y_unique_entry"
-	#include "y_hooks_tests"
+#if !defined _INC_y_thirdpartyinclude
+	#tryinclude "YSI\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude"
+#endif
+#if !defined _INC_y_thirdpartyinclude
+	#tryinclude <YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude>
+#endif
+#if !defined _INC_y_thirdpartyinclude
+	#tryinclude <YSI\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude>
+#endif
+#if !defined _INC_y_thirdpartyinclude
+	#error Could not find y_thirdpartyinclude
 #endif
 

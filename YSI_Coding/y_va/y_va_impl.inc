@@ -139,18 +139,18 @@ stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 	// This means there is 24 bytes of information we need to move to globals,
 	// since we are about to totally destroy our own stack.
 	#emit POP.pri
-	#emit SCTRL        5 // Go back to the previous frame.
+	#emit SCTRL        __frm // Go back to the previous frame.
 	// The frame is now the same.
 	#emit POP.pri
 	#emit MOVE.alt
 	#emit STOR.pri     sReturnAddress
 	#emit POP.pri        // Don't care about this parameter count (don't save).
 	#emit POP.alt                        // skippedBytes
-	#emit LCTRL        5                 // frame
-	#emit ADD.C        12                // frame + 12
+	#emit LCTRL        __frm             // frame
+	#emit ADD.C        __3_cells         // frame + 12
 	#emit ADD                            // frame + 12 + skippedBytes
 	#emit STOR.pri     sParametersBase
-	#emit LOAD.S.pri   8                 // parameterCount
+	#emit LOAD.S.pri   __args_offset     // parameterCount
 	#emit SUB                            // parameterCount - skippedBytes
 	#emit STOR.pri     sPushedParameters
 	#emit POP.alt                        // pushedBytes
@@ -166,29 +166,29 @@ stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 	#emit LOAD.pri     sTotalParameters
 	#emit STOR.I
 	// Move the stack down enough for the new parameters.  `[stk]` is in `pri`.
-	#emit LCTRL        4
+	#emit LCTRL        __stk
 	#emit LOAD.alt     sPushedParameters
 	#emit SUB
-	#emit SCTRL        4 // Move the stack down a load at once.
+	#emit SCTRL        __stk // Move the stack down a load at once.
 	// The stack pointer should be in `alt`.  This code is just:
 	//   
 	//	 memcpy(&stack, sParametersBase, 0, sPushedParameters, cellmax);
 	//   
 	// We know we MUST have enough space on the stack since we allocated it!
 	#emit STACK        0
-	#emit PUSH.C       0x10000000
+	#emit PUSH.C       1000000
 	#emit PUSH         sPushedParameters
 	#emit PUSH.C       0
 	#emit PUSH         sParametersBase
 	#emit PUSH.alt
-	#emit PUSH.C       20
+	#emit PUSH.C       __5_cells
 	#emit SYSREQ.C     memcpy
-	#emit STACK        24
+	#emit STACK        __6_cells
 	// Return from this function.  We are already in the parent frame and have
 	// no parameters on the stack, so function postamble is not required.
 	#emit LOAD.pri     sReturnAddress
-	#emit SCTRL        8
-	#emit SCTRL        6
+	#emit SCTRL        __jmp
+	#emit SCTRL        __cip
 }
 
 // Enable `&YVA2_DummyPush` WITHOUT matching it within the scanner itself.
@@ -201,7 +201,7 @@ stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 #endif
 // IF YOU EVER CHANGE THE NUMBER OF DUMMY PARAMETERS, DON'T FORGET TO CHANGE THE
 // PARAMETER BYTE COUNT IN THE SCANNER!  ONLY DONE IT EVERY TIME SO FAR...
-stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0, const dummy4 = 0, const dummy5 = 0 Y_VA_DUMMIES)
+stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = cellbytes, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0, const dummy4 = 0, const dummy5 = 0 Y_VA_DUMMIES)
 {
 	Debug_Print3("YVA2_DummyPush start");
 	#pragma unused dummy0, dummy1, dummy2, dummy3, dummy4, dummy5
@@ -232,14 +232,14 @@ stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRe
 	else if (TRUE)
 	{
 		// Save the return address.
-		#emit LOAD.S.pri   4
+		#emit LOAD.S.pri   __return_offset
 		#emit STOR.pri     YSI_g_sInitialised
 		// Run lazy initialisation.  This now means that the code is only
 		// scanned and set up when the first `___` is actually found.
 		YVA2_Initalise();
 		// Change the return to jump back to the start of this code.
 		#emit LOAD.pri     YSI_g_sInitialised
-		#emit STOR.S.pri   4
+		#emit STOR.S.pri   __return_offset
 	}
 	else
 	{
@@ -277,22 +277,22 @@ static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skip
 #if __COMPILER_O2
 	@emit ADDR.pri     offset                  // 8
 	@emit PUSH.pri                             // 12
-	@emit PUSH3.C      pushedBytes - 4, skippedBytes, 12 // 28
-	@emit CALL.abs     YSI_g_sDoPushAddr      // 36
-	@emit HEAP         4                       // 44
+	@emit PUSH3.C      pushedBytes - __1_cell, skippedBytes, __3_cells // 28
+	@emit CALL.abs     YSI_g_sDoPushAddr       // 36
+	@emit HEAP         __1_cell                // 44
 #else
 	// `pushedBytes` is the number of bytes originally pushed to the target
 	// function (which includes four for the `___` return value).
 	// Use `ctx` so we can use `@emit`.
 	@emit ADDR.pri     offset                  // 8
 	@emit PUSH.pri                             // 12
-	@emit PUSH.C       pushedBytes - 4         // 20
+	@emit PUSH.C       pushedBytes - __1_cell  // 20
 	@emit PUSH.C       skippedBytes            // 28
-	@emit PUSH.C       12                      // 36
-	@emit CALL.abs     YSI_g_sDoPushAddr      // 44
+	@emit PUSH.C       __3_cells               // 36
+	@emit CALL.abs     YSI_g_sDoPushAddr       // 44
 	// We keep the `HEAP` here since we know that the original code wants to
 	// clean up an extra four bytes from the heap, so it still needs to exist.
-	@emit HEAP         4                       // 52
+	@emit HEAP         __1_cell                // 52
 #endif
 }
 
@@ -305,8 +305,8 @@ static stock YVA2_CodeGenShiftCode(dest, src, end)
 	{
 		#emit LREF.S.pri   src
 		#emit SREF.S.pri   dest
-		src += 4;
-		dest += 4;
+		src += cellbytes;
+		dest += cellbytes;
 	}
 	// NOP out the remaining code.
 	src = _:RelocateOpcode(OP_NOP);
@@ -314,7 +314,7 @@ static stock YVA2_CodeGenShiftCode(dest, src, end)
 	{
 		#emit LOAD.S.pri   src
 		#emit SREF.S.pri   dest
-		dest += 4;
+		dest += cellbytes;
 	}
 }
 
@@ -327,11 +327,11 @@ static stock YVA2_CodeGenMainCleanup(ctx[AsmContext])
 	// Save the return value.
 	@emit STOR.pri     AMX_Ref(sTemp) // 12
 	// Load the stack pointer.
-	@emit LCTRL        4          // 20
+	@emit LCTRL        __stk      // 20
 	// Remove the number of pushed parameters.
 	@emit ADD                     // 24
 	// Store the stack pointer.
-	@emit SCTRL        4          // 32
+	@emit SCTRL        __stk      // 32
 	// Restore the return value.
 	@emit LOAD.pri     AMX_Ref(sTemp) // 40
 }
@@ -366,12 +366,12 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 				// If the length is 12 the code was `SYSREQ.N`, which means the
 				// argument count comes AFTER the call, whereas in all other
 				// cases it comes before.
-				paramCount = CodeScanGetMatchHole(m, len == 12),
+				paramCount = CodeScanGetMatchHole(m, len == __3_cells),
 				returningString = 0,
 #if __COMPILER_O2
-				codeLength = 44;
+				codeLength = 11 * cellbytes;
 #else
-				codeLength = 52;
+				codeLength = 13 * cellbytes;
 #endif
 			YSI_g_sPassthroughNestings = pos;
 			if (!pos && YSI_g_sSkips[0] & cellmin)
@@ -409,9 +409,9 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 				AsmEmitHeap(YSI_g_sContexts[0], codeLength),
 				AsmEmitPushAlt(YSI_g_sContexts[0]);
 #if __COMPILER_O2
-				codeLength = 44 + 5 * cellbytes;
+				codeLength = 11 * cellbytes + 5 * cellbytes;
 #else
-				codeLength = 52 + 5 * cellbytes;
+				codeLength = 13 * cellbytes + 5 * cellbytes;
 #endif
 			}
 			else if (!pos)
@@ -426,13 +426,13 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 			// Shift the code up.
 			YVA2_CodeGenShiftCode(
 				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
-				dest + YSI_g_sLength[pos] + (returningString ? 12 : 0),
+				dest + YSI_g_sLength[pos] + (returningString ? __3_cells : 0),
 				end + returningString);
 			// Adjust the assembly context.  `codeLength` is the length of the
 			// code from `YVA2_CodeGenPushSite`.
 			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - codeLength + returningString) - len,
 			dest = -YSI_g_sStacks[0] - (pos << __COMPILER_CELL_SHIFT);
-			if (len == 12)
+			if (len == __3_cells)
 			{
 				// `-O2`, convert `SYSREQ.N` to `SYSREQ.C`.
 				end = CodeScanGetMatchHole(m, 0),
@@ -446,7 +446,7 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 				AsmEmitPushS(YSI_g_sContexts[pos], dest),
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
 			}
-			if (returningString == 12)
+			if (returningString == __3_cells)
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
 			if (len != 16)
 				YVA2_CodeGenMainCleanup(YSI_g_sContexts[pos]);
@@ -483,7 +483,7 @@ static stock YVA2_FoundPush(const m[CodeScanner])
 	CodeScanGetMatchAsm(m, YSI_g_sContexts[YSI_g_sPassthroughNestings]),
 	YSI_g_sStacks[YSI_g_sPassthroughNestings] = CodeScanGetMatchStack(m),
 	// If the code is 96 bytes long, `ZERO_PRI` was used not a constant number.
-	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 112) ? 0 : CodeScanGetMatchHole(m, 0);
+	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 28 * cellbytes) ? 0 : CodeScanGetMatchHole(m, 0);
 	if (!YSI_g_sPassthroughNestings)
 	{
 		// Check if this function is returning a string.  It has an extra hidden
@@ -494,7 +494,7 @@ static stock YVA2_FoundPush(const m[CodeScanner])
 		// and so don't interrupt their own return values.
 		new
 			dctx[DisasmContext];
-		CodeScanGetMatchDisasm(m, dctx, -12);
+		CodeScanGetMatchDisasm(m, dctx, -__3_cells);
 		if (DisasmNextInsn(dctx) == OP_HEAP && DisasmNextInsn(dctx) == OP_PUSH_ALT)
 		{
 			// Correct preamble.  Mark this to check the postamble.
@@ -505,7 +505,7 @@ static stock YVA2_FoundPush(const m[CodeScanner])
 	++YSI_g_sPassthroughNestings;
 	Debug_Print3("YVA2_FoundPush: %d", CodeScanGetMatchStack(m));
 	Debug_Print5("YVA2_FoundPush: %d %d", addr, YSI_g_sInitialised);
-	if (addr < YSI_g_sInitialised < addr + 100)
+	if (addr < YSI_g_sInitialised < addr + 25 * cellbytes)
 	{
 		Debug_Print5("YVA2_FoundPush: Found match");
 		YSI_g_sInitialised = addr;
@@ -558,10 +558,10 @@ static stock YVA2_Initalise()
 	CodeScanMatcherPattern(csmO2,
 		OP(PUSH5_C,    0, 0, 0, 0, 0)   // 24
 		OP(PUSH5_C,    0, 0, 0, 0, 0)   // 48
-		OP(PUSH5_C,    0, 0, 4, 0, ???) // 72
-		OP(PUSH_C,     60)              // 80
+		OP(PUSH5_C,    0, 0, cellbytes, 0, ???) // 72
+		OP(PUSH_C,     __15_cells)      // 80
 		OP(CALL,       &YVA2_DummyPush) // 88
-		OP(HEAP,       4)               // 96
+		OP(HEAP,       __1_cell)        // 96
 		OP(STOR_I)                      // 100
 		OP(PUSH_ALT)                    // 104
 	);
@@ -596,15 +596,15 @@ static stock YVA2_Initalise()
 		OP(PUSH_PRI)                    // 40
 		OP(ZERO_PRI)                    // 44
 		OP(PUSH_PRI)                    // 48
-		OP(CONST_PRI,  4)               // 56
+		OP(CONST_PRI,  cellbytes)       // 56
 		OP(PUSH_PRI)                    // 60
 		OP(ZERO_PRI)                    // 64
 		OP(PUSH_PRI)                    // 68
 		OP(ZERO_PRI)                    // 72
 		OP(PUSH_PRI)                    // 76
-		OP(PUSH_C,     36)              // 84
+		OP(PUSH_C,     __9_cells)       // 84
 		OP(CALL,       &YVA2_DummyPush) // 92
-		OP(HEAP,       4)               // 100
+		OP(HEAP,       __1_cell)        // 100
 		OP(STOR_I)                      // 104
 		OP(MOVE_PRI)                    // 108
 		OP(PUSH_PRI)                    // 112
@@ -624,15 +624,15 @@ static stock YVA2_Initalise()
 		OP(PUSH_PRI)                    // 40
 		OP(ZERO_PRI)                    // 44
 		OP(PUSH_PRI)                    // 48
-		OP(CONST_PRI,  4)               // 56
+		OP(CONST_PRI,  cellbytes)       // 56
 		OP(PUSH_PRI)                    // 60
 		OP(ZERO_PRI)                    // 64
 		OP(PUSH_PRI)                    // 68
 		OP(CONST_PRI,  ???)             // 76
 		OP(PUSH_PRI)                    // 80
-		OP(PUSH_C,     36)              // 88
+		OP(PUSH_C,     __9_cells)       // 88
 		OP(CALL,       &YVA2_DummyPush) // 96
-		OP(HEAP,       4)               // 104
+		OP(HEAP,       __1_cell)        // 104
 		OP(STOR_I)                      // 108
 		OP(MOVE_PRI)                    // 112
 		OP(PUSH_PRI)                    // 116
@@ -657,12 +657,12 @@ static stock YVA2_Initalise()
 		OP(PUSH_C,     0)               // 32
 		OP(PUSH_C,     0)               // 40
 		OP(PUSH_C,     0)               // 48
-		OP(PUSH_C,     4)               // 56
+		OP(PUSH_C,     cellbytes)       // 56
 		OP(PUSH_C,     0)               // 64
 		OP(PUSH_C,     ???)             // 72
-		OP(PUSH_C,     36)              // 80
+		OP(PUSH_C,     __9_cells)       // 80
 		OP(CALL,       &YVA2_DummyPush) // 84
-		OP(HEAP,       4)               // 92
+		OP(HEAP,       __1_cell)        // 92
 		OP(STOR_I)                      // 96
 		OP(PUSH_ALT)                    // 100
 	);
@@ -730,17 +730,17 @@ stock va_strlen(arg)
 	// Add the frame pointer to the argument offset in bytes.
 	#emit ADD
 	// Add 12 to skip over the function header.
-	#emit ADD.C      12
+	#emit ADD.C      __3_cells
 	// Load the address stored in the specified address.
 	#emit LOAD.I
 	// Push the address we just determined was the source.
 	#emit PUSH.pri
 	// Push the number of parameters passed (in bytes) to the function.
-	#emit PUSH.C     4
+	#emit PUSH.C     __1_cell
 	// Call the function.
 	#emit SYSREQ.C   strlen
 	// Restore the stack to its level before we called this native.
-	#emit STACK      8
+	#emit STACK      __2_cells
 	#emit RETN
 	// Never called.
 	return 0;
@@ -752,17 +752,17 @@ stock va_getstring(dest[], arg, len = sizeof (dest))
 	// the argument required.
 	#emit LOAD.S.pri arg
 	// Then convert that number to bytes from cells.
-	#emit SMUL.C     4
+	#emit SMUL.C     cellbytes
 	// Get the previous function's frame.  Stored in variable 0 (in the current
 	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
 	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
 	// checks that "arg * 4 < *(*(FRM + 0) + 8)", for the previous frame parameter
 	// count (in C pointer speak).
-	#emit LOAD.S.alt 0
+	#emit LOAD.S.alt __frame_offset
 	// Add the frame pointer to the argument offset in bytes.
 	#emit ADD
 	// Add 12 to skip over the function header.
-	#emit ADD.C      12
+	#emit ADD.C      __3_cells
 	// Load the address stored in the specified address.
 	#emit LOAD.I
 	// Push the length for "strcat".
@@ -778,10 +778,10 @@ stock va_getstring(dest[], arg, len = sizeof (dest))
 	// Push the loaded address.
 	#emit PUSH.alt
 	// Push the number of parameters passed (in bytes) to the function.
-	#emit PUSH.C     12
+	#emit PUSH.C     __3_cells
 	// Call the function.
 	#emit SYSREQ.C   strcat
 	// Restore the stack to its level before we called this native.
-	#emit STACK      16
+	#emit STACK      __4_cells
 }
 

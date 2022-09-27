@@ -1242,3 +1242,35 @@ public y_utils_va_return(const str[])
 	ASSERT_EQ(BinStr(!"0b1010"), 0b1010);
 }
 
+@test(.group = "y_utils") y_utils_Abs()
+{
+	ASSERT_EQ(Abs(10), 10);
+	ASSERT_EQ(Abs(20), 20);
+	ASSERT_EQ(Abs(cellmin), cellmin);
+	ASSERT_EQ(Abs(cellmax), cellmax);
+	ASSERT_EQ(Abs(-10), 10);
+	ASSERT_EQ(Abs(0), 0);
+	ASSERT_EQ(Abs(999999999),  999999999);
+	ASSERT_EQ(Abs(-999999999), 999999999);
+	ASSERT_EQ(Abs(-500), 500);
+	ASSERT_EQ(Abs(-600), 600);
+	ASSERT_EQ(Abs(500), 500);
+	ASSERT_EQ(Abs(600), 600);
+	ASSERT_EQ(Cell_Abs(10), 10);
+	ASSERT_EQ(Cell_Abs(20), 20);
+	ASSERT_EQ(Cell_Abs(cellmin), cellmin);
+	ASSERT_EQ(Cell_Abs(cellmax), cellmax);
+	ASSERT_EQ(Cell_Abs(-10), 10);
+	ASSERT_EQ(Cell_Abs(0), 0);
+	ASSERT_EQ(Cell_Abs(999999999),  999999999);
+	ASSERT_EQ(Cell_Abs(-999999999), 999999999);
+	ASSERT_EQ(Cell_Abs(-500), 500);
+	ASSERT_EQ(Cell_Abs(-600), 600);
+	ASSERT_EQ(Cell_Abs(500), 500);
+	ASSERT_EQ(Cell_Abs(600), 600);
+	ASSERT_EQ(Float:Cell_Abs(1.2), 1.2);
+	ASSERT_EQ(Float:Cell_Abs(10.3), 10.3);
+	ASSERT_EQ(Float:Cell_Abs(-10.4), 10.4);
+	ASSERT_EQ(Float:Cell_Abs(-100.5), 100.5);
+}
+
