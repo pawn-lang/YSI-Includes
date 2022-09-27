@@ -3,7 +3,7 @@
  *   name="y_cgen"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary="Create new VM registers and use them via <c>LCTRL</c> and <c>SCTRL</c>."
+ *   summary="Reserve space in COD for newly generated code."
  * >
  *   <summary pawndoc="true">
  *     This library uses the enhanced <em>pawndoc.xsl</em> from
@@ -85,26 +85,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_ctrl
-	#undef _inc_y_ctrl
+#if !defined _INC_y_cgen
+	#tryinclude "y_cgen\y_cgen_entry"
 #endif
-
-#if !defined _INC_y_ctrl
-	#tryinclude "y_cgen\y_ctrl_entry"
+#if !defined _INC_y_cgen
+	#tryinclude "YSI_Coding\y_cgen\y_cgen_entry"
 #endif
-#if !defined _INC_y_ctrl
-	#tryinclude "YSI_Coding\y_cgen\y_ctrl_entry"
+#if !defined _INC_y_cgen
+	#tryinclude "YSI\YSI_Coding\y_cgen\y_cgen_entry"
 #endif
-#if !defined _INC_y_ctrl
-	#tryinclude "YSI\YSI_Coding\y_cgen\y_ctrl_entry"
+#if !defined _INC_y_cgen
+	#tryinclude <YSI_Coding\y_cgen\y_cgen_entry>
 #endif
-#if !defined _INC_y_ctrl
-	#tryinclude <YSI_Coding\y_cgen\y_ctrl_entry>
+#if !defined _INC_y_cgen
+	#tryinclude <YSI\YSI_Coding\y_cgen\y_cgen_entry>
 #endif
-#if !defined _INC_y_ctrl
-	#tryinclude <YSI\YSI_Coding\y_cgen\y_ctrl_entry>
-#endif
-#if !defined _INC_y_ctrl
+#if !defined _INC_y_cgen
 	#error Could not find y_cgen
 #endif
 

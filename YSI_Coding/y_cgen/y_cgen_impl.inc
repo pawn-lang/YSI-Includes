@@ -1,8 +1,3 @@
-#if defined _INC_y_cgen
-	#endinput
-#endif
-#define _INC_y_cgen
-
 /*+
  * <library
  *   name="y_cgen"

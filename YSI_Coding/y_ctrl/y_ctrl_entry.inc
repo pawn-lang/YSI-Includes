@@ -77,7 +77,7 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
+#include "..\..\YSI_Server\y_thirdpartyinclude"
 
 #include "y_ctrl_impl"
 

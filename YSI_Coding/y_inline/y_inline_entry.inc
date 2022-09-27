@@ -76,7 +76,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\y_thirdpartyinclude"
+#include "..\..\YSI_Server\y_thirdpartyinclude"
 #include "..\y_va"
 #include "..\y_cgen"
 
