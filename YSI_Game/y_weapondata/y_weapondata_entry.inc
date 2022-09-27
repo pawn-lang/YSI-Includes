@@ -103,7 +103,10 @@ Optional plugins:
 
 // Many libraries already have `Weapon_IsValid` defined.
 #if !defined Weapon_IsValid
-	stock Weapon_IsValid(weaponid) return (weaponid>=1&&weaponid<=18||weaponid>=21&&weaponid<=46);
+	stock Weapon_IsValid(weaponid)
+	{
+		return (weaponid>=1&&weaponid<=18||weaponid>=21&&weaponid<=46);
+	}
 #endif
 
 #if !defined YSI_WEAPDATA_MAX_STRING_SIZE
@@ -540,7 +543,7 @@ stock bool:Weapon_IsRifle(weaponid)
 
 stock Weapon_GetSlot(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (WEAPONDATA_INVALID_RETURN);
+	return /*Weapon_IsValid(weaponid) ? */YSI_g_WeaponSlots[weaponid]/* : (WEAPONDATA_INVALID_RETURN)*/;
 }
 
 stock Weapon_GetModelID(weaponid)
@@ -560,7 +563,7 @@ stock Weapon_GetIDFromModelID(modelid)
 	return WEAPONDATA_INVALID_RETURN;
 }
 
-enum WeaponType
+enum WeaponType:YSI_E_WEAPON_TYPE
 {
     WEAPON_TYPE_UNKNOWN                        = -1,
     WEAPON_TYPE_UNARMED                        =  0,
@@ -610,7 +613,7 @@ stock WeaponType:Weapon_GetType(weaponid)
 			return WEAPON_TYPE_DETONATOR;
 	}
 	return WEAPON_TYPE_UNKNOWN;*/
-	return WeaponType:Weapon_GetSlot(weaponid);
+	return WeaponType:(Weapon_GetSlot(weaponid) - 1);
 }
 
 static stock Float:YSI_g_WeaponDamage[47] = {
