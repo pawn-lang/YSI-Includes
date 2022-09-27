@@ -580,7 +580,7 @@ enum WeaponType
 
 stock WeaponType:Weapon_GetType(weaponid)
 { 
-	switch(Weapon_GetSlot(weaponid))
+	/*switch(Weapon_GetSlot(weaponid))
 	{
 		case 0:
 			return WEAPON_TYPE_UNARMED;
@@ -609,7 +609,8 @@ stock WeaponType:Weapon_GetType(weaponid)
 		case 12:
 			return WEAPON_TYPE_DETONATOR;
 	}
-	return WEAPON_TYPE_UNKNOWN;
+	return WEAPON_TYPE_UNKNOWN;*/
+	return WeaponType:Weapon_GetSlot(weaponid);
 }
 
 static stock Float:YSI_g_WeaponDamage[47] = {
