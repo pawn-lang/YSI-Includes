@@ -90,6 +90,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\..\YSI_Core\y_utils"
+
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning push
 	#pragma warning disable 231
