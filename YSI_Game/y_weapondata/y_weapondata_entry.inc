@@ -103,10 +103,18 @@ Optional plugins:
 
 // Many libraries already have `Weapon_IsValid` defined.
 #if !defined Weapon_IsValid
-	stock Weapon_IsValid(weaponid)
+	/*stock Weapon_IsValid(weaponid)
 	{
-		return (weaponid>=1&&weaponid<=18||weaponid>=21&&weaponid<=46);
-	}
+		switch(weaponid)
+		{
+			case 1..18:
+				return true;
+			case 21..46:
+				return true;
+		}
+		return false;
+	}*/
+	#define Weapon_IsValid(%0) (%0>=1&&%0<=18||%0>=21&&%0<=46)
 #endif
 
 #if !defined YSI_WEAPDATA_MAX_STRING_SIZE
@@ -543,7 +551,7 @@ stock bool:Weapon_IsRifle(weaponid)
 
 stock Weapon_GetSlot(weaponid)
 {
-	return /*Weapon_IsValid(weaponid) ? */YSI_g_WeaponSlots[weaponid]/* : (WEAPONDATA_INVALID_RETURN)*/;
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (WEAPONDATA_INVALID_RETURN);
 }
 
 stock Weapon_GetModelID(weaponid)
