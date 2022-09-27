@@ -1,14 +1,14 @@
-#if defined _INC_y_codeparse
+#if defined _INC_y_cgen
 	#endinput
 #endif
-#define _INC_y_codeparse
+#define _INC_y_cgen
 
 /*+
  * <library
- *   name="y_thirdpartyinclude"
+ *   name="y_cgen"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary="Try and include all YSI dependencies, looking in as many places as needed."
+ *   summary="Large chunks of code that isn't used, so that the space can be reclaimed and reused by other code generating functions."
  * >
  *   <summary pawndoc="true">
  *     This library uses the enhanced <em>pawndoc.xsl</em> from
@@ -90,15 +90,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#tryinclude "..\..\code-parse\code-parse"
-#tryinclude <code-parse\code-parse>
-#tryinclude "..\..\code-parse.inc\code-parse"
-#tryinclude <code-parse.inc\code-parse>
-#tryinclude "..\..\code-parse.inc-master\code-parse"
-#tryinclude <code-parse.inc-master\code-parse>
-#tryinclude "code-parse"
-#tryinclude <code-parse>
-#if !defined _INC_code_parse_inc
-	#error Could not include "https://github.com/Y-Less/code-parse.inc" - ensure its files are in "include\code-parse\"
-#endif
+#include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
+#include "y_cgen_impl"
 

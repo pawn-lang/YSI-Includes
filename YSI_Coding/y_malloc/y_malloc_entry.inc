@@ -204,7 +204,8 @@ forward Alloc:calloc(size);
 	new
 		YSI_gMallocMemory[1];
 	
-	#include "..\y_cgen\y_cgen"
+	#include "..\y_thirdpartyinclude"
+	#include "..\y_cgen"
 	
 	// Allocate space on the heap permanently.
 	#if !defined YSI_YES_HEAP_MALLOC

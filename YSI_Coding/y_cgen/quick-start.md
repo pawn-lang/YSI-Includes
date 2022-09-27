@@ -1,16 +1,9 @@
 # Quick Start
 
-This is an internal library.  Don't use it.
+This library provides a block of memory within *COD* that you can write new instructions to as code in *DAT* won't execute.  This is used when you're generating all new code (as in *y_hooks*) rather than replacing existing code (as in *y_inline*).
 
 ```pawn
-// Include YSI core.
-#include <YSI_Core\y_utils>
-
-// Include y_cgen.
-#include <YSI_Coding\y_cgen\y_cgen>
-
-// Include amx_assembly.
-#include <amx\asm>
+#include <YSI_Coding\y_cgen>
 
 // Callback called during script init or JIT init.
 public OnCodeInit()

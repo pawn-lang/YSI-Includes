@@ -604,6 +604,5 @@ public OnCodeInit()
 	#pragma warning pop
 #endif
 
-#include "y_codeparse"
 #include "y_dumpamx"
 

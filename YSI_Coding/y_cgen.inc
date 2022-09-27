@@ -1,9 +1,18 @@
-#if defined _INC_y_inline
-	#endinput
-#endif
-#define _INC_y_inline
-
-/*
+/**
+ * <library
+ *   name="y_cgen"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Create new VM registers and use them via <c>LCTRL</c> and <c>SCTRL</c>."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -76,31 +85,26 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\y_thirdpartyinclude"
-#include "..\y_va"
-#include "..\y_cgen"
-
-#if !defined YSI_MAX_INLINE_STRING
-	#define YSI_MAX_INLINE_STRING YSI_MAX_STRING
+#if defined _inc_y_ctrl
+	#undef _inc_y_ctrl
 #endif
 
-#include "..\y_malloc"
-
-CHAIN_HOOK(Inline)
-#undef CHAIN_ORDER
-#define CHAIN_ORDER CHAIN_NEXT(Inline)
-
-#include "y_inline_impl"
-
-// Not implemented errors.
-#include "y_inline_extra"
-
-#if defined YSI_TESTS
-	#include "..\y_hooks"
-	//#include "..\..\YSI_Extra\y_inline_bcrypt"
-	#include "..\..\YSI_Extra\y_inline_mysql"
-	#include "..\..\YSI_Extra\y_inline_requests"
-	#include "..\..\YSI_Extra\y_inline_timers"
-	#include "y_inline_tests"
+#if !defined _INC_y_ctrl
+	#tryinclude "y_cgen\y_ctrl_entry"
+#endif
+#if !defined _INC_y_ctrl
+	#tryinclude "YSI_Coding\y_cgen\y_ctrl_entry"
+#endif
+#if !defined _INC_y_ctrl
+	#tryinclude "YSI\YSI_Coding\y_cgen\y_ctrl_entry"
+#endif
+#if !defined _INC_y_ctrl
+	#tryinclude <YSI_Coding\y_cgen\y_ctrl_entry>
+#endif
+#if !defined _INC_y_ctrl
+	#tryinclude <YSI\YSI_Coding\y_cgen\y_ctrl_entry>
+#endif
+#if !defined _INC_y_ctrl
+	#error Could not find y_cgen
 #endif
 

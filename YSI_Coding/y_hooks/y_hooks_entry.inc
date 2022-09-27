@@ -77,7 +77,8 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
-#include "..\y_cgen\y_cgen"
+#include "..\y_thirdpartyinclude"
+#include "..\y_cgen"
 
 #if defined YSI_TESTS
 	#define _Y_HOOKS_STATIC
