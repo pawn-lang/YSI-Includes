@@ -367,6 +367,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 			}
 		}
 	}
+	Debug_Print4("Hooks_GetPreloadLibraries ended");
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -720,7 +721,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(addr)
 		#emit STOR.S.pri                tmp
 		if (tmp)
 		{
-			Debug_Print6("Hooks_GetAllHooks found: %s %d", YSI_g_sName, (addr - YSI_g_sBlockStart) / 8);
+			Debug_Print6("Hooks_GetAllHooks found: %s %d", YSI_g_sName, (addr - YSI_g_sBlockStart) / __defsize_cells);
 			// Replace the function pointer to the implementation.
 			AMX_Write(addr, YSI_g_sAddress);
 			// Increment and count how many hooks of this type we have.
@@ -972,18 +973,18 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 	
 	// Create the current active hooks stack at "frm - 8".
 	@emit PUSH          AMX_Ref(YSI_g_sActiveHooks) // 5
-	@emit ADDR.pri      -8              // 7
+	@emit ADDR.pri      __local1_offset             // 7
 	@emit STOR.pri      AMX_Ref(YSI_g_sActiveHooks) // 9
 	
 	// Copy the stack to itself (MOVS).
 	// Allocate space.
-	@emit LOAD.S.pri    8               // 11
+	@emit LOAD.S.pri    __args_offset     // 11
 	@emit JZER.label    Hooks_NoStackCopy // 13
-	@emit MOVE.alt                      // 14
-	@emit LCTRL         __stk               // 16
-	@emit SUB                           // 17
-	@emit SCTRL         __stk               // 19
-	@emit XCHG                          // 20
+	@emit MOVE.alt                        // 14
+	@emit LCTRL         __stk             // 16
+	@emit SUB                             // 17
+	@emit SCTRL         __stk             // 19
+	@emit XCHG                            // 20
 	
 	if (Server_JITExists())
 	{
@@ -992,12 +993,12 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		@emit PUSH.pri
 		@emit PUSH.C        0
 		@emit LCTRL         __frm
-		@emit ADD.C         12
+		@emit ADD.C         __3_cells
 		@emit PUSH.pri
 		@emit PUSH.alt
-		@emit PUSH.C        20
+		@emit PUSH.C        __5_cells
 		@emit SYSREQ.C      nativeidxof(_YSI_ConstCpy__<aaiii>)
-		@emit STACK         24
+		@emit STACK         __6_cells
 	}
 	else
 	{
@@ -1005,18 +1006,18 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		// to generate self-modifying code (just to be UBER meta)!  This code is
 		// generated AFTER the file is loaded so we bypass the data segment
 		// checks and can freely write wherever we want.
-		@emit STOR.pri      (CGen_GetCodeSpace() + (27 * 4)) // 22
+		@emit STOR.pri      (CGen_GetCodeSpace() + (27 * cellbytes)) // 22
 		
 		// Do the copying.  "alt" is already "STK", load the "FRM" offset.
 		@emit LCTRL         __frm           // 24
-		@emit ADD.C         12          // 26
+		@emit ADD.C         __3_cells       // 26
 		// This is the instruction we want to modify...
 		@emit MOVS          0           // 28 (- 1) = 27 (see above).
 	}
 	@emit Hooks_NoStackCopy:
 	
 	// Push the (fake) number of parameters.
-	@emit PUSH.C        -4
+	@emit PUSH.C        __m1_cell
 	// Now loop over all our functions and insert "CALL" opcodes for them.
 	if (multiple)
 	{
@@ -1344,43 +1345,49 @@ public OnCodeInit()
 		//   code.
 		//
 		//   From this data we build a list of all calls to replace.
+		// In case there are no hooks.
+		entry = -__defsize_cells;
+		// Get the space of all the publics, then destroy them all.
+		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
+		{
+			Debug_Print7("Hooks_OnCodeInit: idx = %08x", idx);
+			namelen += AMX_GetLengthFromEntry(entry) + 1;
+			base = AMX_Read(entry + cellbytes);
+			if (namewrite == 0)
+			{
+				namewrite = AMX_BASE_ADDRESS + __32(base);
+				YSI_g_sBlockStart = entry;
+			}
+			AMX_Write(entry + cellbytes, base & ~0xFFFFFFFF);
+		}
 		{
 			new hdr[AMX_HDR];
 			GetAmxHeader(hdr);
 			base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
 		}
-		// Get the space of all the publics, then destroy them all.
-		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
-		{
-			namelen += AMX_GetLengthFromEntry(entry) + 1;
-			if (namewrite == 0)
-			{
-				namewrite = AMX_BASE_ADDRESS + AMX_Read(entry + 4);
-				YSI_g_sBlockStart = entry;
-			}
-			AMX_Write(entry + 4, 0);
-		}
-		YSI_g_sBlockEnd = entry + 8;
+		Debug_Print6("Hooks_OnCodeInit: base = %08x", base);
+		YSI_g_sBlockEnd = entry + __defsize_cells;
+		Debug_Print6("Hooks_OnCodeInit: YSI_g_sBlockStart = %08x, YSI_g_sBlockEnd = %08x", YSI_g_sBlockStart, YSI_g_sBlockEnd);
 		// Get the next hook type.  This is binary-search safe because it is the
 		// first call before any name mangling has happened.
 		YSI_g_sNPSBaseCall = cellmin;
 		do
 		{
 			retry = false;
-			//while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
-			for (entry = YSI_g_sBlockStart; entry != YSI_g_sBlockEnd; entry += 8)
+			for (entry = YSI_g_sBlockStart; entry != YSI_g_sBlockEnd; entry += __defsize_cells)
 			{
 				if (AMX_Read(entry) == 0)
 				{
 					continue;
 				}
+				Debug_Print7("Hooks_OnCodeInit: entry = %08x, %08x", entry, AMX_Read(entry));
 				// Invoke the function, which will result in our callback being
 				// called to get the base function name (in to `YSI_g_sName`).
 				state y_hooks_scan : y_hooks_scan_determine_type;
 				YSI_g_sTempRet = YSI_g_sNPSTrampoline;
 				#emit PUSH.C                    0
 				#emit LCTRL                     __cip
-				#emit ADD.C                     44
+				#emit ADD.C                     __11_cells
 				#emit LCTRL                     __jmp
 				#emit PUSH.pri
 				#emit LREF.S.pri                entry
@@ -1401,7 +1408,7 @@ public OnCodeInit()
 					// moved up.  They also may not, but that's not a problem
 					// because in that case the `== 0` check above will trigger
 					// and skip the repeat.
-					entry -= 8;
+					entry -= __defsize_cells;
 				}
 				case 2: // `hook stock`
 				{
@@ -1459,7 +1466,7 @@ public OnCodeInit()
 		//		YSI_g_sTempRet = YSI_g_sNPSTrampoline;
 		//		#emit PUSH.C                    0
 		//		#emit LCTRL                     __cip
-		//		#emit ADD.C                     44
+		//		#emit ADD.C                     __11_cells
 		//		#emit LCTRL                     __jmp
 		//		#emit PUSH.pri
 		//		#emit LREF.S.pri                entry
@@ -1549,7 +1556,7 @@ public OnCodeInit()
 							addr += 8;
 							continue;
 						}
-						idx = YHNPS_Find(heap + allocated * 16, nativeCount, AMX_Read(addr + 4));
+						idx = YHNPS_Find(heap + allocated * __4_cells, nativeCount, AMX_Read(addr + 4));
 				#if __COMPILER_O2
 						base = 0;
 				#endif
@@ -1563,13 +1570,13 @@ public OnCodeInit()
 				#endif
 					case OP_CALL:
 					{
-						idx = YHNPS_Find(heap + allocated * 8, stockCount, AMX_Read(addr + 4) - reloc);
+						idx = YHNPS_Find(heap + allocated * __2_cells, stockCount, AMX_Read(addr + 4) - reloc);
 						if (idx != cellmin)
 						{
 							// Write a different target address.
 							AMX_Write(addr + 4, idx);
 						}
-						addr += 8;
+						addr += __2_cells;
 						continue;
 					}
 					default:
@@ -1583,7 +1590,7 @@ public OnCodeInit()
 				// Don't forget `SYSREQ.D`.
 				if (idx == cellmin)
 				{
-					addr += 8;
+					addr += __2_cells;
 				}
 			#if __COMPILER_O2
 				else if (base)
@@ -1604,12 +1611,12 @@ public OnCodeInit()
 					// Write a different target address.
 					AMX_Write(addr, _:call),
 					AMX_Write(addr + 4, idx),
-					addr += 8;
+					addr += __2_cells;
 					if (UnrelocateOpcode(Opcode:AMX_Read(addr)) == OP_STACK)
 					{
 						AMX_Write(addr, _:nop),
 						AMX_Write(addr + 4, _:nop),
-						addr += 8;
+						addr += __2_cells;
 					}
 				}
 		}
@@ -1624,9 +1631,9 @@ public OnCodeInit()
 					{
 							// Check that the previous OP is `PUSH.C`.  That
 							// represents a real native call, not our wrapper.
-							if (Opcode:AMX_Read(addr - 8) == proc)
+							if (Opcode:AMX_Read(addr - __2_cells) == proc)
 							{
-								addr += 8;
+								addr += __2_cells;
 								continue;
 							}
 							idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4));
@@ -1638,12 +1645,12 @@ public OnCodeInit()
 					{
 							if (HasSysreqD())
 							{
-								if (Opcode:AMX_Read(addr - 8) == proc)
+								if (Opcode:AMX_Read(addr - __2_cells) == proc)
 								{
-									addr += 8;
+									addr += __2_cells;
 									continue;
 								}
-								idx = YHNPS_Find(heap + allocated * 16, nativeCount, AMX_Read(addr + 4));
+								idx = YHNPS_Find(heap + allocated * __4_cells, nativeCount, AMX_Read(addr + 4));
 						#if __COMPILER_O2
 								base = 0;
 							}
@@ -1656,13 +1663,13 @@ public OnCodeInit()
 					}
 					case OP_CALL:
 					{
-						idx = YHNPS_Find(heap + allocated * 8, stockCount, AMX_Read(addr + 4) - reloc);
+						idx = YHNPS_Find(heap + allocated * __2_cells, stockCount, AMX_Read(addr + 4) - reloc);
 						if (idx != cellmin)
 						{
 							// Write a different target address.
 							AMX_Write(addr + 4, idx);
 						}
-						addr += 8;
+						addr += __2_cells;
 						continue;
 					}
 					default:
@@ -1676,7 +1683,7 @@ public OnCodeInit()
 				// Don't forget `SYSREQ.D`.
 				if (idx == cellmin)
 				{
-					addr += 8;
+					addr += __2_cells;
 				}
 			#if __COMPILER_O2
 				else if (base)
@@ -1697,12 +1704,12 @@ public OnCodeInit()
 					// Write a different target address.
 					AMX_Write(addr, _:call),
 					AMX_Write(addr + 4, idx),
-					addr += 8;
+					addr += __2_cells;
 					if (Opcode:AMX_Read(addr) == OP_STACK)
 					{
 						AMX_Write(addr, _:nop),
 						AMX_Write(addr + 4, _:nop),
-						addr += 8;
+						addr += __2_cells;
 					}
 				}
 		}
@@ -1760,8 +1767,8 @@ public OnCodeInit()
 
 _Y_HOOKS_STATIC _Hooks_RepairStub()
 {
-	AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8, YSI_g_sInitFSRep);
-	AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8, YSI_g_sInitGMRep);
+	AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * __2_cells, YSI_g_sInitFSRep);
+	AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * __2_cells, YSI_g_sInitGMRep);
 	// Move the header up for searching.
 	if (YSI_g_sInitPublicDiff)
 	{
@@ -1811,13 +1818,13 @@ _Y_HOOKS_STATIC Hooks_RepairJITInit()
 	YSI_g_sInitFSPtr = GetPublicAddressFromName("OnFilterScriptInit");
 	YSI_g_sInitGMPtr = GetPublicAddressFromName("OnGameModeInit");
 	new
-		base = AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8,
+		base = AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * __2_cells,
 		stub = 0;
 	#emit CONST.pri           _Hooks_RepairStubFS
 	#emit STOR.S.pri          stub
 	YSI_g_sInitFSRep = AMX_Read(base),
 	AMX_Write(base, stub);
-	base = AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8;
+	base = AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * __2_cells;
 	#emit CONST.pri           _Hooks_RepairStubGM
 	#emit STOR.S.pri          stub
 	YSI_g_sInitGMRep = AMX_Read(base),
@@ -1835,7 +1842,7 @@ stock Hooks_NumArgs()
 	// but labels reset the stack always so it gets unconditionally wiped out.
 	#emit LOAD.S.alt          0
 Hooks_NumArgs_load:
-	#emit CONST.pri           8
+	#emit CONST.pri           __2_cells
 	#emit ADD
 	#emit LOAD.I
 	#emit ZERO.alt
@@ -1848,7 +1855,7 @@ Hooks_NumArgs_load:
 	#emit RETN
 	// Ideal code, that can't be used due to having a forward jump.
 /*	#emit LOAD.S.pri          0
-	#emit ADD.C               8
+	#emit ADD.C               __2_cells
 	#emit LOAD.I
 	#emit ZERO.alt
 	#emit JSLESS              Hooks_NumArgs_negative
@@ -1856,7 +1863,7 @@ Hooks_NumArgs_load:
 	#emit RETN
 Hooks_NumArgs_negative:
 	#emit LREF.S.pri          0
-	#emit ADD.C               8
+	#emit ADD.C               __2_cells
 	#emit LOAD.I
 	#emit SHR.C.pri           2
 	#emit RETN*/
@@ -1888,7 +1895,7 @@ public OnRuntimeError(code, &bool:suppress)
 		// Tiny tiny crashdetect overhead in every hook stub:
 		//
 		//   #emit PUSH        YSI_g_sActiveHooks
-		//   #emit ADDR.pri    -8
+		//   #emit ADDR.pri    __m2_cells
 		//   #emit STOR.pri    YSI_g_sActiveHooks
 		//
 		// This makes a stack of active hooks.  When a crash occurs, we walk
@@ -1911,7 +1918,7 @@ public OnRuntimeError(code, &bool:suppress)
 				print("[debug]");
 			}
 			// Not 8, because `cur` is `- 8`.
-			printf("[debug] The %s mangled arguments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", ValstrWithOrdinal(i), AMX_Read(cur + 16) / 4);
+			printf("[debug] The %s mangled arguments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", ValstrWithOrdinal(i), AMX_Read(cur + __4_cells) / 4);
 			//// Get the current parameter count.
 			//printf("count: %d", count);
 			//// Write this out to the lower parameter count copy.
@@ -1990,7 +1997,7 @@ static stock YHNPS_Find(heap, end, value)
 	{
 		mid = (start + end) / 2;
 		new
-			diff = AMX_Read(heap + mid * 8) - value;
+			diff = AMX_Read(heap + mid * __2_cells) - value;
 		if (diff < 0)
 		{
 			start = mid + 1;
@@ -2001,7 +2008,7 @@ static stock YHNPS_Find(heap, end, value)
 		}
 		else
 		{
-			return AMX_Read(heap + mid * 8 + 4);
+			return AMX_Read(heap + mid * __2_cells + 4);
 		}
 	}
 	return cellmin;
@@ -2029,7 +2036,7 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 	{
 		mid = (start + end) / 2;
 		new
-			diff = AMX_Read(heap + mid * 8) - value;
+			diff = AMX_Read(heap + mid * __2_cells) - value;
 		if (diff < 0)
 		{
 			start = mid + 1;
@@ -2046,10 +2053,10 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 	if (start != count)
 	{
 		// Shift all the greater values up.
-		RawMemCpy(heap + start * 8 + 8, heap + start * 8, (count - start) * 8);
+		RawMemCpy(heap + start * __2_cells + __2_cells, heap + start * __2_cells, (count - start) * __2_cells);
 	}
-	AMX_Write(heap + start * 8, value);
-	AMX_Write(heap + start * 8 + 4, ptr);
+	AMX_Write(heap + start * __2_cells, value);
+	AMX_Write(heap + start * __2_cells + 4, ptr);
 }
 
 Hooks_Continue_(GLOBAL_TAG_TYPES:...)
@@ -2073,11 +2080,11 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find,
 		// Move the arrays up in memory.
 		if (nativeCount)
 		{
-			RawMemCpy(heap + allocated * 16 * 2, heap + allocated * 16, nativeCount * 8);
+			RawMemCpy(heap + allocated * __8_cells, heap + allocated * __4_cells, nativeCount * __2_cells);
 		}
 		if (stockCount)
 		{
-			RawMemCpy(heap + allocated * 8 * 2, heap + allocated * 8, stockCount * 8);
+			RawMemCpy(heap + allocated * __4_cells, heap + allocated * __2_cells, stockCount * __2_cells);
 		}
 		allocated *= 2;
 	}
@@ -2086,13 +2093,13 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find,
 		YHNPS_Insert(heap, nativeCount, -find, replace + base);
 		if (HasSysreqD())
 		{
-			YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-find), replace + base);
+			YHNPS_Insert(heap + allocated * __4_cells, nativeCount, GetNativeAddressFromIndex(-find), replace + base);
 		}
 		++nativeCount;
 	}
 	else
 	{
-		YHNPS_Insert(heap + allocated * 8, stockCount, find, replace + base);
+		YHNPS_Insert(heap + allocated * __2_cells, stockCount, find, replace + base);
 		++stockCount;
 	}
 }
@@ -2298,7 +2305,7 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[
 
 	// Copy 20 bytes over (includes the return address and fake param count).
 	@emit HEAP         20                                                       // 12
-	@emit LCTRL        __stk                                                        // 14
+	@emit LCTRL        __stk                                                    // 14
 	@emit MOVS         20                                                       // 16
 	@emit STOR.alt     AMX_Ref(YSI_g_sNPSStack)                                 // 18
 
@@ -2393,12 +2400,12 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(Hooks_RegisterNPSHook<iisi>) - ptr);
 
 	@emit PROC
-	@emit ADDR.pri     8
+	@emit ADDR.pri     __args_offset
 	@emit PUSH.pri
 
 	// Load the bitmap of parameter types.
 	@emit LOAD.pri     AMX_Ref(YSI_g_sNPSStack)
-	@emit ADD.C        16
+	@emit ADD.C        __4_cells
 	@emit LOAD.I
 	@emit MOVE.alt
 
@@ -2406,7 +2413,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 	@emit Hooks_Continue_loop:
 
 	@emit POP.pri
-	@emit ADD.C        4
+	@emit ADD.C        __1_cell
 	@emit PUSH.pri
 
 	// Check if `alt` is `0` (no parameters) or odd (move this parameter).
