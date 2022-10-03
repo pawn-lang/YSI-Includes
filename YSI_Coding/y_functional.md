@@ -1,6 +1,6 @@
 # y_functional
 
-Provides support for "lamda" functions - small functions entirely contained within an expression such as a function call.  Also provides functions for operating on arrays and data at a high level.
+Provides support for "lambda" functions - small functions entirely contained within an expression such as a function call.  Also provides functions for operating on arrays and data at a high level.
 
 ## YSI
 
