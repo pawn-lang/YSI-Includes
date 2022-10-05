@@ -136,7 +136,7 @@ Optional plugins:
     
 	stock bool:BCrypt_CheckInline(const password[], const hash[], Func:cb<i>)
 	{
-		if (_YSI_BCryptCheck(password, hash, "_Inline_BCryptCheckDone", "i", cb))
+		if (_YSI_BCryptCheck(password, hash, "_Inline_BCryptCheckDone", "i", _:cb))
 		{
 			Indirect_Claim(cb);
 			return true;
@@ -146,7 +146,7 @@ Optional plugins:
     
 	stock BCrypt_HashInline(const password[], cost = 12, {F@_@s, F@_@si}:cb) // Func:cb<s> | Func:cb<si>
 	{
-		if (_YSI_BCryptHash(password, cost, "_Inline_BCryptHashDone", "ii", cb, ++_YSI_gHashID))
+		if (_YSI_BCryptHash(password, cost, "_Inline_BCryptHashDone", "ii", _:cb, ++_YSI_gHashID))
 		{
 			Indirect_Claim(cb);
 			return _YSI_gHashID;

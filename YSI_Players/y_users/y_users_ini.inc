@@ -159,7 +159,7 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 {
 	// First, find the player's file.  This should be the ONLY place where the
 	// password is to be loaded.
-	P:4("Player_Preload called: %s", name);
+	Debug_Print4("Player_Preload called: %s", name);
 	ret[E_USER_PRELOAD_YID] = -2;
 	MemSet(ret[E_USER_PRELOAD_PASS], 0, MAX_PASSWORD_LENGTH);
 	ret[E_USER_PRELOAD_LANG] = NO_LANGUAGE;
@@ -173,13 +173,13 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 	fIndex = fopen(filename, io_read);
 	if (fIndex)
 	{
-		P:5("Player_Preload: fIndex OK");
+		Debug_Print5("Player_Preload: fIndex OK");
 		new
 			line[INDEX_DATA_LINE_LENGTH],
 			len = 0;
 		while ((len = fread(fIndex, line)))
 		{
-			P:6("Player_Preload: while");
+			Debug_Print6("Player_Preload: while");
 			//new
 			//	len;
 			//len = strlen(line);
@@ -189,13 +189,13 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 			{
 				continue;
 			}
-			P:6("Player_Preload: Not len");
+			Debug_Print6("Player_Preload: Not len");
 			// Check the name on the line.
 			if (!strcmp(line[MAX_INDEX_LENGTH + 1], name, false, namelen) && line[MAX_INDEX_LENGTH + 1 + namelen] == ' ')
 			{
-				P:6("Player_Preload: checked name");
+				Debug_Print6("Player_Preload: checked name");
 				// Found the section on this one player.
-				//P:6("Player_Preload: check pass: %s ?= %s", hash, line[MAX_INDEX_LENGTH + 1 + MAX_PLAYER_NAME + 1]);
+				//Debug_Print6("Player_Preload: check pass: %s ?= %s", hash, line[MAX_INDEX_LENGTH + 1 + MAX_PLAYER_NAME + 1]);
 				// Save the loaded data.
 				line[MAX_INDEX_LENGTH] = '\0';
 				//printf("line: %s", line);
@@ -209,7 +209,7 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 				ret[E_USER_PRELOAD_BITS] = hexstr(line[MAX_INDEX_LENGTH + 1 + MAX_PLAYER_NAME + 1 + MAX_PASSWORD_LENGTH + 1 + 2 + 1]);
 				// Load the user registration date (if they have one).
 				ret[E_USER_PRELOAD_DATE] = hexstr(line[MAX_INDEX_LENGTH + 1 + MAX_PLAYER_NAME + 1 + MAX_PASSWORD_LENGTH + 1 + 2 + 1 + 8 + 1]);
-				P:6("Player_Preload: %s %d %d %x %x", ret[E_USER_PRELOAD_PASS], ret[E_USER_PRELOAD_YID], _:ret[E_USER_PRELOAD_LANG], ret[E_USER_PRELOAD_BITS], ret[E_USER_PRELOAD_DATE]);
+				Debug_Print6("Player_Preload: %s %d %d %x %x", ret[E_USER_PRELOAD_PASS], ret[E_USER_PRELOAD_YID], _:ret[E_USER_PRELOAD_LANG], ret[E_USER_PRELOAD_BITS], ret[E_USER_PRELOAD_DATE]);
 				fclose(fIndex);
 				return 1;
 			}
@@ -218,7 +218,7 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 	}
 	else if (fexist(filename))
 	{
-		P:E("Error reading index %c.", filename[sizeof (filename) - 6]);
+		Debug_Error("Error reading index %c.", filename[sizeof (filename) - 6]);
 		return -1;
 	}
 	ret[E_USER_PRELOAD_YID] = -1;
@@ -279,7 +279,7 @@ HOOK__ OnYSIInit()
 	{
 		case -1:
 		{
-			P:E(USER_FILE_PATH "index.YSI does not exist and couldn't be created.");
+			Debug_Error(USER_FILE_PATH "index.YSI does not exist and couldn't be created.");
 		}
 		case 1:
 		{
@@ -288,19 +288,19 @@ HOOK__ OnYSIInit()
 				// Don't need upgrades.
 				if (ftouch(USER_FILE_PATH "y_users_v2_1.YSI") == -1)
 				{
-					P:E("Could not touch upgrade file 1.");
+					Debug_Error("Could not touch upgrade file 1.");
 					// Use "else" so we don't try do upgrade 2 without upgrade
 					// 1.  That would really mess up the files (that don't yet
 					// exist, but could do).
 				}
 				else if (ftouch(USER_FILE_PATH "y_users_v2_2.YSI") == -1)
 				{
-					P:E("Could not touch upgrade file 2.");
+					Debug_Error("Could not touch upgrade file 2.");
 				}
 			}
 			else
 			{
-				P:E(USER_FILE_PATH "index.YSI does not exist and couldn't be created.");
+				Debug_Error(USER_FILE_PATH "index.YSI does not exist and couldn't be created.");
 			}
 		}
 	}
@@ -318,7 +318,7 @@ public OnScriptInit()
 
 HOOK__ OnPlayerConnect(playerid)
 {
-	P:1("Users_OnPlayerConnect called: %d", playerid);
+	Debug_Print1("Users_OnPlayerConnect called: %d", playerid);
 	// -2 means unknown.
 	YSI_g_sPlayerYID[playerid] = -2;
 	broadcastfunc _Player_IsLoggedIn(playerid);
@@ -326,7 +326,7 @@ HOOK__ OnPlayerConnect(playerid)
 	{
 		new
 			uid = getproperty(8, YSIM_LOG_IN);
-		P:5("Users_OnPlayerConnect: Exists %d", uid);
+		Debug_Print5("Users_OnPlayerConnect: Exists %d", uid);
 		if (uid == -1)
 		{
 			new
@@ -343,12 +343,12 @@ HOOK__ OnPlayerConnect(playerid)
 	}
 	else
 	{
-		P:5("Users_OnPlayerConnect: Doesn't exist");
+		Debug_Print5("Users_OnPlayerConnect: Doesn't exist");
 		new
 			name[MAX_PLAYER_NAME];
 		GetPlayerName(playerid, name, sizeof (name));
 		Player_Preload(name, YSI_g_sPreloadData[playerid]);
-		P:5("Users_OnPlayerConnect: Done Preload");
+		Debug_Print5("Users_OnPlayerConnect: Done Preload");
 		// Can do checking in here to see if they just rejoined.
 	}
 	YSI_g_sPlayerYID[playerid] = -1;
@@ -356,7 +356,7 @@ HOOK__ OnPlayerConnect(playerid)
 
 HOOK__ OnPlayerDisconnect(playerid, reason)
 {
-	P:2("Users_OnPlayerDisconnect called: %d %d %d", playerid, reason, YSI_g_sPlayerYID[playerid]);
+	Debug_Print2("Users_OnPlayerDisconnect called: %d %d %d", playerid, reason, YSI_g_sPlayerYID[playerid]);
 	if (YSI_g_sPlayerYID[playerid] >= 0)
 	{
 		// DO NOT broadcastfunc this in case it's just because of one script being
@@ -369,7 +369,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 
 remotefunc static void:_Player_IsLoggedIn(playerid)
 {
-	P:4("_Player_IsLoggedIn called: %d %d", playerid, YSI_g_sPlayerYID[playerid]);
+	Debug_Print4("_Player_IsLoggedIn called: %d %d", playerid, YSI_g_sPlayerYID[playerid]);
 	if (YSI_g_sPlayerYID[playerid] != -2)
 	{
 		setproperty(8, YSIM_LOG_IN, YSI_g_sPlayerYID[playerid]);
@@ -405,7 +405,7 @@ stock Player_GetYID(playerid)
 
 GLOBAL__ Player_TryLogin(playerid, string:password[])
 {
-	P:2("Player_TryLogin start");
+	Debug_Print2("Player_TryLogin start");
 	if (Player_IsLoggedIn(playerid))
 	{
 		// They are already logged in.
@@ -461,7 +461,7 @@ GLOBAL__ Player_TryLogin(playerid, string:password[])
 
 GLOBAL__ Player_ForceLogin(playerid)
 {
-	P:2("Player_TryLogin start");
+	Debug_Print2("Player_TryLogin start");
 	if (Player_IsLoggedIn(playerid))
 	{
 		// They are already logged in.
@@ -757,7 +757,7 @@ stock Anything7()
 
 GLOBAL__ Player_TryRegister(playerid, string:password[])
 {
-	P:2("Player_TryRegister called");
+	Debug_Print2("Player_TryRegister called");
 	if (Player_IsLoggedIn(playerid))
 	{
 		// They are already logged in.
@@ -812,12 +812,12 @@ GLOBAL__ Player_TryRegister(playerid, string:password[])
 	//Player_HashPass(password, hash);
 	Player_GetIndexFile(filename, name[0]);
 	fIndex = fopen(filename, io_read);
-	P:5("Player_TryRegister: fIndex");
+	Debug_Print5("Player_TryRegister: fIndex");
 	new
 		line[INDEX_DATA_LINE_LENGTH];
 	if ((fIndex = fopen(filename, io_append)))
 	{
-		P:5("Player_TryRegister: Write index.");
+		Debug_Print5("Player_TryRegister: Write index.");
 		// Write the new user to the index file.
 		new
 			uid = Player_GetNewID();
@@ -919,7 +919,7 @@ static stock Player_RewritePreload(playerid)
 	new
 		name[MAX_PLAYER_NAME + 1];
 	GetPlayerName(playerid, name, sizeof (name));
-	P:4("Player_RewritePreload called: %s", name);
+	Debug_Print4("Player_RewritePreload called: %s", name);
 	#if _YSI_PLUGINS_MYSQL == 7
 		// Right then, lets get coding...
 		new
@@ -935,13 +935,13 @@ static stock Player_RewritePreload(playerid)
 		fIndex = fopen(filename, io_readwrite);
 		if (fIndex)
 		{
-			P:5("Player_RewritePreload: fIndex OK");
+			Debug_Print5("Player_RewritePreload: fIndex OK");
 			new
 				line[INDEX_DATA_LINE_LENGTH],
 				len = 0;
 			while ((len = fread(fIndex, line)))
 			{
-				P:6("Player_RewritePreload: while");
+				Debug_Print6("Player_RewritePreload: while");
 				//new
 				//	len;
 				//len = strlen(line);
@@ -951,11 +951,11 @@ static stock Player_RewritePreload(playerid)
 				{
 					continue;
 				}
-				P:6("Player_RewritePreload: Not len");
+				Debug_Print6("Player_RewritePreload: Not len");
 				// Check the name on the line.
 				if (!strcmp(line[MAX_INDEX_LENGTH + 1], name, false, namelen) && line[MAX_INDEX_LENGTH + 1 + namelen] == ' ')
 				{
-					P:6("Player_RewritePreload: checked name");
+					Debug_Print6("Player_RewritePreload: checked name");
 					fseek(fIndex, -len, seek_current);
 					//format(line, sizeof (line), 
 					if (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS][0] == '\0')
@@ -981,7 +981,7 @@ static stock Player_RewritePreload(playerid)
 							YSI_g_sPreloadData[playerid][E_USER_PRELOAD_BITS] >>> 16, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_BITS] & 0xFFFF,
 							YSI_g_sPreloadData[playerid][E_USER_PRELOAD_DATE] >>> 16, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_DATE] & 0xFFFF);
 					}
-					P:5("Player_RewritePreload: Writing: %s", line);
+					Debug_Print5("Player_RewritePreload: Writing: %s", line);
 					fwrite(fIndex, line);
 					fclose(fIndex);
 					return 1;
@@ -991,7 +991,7 @@ static stock Player_RewritePreload(playerid)
 		}
 		else if (fexist(filename))
 		{
-			P:E("Error reading index %c.", filename[0]);
+			Debug_Error("Error reading index %c.", filename[0]);
 			return 0;
 		}
 		//ret[E_USER_PRELOAD_YID] = -1;
@@ -1010,7 +1010,7 @@ static stock Player_RewritePreload(playerid)
 
 GLOBAL__ Player_TryGroup(playerid, string:other[], string:password[])
 {
-	P:2("Player_TryGroup called");
+	Debug_Print2("Player_TryGroup called");
 	if (Player_IsLoggedIn(playerid))
 	{
 		// They are already logged in.
@@ -1070,7 +1070,7 @@ GLOBAL__ Player_TryGroup(playerid, string:other[], string:password[])
 					Text_Send(playerid, $YSI_ADDU_INDERR2);
 					return 0;
 				}
-				P:5("Player_TryGroup: Write index.");
+				Debug_Print5("Player_TryGroup: Write index.");
 				new
 					uid = ret[E_USER_PRELOAD_YID],
 					line[INDEX_DATA_LINE_LENGTH];
@@ -1118,7 +1118,7 @@ GLOBAL__ Player_TryGroup(playerid, string:other[], string:password[])
 
 GLOBAL__ Player_ForceGroup(playerid, string:other[])
 {
-	P:2("Player_ForceGroup called");
+	Debug_Print2("Player_ForceGroup called");
 	if (Player_IsLoggedIn(playerid))
 	{
 		// They are already logged in.
@@ -1172,7 +1172,7 @@ GLOBAL__ Player_ForceGroup(playerid, string:other[])
 				Text_Send(playerid, $YSI_ADDU_INDERR2);
 				return 0;
 			}
-			P:5("Player_TryGroup: Write index.");
+			Debug_Print5("Player_TryGroup: Write index.");
 			new
 				uid = ret[E_USER_PRELOAD_YID],
 				line[INDEX_DATA_LINE_LENGTH];
@@ -1259,17 +1259,17 @@ static stock Users_DoUpgrade0()
 	{
 		case -1:
 		{
-			P:E("Could not upgrade user files.");
+			Debug_Error("Could not upgrade user files.");
 		}
 		case 1:
 		{
 			#if !defined YSI_DO_USER_UPGRADE
-				P:E("y_users needs to upgrade user files.  Please back up the old ones and recompile/rerun once with YSI_DO_USER_UPGRADE.");
+				Debug_Error("y_users needs to upgrade user files.  Please back up the old ones and recompile/rerun once with YSI_DO_USER_UPGRADE.");
 				fremove(USER_FILE_PATH "y_users_v2_1.YSI");
 			#else
 				// Do the upgrade to add languages to all files (could take a
 				// little while, but needs doing).
-				P:I("Please wait, upgrading user files.");
+				Debug_Info("Please wait, upgrading user files.");
 				new
 					ch = 0,
 					filename[] = USER_FILE_PATH "ind_X.YSI",
@@ -1299,7 +1299,7 @@ static stock Users_DoUpgrade0()
 					{
 						if (fexist(filename))
 						{
-							P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
+							Debug_Error("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
 						}
 						continue;
 					}
@@ -1307,7 +1307,7 @@ static stock Users_DoUpgrade0()
 					if (!g)
 					{
 						fclose(f);
-						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
+						Debug_Error("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
 						continue;
 					}
 					while ((ch = fread(f, line)))
@@ -1349,7 +1349,7 @@ static stock Users_DoUpgrade0()
 					fclose(f);
 					if (!Files_DoCopy(g, filename))
 					{
-						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
+						Debug_Error("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
 					}
 				}
 				f = fopen(USER_FILE_PATH "index.YSI", io_append);
@@ -1360,9 +1360,9 @@ static stock Users_DoUpgrade0()
 				}
 				else
 				{
-					P:E("Upgrade index failed.");
+					Debug_Error("Upgrade index failed.");
 				}
-				P:I("Upgrade complete.");
+				Debug_Info("Upgrade complete.");
 			#endif
 		}
 	}
@@ -1376,17 +1376,17 @@ static stock Users_DoUpgrade1()
 		// case 0: Already exists.
 		case -1:
 		{
-			P:E("Could not upgrade user files.");
+			Debug_Error("Could not upgrade user files.");
 		}
 		case 1:
 		{
 			#if !defined YSI_DO_USER_UPGRADE
-				P:E("y_users needs to upgrade user files.  Please back up the old ones and recompile/rerun once with YSI_DO_USER_UPGRADE.");
+				Debug_Error("y_users needs to upgrade user files.  Please back up the old ones and recompile/rerun once with YSI_DO_USER_UPGRADE.");
 				fremove(USER_FILE_PATH "y_users_v2_2.YSI");
 			#else
 				// Do the upgrade to add languages to all files (could take a
 				// little while, but needs doing).
-				P:I("Please wait, upgrading user files.");
+				Debug_Info("Please wait, upgrading user files.");
 				new
 					ch = 0,
 					hash[MAX_PASSWORD_LENGTH + MAX_INDEX_LENGTH + 1],
@@ -1417,7 +1417,7 @@ static stock Users_DoUpgrade1()
 					{
 						if (fexist(filename))
 						{
-							P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
+							Debug_Error("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
 						}
 						continue;
 					}
@@ -1425,7 +1425,7 @@ static stock Users_DoUpgrade1()
 					if (!g)
 					{
 						fclose(f);
-						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
+						Debug_Error("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
 						continue;
 					}
 					while (fread(f, line))
@@ -1462,7 +1462,7 @@ static stock Users_DoUpgrade1()
 					fclose(f);
 					if (!Files_DoCopy(g, filename))
 					{
-						P:E("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
+						Debug_Error("Upgrade %c failed.", filename[USER_FILE_LENGTH + 4]);
 					}
 				}
 				f = fopen(USER_FILE_PATH "index.YSI", io_append);
@@ -1473,9 +1473,9 @@ static stock Users_DoUpgrade1()
 				}
 				else
 				{
-					P:E("Upgrade index failed.");
+					Debug_Error("Upgrade index failed.");
 				}
-				P:I("Upgrade complete.");
+				Debug_Info("Upgrade complete.");
 			#endif
 		}
 	}

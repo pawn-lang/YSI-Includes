@@ -80,36 +80,37 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused fmat
 	// This function formats the incoming data and compares it to the reference.
+	const size = 512;
 	new
-		msg[512],
+		msg[size],
 		i = 0,
 		end = 0; // 12 + 4 + 4.
 	// Get the stack position after `result`.
-	#emit ADDR.pri         16
+	#emit ADDR.pri         fmat
 	#emit STOR.S.pri       end
 	// Get the stack position after everything.
-	#emit ADDR.pri         12
-	#emit LOAD.S.alt       8
+	#emit ADDR.pri         result
+	#emit LOAD.S.alt       __args_offset
 	#emit ADD
 	#emit STOR.S.pri       i
 	while (i > end)
 	{
-		i -= 4;
+		i -= cellbytes;
 		#emit LREF.S.pri       i
 		#emit PUSH.pri
 	}
 	{}
-	#emit PUSH.C           512
+	#emit PUSH.C           size
 	#emit PUSH.ADR         msg
-	#emit LOAD.S.pri       8
-	#emit ADD.C            4
+	#emit LOAD.S.pri       __args_offset
+	#emit ADD.C            __1_cell
 	#emit PUSH.pri
 	#emit SYSREQ.C         format
 	// Remove the data from the stack.
 	#emit POP.alt
-	#emit LCTRL            4
+	#emit LCTRL            __stk
 	#emit ADD
-	#emit SCTRL            4
+	#emit SCTRL            __stk
 	//format(msg, sizeof (msg), fmat, ___2);
 	new
 		bool:cmp = !strcmp(result, msg);
@@ -153,7 +154,7 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 #define ALS_R_FakeCallback 708
 #define ALS_DO_FakeCallback<%0> %0<FakeCallback,isfi>(more:playerid,const string:text[],Float:pos,end:last)
 
-TEST__ y_als_Fake()
+@test(.group = "y_als") y_als_Fake()
 {
 	// Test that the defines for our fake callback are set up correctly (and the
 	// print macro at the same time).
@@ -163,7 +164,7 @@ TEST__ y_als_Fake()
 		Float:pos = 710.017,
 		last = 711;
 	// Floats don't print quite exactly.
-	__PRINT<FakeCallback, "OnFakeCallback(709, T_E_X_T_, 710.01702, 711)">
+	__PRINT<FakeCallback, "OnFakeCallback(709, T_E_X_T_, 710.01700, 711)">
 }
 
 static stock y_als_DoCall(playerid, const text[], Float:pos, last)
@@ -171,7 +172,7 @@ static stock y_als_DoCall(playerid, const text[], Float:pos, last)
 	ALS_CALL<FakeCallback>
 }
 
-TEST__ y_als_Call()
+@test(.group = "y_als") y_als_Call()
 {
 	// Test the "ALS_CALL" macro.
 	ASSERT_EQ(y_als_DoCall(6000, "", 0.0, 0), 6000);
@@ -185,7 +186,7 @@ static stock y_als_DoGet(playerid, const text[], Float:pos, last)
 	//return ret;
 }
 
-TEST__ y_als_Get()
+@test(.group = "y_als") y_als_Get()
 {
 	// Test the "ALS_GET" macro.
 	y_als_DoGet(6003, "", 0.0, 0);
@@ -207,7 +208,7 @@ public OnFakeCallback(playerid, const text[], Float:pos, last)
 	return playerid;
 }
 
-TEST__ y_als_call()
+@test(.group = "y_als") y_als_call()
 {
 	// Test that "call" calls the original one, not the latest one.
 	new
@@ -216,7 +217,7 @@ TEST__ y_als_call()
 	ASSERT_EQ(ret, 6011);
 }
 
-TEST__ y_als_Generation()
+@test(.group = "y_als") y_als_Generation()
 {
 	// Test all default callbacks.
 	new
@@ -332,23 +333,23 @@ TEST__ y_als_Generation()
 		bodypart = 2;
 	#pragma unused bodypart
 	#if defined GetPlayerLastShotVectors
-		__PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.20000, 50, 2)">
+		__PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.19999, 50, 2)">
 	#else
-		__PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.20000, 50)">
+		__PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.19999, 50)">
 	#endif
 	new
 		issuerid = 46;
 	#pragma unused issuerid
 	#if defined GetPlayerLastShotVectors
-		__PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.20000, 50, 2)">
+		__PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.19999, 50, 2)">
 	#else
-		__PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.20000, 50)">
+		__PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.19999, 50)">
 	#endif
 	new
 		Float:fX = 10.24,
 		Float:fY = 11.34,
 		Float:fZ = 12.44;
-	__PRINT<PlayerClickMap, "OnPlayerClickMap(42, 10.23999, 11.34000, 12.43999)">
+	__PRINT<PlayerClickMap, "OnPlayerClickMap(42, 10.24000, 11.33999, 12.43999)">
 	__PRINT<PlayerCommandReceived, "OnPlayerCommandReceived(42, /help)">
 	__PRINT<PlayerCommandPerformed, "OnPlayerCommandPerformed(42, /help, -11)">
 	new
@@ -375,7 +376,7 @@ TEST__ y_als_Generation()
 		Float:fRotX = 20.24,
 		Float:fRotY = 21.34,
 		Float:fRotZ = 22.44;
-	__PRINT<PlayerEditObject, "OnPlayerEditObject(42, 2234, 1234, 404, 10.23999, 11.34000, 12.43999, 20.23999, 21.34000, 22.44000)">
+	__PRINT<PlayerEditObject, "OnPlayerEditObject(42, 2234, 1234, 404, 10.24000, 11.33999, 12.43999, 20.23999, 21.33999, 22.44000)">
 	#if __COMPILER_MODIFIED
 		// This ends up too long to compile :(.
 		new
@@ -388,7 +389,7 @@ TEST__ y_als_Generation()
 			Float:fScaleX = 404.04,
 			Float:fScaleY = 505.05,
 			Float:fScaleZ = 606.06;
-		__PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.01000, 202.02000, 303.02999, 20.23999, 21.34000, 22.44000, 404.04000, 505.04998, 606.05999)">
+		__PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.01000, 202.02000, 303.02999, 20.23999, 21.33999, 22.44000, 404.04000, 505.05000, 606.05999)">
 	#endif
 }
 

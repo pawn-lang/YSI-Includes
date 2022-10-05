@@ -125,9 +125,21 @@ MASTER_HOOK__ OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
+MASTER_REHOOK__ OnPlayerDisconnect(playerid, reason)
+{
+	#pragma unused playerid, reason
+	return 1;
+}
+
 MASTER_HOOK__ OnPlayerSpawn(playerid)
 {
 	YSI_g_sZNShow[playerid] = 1;
+	return 1;
+}
+
+MASTER_REHOOK__ OnPlayerSpawn(playerid)
+{
+	#pragma unused playerid
 	return 1;
 }
 
@@ -135,6 +147,12 @@ MASTER_HOOK__ OnPlayerDeath(playerid, killerid, reason)
 {
 	#pragma unused killerid, reason
 	YSI_g_sZNShow[playerid] = 0;
+	return 1;
+}
+
+MASTER_REHOOK__ OnPlayerDeath(playerid, killerid, reason)
+{
+	#pragma unused playerid, killerid, reason
 	return 1;
 }
 
@@ -164,7 +182,7 @@ stock ZoneNames_Show(playerid, id)
 		td = Text_GetLastID();
 	if (td != -1)
 	{
-		SetTimerEx("ZoneNames_Hide", 3000, 0, "i", playerid),
+		SetTimerEx("ZoneNames_Hide", 3000, false, "i", playerid),
 		YSI_g_sZNTD[playerid] = td;
 	}
 }
@@ -180,6 +198,12 @@ MASTER_HOOK__ OnPlayerEnterArea(playerid, areaid)
 			ZoneNames_Show(playerid, id);
 		}
 	}
+	return 1;
+}
+
+MASTER_REHOOK__ OnPlayerEnterArea(playerid, areaid)
+{
+	#pragma unused playerid, areaid
 	return 1;
 }
 
@@ -204,6 +228,12 @@ MASTER_HOOK__ OnPlayerLeaveArea(playerid, areaid)
 			}
 		}
 	}
+	return 1;
+}
+
+MASTER_REHOOK__ OnPlayerLeaveArea(playerid, areaid)
+{
+	#pragma unused playerid, areaid
 	return 1;
 }
 
@@ -975,6 +1005,11 @@ MASTER_HOOK__ OnYSIInit()
 	#undef SAZ_AddCuboid
 	#undef SAZ_AddPoly
 	assert(idx == sizeof (YSI_g_scZoneNames));
+	return 1;
+}
+
+MASTER_REHOOK__ OnYSIInit()
+{
 	return 1;
 }
 

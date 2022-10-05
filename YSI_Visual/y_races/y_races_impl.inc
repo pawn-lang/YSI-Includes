@@ -221,7 +221,7 @@ _Y_RACES_STATIC stock RaceArray_Add(slot, Float:x, Float:y, Float:z)
  *  Checks a race is active.
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Race__IsActive(raceid));
+FUNC_PAWNDOC(bool:Race__IsActive(raceid));
 #define Race__IsActive(%1) \
 	(YSI_g_sRaceData[(%1)][E_RACE_FLAGS] & e_RACE_FLAGS_ACTIVE)
 
@@ -231,7 +231,7 @@ P:D(bool:Race__IsActive(raceid));
  *  Checks an id is valid and active.
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:Race_IsValid(raceid));
+FUNC_PAWNDOC(bool:Race_IsValid(raceid));
 #define Race_IsValid(%1) \
 	(0 <= (%1) < MAX_RACES && Race__IsActive((%1)))
 
@@ -839,7 +839,7 @@ GLOBAL__ Race_Start(race)
 			SetVehiclePos(vehicleid, YSI_g_sRaceStarts[race][j % MAX_RACE_STARTS][0], YSI_g_sRaceStarts[race][j % MAX_RACE_STARTS][1], YSI_g_sRaceStarts[race][j % MAX_RACE_STARTS][2]);
 			SetVehicleZAngle(vehicleid, YSI_g_sRaceStarts[race][j % MAX_RACE_STARTS][3]);
 			SetCameraBehindPlayer(i);
-			TogglePlayerControllable(i, 0);
+			TogglePlayerControllable(i, false);
 			++j;
 		}
 		else
@@ -898,7 +898,7 @@ public Race_Countdown(race, time)
 		{
 			if ((vehicleid = GetPlayerVehicleID(i)))
 			{
-				TogglePlayerControllable(i, 1);
+				TogglePlayerControllable(i, true);
 				Race_DoEnterRaceCP(i);
 				SetVehiclePos(vehicleid, YSI_g_sRaceStarts[race][pos % MAX_RACE_STARTS][0], YSI_g_sRaceStarts[race][pos % MAX_RACE_STARTS][1], YSI_g_sRaceStarts[race][pos % MAX_RACE_STARTS][2] + 0.1);
 				SetVehicleZAngle(vehicleid, YSI_g_sRaceStarts[race][pos % MAX_RACE_STARTS][3]);
@@ -926,6 +926,11 @@ MASTER_HOOK__ OnYSIInit()
 	return 1;
 }
 
+MASTER_REHOOK__ OnYSIInit()
+{
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who entered.</param>
  * Checks a players position in the race and displays the corresponding next
@@ -935,6 +940,12 @@ MASTER_HOOK__ OnYSIInit()
 MASTER_HOOK__ OnPlayerEnterRaceCP(playerid)
 {
 	return Race_DoEnterRaceCP(playerid);
+}
+
+MASTER_REHOOK__ OnPlayerEnterRaceCP(playerid)
+{
+	#pragma unused playerid
+	return 1;
 }
 
 _Y_RACES_STATIC Race_DoEnterRaceCP(playerid)
@@ -1040,6 +1051,12 @@ MASTER_HOOK__ OnPlayerStateChange(playerid, PLAYER_STATE:newstate, PLAYER_STATE:
 	return 1;
 }
 
+MASTER_REHOOK__ OnPlayerStateChange(playerid, PLAYER_STATE:newstate, PLAYER_STATE:oldstate)
+{
+	#pragma unused playerid, newstate, oldstate
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who left.</param>
  * <param name="reason">Why they left.</param>
@@ -1066,6 +1083,12 @@ MASTER_HOOK__ OnPlayerDisconnect(playerid, reason)
 	#pragma unused reason
 }
 
+MASTER_REHOOK__ OnPlayerDisconnect(playerid, reason)
+{
+	#pragma unused playerid, reason
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who joined.</param>
  * Just a fix for IsPlayerInRaceCheckpoint.
@@ -1074,6 +1097,12 @@ MASTER_HOOK__ OnPlayerDisconnect(playerid, reason)
 MASTER_HOOK__ OnPlayerConnect(playerid)
 {
 	DisablePlayerRaceCheckpoint(playerid);
+	return 1;
+}
+
+MASTER_REHOOK__ OnPlayerConnect(playerid)
+{
+	#pragma unused playerid
 	return 1;
 }
 

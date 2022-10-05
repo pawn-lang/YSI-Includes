@@ -122,9 +122,9 @@ stock Server_GetJITVersion()
 {
 	if (Script_JITComplete())
 	{
-		#emit LCTRL     6
+		#emit LCTRL     __cip
 		#emit MOVE.alt
-		#emit LCTRL     8
+		#emit LCTRL     __jmp
 		#emit NEQ
 		#emit CONST.alt 1
 		#emit XCHG
@@ -506,11 +506,12 @@ stock bool:Server_CrashDetectExists()
 				YSI_EMPTY,
 				"  Crashdetect has been found, but no",
 				"     long-call controls have been",
-				"   detected.  If you see a console",
-				" warning about slow execution during",
-				"   startup (only), ignore it - this",
-				" message cannot be disabled on Linux",
-				"    in some releases due to a bug."
+				"  detected.  Get the unofficial fixed",
+				"            release from:",
+				YSI_EMPTY,
+				"          github.com/Y-Less/          ",
+				"       samp-plugin-crashdetect/",
+				YSI_EMPTY
 			);
 		}
 		else

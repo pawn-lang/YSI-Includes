@@ -94,7 +94,7 @@ new Alloc:arr = malloc(16);
 new Alloc:rea = realloc(arr, 32);
 if (!rea)
 {
-	P:E("Reallocation failed");
+	Debug_Error("Reallocation failed");
 	free(arr);
 }
 ```

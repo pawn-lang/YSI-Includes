@@ -133,92 +133,95 @@ Optional plugins:
 #define Vehicle_GetCategory(%0)  VIM_GetCategory(Vehicle_GetVIM(%0))
 #define Vehicle_IsValid(%0)      VIM_IsValid(Vehicle_GetVIM(%0))
 
-#define Vehicle_IsCar(%0)        (_Vehicle_Is(Car       , %0))
-#define Vehicle_IsTruck(%0)      (_Vehicle_Is(Truck     , %0))
-#define Vehicle_IsVan(%0)        (_Vehicle_Is(Van       , %0))
-#define Vehicle_IsFire(%0)       (_Vehicle_Is(Fire      , %0))
-#define Vehicle_IsPolice(%0)     (_Vehicle_Is(Police    , %0))
-#define Vehicle_IsFBI(%0)        (_Vehicle_Is(FBI       , %0))
-#define Vehicle_IsSWAT(%0)       (_Vehicle_Is(SWAT      , %0))
-#define Vehicle_IsMilitary(%0)   (_Vehicle_Is(Military  , %0))
-#define Vehicle_IsWeaponised(%0) (_Vehicle_Is(Weaponised, %0))
-#define Vehicle_IsHelicopter(%0) (_Vehicle_Is(Helicopter, %0))
-#define Vehicle_IsBoat(%0)       (_Vehicle_Is(Boat      , %0))
-#define Vehicle_IsPlane(%0)      (_Vehicle_Is(Plane     , %0))
-#define Vehicle_IsBike(%0)       (_Vehicle_Is(Bike      , %0))
-#define Vehicle_IsManual(%0)     (_Vehicle_Is(Manual    , %0))
-#define Vehicle_IsAmbulance(%0)  (_Vehicle_Is(Ambulance , %0))
-#define Vehicle_IsTaxi(%0)       (_Vehicle_Is(Taxi      , %0))
-#define Vehicle_IsOnWater(%0)    (_Vehicle_Is(OnWater   , %0))
-#define Vehicle_IsCoastguard(%0) (_Vehicle_Is(Coastguard, %0))
-#define Vehicle_IsTrain(%0)      (_Vehicle_Is(Train     , %0))
-#define Vehicle_IsLS(%0)         (_Vehicle_Is(LS        , %0))
-#define Vehicle_IsSF(%0)         (_Vehicle_Is(SF        , %0))
-#define Vehicle_IsLV(%0)         (_Vehicle_Is(LV        , %0))
-#define Vehicle_IsTank(%0)       (_Vehicle_Is(Tank      , %0))
-#define Vehicle_IsFlowerpot(%0)  (_Vehicle_Is(Flowerpot , %0))
-#define Vehicle_IsTransport(%0)  (_Vehicle_Is(Transport , %0))
-#define Vehicle_IsArmed(%0)      (_Vehicle_Is(Armed      , %0))
+#define Vehicle_IsCar(%0)          (_Vehicle_Is(Car        , %0))
+#define Vehicle_IsTruck(%0)        (_Vehicle_Is(Truck      , %0))
+#define Vehicle_IsVan(%0)          (_Vehicle_Is(Van        , %0))
+#define Vehicle_IsFire(%0)         (_Vehicle_Is(Fire       , %0))
+#define Vehicle_IsPolice(%0)       (_Vehicle_Is(Police     , %0))
+#define Vehicle_IsFBI(%0)          (_Vehicle_Is(FBI        , %0))
+#define Vehicle_IsSWAT(%0)         (_Vehicle_Is(SWAT       , %0))
+#define Vehicle_IsMilitary(%0)     (_Vehicle_Is(Military   , %0))
+#define Vehicle_IsWeaponised(%0)   (_Vehicle_Is(Weaponised , %0))
+#define Vehicle_IsHelicopter(%0)   (_Vehicle_Is(Helicopter , %0))
+#define Vehicle_IsBoat(%0)         (_Vehicle_Is(Boat       , %0))
+#define Vehicle_IsPlane(%0)        (_Vehicle_Is(Plane      , %0))
+#define Vehicle_IsBike(%0)         (_Vehicle_Is(Bike       , %0))
+#define Vehicle_IsManual(%0)       (_Vehicle_Is(Manual     , %0))
+#define Vehicle_IsAmbulance(%0)    (_Vehicle_Is(Ambulance  , %0))
+#define Vehicle_IsTaxi(%0)         (_Vehicle_Is(Taxi       , %0))
+#define Vehicle_IsOnWater(%0)      (_Vehicle_Is(OnWater    , %0))
+#define Vehicle_IsCoastguard(%0)   (_Vehicle_Is(Coastguard , %0))
+#define Vehicle_IsTrain(%0)        (_Vehicle_Is(Train      , %0))
+#define Vehicle_IsLS(%0)           (_Vehicle_Is(LS         , %0))
+#define Vehicle_IsSF(%0)           (_Vehicle_Is(SF         , %0))
+#define Vehicle_IsLV(%0)           (_Vehicle_Is(LV         , %0))
+#define Vehicle_IsTank(%0)         (_Vehicle_Is(Tank       , %0))
+#define Vehicle_IsFlowerpot(%0)    (_Vehicle_Is(Flowerpot  , %0))
+#define Vehicle_IsTransport(%0)    (_Vehicle_Is(Transport  , %0))
+#define Vehicle_IsArmed(%0)        (_Vehicle_Is(Armed      , %0))
+#define Vehicle_HasNumberPlate(%0) (_Vehicle_Is(NumberPlate, %0))
 
 #define Model_GetCategory(%0)  VIM_GetCategory(Model_ToVIM((%0)))
 #define Model_IsValid(%0)      VIM_IsValid(Model_ToVIM((%0)))
 
-#define Model_IsCar(%0)        (_Model_Is(Car       , %0))
-#define Model_IsTruck(%0)      (_Model_Is(Truck     , %0))
-#define Model_IsVan(%0)        (_Model_Is(Van       , %0))
-#define Model_IsFire(%0)       (_Model_Is(Fire      , %0))
-#define Model_IsPolice(%0)     (_Model_Is(Police    , %0))
-#define Model_IsFBI(%0)        (_Model_Is(FBI       , %0))
-#define Model_IsSWAT(%0)       (_Model_Is(SWAT      , %0))
-#define Model_IsMilitary(%0)   (_Model_Is(Military  , %0))
-#define Model_IsWeaponised(%0) (_Model_Is(Weaponised, %0))
-#define Model_IsHelicopter(%0) (_Model_Is(Helicopter, %0))
-#define Model_IsBoat(%0)       (_Model_Is(Boat      , %0))
-#define Model_IsPlane(%0)      (_Model_Is(Plane     , %0))
-#define Model_IsBike(%0)       (_Model_Is(Bike      , %0))
-#define Model_IsManual(%0)     (_Model_Is(Manual    , %0))
-#define Model_IsAmbulance(%0)  (_Model_Is(Ambulance , %0))
-#define Model_IsTaxi(%0)       (_Model_Is(Taxi      , %0))
-#define Model_IsOnWater(%0)    (_Model_Is(OnWater   , %0))
-#define Model_IsCoastguard(%0) (_Model_Is(Coastguard, %0))
-#define Model_IsTrain(%0)      (_Model_Is(Train     , %0))
-#define Model_IsLS(%0)         (_Model_Is(LS        , %0))
-#define Model_IsSF(%0)         (_Model_Is(SF        , %0))
-#define Model_IsLV(%0)         (_Model_Is(LV        , %0))
-#define Model_IsTank(%0)       (_Model_Is(Tank      , %0))
-#define Model_IsFlowerpot(%0)  (_Model_Is(Flowerpot , %0))
-#define Model_IsTransport(%0)  (_Model_Is(Transport , %0))
-#define Model_IsArmed(%0)      (_Model_Is(Armed      , %0))
+#define Model_IsCar(%0)          (_Model_Is(Car        , %0))
+#define Model_IsTruck(%0)        (_Model_Is(Truck      , %0))
+#define Model_IsVan(%0)          (_Model_Is(Van        , %0))
+#define Model_IsFire(%0)         (_Model_Is(Fire       , %0))
+#define Model_IsPolice(%0)       (_Model_Is(Police     , %0))
+#define Model_IsFBI(%0)          (_Model_Is(FBI        , %0))
+#define Model_IsSWAT(%0)         (_Model_Is(SWAT       , %0))
+#define Model_IsMilitary(%0)     (_Model_Is(Military   , %0))
+#define Model_IsWeaponised(%0)   (_Model_Is(Weaponised , %0))
+#define Model_IsHelicopter(%0)   (_Model_Is(Helicopter , %0))
+#define Model_IsBoat(%0)         (_Model_Is(Boat       , %0))
+#define Model_IsPlane(%0)        (_Model_Is(Plane      , %0))
+#define Model_IsBike(%0)         (_Model_Is(Bike       , %0))
+#define Model_IsManual(%0)       (_Model_Is(Manual     , %0))
+#define Model_IsAmbulance(%0)    (_Model_Is(Ambulance  , %0))
+#define Model_IsTaxi(%0)         (_Model_Is(Taxi       , %0))
+#define Model_IsOnWater(%0)      (_Model_Is(OnWater    , %0))
+#define Model_IsCoastguard(%0)   (_Model_Is(Coastguard , %0))
+#define Model_IsTrain(%0)        (_Model_Is(Train      , %0))
+#define Model_IsLS(%0)           (_Model_Is(LS         , %0))
+#define Model_IsSF(%0)           (_Model_Is(SF         , %0))
+#define Model_IsLV(%0)           (_Model_Is(LV         , %0))
+#define Model_IsTank(%0)         (_Model_Is(Tank       , %0))
+#define Model_IsFlowerpot(%0)    (_Model_Is(Flowerpot  , %0))
+#define Model_IsTransport(%0)    (_Model_Is(Transport  , %0))
+#define Model_IsArmed(%0)        (_Model_Is(Armed      , %0))
+#define Model_HasNumberPlate(%0) (_Model_Is(NumberPlate, %0))
 
 #define VIM_GetCategory(%0)  (YSI_gVehicleFlags[(%0)] & e_VEHICLE_FLAGS_CATEGORY)
 #define VIM_IsValid(%0)      (YSI_gVehicleFlags[(%0)] != e_VEHICLE_FLAGS_NONE)
 
-#define VIM_IsCar(%0)        (_VIM_Is(Car       , %0))
-#define VIM_IsTruck(%0)      (_VIM_Is(Truck     , %0))
-#define VIM_IsVan(%0)        (_VIM_Is(Van       , %0))
-#define VIM_IsFire(%0)       (_VIM_Is(Fire      , %0))
-#define VIM_IsPolice(%0)     (_VIM_Is(Police    , %0))
-#define VIM_IsFBI(%0)        (_VIM_Is(FBI       , %0))
-#define VIM_IsSWAT(%0)       (_VIM_Is(SWAT      , %0))
-#define VIM_IsMilitary(%0)   (_VIM_Is(Military  , %0))
-#define VIM_IsWeaponised(%0) (_VIM_Is(Weaponised, %0))
-#define VIM_IsHelicopter(%0) (_VIM_Is(Helicopter, %0))
-#define VIM_IsBoat(%0)       (_VIM_Is(Boat      , %0))
-#define VIM_IsPlane(%0)      (_VIM_Is(Plane     , %0))
-#define VIM_IsBike(%0)       (_VIM_Is(Bike      , %0))
-#define VIM_IsManual(%0)     (_VIM_Is(Manual    , %0))
-#define VIM_IsAmbulance(%0)  (_VIM_Is(Ambulance , %0))
-#define VIM_IsTaxi(%0)       (_VIM_Is(Taxi      , %0))
-#define VIM_IsOnWater(%0)    (_VIM_Is(OnWater   , %0))
-#define VIM_IsCoastguard(%0) (_VIM_Is(Coastguard, %0))
-#define VIM_IsTrain(%0)      (_VIM_Is(Train     , %0))
-#define VIM_IsLS(%0)         (_VIM_Is(LS        , %0))
-#define VIM_IsSF(%0)         (_VIM_Is(SF        , %0))
-#define VIM_IsLV(%0)         (_VIM_Is(LV        , %0))
-#define VIM_IsTank(%0)       (_VIM_Is(Tank      , %0))
-#define VIM_IsFlowerpot(%0)  (_VIM_Is(Flowerpot , %0))
-#define VIM_IsTransport(%0)  (_VIM_Is(Transport , %0))
-#define VIM_IsArmed(%0)      (_VIM_Is(Armed      , %0))
+#define VIM_IsCar(%0)          (_VIM_Is(Car        , %0))
+#define VIM_IsTruck(%0)        (_VIM_Is(Truck      , %0))
+#define VIM_IsVan(%0)          (_VIM_Is(Van        , %0))
+#define VIM_IsFire(%0)         (_VIM_Is(Fire       , %0))
+#define VIM_IsPolice(%0)       (_VIM_Is(Police     , %0))
+#define VIM_IsFBI(%0)          (_VIM_Is(FBI        , %0))
+#define VIM_IsSWAT(%0)         (_VIM_Is(SWAT       , %0))
+#define VIM_IsMilitary(%0)     (_VIM_Is(Military   , %0))
+#define VIM_IsWeaponised(%0)   (_VIM_Is(Weaponised , %0))
+#define VIM_IsHelicopter(%0)   (_VIM_Is(Helicopter , %0))
+#define VIM_IsBoat(%0)         (_VIM_Is(Boat       , %0))
+#define VIM_IsPlane(%0)        (_VIM_Is(Plane      , %0))
+#define VIM_IsBike(%0)         (_VIM_Is(Bike       , %0))
+#define VIM_IsManual(%0)       (_VIM_Is(Manual     , %0))
+#define VIM_IsAmbulance(%0)    (_VIM_Is(Ambulance  , %0))
+#define VIM_IsTaxi(%0)         (_VIM_Is(Taxi       , %0))
+#define VIM_IsOnWater(%0)      (_VIM_Is(OnWater    , %0))
+#define VIM_IsCoastguard(%0)   (_VIM_Is(Coastguard , %0))
+#define VIM_IsTrain(%0)        (_VIM_Is(Train      , %0))
+#define VIM_IsLS(%0)           (_VIM_Is(LS         , %0))
+#define VIM_IsSF(%0)           (_VIM_Is(SF         , %0))
+#define VIM_IsLV(%0)           (_VIM_Is(LV         , %0))
+#define VIM_IsTank(%0)         (_VIM_Is(Tank       , %0))
+#define VIM_IsFlowerpot(%0)    (_VIM_Is(Flowerpot  , %0))
+#define VIM_IsTransport(%0)    (_VIM_Is(Transport  , %0))
+#define VIM_IsArmed(%0)        (_VIM_Is(Armed      , %0))
+#define VIM_HasNumberPlate(%0) (_VIM_Is(NumberPlate, %0))
 
 #define Vehicle_GetVIM(%0) (Model_ToVIM(GetVehicleModel((%0))))
 #define Model_ToVIM(%0) (VIM:(_Model_Validate(%0)))
@@ -279,33 +282,44 @@ enum e_VEHICLE_FLAGS:(<<= 1)
 	e_VEHICLE_FLAGS_CAT_RC          = 15,
 	e_VEHICLE_FLAGS_CATEGORY        = 0x0F,
 	e_VEHICLE_FLAGS_Car             = 0x10,
-	e_VEHICLE_FLAGS_Truck,
-	e_VEHICLE_FLAGS_Van,
-	e_VEHICLE_FLAGS_Fire,
-	e_VEHICLE_FLAGS_Police,
-	e_VEHICLE_FLAGS_FBI,
-	e_VEHICLE_FLAGS_SWAT,
-	e_VEHICLE_FLAGS_Military,
-	e_VEHICLE_FLAGS_Weaponised,
-	e_VEHICLE_FLAGS_Helicopter,
-	e_VEHICLE_FLAGS_Boat,
-	e_VEHICLE_FLAGS_Plane,
-	e_VEHICLE_FLAGS_Bike,
-	e_VEHICLE_FLAGS_Manual,
-	e_VEHICLE_FLAGS_Ambulance,
-	e_VEHICLE_FLAGS_Taxi,
-	e_VEHICLE_FLAGS_OnWater,
-	e_VEHICLE_FLAGS_Coastguard,
-	e_VEHICLE_FLAGS_Train,
-	e_VEHICLE_FLAGS_LS,
-	e_VEHICLE_FLAGS_SF,
-	e_VEHICLE_FLAGS_LV,
-	e_VEHICLE_FLAGS_Tank,
-	e_VEHICLE_FLAGS_Flowerpot,
-	e_VEHICLE_FLAGS_Transport,
-	e_VEHICLE_FLAGS_Armed
+	e_VEHICLE_FLAGS_Truck,         // 0x00000020
+	e_VEHICLE_FLAGS_Van,           // 0x00000040
+	e_VEHICLE_FLAGS_Fire,          // 0x00000080
+	e_VEHICLE_FLAGS_Police,        // 0x00000100
+	e_VEHICLE_FLAGS_FBI,           // 0x00000200
+	e_VEHICLE_FLAGS_SWAT,          // 0x00000400
+	e_VEHICLE_FLAGS_Military,      // 0x00000800
+	e_VEHICLE_FLAGS_Weaponised,    // 0x00001000
+	e_VEHICLE_FLAGS_Helicopter,    // 0x00002000
+	e_VEHICLE_FLAGS_Boat,          // 0x00004000
+	e_VEHICLE_FLAGS_Plane,         // 0x00008000
+	e_VEHICLE_FLAGS_Bike,          // 0x00010000
+	e_VEHICLE_FLAGS_Manual,        // 0x00020000
+	e_VEHICLE_FLAGS_Ambulance,     // 0x00040000
+	e_VEHICLE_FLAGS_Taxi,          // 0x00080000
+	e_VEHICLE_FLAGS_OnWater,       // 0x00100000
+	e_VEHICLE_FLAGS_Coastguard,    // 0x00200000
+	e_VEHICLE_FLAGS_Train,         // 0x00400000
+	e_VEHICLE_FLAGS_LS,            // 0x00800000
+	e_VEHICLE_FLAGS_SF,            // 0x01000000
+	e_VEHICLE_FLAGS_LV,            // 0x02000000
+	e_VEHICLE_FLAGS_Tank,          // 0x04000000
+	e_VEHICLE_FLAGS_Flowerpot,     // 0x08000000
+	e_VEHICLE_FLAGS_Transport,     // 0x10000000
+	e_VEHICLE_FLAGS_Armed,         // 0x20000000
+	e_VEHICLE_FLAGS_NumberPlate    // 0x40000000
 }
 
+// These macros just prepend `e_VEHICLE_FLAGS_` to every entry inside
+// `_VEHICLE_FLAGS` so that:
+//
+//    _VEHICLE_FLAGS<Saloon | Car>
+//
+// Becomes:
+//
+//    e_VEHICLE_FLAGS_Saloon | e_VEHICLE_FLAGS_Car
+//
+// Which is more correct but less readable.
 #define _VEHICLE_FLAGS<%0> e_VEHICLE_FLAGS_NONE| CAT_%0| END|
 #define e_VEHICLE_FLAGS_NONE|%0\32;%1| e_VEHICLE_FLAGS_%1|e_VEHICLE_FLAGS_NONE|
 #define e_VEHICLE_FLAGS_END|e_VEHICLE_FLAGS_NONE| e_VEHICLE_FLAGS_NONE
@@ -369,48 +383,20 @@ This comment can be collapsed - it pushes line numbers down to match models.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+This comment can be collapsed - it pushes line numbers down to match models.
 
 */
+
+#if defined __line
+	#if __line != 391
+		#error Model IDs not aligned with line numbers.
+	#endif
+#endif
 
 stock
 	e_VEHICLE_FLAGS:YSI_gVehicleFlags[VIM:VIM_MODEL_COUNT] =
 		{
-			e_VEHICLE_FLAGS_NONE,
+			e_VEHICLE_FLAGS_NONE, // This should remain on line 399 forever.
 			_VEHICLE_FLAGS<OffRoad     | Car       >,
 			_VEHICLE_FLAGS<Saloon      | Car       >,
 			_VEHICLE_FLAGS<Sport       | Car       >,

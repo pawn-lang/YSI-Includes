@@ -1,3 +1,76 @@
+/*
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 the "License"; you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI framework.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright (c) 2022
+	the Initial Developer. All Rights Reserved.
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+	Cheaterman
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
 #if !defined MAX_NESTED_ITERATORS
 	#define MAX_NESTED_ITERATORS (4)
 #endif
@@ -85,7 +158,7 @@ stock bool:Iter_YieldEnter()
 	// often be a non-zero jump address (i.e. the return address).
 	if (++YSI_gIteratorDepth >= MAX_NESTED_ITERATORS)
 	{
-		P:E("Too many nested `foreach` yield loops.  Increase `MAX_NESTED_ITERATORS`.");
+		Debug_Error("Too many nested `foreach` yield loops.  Increase `MAX_NESTED_ITERATORS`.");
 		return true;
 	}
 	{}
@@ -100,29 +173,29 @@ stock bool:Iter_YieldEnter()
 	#emit MOVE.alt
 	// Blank a load of data.
 	#emit ZERO.pri
-	#emit FILL         44
+	#emit FILL         __11_cells
 	// Save the stack size after this function ends.
-	#emit LCTRL        4
-	#emit ADD.C        12
+	#emit LCTRL        __stk
+	#emit ADD.C        __3_cells
 	#emit STOR.I
 	#emit XCHG
-	#emit ADD.C        12  // Move on to `E_ITER_YIELD_HEAP_START`.
+	#emit ADD.C        __3_cells  // Move on to `E_ITER_YIELD_HEAP_START`.
 	#emit XCHG
 	// Save the heap size.
-	#emit LCTRL        2
+	#emit LCTRL        __hea
 	#emit STOR.I
 	#emit XCHG
-	#emit ADD.C        24 // Move on to `E_ITER_YIELD_FRAME`.
+	#emit ADD.C        __6_cells // Move on to `E_ITER_YIELD_FRAME`.
 	#emit XCHG
 	// Load of data already blanked.
 	// Store the previous function's frame pointer.
-	#emit LOAD.S.pri   0
+	#emit LOAD.S.pri   __frame_offset
 	#emit STOR.I
 	#emit XCHG
-	#emit ADD.C        4  // Move on to `E_ITER_YIELD_RETURN`.
+	#emit ADD.C        __1_cell  // Move on to `E_ITER_YIELD_RETURN`.
 	#emit XCHG
 	// Store the return address (next instruction to execute).
-	#emit LOAD.S.pri   4
+	#emit LOAD.S.pri   __return_offset
 	#emit STOR.I
 	return false;
 }
@@ -190,7 +263,7 @@ stock bool:Iter_YieldLoop()
 		#emit MOVE.alt
 		#emit LOAD.I
 		#emit ADD
-		#emit ADD.C        8
+		#emit ADD.C        __2_cells
 		#emit STOR.pri     YSI_g_sPtr
 		#emit MOVE.alt
 		// Restore the heap.
@@ -209,14 +282,14 @@ stock bool:Iter_YieldLoop()
 		#emit PUSH.pri
 		#emit CONST.pri    2
 		#emit LIDX
-		#emit SCTRL        2
-		#emit PUSH.C       20
+		#emit SCTRL        __hea
+		#emit PUSH.C       __5_cells
 		#emit SYSREQ.C     memcpy
 		// Restore the stack.
 		#emit LOAD.alt     YSI_g_sPtr
-		#emit CONST.pri    0xFFFFFFFF // -1
+		#emit CONST.pri    __minus1
 		#emit LIDX
-		#emit SCTRL        4
+		#emit SCTRL        __stk
 		#emit LREF.pri     YSI_g_sPtr // Or ZERO.pri, LIDX
 		#emit PUSH.pri
 		#emit PUSH.pri
@@ -227,21 +300,21 @@ stock bool:Iter_YieldLoop()
 		#emit SREF.alt     YSI_g_sPtr
 		#emit PUSH.pri
 		#emit STOR.pri     YSI_g_sStackPtr
-		#emit LCTRL        4
-		#emit ADD.C        16
+		#emit LCTRL        __stk
+		#emit ADD.C        __4_cells
 		#emit PUSH.pri
-		#emit PUSH.C       20
+		#emit PUSH.C       __5_cells
 		#emit SYSREQ.C     memcpy
-		#emit STACK        24
+		#emit STACK        __6_cells
 		// Jump back in to our earlier function.
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit CONST.pri    5
 		#emit LIDX
-		#emit SCTRL        5
+		#emit SCTRL        __frm
 		#emit CONST.pri    6
 		#emit LIDX
-		#emit SCTRL        8
-		#emit SCTRL        6
+		#emit SCTRL        __jmp
+		#emit SCTRL        __cip
 		// Technically, we never return from here, but the compiler can't know!
 	}
 	return true;
@@ -249,6 +322,8 @@ stock bool:Iter_YieldLoop()
 
 stock Iter_YieldReturn(value)
 {
+	const minus5 = -5;
+	const minus8 = -8;
 	// This does the return through the global scope.
 	I@ = value;
 	// Load a pointer to the first address.  We know we are in range, so there's
@@ -261,10 +336,10 @@ stock Iter_YieldReturn(value)
 	#emit ADD
 	#emit STOR.pri     YSI_g_sPtr
 	// Stack (excluding this function and intermediate results).
-	#emit ADD.C        4
+	#emit ADD.C        __1_cell
 	#emit MOVE.alt
-	#emit LCTRL        4
-	#emit ADD.C        16
+	#emit LCTRL        __stk
+	#emit ADD.C        __4_cells
 	#emit STOR.I
 	#emit LREF.alt     YSI_g_sPtr
 	#emit SUB.alt
@@ -273,28 +348,28 @@ stock Iter_YieldReturn(value)
 	#emit PUSH.pri
 	#emit PUSH.C       0
 	#emit LOAD.pri     YSI_g_sPtr
-	#emit ADD.C        8
+	#emit ADD.C        __2_cells
 	#emit XCHG
 	#emit STOR.I
-	#emit LCTRL        4
-	#emit ADD.C        28
+	#emit LCTRL        __stk
+	#emit ADD.C        __7_cells
 	#emit PUSH.pri
 	#emit LOAD.alt     YSI_g_sStackPtr
 	#emit PUSH.alt
-	#emit PUSH.C       20
+	#emit PUSH.C       __5_cells
 	#emit SYSREQ.C     memcpy
 	#emit LOAD.pri     YSI_g_sStackPtr
-	#emit STACK        20
+	#emit STACK        __5_cells
 	#emit POP.alt
 	#emit ADD
 	#emit STOR.pri     YSI_g_sStackPtr
 	#emit LOAD.pri     YSI_g_sPtr
-	#emit ADD.C        12
+	#emit ADD.C        __3_cells
 	#emit STOR.pri     YSI_g_sPtr
 	// Heap.
-	#emit ADD.C        4
+	#emit ADD.C        __1_cell
 	#emit MOVE.alt
-	#emit LCTRL        2
+	#emit LCTRL        __hea
 	#emit STOR.I
 	// Using `LCTRL 2` is faster than saving and restoring the value.
 	#emit LREF.alt     YSI_g_sPtr
@@ -304,47 +379,47 @@ stock Iter_YieldReturn(value)
 	#emit PUSH.pri
 	#emit PUSH.C       0
 	#emit LOAD.pri     YSI_g_sPtr
-	#emit ADD.C        8
+	#emit ADD.C        __2_cells
 	#emit XCHG
 	#emit STOR.I
-	#emit LCTRL        2
+	#emit LCTRL        __hea
 	#emit PUSH.pri
 	#emit LOAD.alt     YSI_g_sStackPtr
 	#emit PUSH.alt
-	#emit PUSH.C       20
+	#emit PUSH.C       __5_cells
 	#emit SYSREQ.C     memcpy
 	#emit LOAD.pri     YSI_g_sStackPtr
-	#emit STACK        20
+	#emit STACK        __5_cells
 	#emit POP.alt
 	#emit ADD
 	#emit STOR.pri     YSI_g_sStackPtr
 	#emit LOAD.pri     YSI_g_sPtr
-	#emit ADD.C        16
+	#emit ADD.C        __4_cells
 	#emit MOVE.alt
-	#emit LOAD.S.pri   0
+	#emit LOAD.S.pri   __frame_offset
 	#emit STOR.I
 	// Frame.
 	#emit MOVE.pri
-	#emit ADD.C        4
+	#emit ADD.C        __1_cell
 	#emit MOVE.alt
-	#emit LOAD.S.pri   4
+	#emit LOAD.S.pri   __return_offset
 	#emit STOR.I
 	// Go to the caller.  From this point on, we can't use any stack-local
 	// storage, because we just destroyed the stack!
 	#emit CONST.pri    1
 	#emit LIDX
-	#emit SCTRL        5
-	#emit CONST.pri    0xFFFFFFF8 // -8
+	#emit SCTRL        __frm
+	#emit CONST.pri    minus8
 	#emit LIDX
-	#emit SCTRL        4
-	#emit CONST.pri    0xFFFFFFFB // -5
+	#emit SCTRL        __stk
+	#emit CONST.pri    minus5
 	#emit LIDX
-	#emit SCTRL        2
+	#emit SCTRL        __hea
 	// No longer in this iterator.
 	#emit DEC          YSI_gIteratorDepth
 	#emit CONST.pri    2
 	#emit LIDX
-	#emit SCTRL        8
-	#emit SCTRL        6
+	#emit SCTRL        __jmp
+	#emit SCTRL        __cip
 }
 

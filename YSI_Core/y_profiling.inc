@@ -211,9 +211,9 @@ static stock
 
 stock bool:Profiling_Run(&profilings)
 {
-	P:3("bool:Profiling_Run called: %i", profilings);
+	Debug_Print3("bool:Profiling_Run called: %i", profilings);
 #if defined RUN_PROFILINGS
-	P:2("Profiling_Run() called");
+	Debug_Print2("Profiling_Run() called");
 	new
 		idx = 0,
 		buffer[FUNCTION_LENGTH];
@@ -223,7 +223,7 @@ stock bool:Profiling_Run(&profilings)
 		CallLocalFunction(buffer, YSI_EMPTY),
 		// Call the test.
 		buffer[0] = Y_PROFILING_PROFILE;
-		P:5("Profiling_Run(): Calling %s", Unpack(buffer[1]));
+		Debug_Print5("Profiling_Run(): Calling %s", Unpack(buffer[1]));
 		YSI_g_sInProfile = true,
 		CallLocalFunction(buffer, YSI_EMPTY),
 		YSI_g_sInProfile = false,
@@ -262,7 +262,7 @@ forward OnProfilingsComplete(profilings, fails);
 		{
 			// Fail the current profile if we see any runtime errors.  Requires the
 			// crashdetect plugin to function, but not to compile and run.
-			P:P("Error: Runtime error detected");
+			Debug_PrintP("Error: Runtime error detected");
 		}
 		return Profiling_OnRuntimeError(code, suppress);
 	}

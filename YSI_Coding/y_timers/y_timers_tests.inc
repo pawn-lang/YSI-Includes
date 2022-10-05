@@ -97,20 +97,26 @@ task y_timers_Counter[1000]()
 	va_SendClientMessageToAll(0x0000FFAA, "GLOBAL COUNTER: %d", sCounter++);
 }
 
-PTEST__ PCounter1(playerid)
+@test(.group = "y_timers") PCounter1(playerid)
 {
 	ASK("Is the red PLAYER COUNTER going up?");
 }
 
-PTEST__ PCounter2(playerid)
+@test(.group = "y_timers") PCounter2(playerid)
 {
 	pause y_timers_PCounter[playerid];
 	ASK("Has the red PLAYER COUNTER stopped?");
 }
 
-PTEST__ Counter(playerid)
+@test(.group = "y_timers") Counter1(playerid)
 {
 	ASK("Is the blue GLOBAL COUNTER going up?");
+}
+
+@test(.group = "y_timers") Counter2(playerid)
+{
+	pause y_timers_Counter;
+	ASK("Has the blue GLOBAL COUNTER stopped?");
 }
 
 timer BigMessage1[4000](playerid)
@@ -123,7 +129,7 @@ timer BigMessage2[4000](playerid)
 	SendClientMessage(playerid, 0x00FF00AA, "BIG MESSAGE appearing repeatedly.");
 }
 
-PTEST__ Timer1(playerid)
+@test(.group = "y_timers") Timer1(playerid)
 {
 	DEFER__ BigMessage1(playerid);
 	ASK("Is a green BIG MESSAGE appearing once after 4 seconds?");
@@ -132,7 +138,7 @@ PTEST__ Timer1(playerid)
 static
 	Timer:sgTimer = Timer:0;
 
-PTEST__ Timer2(playerid)
+@test(.group = "y_timers") Timer2(playerid)
 {
 	sgTimer = REPEAT__ BigMessage2(playerid);
 	ASK("Is a green BIG MESSAGE appearing every 4 seconds?");
@@ -144,7 +150,7 @@ timer StopMessage1[4000](playerid)
 	STOP__ sgTimer;
 }
 
-PTEST__ Timer3(playerid)
+@test(.group = "y_timers") Timer3(playerid)
 {
 	DEFER__ StopMessage1(playerid);
 	ASK("Is the green BIG MESSAGE stopping appearing after 4 seconds?");
@@ -152,7 +158,7 @@ PTEST__ Timer3(playerid)
 
 forward Timer:_yT@ForwardTimer(string:msg[]);
 
-TEST__ ForwardTimer()
+@test(.group = "y_timers") ForwardTimer()
 {
 	DEFER__ ForwardTimer("hi");
 }
@@ -173,32 +179,60 @@ timer StopAndStart[50]()
 	//printf("StopAndStart ended");
 }
 
-TEST__ StopAndStart()
+@test(.group = "y_timers") StopAndStart()
 {
 	YSI_g_sStopAndStart = DEFER__ StopAndStart();
 	ASSERT(Timer_IsRunning(YSI_g_sStopAndStart));
-	ASSERT(_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
+	ASSERT_NZ(_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
 	ASSERT(!Timer_IsRunning(YSI_g_sStopAndStart));
-	ASSERT(!_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
+	ASSERT_ZE(_Timer_F(YSI_g_sStopAndStart, 1)); // `stop`
 	ASSERT(!Timer_IsRunning(YSI_g_sStopAndStart));
 	YSI_g_sStopAndStart = DEFER__ StopAndStart();
 }
 
 timer StopAndStop[50]()
 {
-	printf("StopAndStop started: %d", _YSI_g_sCurrentTimer);
+	printf("StopAndStop started: %d", _:_YSI_g_sCurrentTimer);
 	STOP__;
 	STOP__;
 	STOP__;
 	printf("StopAndStop finished");
 }
 
-TEST__ StopAndStop()
+@test(.group = "y_timers", .run = false) StopAndStop()
 {
 	YSI_g_sStopAndStart = REPEAT__[5] StopAndStop();
 	for (new i = 0; i != 1000; ++i)
 	{
-		ASSERT(DEFER__ StopAndStop());
+		ASSERT_NZ(DEFER__ StopAndStop());
 	}
+}
+
+new Timer:YSI_g_sKillYourself;
+
+@timer(0) KillYourself()
+{
+	printf("KillYourself start");
+	STOP__ YSI_g_sKillYourself;
+	printf("KillYourself end");
+}
+
+@test(.group = "y_timers") KillYourself()
+{
+	printf("KillYourself before");
+	YSI_g_sKillYourself = defer KillYourself();
+	printf("KillYourself after");
+}
+
+@timer(500) y_timers_syntax2()
+{
+}
+
+@timer(500, .auto = true) y_timers_syntax3(playerid)
+{
+}
+
+@timer(500, true)y_timers_syntax4()
+{
 }
 

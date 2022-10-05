@@ -108,14 +108,15 @@ Optional plugins:
 		new success = _YSI_BCryptIsEqual();
 		// See below for why this line is commented.  It IS passed, secretly.
 		//#emit PUSH.S       success
+		#pragma unused success
 		#emit PUSH.S       extra
-		#emit PUSH.C       8
-		#emit LCTRL        6
-		#emit ADD.C        36
-		#emit LCTRL        8
+		#emit PUSH.C       __2_cells
+		#emit LCTRL        __cip
+		#emit ADD.C        __9_cells
+		#emit LCTRL        __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri   ptr
-		#emit SCTRL        6
+		#emit SCTRL        __cip
 		// Fun fact.  If we just got rid of `PUSH.S success` and added `RETN` right here, the code
 		// would still work because the `new` pushes the result on to the stack, then we push it a
 		// second time.
@@ -129,19 +130,19 @@ Optional plugins:
 		// Call the original function.
 		#emit PUSH.S       hashid
 		#emit PUSH.S       extra
-		#emit PUSH.C       8
-		#emit LCTRL        6
-		#emit ADD.C        36
-		#emit LCTRL        8
+		#emit PUSH.C       __2_cells
+		#emit LCTRL        __cip
+		#emit ADD.C        __9_cells
+		#emit LCTRL        __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri   ptr
-		#emit SCTRL        6
+		#emit SCTRL        __cip
 	}
 
 	stock bool:BCrypt_Check(extra, const callback[], const password[], const hash[])
 	{
 		new ptr;
-		return AMX_GetPublicPointer(0, ptr, callback) && _YSI_BCryptCheck(password, hash, "_YSI_BCryptCheckDone", "ii", extra, ptr);
+		return AMX_GetPublicPointer(0, ptr, callback, true) && _YSI_BCryptCheck(password, hash, "_YSI_BCryptCheckDone", "ii", extra, ptr);
 	}
 
 	stock BCrypt_Hash(extra, const callback[], const password[], cost)
@@ -149,7 +150,7 @@ Optional plugins:
 		new ptr;
 		return
 			++_YSI_gHashID,
-			AMX_GetPublicPointer(0, ptr, callback) && _YSI_BCryptHash(password, cost, "_YSI_BCryptHashDone", "iii", extra, ptr, _YSI_gHashID) ? _YSI_gHashID : 0;
+			AMX_GetPublicPointer(0, ptr, callback, true) && _YSI_BCryptHash(password, cost, "_YSI_BCryptHashDone", "iii", extra, ptr, _YSI_gHashID) ? _YSI_gHashID : 0;
 	}
 #elseif defined _samp_bcrypt_included
 	// I've never had to de-const a native before!

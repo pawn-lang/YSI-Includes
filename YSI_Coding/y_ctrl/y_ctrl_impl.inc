@@ -73,13 +73,15 @@ Optional plugins:
 
 #define @y_L%0\32; @y_L
 #define @y_S%0\32; @y_S
+#define @y_L0000%0\32; @y_L0000
+#define @y_S0000%0\32; @y_S0000
 
 // The `LCTRL` and `SCTRL` codes are replaced by `CALL`s to these public
 // functions.  We thus need to be exceptionally careful about the code run in
 // them.  They need to set the parameters (since there was no value pushed), and
 // preserve both `pri` and `alt` to pass to the child implementation.
-#define @lctrl(%0)%1(%2) @y_L%0(); @y_L%0() { return %1(0, 0); } %1(%2)
-#define @sctrl(%0)%1(%2) @y_S%0(); @y_S%0() { %1(0, 0); } %1(%2)
+#define @lctrl(%0)%1(%2) _F<@y_L,%0>(); _F<@y_L,%0>() { return %1(0, 0); } %1(%2)
+#define @sctrl(%0)%1(%2) _F<@y_S,%0>(); _F<@y_S,%0>() { %1(0, 0); } %1(%2)
 
 // The code found in the function.  Replaces everything, including `PROC` (so
 // there is no frame update yet):
@@ -94,47 +96,50 @@ static stock
 
 public OnCodeInit()
 {
-	YSI_g_sBaseRelocation = -DisasmReloc(0);
-	YSI_g_sLCTRLStubAddress = addressof (CTRL_LCTRLStub) + 4 + YSI_g_sBaseRelocation;
-	YSI_g_sSCTRLStubAddress = addressof (CTRL_SCTRLStub) + 4 + YSI_g_sBaseRelocation;
-
-	// Scan for `LCTRL` and `SCTRL`.  Modify any that are >= 256 to calls.
-	// Optimised.
-	new scanner[CodeScanner];
-	CodeScanInit(scanner);
-
-	new lctrl[CodeScanMatcher];
-	CodeScanMatcherInit(lctrl, &CTRL_FoundLCTRL);
-	CodeScanMatcherPattern(lctrl,
-		OP(LCTRL, ???)
-	);
-	CodeScanAddMatcher(scanner, lctrl);
-
-	new sctrl[CodeScanMatcher];
-	CodeScanMatcherInit(sctrl, &CTRL_FoundSCTRL);
-	CodeScanMatcherPattern(sctrl,
-		OP(SCTRL, ???)
-	);
-	CodeScanAddMatcher(scanner, sctrl);
-
-	CodeScanRun(scanner);
-
-	// Rewrite the functions after scanning so that we can still look up their
-	// addresses before invalidating them all (not that we currently do).
-
-	// Loop over all `@y_L` (`LCTRL`) and `@y_S` (`SCTRL`) functions and convert
-	// their file contents.
-	new
-		idx = 0,
-		addr;
-	while ((idx = AMX_GetPublicPointerPrefix(idx, addr, _A<@y_L>)))
 	{
-		CTRL_WriteLCTRLStub(addr);
-	}
+		YSI_g_sBaseRelocation = -DisasmReloc(0);
+		YSI_g_sLCTRLStubAddress = addressof (CTRL_LCTRLStub) + __1_cell + YSI_g_sBaseRelocation;
+		YSI_g_sSCTRLStubAddress = addressof (CTRL_SCTRLStub) + __1_cell + YSI_g_sBaseRelocation;
 
-	while ((idx = AMX_GetPublicPointerPrefix(idx, addr, _A<@y_S>)))
-	{
-		CTRL_WriteSCTRLStub(addr);
+		// Scan for `LCTRL` and `SCTRL`.  Modify any that are >= 256 to calls.
+		// Optimised.
+		new scanner[CodeScanner];
+		CodeScanInit(scanner);
+
+		new lctrl[CodeScanMatcher];
+		CodeScanMatcherInit(lctrl, &CTRL_FoundLCTRL);
+		CodeScanMatcherPattern(lctrl,
+			OP(LCTRL, ???)
+		);
+		CodeScanAddMatcher(scanner, lctrl);
+
+		new sctrl[CodeScanMatcher];
+		CodeScanMatcherInit(sctrl, &CTRL_FoundSCTRL);
+		CodeScanMatcherPattern(sctrl,
+			OP(SCTRL, ???)
+		);
+		CodeScanAddMatcher(scanner, sctrl);
+
+		CodeScanRun(scanner);
+
+		// Rewrite the functions after scanning so that we can still look up
+		// their addresses before invalidating them all (not that we currently
+		// do).
+
+		// Loop over all `@y_L` (`LCTRL`) and `@y_S` (`SCTRL`) functions and
+		// convert their file contents.
+		new
+			idx = 0,
+			addr;
+		while ((idx = AMX_GetPublicPointerPrefix(idx, addr, _A<@y_L>)))
+		{
+			CTRL_WriteLCTRLStub(addr);
+		}
+
+		while ((idx = AMX_GetPublicPointerPrefix(idx, addr, _A<@y_S>)))
+		{
+			CTRL_WriteSCTRLStub(addr);
+		}
 	}
 
 	#if defined CTRL_OnCodeInit
@@ -162,29 +167,29 @@ static stock CTRL_LCTRLStub()
 	#emit PUSH.pri
 
 	// We can finally "enter" the function.
-	#emit PUSH.C           16
+	#emit PUSH.C           __4_cells
 	#emit PUSH.pri
 	#emit PROC
 
 	// Get the return address.
-	#emit LOAD.S.pri       24
-	#emit STOR.S.pri       4
+	#emit LOAD.S.pri       __param3_offset
+	#emit STOR.S.pri       __return_offset
 
 	// Push the `pri` and `alt` parameters.
-	#emit PUSH.S           16
-	#emit PUSH.S           12
-	#emit PUSH.C           8
+	#emit PUSH.S           __param1_offset
+	#emit PUSH.S           __param0_offset
+	#emit PUSH.C           __2_cells
 
 	// And set up a second function call.
-	#emit LCTRL            6
-	#emit ADD.C            36
-	#emit LCTRL            8
+	#emit LCTRL            __cip
+	#emit ADD.C            __9_cells
+	#emit LCTRL            __jmp
 	#emit PUSH.pri
-	#emit LOAD.S.pri       20
-	#emit SCTRL            6
+	#emit LOAD.S.pri       __param2_offset
+	#emit SCTRL            __cip
 
 	// We return to here, from which cleanup is easy.
-	#emit LOAD.S.alt       16
+	#emit LOAD.S.alt       __param1_offset
 	#emit RETN
 }
 
@@ -197,30 +202,30 @@ static stock CTRL_SCTRLStub()
 	#emit PUSH.pri
 
 	// We can finally "enter" the function.
-	#emit PUSH.C           16
+	#emit PUSH.C           __4_cells
 	#emit PUSH.pri
 	#emit PROC
 
 	// Get the return address.
-	#emit LOAD.S.pri       24
-	#emit STOR.S.pri       4
+	#emit LOAD.S.pri       __param3_offset
+	#emit STOR.S.pri       __return_offset
 
 	// Push the `pri` and `alt` parameters.
-	#emit PUSH.S           16
-	#emit PUSH.S           12
-	#emit PUSH.C           8
+	#emit PUSH.S           __param1_offset
+	#emit PUSH.S           __param0_offset
+	#emit PUSH.C           __2_cells
 
 	// And set up a second function call.
-	#emit LCTRL            6
-	#emit ADD.C            36
-	#emit LCTRL            8
+	#emit LCTRL            __cip
+	#emit ADD.C            __9_cells
+	#emit LCTRL            __jmp
 	#emit PUSH.pri
-	#emit LOAD.S.pri       20
-	#emit SCTRL            6
+	#emit LOAD.S.pri       __param2_offset
+	#emit SCTRL            __cip
 
 	// We return to here, from which cleanup is easy.
-	#emit LOAD.S.alt       16
-	#emit LOAD.S.pri       12
+	#emit LOAD.S.alt       __param1_offset
+	#emit LOAD.S.pri       __param0_offset
 	#emit RETN
 }
 
@@ -243,11 +248,11 @@ static stock CTRL_WriteLCTRLStub(addr)
 
 	new
 		ctx[AsmContext];
-	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 32);
+	AsmInitPtr(ctx, addr + AMX_HEADER_COD, __8_cells);
 
 	// Write a function in case someone tries to call this public normally.
 	@emit PROC
-	@emit CALL.abs         addr + 16
+	@emit CALL.abs         addr + __4_cells
 	@emit RETN
 
 	// Push the implementation address and jump to the common register
@@ -263,7 +268,7 @@ static stock CTRL_WriteLCTRLStub(addr)
 	//     ZERO.pri
 	//     PUSH.pri
 	//     PUSH.pri
-	//     PUSH.C              8
+	//     PUSH.C              __2_cells
 	//     CALL                %1
 	//     RETN
 	//
@@ -288,12 +293,12 @@ static stock CTRL_WriteSCTRLStub(addr)
 
 	new
 		ctx[AsmContext];
-	AsmInitPtr(ctx, addr + AMX_HEADER_COD, 32);
+	AsmInitPtr(ctx, addr + AMX_HEADER_COD, __8_cells);
 
 	// Write a tiny empty function in case someone tries to call this public
 	// normally.
 	@emit PROC
-	@emit CALL.abs         addr + 16
+	@emit CALL.abs         addr + __4_cells
 	@emit RETN
 
 	@emit PUSH.C           handlerAddress
@@ -302,53 +307,59 @@ static stock CTRL_WriteSCTRLStub(addr)
 
 static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
 {
+	Debug_Print6("CTRL_FoundLCTRL: Found LCTRL");
 	new reg = CodeScanGetMatchHole(scanner, 0);
 	if (0 <= reg <= 255)
 	{
 		// Reserved registers (VM and plugins).  Do nothing.
 		return;
 	}
+	Debug_Print4("CTRL_FoundLCTRL Valid: %d", reg);
 	new
 		ctx[AsmContext];
-	AsmInitPtr(ctx, CodeScanGetMatchAddress(scanner) + AMX_HEADER_COD, 8);
+	AsmInitPtr(ctx, CodeScanGetMatchAddress(scanner) + AMX_HEADER_COD, __2_cells);
 	new
 		ptr,
 		name[FUNCTION_LENGTH];
-	format(name, sizeof (name), "@y_L%d", reg);
-	if (AMX_GetPublicPointer(0, ptr, name))
+	format(name, sizeof (name), #_F<@y_L,%d>,reg);//NOSPACE!
+	if (AMX_GetPublicPointer(0, ptr, name, true))
 	{
-		@emit CALL.abs         ptr + 16
+		@emit CALL.abs         ptr + __4_cells
 	}
 	else
 	{
 		@emit NOP
 		@emit NOP
 	}
+	Debug_Print5("CTRL_FoundLCTRL Name: %s, Index: %d, %d", name, ptr, AMX_GetPublicPointer(0, ptr, name, true));
 }
 
 static stock CTRL_FoundSCTRL(const scanner[CodeScanner])
 {
+	Debug_Print6("CTRL_FoundSCTRL: Found SCTRL");
 	new reg = CodeScanGetMatchHole(scanner, 0);
 	if (0 <= reg <= 255)
 	{
 		// Reserved registers (VM and plugins).  Do nothing.
 		return;
 	}
+	Debug_Print4("CTRL_FoundSCTRL Valid: %d", reg);
 	new
 		ctx[AsmContext];
-	AsmInitPtr(ctx, CodeScanGetMatchAddress(scanner) + AMX_HEADER_COD, 8);
+	AsmInitPtr(ctx, CodeScanGetMatchAddress(scanner) + AMX_HEADER_COD, __2_cells);
 	new
 		ptr,
 		name[FUNCTION_LENGTH];
-	format(name, sizeof (name), "@y_S%d", reg);
-	if (AMX_GetPublicPointer(0, ptr, name))
+	format(name, sizeof (name), #_F<@y_S,%d>,reg);//NOSPACE!
+	if (AMX_GetPublicPointer(0, ptr, name, true))
 	{
-		@emit CALL.abs         ptr + 16
+		@emit CALL.abs         ptr + __4_cells
 	}
 	else
 	{
 		@emit NOP
 		@emit NOP
 	}
+	Debug_Print5("CTRL_FoundSCTRL Name: %s, Index: %d, %d", name, ptr, AMX_GetPublicPointer(0, ptr, name, true));
 }
 

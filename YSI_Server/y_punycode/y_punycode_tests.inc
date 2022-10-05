@@ -71,56 +71,56 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-TEST__ y_punycode_1()
+@test(.group = "y_punycode") y_punycode_1()
 {
 	new
 		dst[32];
 	Puny_Encode(dst, "bücher");
-	P:1("TEST__ y_punycode_1: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kva");
 	Puny_Encode(dst, "büücher");
-	P:1("TEST__ y_punycode_1: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kvaa");
 	Puny_Encode(dst, "bücüher");
-	P:1("TEST__ y_punycode_1: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kvab");
 	Puny_Encode(dst, "bücherü");
-	P:1("TEST__ y_punycode_1: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kvae");
 	Puny_Encode(dst, "ýbücher");
-	P:1("TEST__ y_punycode_1: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kvaf");
 	Puny_Encode(dst, "übücher");
-	P:1("TEST__ y_punycode_1: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-jvab");
 }
 
-TEST__ y_punycode_2()
+@test(.group = "y_punycode") y_punycode_2()
 {
 	new
 		dst[32],
 		hash = 0;
 	Puny_EncodeHash(dst, "bücher", hash);
-	P:1("TEST__ y_punycode_2: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kva");
 	Puny_EncodeHash(dst, "büCHer", hash);
-	P:1("TEST__ y_punycode_2: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kva");
 	Puny_EncodeHash(dst, "BücHeR", hash);
-	P:1("TEST__ y_punycode_2: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kva");
 	Puny_EncodeHash(dst, "bücHER", hash);
-	P:1("TEST__ y_punycode_2: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kva");
 	Puny_EncodeHash(dst, "bÜcher", hash);
-	P:1("TEST__ y_punycode_2: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kva");
 	Puny_EncodeHash(dst, "bÜcher", hash, 32, '@');
-	P:1("TEST__ y_punycode_2: dst = %s", dst);
+	Debug_Print1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher@kva");
 }
 
-TEST__ y_punycode_hash()
+@test(.group = "y_punycode") y_punycode_hash()
 {
 	new
 		dst[32],

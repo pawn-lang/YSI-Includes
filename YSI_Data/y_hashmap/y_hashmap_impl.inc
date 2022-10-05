@@ -80,8 +80,8 @@ Optional plugins:
 
 #define HashMap:%0<%1> %0[HASH_MAP_SIZE + 5]
 
-#define HASH_MAP_DIR_LEFT  (4)
-#define HASH_MAP_DIR_RIGHT (8)
+#define HASH_MAP_DIR_LEFT  (1 * cellbytes)
+#define HASH_MAP_DIR_RIGHT (2 * cellbytes)
 
 // There are three pieces of hash map data associated with each stored string.
 // In byte offsets, these are:
@@ -101,7 +101,7 @@ Optional plugins:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(HashMap_Hash(str[],&hash));
+FUNC_PAWNDOC(HashMap_Hash(str[],&hash));
 #define HashMap_Hash(%0,%1) (%1=YHash(%0))
 
 /*-------------------------------------------------------------------------*//**
@@ -116,7 +116,7 @@ P:D(HashMap_Hash(str[],&hash));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(HashMap_Init(HashMap:m<>, target[][], slot));
+FUNC_PAWNDOC(HashMap_Init(HashMap:m<>, target[][], slot));
 
 /*-------------------------------------------------------------------------*//**
  * <param name="m">Hash map to initialise.</param>
@@ -191,9 +191,10 @@ stock HashMap_GetUnused(HashMap:m<>)
 		ptr = m[HASH_MAP_UNUSED];
 	if (ptr)
 	{
+		const offset = (256 + 4) * cellbytes;
 		// Get the next slot.
 		#emit LOAD.S.pri m
-		#emit ADD.C      1040 // (256 + 4) * 4
+		#emit ADD.C      offset
 		#emit MOVE.alt
 		#emit LREF.S.pri ptr
 		#emit STOR.I
@@ -217,10 +218,11 @@ stock HashMap_AddUnused(HashMap:m<>, value)
 {
 	if (0 <= value < m[HASH_MAP_SIZE_1])
 	{
+		const offset = (256 + 4) * cellbytes;
 		// Convert the index to a pointer.
 		value = value * m[HASH_MAP_SIZE_2] + m[HASH_MAP_PTR];
 		#emit LOAD.S.pri m
-		#emit ADD.C      1040 // (256 + 4) * 4
+		#emit ADD.C      offset
 		#emit MOVE.alt
 		// Store the current value of "m[HASH_MAP_UNUSED]" in "*value".
 		#emit LOAD.I
@@ -242,8 +244,8 @@ stock HashMap_AddUnused(HashMap:m<>, value)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(HashMap_ByteLen(str[]));
-#define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (2 * _:!ispacked((%0))))
+FUNC_PAWNDOC(HashMap_ByteLen(str[]));
+#define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (__COMPILER_CELL_SHIFT * _:!ispacked((%0))))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="ignorecase"></param>
@@ -260,7 +262,7 @@ P:D(HashMap_ByteLen(str[]));
 
 stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignorecase = false)
 {
-	P:3("HashMap_Add called: %d <= %d < %d", 0, value, m[HASH_MAP_SIZE_1]);
+	Debug_Print3("HashMap_Add called: %d <= %d < %d", 0, value, m[HASH_MAP_SIZE_1]);
 	if (0 <= value < m[HASH_MAP_SIZE_1])
 	{
 		// Check if the index is already in a hash map.  Doesn't work if the
@@ -271,7 +273,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 			ptr = 0,
 			res = 0;
 		// Add this entry to the correct binary tree.
-		P:5("HashMap_Add: mask = %d", hash & 0xFF);
+		Debug_Print5("HashMap_Add: mask = %d", hash & 0xFF);
 		new
 			prev = AMX_Ref(m[hash & 0xFF]),
 			next = 0;
@@ -286,24 +288,25 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 			#emit STOR.pri    res
 			if (hash == res)
 			{
+				const offset = (256 + 3) * cellbytes;
 				// It doesn't matter which way we go on matching hashes, as long
 				// as the direction is consistent.
-				#emit PUSH.C      0x7FFFFFFF
+				#emit PUSH.C      cellmax
 				#emit PUSH.S      ignorecase
 				#emit PUSH.S      str
 				#emit LOAD.S.pri  m
-				#emit ADD.C       1036 // 256 * 4 + 3 * 4
+				#emit ADD.C       offset
 				#emit LOAD.I
 				#emit LOAD.S.alt  next
 				#emit SUB.alt
 				#emit PUSH.pri
-				#emit PUSH.C      16
+				#emit PUSH.C      __4_cells
 				#emit SYSREQ.C    strcmp
-				#emit STACK       20
+				#emit STACK       __5_cells
 				#emit STOR.pri    ptr
 				if (ptr == 0)
 				{
-					P:E("Trying to add two copies of a string to a hashmap: \"%s\", %d", str, value);
+					Debug_Error("Trying to add two copies of a string to a hashmap: \"%s\", %d", str, value);
 					return false;
 				}
 				else if (ptr < 0) // Lower, move left.
@@ -316,7 +319,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 			else // Higher, move right.
 				prev = next + HASH_MAP_DIR_RIGHT;
 		}
-		P:6("HashMap_Add: used = %d", AMX_Read(m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2]));
+		Debug_Print6("HashMap_Add: used = %d", AMX_Read(m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2]));
 		// Get the address of this structure.
 		ptr = m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2],
 		// Copy the hashed value.
@@ -401,7 +404,7 @@ stock HashMap_Get(HashMap:m<>, const str[], bool:ignorecase = false)
 
 stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = false)
 {
-	P:3("HashMap_Get called: mask = %d (%d)", hash, hash & 0xFF);
+	Debug_Print3("HashMap_Get called: mask = %d (%d)", hash, hash & 0xFF);
 	new
 		prev = AMX_Ref(m[hash & 0xFF]),
 		next = 0;
@@ -418,20 +421,21 @@ stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = fals
 		#emit STOR.pri    res
 		if (hash == res)
 		{
+			const offset = (256 + 3) * cellbytes;
 			// It doesn't matter which way we go on matching hashes, as long
 			// as the direction is consistent.
-			#emit PUSH.C      0x7FFFFFFF
+			#emit PUSH.C      cellmax
 			#emit PUSH.S      ignorecase
 			#emit PUSH.S      str
 			#emit LOAD.S.pri  m
-			#emit ADD.C       1036 // 256 * 4 + 3 * 4
+			#emit ADD.C       offset
 			#emit LOAD.I
 			#emit LOAD.S.alt  next
 			#emit SUB.alt
 			#emit PUSH.pri
-			#emit PUSH.C      16
+			#emit PUSH.C      __4_cells
 			#emit SYSREQ.C    strcmp
-			#emit STACK       20
+			#emit STACK       __5_cells
 			#emit STOR.pri    res
 			if (res == 0)
 			{
@@ -479,20 +483,21 @@ stock bool:HashMap_RemoveKeyWithHash(HashMap:m<>, const str[], hash, bool:ignore
 		#emit STOR.pri    res
 		if (hash == res)
 		{
+			const offset = (256 + 3) * cellbytes;
 			// It doesn't matter which way we go on matching hashes, as long
 			// as the direction is consistent.
-			#emit PUSH.C      0x7FFFFFFF
+			#emit PUSH.C      cellmax
 			#emit PUSH.S      ignorecase
 			#emit PUSH.S      str
 			#emit LOAD.S.pri  m
-			#emit ADD.C       1036 // 256 * 4 + 3 * 4
+			#emit ADD.C       offset
 			#emit LOAD.I
 			#emit LOAD.S.alt  next
 			#emit SUB.alt
 			#emit PUSH.pri
-			#emit PUSH.C      16
+			#emit PUSH.C      __4_cells
 			#emit SYSREQ.C    strcmp
-			#emit STACK       20
+			#emit STACK       __5_cells
 			#emit STOR.pri    res
 			if (res == 0)
 			{
@@ -601,7 +606,7 @@ stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 			sString[128 char];
 		new
 			size = m[HASH_MAP_SIZE_3];
-		RawMemCpy(AMX_Ref(sString[0]), m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2] - size, min(size, sizeof (sString) * 4));
+		RawMemCpy(AMX_Ref(sString[0]), m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2] - size, min(size, sizeof (sString) * cellbytes));
 		return HashMap_RemoveKey(m, sString);
 	}
 	return false;

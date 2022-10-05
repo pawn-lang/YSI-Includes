@@ -205,7 +205,7 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 	}
 	if (!fhnd)
 	{
-		P:W("Could not write to profiling results file \"%s\".", name);
+		Debug_Warning("Could not write to profiling results file \"%s\".", name);
 		return;
 	}
 	va_fprintf(fhnd, "%d,%d,%d", gettime(), size, iters);
@@ -236,9 +236,7 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 			ip[16];
 		GetPlayerIp(playerid, ip, sizeof (ip)),
 		YSI_gPlayerIP[playerid] = IPToInt(ip);
-		#if defined _y_utils_OnPlayerConnect
-			_y_utils_OnPlayerConnect(playerid);
-		#endif
+		ScriptInit_OnPlayerConnect(playerid);
 		return 1;
 	}
 
@@ -247,18 +245,13 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 	#else
 		#define _ALS_OnPlayerConnect
 	#endif
-	#define OnPlayerConnect _y_utils_OnPlayerConnect
-
-	#if defined _y_utils_OnPlayerConnect
-		forward _y_utils_OnPlayerConnect(playerid);
-	#endif
+	#define OnPlayerConnect(%0) CHAIN_PUBLIC:ScriptInit_OnPlayerConnect(%0)
+	CHAIN_FORWARD:ScriptInit_OnPlayerConnect(playerid) = 1;
 
 	public OnPlayerDisconnect(playerid, reason)
 	{
+		ScriptInit_OnPlayerDisconnect(playerid, reason);
 		YSI_gPlayerIP[playerid] = -1;
-		#if defined _y_utils_OnPlayerDisconnect
-			_y_utils_OnPlayerDisconnect(playerid, reason);
-		#endif
 		return 1;
 	}
 
@@ -267,11 +260,8 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 	#else
 		#define _ALS_OnPlayerDisconnect
 	#endif
-	#define OnPlayerDisconnect _y_utils_OnPlayerDisconnect
-
-	#if defined _y_utils_OnPlayerDisconnect
-		forward _y_utils_OnPlayerDisconnect(playerid, reason);
-	#endif
+	#define OnPlayerDisconnect(%0) CHAIN_PUBLIC:ScriptInit_OnPlayerDisconnect(%0)
+	CHAIN_FORWARD:ScriptInit_OnPlayerDisconnect(playerid, reason) = 1;
 
 	/*-------------------------------------------------------------------------*//**
 	 * <param name="playerid">Player to get IP of.</param>
@@ -281,7 +271,7 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 	 *//*------------------------------------------------------------------------**/
 
 	// Cunning macro only uses "%0" once, yet is still safe.
-	P:D(GetIP(playerid));
+	FUNC_PAWNDOC(GetIP(playerid));
 	#define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 #endif
 
@@ -347,7 +337,7 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:UCMP(value, upper));
+FUNC_PAWNDOC(bool:UCMP(value, upper));
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
 
 /*-------------------------------------------------------------------------*//**
@@ -360,7 +350,7 @@ P:D(bool:UCMP(value, upper));
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsNaN(Float:value));
+FUNC_PAWNDOC(bool:IsNaN(Float:value));
 #define IsNaN(%0) IS_NAN(%0)
 
 /*-------------------------------------------------------------------------*//**
@@ -370,7 +360,7 @@ P:D(bool:IsNaN(Float:value));
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:VALID_PLAYERID(playerid));
+FUNC_PAWNDOC(bool:VALID_PLAYERID(playerid));
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
 /*-------------------------------------------------------------------------*//**
@@ -388,7 +378,7 @@ P:D(bool:VALID_PLAYERID(playerid));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IS_IN_RANGE(value, lower, upper));
+FUNC_PAWNDOC(bool:IS_IN_RANGE(value, lower, upper));
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
@@ -406,7 +396,7 @@ P:D(bool:IS_IN_RANGE(value, lower, upper));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:NOT_IN_RANGE(value, lower, upper));
+FUNC_PAWNDOC(bool:NOT_IN_RANGE(value, lower, upper));
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
@@ -420,7 +410,7 @@ P:D(bool:NOT_IN_RANGE(value, lower, upper));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(ceildiv(numerator, denominator));
+FUNC_PAWNDOC(ceildiv(numerator, denominator));
 #if defined ceildiv
 	#undef ceildiv
 #endif
@@ -446,7 +436,7 @@ P:D(ceildiv(numerator, denominator));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(floordiv(numerator, denominator));
+FUNC_PAWNDOC(floordiv(numerator, denominator));
 #if defined floordiv
 	#undef floordiv
 #endif
@@ -469,14 +459,8 @@ P:D(floordiv(numerator, denominator));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsNull(const string:str[]));
-#if cellbytes == 4
-	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x01000000)
-#elseif cellbytes == 8
-	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==0x0100000000000000)
-#else
-	#error Unsupported packed string size.
-#endif
+FUNC_PAWNDOC(bool:IsNull(const string:str[]));
+#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==YSI_PackedStringMax__)
 
 #if defined isnull
 	#undef isnull
@@ -494,7 +478,7 @@ P:D(bool:IsNull(const string:str[]));
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsOdd(value));
+FUNC_PAWNDOC(bool:IsOdd(value));
 #define IsOdd(%0) ((%0)&1)
 
 #if defined isodd
@@ -513,7 +497,7 @@ P:D(bool:IsOdd(value));
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IsEven(value));
+FUNC_PAWNDOC(bool:IsEven(value));
 #define IsEven(%0) (~(%0)&1)
 
 #if defined iseven
@@ -534,7 +518,7 @@ P:D(bool:IsEven(value));
  * <param name="len">(Implicit) maximum length of the destination.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(StrCpy(string:dest[], const string:src[], len = sizeof (dest)));
+FUNC_PAWNDOC(StrCpy(string:dest[], const string:src[], len = sizeof (dest)));
 #define StrCpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
 
 #if defined strcpy
@@ -559,7 +543,7 @@ stock StrToLower(string:str[], len = sizeof (str))
 	new
 		i = -1,
 		ch = 0;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while ((ch = str{++i}) && len--)
 			str{i} = tolower(ch);
@@ -581,7 +565,7 @@ stock StrToUpper(string:str[], len = sizeof (str))
 	new
 		i = -1,
 		ch = 0;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while ((ch = str{++i}) && len--)
 			str{i} = toupper(ch);
@@ -599,7 +583,11 @@ stock StrToUpper(string:str[], len = sizeof (str))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomMulberry32()
+#if cellbits == 32
+	stock RandomMulberry32()
+#else
+	static stock RandomMulberry32__()
+#endif
 {
 	static s = 0;
 
@@ -643,11 +631,73 @@ stock RandomMulberry32()
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
+ *   Relatively high quality 32-bit PRNG.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#if cellbits == 64
+	stock RandomMulberry32()
+#else
+	static stock RandomMulberry32__()
+#endif
+{
+	static s = 0;
+
+	// z = (s += 0x6D2B79F5);
+	#emit LOAD.pri     s
+	#emit ADD.C        0x6D2B79F5
+	#emit STOR.pri     s
+
+	// z = (z ^ z >>> 15) * (1 | z);
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
+	#emit MOVE.alt
+	#emit SHR.C.pri    15
+	#emit XOR
+	#emit PUSH.pri
+	#emit CONST.pri    1
+	#emit OR
+	#emit POP.alt
+	#emit UMUL
+
+	// z ^= z + (z ^ z >>> 7) * (61 | z);
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
+	#emit PUSH.pri
+	#emit MOVE.alt
+	#emit SHR.C.pri    7
+	#emit XOR
+	#emit PUSH.pri
+	#emit CONST.pri    61
+	#emit OR
+	#emit POP.alt
+	#emit UMUL
+	#emit POP.alt
+	#emit ADD
+	#emit XOR
+
+	// return z ^ z >>> 14;
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
+	#emit MOVE.alt
+	#emit SHR.C.pri    14
+	#emit XOR
+	#emit RETN
+
+	__pragma("naked");
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
  *   Slightly lower quality 32-bit PRNG.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomSplitMix32()
+#if cellbits == 32
+	stock RandomSplitMix32()
+#else
+	static stock RandomSplitMix32__()
+#endif
 {
 	static s = 0;
 
@@ -675,6 +725,58 @@ stock RandomSplitMix32()
 	#emit UMUL
 
 	// return z ^= z >> 16;
+	#emit MOVE.alt
+	#emit SHR.C.pri    16
+	#emit XOR
+	#emit RETN
+
+	__pragma("naked");
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *   Slightly lower quality 32-bit PRNG.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#if cellbits == 64
+	stock RandomSplitMix32()
+#else
+	static stock RandomSplitMix32__()
+#endif
+{
+	static s = 0;
+
+	// z = (s += 0x9E3779B9);
+	#emit LOAD.pri     s
+	#emit ADD.C        0x9E3779B9
+	#emit STOR.pri     s
+
+	// z ^= z >> 15;
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
+	#emit MOVE.alt
+	#emit SHR.C.pri    15
+	#emit XOR
+
+	// z *= 0x85EBCA6B;
+	#emit CONST.alt    0x85EBCA6B
+	#emit UMUL
+
+	// z ^= z >> 13;
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
+	#emit MOVE.alt
+	#emit SHR.C.pri    13
+	#emit XOR
+
+	// z *= 0xC2B2AE35;
+	#emit CONST.alt    0xC2B2AE35
+	#emit UMUL
+
+	// return z ^= z >> 16;
+	#emit CONST.alt    0xFFFFFFFF
+	#emit AND
 	#emit MOVE.alt
 	#emit SHR.C.pri    16
 	#emit XOR
@@ -896,10 +998,10 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 
 stock StripNL(string:str[])
 {
-	P:7("StripNL called: \"%s\"", str);
+	Debug_Print7("StripNL called: \"%s\"", str);
 	new
 		i = strlen(str);
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while (i-- && str{i} <= ' ') str{i} = '\0';
 	}
@@ -916,7 +1018,7 @@ stock StripNL(string:str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(StripR(string:str[]));
+FUNC_PAWNDOC(StripR(string:str[]));
 #define StripR StripNL
 
 /*-------------------------------------------------------------------------*//**
@@ -925,17 +1027,17 @@ P:D(StripR(string:str[]));
 
 stock StripL(string:str[])
 {
-	P:7("StripL called: \"%s\"", str);
+	Debug_Print7("StripL called: \"%s\"", str);
 	new
 		len = strlen(str),
 		i = 0;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while (IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1)) ++i;
 		// The byte offsets in `memcpy` are broken, and packed strings aren't
 		// even in order.  Thus we do it the slow way.
-		//if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
-		//P:E("Cannot use `StripL` on a packed string");
+		//if (i) memcpy(str[0], str[i], 0, (len - i) * cellbytes, len);
+		//Debug_Error("Cannot use `StripL` on a packed string");
 		if (i)
 		{
 			for (new j = 0; (str{j} = str{i}); ++i, ++j) {}
@@ -946,7 +1048,7 @@ stock StripL(string:str[])
 		while (IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1)) ++i;
 		if (i)
 		{
-			memcpy(str[0], str[i], 0, (len - i + 1) * 4, len);
+			memcpy(str[0], str[i], 0, (len - i + 1) * cellbytes, len);
 		}
 	}
 }
@@ -957,11 +1059,11 @@ stock StripL(string:str[])
 
 stock Strip(string:str[])
 {
-	P:7("Strip called: \"%s\"", str);
+	Debug_Print7("Strip called: \"%s\"", str);
 	new
 		len = strlen(str),
 		i = len;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while (i-- && str{i} <= ' ') str{i} = '\0';
 		for (i = 0; IS_IN_RANGE(str{i}, '\0' + 1, ' ' + 1); ++i) {}
@@ -976,7 +1078,7 @@ stock Strip(string:str[])
 		for (i = 0; IS_IN_RANGE(str[i], '\0' + 1, ' ' + 1); ++i) {}
 		if (i)
 		{
-			memcpy(str[0], str[i], 0, (len - i + 1) * 4, len);
+			memcpy(str[0], str[i], 0, (len - i + 1) * cellbytes, len);
 		}
 	}
 }
@@ -991,9 +1093,9 @@ stock Strip(string:str[])
 
 stock bool:EndOfLine(const string:line[], pos)
 {
-	P:7("EndOfLine called: \"%s\", %i", line, pos);
+	Debug_Print7("EndOfLine called: \"%s\", %i", line, pos);
 	if (NOT_IN_RANGE(pos, 0, strlen(line))) return false;
-	if (YSI_IsPacked__(line))
+	if (YSI_IsLocalVarPackedString__(line))
 	{
 		while (IS_IN_RANGE(line{pos}, '\0' + 1, ' ' + 1)) ++pos;
 		return !line{pos};
@@ -1022,7 +1124,7 @@ stock bool:endofline(const string:line[], pos)
 
 stock ChrFind(needle, const string:haystack[], start = 0)
 {
-	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
+	Debug_Print3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
 	new search[2];
 	search[0] = needle;
 	return strfind(haystack, search, false, start);
@@ -1059,22 +1161,22 @@ stock chrfindp(needle, const string:haystack[], start = 0)
 
 stock IPToInt(const string:ip[])
 {
-	if (YSI_IsPacked__(ip))
+	if (YSI_IsLocalVarPackedString__(ip))
 	{
 		new
-			ipv = strval(ip) << 24,
-			pos = 0,
-			tmp[4];
-		while (pos < 15 && ip{pos++} != '.') {}
-		// This is the only way to extract part of a packed string.
-		strmid(tmp, ip, pos, cellmax);
-		ipv += strval(tmp) << 16;
-		while (pos < 15 && ip{pos++} != '.') {}
-		strmid(tmp, ip, pos, cellmax);
-		ipv += strval(tmp) << 8;
-		while (pos < 15 && ip{pos++} != '.') {}
-		strmid(tmp, ip, pos, cellmax);
-		return ipv + strval(tmp);
+			ipv = 0;
+		// `strmid` doesn't seem to work correctly on packed strings in SA:MP.
+		// Do this the hard way...
+		for (new i = 0, ch, tmp, pos = 0; i != 4; ++i)
+		{
+			tmp = 0;
+			while ((ch = ip{pos++}) && ch != '.')
+			{
+				tmp = tmp * 10 + ch - '0';
+			}
+			ipv = ipv << 8 | tmp;
+		}
+		return ipv;
 	}
 	else
 	{
@@ -1124,39 +1226,43 @@ stock IPToInt(const string:ip[])
 
 stock BernsteinHash(const string:str[] /* 12 */)
 {
-	if (YSI_IsPacked__(str))
+	new h = 5381, i = 0, j = 0;
+	if (YSI_IsLocalVarPackedString__(str))
 	{
-		new h = 5381, i = 0, j = 0;
 		while ((j = str{i++}))
 			h = h * 33 ^ j;
-		return h;
 	}
 	else
 	{
-		new h = 5381, i = 0, j = 0;
 		while ((j = str[i++]))
 			h = h * 33 ^ j;
-		return h;
 	}
+	#if cellbits == 64
+		return h & 0xFFFFFFFF;
+	#else
+		return h;
+	#endif
 }
 
 #pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
 stock bernstein(const string:str[] /* 12 */)
 {
-	if (YSI_IsPacked__(str))
+	new h = 5381, i = 0, j = 0;
+	if (YSI_IsLocalVarPackedString__(str))
 	{
-		new h = 5381, i = 0, j = 0;
 		while ((j = str{i++}))
 			h = h * 33 ^ j;
-		return h;
 	}
 	else
 	{
-		new h = 5381, i = 0, j = 0;
 		while ((j = str[i++]))
 			h = h * 33 ^ j;
-		return h;
 	}
+	#if cellbits == 64
+		return h & 0xFFFFFFFF;
+	#else
+		return h;
+	#endif
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1173,7 +1279,7 @@ stock bernstein(const string:str[] /* 12 */)
 
 stock JenkinsHash(const string:str[] /* 12 */)
 {
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		new h = 0, i = 0, j = 0;
 		while ((j = str{i++}))
@@ -1204,11 +1310,11 @@ stock JenkinsHash(const string:str[] /* 12 */)
 
 stock bool:IsHex(const string:str[])
 {
-	P:3("ishex called: \"%s\"", str);
+	Debug_Print3("ishex called: \"%s\"", str);
 	new
 		i = 0,
 		cur = 0;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		if (str{0} == '0' && (str{1} | 0x20) == 'x') i = 2;
 		do
@@ -1248,7 +1354,7 @@ stock bool:ishex(const string:str[])
 
 stock Unpack(const string:str[])
 {
-	P:3("Unpack called: \"%s\"", str);
+	Debug_Print3("Unpack called: \"%s\"", str);
 	new
 		ret[YSI_MAX_STRING] = {0};
 	if (strlen(str) <= YSI_MAX_STRING)
@@ -1263,7 +1369,7 @@ stock unpack(const string:str[])
 {
 	// Doesn't call the original, instead inlines the code because it returns a
 	// string, and the compiler doesn't like nested string returning functions.
-	P:3("unpack called: \"%s\"", str);
+	Debug_Print3("unpack called: \"%s\"", str);
 	new
 		ret[YSI_MAX_STRING] = {0};
 	if (strlen(str) <= YSI_MAX_STRING)
@@ -1298,7 +1404,7 @@ stock ReturnStringArg(idx)
 	// the argument required.
 	#emit LOAD.S.pri idx
 	// Then convert that number to bytes from cells.
-	#emit SMUL.C     4
+	#emit SMUL.C     cellbytes
 	// Get the previous function's frame.  Stored in variable 0 (in the current
 	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
 	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
@@ -1308,7 +1414,7 @@ stock ReturnStringArg(idx)
 	// Add the frame pointer to the argument offset in bytes.
 	#emit ADD
 	// Add 12 to skip over the function header.
-	#emit ADD.C      12
+	#emit ADD.C      __param0_offset
 	// Load the address stored in the specified address.
 	#emit LOAD.I
 	// Push the length for "strcat".
@@ -1316,7 +1422,7 @@ stock ReturnStringArg(idx)
 	// Push the address we just determined was the source.
 	#emit PUSH.pri
 	// Load the address of the secret destination.
-	#emit LOAD.S.alt 16
+	#emit LOAD.S.alt __param1_offset
 	// Blank the first cell so "strcat" behaves like "StrCpy".
 	#emit CONST.pri  0
 	// Store the loaded number 0 to the loaded address.
@@ -1324,11 +1430,11 @@ stock ReturnStringArg(idx)
 	// Push the loaded address.
 	#emit PUSH.alt
 	// Push the number of parameters passed (in bytes) to the function.
-	#emit PUSH.C     12
+	#emit PUSH.C     __3_cells
 	// Call the function.
 	#emit SYSREQ.C   strcat
 	// Restore the stack to its level before we called this native.
-	#emit STACK      16
+	#emit STACK      __4_cells
 	// Return without more string copying.
 	#emit RETN
 	
@@ -1357,8 +1463,8 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 	static
 		sFrm = 0,
 		sRet = 0,
-		sCnt = 0,
-		scSize = YSI_MAX_STRING;
+		sCnt = 0;
+	const size = YSI_MAX_STRING;
 	
 	// Store the function preamble.
 	#emit POP.pri
@@ -1367,11 +1473,11 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 	#emit POP.pri
 	#emit STOR.pri     sRet
 	#emit POP.pri
-	#emit ADD.C        8
+	#emit ADD.C        __2_cells
 	#emit STOR.pri     sCnt
 	
 	// Put the secret return parameter on the stack again to format in to.
-	#emit PUSH         scSize
+	#emit PUSH.C       size
 	#emit ADD
 	#emit LOAD.I
 	#emit PUSH.pri
@@ -1399,35 +1505,46 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:IsNumeric(const string:str[])
-{
-	P:4("IsNumeric called: \"%s\"", str);
-	new
-		i = -1;
-	if (YSI_IsPacked__(str))
+#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumeric__
+	stock bool:IsNumeric(const string:str[])
 	{
-		if (str{0} == '-') ++i;
-		while (IS_IN_RANGE(str{++i}, '0', '9' + 1)) {}
-		return !str{i};
+		Debug_Print4("IsNumeric called: \"%s\"", str);
+		// This function is copied in `y_core_entry` to test a compiler bug.
+		new
+			i = -1;
+		if (YSI_IsLocalVarPackedString__(str))
+		{
+			if (str{0} == '-') ++i;
+			while (IS_IN_RANGE(str{++i}, '0', '9' + 1)) {}
+			return !str{i};
+		}
+		else
+		{
+			if (str[0] == '-') ++i;
+			while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
+			return !str[i];
+		}
 	}
-	else
-	{
-		if (str[0] == '-') ++i;
-		while (IS_IN_RANGE(str[++i], '0', '9' + 1)) {}
-		return !str[i];
-	}
-}
 
-#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
-stock bool:isnumeric(const string:str[])
-{
-	return IsNumeric(str);
-}
+	#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
+	stock bool:isnumeric(const string:str[])
+	{
+		return IsNumeric(str);
+	}
+
+	// Ensure this branch is hit a second time.
+	stock YSI_IsNumeric__()
+	{
+	}
+#else
+	HIDE_PAWNDOC(YSI_IsNumeric);
+#endif
 
 // Detect a compiler issue.
 #if __COMPILER_FUNC_DECL_BUG
 	// Try disable the next `IsNumeric` declaration.
 	#define IsNumeric(%0[]) _@IsNumeric(%0[])
+	#define isnumeric(%0[]) _@isnumeric(%0[])
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -1508,7 +1625,7 @@ stock HexStr(const string:str[])
 		ret = 0,
 		val = 0,
 		i = 0;
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		if (str{0} == '0' && str{1} | 0x20 == 'x') i = 2;
 		for ( ; ; )
@@ -1580,7 +1697,7 @@ stock hexstr(const string:str[])
 stock bool:BoolStr(const string:str[])
 {
 	// Hooray for De Morgan's rules!
-	return str[0] && ((YSI_IsPacked__(str) ? str{0} : str[0]) != '0') && strcmp(str, "false", true);
+	return str[0] && ((YSI_IsLocalVarPackedString__(str) ? str{0} : str[0]) != '0') && strcmp(str, "false", true);
 }
 
 #pragma deprecated Use `BoolStr` (i.e. use proper capitalisation).
@@ -1602,7 +1719,7 @@ stock bool:boolstr(const string:str[])
 
 stock BinStr(const string:str[])
 {
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		new
 			pos = 0;
@@ -1726,8 +1843,9 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 	len = num % 3;
 	num /= 3;
 	// Set up the array for preincrement.
+	const minus3 = -3;
 	#emit LOAD.S.pri   src
-	#emit ADD.C        0xFFFFFFFD // -3
+	#emit ADD.C        minus3
 	#emit LOAD.S.alt   offset
 	#emit ADD
 	#emit PUSH.pri
@@ -1750,7 +1868,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 		#emit SREF.S.pri   dest
 		#emit INC.S        dest
 		
-		#emit LOAD.S.pri   0xFFFFFFF8
+		#emit LOAD.S.pri   __local1_offset
 		#emit MOVE.alt
 		#emit SHL.C.pri     8 // (pri >> 22) & 0x03
 		#emit SHR.C.pri    30 // Would be just `SHR.C.pri` with `LODB.I 3`...
@@ -1764,7 +1882,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 		#emit SREF.S.pri   dest
 		#emit INC.S        dest
 		
-		#emit LOAD.S.pri   0xFFFFFFF8
+		#emit LOAD.S.pri   __local1_offset
 		#emit MOVE.alt
 		#emit SHL.C.pri    30 // (pri << 4) & 0x30
 		#emit SHR.C.pri    26 //
@@ -1851,7 +1969,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 			#emit LODB.I       1
 			#emit STRB.I       1
 			
-			#emit LOAD.S.pri   0xFFFFFFFC
+			#emit LOAD.S.pri   __local0_offset
 			#emit MOVE.alt
 			#emit SHL.C.pri    30 // (pri << 4) & 0x30
 			#emit SHR.C.pri    26 //
@@ -1929,12 +2047,12 @@ stock Base64Decode(dest[], const string:src[], len = sizeof (dest), offset = 0)
 	{}
 	// x - 1 - 3
 	#emit LOAD.S.pri   dest
-	#emit ADD.C        0xFFFFFFFC // -4
+	#emit ADD.C        __m1_cells
 	#emit LOAD.S.alt   offset
 	#emit ADD
 	#emit STOR.S.pri   dest
 	#emit LOAD.S.pri   src
-	#emit ADD.C        0xFFFFFFFC // -4
+	#emit ADD.C        __m1_cells
 	#emit STOR.S.pri   src
 	while (blocks--)
 	{
@@ -2247,14 +2365,15 @@ stock RawMemSet(address /* 12 */, value /* 16 */, size /* 20 */)
 			#emit FILL       16
 			address += 16;
 		}
-		if (size & 8)
+		// Might be `0` or `8`.
+		if (size & (8 / cellbytes / 2 * 8))
 		{
 			#emit LOAD.S.pri value
 			#emit LOAD.S.alt address
 			#emit FILL       8
 			address += 8;
 		}
-		if (size & 4)
+		if (size & cellbytes)
 		{
 			#emit LOAD.S.pri value
 			#emit SREF.S.pri address
@@ -2309,7 +2428,7 @@ stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 	{
 		// Replace `_` with ` `.
 		len = -1;
-		if (YSI_IsPacked__(name))
+		if (YSI_IsLocalVarPackedString__(name))
 		{
 			while ((len = strfind(name, __COMPILER_PACK"_", false, len + 1)) != -1)
 			{
@@ -2343,7 +2462,7 @@ stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 
 stock bool:IsRPName(const string:name[], bool:casing = false, bool:longNames = false)
 {
-	if (YSI_IsPacked__(name))
+	if (YSI_IsLocalVarPackedString__(name))
 	{
 		new
 			parts = 0,
@@ -2564,27 +2683,33 @@ stock ReturnPlayerRPName(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock ftouch(const string:filename[])
-{
-	if (fexist(filename))
+#if !defined ftouch || defined y_utils_ftouch
+	stock ftouch(const string:filename[])
 	{
-		return 0;
-	}
-	else
-	{
-		new
-			File:f = fopen(filename, io_write);
-		if (f)
+		if (fexist(filename))
 		{
-			fclose(f);
-			return 1;
+			return 0;
 		}
 		else
 		{
-			return -1;
+			new
+				File:f = fopen(filename, io_write);
+			if (f)
+			{
+				fclose(f);
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
 		}
 	}
-}
+
+	static stock y_utils_ftouch()
+	{
+	}	
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
@@ -2659,7 +2784,7 @@ stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN
 #pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 {
-	P:W("`InterpolateColorLinear()` called, please use `InterpolateColourLinear()` isntead,");
+	Debug_Warning("`InterpolateColorLinear()` called, please use `InterpolateColourLinear()` isntead,");
 	return InterpolateColourLinear(startColour, endColour, value, maxvalue, minvalue);
 }
 
@@ -2751,7 +2876,7 @@ stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 #pragma deprecated Use `InterpolateColourGamma` instead.
 stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-	P:W("`InterpolateColorGamma()` called, please use `InterpolateColourGamma()` isntead,");
+	Debug_Warning("`InterpolateColorGamma()` called, please use `InterpolateColourGamma()` isntead,");
 	return InterpolateColourGamma(startColour, endColour, fraction);
 }
 
@@ -2912,7 +3037,7 @@ stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 #pragma deprecated Use `InterpolateColourSRGB` instead.
 stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
-	P:W("`InterpolateColorSRGB()` called, please use `InterpolateColourSRGB()` isntead,");
+	Debug_Warning("`InterpolateColorSRGB()` called, please use `InterpolateColourSRGB()` isntead,");
 	return InterpolateColourSRGB(startColour, endColour, fraction);
 }
 
@@ -3178,7 +3303,7 @@ stock GetNearestColourSRGBCached(colour, const Float:options[][3], count = sizeo
 
 stock SkipWhitespace(const string:str[], pos)
 {
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while (IS_IN_RANGE(str{pos}, '\0' + 1, ' ' + 1)) ++pos;
 	}
@@ -3203,7 +3328,7 @@ stock SkipWhitespace(const string:str[], pos)
 
 stock Trim(const string:str[], &start, &end)
 {
-	if (YSI_IsPacked__(str))
+	if (YSI_IsLocalVarPackedString__(str))
 	{
 		while (IS_IN_RANGE(str{start}, '\0' + 1, ' ' + 1)) ++start;
 		//while ('\0' < str[start] <= ' ') ++start;
@@ -3533,21 +3658,21 @@ stock LevenshteinDistance(const a[], const b[])
 	{
 		if (lenB > MAX_LEVENSHTEIN_STRING)
 		{
-			P:E("`LevenshteinDistance` can currenly only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+			Debug_Error("`LevenshteinDistance` can currenly only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
 			return 1;
 		}
 		// The calls below are NOT wrong, the parameters are swapped so the A/B
 		// packing calls are also swapped.
-		if (YSI_IsPacked__(a))
+		if (YSI_IsLocalVarPackedString__(a))
 		{
-			if (YSI_IsPacked__(b))
+			if (YSI_IsLocalVarPackedString__(b))
 				return DoLevenshteinDistancePackAB(b, lenB, a, lenA);
 			else
 				return DoLevenshteinDistancePackB(b, lenB, a, lenA);
 		}
 		else
 		{
-			if (YSI_IsPacked__(b))
+			if (YSI_IsLocalVarPackedString__(b))
 				return DoLevenshteinDistancePackA(b, lenB, a, lenA);
 			else
 				return DoLevenshteinDistance(b, lenB, a, lenA);
@@ -3560,19 +3685,19 @@ stock LevenshteinDistance(const a[], const b[])
 	}
 	if (lenA > MAX_LEVENSHTEIN_STRING)
 	{
-		P:E("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+		Debug_Error("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
 		return 1;
 	}
-	if (YSI_IsPacked__(a))
+	if (YSI_IsLocalVarPackedString__(a))
 	{
-		if (YSI_IsPacked__(b))
+		if (YSI_IsLocalVarPackedString__(b))
 			return DoLevenshteinDistancePackAB(a, lenA, b, lenB);
 		else
 			return DoLevenshteinDistancePackA(a, lenA, b, lenB);
 	}
 	else
 	{
-		if (YSI_IsPacked__(b))
+		if (YSI_IsLocalVarPackedString__(b))
 			return DoLevenshteinDistancePackB(a, lenA, b, lenB);
 		else
 			return DoLevenshteinDistance(a, lenA, b, lenB);
@@ -3618,15 +3743,15 @@ stock ValstrWithOrdinal(n)
 stock PrintArg(n)
 {
 	#emit LOAD.S.pri   n
-	#emit SHL.C.pri    2
-	#emit ADD.C        12
-	#emit LOAD.S.alt   0
+	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit ADD.C        __3_cells
+	#emit LOAD.S.alt   __frame_offset
 	#emit ADD
 	#emit LOAD.I
 	#emit PUSH.pri
-	#emit PUSH.C       4
+	#emit PUSH.C       __1_cell
 	#emit SYSREQ.C     print
-	#emit STACK        8
+	#emit STACK        __2_cells
 	#emit RETN
 	__pragma("naked");
 }
@@ -3645,7 +3770,7 @@ stock File:ftemporary_(string:name[], const string:ext[] = "tmp", const string:p
 	{
 		return File:0;
 	}
-	if (YSI_IsPacked__(name))
+	if (YSI_IsLocalVarPackedString__(name))
 	{
 		// These parts of the filename never change, so only do them once.
 		strcat(name, path, len),
@@ -3985,8 +4110,8 @@ stock bool:Files_Move(const string:src[], const string:dst[])
 	if (i)
 	{
 		return
-			I@ = _:(Files_CopyRange(i, flength(i), dst) && fremove(src)),
-			fclose(i) && I@;
+			I@ = _:Files_CopyRange(i, flength(i), dst),
+			fclose(i) && I@ && fremove(src);
 	}
 	return false;
 }
@@ -4009,6 +4134,9 @@ stock bool:TryPercentage(percentage)
 	return random(100) < percentage;
 }
 
+#define TryPercentage(%0) (random(100) < (%0))
+#define _ALS_TryPercentage
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  TryPermille(permille);
@@ -4030,6 +4158,9 @@ stock bool:TryPermille(permille)
 	return random(1000) < permille;
 }
 
+#define TryPermille(%0) (random(1000) < (%0))
+#define _ALS_TryPermille
+
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  TryPPM(ppm);
@@ -4050,6 +4181,9 @@ stock bool:TryPPM(ppm)
 {
 	return random(1000000) < ppm;
 }
+
+#define TryPPM(%0) (random(1000000) < (%0))
+#define _ALS_TryPPM
 
 _Y_CORE_STATIC stock IterativeColouredSkipSUnpacked(const string:text[], start, &colour)
 {
@@ -4459,7 +4593,7 @@ _Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex
 
 stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, bool:useHyphen = true)
 {
-	if (YSI_IsPacked__(text))
+	if (YSI_IsLocalVarPackedString__(text))
 	{
 		// Returns `true` if there is more text to come.
 		new
@@ -4784,7 +4918,7 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 
 stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next, &bool:hyphen, &colour, bool:useHyphen = true)
 {
-	if (YSI_IsPacked__(text))
+	if (YSI_IsLocalVarPackedString__(text))
 	{
 		new
 			ch;
@@ -4942,7 +5076,7 @@ stock Float:BiGramSimilarity(const string:string1[], const string:string2[])
 		ngrams1 = -1,
 		ngrams2 = -1;
 	// We can also "improve" the comparison by making all numbers the same.
-	if (YSI_IsPacked__(string1))
+	if (YSI_IsLocalVarPackedString__(string1))
 	{
 		for (new i = 0; (ch = string1{i}); ++i)
 		{
@@ -5002,7 +5136,7 @@ stock Float:BiGramSimilarity(const string:string1[], const string:string2[])
 			}
 		}
 	}
-	if (YSI_IsPacked__(string2))
+	if (YSI_IsLocalVarPackedString__(string2))
 	{
 		for (new i = 0; (ch = string2{i}); ++i)
 		{
@@ -5112,21 +5246,20 @@ forward y_utils_end();
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Float:FloatAbs(Float:value));
+FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 #define FloatAbs(%0) ((%0) & (Float:0x7FFFFFFF))
 #define _ALS_FloatAbs
 
 #if __COMPILER___EMIT_U
+	// Basically `x - (2 * x)`, if x is negative.
 	#define Abs(%0) \
-		__emit(                         \
-			LOAD.U.pri  %0             ,\
-			PUSH.pri                   ,\
-			CONST.alt   30             ,\
-			SSHR                       ,\
-			CONST.alt   1              ,\
-			OR                         ,\
-			POP.alt                    ,\
-			SMUL                        \
+		__emit(                            \
+			LOAD.U.alt  %0                ,\
+			MOVE.pri                      ,\
+			SHR.C.pri   y_utils_abs_shift ,\
+			SHL.C.pri   1                 ,\
+			SMUL                          ,\
+			SUB.alt                        \
 		)
 	#endinput
 #endif
@@ -5146,7 +5279,6 @@ P:D(Float:FloatAbs(Float:value));
 
 stock Abs(number)
 {
-	// 31 also works.
-	return (number >> 30 | 1) * number;
+	return (number >> y_utils_abs_shift | 1) * number;
 }
 

@@ -103,10 +103,8 @@ Optional plugins:
 // as most macros are.
 #define YSI_KEYWORD(%0) ((defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_%0) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_%0))
 
-// Define `cellbytes` as a symbol that really should exist already!
-#if !defined cellbytes
-	#define cellbytes (cellbits / charbits)
-#endif
+// Similar to `YSI_KEYWORD`, but disabled by default.
+#define YSI_OPTIONAL(%0) (defined YSI_KEYWORD_%0 && !defined YSI_NO_KEYWORD_%0)
 
 // Define "volatile" as nothing.
 #if !defined volatile
@@ -158,7 +156,7 @@ Optional plugins:
 	#endif
 
 	#undef _FIXES_DEFAULT
-#elseif !defined YSI_OPENMP__
+#else
 	#define YSI_FIX_CALLBACKS
 #endif
 
@@ -236,6 +234,10 @@ forward bool:DisasmWrite(const filename[]);
 		@_ = -1;
 #endif
 
+// Magical macro.
+#define u@$ 1]);
+//#define MY_THING u@(u[_:%0 u@$
+
 // These three includes are just defines.  They declare no code at all, only
 // variables.
 #include "y_globaltags"
@@ -245,6 +247,7 @@ forward bool:DisasmWrite(const filename[]);
 
 #include "y_shortvar"
 #include "y_pp"
+#include "y_emit"
 #include "y_als_impl"
 
 // A few nicely named short strings used for properties.
@@ -258,6 +261,18 @@ stock const YSIM_VERMAX[] = "X";
 #define YSIM_TXTIND #I
 #define YSIM_LOG_IN #U
 #define YSIM_VARARG #V
+
+#define Debug_Error(%1); \
+	Debug_Print0("\7\7\7*** YSI Error: " #%1);
+
+#define Debug_Warning(%1); \
+	Debug_Print0("\7*** YSI Warning: " #%1);
+
+#define Debug_Info(%1); \
+	Debug_Print0("*** YSI Info: " #%1);
+
+#define Debug_Fatal(%1); \
+	Debug_Print0("\7\7\7\7\7*** YSI Fatal Error: " #%1),Debug_Kill_();
 
 // New create the `OnScriptInit` and `OnCodeInit` callbacks, which many YSI
 // includes use to start themselves.
@@ -274,10 +289,52 @@ stock const YSIM_VERMAX[] = "X";
 
 // More common utilities and user-facing functions.
 #include "y_debug_impl"
+#if cellbits == 32
+	#include "y_cell32"
+#else
+	#include "y_cell64"
+#endif
 #include "y_cell_impl"
 #include "y_amx_impl"
 #include "y_shortfunc"
 #include "..\..\YSI_Players\y_android\y_android_entry"
+
+#if defined YSI_TESTS && __COMPILER_FUNC_DECL_BUG
+	#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumericTest__
+		// Test a compiler crash doesn't.
+		stock IsNumeric(const number[])
+		{
+			Debug_Print4("IsNumeric called: \"%s\"", number);
+			// This function is copied in `y_utils_impl` to test a compiler bug.
+			new
+				i = -1;
+			if (YSI_IsLocalVarPackedString__(number))
+			{
+				if (number{0} == '-') ++i;
+				while ('0' <= number{++i} <= '9') {}
+				return !number{i};
+			}
+			else
+			{
+				if (number[0] == '-') ++i;
+				while ('0' <= number[++i] <= '9') {}
+				return !number[i];
+			}
+		}
+
+		#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
+		stock isnumeric(const number[])
+		{
+			return IsNumeric(number);
+		}
+
+		// Ensure this branch is hit a second time.
+		stock YSI_IsNumericTest__()
+		{
+		}
+	#endif
+#endif
+
 #include "y_utils_impl"
 
 // Part of "y_scriptinit", but requires "y_amx".
@@ -289,12 +346,12 @@ ScriptInit_PreInitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@yI_>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -306,12 +363,12 @@ ScriptInit_PostInitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_yI>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -323,12 +380,12 @@ ScriptInit_PreExitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@Iy_>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -340,12 +397,12 @@ ScriptInit_PostExitFuncs_()
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_Iy>)))
 	{
 		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri ptr
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 	}
 }
 
@@ -386,7 +443,7 @@ stock _YSI_ConstMod(const &var, const val)
 #endif
 
 #if defined YSI_YES_MODE_CACHE
-	#include "y_thirdpartyinclude"
+	#include "..\..\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude_entry"
 #endif
 
 //

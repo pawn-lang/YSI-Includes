@@ -98,11 +98,15 @@ Optional plugins:
 	#define CB_STREAMER_TAG_OBJECT _
 #endif
 
+#if !defined STREAMER_TYPE
+	#define STREAMER_TYPE: _:
+#endif
+
 #if !defined _ALS_Streamer_HasIntData
 	// Push a fake extra parameter.
-	native bool:BAD_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_HasIntData;
+	native bool:BAD_Streamer_HasIntData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_HasIntData;
 
-	stock bool:YSI_Streamer_HasIntData(type, STREAMER_ALL_TAGS:id, data)
+	stock bool:YSI_Streamer_HasIntData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data)
 	{
 		// This isn't a compile-time constant, so we can't use `#if`.
 		if (Streamer_IncludeFileVersion > 0x295)
@@ -119,9 +123,9 @@ Optional plugins:
 
 #if !defined _ALS_Streamer_RemoveIntData
 	// Push a fake extra parameter.
-	native bool:BAD_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_RemoveIntData;
+	native bool:BAD_Streamer_RemoveIntData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_RemoveIntData;
 
-	stock bool:YSI_Streamer_RemoveIntData(type, STREAMER_ALL_TAGS:id, data)
+	stock bool:YSI_Streamer_RemoveIntData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data)
 	{
 		// This isn't a compile-time constant, so we can't use `#if`.
 		if (Streamer_IncludeFileVersion > 0x295)
@@ -135,6 +139,74 @@ Optional plugins:
 	#define _ALS_Streamer_RemoveIntData
 	#define Streamer_RemoveIntData( YSI_Streamer_RemoveIntData(
 #endif
+
+stock bool:YSI_Streamer_GetFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data, &Float:result)
+{
+	if (data & 0x40000000)
+	{
+		// Custom data
+		if (Streamer_HasIntData(type, id, data))
+		{
+			return
+				result = Float:Streamer_GetIntData(type, id, data),
+				true;
+		}
+		return false;
+	}
+	else
+	{
+		return bool:Streamer_GetFloatData(type, id, data, result);
+	}
+}
+
+#if defined _ALS_Streamer_GetFloatData
+	#undef Streamer_GetFloatData
+#endif
+#define _ALS_Streamer_GetFloatData
+#define Streamer_GetFloatData( YSI_Streamer_GetFloatData(
+
+stock bool:YSI_Streamer_SetFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data, Float:value)
+{
+	if (data & 0x40000000)
+	{
+		// Custom data
+		return bool:Streamer_SetIntData(type, id, data, _:value);
+	}
+	else
+	{
+		return bool:Streamer_SetFloatData(type, id, data, value);
+	}
+}
+
+#if defined _ALS_Streamer_SetFloatData
+	#undef Streamer_SetFloatData
+#endif
+#define _ALS_Streamer_SetFloatData
+#define Streamer_SetFloatData( YSI_Streamer_SetFloatData(
+
+stock bool:YSI_Streamer_HasFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data)
+{
+	// Custom data
+	return (data & 0x40000000) && bool:Streamer_HasIntData(type, id, data);
+}
+
+#if defined _ALS_Streamer_HasFloatData
+	#undef Streamer_HasFloatData
+#endif
+#define _ALS_Streamer_HasFloatData
+#define Streamer_HasFloatData( YSI_Streamer_HasFloatData(
+
+stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data)
+{
+	// Custom data
+	return (data & 0x40000000) && Streamer_RemoveIntData(type, id, data);
+}
+
+#if defined _ALS_Streamer_RemoveFloatData
+	#undef Streamer_RemoveFloatData
+#endif
+#define _ALS_Streamer_RemoveFloatData
+#define Streamer_RemoveFloatData( YSI_Streamer_RemoveFloatData(
 
 #if defined E_STREAMER_CUSTOM
 	#define E_YSI_DYNAMIC_OBJECT_MOVED E_STREAMER_CUSTOM(0x59534921) // YSI!

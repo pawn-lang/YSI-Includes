@@ -84,8 +84,8 @@ static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 	// Load in the header.
 	fblockread(bmp, YSI_g_sBlock);
 	//new size = YSI_g_sBlock[0];
-	P:5("Bitmap_ReadHeader: %08x %08x %08x", YSI_g_sBlock[0], YSI_g_sBlock[1], YSI_g_sBlock[2]);
-	P:5("Bitmap_ReadHeader: %08x %08x %08x %08x %08x %08x %08x %08x %08x %08x", YSI_g_sBlock[3], YSI_g_sBlock[4], YSI_g_sBlock[5], YSI_g_sBlock[6], YSI_g_sBlock[7], YSI_g_sBlock[8], YSI_g_sBlock[9], YSI_g_sBlock[10], YSI_g_sBlock[11], YSI_g_sBlock[12]);
+	Debug_Print5("Bitmap_ReadHeader: %08x %08x %08x", YSI_g_sBlock[0], YSI_g_sBlock[1], YSI_g_sBlock[2]);
+	Debug_Print5("Bitmap_ReadHeader: %08x %08x %08x %08x %08x %08x %08x %08x %08x %08x", YSI_g_sBlock[3], YSI_g_sBlock[4], YSI_g_sBlock[5], YSI_g_sBlock[6], YSI_g_sBlock[7], YSI_g_sBlock[8], YSI_g_sBlock[9], YSI_g_sBlock[10], YSI_g_sBlock[11], YSI_g_sBlock[12]);
 
 	// 'BM', 40 byte header, 1 plane, 24 bits, no compression.
 	if (YSI_g_sBlock[3] != 40 || YSI_g_sBlock[6] != 0x00180001 || YSI_g_sBlock[7] != 0)
@@ -96,7 +96,7 @@ static stock bool:Bitmap_ReadHeader(File:bmp, &x, &y)
 	x = YSI_g_sBlock[4],
 	y = YSI_g_sBlock[5];
 
-	P:5("Bitmap_ReadHeader: %d, %d, %d, %d", x, y, YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader), ceildiv(x * 3, 4) * 4 * y);
+	Debug_Print5("Bitmap_ReadHeader: %d, %d, %d, %d", x, y, YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader), ceildiv(x * 3, 4) * 4 * y);
 
 	if (YSI_g_sBlock[0] - sizeof (_YSI_g_sFileHeader) - sizeof (_YSI_g_sInfoHeader) != ceildiv(x * 3, 4) * 4 * y)
 	{
@@ -123,7 +123,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		Alloc:input = malloc(size);
 	if (!input)
 	{
-		P:E("Bitmap_Read: Could not allocate line read buffer");
+		Debug_Error("Bitmap_Read: Could not allocate line read buffer");
 		return false;
 	}
 
@@ -151,7 +151,7 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		// data of interest.
 		#emit CONST.pri            YSI_gMallocMemory
 		#emit LOAD.S.pri           input
-		#emit SHL.C.pri            2
+		#emit SHL.C.pri            __COMPILER_CELL_SHIFT
 		#emit ADD
 		#emit STOR.S.pri           ctx
 		Bitmap_FBlockReadAddr(bmp, _:ctx--, size);
@@ -159,6 +159,8 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 		// Go through the array backwards (bottom to top).
 		while (dest != w2)
 		{
+			const cells0 = 32 * cellbytes;
+			const cells1 = 24 * cellbytes;
 			#emit CONST.alt            0xFF
 
 			// Load the next value.
@@ -386,18 +388,18 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			// We now have all the colours pushed on to the stack.
 
 			// Copy them to `dest` in one go.
-			#emit LCTRL                4
+			#emit LCTRL                __stk
 			#emit LOAD.S.alt           dest
-			#emit MOVS                 128
-			#emit CONST.pri            128
+			#emit MOVS                 cells0
+			#emit CONST.pri            cells0
 			#emit ADD
 			#emit STOR.S.pri           dest
 
 			// Remove them.
-			#emit STACK                128
+			#emit STACK                cells0
 
 			#emit LOAD.S.pri           ctx
-			#emit ADD.C                96
+			#emit ADD.C                cells1
 			#emit STOR.S.pri           ctx
 		}
 		while (dest != w3)
@@ -433,18 +435,18 @@ static stock bool:Bitmap_ReadBody(Bitmap:ctx, File:bmp)
 			// We now have all the colours pushed on to the stack.
 
 			// Copy them to `dest` in one go.
-			#emit LCTRL                4
+			#emit LCTRL                __stk
 			#emit LOAD.S.alt           dest
-			#emit MOVS                 16
-			#emit CONST.pri            16
+			#emit MOVS                 __4_cells
+			#emit CONST.pri            __4_cells
 			#emit ADD
 			#emit STOR.S.pri           dest
 
 			// Remove them.
-			#emit STACK                16
+			#emit STACK                __4_cells
 
 			#emit LOAD.S.pri           ctx
-			#emit ADD.C                12
+			#emit ADD.C                __3_cells
 			#emit STOR.S.pri           ctx
 		}
 		switch (width & (BITMAP_TO_32(4) - 1))

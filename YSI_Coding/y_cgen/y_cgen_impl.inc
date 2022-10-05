@@ -1,8 +1,3 @@
-#if defined _INC_y_cgen
-	#endinput
-#endif
-#define _INC_y_cgen
-
 /*+
  * <library
  *   name="y_cgen"
@@ -90,8 +85,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
-
 CHAIN_HOOK(CGen)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(CGen)
@@ -115,9 +108,9 @@ static stock CGEN(&a = 1, &b = 1, &c = 1, &d = 1, &e = 1, &f = 1, &g = 1, &h = 1
 	#pragma unused a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 }
 
-forward _@_y_cgen_@_0();
+forward @_y_cgen0_y_@();
 
-public _@_y_cgen_@_0()
+public @_y_cgen0_y_@()
 {
 	// Reserve a huge area of "COD" for our own use!
 	// This is currently many calls to `CGEN()`, which takes up huge amounts of
@@ -187,55 +180,57 @@ public _@_y_cgen_@_0()
 		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
 	#endif
 	#if CGEN_MEMORY >= 200000
-		#error Too much codespace requested, please edit YSI_Coding\y_cgen\y_cgen
+		#error Too much codespace requested, please edit YSI_Coding\y_cgen\y_cgen_impl.inc
 	#endif
 }
 
-forward _@_y_cgen_@_1();
+forward @_y_cgen1_y_@();
 
-public _@_y_cgen_@_1()
+public @_y_cgen1_y_@()
 {
-	// This function SHOULD come straight after "_@_y_hooks_@_0" in both the
+	// This function SHOULD come straight after "@_y_hooks_@_0" in both the
 	// public functions table and code segment if the compiler is true to form.
 }
 
 static stock CGen_GetAddr(const func[])
 {
-	return AMX_Read(funcidx(func) * 8 + AMX_HEADER_PUBLICS) + AMX_HEADER_COD;
+	return AMX_Read(funcidx(func) * __defsize_cells + AMX_HEADER_PUBLICS) + AMX_HEADER_COD;
 }
 
 static stock CGen_SetupCodeSpace()
 {
 	if (YSI_g_sCodeSpace != -1) return;
-	YSI_g_sCodeSpace = CGen_GetAddr("_@_y_cgen_@_0"),
-	YSI_g_sCodeEnd   = CGen_GetAddr("_@_y_cgen_@_1"),
-	// Rewrite "_@_y_cgen_@_0" to just "return 0;".
+	YSI_g_sCodeSpace = CGen_GetAddr("@_y_cgen0_y_@"),
+	YSI_g_sCodeEnd   = CGen_GetAddr("@_y_cgen1_y_@"),
+	// Rewrite "@_y_cgen0_y_@" to just "return 0;".
 	AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_PROC)),
-	AMX_Write(YSI_g_sCodeSpace + 4, _:RelocateOpcode(OP_ZERO_PRI)),
-	AMX_Write(YSI_g_sCodeSpace + 8, _:RelocateOpcode(OP_RETN)),
-	YSI_g_sCodeSpace += 12;
+	AMX_Write(YSI_g_sCodeSpace + __1_cell, _:RelocateOpcode(OP_ZERO_PRI)),
+	AMX_Write(YSI_g_sCodeSpace + __2_cells, _:RelocateOpcode(OP_RETN)),
+	YSI_g_sCodeSpace += __3_cells;
 }
 
 public OnCodeInit()
 {
-	CGen_SetupCodeSpace();
-	#if defined CGen_OnCodeInit
-		CGen_OnCodeInit();
-	#endif
-	// Check that the code at this point is valid.  An OpCode is at most two
-	// bytes (except "OP_SWITCH", but there are none of them in this area of
-	// code because there are no "switch"es).  If the code here fails to
-	// decompile, it is probably out of alignment - add a single "NOP" to bring
-	// it back in to alignment.
-	new
-		ctx[DisasmContext];
-	DisasmInit(ctx, YSI_g_sCodeSpace - AMX_HEADER_COD);
-	for (new i = 0; i != 10; ++i)
 	{
-		if (DisasmNextInsn(ctx) == OP_NONE)
+		CGen_SetupCodeSpace();
+		#if defined CGen_OnCodeInit
+			CGen_OnCodeInit();
+		#endif
+		// Check that the code at this point is valid.  An OpCode is at most two
+		// bytes (except "OP_SWITCH", but there are none of them in this area of
+		// code because there are no "switch"es).  If the code here fails to
+		// decompile, it is probably out of alignment - add a single "NOP" to
+		// bring it back in to alignment.
+		new
+			ctx[DisasmContext];
+		DisasmInit(ctx, YSI_g_sCodeSpace - AMX_HEADER_COD);
+		for (new i = 0; i != 10; ++i)
 		{
-			AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_NOP));
-			return 1;
+			if (DisasmNextInsn(ctx) == OP_NONE)
+			{
+				AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_NOP));
+				return 1;
+			}
 		}
 	}
 	return 1;
@@ -255,26 +250,26 @@ public CGen_OOM(ctx[AsmContext])
 	{
 	case ASM_ERROR_OPCODE:
 	{
-		P:E("Unknown opcode written to code generation (CGen) space.");
+		Debug_Error("Unknown opcode written to code generation (CGen) space.");
 	}
 	case ASM_ERROR_OPERAND:
 	{
-		P:E("Invalid operand written to code generation (CGen) space.");
+		Debug_Error("Invalid operand written to code generation (CGen) space.");
 	}
 	case ASM_ERROR_SPACE:
 	{
 		// Just jump straight to the next CGEN step in the error.
-		P:F("Out of code generation (CGen) space.  The current value of `CGEN_MEMORY` is `%d`, please recompile with a higher value (approximately %d).", CGEN_MEMORY, ((CGEN_MEMORY / 10000) + 1) * CGEN_MEMORY);
-		P:I("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
+		Debug_Fatal("Out of code generation (CGen) space.  The current value of `CGEN_MEMORY` is `%d`, please recompile with a higher value (approximately %d).", CGEN_MEMORY, ((CGEN_MEMORY / 10000) + 1) * CGEN_MEMORY);
+		Debug_Info("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
 	}
 	case ASM_ERROR_LABEL_OVERFLOW:
 	{
-		P:F("Out of label space.  The current value of `ASM_MAX_LABELS` is `%d`, please recompile with a higher value.", ASM_MAX_LABELS);
-		P:I("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
+		Debug_Fatal("Out of label space.  The current value of `ASM_MAX_LABELS` is `%d`, please recompile with a higher value.", ASM_MAX_LABELS);
+		Debug_Info("    Note: This is perfectly safe and the recommended correct way to resolve this issue.");
 	}
 	case ASM_ERROR_LABEL_DUPLICATE:
 	{
-		P:F("Duplicate label in code generation.");
+		Debug_Fatal("Duplicate label in code generation.");
 	}
 	case ASM_ERROR_NONE:
 	{
@@ -297,7 +292,7 @@ stock CGen_GetCodeSpace()
 
 stock CGen_AddCodeSpace(num)
 {
-	if (YSI_g_sCodeSpace == -1) P:E("YSI_g_sCodeSpace is -1 in \"CGen_AddCodeSpace\"");
+	if (YSI_g_sCodeSpace == -1) Debug_Error("YSI_g_sCodeSpace is -1 in \"CGen_AddCodeSpace\"");
 	else YSI_g_sCodeSpace += num;
 }
 

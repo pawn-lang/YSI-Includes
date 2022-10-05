@@ -30,7 +30,7 @@ ShowTextToPlayer(playerid, const text[])
 
 ShowTextToAdmins(const text[])
 {
-	foeach (new playerid : Admin)
+	foreach (new playerid : Admin)
 	{
 		ShowTextToPlayer(playerid, text);
 	}
@@ -42,7 +42,7 @@ Or in terms of an additional internal function:
 ```pawn
 static ShowTextToPlayerSet(const bool:players[MAX_PLAYERS], const text[])
 {
-	foeach (new playerid : Player)
+	foreach (new playerid : Player)
 	{
 		if (players[playerid])
 		{
@@ -55,7 +55,7 @@ ShowTextToAdmins(const text[])
 {
 	new
 		bool:players[MAX_PLAYERS];
-	foeach (new playerid : Admin)
+	foreach (new playerid : Admin)
 	{
 		players[playerid] = true;
 	}
@@ -68,7 +68,7 @@ But you still end up with multiple just slightly incompatible functions.  YSI al
 ```pawn
 SentText(@PlayerSet:players, const text[])
 {
-	foeach (new playerid : PS(players))
+	foreach (new playerid : PS(players))
 	{
 		// Real message code.
 	}

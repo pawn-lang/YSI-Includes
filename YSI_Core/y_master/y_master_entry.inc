@@ -94,7 +94,7 @@ Optional plugins:
 
 #if !defined _INC_y_master
 	#include "..\y_utils"
-	#include "..\y_core\y_codeparse"
+	#include "..\..\YSI_Server\y_thirdpartyinclude\y_codeparse"
 
 	CHAIN_HOOK(Master)
 	#undef CHAIN_ORDER
@@ -104,9 +104,7 @@ Optional plugins:
 		#include "..\y_core\y_rconfix"
 	#endif
 	#include "y_master_once"
-	#if !defined YSI_NO_MASTER
-		#include "y_distribute"
-	#endif
+	#include "y_distribute"
 #endif
 
 // ALWAYS!  The compiler defines this automatically, don't use it as this is
@@ -125,7 +123,7 @@ Optional plugins:
 	#include "y_master__pop_master"
 	
 	// Useful debug information (isn't compiled, but shows up with "-l").
-	P:C(static stock const _POPPED_MASTER = MASTER;);
+	Debug_CodeX{static stock const _POPPED_MASTER = MASTER;}
 #endif
 
 #if MASTER < 0 || MASTER >= MAX_MASTERS

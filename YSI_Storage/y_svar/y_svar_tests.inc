@@ -84,7 +84,7 @@ svar y_svar_Test2D[200][200];
 svar y_svar_Test2DEnum[200][y_svar_E_TEST];
 svar y_svar_TestEnum2D[y_svar_E_TEST][200];
 
-TEST__ y_svar_Enum()
+@test(.group = "y_svar") y_svar_Enum()
 {
 	// Should fail first time ever, but then not again.
 	ASSERT_EQ(y_svar_TestEnum[y_svar_E_TEST_A], 42);
@@ -95,7 +95,7 @@ TEST__ y_svar_Enum()
 	StrCpy(y_svar_TestEnum[y_svar_E_TEST_C], "SOME STORED DATA", 24);
 }
 
-TEST__ y_svar_1D()
+@test(.group = "y_svar") y_svar_1D()
 {
 	// Should fail first time ever, but then not again.
 	new
@@ -108,7 +108,7 @@ TEST__ y_svar_1D()
 	ASSERT_ZE(fails);
 }
 
-TEST__ y_svar_2D()
+@test(.group = "y_svar") y_svar_2D()
 {
 	// Should fail first time ever, but then not again.
 	new
@@ -124,7 +124,7 @@ TEST__ y_svar_2D()
 	ASSERT_ZE(fails);
 }
 
-TEST__ y_svar_2DEnum()
+@test(.group = "y_svar") y_svar_2DEnum()
 {
 	// Should fail first time ever, but then not again.
 	new
@@ -141,7 +141,7 @@ TEST__ y_svar_2DEnum()
 	ASSERT_ZE(fails);
 }
 
-TEST__ y_svar_Enum2D()
+@test(.group = "y_svar") y_svar_Enum2D()
 {
 	// Should fail first time ever, but then not again.
 	new

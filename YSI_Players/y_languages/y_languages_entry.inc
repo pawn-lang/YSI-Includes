@@ -120,7 +120,7 @@ FOREIGN__ Language:_Langs_AddLanguage(const string:code[], const string:name[]);
 GLOBAL__ Language:_Langs_AddLanguage(const string:code[], const string:name[])
 {
 	// Get the 2 character language short code.
-	P:2("_Langs_AddLanguage called: %s %s", code, name);
+	Debug_Print2("_Langs_AddLanguage called: %s %s", code, name);
 	static
 		ins[4] = "XX|";
 	if ('a' <= code[0] <= 'z')
@@ -137,7 +137,7 @@ GLOBAL__ Language:_Langs_AddLanguage(const string:code[], const string:name[])
 			}
 			else
 			{
-				P:E("Langs_AddLanguage must have a 2 letter code");
+				Debug_Error("Langs_AddLanguage must have a 2 letter code");
 				return NO_LANGUAGE;
 			}
 		}
@@ -156,7 +156,7 @@ GLOBAL__ Language:_Langs_AddLanguage(const string:code[], const string:name[])
 			}
 			else
 			{
-				P:E("Langs_AddLanguage must have a 2 letter code");
+				Debug_Error("Langs_AddLanguage must have a 2 letter code");
 				return NO_LANGUAGE;
 			}
 		}
@@ -169,7 +169,7 @@ GLOBAL__ Language:_Langs_AddLanguage(const string:code[], const string:name[])
 		}
 		else
 		{
-			P:E("Langs_AddLanguage must have a 2 letter code");
+			Debug_Error("Langs_AddLanguage must have a 2 letter code");
 			return NO_LANGUAGE;
 		}
 	}
@@ -191,9 +191,9 @@ GLOBAL__ Language:_Langs_AddLanguage(const string:code[], const string:name[])
 	if (add < YSI_MAX_LANGUAGES)
 	{
 		strins(YSI_g_sLanguageCodes, ins, _:add * 3);
-		P:5("Langs_AddLanguage: Codes = %s", YSI_g_sLanguageCodes);
+		Debug_Print5("Langs_AddLanguage: Codes = %s", YSI_g_sLanguageCodes);
 		StrCpy(YSI_g_sLanguages[add], name, MAX_LANGUAGE_NAME);
-		P:5("Langs_AddLanguage: New = %s (%d, %d)", YSI_g_sLanguages[add], _:add, Language_IsValid(add));
+		Debug_Print5("Langs_AddLanguage: New = %s (%d, %d)", YSI_g_sLanguages[add], _:add, Language_IsValid(add));
 		++YSI_g_sLanguageCount;
 		return add;
 	}
@@ -421,8 +421,14 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 			return 1;
 		}
 	}
-	P:E("No languages set");
+	Debug_Error("No languages set");
 	return 0;
+}
+
+MASTER_REHOOK__ OnPlayerConnect(playerid)
+{
+	#pragma unused playerid
+	return 1;
 }
 
 #include "..\..\YSI_Core\y_master"

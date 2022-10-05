@@ -112,7 +112,7 @@ Optional plugins:
 #if defined _Y_MASTER_INCLUDED
 	#undef _Y_MASTER_INCLUDED
 #else
-	#error Did you use `YSI/y_master` instead of `YSI\y_master`?
+	#error Did you use `YSI_Core/y_master` instead of `YSI_Core\y_master`?
 #endif
 
 /**

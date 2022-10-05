@@ -113,7 +113,7 @@ Optional plugins:
 
 stock _YSI_HAS_y_races(_do_not_call_me_ever_, _like_never_)
 {
-	P:E("You called _YSI_HAS_y_races!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
+	Debug_Error("You called _YSI_HAS_y_races!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
 	assert(false);
 	return 0;
 }

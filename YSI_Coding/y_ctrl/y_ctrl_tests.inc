@@ -85,20 +85,33 @@ static
 	YSI_g_sValue = pri + alt;
 }
 
-TEST__ LCTRL_SCTRL()
+@test(.group = "y_ctrl") LCTRL_SCTRL()
 {
 	new p0, a0, p1, a1;
+	ASSERT_EQ(YSI_g_sValue, 0);
+	ASSERT_EQ(a0, 0);
+	ASSERT_EQ(p0, 0);
+	ASSERT_EQ(a1, 0);
+	ASSERT_EQ(p1, 0);
 	#emit CONST.pri 4
 	#emit CONST.alt 5
 	#emit SCTRL 558453593
 	#emit STOR.S.pri p0
 	#emit STOR.S.alt a0
+	ASSERT_EQ(YSI_g_sValue, 9);
+	ASSERT_EQ(a0, 5);
+	ASSERT_EQ(p0, 4);
+	ASSERT_EQ(a1, 0);
+	ASSERT_EQ(p1, 0);
+	#emit CONST.pri 1
+	#emit CONST.alt 2
 	#emit LCTRL 558453593
 	#emit STOR.S.pri p1
 	#emit STOR.S.alt a1
+	ASSERT_EQ(YSI_g_sValue, 9);
 	ASSERT_EQ(a0, 5);
 	ASSERT_EQ(p0, 4);
-	ASSERT_EQ(a1, 5);
+	ASSERT_EQ(a1, 2);
 	ASSERT_EQ(p1, 9);
 }
 

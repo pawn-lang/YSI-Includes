@@ -81,7 +81,7 @@ static stock MakeYBitmapTestPath(const file[])
 		ret;
 }
 
-TEST__ y_bitmap_Fade1()
+@test(.group = "y_bitmap") y_bitmap_Fade1()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -97,7 +97,7 @@ TEST__ y_bitmap_Fade1()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Fade2()
+@test(.group = "y_bitmap") y_bitmap_Fade2()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -114,7 +114,7 @@ TEST__ y_bitmap_Fade2()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Rect1()
+@test(.group = "y_bitmap") y_bitmap_Rect1()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -124,7 +124,7 @@ TEST__ y_bitmap_Rect1()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Rect2()
+@test(.group = "y_bitmap") y_bitmap_Rect2()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -135,7 +135,7 @@ TEST__ y_bitmap_Rect2()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Rect3()
+@test(.group = "y_bitmap") y_bitmap_Rect3()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -146,7 +146,7 @@ TEST__ y_bitmap_Rect3()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_FadeRect1()
+@test(.group = "y_bitmap") y_bitmap_FadeRect1()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -164,7 +164,7 @@ TEST__ y_bitmap_FadeRect1()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Diagonal1()
+@test(.group = "y_bitmap") y_bitmap_Diagonal1()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -191,7 +191,7 @@ TEST__ y_bitmap_Diagonal1()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Diagonal2()
+@test(.group = "y_bitmap") y_bitmap_Diagonal2()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -208,7 +208,7 @@ TEST__ y_bitmap_Diagonal2()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Diagonal3()
+@test(.group = "y_bitmap") y_bitmap_Diagonal3()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -225,7 +225,7 @@ TEST__ y_bitmap_Diagonal3()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Diagonal4()
+@test(.group = "y_bitmap") y_bitmap_Diagonal4()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -242,7 +242,7 @@ TEST__ y_bitmap_Diagonal4()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Diagonal5()
+@test(.group = "y_bitmap") y_bitmap_Diagonal5()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -259,7 +259,7 @@ TEST__ y_bitmap_Diagonal5()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Diagonal6()
+@test(.group = "y_bitmap") y_bitmap_Diagonal6()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -276,7 +276,7 @@ TEST__ y_bitmap_Diagonal6()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Pattern1()
+@test(.group = "y_bitmap") y_bitmap_Pattern1()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -294,7 +294,7 @@ TEST__ y_bitmap_Pattern1()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Pattern2()
+@test(.group = "y_bitmap") y_bitmap_Pattern2()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -312,7 +312,7 @@ TEST__ y_bitmap_Pattern2()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Pattern3()
+@test(.group = "y_bitmap") y_bitmap_Pattern3()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -330,7 +330,7 @@ TEST__ y_bitmap_Pattern3()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Pattern4()
+@test(.group = "y_bitmap") y_bitmap_Pattern4()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -348,7 +348,7 @@ TEST__ y_bitmap_Pattern4()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Pattern5()
+@test(.group = "y_bitmap") y_bitmap_Pattern5()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -366,7 +366,7 @@ TEST__ y_bitmap_Pattern5()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Pattern6()
+@test(.group = "y_bitmap") y_bitmap_Pattern6()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -384,7 +384,7 @@ TEST__ y_bitmap_Pattern6()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Pattern7()
+@test(.group = "y_bitmap") y_bitmap_Pattern7()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -402,7 +402,7 @@ TEST__ y_bitmap_Pattern7()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Pattern8()
+@test(.group = "y_bitmap") y_bitmap_Pattern8()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -420,7 +420,7 @@ TEST__ y_bitmap_Pattern8()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Border1()
+@test(.group = "y_bitmap") y_bitmap_Border1()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -430,7 +430,7 @@ TEST__ y_bitmap_Border1()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Border2()
+@test(.group = "y_bitmap") y_bitmap_Border2()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -440,7 +440,7 @@ TEST__ y_bitmap_Border2()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Border3()
+@test(.group = "y_bitmap") y_bitmap_Border3()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -450,7 +450,7 @@ TEST__ y_bitmap_Border3()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Border4()
+@test(.group = "y_bitmap") y_bitmap_Border4()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -460,7 +460,7 @@ TEST__ y_bitmap_Border4()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Border5()
+@test(.group = "y_bitmap") y_bitmap_Border5()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -470,7 +470,7 @@ TEST__ y_bitmap_Border5()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Border6()
+@test(.group = "y_bitmap") y_bitmap_Border6()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -480,7 +480,7 @@ TEST__ y_bitmap_Border6()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Large1()
+@test(.group = "y_bitmap") y_bitmap_Large1()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -490,7 +490,7 @@ TEST__ y_bitmap_Large1()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Large2()
+@test(.group = "y_bitmap") y_bitmap_Large2()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -500,7 +500,7 @@ TEST__ y_bitmap_Large2()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Large3()
+@test(.group = "y_bitmap") y_bitmap_Large3()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -510,7 +510,7 @@ TEST__ y_bitmap_Large3()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Large4()
+@test(.group = "y_bitmap") y_bitmap_Large4()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -520,7 +520,7 @@ TEST__ y_bitmap_Large4()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Large5()
+@test(.group = "y_bitmap") y_bitmap_Large5()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -530,7 +530,7 @@ TEST__ y_bitmap_Large5()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_VLarge1()
+@test(.group = "y_bitmap") y_bitmap_VLarge1()
 {
 	new
 		Bitmap:ctx = Bitmap:0;
@@ -570,7 +570,7 @@ static stock BlendThree(Bitmap:ctx, y, left, right)
 	}
 }
 
-TEST__ y_bitmap_Interpolations()
+@test(.group = "y_bitmap") y_bitmap_Interpolations()
 {
 	new
 		Bitmap:ctx = Bitmap_Create(256, 300);
@@ -583,7 +583,7 @@ TEST__ y_bitmap_Interpolations()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_Alpha1()
+@test(.group = "y_bitmap") y_bitmap_Alpha1()
 {
 	new
 		Bitmap:ctx = Bitmap_Create(256, 300);
@@ -596,7 +596,7 @@ TEST__ y_bitmap_Alpha1()
 	Bitmap_Destroy(ctx);
 }
 
-TEST__ y_bitmap_read()
+@test(.group = "y_bitmap") y_bitmap_read()
 {
 	new Bitmap:ctx;
 	fremove(MakeYBitmapTestPath("ReadOutput1.bmp"));

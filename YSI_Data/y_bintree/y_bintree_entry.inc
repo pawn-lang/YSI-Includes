@@ -118,7 +118,7 @@ enum E_BINTREE_INPUT
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Bintree_Sort(numbers[][E_BINTREE_INPUT], size = sizeof (data)));
+FUNC_PAWNDOC(Bintree_Sort(numbers[][E_BINTREE_INPUT], size = sizeof (data)));
 #define Bintree_Sort(%1,%2) \
 	Bintree_QSort((%1), 0, (%2) - 1)
 
@@ -134,7 +134,7 @@ P:D(Bintree_Sort(numbers[][E_BINTREE_INPUT], size = sizeof (data)));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(Bintree_Fill(BinaryTree:output<>, data[][E_BINTREE_INPUT], size = sizeof (data)));
+FUNC_PAWNDOC(Bintree_Fill(BinaryTree:output<>, data[][E_BINTREE_INPUT], size = sizeof (data)));
 #define Bintree_Fill(%1,%2,%3) \
 	Bintree_SortHalf((%1), (%2), 0, (%3), 0, BINTREE_NO_BRANCH)
 
@@ -149,7 +149,7 @@ P:D(Bintree_Fill(BinaryTree:output<>, data[][E_BINTREE_INPUT], size = sizeof (da
 
 stock Bintree_Generate(BinaryTree:output<>, BinaryInput:input<>, size = sizeof (input))
 {
-	P:3("Bintree_Generate called: %s, %s, %i", Bintree_DisplayOutput(output), Bintree_DisplayInput(input), size);
+	Debug_Print3("Bintree_Generate called: %s, %s, %i", Bintree_DisplayOutput(output), Bintree_DisplayInput(input), size);
 	if (!size)
 	{
 		output[0][E_BINTREE_TREE_PARENT] = BINTREE_NO_BRANCH;
@@ -172,7 +172,7 @@ stock Bintree_Generate(BinaryTree:output<>, BinaryInput:input<>, size = sizeof (
 
 stock Bintree_Reset(BinaryTree:tree<>, pointer = 0)
 {
-	P:3("Bintree_Reset called: %s, %i", Bintree_DisplayOutput(tree), pointer);
+	Debug_Print3("Bintree_Reset called: %s, %i", Bintree_DisplayOutput(tree), pointer);
 	tree[pointer][E_BINTREE_TREE_VALUE] = 0;
 	tree[pointer][E_BINTREE_TREE_LEFT] = BINTREE_NO_BRANCH;
 	tree[pointer][E_BINTREE_TREE_RIGHT] = BINTREE_NO_BRANCH;
@@ -198,12 +198,12 @@ stock Bintree_Reset(BinaryTree:tree<>, pointer = 0)
 
 stock Bintree_FindValue(const BinaryTree:tree<>, value, &cont = 0, &old = 0)
 {
-	P:3("Bintree_FindValue called: %s, %i, %i, %i", Bintree_DisplayOutput(tree), value, cont, old);
+	Debug_Print3("Bintree_FindValue called: %s, %i, %i, %i", Bintree_DisplayOutput(tree), value, cont, old);
 	new
 		treeValue = 0;
 	while (cont != BINTREE_NO_BRANCH)
 	{
-		P:7("Bintree_FindValue: search %d %d %d %d", cont, old, tree[cont][E_BINTREE_TREE_VALUE], value);
+		Debug_Print7("Bintree_FindValue: search %d %d %d %d", cont, old, tree[cont][E_BINTREE_TREE_VALUE], value);
 		old = cont;
 		treeValue = tree[old][E_BINTREE_TREE_VALUE];
 		if (value < treeValue) cont = tree[old][E_BINTREE_TREE_LEFT];
@@ -231,7 +231,7 @@ stock Bintree_FindValue(const BinaryTree:tree<>, value, &cont = 0, &old = 0)
 
 stock Bintree_QSort(numbers[][E_BINTREE_INPUT], left, right)
 {
-	P:3("Bintree_QSort called: %s, %i, %i", Bintree_DisplayInput(numbers), left, right);
+	Debug_Print3("Bintree_QSort called: %s, %i, %i", Bintree_DisplayInput(numbers), left, right);
 	new
 		pivot = numbers[left][E_BINTREE_INPUT_VALUE],
 		pointer = numbers[left][E_BINTREE_INPUT_POINTER],
@@ -290,7 +290,7 @@ stock Bintree_QSort(numbers[][E_BINTREE_INPUT], left, right)
 
 stock Bintree_SortHalf(BinaryTree:output<>, data[][E_BINTREE_INPUT], index, upper, offset, parent)
 {
-	P:3("Bintree_SortHalf called: %s, %s, %i, %i, %i, %i", Bintree_DisplayOutput(output), Bintree_DisplayInput(data), index, upper, offset, parent);
+	Debug_Print3("Bintree_SortHalf called: %s, %s, %i, %i, %i, %i", Bintree_DisplayOutput(output), Bintree_DisplayInput(data), index, upper, offset, parent);
 	new
 		num = upper - index;
 	if (!num) return offset;
@@ -304,7 +304,7 @@ stock Bintree_SortHalf(BinaryTree:output<>, data[][E_BINTREE_INPUT], index, uppe
 	}
 	else if (num == 2)
 	{
-		P:3("Bintree_SortHalf: adding %i %i %i", index, data[index][E_BINTREE_INPUT_VALUE], data[index + 1][E_BINTREE_INPUT_VALUE]);
+		Debug_Print3("Bintree_SortHalf: adding %i %i %i", index, data[index][E_BINTREE_INPUT_VALUE], data[index + 1][E_BINTREE_INPUT_VALUE]);
 		output[offset][E_BINTREE_TREE_VALUE] = data[index][E_BINTREE_INPUT_VALUE];
 		output[offset][E_BINTREE_TREE_POINTER] = data[index][E_BINTREE_INPUT_POINTER];
 		output[offset][E_BINTREE_TREE_PARENT] = parent;
@@ -355,7 +355,7 @@ stock Bintree_SortHalf(BinaryTree:output<>, data[][E_BINTREE_INPUT], index, uppe
 
 stock Bintree_Add(BinaryTree:data<>, pointer, value, offset, maxsize = sizeof (data))
 {
-	P:3("Bintree_Add called: %s, %i, %i, %i, %i", Bintree_DisplayOutput(data), pointer, value, offset, maxsize);
+	Debug_Print3("Bintree_Add called: %s, %i, %i, %i, %i", Bintree_DisplayOutput(data), pointer, value, offset, maxsize);
 	if (offset >= maxsize) return BINTREE_NOT_FOUND;
 	if (offset)
 	{
@@ -400,7 +400,7 @@ stock Bintree_Add(BinaryTree:data<>, pointer, value, offset, maxsize = sizeof (d
 
 stock Bintree_Delete(BinaryTree:source<>, index, count)
 {
-	P:3("Bintree_Delete called: %s, %i, %i", Bintree_DisplayOutput(source), index, count);
+	Debug_Print3("Bintree_Delete called: %s, %i, %i", Bintree_DisplayOutput(source), index, count);
 	new
 		branch = 0,
 		old = index;
@@ -437,7 +437,7 @@ stock Bintree_Delete(BinaryTree:source<>, index, count)
 
 static stock Bintree_Compress(BinaryTree:data<>, index, count)
 {
-	P:4("Bintree_Compress called: %s, %i, %i", Bintree_DisplayOutput(data), index, count);
+	Debug_Print4("Bintree_Compress called: %s, %i, %i", Bintree_DisplayOutput(data), index, count);
 	new
 		index2 = index + 1;
 	while (index < count)
@@ -471,7 +471,7 @@ static stock Bintree_Compress(BinaryTree:data<>, index, count)
 
 static stock Bintree_FindMin(BinaryTree:data<>, offset)
 {
-	P:4("Bintree_FindMin called: %s, %i", Bintree_DisplayOutput(data), offset);
+	Debug_Print4("Bintree_FindMin called: %s, %i", Bintree_DisplayOutput(data), offset);
 	new
 		branch = 0;
 	while ((branch = data[offset][E_BINTREE_TREE_LEFT]) != BINTREE_NO_BRANCH) offset = branch;
@@ -488,7 +488,7 @@ static stock Bintree_FindMin(BinaryTree:data<>, offset)
 
 static stock Bintree_FindMax(BinaryTree:data<>, offset)
 {
-	P:4("Bintree_FindMax called: %s, %i", Bintree_DisplayOutput(data), offset);
+	Debug_Print4("Bintree_FindMax called: %s, %i", Bintree_DisplayOutput(data), offset);
 	new
 		branch = 0;
 	while ((branch = data[offset][E_BINTREE_TREE_RIGHT]) != BINTREE_NO_BRANCH) offset = branch;
@@ -507,7 +507,7 @@ static stock Bintree_FindMax(BinaryTree:data<>, offset)
 
 stock Bintree_UpdatePointers(BinaryTree:data<>, offset, size, mod = -1)
 {
-	P:3("Bintree_UpdatePointers called: %s, %i, %i, %i", Bintree_DisplayOutput(data), offset, size, mod);
+	Debug_Print3("Bintree_UpdatePointers called: %s, %i, %i, %i", Bintree_DisplayOutput(data), offset, size, mod);
 	for (new i = 0; i < size; i++)
 	{
 		if (data[i][E_BINTREE_TREE_POINTER] > offset) data[i][E_BINTREE_TREE_POINTER] += mod;

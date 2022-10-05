@@ -170,6 +170,7 @@ Optional plugins:
 // The global is just the function implementation - doesn't need extra code.
 #define YSIM_SERVER_GLOBAL%0(%1)   %0(%1)
 #define YSIM_SERVER_HOOK%0(%1)     HOOK__%0(%1)
+#define YSIM_SERVER_REHK%0(%1)     static stock _@%0(%1)
 #define YSIM_SERVER_TASK%0[%3](%1) task%0[%3](%1)
 #define YSIM_SERVER_PTSK%0[%3](%1) ptask%0[%3](%1)
 #define YSIM_SERVER_FUNC%0(%1)<%9> forward%0(%1);public%0(%1)
@@ -180,7 +181,8 @@ Optional plugins:
 #define YSIM_CLIENT_FOREIGN%0(%1)  %0(%1);YSIM_PARSER(YSIM_UF)%0(%1)
 // Hide the local implementations.
 #define YSIM_CLIENT_GLOBAL%0(%1)   YSIM_PARSER(YSIM_UG)%0(%1)
-#define YSIM_CLIENT_HOOK%0(%1)     static stock _@%0(%1)
+#define YSIM_CLIENT_HOOK%0(%1)     static stock _@%0(%1) <y_master_unused:y_master_unused_a>
+#define YSIM_CLIENT_REHK%0(%1)     static stock _@%0(%1) <y_master_unused:y_master_unused_b>
 #define YSIM_CLIENT_TASK%0[%3](%1) YSIM_PARSER(YSIM_UG)%0(%1)
 #define YSIM_CLIENT_PTSK%0[%3](%1) YSIM_PARSER(YSIM_UG)%0(%1)
 #define YSIM_CLIENT_FUNC%0(%1)<%9> static stock %0(%1)
@@ -190,11 +192,12 @@ Optional plugins:
 
 #define YSIM_CLOUD_FOREIGN%0(%1)   %0(%1);YSIM_PARSER(YSIM_DF)%0(%1)
 #define YSIM_CLOUD_GLOBAL%0(%1)    YSIM_PARSER(YSIM_DG)%0(%1)
-#define YSIM_CLOUD_HOOK%0(%1)      HOOK__%0(%1)<>return 0;HOOK__%0(%1)<_YCM:y>
+#define YSIM_CLOUD_HOOK%0(%1)      HOOK__%0(%1)<_YCM:y>
+#define YSIM_CLOUD_REHK%0(%1)      REHOOK__%0(%1)<>
 #define YSIM_CLOUD_TASK%0[%3](%1)  task%0[%3](%1)<>{}public%0(%1)<_YCM:y>
 #define YSIM_CLOUD_PTSK%0[%3](%1)  ptask%0[%3](%1)<>{}public%0(%1)<_YCM:y>
 #define YSIM_CLOUD_FUNC%0(%1)<%9>  %0(%1);public%0(%1)<>{}public%0(%1)<%9>
-#define YSIM_CLOUD_GRUP%0(%1)      _GROUP_MAKE_NAME<HOOK__%0...>(%1)<>{}_GROUP_MAKE_NAME<HOOK__%0...>(%1)<_YCM:y>
+#define YSIM_CLOUD_GRUP%0(%1)      _GROUP_MAKE_NAME<HOOK__%0...>(%1)<>{}_GROUP_MAKE_NAME<REHOOK__%0...>(%1)<_YCM:y>
 #define YSIM_CLOUD_YCMD%0(%1)      _YCMD_4:@yC_%0(a,b[],c);_YCMD_4:@yC_%0(a,b[],c)<>{}_YCMD_4:@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 #define YSIM_CLOUD_ZERO%0(%1)      _YCMD_4:@yC_%0(a,b[],c,i);_YCMD_4:@yC_%0(a,b[],c,i)i==@_&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
@@ -205,6 +208,7 @@ Optional plugins:
 // parsing though to give the RIGHT error...
 #define YSIM_STUB_GLOBAL%0(%1)     YSIM_PARSER(YSIM_TG)%0(%1)
 #define YSIM_STUB_HOOK%0(%1)       YSIM_PARSER(YSIM_TG)%0(%1)
+#define YSIM_STUB_REHK%0(%1)       static stock _@%0(%1)
 #define YSIM_STUB_TASK%0[%3](%1)   YSIM_PARSER(YSIM_TG)%0(%1)
 #define YSIM_STUB_PTSK%0[%3](%1)   YSIM_PARSER(YSIM_TG)%0(%1)
 #define YSIM_STUB_FUNC%0(%1)<%9>   YSIM_PARSER(YSIM_TG)%0(%1)
@@ -217,12 +221,13 @@ Optional plugins:
 #define YSIM_NONE_FOREIGN%0(%1)    %0(%1)
 #define YSIM_NONE_GLOBAL%0(%1)     %0(%1)
 #define YSIM_NONE_HOOK%0(%1)       HOOK__%0(%1)
+#define YSIM_NONE_REHK%0(%1)       static stock _@%0(%1)
 #define YSIM_NONE_TASK%0[%3](%1)   task%0[%3](%1)
 #define YSIM_NONE_PTSK%0[%3](%1)   ptask%0[%3](%1)
 #define YSIM_NONE_FUNC%0(%1)<%9>   forward%0(%1);public%0(%1)
 #define YSIM_NONE_GRUP%0(%1)       _GROUP_MAKE_NAME<HOOK__%0...>(%1)
-#define YSIM_NONE_YCMD%0(%1)       @yC_%0(%1);@yC_%0(%1)
-#define YSIM_NONE_ZERO%0(%1)       @yC_%0(%1);@yC_%0(%1)
+#define YSIM_NONE_YCMD%0(%1)       _YCMD_5:@yC_%0(%1);_YCMD_5:@yC_%0(%1)
+#define YSIM_NONE_ZERO%0(%1)       _YCMD_5:@yC_%0(%1);_YCMD_5:@yC_%0(%1)
 
 // Now the compilation parts.
 #define YSIM_NUM(%0,%1,%2)%8$%4#%5(%7)(%0)(%9)            %8$%4#%5i(%7,%2)(%0,_:%2)(%9,%1%2)
@@ -458,7 +463,7 @@ static stock const
 
 public OnYSIInit()
 {
-	P:1("Master_OnYSIInit");
+	Debug_Print1("Master_OnYSIInit");
 	state _ALS : _ALS_go;
 	#if !defined YSI_NO_MASTER
 		getproperty(8, YSI_EMPTY, YSIM_STRING + 1, YSI_g_sModuleName);
@@ -481,9 +486,9 @@ public OnYSIInit()
 	new
 		masters = getproperty(8, YSIM_MASTER) | getproperty(5, YSI_FIXES_gscSingleProperty);
 	@_ = Cell_GetLowestEmpty(masters);
-	P:I("YSI Script ID: %d", @_);
+	Debug_Info("YSI Script ID: %d", @_);
 	setproperty(8, YSIM_MASTER, masters | Master_ID());
-	C:1(if (!Master_ID()) P:E("MasterID not assigned"););
+	Debug_Code1{if (!Master_ID()) Debug_Error("MasterID not assigned");}
 	#if !defined YSI_NO_MASTER
 		if (Master_ID() && YSI_g_sModuleName[0])
 		{
@@ -520,7 +525,7 @@ forward Master_OnCloseModules();
 
 public OnScriptExit()
 {
-	P:1("MasterOnce_OnScriptExit called");
+	Debug_Print1("MasterOnce_OnScriptExit called");
 	#if !defined YSI_NO_MASTER
 		if (YSI_g_sModuleName[0])
 		{
@@ -546,7 +551,7 @@ public OnScriptExit()
 			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
 			func[2] = YSI_g_sMasterData[i] >> 16,
 			CallLocalFunction(func, YSI_EMPTY);
-			P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
+			Debug_Print5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
 			// The properties currently clear instantly, but that may not always be the case.
 		}
 	#endif
@@ -601,7 +606,7 @@ forward OnMasterSystemClose(id);
 #if !defined YSI_NO_MASTER
 	public Master_OnCloseModules()
 	{
-		P:1("Master_OnCloseModules called");
+		Debug_Print1("Master_OnCloseModules called");
 		if (YSI_g_sModuleName[0])
 		{
 			// This is a module, and thus purely loaded for the sake of gamemodes.  Shut it down.
@@ -618,7 +623,7 @@ forward OnMasterSystemClose(id);
 				func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
 				func[2] = YSI_g_sMasterData[i] >> 16,
 				CallLocalFunction(func, YSI_EMPTY);
-				P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
+				Debug_Print5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
 				// The properties currently clear instantly, but that may not always be the case.
 			}
 			if (prev)
@@ -638,7 +643,7 @@ forward OnMasterSystemClose(id);
 	{
 		if (existproperty(10, module))
 		{
-			P:E("Module \"%s\" already loaded.", module);
+			Debug_Error("Module \"%s\" already loaded.", module);
 		}
 		else
 		{
@@ -649,12 +654,12 @@ forward OnMasterSystemClose(id);
 			SendRconCommand(Q@);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
-				P:F("Could not load module \"%s\"", module);
+				Debug_Fatal("Could not load module \"%s\"", module);
 				return false;
 			}
 			else
 			{
-				P:0("Module \"%s\" loaded", module);
+				Debug_Print0("Module \"%s\" loaded", module);
 			}
 			deleteproperty(8, YSI_EMPTY, YSIM_STRING + 1);
 		}
@@ -670,7 +675,7 @@ forward OnMasterSystemClose(id);
 	{
 		if (!Master_IsModuleLoaded(module))
 		{
-			P:W("Module \"%s\" not loaded.", module);
+			Debug_Warning("Module \"%s\" not loaded.", module);
 		}
 		#if _YSI_SAFE_STARTUP
 			// Free up a temporary filterscript slot for the swapping.  Handily,
@@ -693,7 +698,7 @@ forward OnMasterSystemClose(id);
 			SendRconCommand(Q@);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
-				P:F("Could not reload module \"%s\"", module);
+				Debug_Fatal("Could not reload module \"%s\"", module);
 				#if _YSI_SAFE_STARTUP
 					y_rconfix_Load();
 				#endif
@@ -704,7 +709,7 @@ forward OnMasterSystemClose(id);
 				format(Q@, sizeof (Q@), "unloadfs ./%s%s", YSI_g_scModulePath, module);
 				SendRconCommand(Q@);
 				CallRemoteFunction("Master_Reassert", YSI_EMPTY);
-				P:0("Module \"%s\" (re)loaded.", module);
+				Debug_Print0("Module \"%s\" (re)loaded.", module);
 			}
 		}
 		else
@@ -713,7 +718,7 @@ forward OnMasterSystemClose(id);
 			format(Q@, sizeof (Q@), "unloadfs %s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
 			CallRemoteFunction("Master_Reassert", YSI_EMPTY);
-			P:0("Module \"%s\" (re)loaded.", module);
+			Debug_Print0("Module \"%s\" (re)loaded.", module);
 		}
 		return true;
 	}
@@ -731,18 +736,18 @@ forward OnMasterSystemClose(id);
 			CallRemoteFunction("Master_Reassert", YSI_EMPTY);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
-				P:F("Could not unload module \"%s\"", module);
+				Debug_Fatal("Could not unload module \"%s\"", module);
 				return false;
 			}
 			else
 			{
-				P:0("Module \"%s\" unloaded.", module);
+				Debug_Print0("Module \"%s\" unloaded.", module);
 				return true;
 			}
 		}
 		else
 		{
-			P:E("Module \"%s\" not loaded.", module);
+			Debug_Error("Module \"%s\" not loaded.", module);
 			return false;
 		}
 	}
@@ -758,7 +763,7 @@ forward OnMasterSystemClose(id);
 
 	public OnRconCommand(cmd[])
 	{
-		P:1("MasterOnce_OnRconCommand called");
+		Debug_Print1("MasterOnce_OnRconCommand called");
 		if (!Script_IsFilterscript())
 		{
 			if (!strcmp(cmd, "loadmodule ", true, 11))
@@ -769,7 +774,7 @@ forward OnMasterSystemClose(id);
 				}
 				else
 				{
-					P:F("No module specified for \"loadmodule\"");
+					Debug_Fatal("No module specified for \"loadmodule\"");
 				}
 				return 1;
 			}
@@ -781,7 +786,7 @@ forward OnMasterSystemClose(id);
 				}
 				else
 				{
-					P:F("No module specified for \"unloadmodule\"");
+					Debug_Fatal("No module specified for \"unloadmodule\"");
 				}
 				return 1;
 			}
@@ -793,7 +798,7 @@ forward OnMasterSystemClose(id);
 				}
 				else
 				{
-					P:F("No module specified for \"reloadmodule\"");
+					Debug_Fatal("No module specified for \"reloadmodule\"");
 				}
 				return 1;
 			}
@@ -852,7 +857,7 @@ public Master_Reassert()
 
 stock _Master_Relinquish(const library[])
 {
-	P:4("_Master_Relinquish called: %s %d", library, YSI_g_sMasterCount);
+	Debug_Print4("_Master_Relinquish called: %s %d", library, YSI_g_sMasterCount);
 	switch (YSI_g_sMasterCount)
 	{
 		case 0: return;
@@ -879,13 +884,13 @@ stock _Master_Relinquish(const library[])
 
 static stock _Master_Rename(const name[])
 {
-	P:3("_Master_Rename called: \"%s\"", name);
+	Debug_Print3("_Master_Rename called: \"%s\"", name);
 	// Set the name of the function at `index` back to what it should be.
 	new
 		entry;
 	if (AMX_GetPublicEntry(0, entry, name, true))
 	{
-		P:5("_Master_Rename: found %d", entry);
+		Debug_Print5("_Master_Rename: found %d", entry);
 		new
 			len = strlen(name);
 		// These function names are stored in C order, not packed string order.
@@ -893,13 +898,13 @@ static stock _Master_Rename(const name[])
 		// It is possible that this will result in an invalid function name, but
 		// we don't care about that because the function isn't to be called
 		// anyway.
-		entry += 4;
+		entry += cellbytes;
 		#emit LREF.S.pri entry
 		#emit LOAD.alt   AMX_BASE_ADDRESS
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
-		#emit ADD.C      0xFFFFFFFF
+		#emit ADD.C      __minus1
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry
@@ -910,7 +915,7 @@ static stock _Master_Rename(const name[])
 
 static stock _Master_Unname(const name[])
 {
-	P:3("_Master_Unname called: \"%s\"", name);
+	Debug_Print3("_Master_Unname called: \"%s\"", name);
 	// Rename the public function to exactly the same thing with the last letter
 	// increased by one.  This ensures that it can't be called, but keeps its
 	// position in the binary tree (so that we don't need to sort the public
@@ -923,18 +928,18 @@ static stock _Master_Unname(const name[])
 		new
 			len = strlen(name);
 		// This check isn't needed if this is the very last function.
-		if (idx < (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8)
+		if (idx < (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / __defsize_cells)
 		{
 			// Load the NEXT string entry for comparison.
 			new
-				addr = entry + 12;
+				addr = entry + 3 * cellbytes;
 			#emit LREF.S.pri addr
 			#emit LOAD.alt   AMX_BASE_ADDRESS
 			#emit ADD
 			#emit STOR.S.pri addr
 			new str[FUNCTION_LENGTH];
 			AMX_ReadString(addr, str);
-			P:5("_Master_Unname: Comparing \"%s\" and \"%s\" to %d", name, Unpack(str), len);
+			Debug_Print5("_Master_Unname: Comparing \"%s\" and \"%s\" to %d", name, Unpack(str), len);
 			// Check if the strings are identical.
 			if (strlen(str) == len)
 			{
@@ -949,7 +954,7 @@ static stock _Master_Unname(const name[])
 					// take the place of the next function and be called instead
 					// of it, when neither should be called.
 					strunpack(str, str);
-					P:F("_Master_Unname: Function \"%s\" is adjacent to \"%s\"; cannot hide it.", name, str);
+					Debug_Fatal("_Master_Unname: Function \"%s\" is adjacent to \"%s\"; cannot hide it.", name, str);
 					return;
 				}
 			}
@@ -959,20 +964,20 @@ static stock _Master_Unname(const name[])
 		// It is possible that this will result in an invalid function name, but
 		// we don't care about that because the function isn't to be called
 		// anyway
-		entry += 4;
+		entry += cellbytes;
 		#emit LREF.S.pri entry
 		#emit LOAD.alt   AMX_BASE_ADDRESS
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
-		#emit ADD.C      0xFFFFFFFF
+		#emit ADD.C      __minus1
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry
 		#emit INC.pri
 		#emit SREF.S.pri entry
 	}
-	P:C(else P:E("_Master_Unname: Could not function \"%s\"", name););
+	Debug_CodeX{else Debug_Error("_Master_Unname: Could not function \"%s\"", name);}
 }
 
 stock _Master_UnnameAll(master)
@@ -1006,9 +1011,9 @@ stock _Master_RenameAll(master)
 		{
 			buffer[0] = 0x40404040, // '@@@@',
 			strunpack(buffer, buffer);
-			P:6("_Master_RenameAll: Renaming to \"%s\"", buffer);
+			Debug_Print6("_Master_RenameAll: Renaming to \"%s\"", buffer);
 			++buffer[strlen(buffer) - 1];
-			P:6("_Master_RenameAll: Renaming from \"%s\"", buffer);
+			Debug_Print6("_Master_RenameAll: Renaming from \"%s\"", buffer);
 			_Master_Rename(buffer[2]);
 		}
 	}
@@ -1030,16 +1035,16 @@ static stock const
 
 stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 {
-	P:2("_Master_Get called");
+	Debug_Print2("_Master_Get called");
 	new
 		e_YSIM_GET_TYPE:ret = e_YSIM_GET_TYPE_NO_CONTEST;
 	new
 		master = getproperty(9, library);
-	P:3("E_YSIM_GET_TYPE:_Master_Get called: \"%s\", %i, %d", library, _:force, master);
+	Debug_Print3("E_YSIM_GET_TYPE:_Master_Get called: \"%s\", %i, %d", library, _:force, master);
 	if (master)
 	{
-		P:4("_Master_Get: Prop exists: %d %d", master, Master_ID());
-		P:4("_Master_Get: Prop set");
+		Debug_Print4("_Master_Get: Prop exists: %d %d", master, Master_ID());
+		Debug_Print4("_Master_Get: Prop set");
 		if (master == Master_ID())
 		{
 			// Nothing has changed.
@@ -1075,18 +1080,18 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 			return e_YSIM_GET_TYPE_NOT_GOT;
 		}
 	}
-	P:4("_Master_Get: Get master.");
+	Debug_Print4("_Master_Get: Get master.");
 	setproperty(9, library, Master_ID());
-	P:4("_Master_Get: Set master.");
+	Debug_Print4("_Master_Get: Set master.");
 	// Add this library to the list.  The list is designed to only deal with
 	// two or three character master names now!
 	if (YSI_g_sMasterCount < MAX_MASTERS)
 	{
-		P:4("_Master_Get: Set master string %s = %d", library, library[0] | (library[1] << 8) | (library[2] << 16));
+		Debug_Print4("_Master_Get: Set master string %s = %d", library, library[0] | (library[1] << 8) | (library[2] << 16));
 		YSI_g_sMasterData[YSI_g_sMasterCount++] = library[0] | (library[1] << 8) | (library[2] << 16);
-		P:4("_Master_Get: Set master string.");
+		Debug_Print4("_Master_Get: Set master string.");
 	}
-	P:C(else P:E("Too many master scripts"););
+	Debug_CodeX{else Debug_Error("Too many master scripts");}
 	return ret;
 }
 

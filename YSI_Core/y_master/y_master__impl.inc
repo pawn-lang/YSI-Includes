@@ -130,13 +130,14 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 
 // These parts are redefined every time the master system is included.
 #if !YSIM_HAS_MASTER
-	#define FOREIGN__      YSIM_NONE_FOREIGN
-	#define GLOBAL__       YSIM_NONE_GLOBAL
-	#define MASTER_FUNC__  YSIM_NONE_FUNC
-	#define MASTER_HOOK__  YSIM_NONE_HOOK
-	#define MASTER_TASK__  YSIM_NONE_TASK
-	#define MASTER_PTASK__ YSIM_NONE_PTSK
-	#define GROUP_HOOK__   YSIM_NONE_GRUP
+	#define FOREIGN__       YSIM_NONE_FOREIGN
+	#define GLOBAL__        YSIM_NONE_GLOBAL
+	#define MASTER_FUNC__   YSIM_NONE_FUNC
+	#define MASTER_HOOK__   YSIM_NONE_HOOK
+	#define MASTER_TASK__   YSIM_NONE_TASK
+	#define MASTER_PTASK__  YSIM_NONE_PTSK
+	#define GROUP_HOOK__    YSIM_NONE_GRUP
+	#define MASTER_REHOOK__ YSIM_NONE_REHK
 	#if _MASTER == 0
 		// Less strict (implicit user master).
 		#define YSIM_COMMAND YSIM_NONE_ZERO
@@ -145,13 +146,14 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#endif
 	#define Master_Caller() (1)
 #elseif _YSIM_IS_SERVER
-	#define FOREIGN__      YSIM_SERVER_FOREIGN
-	#define GLOBAL__       YSIM_SERVER_GLOBAL
-	#define MASTER_FUNC__  YSIM_SERVER_FUNC
-	#define MASTER_HOOK__  YSIM_SERVER_HOOK
-	#define MASTER_TASK__  YSIM_SERVER_TASK
-	#define MASTER_PTASK__ YSIM_SERVER_PTSK
-	#define GROUP_HOOK__   YSIM_SERVER_GRUP
+	#define FOREIGN__       YSIM_SERVER_FOREIGN
+	#define GLOBAL__        YSIM_SERVER_GLOBAL
+	#define MASTER_FUNC__   YSIM_SERVER_FUNC
+	#define MASTER_HOOK__   YSIM_SERVER_HOOK
+	#define MASTER_TASK__   YSIM_SERVER_TASK
+	#define MASTER_PTASK__  YSIM_SERVER_PTSK
+	#define GROUP_HOOK__    YSIM_SERVER_GRUP
+	#define MASTER_REHOOK__ YSIM_SERVER_REHK
 	#if _MASTER == 0
 		// Less strict (implicit user master).
 		#define YSIM_COMMAND YSIM_SERVER_ZERO
@@ -160,13 +162,14 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#endif
 	#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(@_):(I@))
 #elseif _YSIM_IS_CLIENT
-	#define FOREIGN__      YSIM_CLIENT_FOREIGN
-	#define GLOBAL__       YSIM_CLIENT_GLOBAL
-	#define MASTER_FUNC__  YSIM_CLIENT_FUNC
-	#define MASTER_HOOK__  YSIM_CLIENT_HOOK
-	#define MASTER_TASK__  YSIM_CLIENT_TASK
-	#define MASTER_PTASK__ YSIM_CLIENT_PTSK
-	#define GROUP_HOOK__   YSIM_CLIENT_GRUP
+	#define FOREIGN__       YSIM_CLIENT_FOREIGN
+	#define GLOBAL__        YSIM_CLIENT_GLOBAL
+	#define MASTER_FUNC__   YSIM_CLIENT_FUNC
+	#define MASTER_HOOK__   YSIM_CLIENT_HOOK
+	#define MASTER_TASK__   YSIM_CLIENT_TASK
+	#define MASTER_PTASK__  YSIM_CLIENT_PTSK
+	#define GROUP_HOOK__    YSIM_CLIENT_GRUP
+	#define MASTER_REHOOK__ YSIM_CLIENT_REHK
 	#if _MASTER == 0
 		// Less strict (implicit user master).
 		#define YSIM_COMMAND YSIM_CLIENT_ZERO
@@ -175,13 +178,14 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#endif
 	#define Master_Caller() (-1)
 #elseif _YSIM_IS_STUB
-	#define FOREIGN__      YSIM_STUB_FOREIGN
-	#define GLOBAL__       YSIM_STUB_GLOBAL
-	#define MASTER_FUNC__  YSIM_STUB_FUNC
-	#define MASTER_HOOK__  YSIM_STUB_HOOK
-	#define MASTER_TASK__  YSIM_STUB_TASK
-	#define MASTER_PTASK__ YSIM_STUB_PTSK
-	#define GROUP_HOOK__   YSIM_STUB_GRUP
+	#define FOREIGN__       YSIM_STUB_FOREIGN
+	#define GLOBAL__        YSIM_STUB_GLOBAL
+	#define MASTER_FUNC__   YSIM_STUB_FUNC
+	#define MASTER_HOOK__   YSIM_STUB_HOOK
+	#define MASTER_TASK__   YSIM_STUB_TASK
+	#define MASTER_PTASK__  YSIM_STUB_PTSK
+	#define GROUP_HOOK__    YSIM_STUB_GRUP
+	#define MASTER_REHOOK__ YSIM_STUB_REHK
 	#if _MASTER == 0
 		// Less strict (implicit user master).
 		#define YSIM_COMMAND YSIM_STUB_ZERO
@@ -190,13 +194,14 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#endif
 	#define Master_Caller
 #else
-	#define FOREIGN__      YSIM_CLOUD_FOREIGN
-	#define GLOBAL__       YSIM_CLOUD_GLOBAL
-	#define MASTER_FUNC__  YSIM_CLOUD_FUNC
-	#define MASTER_HOOK__  YSIM_CLOUD_HOOK
-	#define MASTER_TASK__  YSIM_CLOUD_TASK
-	#define MASTER_PTASK__ YSIM_CLOUD_PTSK
-	#define GROUP_HOOK__   YSIM_CLOUD_GRUP
+	#define FOREIGN__       YSIM_CLOUD_FOREIGN
+	#define GLOBAL__        YSIM_CLOUD_GLOBAL
+	#define MASTER_FUNC__   YSIM_CLOUD_FUNC
+	#define MASTER_HOOK__   YSIM_CLOUD_HOOK
+	#define MASTER_TASK__   YSIM_CLOUD_TASK
+	#define MASTER_PTASK__  YSIM_CLOUD_PTSK
+	#define GROUP_HOOK__    YSIM_CLOUD_GRUP
+	#define MASTER_REHOOK__ YSIM_CLOUD_REHK
 	#if _MASTER == 0
 		// Less strict (implicit user master).
 		#define YSIM_COMMAND YSIM_CLOUD_ZERO
@@ -266,7 +271,7 @@ stock
 
 	public MAKE_YCM<YSIM_VERSION...>() <_YCM:y, _YCM:u>
 	{
-		P:3(#MAKE_YCM<YSIM_VERSION...> "() <y,u> called");
+		Debug_Print3(#MAKE_YCM<YSIM_VERSION...> "() <y,u> called");
 		// For making sure the latest version of a library is the one used.
 		if (YSI_gModuleShutdown)
 		{
@@ -280,7 +285,7 @@ stock
 
 	public MAKE_YCM<YSIM_VERSION...>() <_YCM:n>
 	{
-		P:3(#MAKE_YCM<YSIM_VERSION...> "() <n> called");
+		Debug_Print3(#MAKE_YCM<YSIM_VERSION...> "() <n> called");
 		if (YSI_gModuleShutdown)
 		{
 			return cellmin;
@@ -294,7 +299,7 @@ stock
 	public MAKE_YCM<YSIM_VERSION...>() <>
 	{
 		// Called if this script is ending.
-		P:3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
+		Debug_Print3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
 		if (YSI_gModuleShutdown)
 		{
 			return cellmin;
@@ -308,7 +313,7 @@ stock
 		public MAKE_YCM<YSIM_VERSION...>() <>
 		{
 			// Return here for local (current version) gets.
-			P:3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
+			Debug_Print3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
 			if (YSI_gModuleShutdown)
 			{
 				return cellmin;
@@ -320,7 +325,7 @@ stock
 		
 		public MAKE_YCM<YSIM_VERSION...>() <_YCM:y>
 		{
-			P:3(#MAKE_YCM<YSIM_VERSION...> "() <y> called");
+			Debug_Print3(#MAKE_YCM<YSIM_VERSION...> "() <y> called");
 			if (YSI_gModuleShutdown)
 			{
 				return cellmin;
@@ -334,7 +339,7 @@ stock
 
 		public MAKE_YCM<YSIM_VERSION...>() <_YCM:n>
 		{
-			P:3(#MAKE_YCM<YSIM_VERSION...> "() <n> called");
+			Debug_Print3(#MAKE_YCM<YSIM_VERSION...> "() <n> called");
 			if (YSI_gModuleShutdown)
 			{
 				return cellmin;
@@ -358,7 +363,7 @@ stock
 				return cellmin;
 			}
 			
-			P:3(#MAKE_YCM<YSIM_VERSION...> "() <u> called");
+			Debug_Print3(#MAKE_YCM<YSIM_VERSION...> "() <u> called");
 			// This script already claimed the master, we can't reverse that.
 			setproperty(8, YSIM_VERRET, cellmax);
 			setproperty(8, YSIM_VERMAX, cellmax);
@@ -389,7 +394,7 @@ static stock Master_GetCurrentMaster(installState)
 			case e_YSIM_GET_TYPE_NO_CONTEST:
 			{
 				// Nothing changed, or we took it without force.
-				P:2("Master_GetCurrentMaster: Got master " #_YCM);
+				Debug_Print2("Master_GetCurrentMaster: Got master " #_YCM);
 				state _YCM:y;
 				_YCM@ = _E_YCM@y;
 				// Already installed = 1 + 1, does nothing.
@@ -398,7 +403,7 @@ static stock Master_GetCurrentMaster(installState)
 			}
 			case e_YSIM_GET_TYPE_STOLE:
 			{
-				P:2("Master_GetCurrentMaster: Stole master " #_YCM);
+				Debug_Print2("Master_GetCurrentMaster: Stole master " #_YCM);
 				// Something changed, tell other scripts.  Set the state here to `:u` not `:y` so that
 				// the only call to a `:y` function does relinquishing.  We don't want to be set as
 				// master here then instantly relinquish everything.
@@ -412,7 +417,7 @@ static stock Master_GetCurrentMaster(installState)
 			}
 			case e_YSIM_GET_TYPE_NOT_GOT:
 			{
-				P:2("Master_GetCurrentMaster: Not master " #_YCM);
+				Debug_Print2("Master_GetCurrentMaster: Not master " #_YCM);
 				state _YCM:n;
 				_YCM@ = _E_YCM@n;
 				// Already installed = 1 - 1, uninstalls.
@@ -421,7 +426,7 @@ static stock Master_GetCurrentMaster(installState)
 			}
 			default:
 			{
-				P:E("Master_GetCurrentMaster: Unknown return " #_YCM);
+				Debug_Error("Master_GetCurrentMaster: Unknown return " #_YCM);
 				state _YCM:n;
 				_YCM@ = _E_YCM@n;
 				--installState;
@@ -430,20 +435,20 @@ static stock Master_GetCurrentMaster(installState)
 		// We are now in charge of `_MASTER`.  Rename relevant functions.
 		if (installState == 1)
 		{
-			P:6("Master_GetCurrentMaster: Installing %d", _MASTER);
+			Debug_Print6("Master_GetCurrentMaster: Installing %d", _MASTER);
 			_Master_RenameAll(_MASTER);
 		}
 		else if (installState == 0)
 		{
-			P:6("Master_GetCurrentMaster: Uninstalling %d", _MASTER);
+			Debug_Print6("Master_GetCurrentMaster: Uninstalling %d", _MASTER);
 			_Master_UnnameAll(_MASTER);
 		}
-		P:C(else { P:6("Master_GetCurrentMaster: Neither %d", _MASTER); });
+		Debug_CodeX{else { Debug_Print6("Master_GetCurrentMaster: Neither %d", _MASTER); }}
 }
 
 public OnMasterSystemInit(id)
 {
-	P:1(#_YCM "_OGM");
+	Debug_Print1(#_YCM "_OGM");
 	deleteproperty(8, YSIM_VERMAX);
 	Master_GetCurrentMaster(1);
 	#if defined _ALS_OnMasterSystemInit
@@ -802,10 +807,10 @@ public OnMasterSystemInit(id)
 
 public _YCM() <_YCM:y>
 {
-	P:1("%d: " #_YCM "() <y> called, master = %d", Master_ID(), getproperty(9, #_YCM));
+	Debug_Print1("%d: " #_YCM "() <y> called, master = %d", Master_ID(), getproperty(9, #_YCM));
 	if (getproperty(9, #_YCM) == Master_ID())
 	{
-		P:2(#_YCM " natural end");
+		Debug_Print2(#_YCM " natural end");
 		if (YSI_gModuleShutdown)
 		{
 			// Disable the current mastership.
@@ -813,7 +818,7 @@ public _YCM() <_YCM:y>
 			_YCM@ = _E_YCM@w;
 			return;
 		}
-		P:2(#_YCM " not shut down");
+		Debug_Print2(#_YCM " not shut down");
 		// Disable the current mastership.
 		state _YCM:p;
 		_YCM@ = _E_YCM@p;
@@ -827,7 +832,7 @@ public _YCM() <_YCM:y>
 	}
 	else
 	{
-		P:2(#_YCM " stolen!");
+		Debug_Print2(#_YCM " stolen!");
 		// Brutally stolen, but can be later reclaimed.
 		state _YCM:n;
 		_YCM@ = _E_YCM@n;
@@ -844,7 +849,7 @@ public _YCM() <_YCM:y>
 
 public _YCM() <_YCM:n>
 {
-	P:1("%d: " #_YCM "() <n> called", Master_ID());
+	Debug_Print1("%d: " #_YCM "() <n> called", Master_ID());
 	if (YSI_gModuleShutdown)
 	{
 		// This wasn't the master, but is in a module that's now shutting down.  null-route all
@@ -862,21 +867,21 @@ public _YCM() <_YCM:n>
 
 public _YCM() <_YCM:m, _YCM:p>
 {
-	P:1("%d: " #_YCM "() <m,p> called", Master_ID());
+	Debug_Print1("%d: " #_YCM "() <m,p> called", Master_ID());
 	// Do nothing at all (just define states).
 }
 
 public _YCM() <_YCM:u>
 {
 	// Finish initialisation.
-	P:1("%d: " #_YCM "() <u> called", Master_ID());
+	Debug_Print1("%d: " #_YCM "() <u> called", Master_ID());
 	state _YCM:y;
 	_YCM@ = _E_YCM@y;
 }
 
 public _YCM() <_YCM:w>
 {
-	P:1("%d: " #_YCM "() <w> called", Master_ID());
+	Debug_Print1("%d: " #_YCM "() <w> called", Master_ID());
 	// Disable the current mastership.
 	state _YCM:p;
 	_YCM@ = _E_YCM@p;
@@ -900,6 +905,6 @@ public _YCM() <_YCM:w>
 public _YCM() <>
 {
 	// Do nothing at all (just define states).
-	P:E("%d: " #_YCM "() <> called", Master_ID());
+	Debug_Error("%d: " #_YCM "() <> called", Master_ID());
 }
 

@@ -76,8 +76,9 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\..\YSI_Server\y_thirdpartyinclude"
 #include "..\y_va"
-#include "..\y_cgen\y_cgen"
+#include "..\y_cgen"
 
 #if !defined YSI_MAX_INLINE_STRING
 	#define YSI_MAX_INLINE_STRING YSI_MAX_STRING

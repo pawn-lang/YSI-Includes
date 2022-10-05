@@ -5,6 +5,7 @@
 * [installation](installation.md)
 * [troubleshooting](troubleshooting.md)
 * [YSI_COMPATIBILTY_MODE](YSI_COMPATIBILTY_MODE.md)
+* [Information on the more consistent YSI syntax ("annotations")](annotations.md)
 
 ## Libraries
 
@@ -74,6 +75,7 @@ Optional features.
 Libraries that provide information about the game.
 
 * [y_vehicledata](YSI_Game/y_vehicledata.md)
+* [y_weapondata](YSI_Game/y_weapondata.md)
 
 ### Players
 
@@ -97,6 +99,7 @@ Libraries for controlling the server.
 * [y_scriptinit](YSI_Server/y_scriptinit.md)
 * [y_stringise](YSI_Server/y_stringise.md) (AKA y_stringize)
 * [y_td](YSI_Server/y_td.md)
+* [y_thirdpartyinclude](YSI_Server/y_thirdpartyinclude.md)
 
 ### Storage
 

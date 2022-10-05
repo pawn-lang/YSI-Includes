@@ -90,13 +90,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\..\YSI_Core\y_utils"
+
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning push
 	#pragma warning disable 231
 #endif
 
 // If the files only exist in one place, they will only be included once because
-// of using "#tryinclude".  If they happen to exist in two places, their own
+// of using "#tryinclude.inc".  If they happen to exist in two places, their own
 // internal include guards (or the compiler's one) will prevent their multiple
 // inclusions.  I don't know why I ever made YSI use its own internal version...
 
@@ -497,9 +499,9 @@ Optional plugins:
 //#endif
 
 #if defined AMX_INCLUDING_FAILED
-	#error Download `https://github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
-#elseif !defined IsOpcodeRelocationRequired
-	#error Re-download `https://github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
+	#error Download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
+#elseif !defined AMX_TAG_LOCAL
+	#error Re-download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
 //#tryinclude <md-sort\md-sort>
@@ -514,9 +516,9 @@ Optional plugins:
 //#tryinclude "md-sort"
 //#tryinclude <md-sort>
 //#if !defined _INC_md_sort
-//	#error Download `https://github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
+//	#error Download `github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
 //#elseif !defined ResetDeepArray_Entry
-//	#error Re-download `https://github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
+//	#error Re-download `github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
 //#endif
 
 //#tryinclude <formatex\formatex>
@@ -531,37 +533,12 @@ Optional plugins:
 //#tryinclude "formatex"
 //#tryinclude <formatex>
 //#if !defined _INC_md_sort
-//	#error Download `https://github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
+//	#error Download `github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
 //#elseif !defined FormatFlags
-//	#error Re-download `https://github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
+//	#error Re-download `github.com/Y-Less/formatex/archive/refs/heads/master.zip` and extract it to `include\`.
 //#endif
 
-// Manually fix earlier versions.
-#if !defined _INC_code_parse_inc
-	#undef u@
-#endif
-#tryinclude <code-parse\code-parse>
-#tryinclude <code-parse.inc\code-parse>
-#tryinclude <code-parse.inc-master\code-parse>
-#tryinclude <code-parse.inc-master\code-parse.inc-master\code-parse>
-#tryinclude "..\..\code-parse\code-parse"
-#tryinclude "..\..\code-parse.inc\code-parse"
-#tryinclude "..\..\code-parse.inc-master\code-parse"
-#tryinclude "..\..\code-parse.inc-master\code-parse.inc-master\code-parse"
-#tryinclude "..\..\..\code-parse\code-parse"
-#tryinclude "..\..\..\code-parse.inc\code-parse"
-#tryinclude "..\..\..\code-parse.inc-master\code-parse"
-#tryinclude "..\..\..\code-parse.inc-master\code-parse.inc-master\code-parse"
-#tryinclude "code-parse"
-#tryinclude <code-parse>
-#if defined _INC_code_parse_inc
-	#undef u@
-#else
-	#error Download `https://github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
-//#elseif !defined __code_parse_u@_1
-//	#error Re-download `https://github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
-#endif
-#define u@$ 1]);
+#include "y_codeparse"
 
 #tryinclude <indirection\indirection>
 #tryinclude <indirection-master\indirection>
@@ -575,9 +552,9 @@ Optional plugins:
 #tryinclude "indirection"
 #tryinclude <indirection>
 #if !defined _INC_indirection
-	#error Download `https://github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
+	#error Download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
 #elseif !defined Indirect_Init || defined TAGOF@ || defined __TAGOF
-	#error Re-download `https://github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
+	#error Re-download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
 // "y_thirdpartyinclude_tests" is NOT included here when tests are active, because it complicates
@@ -604,6 +581,5 @@ public OnCodeInit()
 	#pragma warning pop
 #endif
 
-#include "y_codeparse"
-#include "y_dumpamx"
+#include "..\..\YSI_Core\y_core\y_dumpamx"
 

@@ -90,15 +90,30 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#tryinclude "..\..\code-parse\code-parse"
+// Manually fix earlier versions.
+#if !defined _INC_code_parse_inc
+	#undef u@
+#endif
 #tryinclude <code-parse\code-parse>
-#tryinclude "..\..\code-parse.inc\code-parse"
 #tryinclude <code-parse.inc\code-parse>
-#tryinclude "..\..\code-parse.inc-master\code-parse"
 #tryinclude <code-parse.inc-master\code-parse>
+#tryinclude <code-parse.inc-master\code-parse.inc-master\code-parse>
+#tryinclude "..\..\code-parse\code-parse"
+#tryinclude "..\..\code-parse.inc\code-parse"
+#tryinclude "..\..\code-parse.inc-master\code-parse"
+#tryinclude "..\..\code-parse.inc-master\code-parse.inc-master\code-parse"
+#tryinclude "..\..\..\code-parse\code-parse"
+#tryinclude "..\..\..\code-parse.inc\code-parse"
+#tryinclude "..\..\..\code-parse.inc-master\code-parse"
+#tryinclude "..\..\..\code-parse.inc-master\code-parse.inc-master\code-parse"
 #tryinclude "code-parse"
 #tryinclude <code-parse>
-#if !defined _INC_code_parse_inc
-	#error Could not include "https://github.com/Y-Less/code-parse.inc" - ensure its files are in "include\code-parse\"
+#if defined _INC_code_parse_inc
+	#undef u@
+#else
+	#error Download `github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
+//#elseif !defined __code_parse_u@_1
+//	#error Re-download `github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
+#define u@$ 1]);
 

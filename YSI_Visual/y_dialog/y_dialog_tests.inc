@@ -71,10 +71,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-// Using "y_testing" in here isn't actually possible, because it needs dialogs
-// to ask players for feedback...
-
-TEST__ y_dialog_Compile()
+@test(.group = "y_dialog", .run = false) y_dialog_Compile()
 {
 	if (FALSE)
 	{
@@ -87,11 +84,103 @@ TEST__ y_dialog_Compile()
 		{
 			#pragma unused arg0, arg1, arg2, arg3, arg4
 		}
-		Dialog_ShowCallback(0, using inline A, 0, "", "", "");
-		Dialog_ShowCallback(0, using inline B, 0, "", "", "");
-		Dialog_Show(0, 0, "", "", "");
+		Dialog_ShowCallback(0, using inline A, DIALOG_STYLE_MSGBOX, "", "", "");
+		Dialog_ShowCallback(0, using inline B, DIALOG_STYLE_MSGBOX, "", "", "");
+		Dialog_Show(0, DIALOG_STYLE_MSGBOX, "", "", "");
 		Dialog_Hide(0);
-		Dialog_ShowPlayerDialog(0, 0, 0, "", "", "", "");
+		Dialog_ShowPlayerDialog(0, 0, DIALOG_STYLE_MSGBOX, "", "", "", "");
 	}
+}
+
+#if defined YSI_DIALOG_ASK
+	// Using "y_testing" in here isn't actually possible, because it needs dialogs
+	// to ask players for feedback...
+	#endinput
+#endif
+
+@test(.group = "y_dialog") Dialog_ShowCallback(playerid)
+{
+	inline const Response(arg0, arg1, string:arg2[])
+	{
+		#pragma unused arg0, arg1, arg2
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK");
+	ASK("Did the dialog show up (you may need to close it before answering)?");
+}
+
+@test(.group = "y_dialog") Dialog_CallbackOK(playerid)
+{
+	inline const Response(response, arg1, string:arg2[])
+	{
+		if (response)
+		{
+			SendClientMessage(playerid, 0xFF0000AA, "HI!");
+		}
+		#pragma unused arg1, arg2
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK", "CANCEL");
+	ASK("Does clicking OK send `HI!`?");
+}
+
+@test(.group = "y_dialog") Dialog_CallbackCancel(playerid)
+{
+	inline const Response(response, arg1, string:arg2[])
+	{
+		if (!response)
+		{
+			SendClientMessage(playerid, 0xFF0000AA, "BYE!");
+		}
+		#pragma unused arg1, arg2
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_MSGBOX, "Dialog", "Text", "OK", "CANCEL");
+	ASK("Does clicking CANCEL send `BYE!`?");
+}
+
+@test(.group = "y_dialog") Dialog_CallbackInput(playerid)
+{
+	inline const Response(response, arg1, string:input[])
+	{
+		SendClientMessage(playerid, 0xFF0000AA, "Your input:");
+		if (response)
+		{
+			SendClientMessage(playerid, 0xFF0000AA, input);
+		}
+		#pragma unused arg1
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_INPUT, "Dialog", "Input:", "OK", "CANCEL");
+	ASK("Does clicking OK send your input?");
+}
+
+@test(.group = "y_dialog") Dialog_CallbackIgnore(playerid)
+{
+	inline const Response(response, arg1, string:input[])
+	{
+		SendClientMessage(playerid, 0xFF0000AA, "Your input:");
+		if (response)
+		{
+			SendClientMessage(playerid, 0xFF0000AA, input);
+		}
+		#pragma unused arg1
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_INPUT, "Dialog", "Input:", "OK", "CANCEL");
+	ASK("Does clicking CANCEL NOT send your input?");
+}
+
+forward Dialog_TestHide(playerid);
+
+public Dialog_TestHide(playerid)
+{
+	Dialog_Hide(playerid);
+}
+
+@test(.group = "y_dialog") Dialog_Hide(playerid)
+{
+	inline const Response(arg0, arg1, string:arg2[])
+	{
+		#pragma unused arg0, arg1, arg2
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_INPUT, "Dialog", "Input:", "OK", "CANCEL");
+	SetTimerEx("Dialog_TestHide", 5000, false, "i", playerid);
+	ASK("Does the dialog disappear after 5 seconds?");
 }
 

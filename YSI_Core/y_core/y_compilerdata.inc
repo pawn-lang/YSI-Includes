@@ -107,8 +107,14 @@ Optional plugins:
 //   P:D(bool:MyFunc(playerid));
 //   #define MyFunc(%0) ((%0) < MAX_PLAYERS)
 //   
-#define P:%1(%2); Debug_Print%1(%2);
-#define C:%1(%2); Debug_Code%1(%2);
+
+#if YSI_OPTIONAL(P)
+	#define P:%1(%2); Debug_Print%1(%2);
+#endif
+
+#if YSI_OPTIONAL(C)
+	#define C:%1{%2} Debug_Code%1{%2}
+#endif
 
 // This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
 // or `__COMPILER_WINDOWS` depending on where the code is being built.  It does
@@ -198,6 +204,9 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 
 #define __COMPILER_STATIC_ENUM enum
 #define __COMPILER_CONST_STATIC const
+
+// Generate macro opcodes?
+#define __COMPILER_O2 (0)
 
 // Has `#pragma option`
 #define __COMPILER_OPTION (0)
@@ -291,6 +300,13 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 		#undef __COMPILER_CONST_STATIC
 		#define __COMPILER_CONST_STATIC const static
 	#endif
+
+	#if defined __optimisation
+		#if __optimisation == 2
+			#undef __COMPILER_O2
+			#define __COMPILER_O2 (1)
+		#endif
+	#endif
 #else
 	#define __COMPILER_USER_WARNING (0)
 
@@ -307,7 +323,7 @@ const __COMPILER_DETERMINE_SEMICOLON = 1;
 	// `-;-`
 	#define __COMPILER_SEMICOLON (0)
 
-	// The macros `P:C` and `P:#` don't work without this.
+	// The macros `Debug_Code1` and `P:#` don't work without this.
 	#pragma semicolon 1
 
 	#if __COMPILER_USER_WARNING
@@ -358,11 +374,14 @@ static stock const
 #endif
 
 #if !__COMPILER_NAMEOF
-	// Allow `__nameof(Float:)` `CoMPiler REMove CoLoN`.
-	#define __CMPREMCLN:tagof(%0:),%0:) tagof(%0),%0)
+	// Allow `__nameof(Float:)` as `__nameof(Float)` and
+	// `__nameof(Float:Function)` as `__nameof(Function)`.
+	#define __CMPRC:tagof(%0:%1),%0:%1) __CMPRA:__CMPRB:tagof(%0:%1:),%0:%1:)
+	#define __CMPRA:__CMPRB:tagof(%0::),%0::) %0)
+	#define __CMPRB:tagof(%0:%1:),%0:%1:) tagof(%1),#%1)
 	
 	// Check the symbol exists with `tagof`, then return the name as a string.
-	#define __nameof(%0) (__CMPREMCLN:tagof(%0),#%0)
+	#define __nameof(%0) (__CMPRC:tagof(%0),#%0)
 #endif
 
 #define __COMPILER_DECL (0)
@@ -700,6 +719,8 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	
 	stock __CompilerStringReturn(const str[], size = sizeof (str), dummy = 0)
 	{
+		// Only needed on old compilers.
+		assert(cellbits == 32);
 		#pragma unused dummy
 		#emit PUSH.S       size   // Push the first parameter.
 		#emit PUSH.S       str    // Push the second parameter.
@@ -717,8 +738,8 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		#emit PUSH.C       12     // Push the parameters for `StrCpy`.
 		#emit SYSREQ.C     strcat // Call `strcat`.
 		#emit LOAD.S.pri   0      // Reload the previous frame pointer.
-		#emit SCTRL        4      // Wipe out the stack.
-		#emit SCTRL        5      // Wipe out the frame (go to parent context).
+		#emit SCTRL        __stk      // Wipe out the stack.
+		#emit SCTRL        __frm      // Wipe out the frame (go to parent context).
 		#emit RETN                // Return (now within the parent context).
 		return 0;
 	}
@@ -765,34 +786,42 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #endif
 
 // Should be an inbuilt constant!
-#define cellbytes (cellbits / charbits)
-
-#if cellbits != 32
-	#error YSI assumes `cellbits` is 32.
+#if !defined cellbytes
+	const cellbytes = cellbits / charbits;
 #endif
 
 #if charbits != 8
 	#error YSI assumes `charbits` is 8.
 #endif
 
-#define __COMPILER_CELL_BYTES cellbytes
-#define __COMPILER_CELL_BITS  cellbits
-#define __COMPILER_CHAR_BITS  charbits
+const __COMPILER_CELL_BYTES = cellbytes;
+const __COMPILER_CELL_BITS  = cellbits;
+const __COMPILER_CHAR_BITS  = charbits;
 
 // How much to adjust a cell count by to get a byte count.
 #if cellbits == 8
-	#define __COMPILER_CELL_SHIFT (0)
+	const __COMPILER_CELL_SHIFT = 0;
+	const __COMPILER_BIT_SHIFT = 3;
+	const __COMPILER_BIT_MASK = 7;
+	#error YSI assumes `cellbits` is 32 or 64.
 #elseif cellbits == 16
-	#define __COMPILER_CELL_SHIFT (1)
+	const __COMPILER_CELL_SHIFT = 1;
+	const __COMPILER_BIT_SHIFT = 4;
+	const __COMPILER_BIT_MASK = 15;
+	#error YSI assumes `cellbits` is 32 or 64.
 #elseif cellbits == 32
-	#define __COMPILER_CELL_SHIFT (2)
+	const __COMPILER_CELL_SHIFT = 2;
+	const __COMPILER_BIT_SHIFT = 5;
+	const __COMPILER_BIT_MASK = 31;
 #elseif cellbits == 64
-	#define __COMPILER_CELL_SHIFT (3)
+	const __COMPILER_CELL_SHIFT = 3;
+	const __COMPILER_BIT_SHIFT = 6;
+	const __COMPILER_BIT_MASK = 63;
 #else
-	#error Unknown cellbits size.
+	#error Unknown `cellbits` size.
 #endif
 
-#define FUNCTION_LENGTH (__COMPILER_sNAMEMAX + 1)
+const FUNCTION_LENGTH = __COMPILER_sNAMEMAX + 1;
 
 // Core tags.
 #if defined _INC_indirection
@@ -806,6 +835,8 @@ __COMPILER_TAG_DATA(_, 0);
 __COMPILER_TAG_DATA(bool, 0);
 __COMPILER_TAG_DATA(filemode, 0);
 __COMPILER_TAG_DATA(seek_whence, 0);
+__COMPILER_TAG_DATA(floatround_method, 0);
+__COMPILER_TAG_DATA(anglemode, 0);
 
 // SA:MP tags.
 __COMPILER_TAG_DATA(DB, 0);
@@ -816,11 +847,51 @@ __COMPILER_TAG_DATA(Menu, 255);
 __COMPILER_TAG_DATA(Text3D, 65535);
 __COMPILER_TAG_DATA(PlayerText3D, 65535);
 
+// open.mp tags.
+__COMPILER_TAG_DATA(T_CP_TYPE, 0)
+__COMPILER_TAG_DATA(T_WEAPON, -1);
+__COMPILER_TAG_DATA(T_WEAPON_SLOT, -1);
+__COMPILER_TAG_DATA(T_PLAYER_MARKERS_MODE, -1);
+__COMPILER_TAG_DATA(T_DIALOG_STYLE, 0);
+__COMPILER_TAG_DATA(T_HTTP_METHOD, 1);
+__COMPILER_TAG_DATA(T_HTTP_ERROR, 0);
+__COMPILER_TAG_DATA(T_CONNECTION_STATUS, 0);
+__COMPILER_TAG_DATA(T_DOWNLOAD_REQUEST, 0);
+__COMPILER_TAG_DATA(T_SELECT_OBJECT, 0);
+__COMPILER_TAG_DATA(T_OBJECT_MATERIAL_SIZE, 0);
+__COMPILER_TAG_DATA(T_OBJECT_MATERIAL_TEXT_ALIGN, 0);
+__COMPILER_TAG_DATA(T_EDIT_RESPONSE, 0);
+__COMPILER_TAG_DATA(T_PLAYER_STATE, 0);
+__COMPILER_TAG_DATA(T_SPECIAL_ACTION, 0);
+__COMPILER_TAG_DATA(T_FIGHT_STYLE, 4);
+__COMPILER_TAG_DATA(T_WEAPONSKILL, 0);
+__COMPILER_TAG_DATA(T_WEAPONSTATE, -1);
+__COMPILER_TAG_DATA(T_KEY, 0);
+__COMPILER_TAG_DATA(T_CAM_MOVE, 1);
+__COMPILER_TAG_DATA(T_CAM_MODE, 0);
+__COMPILER_TAG_DATA(T_MAPICON, 0);
+__COMPILER_TAG_DATA(T_SPECTATE_MODE, 1);
+__COMPILER_TAG_DATA(T_PLAYER_RECORDING_TYPE, 0);
+__COMPILER_TAG_DATA(T_FORCE_SYNC, 0);
+__COMPILER_TAG_DATA(T_CLICK_SOURCE, 0);
+__COMPILER_TAG_DATA(T_BULLET_HIT_TYPE, 0);
+__COMPILER_TAG_DATA(T_TEXT_DRAW_FONT, 0);
+__COMPILER_TAG_DATA(T_TEXT_DRAW_ALIGN, 1);
+__COMPILER_TAG_DATA(T_VARTYPE, 0);
+__COMPILER_TAG_DATA(T_CARMODTYPE, -1);
+__COMPILER_TAG_DATA(T_VEHICLE_MODEL_INFO, 0);
+__COMPILER_TAG_DATA(T_VEHICLE_PANEL_STATUS, 0);
+__COMPILER_TAG_DATA(T_VEHICLE_DOOR_STATUS, 0);
+__COMPILER_TAG_DATA(T_VEHICLE_LIGHT_STATUS, 0);
+__COMPILER_TAG_DATA(T_VEHICLE_TYRE_STATUS, 0);
+
 // YSI tags.
 __COMPILER_TAG_DATA(Language, -1);
 __COMPILER_TAG_DATA(Bit, 0);
+__COMPILER_TAG_DATA(Bitmap, 0);
 __COMPILER_TAG_DATA(Style, 0);
 __COMPILER_TAG_DATA(XML, -1);
+__COMPILER_TAG_DATA(XMLEntry, -1);
 __COMPILER_TAG_DATA(Bintree, 0);
 __COMPILER_TAG_DATA(Group, -1);
 __COMPILER_TAG_DATA(Timer, 0);
@@ -871,6 +942,7 @@ __COMPILER_TAG_DATA(DynamicMapIcon, 0);
 __COMPILER_TAG_DATA(DynamicText3D, 0);
 __COMPILER_TAG_DATA(DynamicArea, 0);
 __COMPILER_TAG_DATA(DynamicActor, 0);
+__COMPILER_TAG_DATA(T_STREAMER_TYPE, -1);
 
 // Pawn.Regex tags.
 __COMPILER_TAG_DATA(E_REGEX_GRAMMAR, 0);

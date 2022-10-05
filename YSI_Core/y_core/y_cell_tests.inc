@@ -71,9 +71,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-TEST_COMPILE__ y_cell()
+//@test(.group = "y_cell", .run = false) y_cell()
+@test(.group = "y_cell", .run = false) y_cell()
 {
-	new masks[5];
+	#if cellbits == 32
+		new masks[5];
+	#endif
+	#if cellbits == 64
+		new masks[6];
+	#endif
 	Cell_ReverseBits(0);
 	Cell_ReverseNibbles(0);
 	Cell_ReverseBytes(0);
@@ -92,18 +98,28 @@ TEST_COMPILE__ y_cell()
 	Cell_ExpandLeft(0, 0);
 }
 
-TEST__ y_cell_ReverseBits0()
+@test(.group = "y_cell") y_cell_ReverseBits0()
 {
-	ASSERT_EQ(Cell_ReverseBits(0), 0x00000000);
-	ASSERT_EQ(Cell_ReverseBits(1), 0x80000000);
-	ASSERT_EQ(Cell_ReverseBits(2), 0x40000000);
-	ASSERT_EQ(Cell_ReverseBits(3), 0xC0000000);
-	ASSERT_EQ(Cell_ReverseBits(4), 0x20000000);
-	ASSERT_EQ(Cell_ReverseBits(0b01010101010), 0b01010101010000000000000000000000);
-	ASSERT_EQ(Cell_ReverseBits(0b1111000001111000011), 0b11000011110000011110000000000000);
+	#if cellbits == 32
+		ASSERT_EQ(Cell_ReverseBits(0), 0x00000000);
+		ASSERT_EQ(Cell_ReverseBits(1), 0x80000000);
+		ASSERT_EQ(Cell_ReverseBits(2), 0x40000000);
+		ASSERT_EQ(Cell_ReverseBits(3), 0xC0000000);
+		ASSERT_EQ(Cell_ReverseBits(4), 0x20000000);
+		ASSERT_EQ(Cell_ReverseBits(0b01010101010), 0b01010101010000000000000000000000);
+		ASSERT_EQ(Cell_ReverseBits(0b1111000001111000011), 0b11000011110000011110000000000000);
+	#else
+		ASSERT_EQ(Cell_ReverseBits(0), 0x0000000000000000);
+		ASSERT_EQ(Cell_ReverseBits(1), 0x8000000000000000);
+		ASSERT_EQ(Cell_ReverseBits(2), 0x4000000000000000);
+		ASSERT_EQ(Cell_ReverseBits(3), 0xC000000000000000);
+		ASSERT_EQ(Cell_ReverseBits(4), 0x2000000000000000);
+		ASSERT_EQ(Cell_ReverseBits(0b01010101010), 0b0101010101000000000000000000000000000000000000000000000000000000);
+		ASSERT_EQ(Cell_ReverseBits(0b1111000001111000011), 0b1100001111000001111000000000000000000000000000000000000000000000);
+	#endif
 }
 
-TEST__ y_cell_ExpandCompress()
+@test(.group = "y_cell") y_cell_ExpandCompress()
 {
 	new o = 0, x = 0, m = 0, n = 0;
 	//print("1");
@@ -162,13 +178,13 @@ TEST__ y_cell_ExpandCompress()
 	//PRINT(n);
 }
 
-TEST__ y_cell_ReverseBits1()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBits1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
 		new
 			count = 0;
-		for (new j = 0x80000000, k = 1; j; j >>>= 1, k <<= 1)
+		for (new j = cellmin, k = 1; j; j >>>= 1, k <<= 1)
 		{
 			if (i & j) count |= k;
 		}
@@ -180,13 +196,13 @@ TEST__ y_cell_ReverseBits1()
 	}
 }
 
-TEST__ y_cell_ReverseBits2()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBits2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
 		new
 			count = 0;
-		for (new j = 0x80000000, k = 1; j; j >>>= 1, k <<= 1)
+		for (new j = cellmin, k = 1; j; j >>>= 1, k <<= 1)
 		{
 			if (i & j) count |= k;
 		}
@@ -198,13 +214,13 @@ TEST__ y_cell_ReverseBits2()
 	}
 }
 
-TEST__ y_cell_ReverseBits3()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBits3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
 		new
 			count = 0;
-		for (new j = 0x80000000, k = 1; j; j >>>= 1, k <<= 1)
+		for (new j = cellmin, k = 1; j; j >>>= 1, k <<= 1)
 		{
 			if (i & j) count |= k;
 		}
@@ -216,25 +232,35 @@ TEST__ y_cell_ReverseBits3()
 	}
 }
 
-TEST__ y_cell_ReverseNibbles0()
+@test(.group = "y_cell") y_cell_ReverseNibbles0()
 {
-	ASSERT_ZE(Cell_ReverseNibbles(0));
-	ASSERT_EQ(Cell_ReverseNibbles(1), 0x10000000);
-	ASSERT_EQ(Cell_ReverseNibbles(2), 0x20000000);
-	ASSERT_EQ(Cell_ReverseNibbles(3), 0x30000000);
-	ASSERT_EQ(Cell_ReverseNibbles(4), 0x40000000);
-	ASSERT_EQ(Cell_ReverseNibbles(0b1010101010), 0b10101010001000000000000000000000);
-	ASSERT_EQ(Cell_ReverseNibbles(0b1111000001111000011), 0b00111100001110000111000000000000);
+	#if cellbits == 32
+		ASSERT_ZE(Cell_ReverseNibbles(0));
+		ASSERT_EQ(Cell_ReverseNibbles(1), 0x10000000);
+		ASSERT_EQ(Cell_ReverseNibbles(2), 0x20000000);
+		ASSERT_EQ(Cell_ReverseNibbles(3), 0x30000000);
+		ASSERT_EQ(Cell_ReverseNibbles(4), 0x40000000);
+		ASSERT_EQ(Cell_ReverseNibbles(0b1010101010), 0b10101010001000000000000000000000);
+		ASSERT_EQ(Cell_ReverseNibbles(0b1111000001111000011), 0b00111100001110000111000000000000);
+	#else
+		ASSERT_ZE(Cell_ReverseNibbles(0));
+		ASSERT_EQ(Cell_ReverseNibbles(1), 0x1000000000000000);
+		ASSERT_EQ(Cell_ReverseNibbles(2), 0x2000000000000000);
+		ASSERT_EQ(Cell_ReverseNibbles(3), 0x3000000000000000);
+		ASSERT_EQ(Cell_ReverseNibbles(4), 0x4000000000000000);
+		ASSERT_EQ(Cell_ReverseNibbles(0b1010101010), 0b1010101000100000000000000000000000000000000000000000000000000000);
+		ASSERT_EQ(Cell_ReverseNibbles(0b1111000001111000011), 0b0011110000111000011100000000000000000000000000000000000000000000);
+	#endif
 }
 
-TEST__ y_cell_ReverseNibbles1()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseNibbles1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
 		new
 			count = 0,
 			k = i;
-		for (new j = 0; j != 8; ++j)
+		for (new j = 0; j != cellbytes * 2; ++j)
 		{
 			count <<= 4;
 			count |= k & 0x0F;
@@ -248,14 +274,14 @@ TEST__ y_cell_ReverseNibbles1()
 	}
 }
 
-TEST__ y_cell_ReverseNibbles2()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseNibbles2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
 		new
 			count = 0,
 			k = i;
-		for (new j = 0; j != 8; ++j)
+		for (new j = 0; j != cellbytes * 2; ++j)
 		{
 			count <<= 4;
 			count |= k & 0x0F;
@@ -269,14 +295,14 @@ TEST__ y_cell_ReverseNibbles2()
 	}
 }
 
-TEST__ y_cell_ReverseNibbles3()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseNibbles3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
 		new
 			count = 0,
 			k = i;
-		for (new j = 0; j != 8; ++j)
+		for (new j = 0; j != cellbytes * 2; ++j)
 		{
 			count <<= 4;
 			count |= k & 0x0F;
@@ -290,25 +316,35 @@ TEST__ y_cell_ReverseNibbles3()
 	}
 }
 
-TEST__ y_cell_ReverseBytes0()
+@test(.group = "y_cell") y_cell_ReverseBytes0()
 {
-	ASSERT_ZE(Cell_ReverseBytes(0));
-	ASSERT_EQ(Cell_ReverseBytes(1), 0x01000000);
-	ASSERT_EQ(Cell_ReverseBytes(2), 0x02000000);
-	ASSERT_EQ(Cell_ReverseBytes(3), 0x03000000);
-	ASSERT_EQ(Cell_ReverseBytes(4), 0x04000000);
-	ASSERT_EQ(Cell_ReverseBytes(0b1010101010), 0b10101010000000100000000000000000);
-	ASSERT_EQ(Cell_ReverseBytes(0b1111000001111000011), 0b11000011100000110000011100000000);
+	#if cellbits == 32
+		ASSERT_ZE(Cell_ReverseBytes(0));
+		ASSERT_EQ(Cell_ReverseBytes(1), 0x01000000);
+		ASSERT_EQ(Cell_ReverseBytes(2), 0x02000000);
+		ASSERT_EQ(Cell_ReverseBytes(3), 0x03000000);
+		ASSERT_EQ(Cell_ReverseBytes(4), 0x04000000);
+		ASSERT_EQ(Cell_ReverseBytes(0b1010101010), 0b10101010000000100000000000000000);
+		ASSERT_EQ(Cell_ReverseBytes(0b1111000001111000011), 0b11000011100000110000011100000000);
+	#else
+		ASSERT_ZE(Cell_ReverseBytes(0));
+		ASSERT_EQ(Cell_ReverseBytes(1), 0x0100000000000000);
+		ASSERT_EQ(Cell_ReverseBytes(2), 0x0200000000000000);
+		ASSERT_EQ(Cell_ReverseBytes(3), 0x0300000000000000);
+		ASSERT_EQ(Cell_ReverseBytes(4), 0x0400000000000000);
+		ASSERT_EQ(Cell_ReverseBytes(0b1010101010), 0b1010101000000010000000000000000000000000000000000000000000000000);
+		ASSERT_EQ(Cell_ReverseBytes(0b1111000001111000011), 0b1100001110000011000001110000000000000000000000000000000000000000);
+	#endif
 }
 
-TEST__ y_cell_ReverseBytes1()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBytes1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
 		new
 			count = 0,
 			k = i;
-		for (new j = 0; j != 4; ++j)
+		for (new j = 0; j != cellbytes; ++j)
 		{
 			count <<= 8;
 			count |= k & 0xFF;
@@ -322,14 +358,14 @@ TEST__ y_cell_ReverseBytes1()
 	}
 }
 
-TEST__ y_cell_ReverseBytes2()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBytes2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
 		new
 			count = 0,
 			k = i;
-		for (new j = 0; j != 4; ++j)
+		for (new j = 0; j != cellbytes; ++j)
 		{
 			count <<= 8;
 			count |= k & 0xFF;
@@ -343,7 +379,7 @@ TEST__ y_cell_ReverseBytes2()
 	}
 }
 
-TEST__ y_cell_ReverseBytes3()
+@test(.group = "y_cell", .slow = true) y_cell_ReverseBytes3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
@@ -495,15 +531,15 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 	__pragma("naked");
 }
 
-TEST__ y_cell_CountBits0()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits0()
 {
-	ASSERT_ZE(y_cell_CountBits_v4(0));
-	ASSERT_EQ(y_cell_CountBits_v4(1), 1);
-	ASSERT_EQ(y_cell_CountBits_v4(2), 1);
-	ASSERT_EQ(y_cell_CountBits_v4(3), 2);
-	ASSERT_EQ(y_cell_CountBits_v4(4), 1);
-	ASSERT_EQ(y_cell_CountBits_v4(0b1010101010), 5);
-	ASSERT_EQ(y_cell_CountBits_v4(0b1111000001111000011), 10);
+	ASSERT_ZE(Cell_CountBits(0));
+	ASSERT_EQ(Cell_CountBits(1), 1);
+	ASSERT_EQ(Cell_CountBits(2), 1);
+	ASSERT_EQ(Cell_CountBits(3), 2);
+	ASSERT_EQ(Cell_CountBits(4), 1);
+	ASSERT_EQ(Cell_CountBits(0b1010101010), 5);
+	ASSERT_EQ(Cell_CountBits(0b1111000001111000011), 10);
 #if 0
 	new
 		t0 = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0;
@@ -550,61 +586,61 @@ TEST__ y_cell_CountBits0()
 #endif
 }
 
-TEST__ y_cell_CountBits1()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits1()
 {
 	for (new i = 0; i != 1000000; ++i)
 	{
 		new
 			count = 0;
-		for (new j = 0x80000000; j; j >>>= 1)
+		for (new j = cellmin; j; j >>>= 1)
 		{
 			if (i & j) ++count;
 		}
-		if (y_cell_CountBits_v4(i) != count)
+		if (Cell_CountBits(i) != count)
 		{
-			ASSERT_EQ(y_cell_CountBits_v4(i), count);
+			ASSERT_EQ(Cell_CountBits(i), count);
 			break;
 		}
 	}
 }
 
-TEST__ y_cell_CountBits2()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits2()
 {
 	for (new i = 1000000000; i != 1000123000; ++i)
 	{
 		new
 			count = 0;
-		for (new j = 0x80000000; j; j >>>= 1)
+		for (new j = cellmin; j; j >>>= 1)
 		{
 			if (i & j) ++count;
 		}
-		if (y_cell_CountBits_v4(i) != count)
+		if (Cell_CountBits(i) != count)
 		{
-			ASSERT_EQ(y_cell_CountBits_v4(i), count);
+			ASSERT_EQ(Cell_CountBits(i), count);
 			break;
 		}
 	}
 }
 
-TEST__ y_cell_CountBits3()
+@test(.group = "y_cell", .slow = true) y_cell_CountBits3()
 {
 	for (new i = -999888; i != 0; ++i)
 	{
 		new
 			count = 0;
-		for (new j = 0x80000000; j; j >>>= 1)
+		for (new j = cellmin; j; j >>>= 1)
 		{
 			if (i & j) ++count;
 		}
-		if (y_cell_CountBits_v4(i) != count)
+		if (Cell_CountBits(i) != count)
 		{
-			ASSERT_EQ(y_cell_CountBits_v4(i), count);
+			ASSERT_EQ(Cell_CountBits(i), count);
 			break;
 		}
 	}
 }
 
-TEST__ y_cell_GetLowestComponent()
+@test(.group = "y_cell") y_cell_GetLowestComponent()
 {
 	ASSERT_ZE(Cell_GetLowestComponent(0));
 	ASSERT_EQ(Cell_GetLowestComponent(1), 1);
@@ -626,7 +662,7 @@ TEST__ y_cell_GetLowestComponent()
 	}
 }
 
-TEST__ y_cell_GetLowestBit()
+@test(.group = "y_cell") y_cell_GetLowestBit()
 {
 	ASSERT_ZE(Cell_GetLowestBit(0));
 	ASSERT_ZE(Cell_GetLowestBit(1));
@@ -647,7 +683,7 @@ TEST__ y_cell_GetLowestBit()
 	}
 }
 
-TEST__ y_cell_GetLowestBitEx()
+@test(.group = "y_cell") y_cell_GetLowestBitEx()
 {
 	ASSERT_ZE(Cell_GetLowestBitEx(0));
 	ASSERT_EQ(Cell_GetLowestBitEx(1), 1);

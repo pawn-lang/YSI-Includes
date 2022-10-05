@@ -369,7 +369,7 @@ stock Puny_EncodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (ds
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(_Puny_Basic(num));
+FUNC_PAWNDOC(_Puny_Basic(num));
 #define _Puny_Basic(%0) (((%0) > 25) ? ((%0) + ('0' - 25)) : ((%0) + 'a'))
 
 /*-------------------------------------------------------------------------*//**
@@ -474,7 +474,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="index">The HTTP reference index.</param>
- * <param name="type">How the request should be sent.</param>
+ * <param name="method">How the request should be sent.</param>
  * <param name="url">The (internationalised) URL address.</param>
  * <param name="data">The GET/POST data.</param>
  * <param name="callback">Which function to return the data to.</param>
@@ -484,7 +484,10 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
  *//*------------------------------------------------------------------------**/
 
 #if defined PUNY_HTTP_HOOK
-	stock Puny_HTTP(index, type, const url[], const data[], const callback[])
+	#if !defined HTTP_METHOD
+		#define HTTP_METHOD: _:
+	#endif
+	stock Puny_HTTP(index, HTTP_METHOD:method, const url[], const data[], const callback[])
 	{
 		static
 			sPart[64], // Maximum legal domain part length.
@@ -527,8 +530,8 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 							static
 								sDecoded[64];
 							Puny_Decode(sDecoded, sPart);
-							P:5("Puny_HTTP Original: \"%s\", Encoded: \"%s\", Decoded: \"%s\"", url[prev], sPart, sDecoded);
-							if (strcmp(url[prev], sDecoded)) P:E("Puny_Decode did not match Puny_Encode");
+							Debug_Print5("Puny_HTTP Original: \"%s\", Encoded: \"%s\", Decoded: \"%s\"", url[prev], sPart, sDecoded);
+							if (strcmp(url[prev], sDecoded)) Debug_Error("Puny_Decode did not match Puny_Encode");
 						#endif
 					#endif
 				}
@@ -543,17 +546,17 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 		// Add the remainder of the domain.
 		if (url[end]) strcat(sEncoded, url[end + 1]);
 		#if defined _DEBUG
-			P:2("Puny_HTTP Domain: \"%s\" -> \"%s\"", url, sEncoded);
+			Debug_Print2("Puny_HTTP Domain: \"%s\" -> \"%s\"", url, sEncoded);
 		#endif
 		// Call the original "HTTP".
-		return YSI_HTTP__(index, type, sEncoded, data, callback);
+		return YSI_HTTP__(index, method, sEncoded, data, callback);
 	}
 	
 	#if defined _ALS_HTTP
 		#undef HTTP
 	#else
 		
-		native BAD_HTTP(index, type, url[], data[], callback[]) = HTTP;
+		native BAD_HTTP(index, HTTP_METHOD:method, url[], data[], callback[]) = HTTP;
 		
 		#define _ALS_HTTP
 	#endif

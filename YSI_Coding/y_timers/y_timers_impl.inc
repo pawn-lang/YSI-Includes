@@ -85,86 +85,89 @@ stock
 
 public OnCodeInit()
 {
-	P:1("hook Timers_OnYSIInit called");
-	new
-		pointer = 0,
-		time = 0,
-		idx = 0,
-		publicTableEntry = 0;
-	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@yT_>)))
+	Debug_Print1("hook Timers_OnYSIInit called");
 	{
-		P:6("Timer_OnYSIInit: publicTableEntry: %d", publicTableEntry);
-		#emit LREF.S.pri publicTableEntry
-		#emit STOR.S.pri pointer
-		//YSI_g_sCurFunc = pointer;
-		// Don't bother with the real name, call the function by address to get
-		// the time the function runs for.
-		P:7("Timer_OnYSIInit: pointer: %d", pointer);
-		// Push the address of the current function.
-		#emit PUSH.S     pointer
-		#emit PUSH.C     0xFFFFFFFF // -1: Initial list action for `_Timer_D`.
-		#emit PUSH.C     8
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
-		#emit PUSH.pri
-		#emit LOAD.S.pri pointer
-		#emit SCTRL      6
-		#emit STOR.S.pri time
-		//YSI_g_sCurFunc = 0;
-		P:7("Timer_OnYSIInit: time: %d", time);
-		if (time != -1)
+		new
+			pointer = 0,
+			time = 0,
+			idx = 0,
+			publicTableEntry = 0;
+		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@yT_>)))
 		{
-			// Find all the functions with the same time.  This is less
-			// efficient than previous implementations (it is O(N^2)), but also
-			// more robust as it won't fail no matter how many different times
-			// there are - old ones relied on an array with a finite size.
-			new
-				pointer2 = 0,
-				time2 = 0,
-				idx2 = 0,
-				total = 0,
-				pre = 0;
-			while ((idx2 = AMX_GetPublicPointerPrefix(idx2, pointer2, _A<@yT_>)))
-			{
-				// Call the functions a second time to guarantee getting
-				#emit PUSH.C     0
-				#emit PUSH.C     0xFFFFFFFF
-				#emit PUSH.C     8
-				#emit LCTRL      6
-				#emit ADD.C      36
-				#emit LCTRL      8
-				#emit PUSH.pri
-				#emit LOAD.S.pri pointer2
-				#emit SCTRL      6
-				#emit STOR.S.pri time2
-				// Check if the new time is a FACTOR, SAME, or MULTIPLE of this
-				// task, so we don't start different timers together.
-				if (time2 == time || time / time2 * time2 == time || time2 / time * time == time2)
-				{
-					++total;
-					if (idx2 < idx)
-					{
-						++pre;
-					}
-				}
-			}
-			P:7("Timer_OnYSIInit: total: %d, time: %d, pre: %d", total, time, pre);
-			// Now we know what time this function has, how many others have
-			// that time and how many have already been started.
-			new
-				buffer[FUNCTION_LENGTH];
-			publicTableEntry += 4;
+			Debug_Print6("Timer_OnYSIInit: publicTableEntry: %d", publicTableEntry);
 			#emit LREF.S.pri publicTableEntry
 			#emit STOR.S.pri pointer
-			AMX_ReadString(AMX_BASE_ADDRESS + pointer, buffer);
-			P:7("Timer_OnYSIInit: %s", Unpack(buffer));
-			// Get the time offset for the current call.  This should mean that
-			// all the functions are nicely spread out.
-			YSI_SetTimerEx__(buffer, time * pre / total, false, "ii", 1, -1);
+			//YSI_g_sCurFunc = pointer;
+			// Don't bother with the real name, call the function by address to
+			// get the time the function runs for.
+			Debug_Print7("Timer_OnYSIInit: pointer: %d", pointer);
+			// Push the address of the current function.
+			#emit PUSH.S     pointer
+			#emit PUSH.C     __minus1 // -1: Initial list action for `_Timer_D`.
+			#emit PUSH.C     __2_cells
+			#emit LCTRL      __cip
+			#emit ADD.C      __9_cells
+			#emit LCTRL      __jmp
+			#emit PUSH.pri
+			#emit LOAD.S.pri pointer
+			#emit SCTRL      __cip
+			#emit STOR.S.pri time
+			//YSI_g_sCurFunc = 0;
+			Debug_Print7("Timer_OnYSIInit: time: %d", time);
+			if (time != -1)
+			{
+				// Find all the functions with the same time.  This is less
+				// efficient than previous implementations (it is O(N^2)), but
+				// also more robust as it won't fail no matter how many
+				// different times there are - old ones relied on an array with
+				// a finite size.
+				new
+					pointer2 = 0,
+					time2 = 0,
+					idx2 = 0,
+					total = 0,
+					pre = 0;
+				while ((idx2 = AMX_GetPublicPointerPrefix(idx2, pointer2, _A<@yT_>)))
+				{
+					// Call the functions a second time to guarantee getting
+					#emit PUSH.C     0
+					#emit PUSH.C     __minus1
+					#emit PUSH.C     __2_cells
+					#emit LCTRL      __cip
+					#emit ADD.C      __9_cells
+					#emit LCTRL      __jmp
+					#emit PUSH.pri
+					#emit LOAD.S.pri pointer2
+					#emit SCTRL      __cip
+					#emit STOR.S.pri time2
+					// Check if the new time is a FACTOR, SAME, or MULTIPLE of
+					// this task, so we don't start different timers together.
+					if (time2 == time || time / time2 * time2 == time || time2 / time * time == time2)
+					{
+						++total;
+						if (idx2 < idx)
+						{
+							++pre;
+						}
+					}
+				}
+				Debug_Print7("Timer_OnYSIInit: total: %d, time: %d, pre: %d", total, time, pre);
+				// Now we know what time this function has, how many others have
+				// that time and how many have already been started.
+				new
+					buffer[FUNCTION_LENGTH];
+				publicTableEntry += 4;
+				#emit LREF.S.pri publicTableEntry
+				#emit STOR.S.pri pointer
+				AMX_ReadString(AMX_BASE_ADDRESS + pointer, buffer);
+				Debug_Print7("Timer_OnYSIInit: %s", Unpack(buffer));
+				// Get the time offset for the current call.  This should mean
+				// that all the functions are nicely spread out.
+				YSI_SetTimerEx__(buffer, time * pre / total, false, "ii", 1, -1);
+			}
 		}
 	}
-	P:1("hook Timers_OnYSIInit ended");
+	Debug_Print1("hook Timers_OnYSIInit ended");
 	
 	#if defined Timers_OnCodeInit
 		Timers_OnCodeInit();
@@ -178,9 +181,9 @@ public OnCodeInit()
 	forward Timers_OnCodeInit();
 #endif
 
-HOOK__ OnPlayerConnect(playerid)
+public OnPlayerConnect(playerid)
 {
-	P:1("hook Timers_OnPlayerConnect called: %d", playerid);
+	Debug_Print1("hook Timers_OnPlayerConnect called: %d", playerid);
 	// Loop through all the per-player timers.  Correctly finds them all from a
 	// linked list hidden in static variables (which are really global).
 	new
@@ -190,34 +193,45 @@ HOOK__ OnPlayerConnect(playerid)
 	{
 		#emit LREF.S.pri  cur
 		#emit STOR.S.pri  data
-		P:6("Timers_OnPlayerConnect: func: %x", data);
+		Debug_Print6("Timers_OnPlayerConnect: func: %x", data);
 		// Start this timer for this player.
 		#emit PUSH.S     playerid
 		#emit PUSH.C     1
 		// Push the parameter count (in bytes).  This is actually passed to
 		// native functions directly.
-		#emit PUSH.C     8
+		#emit PUSH.C     __2_cells
 		// Call the function currently in the list to trigger the repeating
 		// timer.  This involves getting the current "cip" address, modifying it
 		// to get the return address then modifying "cip" to call the function.
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri data
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 		// Returned, get the next list element.
-		cur += 4;
+		cur += cellbytes;
 		#emit LREF.S.pri  cur
 		#emit STOR.S.pri  cur
 	}
-	P:1("hook Timers_OnPlayerConnect ended");
+	Debug_Print1("hook Timers_OnPlayerConnect ended");
+
+	#if defined Timers_OnPlayerConnect
+		Timers_OnPlayerConnect(playerid);
+	#endif
 	return 1;
 }
 
-HOOK__ OnPlayerDisconnect(playerid, reason)
+#undef OnPlayerConnect
+#define OnPlayerConnect Timers_OnPlayerConnect
+#if defined Timers_OnPlayerConnect
+	forward Timers_OnPlayerConnect(playerid);
+#endif
+
+public OnPlayerDisconnect(playerid, reason)
 {
-	P:1("hook Timers_OnPlayerDisconnect called: %d, %d, playerid, reason");
+	#pragma unused reason
+	Debug_Print1("hook Timers_OnPlayerDisconnect called: %d, %d", playerid, reason);
 	// Loop through all the per-player timers.  Correctly finds them all from a
 	// linked list hidden in static variables (which are really global).
 	new
@@ -227,35 +241,45 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	{
 		#emit LREF.S.pri  cur
 		#emit STOR.S.pri  data
-		P:6("Timers_OnPlayerDisconnect: func: %x", data);
+		Debug_Print6("Timers_OnPlayerDisconnect: func: %x", data);
 		// End this timer for this player.
 		#emit PUSH.S     playerid
 		#emit PUSH.C     0
 		// Push the parameter count (in bytes).  This is actually passed to
 		// native functions directly.
-		#emit PUSH.C     8
+		#emit PUSH.C     __2_cells
 		// Call the function currently in the list to trigger the repeating
 		// timer.  This involves getting the current "cip" address, modifying it
 		// to get the return address then modifying "cip" to call the function.
-		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
 		#emit PUSH.pri
 		#emit LOAD.S.pri data
-		#emit SCTRL      6
+		#emit SCTRL      __cip
 		// Returned, get the next list element.
-		cur += 4;
+		cur += cellbytes;
 		#emit LREF.S.pri  cur
 		#emit STOR.S.pri  cur
 	}
-	P:1("hook Timers_OnPlayerDisconnect ended");
+	Debug_Print1("hook Timers_OnPlayerDisconnect ended");
+
+	#if defined Timers_OnPlayerDisconnect
+		Timers_OnPlayerDisconnect(playerid, reason);
+	#endif
 	return 1;
 }
 
-stock _Timer_I(const func[], interval, action, &result)
+#undef OnPlayerDisconnect
+#define OnPlayerDisconnect Timers_OnPlayerDisconnect
+#if defined Timers_OnPlayerDisconnect
+	forward Timers_OnPlayerDisconnect(playerid, reason);
+#endif
+
+stock _y@T:_Timer_I(const func[], interval, {_, _@yT}:action, &result)
 {
-	P:3("_Timer_I called");
-	switch (action)
+	Debug_Print3("_Timer_I called");
+	switch (_:action)
 	{
 		case 0:
 		{
@@ -273,14 +297,14 @@ stock _Timer_I(const func[], interval, action, &result)
 			}
 		}
 	}
-	return interval;
+	return _y@T:interval;
 }
 
 // Attempt to stop or start a task, possibly for a single player.
-stock _Timer_D(const func[], interval, const action, who, results[], a[2])
+stock _y@T:_Timer_D(const func[], interval, const {_, _@yT}:action, who, results[], a[2])
 {
-	P:3("_Timer_D called");
-	switch (action)
+	Debug_Print3("_Timer_D called");
+	switch (_:action)
 	{
 		case -1:
 		{
@@ -334,14 +358,14 @@ stock _Timer_D(const func[], interval, const action, who, results[], a[2])
 		}
 	}
 	// No global interval for per-player timers.
-	return -1;
+	return _y@T:-1;
 }
 
 static stock Alloc:Timer_GetSingleSlot(len)
 {
 	// Allocates memory and secretly appends data to the start.
 	++len;
-	P:4("Timer_GetSingleSlot called: %d", len);
+	Debug_Print4("Timer_GetSingleSlot called: %d", len);
 	// `6` is for the timer header, `- 1` for `++` above.  Slots:
 	//
 	// 0 - Next.
@@ -357,7 +381,7 @@ static stock Alloc:Timer_GetSingleSlot(len)
 	{
 		return NO_ALLOC;
 	}
-	P:5("Timer_GetSingleSlot: %d, %d, %d", _:YSI_g_sFirstSlot, _:YSI_g_sLastSlot, _:slot);
+	Debug_Print5("Timer_GetSingleSlot: %d, %d, %d", _:YSI_g_sFirstSlot, _:YSI_g_sLastSlot, _:slot);
 	// Standard linked list.
 	if (YSI_g_sFirstSlot == NO_ALLOC)
 	{
@@ -423,7 +447,7 @@ stock bool:Timer_IsRunning(Timer:slot = Timer:0)
 // Allocate memory to store a string.
 stock _Timer_S(const string:str[])
 {
-	P:3("_Timer_S called");
+	Debug_Print3("_Timer_S called");
 	new
 		len = strlen(str);
 	if (len & 0x0F)
@@ -436,28 +460,28 @@ stock _Timer_S(const string:str[])
 	{
 		msets(slot, 1, str);
 	}
-	P:5("str: %d", _:slot);
+	Debug_Print5("str: %d", _:slot);
 	return _:slot + 1;
 }
 
 // Allocate memory to store an array.
 stock _Timer_A(const str[], len)
 {
-	P:3("_Timer_A called");
+	Debug_Print3("_Timer_A called");
 	new
 		Alloc:slot = Timer_GetSingleSlot(len);
 	if (slot != NO_ALLOC)
 	{
 		mseta(slot, 1, str, len);
 	}
-	P:5("str: %d", _:slot);
+	Debug_Print5("str: %d", _:slot);
 	return _:slot + 1;
 }
 
 // Create the timer setup.
 stock Timer:_Timer_C(timerID)
 {
-	P:3("_Timer_C called: %d", timerID);
+	Debug_Print3("_Timer_C called: %d", timerID);
 	// This is done here for convenience.
 	I@ = -1;
 	// Only repeating timers are freed like this.
@@ -488,12 +512,12 @@ stock Timer:_Timer_C(timerID)
 // Allocate the ID.
 stock _Timer_B(repeatCount)
 {
-	P:3("_Timer_B called: %d", repeatCount);
+	Debug_Print3("_Timer_B called: %d", repeatCount);
 	if (YSI_g_sFirstSlot == NO_ALLOC)
 	{
 		Timer_GetSingleSlot(-1);
 	}
-	P:5("_Timer_B: slot = %d", _:YSI_g_sFirstSlot);
+	Debug_Print5("_Timer_B: slot = %d", _:YSI_g_sFirstSlot);
 	if (YSI_g_sFirstSlot == NO_ALLOC)
 	{
 		// Not a graceful fail!
@@ -515,13 +539,14 @@ stock _Timer_B(repeatCount)
 // Free all timer resources.
 stock _Timer_F(Timer:slot = Timer:0, force = 0)
 {
-	P:3("_Timer_F called");
+	Debug_Print3("_Timer_F called");
 	// This is done here for convenience.
 	// Always called with the first ID.
 	switch (force)
 	{
 	case 0:
 	{
+		// Auto stop.
 		if (!(slot = _YSI_g_sCurrentTimer))
 		{
 			return 0;
@@ -543,15 +568,19 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 	}	
 	case 1:
 	{
-		// Given an ID.
+		// Given an ID:  `STOP__ gTimerID;`.
 		if (!(slot = Timer:_Timer_Get(slot)))
 		{
 			return 0;
 		}
+		if (slot == _YSI_g_sCurrentTimer)
+		{
+			_YSI_g_sCurrentTimer = Timer:0;
+		}
 	}
 	case 2:
 	{
-		// Current timer.
+		// Current timer:  `STOP__;`.
 		if (!(slot = _YSI_g_sCurrentTimer))
 		{
 			return 0;
@@ -583,25 +612,25 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 	{
 		// Free all the slots in the linked list of allocations.
 		force = mget(Alloc:slot, 0);
-		P:6("_Timer_F: slot = %d, next = %d", _:slot, force);
+		Debug_Print6("_Timer_F: slot = %d, next = %d", _:slot, force);
 		free(Alloc:slot);
 	}
 	while ((_:slot = force) != -1);
 	return 1;
 }
 
-#define TASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public%0()
+#define TASK__%0[%1](%2) _F<@yT_,%0>(g,p);_F<@yT_,%0>(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public%0()
 
 // 
-#define PTASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
+#define PTASK__%0[%1](%2) _F<@yT_,%0>(g,p);_F<@yT_,%0>(g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
 
 #define _yT@%0\32; _yT@
 #define @_yT%0\32; @_yT
 #define @yT_%0\32; @yT_
 
-#define PAUSE__%0; {J@=_:@Ym:@yT_%0(0,-1);}
-#define RESUME__%0; {J@=_:@Ym:@yT_%0(1,-1);}
-#define @Ym:%0[%1](%2,-1) %0(%2,%1)
+#define PAUSE__%0; {J@=_:@Ym:_F<@yT_,%0>(0,-1);}
+#define RESUME__%0; {J@=_:@Ym:_F<@yT_,%0>(1,-1);}
+#define @Ym:_F<%8,%0[%1]>(%2,-1) _F<%8,%0>(%2,%1)
 
 #if YSI_KEYWORD(stop)
 	#define stop STOP__
@@ -630,4 +659,33 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 #if YSI_KEYWORD(timer)
 	#define timer%0[%1]%3(%2) TIMER__%0[%1]%3(%2)
 #endif
+
+// Decorator syntax.  We don't have `@task` and `@ptask`, it determines the
+// type automatically from having parameters or not.
+#define @timer(%1)%0(%2) _y@T:_F<@yT_,%0>(_@yT:g,p);_y@T:_F<@yT_,%0>(_@yT:g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public %0(%2)
+#define _@yT:g,p);%9(%9){%9;%9_Timer_D(%9,%1,%9);}%0()%9() g,p);_y@T:_F<@yT_,%0>(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public %0()
+
+#define _Timer_I(%0,%1,%9,g,s) _Timer_I(%0,%1,g,s)
+#define _Timer_D(%0,%1,%9,g,p,s,a) _Timer_D(%0,%1,g,p,s,a)
+
+// Normal timer, not a task.
+#define _y@T:%9(%9);%9(%9){%9;%9_Timer_D(%9,%1,g,p,s,a);}%0(%2)%9(%9) TIMER__ %0[%1](%2)
+
+#endinput
+
+// Use:
+// `timer`
+@timer(100) A()
+{
+}
+
+// `task`
+@timer(100, .auto = true) B()
+{
+}
+
+// `ptask`
+@timer(100, true) C(playerid)
+{
+}
 

@@ -111,7 +111,7 @@ Optional plugins:
 #if defined _Y_GROUPS_INCLUDED
 	#undef _Y_GROUPS_INCLUDED
 #else
-	#error Did you use `YSI/y_groups` instead of `YSI\y_groups`?
+	#error Did you use `YSI_Players/y_groups` instead of `YSI_Players\y_groups`?
 #endif
 
 /**

@@ -179,7 +179,7 @@ static stock
  * <param name="id">Text draw style to check validity of,</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:TD_IsValidStyle(Style:id));
+FUNC_PAWNDOC(bool:TD_IsValidStyle(Style:id));
 #define TD_IsValidStyle(%1) \
 	(Style:0 <= (%1) < MAX_TEXT_DRAW_STYLES && YSI_g_sTDData[(%1)][E_TD_DATA_HASH])
 
@@ -232,7 +232,7 @@ HOOK__ OnYSIInit()
 
 stock TD_Parse(const filename[])
 {
-	P:3("TD_Parse called: \"%s\"", filename);
+	Debug_Print3("TD_Parse called: \"%s\"", filename);
 	return XML_Parse(YSI_g_sXMLRules, filename);
 }
 
@@ -244,7 +244,7 @@ stock TD_Parse(const filename[])
 
 public TD_LoadColour()
 {
-	P:2("TD_LoadColour called");
+	Debug_Print2("TD_LoadColour called");
 	static
 		name[MAX_XML_ENTRY_NAME],
 		val[MAX_XML_ENTRY_TEXT];
@@ -309,7 +309,7 @@ public TD_LoadColour()
 
 stock Style:TD_Create(Float:x = 0.0, Float:y = 0.0, Float:letterX = 0.48, Float:letterY = 1.12, Float:textX = 1280.0, Float:textY = 1280.0, colour = 0xE1E1E1FF, boxColour = 0x80808080, bgColour = 0x000000FF, shadow = 2, outline = 0, align = _:td_align_none, font = 1, bool:proportional = false, bool:box = false, time = 0, const name[] = "\1")
 {
-	P:3("Text:TD_Create called: %f, %f, %f, %f, %f, %f, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, \"%s\"", x, y, letterX, letterY, textX, textY, colour, boxColour, bgColour, shadow, outline, align, font, _:proportional, _:box, time, name);
+	Debug_Print3("Text:TD_Create called: %f, %f, %f, %f, %f, %f, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, \"%s\"", x, y, letterX, letterY, textX, textY, colour, boxColour, bgColour, shadow, outline, align, font, _:proportional, _:box, time, name);
 	new
 		Style:i = Style:0;
 	while (_TD_IsValid(i))
@@ -355,12 +355,12 @@ stock Style:TD_Create(Float:x = 0.0, Float:y = 0.0, Float:letterX = 0.48, Float:
 public TD_Textdraw()
 {
 	// Set all the default values quickly.
-	P:1("TD_Textdraw called");
+	Debug_Print1("TD_Textdraw called");
 	new
 		Style:i = TD_Create();
 	if (i != MAX_TEXT_DRAW_STYLES)
 	{
-		P:5("TD_Textdraw: created %i", _:i);
+		Debug_Print5("TD_Textdraw: created %i", _:i);
 		static
 			name[MAX_XML_ENTRY_NAME],
 			val[MAX_XML_ENTRY_TEXT];
@@ -372,7 +372,7 @@ public TD_Textdraw()
 		//YSI_g_sTDData[i][E_TD_DATA_NAME] = 0x01000000;
 		while (XML_GetKeyValue(name, val))
 		{
-			P:7("TD_Textdraw: loop");
+			Debug_Print7("TD_Textdraw: loop");
 			if (!strcmp(name, "x", true))
 			{
 				YSI_g_sTDData[i][E_TD_DATA_X] = floatstr(val);
@@ -406,7 +406,7 @@ public TD_Textdraw()
 			}
 			else if (!strcmp(name, "color", true) || !strcmp(name, "colour", true))
 			{
-				P:2("TD_Textdraw: colour called");
+				Debug_Print2("TD_Textdraw: colour called");
 				// This could now be done with the sscanf "n" type for "number".
 				#if defined _inc_sscanf2 || defined unformat
 					new
@@ -447,7 +447,7 @@ public TD_Textdraw()
 					else if (isnumeric(val)) YSI_g_sTDData[i][E_TD_DATA_BG] = strval(val);
 				#endif
 					else YSI_g_sTDData[i][E_TD_DATA_BG] = GetColour(val);
-					P:5("TD_Textdraw(): Background color: \"%s\", %d, %d: 0x%04x%04x", val, ishex(val), isnumeric(val), YSI_g_sTDData[i][E_TD_DATA_BG] >>> 16, YSI_g_sTDData[i][E_TD_DATA_BG] & 0xFFFF);
+					Debug_Print5("TD_Textdraw(): Background color: \"%s\", %d, %d: 0x%04x%04x", val, ishex(val), isnumeric(val), YSI_g_sTDData[i][E_TD_DATA_BG] >>> 16, YSI_g_sTDData[i][E_TD_DATA_BG] & 0xFFFF);
 			}
 			else if (!strcmp(name, "font", true))
 			{
@@ -455,7 +455,7 @@ public TD_Textdraw()
 			}
 			else if (!strcmp(name, "proportional", true))
 			{
-				P:7("TD_Textdraw: proportional");
+				Debug_Print7("TD_Textdraw: proportional");
 				bits |= e_TD_BITS_PROP;
 			}
 			else if (!strcmp(name, "time", true))
@@ -477,7 +477,7 @@ public TD_Textdraw()
 		}*/
 		//YSI_g_sTDData[i][E_TD_DATA_HASH] = BernsteinHash(YSI_g_sTDData[i][E_TD_DATA_NAME]);
 		YSI_g_sTDData[i][E_TD_DATA_HASH] = hash;
-		P:5("TD data: %.2f %.2f %.2f %.2f %.2f %.2f %x %d %x %d %d", YSI_g_sTDData[i][E_TD_DATA_X], YSI_g_sTDData[i][E_TD_DATA_Y], YSI_g_sTDData[i][E_TD_DATA_LX], YSI_g_sTDData[i][E_TD_DATA_LY], YSI_g_sTDData[i][E_TD_DATA_TX], YSI_g_sTDData[i][E_TD_DATA_TY], YSI_g_sTDData[i][E_TD_DATA_COLOUR], YSI_g_sTDData[i][E_TD_DATA_BOX], YSI_g_sTDData[i][E_TD_DATA_BG], YSI_g_sTDData[i][E_TD_DATA_TIME], YSI_g_sTDData[i][E_TD_DATA_BITS]);//, YSI_g_sTDData[i][E_TD_DATA_NAME]);
+		Debug_Print5("TD data: %.2f %.2f %.2f %.2f %.2f %.2f %x %d %x %d %d", YSI_g_sTDData[i][E_TD_DATA_X], YSI_g_sTDData[i][E_TD_DATA_Y], YSI_g_sTDData[i][E_TD_DATA_LX], YSI_g_sTDData[i][E_TD_DATA_LY], YSI_g_sTDData[i][E_TD_DATA_TX], YSI_g_sTDData[i][E_TD_DATA_TY], YSI_g_sTDData[i][E_TD_DATA_COLOUR], YSI_g_sTDData[i][E_TD_DATA_BOX], YSI_g_sTDData[i][E_TD_DATA_BG], YSI_g_sTDData[i][E_TD_DATA_TIME], YSI_g_sTDData[i][E_TD_DATA_BITS]);//, YSI_g_sTDData[i][E_TD_DATA_NAME]);
 	}
 	return _:i;
 }
@@ -490,7 +490,7 @@ stock Style:TD_GetNamed(const name[])
 {
 	new
 		hash = BernsteinHash(name);
-	P:3("Text:TD_GetID called: %i", hash);
+	Debug_Print3("Text:TD_GetID called: %i", hash);
 	new
 		Style:i = Style:0;
 	while (i != MAX_TEXT_DRAW_STYLES && YSI_g_sTDData[i][E_TD_DATA_HASH] != hash)
@@ -506,7 +506,7 @@ stock Style:TD_GetNamed(const name[])
 
 stock Style:TD_GetID(hash)
 {
-	P:3("Text:TD_GetID called: %i", hash);
+	Debug_Print3("Text:TD_GetID called: %i", hash);
 	new
 		Style:i = Style:0;
 	while (i != MAX_TEXT_DRAW_STYLES && YSI_g_sTDData[i][E_TD_DATA_HASH] != hash)
@@ -526,7 +526,7 @@ stock Style:TD_GetID(hash)
 //#if 0
 stock Style:TD_Clone(Style:styleID, const name[] = "\1")
 {
-	P:3("Text:TD_Clone called: %i, \"%s\"", _:styleID, name);
+	Debug_Print3("Text:TD_Clone called: %i, \"%s\"", _:styleID, name);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return MAX_TEXT_DRAW_STYLES;
@@ -585,7 +585,7 @@ stock TD_GetStyleData(Style:styleID, data[E_TD_DATA])
 
 stock TD_Name(Style:styleID, const name[])
 {
-	P:3("TD_Name called: %i, \"%s\"", _:styleID, name);
+	Debug_Print3("TD_Name called: %i, \"%s\"", _:styleID, name);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -608,7 +608,7 @@ stock TD_Name(Style:styleID, const name[])
 
 stock TD_TextPosition(Text:textID, Float:x, Float:y)
 {
-	P:3("TD_TextPosition called: %i, %i, %i", _:textID, x, y);
+	Debug_Print3("TD_TextPosition called: %i, %i, %i", _:textID, x, y);
 	if (!_TD_TextValid(textID))
 	{
 		return 0;
@@ -633,7 +633,7 @@ stock TD_TextPosition(Text:textID, Float:x, Float:y)
 
 stock TD_TextXPos(Text:textID, Float:x)
 {
-	P:3("TD_TextXPos called: %i, %i", _:textID, x);
+	Debug_Print3("TD_TextXPos called: %i, %i", _:textID, x);
 	if (!_TD_TextValid(textID))
 	{
 		return 0;
@@ -657,7 +657,7 @@ stock TD_TextXPos(Text:textID, Float:x)
 
 stock TD_TextYPos(Text:textID, Float:y)
 {
-	P:3("TD_TextYPos called: %i, %i", _:textID, y);
+	Debug_Print3("TD_TextYPos called: %i, %i", _:textID, y);
 	if (!_TD_TextValid(textID))
 	{
 		return 0;
@@ -683,7 +683,7 @@ stock TD_TextYPos(Text:textID, Float:y)
 
 stock TD_StylePosition(Style:styleID, Float:x, Float:y)
 {
-	P:3("TD_StylePosition called: %i, %i, %i", _:styleID, x, y);
+	Debug_Print3("TD_StylePosition called: %i, %i, %i", _:styleID, x, y);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -705,7 +705,7 @@ stock TD_StylePosition(Style:styleID, Float:x, Float:y)
 
 stock TD_StyleXPos(Style:styleID, Float:x)
 {
-	P:3("TD_StyleXPos called: %i, %i", _:styleID, x);
+	Debug_Print3("TD_StyleXPos called: %i, %i", _:styleID, x);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -726,7 +726,7 @@ stock TD_StyleXPos(Style:styleID, Float:x)
 
 stock TD_StyleYPos(Style:styleID, Float:y)
 {
-	P:3("TD_StyleYPos called: %i, %i", _:styleID, y);
+	Debug_Print3("TD_StyleYPos called: %i, %i", _:styleID, y);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -745,7 +745,7 @@ stock TD_StyleYPos(Style:styleID, Float:y)
 
 stock TD_LetterSize(Style:styleID, Float:x, Float:y)
 {
-	P:3("TD_LetterSize called: %i, %i, %i", _:styleID, x, y);
+	Debug_Print3("TD_LetterSize called: %i, %i, %i", _:styleID, x, y);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -764,7 +764,7 @@ stock TD_LetterSize(Style:styleID, Float:x, Float:y)
 
 stock TD_LetterX(Style:styleID, Float:x)
 {
-	P:3("TD_LetterX called: %i, %i", _:styleID, x);
+	Debug_Print3("TD_LetterX called: %i, %i", _:styleID, x);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -782,7 +782,7 @@ stock TD_LetterX(Style:styleID, Float:x)
 
 stock TD_LetterY(Style:styleID, Float:y)
 {
-	P:3("TD_LetterY called: %i, %i", _:styleID, y);
+	Debug_Print3("TD_LetterY called: %i, %i", _:styleID, y);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -801,7 +801,7 @@ stock TD_LetterY(Style:styleID, Float:y)
 
 stock TD_TextSize(Style:styleID, Float:x, Float:y)
 {
-	P:3("TD_TextSize called: %i, %i, %i", _:styleID, x, y);
+	Debug_Print3("TD_TextSize called: %i, %i, %i", _:styleID, x, y);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -820,7 +820,7 @@ stock TD_TextSize(Style:styleID, Float:x, Float:y)
 
 stock TD_TextX(Style:styleID, Float:x)
 {
-	P:3("TD_TextX called: %i, %i", _:styleID, x);
+	Debug_Print3("TD_TextX called: %i, %i", _:styleID, x);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -838,7 +838,7 @@ stock TD_TextX(Style:styleID, Float:x)
 
 stock TD_TextY(Style:styleID, Float:y)
 {
-	P:3("TD_TextY called: %i, %i", _:styleID, y);
+	Debug_Print3("TD_TextY called: %i, %i", _:styleID, y);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -859,7 +859,7 @@ stock TD_TextY(Style:styleID, Float:y)
 
 stock TD_Alignment(Style:styleID, alignment = _:td_align_none)
 {
-	P:3("TD_Alignment called: %i, %i", _:styleID, alignment);
+	Debug_Print3("TD_Alignment called: %i, %i", _:styleID, alignment);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -877,7 +877,7 @@ stock TD_Alignment(Style:styleID, alignment = _:td_align_none)
 
 stock TD_Colour(Style:styleID, colour)
 {
-	P:3("TD_Colour called: %i, %i", _:styleID, colour);
+	Debug_Print3("TD_Colour called: %i, %i", _:styleID, colour);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -897,7 +897,7 @@ stock TD_Colour(Style:styleID, colour)
 
 stock TD_UseBox(Style:styleID, bool:use)
 {
-	P:3("TD_UseBox called: %i, %i", _:styleID, _:use);
+	Debug_Print3("TD_UseBox called: %i, %i", _:styleID, _:use);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -916,7 +916,7 @@ stock TD_UseBox(Style:styleID, bool:use)
 
 stock TD_BoxColour(Style:styleID, colour)
 {
-	P:3("TD_BoxColour called: %i, %i", _:styleID, colour);
+	Debug_Print3("TD_BoxColour called: %i, %i", _:styleID, colour);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -936,7 +936,7 @@ stock TD_BoxColour(Style:styleID, colour)
 
 stock TD_SetShadow(Style:styleID, size)
 {
-	P:3("TD_SetShadow called: %i, %i", _:styleID, size);
+	Debug_Print3("TD_SetShadow called: %i, %i", _:styleID, size);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -954,7 +954,7 @@ stock TD_SetShadow(Style:styleID, size)
 
 stock TD_SetOutline(Style:styleID, size)
 {
-	P:3("TD_SetOutline called: %i, %i", _:styleID, size);
+	Debug_Print3("TD_SetOutline called: %i, %i", _:styleID, size);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -972,7 +972,7 @@ stock TD_SetOutline(Style:styleID, size)
 
 stock TD_BackgroundColour(Style:styleID, colour)
 {
-	P:3("TD_BackgroundColour called: %i, %i", _:styleID, colour);
+	Debug_Print3("TD_BackgroundColour called: %i, %i", _:styleID, colour);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -992,7 +992,7 @@ stock TD_BackgroundColour(Style:styleID, colour)
 
 stock TD_Font(Style:styleID, font)
 {
-	P:3("TD_Font called: %i, %i", _:styleID, font);
+	Debug_Print3("TD_Font called: %i, %i", _:styleID, font);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -1010,7 +1010,7 @@ stock TD_Font(Style:styleID, font)
 
 stock TD_SetProportional(Style:styleID, bool:set)
 {
-	P:3("TD_SetProportional called: %i, %i", _:styleID, _:set);
+	Debug_Print3("TD_SetProportional called: %i, %i", _:styleID, _:set);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -1032,7 +1032,7 @@ stock TD_SetProportional(Style:styleID, bool:set)
 
 stock TD_SetTime(Style:styleID, time, bool:existing = false)
 {
-	P:3("TD_SetTime called: %i, %i, %i", _:styleID, time, _:existing);
+	Debug_Print3("TD_SetTime called: %i, %i, %i", _:styleID, time, _:existing);
 	if (!TD_IsValidStyle(styleID))
 	{
 		return 0;
@@ -1087,7 +1087,7 @@ stock TD_SetTime(Style:styleID, time, bool:existing = false)
 
 static stock Text:TD_RenderInternal(const text[], const style[E_TD_DATA], Float:x, Float:y)
 {
-	//P:4("Text:TD_Render called: \"%s\", %i, %i", text, _:id, _:slot);
+	//Debug_Print4("Text:TD_Render called: \"%s\", %i, %i", text, _:id, _:slot);
 	new
 		Text:textDraw = TD_TextDrawCreate(x, y, text);
 	if (textDraw != Text:INVALID_TEXT_DRAW)
@@ -1125,7 +1125,7 @@ static stock Text:TD_RenderInternal(const text[], const style[E_TD_DATA], Float:
 
 static stock Text:TD_Render(const text[], Style:id, Text:slot)
 {
-	P:4("Text:TD_Render called: \"%s\", %i, %i", text, _:id, _:slot);
+	Debug_Print4("Text:TD_Render called: \"%s\", %i, %i", text, _:id, _:slot);
 	return TD_RenderInternal(text, YSI_g_sTDData[id], YSI_g_sTDDisplay[slot][E_TD_DISPLAY_X], YSI_g_sTDDisplay[slot][E_TD_DISPLAY_Y]);
 }
 
@@ -1140,7 +1140,7 @@ static stock Text:TD_Render(const text[], Style:id, Text:slot)
 
 stock TD_Update(Style:id, bool:pos = false)
 {
-	P:3("TD_Update called: %i, %i", _:id, _:pos);
+	Debug_Print3("TD_Update called: %i, %i", _:id, _:pos);
 	if (!TD_IsValidStyle(id))
 	{
 		return;
@@ -1192,7 +1192,7 @@ public TD_UpdateInternal(Style:id)
 
 stock TD_UpdateOne(Text:slot, Style:id)
 {
-	P:3("TD_UpdateOne called: %i, %i", _:slot, _:id);
+	Debug_Print3("TD_UpdateOne called: %i, %i", _:slot, _:id);
 	// DON'T update the revision in here - if you show a TD to a player for 5
 	// seconds and change it after 2, they should just get the new version for
 	// 3 seconds, it shouldn't reset the timer.
@@ -1225,7 +1225,7 @@ stock TD_UpdateOne(Text:slot, Style:id)
 
 stock TD_Delete(Style:styleId)
 {
-	P:3("TD_Delete called: %i", _:styleId);
+	Debug_Print3("TD_Delete called: %i", _:styleId);
 	if (!TD_IsValidStyle(styleId))
 	{
 		return 0;
@@ -1290,7 +1290,7 @@ stock TD_Delete(Style:styleId)
 
 static stock TD_TryDestroy(Text:textDraw)
 {
-	P:4("TD_TryDestroy called: %i", _:textDraw);
+	Debug_Print4("TD_TryDestroy called: %i", _:textDraw);
 	// Destroy this if it is marked to be garbage collected.
 	if (YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_LIFE] & 0x80000000)
 	{
@@ -1309,7 +1309,7 @@ static stock TD_TryDestroy(Text:textDraw)
 
 stock TD_Destroy(Text:textDraw)
 {
-	P:3("TD_Destroy called: %i", _:textDraw);
+	Debug_Print3("TD_Destroy called: %i", _:textDraw);
 	if (Text:0 <= textDraw < Text:MAX_TEXT_DRAWS)
 	{
 		TDL_START(textDraw)
@@ -1367,7 +1367,7 @@ stock TD_Destroy(Text:textDraw)
 				YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_NEXT] = YSI_g_sUnused;
 				YSI_g_sUnused = textDraw;
 			}
-			P:C(else P:W("Orphaned text draw found."););
+			Debug_CodeX{else Debug_Warning("Orphaned text draw found.");}
 		}
 		TDL_END(textDraw)
 	}
@@ -1532,7 +1532,7 @@ stock Style:TD_GetDisplayStyle(Text:td)
 
 stock TD_SetString(Text:td, const text[])
 {
-	P:3("TD_SetString called: %i, \"%s\"", _:td, text);
+	Debug_Print3("TD_SetString called: %i, \"%s\"", _:td, text);
 	if (_TD_TextValid(td))
 	{
 		//StrCpy(YSI_g_sTDDisplay[td][E_TD_DISPLAY_TEXT], text, MAX_TEXT_DRAW_LINE);
@@ -1621,7 +1621,7 @@ stock Text:TD_DisplayNamedForAll(const text[], const style[], Float:x = (Float:T
 
 stock TD_ShowForPlayer(playerid, Text:textDraw)
 {
-	P:3("TD_ShowForPlayer called: %i, %i", playerid, _:textDraw);
+	Debug_Print3("TD_ShowForPlayer called: %i, %i", playerid, _:textDraw);
 	if (Text:0 <= textDraw < Text:MAX_TEXT_DRAWS && !Bit_GetBit(YSI_g_sPlayerDraws[playerid], _:textDraw))
 	{
 		new
@@ -1692,7 +1692,7 @@ public TD_HideForPlayerPub(playerid, Text:textDraw, revision)
 
 stock TD_HideForPlayer(playerid, Text:textDraw)
 {
-	P:3("TD_HideForPlayer called: %i, %i", playerid, _:textDraw);
+	Debug_Print3("TD_HideForPlayer called: %i, %i", playerid, _:textDraw);
 	if (IsPlayerConnected(playerid))
 	{
 		// Find the REAL TD for this player from the base TD.
@@ -1734,7 +1734,7 @@ stock TD_HideForPlayer(playerid, Text:textDraw)
 
 stock TD_ShowForAll(Text:textDraw)
 {
-	P:3("TD_ShowForAll called: %i", _:textDraw);
+	Debug_Print3("TD_ShowForAll called: %i", _:textDraw);
 	if (Text:0 <= textDraw < Text:MAX_TEXT_DRAWS)
 	{
 		new
@@ -1798,7 +1798,7 @@ stock TD_ShowForAll(Text:textDraw)
 
 stock TD_HideForAll(Text:textDraw)
 {
-	P:3("TD_HideForAll called: %i", _:textDraw);
+	Debug_Print3("TD_HideForAll called: %i", _:textDraw);
 	if (Text:0 <= textDraw < Text:MAX_TEXT_DRAWS)
 	{
 		TDL_START(textDraw)
@@ -1845,7 +1845,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 		new
 			Bit:s = YSI_g_sPlayerDraws[playerid][i],
 			j = 0,
-			ix = i << 5;
+			ix = i << __COMPILER_BIT_SHIFT;
 		while (s)
 		{
 			// Get rid of data for textdraws which this player can see.  We
@@ -1887,7 +1887,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 
 stock TD_Garbage(Text:textDraw)
 {
-	P:3("TD_Garbage called: %i", _:textDraw);
+	Debug_Print3("TD_Garbage called: %i", _:textDraw);
 	if (Text:0 <= textDraw < Text:MAX_TEXT_DRAWS)
 	{
 		if (YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_LIFE] & 0x7FFFFFFF)
@@ -1928,7 +1928,7 @@ forward TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision);
 
 stock TD_Morph(Text:textDraw, Style:style, time, delay = 0)
 {
-	P:2("TD_Morph called: %d %d", TD_IsValidStyle(style), _TD_TextValid(textDraw));
+	Debug_Print2("TD_Morph called: %d %d", TD_IsValidStyle(style), _TD_TextValid(textDraw));
 	if (TD_IsValidStyle(style) && _TD_TextValid(textDraw))
 	{
 		//FOREACH__ (new playerid : PS(players))
@@ -1944,7 +1944,7 @@ stock TD_Morph(Text:textDraw, Style:style, time, delay = 0)
 
 public TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision)
 {
-	P:2("TD_MorphTDInternal called: %d %d %d %d %d %d", _:td, _:from, _:to, speed, pos, revision);
+	Debug_Print2("TD_MorphTDInternal called: %d %d %d %d %d %d", _:td, _:from, _:to, speed, pos, revision);
 	if (!(Text:0 <= td < Text:MAX_TEXT_DRAWS))
 	{
 		return 0;

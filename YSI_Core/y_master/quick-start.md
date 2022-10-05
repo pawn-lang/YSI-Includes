@@ -39,13 +39,13 @@ So how does that work?  Each scripter has their own area of responsibility, and 
 // External includes go here.
 #include <YSI_Core\y_master>
 
-#include <mode\jobs.inc>
-#include <mode\races.inc>
-#include <mode\vehicles.inc>
-#include <mode\vip.inc>
-#include <mode\minimodes.inc>
-#include <mode\phone.inc>
-#include <mode\admin.inc>
+#include <mode\jobs>
+#include <mode\races>
+#include <mode\vehicles>
+#include <mode\vip>
+#include <mode\minimodes>
+#include <mode\phone>
+#include <mode\admin>
 ```
 
 Everyone has the included files, but they don't contain the bulk of the source.  Instead they look like this:
@@ -70,7 +70,7 @@ foreign void:DestroyJob(JobID:jobid); // Returns nothing (`void:`).
 
 #if JOB_MASTER
   // We need the implementation.
-  #include "jobs\detail.inc"
+  #include "jobs\detail"
 #endif
 ```
 
@@ -119,13 +119,13 @@ When you want to build the main mode that will go on your live server, this is d
 #include <YSI_Core\y_master>
 
 // All these includes remain the same.
-#include <mode\jobs.inc>
-#include <mode\races.inc>
-#include <mode\vehicles.inc>
-#include <mode\vip.inc>
-#include <mode\minimodes.inc>
-#include <mode\phone.inc>
-#include <mode\admin.inc>
+#include <mode\jobs>
+#include <mode\races>
+#include <mode\vehicles>
+#include <mode\vip>
+#include <mode\minimodes>
+#include <mode\phone>
+#include <mode\admin>
 ```
 
 So when *xX_h4cker_gUr1_69_Xx* decides to steal your code, they can only steal a small bit of it from the repos they had access to, along with some shared headers and compiled filterscripts that can only handle 5 players.  This is totally useless for running a server.  You can even go further with the filterscripts and include anti-deamx and y_lock:

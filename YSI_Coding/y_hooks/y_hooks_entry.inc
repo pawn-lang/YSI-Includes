@@ -77,7 +77,8 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
-#include "..\y_cgen\y_cgen"
+#include "..\..\YSI_Server\y_thirdpartyinclude"
+#include "..\y_cgen"
 
 #if defined YSI_TESTS
 	#define _Y_HOOKS_STATIC
@@ -89,9 +90,10 @@ Optional plugins:
 	#define MAX_Y_HOOKS (128)
 #endif
 
+#define Y_HOOKS_MAX_NAME (__COMPILER_sNAMEMAX * 2 + 1)
+
 #include "y_hooks_macros"
 #include "y_hooks_impl"
-#include "y_hooks_nps"
 
 #if defined YSI_TESTS
 	// Get a new unique ID for the test hooks.

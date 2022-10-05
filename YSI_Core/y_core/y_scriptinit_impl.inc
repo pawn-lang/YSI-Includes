@@ -99,7 +99,6 @@ CHAIN_HOOK(ScriptInit)
 stock
 	#if _YSI_SAFE_STARTUP
 		bool:YSI_GAMEMODE = false,
-		bool:YSI_OPEN_MP = false,
 	#endif
 		bool:YSI_FILTERSCRIPT = false;
 
@@ -116,9 +115,6 @@ enum E_SCRIPTINIT_STATE (<<= 1)
 
 static
 	E_SCRIPTINIT_STATE:YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_NONE;
-
-#define Debug_PrintE(%1); \
-	Debug_Print0("\7\7\7*** YSI Error: " #%1);
 
 #if defined _DEBUG
 	#if _DEBUG > 0
@@ -221,9 +217,9 @@ stock bool:Server_IsLinuxHost()
 	new
 		val = 0;
 	// The code at address 0 is always `HALT`.
-	#emit LCTRL                0
+	#emit LCTRL                __cod
 	#emit MOVE.alt
-	#emit LCTRL                1
+	#emit LCTRL                __dat
 	#emit SUB.alt
 	#emit STOR.S.pri           val
 	#emit LREF.S.alt           val
@@ -237,15 +233,31 @@ stock bool:Server_IsWindowsHost()
 	new
 		val = 0;
 	// The code at address 0 is always `HALT`.
-	#emit LCTRL                0
+	#emit LCTRL                __cod
 	#emit MOVE.alt
-	#emit LCTRL                1
+	#emit LCTRL                __dat
 	#emit SUB.alt
 	#emit STOR.S.pri           val
 	#emit LREF.S.alt           val
 	#emit STOR.S.alt           val
 	return val == 120;
 }
+
+forward bool:Server_IsOpenMP();
+
+// Spell `open.mp` correctly in the function name (because why not).
+#define Server_Isopen.mp Server_IsOpenMP
+#define Server_Is_open.mp Server_IsOpenMP
+
+#if __COMPILER___EMIT_U
+	#define Server_IsOpenMP() (bool:(__emit(zero.pri, zero.alt, lctrl 9, neq)))
+#endif
+
+forward bool:Server_IsSAMP();
+
+#if __COMPILER___EMIT_U
+	#define Server_IsSAMP() (bool:(__emit(zero.pri, lctrl 9, eq.c.pri 0)))
+#endif
 
 #pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
@@ -305,15 +317,6 @@ stock bool:Server_IsGameMode()
 	#define Script_IsGameMode() (TRUE)
 #endif
 
-stock bool:Server_IsOpenMP()
-{
-#if _YSI_SAFE_STARTUP
-	return YSI_OPEN_MP;
-#else
-	return false;
-#endif
-}
-
 static stock const
 	YSI_gscHeader[] = " ========================================== ",
 	YSI_gscSpacer[] = " |                                        | ",
@@ -350,6 +353,7 @@ forward bool:fautocleanup(const name[], maxAge);
 
 static stock ScriptInit_Dump(const filename[], const message[])
 {
+		PrintAmxHeader();
 		new file[48];
 		format(file, sizeof (file), "%s%s.%d.asm", GetYSIScriptfilesDir(E_YSI_DIR_DEBUG), filename, YSI_gsStartTime);
 	#if _YSI_SAFE_STARTUP
@@ -425,7 +429,7 @@ stock Server_PrintIntroMessage(...)
 		// Body.
 		for (new i = 3 * cellbytes, j = (numargs() << __COMPILER_CELL_SHIFT) + (3 * cellbytes), a = 0; i != j; i += cellbytes)
 		{
-			#emit LCTRL          5
+			#emit LCTRL          __frm
 			#emit LOAD.S.alt     i
 			#emit ADD
 			#emit LOAD.I
@@ -468,7 +472,7 @@ stock Server_PrintIntroPart(...)
 		// Body.
 		for (new i = 3 * cellbytes, j = 3 * cellbytes + (numargs() << __COMPILER_CELL_SHIFT), a = 0; i != j; i += cellbytes)
 		{
-			#emit LCTRL          5
+			#emit LCTRL          __frm
 			#emit LOAD.S.alt     i
 			#emit ADD
 			#emit LOAD.I
@@ -563,10 +567,10 @@ stock bool:Server_IsDetectAddr0Enabled() {
 
 stock bool:Server_HasDetectAddr0() {
 	// Is the check possible?
-	#emit CONST.pri     0xFFFFFFFF // -1
-	#emit LCTRL 0xFD               // 0, 1, or -2
+	#emit CONST.pri     __minus1     // -1
+	#emit LCTRL 0xFD                 // 0, 1, or -2
 	#emit CONST.alt     0
-	#emit SGEQ                     // >= 0
+	#emit SGEQ                       // >= 0
 	#emit RETN
 	return false;
 }
@@ -645,144 +649,164 @@ stock Server_GetLongCallDefault()
 
 static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 {
-	#if !_YSI_SAFE_STARTUP
-		printf("Unsafe YSI signed by: %s", YSI_gcUnsafeStartupContract);
-	#endif
-	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
-	{
-		// Loaded from a file.
-		#if _YSI_SAFE_STARTUP
-			Server_PrintIntroMessage("   File loaded from YSI code cache.");
+	#if defined _DEBUG
+		#if _DEBUG > 0
+			new preHeap, postHeap;
+			preHeap = heapspace();
 		#endif
-			R@("OnCachedInit", YSI_EMPTY);
-	}
-	else
+	#endif
 	{
-		#if defined YSI_NO_MODE_CACHE
-			#pragma unused fs
-		#else
-			#if defined __date && defined __time && defined YSI_AUTO_LOAD_CACHE
-				new name[64];
-				format(name, sizeof (name), "YSI_CACHE.%s.%s", __date, __time);
-				if (fexist(name))
-				{
-					if (jit)
+		#if !_YSI_SAFE_STARTUP
+			printf("Unsafe YSI signed by: %s", YSI_gcUnsafeStartupContract);
+		#endif
+		if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
+		{
+			// Loaded from a file.
+			#if _YSI_SAFE_STARTUP
+				Server_PrintIntroMessage("   File loaded from YSI code cache.");
+			#endif
+				R@("OnCachedInit", YSI_EMPTY);
+		}
+		else
+		{
+			#if defined YSI_NO_MODE_CACHE
+				#pragma unused fs
+			#else
+				#if defined __date && defined __time && defined YSI_AUTO_LOAD_CACHE
+					new name[64];
+					format(name, sizeof (name), "YSI_CACHE.%s.%s", __date, __time);
+					if (fexist(name))
 					{
-						P:W("Could not auto-load YSI cache - script type (GM/FS) cannot be determined with JIT.");
-						strcat(name, ".amx");
-					}
-					else if (fs)
-					{
-						P:W("Could not auto-load YSI cache - current filterscript cannot be unloaded.");
-						strcat(name, ".amx");
+						if (jit)
+						{
+							Debug_Warning("Could not auto-load YSI cache - script type (GM/FS) cannot be determined with JIT.");
+							strcat(name, ".amx");
+						}
+						else if (fs)
+						{
+							Debug_Warning("Could not auto-load YSI cache - current filterscript cannot be unloaded.");
+							strcat(name, ".amx");
+						}
+						else
+						{
+							Server_EnableLongCall();
+							format(name, sizeof (name), "changemode ../scriptfiles/%s", name);
+							SendRconCommand(name)
+							return false;
+						}
 					}
 					else
 					{
-						Server_EnableLongCall();
-						format(name, sizeof (name), "changemode ../scriptfiles/%s", name);
-						SendRconCommand(name)
-						return false;
+						strcat(name, ".amx");
 					}
+				#else
+					#pragma unused fs
+					static const name[] = "YSI_CACHE.amx";
+				#endif
+			#endif
+				Server_DisableLongCall();
+			#if _YSI_SAFE_STARTUP
+				if (jit)
+				{
+					Server_PrintIntroPart(
+						"  Generating code, this may take a",
+						"         little bit of time.",
+						YSI_SPACE,
+						YSI_gscInitMsgD
+					);
 				}
 				else
 				{
-					strcat(name, ".amx");
+					Server_PrintIntroPart(
+						"  Generating code, this may take a",
+						" little bit of time.  Note that this",
+						" code generation works best with the",
+						"    JIT plugin, which you are not",
+						"    currently using.  Get it here:",
+						YSI_SPACE,
+						"      https://git.io/jit-plugin",
+						YSI_SPACE,
+						YSI_gscInitMsgD
+					);
 				}
 			#else
-				#pragma unused fs
-				static const name[] = "YSI_CACHE.amx";
+				#pragma unused jit
 			#endif
-		#endif
-			Server_DisableLongCall();
-		#if _YSI_SAFE_STARTUP
-			if (jit)
-			{
-				Server_PrintIntroPart(
-					"  Generating code, this may take a",
-					"         little bit of time.",
-					YSI_SPACE,
-					YSI_gscInitMsgD
-				);
-			}
-			else
-			{
-				Server_PrintIntroPart(
-					"  Generating code, this may take a",
-					" little bit of time.  Note that this",
-					" code generation works best with the",
-					"    JIT plugin, which you are not",
-					"    currently using.  Get it here:",
-					YSI_SPACE,
-					"      https://git.io/jit-plugin",
-					YSI_SPACE,
-					YSI_gscInitMsgD
-				);
-			}
-		#else
-			#pragma unused jit
-		#endif
-		#if defined ScriptInit_OnCodeInit
-			ScriptInit_OnCodeInit();
-		#endif
-		#if _YSI_SAFE_STARTUP
-			Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
-			Server_FinishIntroPart();
-		#endif
-		#if !defined YSI_NO_MODE_CACHE
-			E_SCRIPTINIT_STATE
-				tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
-			// Set the variable to something unique for next load.  This will be
-			// written out, thus loaded in next time.
-			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
+			#if defined ScriptInit_OnCodeInit
+				ScriptInit_OnCodeInit();
+			#endif
 			#if _YSI_SAFE_STARTUP
-				Server_PrintIntroPart(
-					" Dumping \"YSI_CACHE.amx\", this may",
-					"     take a little bit of time.",
-					YSI_SPACE,
-					YSI_gscInitMsgD
-				);
+				Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
+				Server_FinishIntroPart();
 			#endif
-			if (DumpAMX_Write(name))
-			{
+			#if defined ScriptInit_OnYSIInit
+				ScriptInit_OnYSIInit();
+			#endif
+			#if !defined YSI_NO_MODE_CACHE
+				new
+					E_SCRIPTINIT_STATE:tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
+				// Set the variable to something unique for next load.  This will be
+				// written out, thus loaded in next time.
+				YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
 				#if _YSI_SAFE_STARTUP
-					Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
-					Server_FinishIntroPart();
-				#endif
-					// Clear this flag after dumping.  This is so we can tell
-					// when a mode is cached.
-					YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
-				#if _YSI_SAFE_STARTUP
-					Server_PrintIntroMessage(
-						"    File dumped to YSI code cache:",
+					Server_PrintIntroPart(
+						" Dumping \"YSI_CACHE.amx\", this may",
+						"     take a little bit of time.",
 						YSI_SPACE,
-						"       scriptfiles/YSI_CACHE.amx",
-						YSI_SPACE,
-						"Load this file instead to skip this",
-						"code optimisation step in the future.",
-						"Note that if you have multiple scripts",
-						"loading at once (i.e. gamemodes,",
-						"filterscripts, and modules) you may",
-						"need to load and cache them",
-						"individually so that they don't",
-						"clobber each other.  If you don't, in",
-						"\"server.cfg\", the following works:",
-						YSI_SPACE,
-						"  gamemode0 ../scriptfiles/YSI_CACHE 1"
+						YSI_gscInitMsgD
 					);
 				#endif
-			}
-			else
+				if (DumpAMX_Write(name))
+				{
+					#if _YSI_SAFE_STARTUP
+						Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
+						Server_FinishIntroPart();
+					#endif
+						// Clear this flag after dumping.  This is so we can tell
+						// when a mode is cached.
+						YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
+					#if _YSI_SAFE_STARTUP
+						Server_PrintIntroMessage(
+							"    File dumped to YSI code cache:",
+							YSI_SPACE,
+							"       scriptfiles/YSI_CACHE.amx",
+							YSI_SPACE,
+							"Load this file instead to skip this",
+							"code optimisation step in the future.",
+							"Note that if you have multiple scripts",
+							"loading at once (i.e. gamemodes,",
+							"filterscripts, and modules) you may",
+							"need to load and cache them",
+							"individually so that they don't",
+							"clobber each other.  If you don't, in",
+							"\"server.cfg\", the following works:",
+							YSI_SPACE,
+							"  gamemode0 ../scriptfiles/YSI_CACHE 1"
+						);
+					#endif
+				}
+				else
+				{
+					#if _YSI_SAFE_STARTUP
+						Server_PrintIntroPart(YSI_SPACE, YSI_gscFailed);
+						Server_FinishIntroPart();
+					#endif
+						YSI_g_sScriptInitState = tmp;
+						Debug_Error("YSI code cache write failed");
+				}
+			#endif
+				Server_EnableLongCall();
+		}
+	}
+	#if defined _DEBUG
+		#if _DEBUG > 0
+			postHeap = heapspace();
+			if (preHeap != postHeap)
 			{
-				#if _YSI_SAFE_STARTUP
-					Server_PrintIntroPart(YSI_SPACE, YSI_gscFailed);
-					Server_FinishIntroPart();
-				#endif
-					YSI_g_sScriptInitState = tmp;
-					P:E("YSI code cache write failed");
+				Debug_Warning("Heapspace leak in `OnCodeInit`.");
 			}
 		#endif
-			Server_EnableLongCall();
-	}
+	#endif
 	return true;
 }
 
@@ -815,7 +839,7 @@ public OnJITCompile()
 	}
 	else
 	{
-		Debug_Print0("\7*** YSI Warning: JIT disabled");
+		Debug_Warning("JIT disabled");
 	}
 	DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
 	#if _YSI_SAFE_STARTUP
@@ -899,7 +923,6 @@ public OnJITCompile()
 //	public OnScriptInit(id)
 //	{
 //		state _ALS : _ALS_go;
-//		YSI_OPEN_MP = true;
 //		state _script_init_fix_state : false;
 //		// Dump the final assembly of this script so we can inspect it.
 //		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
@@ -941,7 +964,7 @@ public OnJITCompile()
 			state _ALS : _ALS_go;
 		#if _YSI_SAFE_STARTUP
 			YSI_FILTERSCRIPT = true;
-			if (!YSI_OPEN_MP)
+			//if (Server_IsSAMP())
 		#endif
 			{
 				state _script_init_fix_state : true;
@@ -959,9 +982,6 @@ public OnJITCompile()
 				YVers_StartCheck();
 				#if _YSI_SAFE_STARTUP
 					Server_FinishIntroMessage();
-				#endif
-				#if defined ScriptInit_OnYSIInit
-					ScriptInit_OnYSIInit();
 				#endif
 				ScriptInit_PreInitFuncs_();
 				CallLocalFunction("OnScriptInit", YSI_EMPTY);
@@ -1089,7 +1109,7 @@ ScriptInit_Purge_retry:
 			state _ALS : _ALS_go;
 			// Kill an existing purge if one exists in this script.
 		#if _YSI_SAFE_STARTUP
-			if (!YSI_FILTERSCRIPT && !YSI_OPEN_MP && !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
+			if (!YSI_FILTERSCRIPT && /*Server_IsSAMP() &&*/ !(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		#else
 			if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		#endif
@@ -1116,7 +1136,7 @@ ScriptInit_Purge_retry:
 			{
 		#if _YSI_SAFE_STARTUP
 				YSI_GAMEMODE = true;
-				if (!YSI_OPEN_MP)
+				//if (Server_IsSAMP())
 		#endif
 				{
 					state _script_init_fix_state : false;
@@ -1130,9 +1150,6 @@ ScriptInit_Purge_retry:
 					YVers_StartCheck();
 					#if _YSI_SAFE_STARTUP
 						Server_FinishIntroMessage();
-					#endif
-					#if defined ScriptInit_OnYSIInit
-						ScriptInit_OnYSIInit();
 					#endif
 					ScriptInit_PreInitFuncs_();
 					CallLocalFunction("OnScriptInit", YSI_EMPTY);
@@ -1163,7 +1180,7 @@ ScriptInit_Purge_retry:
 				}
 			}
 		#if _YSI_SAFE_STARTUP
-			if (!YSI_OPEN_MP)
+			//if (Server_IsSAMP())
 		#endif
 			{
 				CallLocalFunction("OnScriptInit@E", YSI_EMPTY);
@@ -1190,7 +1207,7 @@ ScriptInit_Purge_retry:
 	{
 		ScriptInit_OnFilterScriptExit();
 #if _YSI_SAFE_STARTUP
-		if (YSI_FILTERSCRIPT && !YSI_OPEN_MP)
+		if (YSI_FILTERSCRIPT /*&& Server_IsSAMP()*/)
 #endif
 		{
 			ScriptInit_PreExitFuncs_();
@@ -1207,7 +1224,7 @@ ScriptInit_Purge_retry:
 	{
 		ScriptInit_OnGameModeExit();
 #if _YSI_SAFE_STARTUP
-		if (YSI_GAMEMODE && !YSI_OPEN_MP)
+		if (YSI_GAMEMODE /*&& Server_IsSAMP()*/)
 #endif
 		{
 			ScriptInit_PreExitFuncs_();
@@ -1219,21 +1236,21 @@ ScriptInit_Purge_retry:
 	}
 #endif
 
-#if _YSI_SAFE_STARTUP
-	forward OnScriptExit(id);
-
-	public OnScriptExit(id)
-	{
-		if (YSI_OPEN_MP)
-		{
-			ScriptInit_PreExitFuncs_();
-			ScriptInit_OnScriptExit();
-			ScriptInit_PostExitFuncs_();
-			ScriptInit_OnYSIExit();
-		}
-		return 1;
-	}
-#endif
+//#if _YSI_SAFE_STARTUP
+//	forward OnScriptExit(id);
+//
+//	public OnScriptExit(id)
+//	{
+//		if (YSI_OPEN_MP)
+//		{
+//			ScriptInit_PreExitFuncs_();
+//			ScriptInit_OnScriptExit();
+//			ScriptInit_PostExitFuncs_();
+//			ScriptInit_OnYSIExit();
+//		}
+//		return 1;
+//	}
+//#endif
 
 /*
 
@@ -1366,5 +1383,34 @@ public _ScriptInit_FixState() <_script_init_fix_state : true>
 
 public _ScriptInit_FixState() <_script_init_fix_state : false>
 {
+}
+
+#if __COMPILER___EMIT_U
+	#endinput
+#endif
+
+stock bool:Server_IsOpenMP()
+{
+	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
+	// `pri` is 0 it wasn't set by the control register.
+	#emit ZERO.pri
+	#emit ZERO.alt
+	#emit LCTRL                __flg
+	#emit NEQ
+	#emit RETN
+
+	return false;
+}
+
+stock bool:Server_IsSAMP()
+{
+	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
+	// `pri` is 0 it wasn't set by the control register.
+	#emit ZERO.pri
+	#emit LCTRL                __flg
+	#emit EQ.C.pri             0
+	#emit RETN
+
+	return false;
 }
 

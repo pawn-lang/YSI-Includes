@@ -73,7 +73,7 @@ Optional plugins:
 
 stock Bitmap_StraightLine(Bitmap:ctx, sX, sY, eX, eY, Float:lineWidth, colour, const pattern[] = "SOLID")
 {
-	P:3("Bitmap_DrawRing called: %d, %d, %d, %.2f, %.2f, 0x%04x%04x, \"%s\"", _:ctx, x, y, inner, outer, colour >>> 16, colour & 0xFFFF, pattern);
+	Debug_Print3("Bitmap_DrawRing called: %d, %d, %d, %.2f, %.2f, 0x%04x%04x, \"%s\"", _:ctx, x, y, inner, outer, colour >>> 16, colour & 0xFFFF, pattern);
 	new
 		imageWidth = Bitmap_Width(ctx),
 		minY = 0, // = max(0, min(sY, eY)),
