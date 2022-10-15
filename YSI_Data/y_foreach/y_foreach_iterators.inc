@@ -964,7 +964,7 @@ iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDrive
 
 			new 
 				YSI_VehicleSeatsOccupied, 
-				YSI_VehicleModelID = GetVehicleModel(vehicleid) - 400;
+				YSI_VehicleModelSeats = YSI_sVehiclesSeats[GetVehicleModel(vehicleid) - 400];
 
 			FOREACH__ (new i : PlayersFromVehicles)
 			{
@@ -972,7 +972,7 @@ iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDrive
 				{
 					YIELD__ return i;
 
-					if (++ YSI_VehicleSeatsOccupied == YSI_sVehiclesSeats[YSI_VehicleModelID]) 
+					if (++ YSI_VehicleSeatsOccupied == YSI_VehicleModelSeats) 
 					{
 						return;
 					}
@@ -1032,7 +1032,7 @@ iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDrive
 
 			new 
 				YSI_VehicleSeatsOccupied, 
-				YSI_VehicleModelID = GetVehicleModel(vehicleid) - 400;
+				YSI_VehicleModelSeats = YSI_sVehiclesSeats[GetVehicleModel(vehicleid) - 400] - 1;
 			
 			FOREACH__ (new i : PlayersFromVehicles)
 			{
@@ -1040,7 +1040,7 @@ iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDrive
 				{
 					YIELD__ return i;
 
-					if (++ YSI_VehicleSeatsOccupied == YSI_sVehiclesSeats[YSI_VehicleModelID] - 1) 
+					if (++ YSI_VehicleSeatsOccupied == YSI_VehicleModelSeats) 
 					{
 						return;
 					}
