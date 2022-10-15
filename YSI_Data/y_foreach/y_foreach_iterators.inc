@@ -560,7 +560,7 @@ stock Iter_All_Internal(const array[], size, value)
 		new ret = Iter_OnPlayerDisconnect(playerid, reason);
 		YSI_SetTimerEx__("Iter_OPDCInternal", 0, false, "i", playerid);
 
-		#if defined _FOREACH_VEHICLES 
+		#if _FOREACH_VEHICLES 
 			Iter_Remove(PlayersFromVehicles, playerid);
 		#endif
 		return ret;
