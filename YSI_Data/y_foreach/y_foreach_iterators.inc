@@ -935,7 +935,7 @@ static stock const
 			#undef OnPlayerStateChange
 		#endif
 		#define _ALS_OnPlayerStateChange
-		#define OnPlayerStateChange(%0, %1, %2) CHAIN_PUBLIC:OnPlayerStateChange(%0, %1, %2)
+		#define OnPlayerStateChange(%0,%1,%2) CHAIN_PUBLIC:OnPlayerStateChange(%0, %1, %2)
 		CHAIN_FORWARD:Iter_OnPlayerStateChange(playerid, newstate, oldstate) = 1;
 		#endif
 #endif
