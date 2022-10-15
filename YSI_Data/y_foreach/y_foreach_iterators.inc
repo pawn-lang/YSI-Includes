@@ -130,7 +130,8 @@ Optional plugins:
 		#if _FOREACH_STREAMED
 			ITERATOR__ StreamedVehicle[MAX_PLAYERS]<MAX_VEHICLES>,
 		#endif
-		ITERATOR__ Vehicle<MAX_VEHICLES>;
+		ITERATOR__ Vehicle<MAX_VEHICLES>,
+		ITERATOR__ PlayersFromVehicles<MAX_PLAYERS>;
 #endif
 
 iterfunc stock Range[cellmin](cur, min, max, step = 1)
@@ -558,6 +559,10 @@ stock Iter_All_Internal(const array[], size, value)
 	{
 		new ret = Iter_OnPlayerDisconnect(playerid, reason);
 		YSI_SetTimerEx__("Iter_OPDCInternal", 0, false, "i", playerid);
+
+		#if defined _FOREACH_VEHICLES 
+			Iter_Remove(PlayersFromVehicles, playerid);
+		#endif
 		return ret;
 	}
 
@@ -910,7 +915,29 @@ static stock const
 		#define _ALS_OnVehicleStreamOut
 		#define OnVehicleStreamOut(%0) CHAIN_PUBLIC:Iter_OnVehicleStreamOut(%0)
 		CHAIN_FORWARD:Iter_OnVehicleStreamOut(vehicleid, forplayerid) = 1;
-	#endif
+		
+		public OnPlayerStateChange(playerid, newstate, oldstate)
+		{
+			new ret = Iter_OnPlayerStateChange(playerid, newstate, oldstate);
+
+			if (newstate == PLAYER_STATE_DRIVER || newstate == PLAYER_STATE_PASSENGER)
+			{
+				Iter_Add(PlayersFromVehicles, playerid);
+			}
+			else if (oldstate == PLAYER_STATE_DRIVER || oldstate == PLAYER_STATE_PASSENGER) 
+			{
+				Iter_Remove(PlayersFromVehicles, playerid);
+			}
+			return ret;
+		}
+
+		#if defined _ALS_OnPlayerStateChange
+			#undef OnPlayerStateChange
+		#endif
+		#define _ALS_OnPlayerStateChange
+		#define OnPlayerStateChange(%0, %1, %2) CHAIN_PUBLIC:OnPlayerStateChange(%0, %1, %2)
+		CHAIN_FORWARD:Iter_OnPlayerStateChange(playerid, newstate, oldstate) = 1;
+		#endif
 #endif
 
 iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDriver = true, bool:includePassenger = true)
@@ -919,21 +946,36 @@ iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDrive
 	{
 		if (vehicleid == INVALID_VEHICLE_ID)
 		{
-			FOREACH__ (new i : Player)
+			FOREACH__ (new i : PlayersFromVehicles)
 			{
-				if (IsPlayerInAnyVehicle(i))
-				{
-					YIELD__ return i;
-				}
+				YIELD__ return i;
 			}
 		}
 		else
 		{
-			FOREACH__ (new i : Player)
+			static const 
+				YSI_sVehiclesSeats[] = 
+				{
+					4, 2, 2, 2, 4, 4, 1, 2, 2, 4, 2, 2, 2, 4, 2, 2, 4, 2, 4, 2, 4, 2, 2, 2, 2, 1, 4, 4, 4, 2, 1, 9, 1, 2, 2, 1, 2, 9, 4, 2, 4, 1, 2, 
+					2, 2, 4, 1, 2, 1, 2, 1, 2, 1, 1, 1, 2, 2, 2, 4, 4, 2, 2, 2, 2, 1, 1, 4, 4, 2, 2, 4, 2, 1, 1, 2, 2, 1, 2, 2, 4, 2, 1, 2, 3, 1, 1, 1, 4, 2, 2, 4, 2, 4, 1, 2, 2, 2, 4, 4, 2,
+					2, 1, 2, 2, 2, 2, 2, 4, 2, 1, 1, 2, 1, 1, 2, 2, 4, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 4, 2, 2, 2, 2, 2, 4, 4, 2, 2, 4, 4, 2, 1, 2, 2, 2, 2, 2, 2, 
+					4, 4, 2, 2, 1, 2, 4, 4, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 2, 4, 4, 2, 4, 1, 1, 4, 2, 2, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 4, 2, 2, 2, 2, 2, 4, 2, 1, 1, 1, 4, 1, 1                 
+				};
+
+			new 
+				YSI_VehicleSeatsOccupied, 
+				YSI_VehicleModelID = GetVehicleModel(vehicleid) - 400;
+
+			FOREACH__ (new i : PlayersFromVehicles)
 			{
 				if (GetPlayerVehicleID(i) == vehicleid)
 				{
 					YIELD__ return i;
+
+					if (++ YSI_VehicleSeatsOccupied == YSI_sVehiclesSeats[YSI_VehicleModelID]) 
+					{
+						return;
+					}
 				}
 			}
 		}
@@ -942,7 +984,7 @@ iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDrive
 	{
 		if (vehicleid == INVALID_VEHICLE_ID)
 		{
-			FOREACH__ (new i : Player)
+			FOREACH__ (new i : PlayersFromVehicles)
 			{
 				if (GetPlayerState(i) == PLAYER_STATE_DRIVER)
 				{
@@ -954,7 +996,7 @@ iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDrive
 		}
 		else
 		{
-			FOREACH__ (new i : Player)
+			FOREACH__ (new i : PlayersFromVehicles)
 			{
 				if (GetPlayerVehicleID(i) == vehicleid && GetPlayerState(i) == PLAYER_STATE_DRIVER)
 				{
@@ -969,7 +1011,7 @@ iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDrive
 	{
 		if (vehicleid == INVALID_VEHICLE_ID)
 		{
-			FOREACH__ (new i : Player)
+			FOREACH__ (new i : PlayersFromVehicles)
 			{
 				if (GetPlayerState(i) == PLAYER_STATE_PASSENGER)
 				{
@@ -979,11 +1021,29 @@ iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDrive
 		}
 		else
 		{
-			FOREACH__ (new i : Player)
+			static const 
+				YSI_sVehiclesSeats[] = 
+				{
+					4, 2, 2, 2, 4, 4, 1, 2, 2, 4, 2, 2, 2, 4, 2, 2, 4, 2, 4, 2, 4, 2, 2, 2, 2, 1, 4, 4, 4, 2, 1, 9, 1, 2, 2, 1, 2, 9, 4, 2, 4, 1, 2, 
+					2, 2, 4, 1, 2, 1, 2, 1, 2, 1, 1, 1, 2, 2, 2, 4, 4, 2, 2, 2, 2, 1, 1, 4, 4, 2, 2, 4, 2, 1, 1, 2, 2, 1, 2, 2, 4, 2, 1, 2, 3, 1, 1, 1, 4, 2, 2, 4, 2, 4, 1, 2, 2, 2, 4, 4, 2,
+					2, 1, 2, 2, 2, 2, 2, 4, 2, 1, 1, 2, 1, 1, 2, 2, 4, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 4, 2, 2, 2, 2, 2, 4, 4, 2, 2, 4, 4, 2, 1, 2, 2, 2, 2, 2, 2, 
+					4, 4, 2, 2, 1, 2, 4, 4, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 2, 4, 4, 2, 4, 1, 1, 4, 2, 2, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 4, 2, 2, 2, 2, 2, 4, 2, 1, 1, 1, 4, 1, 1                 
+				};
+
+			new 
+				YSI_VehicleSeatsOccupied, 
+				YSI_VehicleModelID = GetVehicleModel(vehicleid) - 400;
+			
+			FOREACH__ (new i : PlayersFromVehicles)
 			{
 				if (GetPlayerVehicleID(i) == vehicleid && GetPlayerState(i) == PLAYER_STATE_PASSENGER)
 				{
 					YIELD__ return i;
+
+					if (++ YSI_VehicleSeatsOccupied == YSI_sVehiclesSeats[YSI_VehicleModelID] - 1) 
+					{
+						return;
+					}
 				}
 			}
 		}
