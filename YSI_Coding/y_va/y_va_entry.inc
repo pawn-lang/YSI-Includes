@@ -93,6 +93,13 @@ stock PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, const fmat[
 		CreatePlayerTextDraw(playerid, x, y, YSI_UNSAFE_HUGE_STRING);
 }
 
+stock va_SetPlayerChatBubble(playerid, const fmat[], colour, Float:drawDistance, expireTime, GLOBAL_TAG_TYPES:...)
+{
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(5)),
+		SetPlayerChatBubble(playerid, YSI_UNSAFE_HUGE_STRING, colour, drawDistance, expireTime);
+}
+
 stock Text:va_TextDrawCreate(Float:x, Float:y, const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	return
