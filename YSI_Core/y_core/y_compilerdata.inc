@@ -726,28 +726,26 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	
 	stock __CompilerStringReturn(const str[], size = sizeof (str), dummy = 0)
 	{
-		// Only needed on old compilers.
-		assert(cellbits == 32);
 		#pragma unused dummy
-		#emit PUSH.S       size   // Push the first parameter.
-		#emit PUSH.S       str    // Push the second parameter.
-		#emit LOAD.S.alt   0      // Load the previous frame pointer.
-		#emit MOVE.pri            // Copy the pointer.
-		#emit ADD.C        8      // Get the pointer to the parameter count.
-		#emit LOAD.I              // Load the parameter count.
-		#emit ADD.C        12     // Adjust for the function header size.
-		#emit ADD                 // Get the pointer to after the parameters.
-		#emit LOAD.I              // Load the pointer in the (secret) parameter.
-		#emit PUSH.pri            // Push the destination.
-		#emit MOVE.alt            // Make a copy of the pointer.
-		#emit ZERO.pri            // `pri = 0`.
-		#emit STOR.I              // Set the first cell of the target to NULL.
-		#emit PUSH.C       12     // Push the parameters for `StrCpy`.
-		#emit SYSREQ.C     strcat // Call `strcat`.
-		#emit LOAD.S.pri   0      // Reload the previous frame pointer.
-		#emit SCTRL        __stk      // Wipe out the stack.
-		#emit SCTRL        __frm      // Wipe out the frame (go to parent context).
-		#emit RETN                // Return (now within the parent context).
+		#emit PUSH.S       size           // Push the first parameter.
+		#emit PUSH.S       str            // Push the second parameter.
+		#emit LOAD.S.alt   __frame_offset // Load the previous frame pointer.
+		#emit MOVE.pri                    // Copy the pointer.
+		#emit ADD.C        __args_offset  // Get the pointer to the parameter count.
+		#emit LOAD.I                      // Load the parameter count.
+		#emit ADD.C        __3_cells      // Adjust for the function header size.
+		#emit ADD                         // Get the pointer to after the parameters.
+		#emit LOAD.I                      // Load the pointer in the (secret) parameter.
+		#emit PUSH.pri                    // Push the destination.
+		#emit MOVE.alt                    // Make a copy of the pointer.
+		#emit ZERO.pri                    // `pri = 0`.
+		#emit STOR.I                      // Set the first cell of the target to NULL.
+		#emit PUSH.C       __3_cells      // Push the parameters for `StrCpy`.
+		#emit SYSREQ.C     strcat         // Call `strcat`.
+		#emit LOAD.S.pri   __frame_offset // Reload the previous frame pointer.
+		#emit SCTRL        __stk          // Wipe out the stack.
+		#emit SCTRL        __frm          // Wipe out the frame (go to parent context).
+		#emit RETN                        // Return (now within the parent context).
 		return 0;
 	}
 #endif
