@@ -86,16 +86,21 @@ Optional plugins:
 #include "y_va_header"
 #include "y_va_impl"
 
-#if __COMPILER___EMIT_U
-	#define YSI_CheckNumargs__(%0) (__emit(LOAD.S.pri __args_offset) == ((%0) * cellbytes))
-#else
-	#define YSI_CheckNumargs__(%0) (numargs() == (%0))
-#endif
+#define YSI_CheckNumargs__(%0) ((n -= ((3 - (%0)) * cellbytes)) == __3_cells)
 
 stock PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, const fmat[], GLOBAL_TAG_TYPES:...)
 {
+	static n;
+	#emit LOAD.S.pri    __args_offset
+	//#emit ADD.C         __m1_cells // 3 - 4, format static args - function static args.
+	#emit STOR.pri      n
 	if (YSI_CheckNumargs__(4))
 		return CreatePlayerTextDraw(playerid, x, y, fmat);
+	{}
+	#emit HEAP          __2_cells
+	#emit ADDR.pri      0
+	#emit MOVS          __2_cells
+	#emit STACK         __3_cells
 	return
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(4)),
 		CreatePlayerTextDraw(playerid, x, y, YSI_UNSAFE_HUGE_STRING);
