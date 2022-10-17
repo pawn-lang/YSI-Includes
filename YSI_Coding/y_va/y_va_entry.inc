@@ -454,11 +454,11 @@ native bool:va_TextDrawSetStringForPlayer(Text:text, playerid, const fmat[], GLO
 #define _ALS_GameTextForAll
 #define GameTextForAll( va_GameTextForAll(
 
-#if defined _ALS_fprintf
-	#undef fprintf
+#if defined _ALS_fwrite
+	#undef fwrite
 #endif
-#define _ALS_fprintf
-#define fprintf( va_fprintf(
+#define _ALS_fwrite
+#define fwrite( va_fprintf(
 
 #if defined _ALS_SendRconCommand
 	#undef SendRconCommand
