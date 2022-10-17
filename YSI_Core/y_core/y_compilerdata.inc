@@ -415,7 +415,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __pragma("%0"%1) __pragma_%0(%1)
 
 	// The only two `__pragma`s we can fake.
-	#define __pragma_naked() return 0 //__COMPILER_DEFAULT
+	#define __pragma_naked(); {return 0;} //__COMPILER_DEFAULT
 	#define __pragma_unused(,%0) H@(%0)
 
 	// Unimplemented errors.
@@ -440,8 +440,15 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	forward __pragma_ctrlchar(character);
 	#define __pragma_ctrlchar(,%0) __pragma_ctrlchar(%0)
 
-	forward __pragma_deprecated(const string:symbol[]);
-	#define __pragma_deprecated(,%0) __pragma_deprecated(#%0)
+	// The best warning I can give.
+	#define __pragma_deprecated(,%0); {new deprecated_%0=__deprecated(#%0);}
+
+	#pragma deprecated The parameter is deprecated.
+	stock __deprecated(const symbol[])
+	{
+		return 0;
+	}
+	#define deprecated_%0\32;%1= deprecated_%1=
 
 	forward __pragma_dynamic(ram);
 	#define __pragma_dynamic(,%0) __pragma_dynamic(%0)
