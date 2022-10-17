@@ -383,3 +383,188 @@ native bool:va_TextDrawSetStringForPlayer(Text:text, playerid, const fmat[], GLO
 	#include "y_va_tests"
 #endif
 
+#if defined YSI_NO_AUTO_VA
+	#endinput
+#endif
+
+// ALS defines for all the functions above.
+#if defined _ALS_CreatePlayerTextDraw
+	#undef CreatePlayerTextDraw
+#endif
+#define _ALS_CreatePlayerTextDraw
+#define CreatePlayerTextDraw( va_CreatePlayerTextDraw(
+
+#if defined _ALS_SetPlayerChatBubble
+	#undef SetPlayerChatBubble
+#endif
+#define _ALS_SetPlayerChatBubble
+#define SetPlayerChatBubble( va_SetPlayerChatBubble(
+
+#if defined _ALS_TextDrawCreate
+	#undef TextDrawCreate
+#endif
+#define _ALS_TextDrawCreate
+#define TextDrawCreate( va_TextDrawCreate(
+
+#if defined _ALS_TextDrawSetString
+	#undef TextDrawSetString
+#endif
+#define _ALS_TextDrawSetString
+#define TextDrawSetString( va_TextDrawSetString(
+
+#if defined _ALS_PlayerTextDrawSetString
+	#undef PlayerTextDrawSetString
+#endif
+#define _ALS_PlayerTextDrawSetString
+#define PlayerTextDrawSetString( va_PlayerTextDrawSetString(
+
+#if defined _ALS_SendClientMessage
+	#undef SendClientMessage
+#endif
+#define _ALS_SendClientMessage
+#define SendClientMessage( va_SendClientMessage(
+
+#if defined _ALS_SendClientMessageToAll
+	#undef SendClientMessageToAll
+#endif
+#define _ALS_SendClientMessageToAll
+#define SendClientMessageToAll( va_SendClientMessageToAll(
+
+#if defined _ALS_SendPlayerMessageToPlayer
+	#undef SendPlayerMessageToPlayer
+#endif
+#define _ALS_SendPlayerMessageToPlayer
+#define SendPlayerMessageToPlayer( va_SendPlayerMessageToPlayer(
+
+#if defined _ALS_SendPlayerMessageToAll
+	#undef SendPlayerMessageToAll
+#endif
+#define _ALS_SendPlayerMessageToAll
+#define SendPlayerMessageToAll( va_SendPlayerMessageToAll(
+
+#if defined _ALS_GameTextForPlayer
+	#undef GameTextForPlayer
+#endif
+#define _ALS_GameTextForPlayer
+#define GameTextForPlayer( va_GameTextForPlayer(
+
+#if defined _ALS_GameTextForAll
+	#undef GameTextForAll
+#endif
+#define _ALS_GameTextForAll
+#define GameTextForAll( va_GameTextForAll(
+
+#if defined _ALS_fprintf
+	#undef fprintf
+#endif
+#define _ALS_fprintf
+#define fprintf( va_fprintf(
+
+#if defined _ALS_SendRconCommand
+	#undef SendRconCommand
+#endif
+#define _ALS_SendRconCommand
+#define SendRconCommand( va_SendRconCommand(
+
+#if defined _ALS_SetGameModeText
+	#undef SetGameModeText
+#endif
+#define _ALS_SetGameModeText
+#define SetGameModeText( va_SetGameModeText(
+
+#if defined _ALS_DBQuery
+	#undef DBQuery
+#endif
+#define _ALS_DBQuery
+#define DBQuery( va_DBQuery(
+
+#if defined _ALS_ShowPlayerDialog
+	#undef ShowPlayerDialog
+#endif
+#define _ALS_ShowPlayerDialog
+#define ShowPlayerDialog( va_ShowPlayerDialog(
+
+#if defined _ALS_CreateMenu
+	#undef CreateMenu
+#endif
+#define _ALS_CreateMenu
+#define CreateMenu( va_CreateMenu(
+
+#if defined _ALS_AddMenuItem
+	#undef AddMenuItem
+#endif
+#define _ALS_AddMenuItem
+#define AddMenuItem( va_AddMenuItem(
+
+#if defined _ALS_SetMenuColumnHeader
+	#undef SetMenuColumnHeader
+#endif
+#define _ALS_SetMenuColumnHeader
+#define SetMenuColumnHeader( va_SetMenuColumnHeader(
+
+#if defined _ALS_SetObjectMaterialText
+	#undef SetObjectMaterialText
+#endif
+#define _ALS_SetObjectMaterialText
+#define SetObjectMaterialText( va_SetObjectMaterialText(
+
+#if defined _ALS_SetPlayerObjMaterialText
+	#undef SetPlayerObjectMaterialText
+#endif
+#define _ALS_SetPlayerObjMaterialText
+#define SetPlayerObjectMaterialText( va_SetPlayerObjectMaterialText(
+
+#if defined _ALS_Create3DTextLabel
+	#undef Create3DTextLabel
+#endif
+#define _ALS_Create3DTextLabel
+#define Create3DTextLabel( va_Create3DTextLabel(
+
+#if defined _ALS_Update3DTextLabelText
+	#undef Update3DTextLabelText
+#endif
+#define _ALS_Update3DTextLabelText
+#define Update3DTextLabelText( va_Update3DTextLabelText(
+
+#if defined _ALS_CreatePlayer3DTextLabel
+	#undef CreatePlayer3DTextLabel
+#endif
+#define _ALS_CreatePlayer3DTextLabel
+#define CreatePlayer3DTextLabel( va_CreatePlayer3DTextLabel(
+
+#if defined _ALS_UpdPlayer3DTextLabelText
+	#undef UpdatePlayer3DTextLabelText
+#endif
+#define _ALS_UpdPlayer3DTextLabelText
+#define UpdatePlayer3DTextLabelText( va_UpdatePlayer3DTextLabelText(
+
+#if defined _ALS_SetSVarString
+	#undef SetSVarString
+#endif
+#define _ALS_SetSVarString
+#define SetSVarString( va_SetSVarString(
+
+#if defined _ALS_SetPVarString
+	#undef SetPVarString
+#endif
+#define _ALS_SetPVarString
+#define SetPVarString( va_SetPVarString(
+
+#if defined _ALS_AddServerRule
+	#undef AddServerRule
+#endif
+#define _ALS_AddServerRule
+#define AddServerRule( va_AddServerRule(
+
+#if defined _ALS_SetServerRule
+	#undef SetServerRule
+#endif
+#define _ALS_SetServerRule
+#define SetServerRule( va_SetServerRule(
+
+#if defined _ALS_TextDrawSetStringForPlayer
+	#undef TextDrawSetStringForPlayer
+#endif
+#define _ALS_TextDrawSetStringForPlayer
+#define TextDrawSetStringForPlayer( va_TextDrawSetStringForPlayer(
+
