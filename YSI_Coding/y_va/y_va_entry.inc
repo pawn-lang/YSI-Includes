@@ -242,10 +242,10 @@ stock DBResult:va_DBQuery(DB:db, const fmat[], GLOBAL_TAG_TYPES:...)
 stock bool:va_ShowPlayerDialog(playerid, dialogid, DIALOG_STYLE:style, const title[], const fmat[], const button1[], const button2[], GLOBAL_TAG_TYPES:...)
 {
 	if (YSI_CheckNumargs__(7))
-		return Dialog_ShowPlayerNative(playerid, dialogid, style, title, fmat, button1, button2);
+		return bool:Dialog_ShowPlayerNative(playerid, dialogid, style, title, fmat, button1, button2);
 	return
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(7)),
-		Dialog_ShowPlayerNative(playerid, dialogid, style, title, YSI_UNSAFE_HUGE_STRING, button1, button2);
+		bool:Dialog_ShowPlayerNative(playerid, dialogid, style, title, YSI_UNSAFE_HUGE_STRING, button1, button2);
 }
 
 stock Menu:va_CreateMenu(const fmat[], columns, Float:x, Float:y, Float:col1width, Float:col2width = 0.0, GLOBAL_TAG_TYPES:...)
