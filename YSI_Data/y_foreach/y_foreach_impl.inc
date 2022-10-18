@@ -1089,6 +1089,16 @@ stock
 stock
 	Iter_Prev_InternalD(const array[], size, slot)
 {
-	return (array[(slot - 1) % size] - 1) % size;
+	new prev = array[(slot - 1) % size];
+	if (prev == slot)
+	{
+		// The previous value is also in.
+		return (prev - 1) % size;
+	}
+	// Otherwise, we use the new `prev` method for values that aren't in, which
+	// involves a division so they can represent both the last value and keep a
+	// vague representation of their old `next` value for removals in loops.
+	// TODO: ^that.
+	return (prev - 1) % size;
 }
 
