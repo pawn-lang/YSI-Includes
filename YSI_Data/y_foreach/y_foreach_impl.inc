@@ -816,15 +816,24 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 	{
 		// This version has reverse iterators, which need maintaining, and can
 		// be used in place of a loop to jump backwards in the list.
-		return
-			--count,
-			last = (array[(value - 1) % size] - 1) % size,
-			array[last] = array[value],
-			// Set the current value.
-			array[value] = -123456789,
-			// Set the reverse pointer.  The one before the next is NEVER in the
-			// iterator at this point, because we just removed its previous.
-			array[(array[last] - 1) % size] = (last + 1) % size - size - size;
+		--count,
+		last = Iter_Prev_InternalD(array, size, value);
+		array[last] = array[value];
+		//if (array[last] == value + 1)
+		//{
+		//	// We are going one step later, which means that the removed value
+		//	// needs to point both forwards and backwards at the same time.
+		//	return
+		//		array[value] = (last + 1) % size - (2 * size);
+		//}
+		//else
+		{
+			return
+				// For being out the iterator, but still usable in `foreach`.
+				array[value] -= size,
+				// Set the reverse pointer.
+				array[(array[last] - 1) % size] = (last + 1) % size - size;
+		}
 	}
 	else
 	{

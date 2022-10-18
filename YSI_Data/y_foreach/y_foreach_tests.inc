@@ -4074,3 +4074,24 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 	ASSERT_EQ(n, 6);
 }
 
+@test(.group = "y_iterate") y_iterate_NowSafeRemoval1()
+{
+	new
+		Iterator:iter<20>,
+		n;
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 3);
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 7);
+	n = 0;
+	foreach (new i : iter)
+	{
+		if (i == 3)
+		{
+			Iter_Remove(iter, i);
+		}
+		n += i;
+	}
+	ASSERT_EQ(n, 16);
+}
+
