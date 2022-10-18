@@ -4062,16 +4062,53 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 	new
 		Iterator:iter<20>,
 		n;
+	Iter_Add(iter, 4);
 	Iter_Add(iter, 5);
 	Iter_Add(iter, 6);
+	Iter_Add(iter, 7);
 	n = Iter_First(iter);
-	ASSERT_EQ(n, 5);
-	n = Iter_Next(iter, n);
+	ASSERT_EQ(n, 4);
+	n = Iter_Next(iter, Iter_Next(iter, n));
 	ASSERT_EQ(n, 6);
 	n = Iter_Prev(iter, n);
 	ASSERT_EQ(n, 5);
 	n = Iter_Last(iter);
-	ASSERT_EQ(n, 6);
+	ASSERT_EQ(n, 7);
+}
+
+@test(.group = "y_iterate") y_iterate_ToLast()
+{
+	new
+		Iterator:iter<20>,
+		n;
+	Iter_Add(iter, 7);
+	n = Iter_First(iter);
+	ASSERT_EQ(n, 7);
+	n = Iter_Last(iter);
+	ASSERT_EQ(n, 7);
+}
+
+@test(.group = "y_iterate") y_iterate_ConfirmRemoval()
+{
+	new
+		Iterator:iter<20>,
+		n;
+	Iter_Add(iter, 2);
+	Iter_Add(iter, 3);
+	Iter_Add(iter, 4);
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 6);
+	ASSERT(Iter_Contains(iter, 2));
+	ASSERT(Iter_Contains(iter, 3));
+	ASSERT(Iter_Contains(iter, 4));
+	ASSERT(Iter_Contains(iter, 5));
+	ASSERT(Iter_Contains(iter, 6));
+	Iter_Remove(iter, 4);
+	ASSERT(Iter_Contains(iter, 2));
+	ASSERT(Iter_Contains(iter, 3));
+	ASSERT(!Iter_Contains(iter, 4));
+	ASSERT(Iter_Contains(iter, 5));
+	ASSERT(Iter_Contains(iter, 6));
 }
 
 @test(.group = "y_iterate") y_iterate_NowSafeRemoval1()
@@ -4093,5 +4130,49 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 		n += i;
 	}
 	ASSERT_EQ(n, 16);
+}
+
+@test(.group = "y_iterate") y_iterate_NowSafeRemoval2()
+{
+	new
+		Iterator:iter<20>,
+		n;
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 2);
+	Iter_Add(iter, 3);
+	Iter_Add(iter, 4);
+	Iter_Add(iter, 5);
+	n = 0;
+	foreach (new i : iter)
+	{
+		if (i == 3)
+		{
+			Iter_Remove(iter, i);
+		}
+		n += i;
+	}
+	ASSERT_EQ(n, 15);
+}
+
+@test(.group = "y_iterate") y_iterate_NowSafeRemoval3()
+{
+	new
+		Iterator:iter<20>,
+		n;
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 2);
+	Iter_Add(iter, 3);
+	Iter_Add(iter, 4);
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 6);
+	Iter_Add(iter, 7);
+	Iter_Add(iter, 8);
+	n = 0;
+	foreach (new i : iter)
+	{
+		Iter_Remove(iter, i);
+		n += i;
+	}
+	ASSERT_EQ(n, 36);
 }
 

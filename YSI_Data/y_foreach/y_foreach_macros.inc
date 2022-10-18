@@ -605,7 +605,7 @@ FUNC_PAWNDOC(Iter_First(Iterator:iter<>));
 
 FUNC_PAWNDOC(Iter_Last(Iterator:iter<>));
 #define Iter_Last _ITER<Iter_Last_Internal>
-#define Iter_Last_InternalA(%0,%1)    ((_:%1[Iter_End_InternalA(%0,%1)-1])-1)
+#define Iter_Last_InternalA(%0,%1)    (Iter_Prev_InternalA(%0,%1,Iter_End_InternalA(%0,%1)))
 #define Iter_Last_InternalB(%0,%2,%1) (Iter_Prev_InternalB(%0,%2,%1,Iter_End_InternalB(%0,%2,%1)))
 
 /*-------------------------------------------------------------------------*//**

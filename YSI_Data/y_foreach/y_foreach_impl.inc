@@ -717,10 +717,18 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 			last = next,
 			next = array[last];
 		}
+		if ((last + 1) % size != value)
+		{
+			// Reverse from us to `last`.
+			array[(value - 1) % size] = last * -size;
+		}
+		if (value + 1 != next)
+		{
+			// Reverse from `next` to us.
+			array[next - 1] = value * -size;
+		}
 		return
 			++count,
-			array[(value - 1) % size] = (last + 1) % size,
-			array[next - 1] = value + 1,
 			array[value] = next,
 			array[last] = value;
 	}
@@ -819,20 +827,20 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 		--count,
 		last = Iter_Prev_InternalD(array, size, value);
 		array[last] = array[value];
-		//if (array[last] == value + 1)
-		//{
-		//	// We are going one step later, which means that the removed value
-		//	// needs to point both forwards and backwards at the same time.
-		//	return
-		//		array[value] = (last + 1) % size - (2 * size);
-		//}
-		//else
+		if (array[last] == value + 1)
+		{
+			// We are going one step later, which means that the removed value
+			// needs to point both forwards and backwards at the same time.
+			return
+				array[value] = (array[value] - size) + (-size * last);
+		}
+		else
 		{
 			return
 				// For being out the iterator, but still usable in `foreach`.
-				array[value] -= size,
+				array[value] = array[value] - size,
 				// Set the reverse pointer.
-				array[(array[last] - 1) % size] = (last + 1) % size - size;
+				array[(array[last] - 1) % size] = -size * last;
 		}
 	}
 	else
@@ -1107,7 +1115,6 @@ stock
 	// Otherwise, we use the new `prev` method for values that aren't in, which
 	// involves a division so they can represent both the last value and keep a
 	// vague representation of their old `next` value for removals in loops.
-	// TODO: ^that.
-	return (prev - 1) % size;
+	return prev / -size;
 }
 
