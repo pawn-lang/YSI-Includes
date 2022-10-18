@@ -1608,7 +1608,7 @@ public OnCodeInit()
 					}
 					default:
 					{
-						addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (cellbytes);
+						addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (__1_cell);
 						continue;
 					}
 				}
@@ -2404,7 +2404,7 @@ stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &
 
 stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <>
 {
-	const cells0 = (12 + 10) * cellbytes;
+	const cells0 = __3_cells + __10_cells;
 	#pragma unused compressedFormat, address, order
 	#pragma unused a, b, c, d, e, f, g
 
