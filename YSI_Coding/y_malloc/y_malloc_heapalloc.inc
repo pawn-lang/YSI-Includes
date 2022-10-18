@@ -107,7 +107,7 @@ public OnCodeInit()
 			if (dctx[DisasmContext_opcode] == OP_BOUNDS && DisasmGetOperand(dctx) == 0)
 			{
 				AMX_Write(dctx[DisasmContext_cip], _:nop);
-				AMX_Write(dctx[DisasmContext_cip] + 4, _:nop);
+				AMX_Write(dctx[DisasmContext_cip] + cellbytes, _:nop);
 			}
 		}
 	}
@@ -156,7 +156,7 @@ Malloc_Finalise() <>
 	}
 	{}
 	// Allocate the heap space initially.
-	heap = MALLOC_MEMORY * 4;
+	heap = MALLOC_MEMORY * cellbytes;
 	Debug_Print6("Malloc_OnCodeInit: allocate %d", heap);
 	#emit LCTRL        __hea
 	#emit LOAD.S.alt   heap
@@ -167,7 +167,7 @@ Malloc_Finalise() <>
 	#emit CONST.alt    YSI_gMallocMemory
 	#emit LOAD.pri     AMX_HEADER_HEA
 	#emit SUB
-	#emit SHR.C.pri    2 // Divide by 4 to get cells.
+	#emit SHR.C.pri    __COMPILER_CELL_SHIFT // Divide by 4 to get cells.
 	#emit STOR.pri     __YSI_g_sHeapStart
 	#emit INC.pri
 	#emit STOR.pri     __YSI_g_sUnusedStart
@@ -182,7 +182,7 @@ Malloc_Finalise() <>
 		#emit CONST.alt    YSI_gMallocMemory
 		#emit STOR.S.alt   heap
 		printf("Malloc_OnCodeInit: AMX_HEADER_HEA = %d, YSI_gMallocMemory = %d, YSI_g_sHeapStart = %d", _:AMX_HEADER_HEA, heap, YSI_g_sHeapStart);
-		printf("Malloc_OnCodeInit: YSI_gMallocMemory + 4 * YSI_g_sHeapStart = %d", heap + 4 * YSI_g_sHeapStart);
+		printf("Malloc_OnCodeInit: YSI_gMallocMemory + 4 * YSI_g_sHeapStart = %d", heap + cellbytes * YSI_g_sHeapStart);
 	#endif
 	// Loop through all the exposed public functions.
 	new
@@ -194,7 +194,7 @@ Malloc_Finalise() <>
 	// Get the pointer to `main` as well - don't forget that one!
 	#emit LCTRL                     __dat
 	#emit STOR.S.pri                addr
-	entry = -addr + 28;
+	entry = -addr + __7_cells;
 	Debug_Print6("Malloc_OnCodeInit: main = %d", entry);
 	new offset = GetAmxBaseAddress() + AMX_HEADER_COD - AMX_BASE_ADDRESS;
 	do
@@ -205,7 +205,7 @@ Malloc_Finalise() <>
 		AMX_Write(entry, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_HEADER_COD);
 		// Check if the heap has already been modified in the current stack.
 		@emit HEAP         0                                    // Get heap location in `alt`.
-		@emit CONST.pri    (AMX_HEADER_HEA + MALLOC_MEMORY * 4) // Get the end of malloc data.
+		@emit CONST.pri    (AMX_HEADER_HEA + MALLOC_MEMORY * cellbytes) // Get the end of malloc data.
 		@emit JSLEQ        addr + offset                        // Already allocated.
 		@emit SCTRL        __hea                                // Store the new end.
 		@emit JUMP         addr + offset                        // Continue with code.
