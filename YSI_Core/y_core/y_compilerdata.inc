@@ -119,6 +119,15 @@ const __debug = debug;
 	#define C:%1{%2} Debug_Code%1{%2}
 #endif
 
+#if charbits != 8
+	#error YSI assumes `charbits` is 8.
+#endif
+
+// Should be an inbuilt constant!
+#if !defined cellbytes
+	const cellbytes = cellbits / charbits;
+#endif
+
 // This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
 // or `__COMPILER_WINDOWS` depending on where the code is being built.  It does
 // this in a very simple manner - by trying to include a file by the wrong name,
@@ -835,21 +844,12 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 //	#define const%0:%1[%2]=%3:%4; const _yI@%1[%2]=%4,%0:%1[sizeof(_yI@%1)];PREINIT__ %1()_YSI_ConstCpy__(_:(%1),(_yI@%1),0,sizeof(%1)*4,sizeof(%1));
 //#endif
 
-#if charbits != 8
-	#error YSI assumes `charbits` is 8.
-#endif
-
 // Don't define `__PawnBuild` if it doesn't exist, but do create an alternate
 // symbol (with a consistent naming scheme) that always exists.
 #if defined __PawnBuild
 	#define __pawn_build __PawnBuild
 #else
 	#define __pawn_build 0
-#endif
-
-// Should be an inbuilt constant!
-#if !defined cellbytes
-	const cellbytes = cellbits / charbits;
 #endif
 
 // Consistent naming of compiler defined values. 
