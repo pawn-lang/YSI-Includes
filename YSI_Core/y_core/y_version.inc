@@ -101,7 +101,7 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 
 #define YSI_VERSION_MAJOR               5
 #define YSI_VERSION_MINOR               06
-#define YSI_VERSION_BUILD               1932
+#define YSI_VERSION_BUILD               3080
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 
