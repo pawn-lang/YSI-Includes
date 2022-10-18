@@ -316,10 +316,6 @@ Optional plugins:
 	#endif
 #endif
 
-#if !defined BOTSYNC_IS_BOT
-	forward Iter_OPDCInternal(playerid);
-#endif
-
 #include "y_foreach_macros"
 
 #include "y_foreach_impl"

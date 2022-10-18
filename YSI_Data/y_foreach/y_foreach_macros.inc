@@ -332,8 +332,8 @@ FUNC_PAWNDOC(Iter_GetMulti(Iterator:iter<,>, value));
 
 FUNC_PAWNDOC(Iter_SafeRemove(Iterator:iter<>, value, &next));
 #define Iter_SafeRemove _ITER<Iter_SafeRemove_Internal>
-#define Iter_SafeRemove_InternalA(%0,%1,%9)    Iter_SafeRemove_InternalC(%0,_:%1,F@s(%1)-1,Iter_Tag(%1,%9))
-#define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_InternalD(%0[%2],_:%1,F@s(%1),F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
+#define Iter_SafeRemove_InternalA(%0,%1,%9)    Iter_SafeRemove_1(%0,_:%1,F@s(%1)-1,Iter_Tag(%1,%9))
+#define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_2(%0[%2],_:%1,F@s(%1),F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to add a random slot to.</param>

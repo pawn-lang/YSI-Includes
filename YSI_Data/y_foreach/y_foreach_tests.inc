@@ -4241,3 +4241,51 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 	ASSERT_EQ(n, 36);
 }
 
+@test(.group = "y_iterate") y_iterate_SafeRemove1()
+{
+	new
+		Iterator:iter<5, 20>,
+		n;
+	Iter_Add(iter<0>, 1);
+	Iter_Add(iter<0>, 2);
+	Iter_Add(iter<1>, 3);
+	Iter_Add(iter<1>, 4);
+	Iter_Add(iter<1>, 5);
+	Iter_Add(iter<1>, 6);
+	Iter_Add(iter<0>, 7);
+	Iter_Add(iter<0>, 8);
+	n = 0;
+	foreach (new i : iter<1>)
+	{
+		n += i;
+		Iter_SafeRemove(iter<1>, i, i);
+	}
+	foreach (new i : iter<0>)
+	{
+		n += i;
+		Iter_SafeRemove(iter<0>, i, i);
+	}
+	ASSERT_EQ(n, 36);
+}
+
+@test(.group = "y_iterate") y_iterate_SafeRemove2()
+{
+	new
+		Iterator:iter<20>,
+		n;
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 3);
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 7);
+	n = 0;
+	foreach (new i : iter)
+	{
+		n += i;
+		if (i == 3)
+		{
+			Iter_SafeRemove(iter, i, i);
+		}
+	}
+	ASSERT_EQ(n, 16);
+}
+

@@ -861,7 +861,8 @@ stock Iter_Remove_InternalD(&count, array[], elems, start, size, value)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
+#pragma deprecated You can now use `Iter_Remove()` in loops.
+stock Iter_SafeRemove_1(&count, array[], size, value, &last)
 {
 	if (0 <= value < size++ && array[value] > value)
 	{
@@ -894,7 +895,8 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 	}
 }
 
-stock Iter_SafeRemove_InternalD(&count, array[], elems, start, size, value, &last)
+#pragma deprecated You can now use `Iter_Remove()` in loops.
+stock Iter_SafeRemove_2(&count, array[], elems, start, size, value, &last)
 {
 	last = start;
 	if (0 <= value < size && start >= size && count && array[value] > value)

@@ -837,17 +837,6 @@ Output:
  
 ***
 
-#### Iter_OPDCInternal
->* **Parameters:**
->	* `playerid`: playerid_INFO
->* **Returns:**
->	* -
->* **Remarks:**
->	Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a
->	"foreach" loop doesn't crash the server due to an OOB error.
- 
-***
-
 #### foreach
 >* **Parameters:**
 >	* `data`: data_INFO
