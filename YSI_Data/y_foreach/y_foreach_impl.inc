@@ -366,14 +366,14 @@ stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
+stock Iter_RandomRemove_InternalD(&count, array[], elems, size, start, ...)
 {
 	new
 		n = numargs() - 4,
 		s,
 		e;
 	// Get the range of the dynamic parameters.
-	#emit ADDR.pri             __param4_offset
+	#emit ADDR.pri             __param5_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
 	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
@@ -395,7 +395,7 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 	#emit SCTRL                __stk
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
-	return Iter_Remove_InternalD(count, array, start, size, s);
+	return Iter_Remove_InternalD(count, array, elems, start, size, s);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -799,12 +799,55 @@ stock Iter_Index_Internal(count, const array[], start, size, index, bool:wrap = 
 
 stock Iter_Remove_InternalC(&count, array[], size, value)
 {
-	return Iter_SafeRemove_InternalC(count, array, size, value, value);
+	if (0 <= value < size++ && array[value] > value)
+	{
+		// This version has reverse iterators, which need maintaining, and can
+		// be used in place of a loop to jump backwards in the list.
+		--count;
+		new last = Iter_Prev_InternalD(array, size, value);
+		array[last] = array[value];
+		if (array[last] == value + 1)
+		{
+			// We are going one step later, which means that the removed value
+			// needs to point both forwards and backwards at the same time.
+			return
+				array[value] = (array[value] - size) + (-size * last);
+		}
+		else
+		{
+			return
+				// For being out the iterator, but still usable in `foreach`.
+				array[value] = array[value] - size,
+				// Set the reverse pointer.
+				array[(array[last] - 1) % size] = -size * last;
+		}
+	}
+	else
+	{
+		return INVALID_ITERATOR_SLOT;
+	}
 }
 
-stock Iter_Remove_InternalD(&count, array[], start, size, value)
+stock Iter_Remove_InternalD(&count, array[], elems, start, size, value)
 {
-	return Iter_SafeRemove_InternalD(count, array, start, size, value, value);
+	new last = start;
+	if (0 <= value < size && start >= size && count && array[value] > value)
+	{
+		// This version doesn't have reverse iterators, so we need to
+		// manually loop through the list.
+		while ((start = array[last]) < size)
+		{
+			if (start == value)
+			{
+				return
+					--count,
+					array[last] = array[value],
+					array[value] -= elems;
+			}
+			last = start;
+		}
+	}
+	return INVALID_ITERATOR_SLOT;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -851,7 +894,7 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 	}
 }
 
-stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
+stock Iter_SafeRemove_InternalD(&count, array[], elems, start, size, value, &last)
 {
 	last = start;
 	if (0 <= value < size && start >= size && count && array[value] > value)
@@ -865,7 +908,7 @@ stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
 				return
 					--count,
 					array[last] = array[value],
-					array[value] = -123456789;
+					array[value] -= elems;
 			}
 			last = start;
 		}

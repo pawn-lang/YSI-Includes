@@ -4176,3 +4176,68 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 	ASSERT_EQ(n, 36);
 }
 
+@test(.group = "y_iterate") y_iterate_NowSafeRemoval4()
+{
+	new
+		Iterator:iter<5, 20>,
+		n;
+	Iter_Init(iter);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
+	Iter_Add(iter<0>, 1);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
+	Iter_Add(iter<0>, 2);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
+	Iter_Add(iter<0>, 3);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
+	Iter_Add(iter<0>, 4);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
+	Iter_Add(iter<0>, 5);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
+	Iter_Add(iter<0>, 6);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
+	Iter_Add(iter<0>, 7);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
+	Iter_Add(iter<0>, 8);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
+	n = 0;
+	foreach (new i : iter<0>)
+	{
+		//printf("i: %d", i);
+		//printf("e: %d", Iterator@iter[i]);
+		//printf("e: %d", Iterator@iter[i] % sizeof (Iterator@iter));
+		Iter_Remove(iter<0>, i);
+		//printf("i: %d", i);
+		//printf("e: %d", Iterator@iter[i]);
+		//printf("e: %d", Iterator@iter[i] % sizeof (Iterator@iter));
+		n += i;
+	}
+	ASSERT_EQ(n, 36);
+}
+
+@test(.group = "y_iterate") y_iterate_NowSafeRemoval5()
+{
+	new
+		Iterator:iter<5, 20>,
+		n;
+	Iter_Add(iter<0>, 1);
+	Iter_Add(iter<0>, 2);
+	Iter_Add(iter<1>, 3);
+	Iter_Add(iter<1>, 4);
+	Iter_Add(iter<1>, 5);
+	Iter_Add(iter<1>, 6);
+	Iter_Add(iter<0>, 7);
+	Iter_Add(iter<0>, 8);
+	n = 0;
+	foreach (new i : iter<1>)
+	{
+		Iter_Remove(iter<1>, i);
+		n += i;
+	}
+	foreach (new i : iter<0>)
+	{
+		Iter_Remove(iter<0>, i);
+		n += i;
+	}
+	ASSERT_EQ(n, 36);
+}
+
