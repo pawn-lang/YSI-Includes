@@ -796,28 +796,42 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, en
 		// and save a step.
 		for (new str[FUNCTION_LENGTH]; ; )
 		{
-			nextPtr = AMX_Read(writePtr + 12);
-			if (nextPtr)
+			nextPtr = AMX_Read(writePtr + (__defsize_cells + cellbytes));
+			if (__32(nextPtr))
 			{
 				// Is this the insertion point?
-				AMX_ReadString(nextPtr + AMX_BASE_ADDRESS, str, sizeof (str));
+				AMX_ReadString(__32(nextPtr) + AMX_BASE_ADDRESS, str, sizeof (str));
 				if (strcmp(str, YSI_g_sName) > 0)
 				{
 					// Save the new name's address.
-					AMX_Write(writePtr + 4, precount);
+					#if cellbits == 64
+						// But only write 32 bits.
+						pc = AMX_Read(writePtr + cellbytes),
+						pc = (pc & 0xFFFFFFFF00000000) | (precount & 0x00000000FFFFFFFF),
+						AMX_Write(writePtr + cellbytes, pc);
+					#else
+						AMX_Write(writePtr + cellbytes, precount);
+					#endif
 					break;
 				}
 			}
 			// Shift this entry up.
-			AMX_Write(writePtr + 4, nextPtr),
-			nextPtr = AMX_Read(writePtr + 8),
+			#if cellbits == 64
+				// But only write 32 bits.
+				pc = AMX_Read(writePtr + cellbytes),
+				pc = (pc & 0xFFFFFFFF00000000) | (nextPtr & 0x00000000FFFFFFFF),
+				AMX_Write(writePtr + cellbytes, pc);
+			#else
+				AMX_Write(writePtr + cellbytes, nextPtr);
+			#endif
+			nextPtr = AMX_Read(writePtr + __defsize_cells),
 			AMX_Write(writePtr, nextPtr),
-			writePtr += 8;
+			writePtr += __defsize_cells;
 		}
 		
 		// Mark that there are now fewer header hook entries because we
 		// reused one for a proper callback.
-		YSI_g_sBlockEnd -= 8;
+		YSI_g_sBlockEnd -= __defsize_cells;
 	}
 	// Save the function pointer again so it can be used by
 	// the rewrite code.
