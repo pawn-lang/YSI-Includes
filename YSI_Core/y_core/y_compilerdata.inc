@@ -81,6 +81,9 @@ Optional plugins:
 #pragma tabsize 4
 #define tabsize%00%0\10;%0 _DUMMY_do_not_use_tabsize_0
 
+// For consistency.
+const __debug = debug;
+
 // Enable `P:D(func())` for forcing function-like macros in to documentation.
 // For example:
 //   
@@ -201,6 +204,7 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 #define __COMPILER_PRAGMA (0)
 #define __COMPILER___EMIT_U (0)
 #define __COMPILER_FUNC_DECL_BUG (0)
+#define __COMPILER_ADDRESSOF (0)
 
 #define __COMPILER_STATIC_ENUM enum
 #define __COMPILER_CONST_STATIC const
@@ -289,6 +293,9 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 	#if __PawnBuild >= 10
 		#undef __COMPILER___EMIT_U
 		#define __COMPILER___EMIT_U (1)
+
+		#undef __COMPILER_ADDRESSOF
+		#define __COMPILER_ADDRESSOF (1)
 	#endif
 	// Disable `__COMPILER_PRAGMA` for now, while there's no `PROC` generated.
 	#if __PawnBuild >= 11
@@ -501,6 +508,10 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #define __COMPILER_UNUSED(%0) __pragma("unused", %0)
 #define __COMPILER_NAKED() __pragma("naked")
 
+#if defined __optimization
+	const __optimisation = __optimization;
+#endif
+
 #if __COMPILER_MODIFIED
 	#if defined YSI_TESTS
 		#pragma option -E-
@@ -654,6 +665,68 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	
 	#pragma warning pop
 	
+	#if __PawnBuild >= 10 && !defined __optimisation
+		// Requires __addressof.
+		forward __CompilerAddress1();
+		forward __CompilerAddress2(a, b);
+
+		public __CompilerAddress1()
+		{
+			__CompilerAddress2(1, 2);
+			// Function size in cells for various (-O, -d) combinations:
+			// 0, 0 = 13
+			// 0, 1 = 14
+			// 0, 2 = 15
+			// 1, 0 = 11
+			// 1, 1 = 12
+			// 1, 2 = 13
+			// 2, 0 = 10
+			// 2, 1 = 11
+			// 2, 2 = 12
+		}
+
+		public __CompilerAddress2(a, b)
+		{
+		}
+
+		const __CompilerAddress = __addressof(__CompilerAddress2) - __addressof(__CompilerAddress1);
+
+		#if __debug == 0
+			#if __CompilerAddress == 13 * cellbytes
+				const __optimisation = 0;
+			#elseif __CompilerAddress == 11 * cellbytes
+				const __optimisation = 1;
+			#elseif __CompilerAddress == 10 * cellbytes
+				const __optimisation = 2;
+			#else
+				#error Unknown optimisation level.
+			#endif
+		#elseif __debug == 1
+			#if __CompilerAddress == 14 * cellbytes
+				const __optimisation = 0;
+			#elseif __CompilerAddress == 12 * cellbytes
+				const __optimisation = 1;
+			#elseif __CompilerAddress == 11 * cellbytes
+				const __optimisation = 2;
+			#else
+				#error Unknown optimisation level.
+			#endif
+		#elseif __debug == 2
+			#if __CompilerAddress == 15 * cellbytes
+				const __optimisation = 0;
+			#elseif __CompilerAddress == 13 * cellbytes
+				const __optimisation = 1;
+			#elseif __CompilerAddress == 12 * cellbytes
+				const __optimisation = 2;
+			#else
+				#error Unknown optimisation level.
+			#endif
+		#else
+			// Optimisations are disabled with `-d3`.
+			const __optimisation = 0;
+		#endif
+	#endif
+	
 	// Disable the warning for `const &var`.
 	#define __COMPILER_CONST_REF (1)
 #else
@@ -748,6 +821,10 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		#emit RETN                        // Return (now within the parent context).
 		return 0;
 	}
+#endif
+#if !defined __optimisation
+	// Unknown optimisation level.
+	const __optimisation = -1;
 #endif
 
 #define __COMPILER_ARRAY_RETURN __COMPILER_STRING_RETURN	

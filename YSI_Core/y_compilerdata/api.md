@@ -238,6 +238,15 @@ __COMPILER_THIS
 
 // The script is being compiled with `-O2` on later versions.
 __COMPILER_O2
+
+// The compiler has native `__addressof` support.
+__COMPILER_ADDRESSOF
+
+// The optimisation level used by the compiler, on some versions.  `-1` if unknown.
+__optimisation
+
+// The `debug` constant, but with a better name.
+__debug
 ```
 
 ## Default Values
