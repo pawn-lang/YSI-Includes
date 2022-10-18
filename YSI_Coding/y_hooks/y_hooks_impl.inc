@@ -796,11 +796,11 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, en
 		// and save a step.
 		for (new str[FUNCTION_LENGTH]; ; )
 		{
-			nextPtr = AMX_Read(writePtr + (__defsize_cells + cellbytes));
-			if (__32(nextPtr))
+			nextPtr = __32(AMX_Read(writePtr + (__defsize_cells + cellbytes)));
+			if (nextPtr)
 			{
 				// Is this the insertion point?
-				AMX_ReadString(__32(nextPtr) + AMX_BASE_ADDRESS, str, sizeof (str));
+				AMX_ReadString(nextPtr + AMX_BASE_ADDRESS, str, sizeof (str));
 				if (strcmp(str, YSI_g_sName) > 0)
 				{
 					// Save the new name's address.
@@ -925,7 +925,7 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
 		//ptr = AMX_Read(ptr);
 		#emit PUSH.C                    0
 		#emit LCTRL                     __cip
-		#emit ADD.C                     36
+		#emit ADD.C                     __9_cells
 		#emit LCTRL                     __jmp
 		#emit PUSH.pri
 		#emit LREF.S.pri                ptr
@@ -1039,7 +1039,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		{
 			// Get the absolute offset from here.
 			@emit CALL          (AMX_Read(YSI_g_sHooks[i]) + base) // 2
-			if (!AMX_Read(YSI_g_sHooks[i] + 4))
+			if (!__32(AMX_Read(YSI_g_sHooks[i] + cellbytes)))
 			{
 				Hooks_InvalidatePointer(YSI_g_sHooks[i]);
 			}
@@ -1059,12 +1059,12 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 				//  JUMP OVER THIS SECTION. 
 				// =========================
 			}
-			@emit LOAD.S.alt    -4   // 7
+			@emit LOAD.S.alt    __local0_offset   // 7
 			if (ret) @emit AND       // 8
 			else @emit OR            // 8
 			// Loop and do the very first items last.
 			if (++i == YSI_g_sCount) break;
-			else @emit STOR.S.pri -4 // 10
+			else @emit STOR.S.pri __local0_offset // 10
 		}
 		if (skipable)
 		{
@@ -1080,7 +1080,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 		// Still need this code as they may hook a function that doesn't exist,
 		// but we still need to correctly process -1 or -2.
 		@emit CALL          (AMX_Read(YSI_g_sHooks[0]) + base)
-		if (!AMX_Read(YSI_g_sHooks[0] + 4))
+		if (!AMX_Read(YSI_g_sHooks[0] + cellbytes))
 		{
 			Hooks_InvalidatePointer(YSI_g_sHooks[0]);
 		}
@@ -1101,7 +1101,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 	@emit MOVE.alt
 	
 	// Pop from the active hooks stack.
-	@emit LOAD.S.pri    -8
+	@emit LOAD.S.pri    __local1_offset
 	@emit STOR.pri      AMX_Ref(YSI_g_sActiveHooks)
 	
 	// Remove the whole stack then get the return value.
@@ -1144,21 +1144,24 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 	Debug_Print4("Hooks_CompressPublics called");
 	// Count the number of still active functions.
 	new
-		read = AMX_HEADER_NATIVES,
-		write = AMX_HEADER_NATIVES,
-		tmp;
+			read = AMX_HEADER_NATIVES,
+			write = AMX_HEADER_NATIVES,
+		#if cellbits == 64
+			tmp,
+		#endif
+			name;
 	do
 	{
-		read -= 8,
+		read -= __defsize_cells,
 		// Check if we should skip it anyway (i.e. is it one of the prefixes
 		// we want removed).
-		tmp = AMX_Read(read + 4);
-		if (tmp == 0)
+		name = __32(AMX_Read(read + cellbytes));
+		if (name == 0)
 		{
 			// No pointer, skip it.
 			continue;
 		}
-		switch (AMX_Read(tmp + AMX_BASE_ADDRESS))
+		switch (AMX_Read(name + AMX_BASE_ADDRESS))
 		{
 		#if !defined YSI_TESTS
 		case _A<@y_H>:
@@ -1177,10 +1180,17 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 			continue;
 		}
 		// Neither an invalid pointer nor a removed name.
-		write -= 8,
-		AMX_Write(write + 4, tmp),
-		tmp = AMX_Read(read),
-		AMX_Write(write, tmp);
+		write -= __defsize_cells;
+		#if cellbits == 64
+			// But only write 32 bits.
+			tmp = AMX_Read(write + cellbytes),
+			tmp = (tmp & 0xFFFFFFFF00000000) | (name & 0x00000000FFFFFFFF),
+			AMX_Write(write + cellbytes, pc);
+		#else
+			AMX_Write(write + cellbytes, name);
+		#endif
+		name = AMX_Read(read),
+		AMX_Write(write, name);
 	}
 	while (read != AMX_HEADER_PUBLICS);
 	// Get the difference from the old to the new publics table.
@@ -1191,8 +1201,11 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 		// Update stored values in y_amx so they reflect the new structure.
 		if (!Server_JITExists() || YSI_g_sSortedOnce)
 		{
-			tmp = AMX_Read(AMX_BASE_ADDRESS + 32),
-			AMX_Write(AMX_BASE_ADDRESS + 32, tmp + YSI_g_sInitPublicDiff),
+			// I think this offset remains constant in 64-bit, and because the
+			// values are little-endian the addition still works as well without
+			// any masking required.
+			name = AMX_Read(AMX_BASE_ADDRESS + 32),
+			AMX_Write(AMX_BASE_ADDRESS + 32, name + YSI_g_sInitPublicDiff),
 			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
 			ResetStaticAmxHeader(),
 			YSI_g_sSortedOnce = true;
@@ -1317,7 +1330,7 @@ public OnCodeInit()
 	{
 		#emit PUSH.C                    0
 		#emit LCTRL                     __cip
-		#emit ADD.C                     36
+		#emit ADD.C                     __9_cells
 		#emit LCTRL                     __jmp
 		#emit PUSH.pri
 		#emit LREF.S.pri                entry
@@ -1469,7 +1482,7 @@ public OnCodeInit()
 		//	// other way.
 		//	for (entry = YSI_g_sBlockEnd; entry != YSI_g_sBlockStart; )
 		//	{
-		//		entry -= 8;
+		//		entry -= __defsize_cells;
 		//		if (AMX_Read(entry) == 0)
 		//		{
 		//			continue;
@@ -1553,24 +1566,24 @@ public OnCodeInit()
 						// correctly, this code checks that the previous Opcode
 						// isn't `PROC`, which only happens in our wrapper, we
 						// just assume that it is `PUSH.C` otherwise.
-						if (Opcode:AMX_Read(addr - 8) == proc)
+						if (Opcode:AMX_Read(addr - __2_cells) == proc)
 						{
-							addr += 8;
+							addr += __2_cells;
 							continue;
 						}
-						idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4));
+						idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + __1_cell));
 				#if __COMPILER_O2
 						base = 0;
 				#endif
 					}
 					case OP_SYSREQ_D:
 					{
-						if (Opcode:AMX_Read(addr - 8) == proc)
+						if (Opcode:AMX_Read(addr - __2_cells) == proc)
 						{
-							addr += 8;
+							addr += __2_cells;
 							continue;
 						}
-						idx = YHNPS_Find(heap + allocated * __4_cells, nativeCount, AMX_Read(addr + 4));
+						idx = YHNPS_Find(heap + allocated * __4_cells, nativeCount, AMX_Read(addr + __1_cell));
 				#if __COMPILER_O2
 						base = 0;
 				#endif
@@ -1578,24 +1591,24 @@ public OnCodeInit()
 				#if __COMPILER_O2
 					case OP_SYSREQ_N:
 					{
-						idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4)),
+						idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + __1_cell)),
 						base = 1;
 					}
 				#endif
 					case OP_CALL:
 					{
-						idx = YHNPS_Find(heap + allocated * __2_cells, stockCount, AMX_Read(addr + 4) - reloc);
+						idx = YHNPS_Find(heap + allocated * __2_cells, stockCount, AMX_Read(addr + __1_cell) - reloc);
 						if (idx != cellmin)
 						{
 							// Write a different target address.
-							AMX_Write(addr + 4, idx);
+							AMX_Write(addr + __1_cell, idx);
 						}
 						addr += __2_cells;
 						continue;
 					}
 					default:
 					{
-						addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (4);
+						addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (cellbytes);
 						continue;
 					}
 				}
@@ -1616,20 +1629,20 @@ public OnCodeInit()
 					// compatible (so we can do clever things with stacks/
 					// addresses if nescessary).
 					AMX_Write(addr, _:call),
-					AMX_Write(addr + 4, idx),
-					addr += 12;
+					AMX_Write(addr + __1_cell, idx),
+					addr += __3_cells;
 				}
 			#endif
 				else
 				{
 					// Write a different target address.
 					AMX_Write(addr, _:call),
-					AMX_Write(addr + 4, idx),
+					AMX_Write(addr + __1_cell, idx),
 					addr += __2_cells;
 					if (UnrelocateOpcode(Opcode:AMX_Read(addr)) == OP_STACK)
 					{
 						AMX_Write(addr, _:nop),
-						AMX_Write(addr + 4, _:nop),
+						AMX_Write(addr + __1_cell, _:nop),
 						addr += __2_cells;
 					}
 				}
@@ -1650,7 +1663,7 @@ public OnCodeInit()
 								addr += __2_cells;
 								continue;
 							}
-							idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4));
+							idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + __1_cell));
 						#if __COMPILER_O2
 							base = 0;
 						#endif
@@ -1664,31 +1677,31 @@ public OnCodeInit()
 									addr += __2_cells;
 									continue;
 								}
-								idx = YHNPS_Find(heap + allocated * __4_cells, nativeCount, AMX_Read(addr + 4));
+								idx = YHNPS_Find(heap + allocated * __4_cells, nativeCount, AMX_Read(addr + __1_cell));
 						#if __COMPILER_O2
 								base = 0;
 							}
 							else
 							{
-								idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + 4));
+								idx = YHNPS_Find(heap, nativeCount, AMX_Read(addr + __1_cell));
 								base = 1;
 						#endif
 							}
 					}
 					case OP_CALL:
 					{
-						idx = YHNPS_Find(heap + allocated * __2_cells, stockCount, AMX_Read(addr + 4) - reloc);
+						idx = YHNPS_Find(heap + allocated * __2_cells, stockCount, AMX_Read(addr + __1_cell) - reloc);
 						if (idx != cellmin)
 						{
 							// Write a different target address.
-							AMX_Write(addr + 4, idx);
+							AMX_Write(addr + __1_cell, idx);
 						}
 						addr += __2_cells;
 						continue;
 					}
 					default:
 					{
-						addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (4);
+						addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (__1_cell);
 						continue;
 					}
 				}
@@ -1709,20 +1722,20 @@ public OnCodeInit()
 					// compatible (so we can do clever things with stacks/
 					// addresses if nescessary).
 					AMX_Write(addr, _:call),
-					AMX_Write(addr + 4, idx),
-					addr += 12;
+					AMX_Write(addr + __1_cell, idx),
+					addr += __3_cells;
 				}
 			#endif
 				else
 				{
 					// Write a different target address.
 					AMX_Write(addr, _:call),
-					AMX_Write(addr + 4, idx),
+					AMX_Write(addr + __1_cell, idx),
 					addr += __2_cells;
 					if (Opcode:AMX_Read(addr) == OP_STACK)
 					{
 						AMX_Write(addr, _:nop),
-						AMX_Write(addr + 4, _:nop),
+						AMX_Write(addr + __1_cell, _:nop),
 						addr += __2_cells;
 					}
 				}
@@ -1786,6 +1799,7 @@ _Y_HOOKS_STATIC _Hooks_RepairStub()
 	// Move the header up for searching.
 	if (YSI_g_sInitPublicDiff)
 	{
+		// As elsewhere this needs no changes in 64-bit.
 		new tmp = AMX_Read(AMX_BASE_ADDRESS + 32);
 		AMX_Write(AMX_BASE_ADDRESS + 32, tmp + YSI_g_sInitPublicDiff),
 		AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
@@ -1799,7 +1813,7 @@ _Y_HOOKS_STATIC _Hooks_RepairStubFS()
 	_Hooks_RepairStub();
 	#emit PUSH.C              0
 	#emit LCTRL               __cip
-	#emit ADD.C               36
+	#emit ADD.C               __9_cells
 	#emit LCTRL               __jmp
 	#emit PUSH.pri
 	#emit LOAD.pri            YSI_g_sInitFSPtr
@@ -1812,7 +1826,7 @@ _Y_HOOKS_STATIC _Hooks_RepairStubGM()
 	_Hooks_RepairStub();
 	#emit PUSH.C              0
 	#emit LCTRL               __cip
-	#emit ADD.C               36
+	#emit ADD.C               __9_cells
 	#emit LCTRL               __jmp
 	#emit PUSH.pri
 	#emit LOAD.pri            YSI_g_sInitGMPtr
@@ -1865,7 +1879,7 @@ Hooks_NumArgs_load:
 	#emit LREF.S.alt          0
 	#emit JZER                Hooks_NumArgs_load
 	#emit POP.pri
-	#emit SHR.C.pri           2
+	#emit SHR.C.pri           __COMPILER_CELL_SHIFT
 	#emit RETN
 	// Ideal code, that can't be used due to having a forward jump.
 /*	#emit LOAD.S.pri          0
@@ -1873,13 +1887,13 @@ Hooks_NumArgs_load:
 	#emit LOAD.I
 	#emit ZERO.alt
 	#emit JSLESS              Hooks_NumArgs_negative
-	#emit SHR.C.pri           2
+	#emit SHR.C.pri           __COMPILER_CELL_SHIFT
 	#emit RETN
 Hooks_NumArgs_negative:
 	#emit LREF.S.pri          0
 	#emit ADD.C               __2_cells
 	#emit LOAD.I
-	#emit SHR.C.pri           2
+	#emit SHR.C.pri           __COMPILER_CELL_SHIFT
 	#emit RETN*/
 	__pragma("naked");
 }
@@ -1932,11 +1946,11 @@ public OnRuntimeError(code, &bool:suppress)
 				print("[debug]");
 			}
 			// Not 8, because `cur` is `- 8`.
-			printf("[debug] The %s mangled arguments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", ValstrWithOrdinal(i), AMX_Read(cur + __4_cells) / 4);
+			printf("[debug] The %s mangled arguments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", ValstrWithOrdinal(i), AMX_Read(cur + __4_cells) / cellbytes);
 			//// Get the current parameter count.
 			//printf("count: %d", count);
 			//// Write this out to the lower parameter count copy.
-			//AMX_Write(cur - count - 4, count);
+			//AMX_Write(cur - count - __1_cell, count);
 			//// Fixed.
 			prev = cur;
 			cur = AMX_Read(cur);
@@ -2022,7 +2036,7 @@ static stock YHNPS_Find(heap, end, value)
 		}
 		else
 		{
-			return AMX_Read(heap + mid * __2_cells + 4);
+			return AMX_Read(heap + mid * __2_cells + __1_cell);
 		}
 	}
 	return cellmin;
@@ -2070,7 +2084,7 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 		RawMemCpy(heap + start * __2_cells + __2_cells, heap + start * __2_cells, (count - start) * __2_cells);
 	}
 	AMX_Write(heap + start * __2_cells, value);
-	AMX_Write(heap + start * __2_cells + 4, ptr);
+	AMX_Write(heap + start * __2_cells + __1_cell, ptr);
 }
 
 Hooks_Continue_(GLOBAL_TAG_TYPES:...)
@@ -2265,20 +2279,20 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[
 		// Chain the functions.
 		if (YSI_g_sNPSBaseCall == addr)
 		{
-			@emit PUSH3.C       compressedFormat, YSI_g_sNPSStack, 8            // 5
+			@emit PUSH3.C       compressedFormat, YSI_g_sNPSStack, __2_cells    // 5
 			YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
 		}
 		else if (YSI_g_sNPSBaseCall == cellmin)
 		{
-			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), 8   // 5
+			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), __2_cells // 5
 			YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
 		}
 		else
 		{
-			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), 8   // 5
+			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), __2_cells // 5
 		}
 
-		@emit CONST.pri     4                                                   // 47
+		@emit CONST.pri     __1_cell                                            // 47
 		@emit ADD                                                               // 48
 	}
 	else
@@ -2311,36 +2325,36 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[
 			@emit PUSH.C       YSI_g_sNPSStack                                  // 5
 		}
 		YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
-		@emit PUSH.C       8                                                    // 7
+		@emit PUSH.C       __2_cells                                            // 7
 	}
 
 	@emit PUSH.pri     // Save the return address again.                        // 8
 	@emit PUSH         AMX_Ref(YSI_g_sNPSStack)                                 // 10
 
 	// Copy 20 bytes over (includes the return address and fake param count).
-	@emit HEAP         20                                                       // 12
+	@emit HEAP         __5_cells                                                // 12
 	@emit LCTRL        __stk                                                    // 14
-	@emit MOVS         20                                                       // 16
+	@emit MOVS         __5_cells                                                // 16
 	@emit STOR.alt     AMX_Ref(YSI_g_sNPSStack)                                 // 18
 
 	// Call, and return to here to clean up the heap.
-	@emit STACK        20                                                       // 20
+	@emit STACK        __5_cells                                                // 20
 	@emit CALL.abs     YSI_g_sNPSReplace                                        // 22
 
 	// Put data (and return value) on the stack.
-	@emit STACK        -20                                                      // 24
+	@emit STACK        -__5_cells                                               // 24
 	@emit STACK        0                                                        // 26
 	@emit PUSH.pri                                                              // 27
 
 	// Copy from the heap.
 	@emit LOAD.pri     AMX_Ref(YSI_g_sNPSStack)                                 // 29
-	@emit MOVS         20                                                       // 31
+	@emit MOVS         __5_cells                                                // 31
 
 	// Restore the return address and `continue` stack.
 	@emit POP.pri                                                               // 32
 	@emit POP.alt                                                               // 33
 	@emit STOR.alt     AMX_Ref(YSI_g_sNPSStack)                                 // 35
-	@emit HEAP         -20                                                      // 37
+	@emit HEAP         -__5_cells                                               // 37
 
 	// Return from this "function", with our fake parameters and return address.
 	// We do this instead of using `SCTRL 6`, as is the normal way, to preserve
@@ -2390,13 +2404,14 @@ stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &
 
 stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <>
 {
+	const cells0 = (12 + 10) * cellbytes;
 	#pragma unused compressedFormat, address, order
 	#pragma unused a, b, c, d, e, f, g
 
 	// A double return.  We return `0` from this function because we don't care
 	// about the current state.
 	#emit HEAP                 EMIT_MINUS_28
-	#emit STACK                52 // 12 + 10 * 4
+	#emit STACK                cells0
 	#emit ZERO.pri
 	#emit RETN
 
@@ -2438,9 +2453,9 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 	@emit JZER.label   Hooks_Continue_loop
 
 	// Adjust the given parameter.
-	@emit LREF.S.pri   -4
+	@emit LREF.S.pri   -__1_cell
 	@emit LOAD.I
-	@emit SREF.S.pri   -4
+	@emit SREF.S.pri   -__1_cell
 	@emit JUMP.label   Hooks_Continue_loop
 
 	@emit Hooks_Continue_done:
@@ -2448,7 +2463,7 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 	@emit POP.pri
 
 	@emit LOAD.pri     AMX_Ref(YSI_g_sNPSStack)
-	@emit ADD.C        12
+	@emit ADD.C        __3_cells
 	@emit LOAD.I
 
 	// `alt` is `0` here, thanks to the loop above.
