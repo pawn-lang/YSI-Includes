@@ -631,8 +631,8 @@ FUNC_PAWNDOC(Iter_Next(Iterator:iter<>, cur));
 
 FUNC_PAWNDOC(Iter_Prev(Iterator:iter<>, cur));
 #define Iter_Prev _ITER<Iter_Prev_Internal>
-#define Iter_Prev_InternalA(%0,%1,%9)    (((_:%1[(Iter_Tag(%1,%9)-1)%F@s(%1)])-1)%F@s(%1))
-#define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0),F@s(%1),Iter_Tag(%1,%9))
+#define Iter_Prev_InternalA(%0,%1,%9)    Iter_Prev_InternalD(_:%1,F@s(%1),Iter_Tag(%1,%9))
+#define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_InternalC(_:%1,F@s(%1)-F@s(%0),F@s(%1),Iter_Tag(%1,%9))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the true array of.</param>
@@ -927,7 +927,6 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2)));_:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Reverse normal iterator (uses a custom `Iter_Prev_InternalA` with tag check).
-//#define F@q:%9$%1,%0$ F@s(Iterator@%0)-2));_:(%1=(_:(%1=Iterator@%0[(_:(%1)-1)%F@s(Iterator@%0)])-1)%F@s(Iterator@%0))!=(F@s(Iterator@%0)-1);
 #define F@q:%9$%1,%0$ F@s(Iterator@%0)-2));_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
 
 // Special iterator function declaration.

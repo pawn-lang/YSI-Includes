@@ -1060,7 +1060,7 @@ stock
  *//*------------------------------------------------------------------------**/
 
 stock
-	Iter_Prev_Internal(const array[], elems, size, slot)
+	Iter_Prev_InternalC(const array[], elems, size, slot)
 {
 	if ((slot < elems) ?
 		(0 <= slot < array[slot]) :
@@ -1075,5 +1075,20 @@ stock
 		}
 	}
 	return elems;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="array">iterator data.</param>
+ * <param name="size">Size of the iterator.</param>
+ * <param name="slot">The current slot.</param>
+ * <remarks>
+ *  Gets the element in an iterator that points to the current element.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock
+	Iter_Prev_InternalD(const array[], size, slot)
+{
+	return (array[(slot - 1) % size] - 1) % size;
 }
 
