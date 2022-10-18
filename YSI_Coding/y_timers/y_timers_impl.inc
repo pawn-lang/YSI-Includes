@@ -156,10 +156,7 @@ public OnCodeInit()
 				// that time and how many have already been started.
 				new
 					buffer[FUNCTION_LENGTH];
-				publicTableEntry += 4;
-				#emit LREF.S.pri publicTableEntry
-				#emit STOR.S.pri pointer
-				AMX_ReadString(AMX_BASE_ADDRESS + pointer, buffer);
+				AMX_GetStringFromEntry(publicTableEntry, buffer);
 				Debug_Print7("Timer_OnYSIInit: %s", Unpack(buffer));
 				// Get the time offset for the current call.  This should mean
 				// that all the functions are nicely spread out.

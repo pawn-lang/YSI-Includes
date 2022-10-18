@@ -192,7 +192,7 @@ stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 			Debug_Print5("Found hook name replacement: %d, %s", pos, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT]);
 			// Found a complete word according to CamelCase rules.
 			strdel(name, pos + 1, end),
-			name[pos] = 0x80000000 | idx;
+			name[pos] = cellmin | idx;
 		}
 	}
 	// All the replacements have been found and marked.  Now actually insert.
@@ -211,7 +211,7 @@ stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 				// inline in the loop above because some replacements may be
 				// contained within others - we don't want those to be both done
 				// within each other.
-				Debug_Print5("Inserting hook name replacement: %d, %s", pos, YSI_g_sReplacements[name[pos] & ~0x80000000][E_HOOK_NAME_REPLACEMENT_LONG]);
+				Debug_Print5("Inserting hook name replacement: %d, %s", pos, YSI_g_sReplacements[name[pos] & ~cellmin][E_HOOK_NAME_REPLACEMENT_LONG]);
 				Debug_Print6("Current character: 0x%04x%04x", name[pos] >>> 16, name[pos] & 0xFFFF);
 				// It took me ages to find a bug in this code.  For some reason,
 				// "strins" was packing the result.  This was because the value
@@ -219,7 +219,7 @@ stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 				// indication that the string was packed.  I fixed it by moving
 				// the assignment to "name[pos]" above "strins".  So while the
 				// two lines look independent, they aren't!
-				i = name[pos] & ~0x80000000,
+				i = name[pos] & ~cellmin,
 				name[pos] = YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG];
 				// Use the original "strins" - we know this string is not
 				// packed, but it might sometimes look like it is.  The "fixed"
@@ -332,11 +332,11 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 				Debug_Error("y_hooks prehook array filled");
 				break;
 			}
-			AMX_ReadString(AMX_Read(publicTableEntry + 4) + AMX_BASE_ADDRESS + 4, name),
-			strunpack(preloads[precount][E_CHAIN_HOOK_NAME], name, 16);
+			AMX_GetStringFromEntry(publicTableEntry, name),
+			strunpack(preloads[precount][E_CHAIN_HOOK_NAME], name[1], 16);
 			#emit PUSH.C                    0
 			#emit LCTRL                     __cip
-			#emit ADD.C                     36
+			#emit ADD.C                     __9_cells
 			#emit LCTRL                     __jmp
 			#emit PUSH.pri
 			#emit LREF.S.pri                publicTableEntry
@@ -398,7 +398,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 		Debug_CodeX{new oc = count;}
 		// Needs to be binary search safe, i.e. use fallback code.
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
-		Debug_Code1{if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_ReadString(AMX_Read(hooks[oc] + 4) + AMX_BASE_ADDRESS, buffer); strunpack(buffer, buffer); Debug_Print5("Hooks_GetPreHooks: found = %s", buffer); }}
+		Debug_Code1{if (oc != count) { new buffer[FUNCTION_LENGTH]; AMX_GetStringFromEntry(hooks[oc], buffer); strunpack(buffer, buffer); Debug_Print5("Hooks_GetPreHooks: found = %s", buffer); }}
 		StrCpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
 		strcat(lfunc, __COMPILER_UNPACK"_");
 	}
