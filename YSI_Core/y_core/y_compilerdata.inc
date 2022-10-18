@@ -758,29 +758,9 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 //	#define const%0:%1[%2]=%3:%4; const _yI@%1[%2]=%4,%0:%1[sizeof(_yI@%1)];PREINIT__ %1()_YSI_ConstCpy__(_:(%1),(_yI@%1),0,sizeof(%1)*4,sizeof(%1));
 //#endif
 
-// Consistent naming of compiler defined values. 
-#define __Line __line
-#define __File __file
-#define __Date __date
-#define __Time __time
-#define __Compat __compat
-#define __Emit __emit
-#define __CellBytes cellbytes
-#define __CellBits cellbits
-#define __CellBits cellbits
-#define __CharBits charbits
-#define __CharMax charmax
-#define __UCharMax ucharmax
-
-// And the other way
-#define __cellbytes cellbytes
-#define __cellbits cellbits
-#define __cell_bytes cellbytes
-#define __cell_bits cellbits
-#define __char_bits charbits
-#define __char_max charmax
-#define __uchar_max ucharmax
-#define __pawn __Pawn
+#if charbits != 8
+	#error YSI assumes `charbits` is 8.
+#endif
 
 // Don't define `__PawnBuild` if it doesn't exist, but do create an alternate
 // symbol (with a consistent naming scheme) that always exists.
@@ -795,9 +775,29 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	const cellbytes = cellbits / charbits;
 #endif
 
-#if charbits != 8
-	#error YSI assumes `charbits` is 8.
-#endif
+// Consistent naming of compiler defined values. 
+#define __Line __line
+#define __File __file
+#define __Date __date
+#define __Time __time
+#define __Compat __compat
+#define __Emit __emit
+const __CellBytes = cellbytes;
+const __CellBits = cellbits;
+const __CellBits = cellbits;
+const __CharBits = charbits;
+const __CharMax = charmax;
+const __UCharMax = ucharmax;
+
+// And the other way
+const __cellbytes = cellbytes;
+const __cellbits = cellbits;
+const __cell_bytes = cellbytes;
+const __cell_bits = cellbits;
+const __char_bits = charbits;
+const __char_max = charmax;
+const __uchar_max = ucharmax;
+const __pawn = __Pawn;
 
 const __COMPILER_CELL_BYTES = cellbytes;
 const __COMPILER_CELL_BITS  = cellbits;
