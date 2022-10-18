@@ -1194,6 +1194,11 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 	{
 		ASSERT_EQ(_:i / 11 * 11, _:i);
 	}
+	// Should also give warnings.
+	FOREACH__ (new i : iter1)
+	{
+		ASSERT_EQ(_:i / 11 * 11, _:i);
+	}
 	Iter_Alloc(iter2[0]);
 	Iter_Alloc(iter2[0]);
 	Iter_Alloc(iter2[0]);

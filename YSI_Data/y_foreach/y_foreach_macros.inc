@@ -162,7 +162,7 @@ FUNC_PAWNDOC(iterfunc(params));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(Iterator@Reverse(Iterator:iter<>));
-#define Iterator@Reverse%9;(_:%1=%9(%0)%9)%9; F@o)+_:F@p:F@q:$%1,%0$
+#define Iterator@Reverse%9;_:(%1=%9(%0)%9)%9; F@o)+_:F@p:F@q:$%1,%0$
 
 /*
 
@@ -900,19 +900,19 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define F@j:%7$%5(%0)       %5A(F@g(Iter_Single@%0,),F@h:Iterator@%0)
 #define F@i:%7$%5(%0<%2>%1) %5B(F@h:Iter_Multi@%0,%2,F@h:Iterator@%0%1)
 
-#define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@A:F@m:F@a$%1,%0$
+#define _Y_ITER_DO_FOREACH(%1,%0,%8) (_:F@n:F@A:F@m:F@a$%1,%0,%8$
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));(_:%1=_:Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>%8,%8$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
-#define iterstart(%1)%9;(%9=_:Iter%9@%0$[_:%2]%9; F@o))-1+(_:%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
+#define iterstart(%1)%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o))-1+(_:%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
 #define iterstate iterstart
 
 // Special iterators without extra defines.  Default to -1 start value.  The
 // many extra brackets are needed to ensure that other macros match.
-#define F@A:%9$%1,%0(%2)%8$ F@s(Iterator@%0)-1+_:((F@h:iterstart@%0))+_:F@x:F@h:Iterator@%0);(_:%1=_:Iter_Func@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-1+_:F@h:Iterator@%0+iterstart@%0);
-#define F@x:%6);(_:%1=%9@%0(%2)%9[%4])!=%3; %6);(_:%1=_:Iter_Func@%0(%4,%2)%9)!=%3;
+#define F@A:%9$%1,%0(%2)%8,%8$ F@s(Iterator@%0)-1+_:((F@h:iterstart@%0))+_:F@x:F@h:Iterator@%0);_:(%1=Iter_Func@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-1+_:F@h:Iterator@%0+iterstart@%0);
+#define F@x:%6);_:(%1=%9@%0(%2)%9[%4])!=%3; %6);_:(%1=Iter_Func@%0(%4,%2)%9)!=%3;
 
 #define F@o))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); F@o))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
 
@@ -921,14 +921,14 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define F@l:(%0[%2]%8$(%1)%9) (%0(%1,%2)%8$%9)
 
 // Normal iterator.
-#define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);(_:%1=_:Iterator@%0 F@a$[_:%1]%F@s(Iterator@%0))!=(F@s(Iterator@%0)-1);
+#define F@m:%9$%1,%0,%8$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1]%F@s(Iterator@%0))!=(F@s(Iterator@%0)-1);
 
 // Reverse multi-iterator.
-#define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2)));(_:%1=_:Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2)));_:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Reverse normal iterator (uses a custom `Iter_Prev_InternalA` with tag check).
 //#define F@q:%9$%1,%0$ F@s(Iterator@%0)-2));_:(%1=(_:(%1=Iterator@%0[(_:(%1)-1)%F@s(Iterator@%0)])-1)%F@s(Iterator@%0))!=(F@s(Iterator@%0)-1);
-#define F@q:%9$%1,%0$ F@s(Iterator@%0)-2));(_:%1=_:Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
+#define F@q:%9$%1,%0$ F@s(Iterator@%0)-2));_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
 
 // Special iterator function declaration.
 #define F@y:%0(%1) Y_FOREACH_SQ:Iter_Func@%0[]$(%1);Y_FOREACH_STOCK stock const F@z:Iterator@%0=F@z:0,iterstart@%0=-1;Iter_Func@%0(%1)F@a$
@@ -975,17 +975,17 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define Y_FOREACH_FOURTH|||%1=Y_FOREACH_FIFTH|||%9|||%2||| new Y_FOREACH_SIXTH;%1|||Y_FOREACH_SEVENTH|||%2|||
 
 // This is called when there are tags on the "new" declaration (%9 = "new ").
-#define Y_FOREACH_SEVENTH|||%9Y_FOREACH_SIXTH;%0|||%1|||%2||| new %0:%1=%0:_Y_ITER_DO_FOREACH(%1,%2)
+#define Y_FOREACH_SEVENTH|||%9Y_FOREACH_SIXTH;%0|||%1|||%2||| new %0:%1=%0:_Y_ITER_DO_FOREACH(%1,%2,%0:)
 
 // This is called when there aren't.
-#define Y_FOREACH_SIXTH;%1|||Y_FOREACH_SEVENTH|||%2||| %1=_Y_ITER_DO_FOREACH(%1,%2)
+#define Y_FOREACH_SIXTH;%1|||Y_FOREACH_SEVENTH|||%2||| %1=_Y_ITER_DO_FOREACH(%1,%2,)
 
 // This is called if "%1" didn't have "new" at the start.
-#define Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1:%2||| _Y_ITER_DO_FOREACH(%1,%2)
+#define Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1:%2||| _Y_ITER_DO_FOREACH(%1,%2,)
 
 // This is the old version, but DON'T add "new" because that already exists from
 // the failed "new" macro call above.
-#define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%2,%1||| using_deprecated_foreach_syntax,%1=_Y_ITER_DO_FOREACH(%1,%2)++using_deprecated_foreach_syntax
+#define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%2,%1||| using_deprecated_foreach_syntax,%1=_Y_ITER_DO_FOREACH(%1,%2,)++using_deprecated_foreach_syntax
 
 stock const
 	// This variable is re-declared when you do "foreach (Player, i)" or similar
