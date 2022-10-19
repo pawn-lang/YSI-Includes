@@ -310,6 +310,20 @@ main()
 }
 ```
 
+Example:
+
+```pawn
+PrintPlayerData(playerid)
+{
+	decl name[MAX_PLAYER_NAME + 1], Float:health;
+	GetPlayerName(playerid, name, sizeof (name));
+	GetPlayerHealth(playerid, health);
+	printf("name: %s, health: %f", name, health);
+}
+```
+
+`name` and `health` are both initialised by function calls so there's no need to initialise them to something else first, hence using `decl` doesn't.
+
 ## `THIS__`
 
 `THIS__` allows you to use a limited form of OO-like syntax, based on the variable `this`.  You need to define `this` at the top of a file using `THIS__`, then undefine it at the end:
