@@ -366,14 +366,14 @@ stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_RandomRemove_InternalD(&count, array[], elems, size, start, ...)
+stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 {
 	new
 		n = numargs() - 4,
 		s,
 		e;
 	// Get the range of the dynamic parameters.
-	#emit ADDR.pri             __param5_offset
+	#emit ADDR.pri             __param4_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
 	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
@@ -395,7 +395,7 @@ stock Iter_RandomRemove_InternalD(&count, array[], elems, size, start, ...)
 	#emit SCTRL                __stk
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
-	return Iter_Remove_InternalD(count, array, elems, start, size, s);
+	return Iter_Remove_InternalD(count, array, start, size, s);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -720,12 +720,12 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		if ((last + 1) % size != value)
 		{
 			// Reverse from us to `last`.
-			array[(value - 1) % size] = last * -size;
+			array[(value - 1) % size] = last * -65536;
 		}
 		if (value + 1 != next)
 		{
 			// Reverse from `next` to us.
-			array[next - 1] = value * -size;
+			array[next - 1] = value * -65536;
 		}
 		return
 			++count,
@@ -811,15 +811,15 @@ stock Iter_Remove_InternalC(&count, array[], size, value)
 			// We are going one step later, which means that the removed value
 			// needs to point both forwards and backwards at the same time.
 			return
-				array[value] = (array[value] - size) + (-size * last);
+				array[value] |= last * -65536;
 		}
 		else
 		{
 			return
 				// For being out the iterator, but still usable in `foreach`.
-				array[value] = array[value] - size,
+				array[value] |= -65536,
 				// Set the reverse pointer.
-				array[(array[last] - 1) % size] = -size * last;
+				array[(array[last] - 1) % size] = last * -65536;
 		}
 	}
 	else
@@ -828,7 +828,7 @@ stock Iter_Remove_InternalC(&count, array[], size, value)
 	}
 }
 
-stock Iter_Remove_InternalD(&count, array[], elems, start, size, value)
+stock Iter_Remove_InternalD(&count, array[], start, size, value)
 {
 	new last = start;
 	if (0 <= value < size && start >= size && count && array[value] > value)
@@ -842,7 +842,7 @@ stock Iter_Remove_InternalD(&count, array[], elems, start, size, value)
 				return
 					--count,
 					array[last] = array[value],
-					array[value] -= elems;
+					array[value] |= -65536;
 			}
 			last = start;
 		}
@@ -896,7 +896,7 @@ stock Iter_SafeRemove_1(&count, array[], size, value, &last)
 }
 
 #pragma deprecated You can now use `Iter_Remove()` in loops.
-stock Iter_SafeRemove_2(&count, array[], elems, start, size, value, &last)
+stock Iter_SafeRemove_2(&count, array[], start, size, value, &last)
 {
 	last = start;
 	if (0 <= value < size && start >= size && count && array[value] > value)
@@ -910,7 +910,7 @@ stock Iter_SafeRemove_2(&count, array[], elems, start, size, value, &last)
 				return
 					--count,
 					array[last] = array[value],
-					array[value] -= elems;
+					array[value] |= -65536;
 			}
 			last = start;
 		}
@@ -1160,6 +1160,7 @@ stock
 	// Otherwise, we use the new `prev` method for values that aren't in, which
 	// involves a division so they can represent both the last value and keep a
 	// vague representation of their old `next` value for removals in loops.
-	return prev / -size;
+	//return ceildiv(prev, -65536);
+	return (prev & ~0xFFFF) / -65536;
 }
 

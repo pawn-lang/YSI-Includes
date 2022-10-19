@@ -246,7 +246,7 @@ FUNC_PAWNDOC(Iter_Add(Iterator:iter<>, value));
 FUNC_PAWNDOC(Iter_Remove(Iterator:iter<>, value));
 #define Iter_Remove _ITER<Iter_Remove_Internal>
 #define Iter_Remove_InternalA(%0,%1,%9)    Iter_Remove_InternalC(%0,_:%1,F@s(%1)-1,Iter_Tag(%1,%9))
-#define Iter_Remove_InternalB(%0,%2,%1,%9) Iter_Remove_InternalD(%0[%2],_:%1,F@s(%1),F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
+#define Iter_Remove_InternalB(%0,%2,%1,%9) Iter_Remove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the first free slot in.</param>
@@ -333,7 +333,7 @@ FUNC_PAWNDOC(Iter_GetMulti(Iterator:iter<,>, value));
 FUNC_PAWNDOC(Iter_SafeRemove(Iterator:iter<>, value, &next));
 #define Iter_SafeRemove _ITER<Iter_SafeRemove_Internal>
 #define Iter_SafeRemove_InternalA(%0,%1,%9)    Iter_SafeRemove_1(%0,_:%1,F@s(%1)-1,Iter_Tag(%1,%9))
-#define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_2(%0[%2],_:%1,F@s(%1),F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
+#define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_2(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),Iter_Tag(%1,%9))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to add a random slot to.</param>
@@ -365,9 +365,9 @@ FUNC_PAWNDOC(Iter_RandomAdd(Iterator:iter<>));
 FUNC_PAWNDOC(Iter_RandomRemove(Iterator:iter<>));
 #define Iter_RandomRemove _ITER<Iter_RandomRemove_Internal>
 #define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,(_:%1),F@s(%1)-1)
-#define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0[%2],(_:%1),F@s(%1),F@s(%1)-F@s(%0),F@s(%1)-1-(%2))
+#define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0[%2],(_:%1),F@s(%1)-F@s(%0),F@s(%1)-1-(%2))
 #define Iter_RandomRemove_InternalC(%0,(_:%1,%2),F@s(%9)%3) Iter_RandomRemove_InternalC(%0,(_:%1),F@s(%1)%3,%2)
-#define Iter_RandomRemove_InternalD(%0,(_:%1,%2),F@s(%9),F@s(%9)%3,F@s(%9)%4) Iter_RandomRemove_InternalD(%0,(_:%1),F@s(%1),F@s(%1)%3,F@s(%1)%4,%2)
+#define Iter_RandomRemove_InternalD(%0,(_:%1,%2),F@s(%9)%3,F@s(%9)%4) Iter_RandomRemove_InternalD(%0,(_:%1),F@s(%1)%3,F@s(%1)%4,%2)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get a random unused slot for.</param>
@@ -903,7 +903,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define _Y_ITER_DO_FOREACH(%1,%0,%8) (_:F@n:F@A:F@m:F@a$%1,%0,%8$
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>%8,%8$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1]%%8F@s(Iterator@%0))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>%8,%8$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1]&%865535)<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
 #define iterstart(%1)%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o))-1+(_:%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
@@ -921,7 +921,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define F@l:(%0[%2]%8$(%1)%9) (%0(%1,%2)%8$%9)
 
 // Normal iterator.
-#define F@m:%9$%1,%0,%8$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1]%%8F@s(Iterator@%0))!=(F@s(Iterator@%0)-1);
+#define F@m:%9$%1,%0,%8$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1]&%865535)!=(F@s(Iterator@%0)-1);
 
 // Reverse multi-iterator.
 #define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2)));_:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));

@@ -1283,11 +1283,16 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 
 @test(.group = "y_iterate") y_iter_InfiniteLoop()
 {
-    new Iterator:iter<20>;
+	new Iterator:iter<5>;
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
     Iter_Add(iter, 1);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
     Iter_Add(iter, 2);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
     Iter_Remove(iter, 1);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
     Iter_Remove(iter, 2);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
     FOREACH__ (new i : iter)
     {
         ASSERT(false);
@@ -4116,16 +4121,28 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 	new
 		Iterator:iter<20>,
 		n;
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	Iter_Add(iter, 1);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	Iter_Add(iter, 3);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	Iter_Add(iter, 5);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	Iter_Add(iter, 7);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	n = 0;
 	foreach (new i : iter)
 	{
 		if (i == 3)
 		{
+			//printf("i: %d", i);
+			//printf("e: %04x%04x", Iterator@iter[i] >>> 16, Iterator@iter[i] & 65535);
+			//printf("e: %d", Iterator@iter[i] & 65535);
 			Iter_Remove(iter, i);
+			//printf("i: %d", i);
+			//printf("e: %04x%04x", Iterator@iter[i] >>> 16, Iterator@iter[i] & 65535);
+			//printf("e: %d", Iterator@iter[i] & 65535);
+			//break;
 		}
 		n += i;
 	}
@@ -4137,17 +4154,32 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 	new
 		Iterator:iter<20>,
 		n;
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	Iter_Add(iter, 1);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	Iter_Add(iter, 2);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	Iter_Add(iter, 3);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	Iter_Add(iter, 4);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	Iter_Add(iter, 5);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	n = 0;
 	foreach (new i : iter)
 	{
 		if (i == 3)
 		{
+			//printf("i: %d", i);
+			//printf("e: %04x%04x", Iterator@iter[i] >>> 16, Iterator@iter[i] & 65535);
+			//printf("e: %d", Iterator@iter[i] & 65535);
 			Iter_Remove(iter, i);
+			//printf("i: %d", i);
+			//printf("e: %04x%04x", Iterator@iter[i] >>> 16, Iterator@iter[i] & 65535);
+			//printf("e: %d", Iterator@iter[i] & 65535);
+			//printf("e: %d", Iterator@iter[i] / -65536);
+			//printf("e: %d", ceildiv(Iterator@iter[i], -65536));
+			//break;
 		}
 		n += i;
 	}
