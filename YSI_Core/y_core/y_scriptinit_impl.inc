@@ -262,17 +262,17 @@ forward bool:Server_IsSAMP();
 #pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
 {
-	#if __COMPILER_OS == __COMPILER_WINDOWS
-		return false;
-	#else
+	#if __COMPILER_OS == __COMPILER_UNIX
 		return true;
+	#else
+		return false;
 	#endif
 }
 
-#if __COMPILER_OS == __COMPILER_WINDOWS
-	#define Script_IsLinuxCompiler() (FALSE)
-#else
+#if __COMPILER_OS == __COMPILER_UNIX
 	#define Script_IsLinuxCompiler() (TRUE)
+#else
+	#define Script_IsLinuxCompiler() (FALSE)
 #endif
 
 #pragma deprecated Use `Script_IsWindowsCompiler`.
@@ -527,9 +527,13 @@ forward bool:Server_IsLongCallEnabled();
 	#define Server_EnableDetectAddr0() (__emit(CONST.pri 1, SCTRL 0xFD))
 #endif
 
+forward bool:Server_IsDetectAddr0Enabled();
+
 #if __COMPILER___EMIT_U
 	#define Server_IsDetectAddr0Enabled() (bool:(__emit(CONST.pri 0, LCTRL 0xFD, CONST.alt 1, AND, RETN)))
 #endif
+
+forward bool:Server_HasDetectAddr0();
 
 #if __COMPILER___EMIT_U
 	#define Server_HasDetectAddr0() (bool:(__emit(CONST.pri __minus1, LCTRL 0xFD, CONST.alt 0, SGEQ, RETN)))
