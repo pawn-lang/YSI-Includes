@@ -250,13 +250,13 @@ forward bool:Server_IsOpenMP();
 #define Server_Is_open.mp Server_IsOpenMP
 
 #if __COMPILER___EMIT_U
-	#define Server_IsOpenMP() (bool:(__emit(zero.pri, zero.alt, lctrl 9, neq)))
+	#define Server_IsOpenMP() (bool:(__emit(ZERO.pri, ZERO.alt, LCTRL 9, NEQ)))
 #endif
 
 forward bool:Server_IsSAMP();
 
 #if __COMPILER___EMIT_U
-	#define Server_IsSAMP() (bool:(__emit(zero.pri, lctrl 9, eq.c.pri 0)))
+	#define Server_IsSAMP() (bool:(__emit(ZERO.pri, LCTRL 9, EQ.C.pri 0)))
 #endif
 
 #pragma deprecated Use `Script_IsLinuxCompiler`.
@@ -269,14 +269,11 @@ stock bool:Server_IsLinuxCompiler()
 	#endif
 }
 
-stock bool:Script_IsLinuxCompiler()
-{
-	#if __COMPILER_OS == __COMPILER_LINUX
-		return true;
-	#else
-		return false;
-	#endif
-}
+#if __COMPILER_OS == __COMPILER_LINUX
+	#define Script_IsLinuxCompiler() (TRUE)
+#else
+	#define Script_IsLinuxCompiler() (FALSE)
+#endif
 
 #pragma deprecated Use `Script_IsWindowsCompiler`.
 stock bool:Server_IsWindowsCompiler()
@@ -288,14 +285,11 @@ stock bool:Server_IsWindowsCompiler()
 	#endif
 }
 
-stock bool:Script_IsWindowsCompiler()
-{
-	#if __COMPILER_OS == __COMPILER_WINDOWS
-		return true;
-	#else
-		return false;
-	#endif
-}
+#if __COMPILER_OS == __COMPILER_WINDOWS
+	#define Script_IsWindowsCompiler() (TRUE)
+#else
+	#define Script_IsWindowsCompiler() (FALSE)
+#endif
 
 #pragma deprecated Use `Script_IsGameMode`.
 stock bool:Server_IsGameMode()
@@ -495,85 +489,49 @@ stock Server_FinishIntroMessage()
 	YSI_gsFirstHeader = true;
 }
 
-stock Server_SetLongCallTime(usTime)
-{
-	// Setting this to `0` doesn't change the internal time, merely disables the check.
-	#emit LOAD.S.pri    usTime
-	#emit SCTRL         0xFE
-}
+#if __COMPILER___EMIT_U
+	#define Server_SetLongCallTime(%0) (__emit(LOAD.U.pri %0, SCTRL 0xFE))
+#endif
 
-stock Server_DisableLongCall()
-{
-	#emit CONST.pri     0
-	#emit SCTRL         0xFE
-}
+#if __COMPILER___EMIT_U
+	#define Server_DisableLongCall() (__emit(CONST.pri 0, SCTRL 0xFE))
+#endif
 
-stock Server_EnableLongCall()
-{
-	#emit CONST.pri     2
-	#emit SCTRL         0xFF
-}
+#if __COMPILER___EMIT_U
+	#define Server_EnableLongCall() (__emit(CONST.pri 2, SCTRL 0xFF))
+#endif
 
-stock Server_ResetLongCallTime()
-{
-	#emit CONST.pri     4
-	#emit SCTRL         0xFF
-}
+#if __COMPILER___EMIT_U
+	#define Server_ResetLongCallTime() (__emit(CONST.pri 4, SCTRL 0xFF))
+#endif
 
-stock Server_RestartLongCall()
-{
-	#emit CONST.pri     8
-	#emit SCTRL         0xFF
-}
+#if __COMPILER___EMIT_U
+	#define Server_RestartLongCall() (__emit(CONST.pri 8, SCTRL 0xFF))
+#endif
 
-stock bool:Server_IsLongCallEnabled()
-{
-	#emit ZERO.pri
-	#emit LCTRL         0xFF
-	#emit CONST.alt     1
-	#emit AND
-	#emit RETN
-	return false;
-}
+#if __COMPILER___EMIT_U
+	#define bool:Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, CONST.alt 1, AND, RETN)))
+#endif
 
-stock Server_GetLongCallTime()
-{
-	#emit ZERO.pri
-	#emit LCTRL         0xFE
-	#emit SHR.C.pri     1
-	#emit RETN
-	return 0;
-}
+#if __COMPILER___EMIT_U
+	#define Server_GetLongCallTime() (__emit(ZERO.pri, LCTRL 0xFE, SHR.C.pri 1, RETN))
+#endif
 
-stock Server_DisableDetectAddr0() {
-	#emit CONST.pri     0
-	#emit SCTRL         0xFD
-}
+#if __COMPILER___EMIT_U
+	#define Server_DisableDetectAddr0() (__emit(CONST.pri 0, SCTRL 0xFD))
+#endif
 
-stock Server_EnableDetectAddr0() {
-	#emit CONST.pri     1
-	#emit SCTRL         0xFD
-}
+#if __COMPILER___EMIT_U
+	#define Server_EnableDetectAddr0() (__emit(CONST.pri 1, SCTRL 0xFD))
+#endif
 
-stock bool:Server_IsDetectAddr0Enabled() {
-	// Is the check enabled?  0 if off or doesn't exist.
-	#emit CONST.pri     0
-	#emit LCTRL 0xFD
-	#emit CONST.alt     1
-	#emit AND
-	#emit RETN
-	return false;
-}
+#if __COMPILER___EMIT_U
+	#define Server_IsDetectAddr0Enabled() (bool:(__emit(CONST.pri 0, LCTRL 0xFD, CONST.alt 1, AND, RETN)))
+#endif
 
-stock bool:Server_HasDetectAddr0() {
-	// Is the check possible?
-	#emit CONST.pri     __minus1     // -1
-	#emit LCTRL 0xFD                 // 0, 1, or -2
-	#emit CONST.alt     0
-	#emit SGEQ                       // >= 0
-	#emit RETN
-	return false;
-}
+#if __COMPILER___EMIT_U
+	#define Server_HasDetectAddr0() (bool:(__emit(CONST.pri __minus1, LCTRL 0xFD, CONST.alt 0, SGEQ, RETN)))
+#endif
 
 stock Server_GetStartTime()
 {
@@ -1411,6 +1369,90 @@ stock bool:Server_IsSAMP()
 	#emit EQ.C.pri             0
 	#emit RETN
 
+	return false;
+}
+
+stock Server_SetLongCallTime(usTime)
+{
+	// Setting this to `0` doesn't change the internal time, merely disables the check.
+	#emit LOAD.S.pri    usTime
+	#emit SCTRL         0xFE
+}
+
+stock Server_DisableLongCall()
+{
+	#emit CONST.pri     0
+	#emit SCTRL         0xFE
+}
+
+stock Server_EnableLongCall()
+{
+	#emit CONST.pri     2
+	#emit SCTRL         0xFF
+}
+
+stock Server_ResetLongCallTime()
+{
+	#emit CONST.pri     4
+	#emit SCTRL         0xFF
+}
+
+stock Server_RestartLongCall()
+{
+	#emit CONST.pri     8
+	#emit SCTRL         0xFF
+}
+
+stock bool:Server_IsLongCallEnabled()
+{
+	#emit ZERO.pri
+	#emit LCTRL         0xFF
+	#emit CONST.alt     1
+	#emit AND
+	#emit RETN
+	return false;
+}
+
+stock Server_GetLongCallTime()
+{
+	#emit ZERO.pri
+	#emit LCTRL         0xFE
+	#emit SHR.C.pri     1
+	#emit RETN
+	return 0;
+}
+
+stock Server_DisableDetectAddr0()
+{
+	#emit CONST.pri     0
+	#emit SCTRL         0xFD
+}
+
+stock Server_EnableDetectAddr0()
+{
+	#emit CONST.pri     1
+	#emit SCTRL         0xFD
+}
+
+stock bool:Server_IsDetectAddr0Enabled()
+{
+	// Is the check enabled?  0 if off or doesn't exist.
+	#emit CONST.pri     0
+	#emit LCTRL 0xFD
+	#emit CONST.alt     1
+	#emit AND
+	#emit RETN
+	return false;
+}
+
+stock bool:Server_HasDetectAddr0()
+{
+	// Is the check possible?
+	#emit CONST.pri     __minus1     // -1
+	#emit LCTRL 0xFD                 // 0, 1, or -2
+	#emit CONST.alt     0
+	#emit SGEQ                       // >= 0
+	#emit RETN
 	return false;
 }
 
