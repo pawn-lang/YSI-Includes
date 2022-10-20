@@ -262,17 +262,17 @@ forward bool:Server_IsSAMP();
 #pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
 {
-	#if __COMPILER_OS == __COMPILER_LINUX
-		return true;
-	#else
+	#if __COMPILER_OS == __COMPILER_WINDOWS
 		return false;
+	#else
+		return true;
 	#endif
 }
 
-#if __COMPILER_OS == __COMPILER_LINUX
-	#define Script_IsLinuxCompiler() (TRUE)
-#else
+#if __COMPILER_OS == __COMPILER_WINDOWS
 	#define Script_IsLinuxCompiler() (FALSE)
+#else
+	#define Script_IsLinuxCompiler() (TRUE)
 #endif
 
 #pragma deprecated Use `Script_IsWindowsCompiler`.
@@ -509,8 +509,10 @@ stock Server_FinishIntroMessage()
 	#define Server_RestartLongCall() (__emit(CONST.pri 8, SCTRL 0xFF))
 #endif
 
+forward bool:Server_IsLongCallEnabled();
+
 #if __COMPILER___EMIT_U
-	#define bool:Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, CONST.alt 1, AND, RETN)))
+	#define Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, CONST.alt 1, AND, RETN)))
 #endif
 
 #if __COMPILER___EMIT_U
