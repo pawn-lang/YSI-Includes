@@ -696,6 +696,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			#else
 				#pragma unused jit
 			#endif
+			ScriptInit_CodeInitFuncs_();
 			#if defined ScriptInit_OnCodeInit
 				ScriptInit_OnCodeInit();
 			#endif
@@ -827,6 +828,8 @@ public OnJITCompile()
 
 #define @yI_%0\32; @yI_
 #define @_yI%0\32; @_yI
+#define @y_I%0\32; @y_I
+#define @I_y%0\32; @I_y
 #define @Iy_%0\32; @Iy_
 #define @_Iy%0\32; @_Iy
 
@@ -862,17 +865,33 @@ public OnJITCompile()
 
 // New decorator:
 //
-//   @init() A()             // Pre
-//   @init(true) B()         // Pre
-//   @init(.pre = true) C()  // Pre
-//   @init(false) D()        // Post
-//   @init(.pre = false) E() // Post
+//   @init(init_code) B()           // OnCodeInit
+//   @init() A()                    // OnScriptInit
+//   @init(init_script) F()         // OnScriptInit
+//   @init(.order = init_mode) C()  // OnGameModeInit
+//   @init(init_mode) D()           // OnFilterScriptInit
+//   @init(.order = init_main) E()  // main
 //
-#define @init(%2)%0(%1) u@(u[_:y_I@:I_y@:u@$%0(%1)<_>(%2)
+#define @init(%2)%0(%1) u@(u[_:Iy_@:y_I@%2:u@$@yI_%0(%1);@yI_%0(%1)
 
-// Just detect `f` in `@init()` for `false`.  Can't use `f` in the parameter name...
-//#define y_I@:%8$%0(%1)<%3>(%9f%9) %8$%3:@_yI%0(%1);%3:@_yI%0(%1)
-#define I_y@:%8$%0(%1)<%3>(%9) %8$%3:@yI_%0(%1);%3:@yI_%0(%1)
+enum init_order
+{
+	init_code,   // OnCodeInit
+	init_script, // OnScriptInit
+	init_mode,   // OnGameModeInit/OnFilterScriptInit
+	init_main    // main
+}
+
+// Strip all spaces within the parameters first.
+#define Iy_@:%0\32;%1$ Iy_@:%0%1$
+
+// Detect the parameters, with or without names.
+#define y_I@.%4=%5: y_I@%4=%5:
+#define y_I@order=%5: y_I@%5:
+#define y_I@init_code:%8$@yI_%0(%1);@yI_%0(%1) %8$@y_I%0(%1);@y_I%0(%1)
+#define y_I@init_script:%8$@yI_%0(%1);@yI_%0(%1) %8$@yI_%0(%1);@yI_%0(%1)
+#define y_I@init_mode:%8$@yI_%0(%1);@yI_%0(%1) %8$@_yI%0(%1);@_yI%0(%1)
+#define y_I@init_main:%8$@yI_%0(%1);@yI_%0(%1) %8$@I_y%0(%1);@I_y%0(%1)
 
 // Alternative spellings.
 #define PRE_INIT__ PREINIT__
