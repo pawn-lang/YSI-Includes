@@ -845,6 +845,7 @@ public OnJITCompile()
 // Finish inits.
 #define _y@I:%8$%0(%1)<%3>(%2) %8$%3:%2%0(%1);%3:%2%0(%1)
 
+
 // Finish final.
 #define _I@y:%8$%0(%1)<%3> %8$@yI_%0();@yI_%0(){new %3:y__;y_@I%0(y__);_YSI_ConstMod(_:%0,_:y__);}static y_@I%0(&%3:y__)y__=
 
@@ -858,6 +859,20 @@ public OnJITCompile()
 
 #define PREEXIT__%0(%1) DO_YSI_INIT__%0(%1)<@Iy_>
 #define POSTEXIT__%0(%1) DO_YSI_INIT__%0(%1)<@_Iy>
+
+// New decorator:
+//
+//   @init() A()             // Pre
+//   @init(true) B()         // Pre
+//   @init(.pre = true) C()  // Pre
+//   @init(false) D()        // Post
+//   @init(.pre = false) E() // Post
+//
+#define @init(%2)%0(%1) u@(u[_:y_I@:I_y@:u@$%0(%1)<_>(%2)
+
+// Just detect `f` in `@init()` for `false`.  Can't use `f` in the parameter name...
+#define y_I@:%8$%0(%1)<%3>(%9f%9) %8$%3:@_yI%0(%1);%3:@_yI%0(%1)
+#define I_y@:%8$%0(%1)<%3>(%9) %8$%3:@yI_%0(%1);%3:@yI_%0(%1)
 
 // Alternative spellings.
 #define PRE_INIT__ PREINIT__
