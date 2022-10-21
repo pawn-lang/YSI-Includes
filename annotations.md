@@ -224,20 +224,5 @@ Call a function when the mode starts.  This is similar to `@hook() OnScriptInit(
 {
 	CreateObject(1337, 4.0, 5.0, 6.0);
 }
-
-// Run before `OnScriptInit`.
-@init(true) GangZonesModule()
-{
-}
-
-// Run AFTER `OnScriptInit`.
-@init(false) TextDrawsModule()
-{
-}
-
-// Run AFTER `OnScriptInit`.
-@init(.pre = false) CheckpointModule()
-{
-}
 ```
 

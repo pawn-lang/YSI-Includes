@@ -871,7 +871,7 @@ public OnJITCompile()
 #define @init(%2)%0(%1) u@(u[_:y_I@:I_y@:u@$%0(%1)<_>(%2)
 
 // Just detect `f` in `@init()` for `false`.  Can't use `f` in the parameter name...
-#define y_I@:%8$%0(%1)<%3>(%9f%9) %8$%3:@_yI%0(%1);%3:@_yI%0(%1)
+//#define y_I@:%8$%0(%1)<%3>(%9f%9) %8$%3:@_yI%0(%1);%3:@_yI%0(%1)
 #define I_y@:%8$%0(%1)<%3>(%9) %8$%3:@yI_%0(%1);%3:@yI_%0(%1)
 
 // Alternative spellings.
