@@ -873,6 +873,7 @@ public OnJITCompile()
 //   @init(.order = init_main) E()  // main
 //
 #define @init(%2)%0(%1) u@(u[_:Iy_@:y_I@%2:u@$@yI_%0(%1);@yI_%0(%1)
+#define @exit(%2)%0(%1) u@(u[_:Iy_@:yI_@%2:u@$@Iy_%0(%1);@Iy_%0(%1)
 
 enum init_order
 {
@@ -880,6 +881,12 @@ enum init_order
 	init_script, // OnScriptInit
 	init_mode,   // OnGameModeInit/OnFilterScriptInit
 	init_main    // main
+}
+
+enum exit_order
+{
+	exit_mode,   // OnGameModeExit/OnFilterScriptExit
+	exit_script  // OnScriptExit
 }
 
 // Strip all spaces within the parameters first.
@@ -892,6 +899,12 @@ enum init_order
 #define y_I@init_script:%8$@yI_%0(%1);@yI_%0(%1) %8$@yI_%0(%1);@yI_%0(%1)
 #define y_I@init_mode:%8$@yI_%0(%1);@yI_%0(%1) %8$@_yI%0(%1);@_yI%0(%1)
 #define y_I@init_main:%8$@yI_%0(%1);@yI_%0(%1) %8$@I_y%0(%1);@I_y%0(%1)
+
+// And do the same for `exit`, but with fewer options.
+#define yI_@.%4=%5: yI_@%4=%5:
+#define yI_@order=%5: yI_@%5:
+#define yI_@exit_script:%8$@Iy_%0(%1);@Iy_%0(%1) %8$@Iy_%0(%1);@Iy_%0(%1)
+#define yI_@exit_mode:%8$@Iy_%0(%1);@Iy_%0(%1) %8$@_Iy%0(%1);@_Iy%0(%1)
 
 // Alternative spellings.
 #define PRE_INIT__ PREINIT__

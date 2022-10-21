@@ -246,3 +246,24 @@ Call a function when the mode starts.  This is similar to `@hook() OnScriptInit(
 }
 ```
 
+### `@exit()`
+
+Call a function when the mode ends.  This is similar to `@hook() OnScriptExit()`, but lighter weight.
+
+```pawn
+// Run during `OnGameModeExit`/`OnFilterScriptExit`.
+@exit(.order = exit_mode) TextDrawsModule()
+{
+}
+
+// Run during `OnScriptExit`.
+@exit() ObjectModule()
+{
+}
+
+// Run during `OnScriptExit`.
+@exit(exit_script) GangZonesModule()
+{
+}
+```
+
