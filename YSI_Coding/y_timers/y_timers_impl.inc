@@ -616,18 +616,22 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 	return 1;
 }
 
-#define TASK__%0[%1](%2) _F<@yT_,%0>(g,p);_F<@yT_,%0>(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public%0()
+#define TASK__%0[%1](%2) _F<@yT_>%0(g,p);_F<@yT_>%0(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public%0()
 
 // 
-#define PTASK__%0[%1](%2) _F<@yT_,%0>(g,p);_F<@yT_,%0>(g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
+#define PTASK__%0[%1](%2) _F<@yT_>%0(g,p);_F<@yT_>%0(g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
 
 #define _yT@%0\32; _yT@
 #define @_yT%0\32; @_yT
 #define @yT_%0\32; @yT_
 
-#define PAUSE__%0; {J@=_:@Ym:_F<@yT_,%0>(0,-1);}
-#define RESUME__%0; {J@=_:@Ym:_F<@yT_,%0>(1,-1);}
-#define @Ym:_F<%8,%0[%1]>(%2,-1) _F<%8,%0>(%2,%1)
+#define _yT@0000%0\32; _yT@0000
+#define @_yT0000%0\32; @_yT0000
+#define @yT_0000%0\32; @yT_0000
+
+#define PAUSE__%0; {J@=_:@Ym:_F<@yT_>%0(0,-1);}
+#define RESUME__%0; {J@=_:@Ym:_F<@yT_>%0(1,-1);}
+#define @Ym:_F<%8>%0[%1](%2,-1) _F<%8>%0(%2,%1)
 
 #if YSI_KEYWORD(stop)
 	#define stop STOP__
@@ -659,8 +663,8 @@ stock _Timer_F(Timer:slot = Timer:0, force = 0)
 
 // Decorator syntax.  We don't have `@task` and `@ptask`, it determines the
 // type automatically from having parameters or not.
-#define @timer(%1)%0(%2) _y@T:_F<@yT_,%0>(_@yT:g,p);_y@T:_F<@yT_,%0>(_@yT:g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public %0(%2)
-#define _@yT:g,p);%9(%9){%9;%9_Timer_D(%9,%1,%9);}%0()%9() g,p);_y@T:_F<@yT_,%0>(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public %0()
+#define @timer(%1)%0(%2) _y@T:_F<@yT_>%0(_@yT:g,p);_y@T:_F<@yT_>%0(_@yT:g,p){static s[MAX_PLAYERS]={0,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public %0(%2)
+#define _@yT:g,p);%9(%9){%9;%9_Timer_D(%9,%1,%9);}%0()%9() g,p);_y@T:_F<@yT_>%0(g,p){static s=0;return _Timer_I(#%0,%1,g,s);}%0();public %0()
 
 #define _Timer_I(%0,%1,%9,g,s) _Timer_I(%0,%1,g,s)
 #define _Timer_D(%0,%1,%9,g,p,s,a) _Timer_D(%0,%1,g,p,s,a)

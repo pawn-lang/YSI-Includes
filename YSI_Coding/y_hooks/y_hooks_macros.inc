@@ -146,7 +146,7 @@ stock Y_HOOKS_BREAK_RETURN_1()
 
 // Generate a function name using only ONE of the parts, so two replacements for
 // the same long name will collide at compile-time.  Always packed.
-#define DEFINE_HOOK_REPLACEMENT__(%0,%1); forward _F<@_yH,%0>(); public _F<@_yH,%0>() { _Hooks_AddReplacement(__COMPILER_PACK#%0, __COMPILER_PACK#%1); }
+#define DEFINE_HOOK_REPLACEMENT__(%0,%1); forward _F<@_yH>%0(); public _F<@_yH>%0() { _Hooks_AddReplacement(__COMPILER_PACK#%0, __COMPILER_PACK#%1); }
 
 // Strip spaces from the generated function names.
 #define @yH_%0\32; @yH_ // @hook entry point
@@ -173,13 +173,13 @@ stock Y_HOOKS_BREAK_RETURN_1()
 #define @yH_void: void:@yH_
 #define @yH_string: string:@yH_
 
-#define DEFINE_HOOK_RETURN__(%0,%1); forward _F<@y_H,%0>(); public _F<@y_H,%0>() { return (%1); }
+#define DEFINE_HOOK_RETURN__(%0,%1); forward _F<@y_H>%0(); public _F<@y_H>%0() { return (%1); }
 
 #if YSI_KEYWORD(HOOK_REPLACEMENT)
 	#define DEFINE_HOOK_REPLACEMENT DEFINE_HOOK_REPLACEMENT__
 #endif
 #if YSI_KEYWORD(HOOK_RET)
-	#define HOOK_RET:%0(%1) forward _F<@y_H,%0>(); public _F<@y_H,%0>()
+	#define HOOK_RET:%0(%1) forward _F<@y_H>%0(); public _F<@y_H>%0()
 #endif
 #if YSI_KEYWORD(hook)
 	#define hook HOOK__
@@ -188,7 +188,7 @@ stock Y_HOOKS_BREAK_RETURN_1()
 	#define rehook REHOOK__
 #endif
 #if YSI_KEYWORD(Hook)
-	#define Hook:%0_%1(%2) forward public _F<@yH_,%1@%0>(%2);_F<@yH_,%1@%0>(%2)
+	#define Hook:%0_%1(%2) forward public _F<@yH_>%1@%0(%2);_F<@yH_>%1@%0(%2)
 #endif
 
 // Decorator syntax.
@@ -397,8 +397,8 @@ stock Y_HOOKS_BREAK_RETURN_1()
 
 // Helper macro to generate the unique function name without bloating the
 // generated code multiple times.
-#define YHNPS_U0<%1> UNIQUE_FUNCTION<_F<_@yH,%1@>...>
-#define YHNPS_U1<%1> UNIQUE_FUNCTION<_F<@yH_,%1@>...>
+#define YHNPS_U0<%1> UNIQUE_FUNCTION<_F<_@yH>%1@...>
+#define YHNPS_U1<%1> UNIQUE_FUNCTION<_F<@yH_>%1@...>
 
 // Remove specified priorities from the original call.
 #define _yH@(%0),%1@%2(%3); _yH@(%0),%1(%3);
