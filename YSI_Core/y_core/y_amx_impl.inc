@@ -1274,9 +1274,9 @@ stock AMX_DumpHeader()
 
 #if cellbits == 64
 	// Extend the prefix to 8 bytes as simply as possible.
-	#define _F<%0,%1> %00000%1
+	#define _F<%0> %00000
 #elseif cellbits == 32
-	#define _F<%0,%1> %0%1
+	#define _F<%0> %0
 #else
 	#error Unsupported `cellbits`.
 #endif
