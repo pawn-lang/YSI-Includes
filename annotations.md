@@ -219,28 +219,28 @@ No parameters.
 Call a function when the mode starts.  This is similar to `@hook() OnScriptInit()`, but lighter weight.  This is related to the underlying implementation of `final` (which is not yet `@final()`, and maybe never will be):
 
 ```pawn
-// Run before `OnCodeInit`.
+// Run during `OnCodeInit`.
 @init(.order = init_code) PickupsModule()
 {
 }
 
-// Run before `OnScriptInit`.
+// Run during `OnScriptInit`.
 @init() ObjectModule()
 {
 	CreateObject(1337, 4.0, 5.0, 6.0);
 }
 
-// Run before `OnScriptInit`.
+// Run during `OnScriptInit`.
 @init(init_script) GangZonesModule()
 {
 }
 
-// Run before `OnGameModeInit`/`OnFilterScriptInit`.
+// Run during `OnGameModeInit`/`OnFilterScriptInit`.
 @init(.order = init_mode) TextDrawsModule()
 {
 }
 
-// Run before `main`.
+// Run during `main`.
 @init(init_main) CheckpointModule()
 {
 }
