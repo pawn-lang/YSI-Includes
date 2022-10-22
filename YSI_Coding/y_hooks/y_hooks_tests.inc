@@ -952,6 +952,12 @@ REHOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
 	ASSERT_EQ(g_y_hooksVar, 3000);
 }
 
+@test(.group = "y_hooks") y_hooks_DeprecatedReturns()
+{
+	// Ensure there's a warning on this line.
+	return Y_HOOKS_BREAK_RETURN_1;
+}
+
 static stock y_hooks_CrashTrigger()
 {
 	#emit HALT 1

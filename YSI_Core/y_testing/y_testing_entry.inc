@@ -243,44 +243,44 @@ static stock const
 // the static function "y_Q@<test>".
 
 #if defined RUN_TESTS
-	#define TEST_INIT__%1() _F<@y_Q,%1>();_F<@y_Q,%1>()
-	#define YTEST_PID0:%8$_F<@Q_y,%1>();_F<@Q_y,%1>() %8$_F<@y_Q,%1>();_F<@y_Q,%1>()
+	#define TEST_INIT__%1() _F<@y_Q>%1();_F<@y_Q>%1()
+	#define YTEST_PID0:%8$_F<@Q_y>%1();_F<@Q_y>%1() %8$_F<@y_Q>%1();_F<@y_Q>%1()
 	
 	// We can't do `#define YTEST_PID1 TEST__` or something similar as then
 	// the result will be compressed in to `TEST__` and `YTEST_ARGS` will be
 	// checked before the expansion of `TEST__`.  Thus we must exactly copy the
 	// results of all these macros, with the addition of `%8$` of course.
 	#if !__COMPILER_STRING_PACKING
-		#define TEST__%1() bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
-		#define YTEST_PID1:%8$bool:_F<@_Qy,%1>();bool:_F<@_Qy,%1>()%9(%9)%9;%9(%9) %8$bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
+		#define TEST__%1() bool:_F<@yQ_>%1();bool:_F<@yQ_>%1()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@>%1();static _F<yQ_@>%1()
+		#define YTEST_PID1:%8$bool:_F<@_Qy>%1();bool:_F<@_Qy>%1()%9(%9)%9;%9(%9) %8$bool:_F<@yQ_>%1();bool:_F<@yQ_>%1()for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@>%1();static _F<yQ_@>%1()
 	#elseif cellbits == 32
 		// Ensure there is always sufficient spacefor the failures linked list.
-		#define TEST__%1() bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
-		#define YTEST_PID1:%8$bool:_F<@_Qy,%1>();bool:_F<@_Qy,%1>()%9(%9)%9;%9(%9) %8$bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
+		#define TEST__%1() bool:_F<@yQ_>%1();bool:_F<@yQ_>%1()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@>%1();static _F<yQ_@>%1()
+		#define YTEST_PID1:%8$bool:_F<@_Qy>%1();bool:_F<@_Qy>%1()%9(%9)%9;%9(%9) %8$bool:_F<@yQ_>%1();bool:_F<@yQ_>%1()for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@>%1();static _F<yQ_@>%1()
 	#elseif cellbits == 64
-		#define TEST__%1() bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
-		#define YTEST_PID1:%8$bool:_F<@_Qy,%1>();bool:_F<@_Qy,%1>()%9(%9)%9;%9(%9) %8$bool:_F<@yQ_,%1>();bool:_F<@yQ_,%1>()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@,%1>();static _F<yQ_@,%1>()
+		#define TEST__%1() bool:_F<@yQ_>%1();bool:_F<@yQ_>%1()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@>%1();static _F<yQ_@>%1()
+		#define YTEST_PID1:%8$bool:_F<@_Qy>%1();bool:_F<@_Qy>%1()%9(%9)%9;%9(%9) %8$bool:_F<@yQ_>%1();bool:_F<@yQ_>%1()for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<yQ_@>%1();static _F<yQ_@>%1()
 	#else
 		#error Unsupported packed string size.
 	#endif
-	#define TEST_CLOSE__%1() _F<@Qy_,%1>();_F<@Qy_,%1>()
-	#define YTEST_PID2:%8$_F<@_yQ,%1>();_F<@_yQ,%1>() %8$_F<@Qy_,%1>();_F<@Qy_,%1>()
+	#define TEST_CLOSE__%1() _F<@Qy_>%1();_F<@Qy_>%1()
+	#define YTEST_PID2:%8$_F<@_yQ>%1();_F<@_yQ>%1() %8$_F<@Qy_>%1();_F<@Qy_>%1()
 	
 	// Default to having `playerid`, and fall back to no players otherwise.
-	#define PTEST_INIT__%1(%2) u@(u[_:YTEST_PID0:YTEST_DROP:u@$_F<@Q_y,%1>(%2);_F<@Q_y,%1>(%2)
+	#define PTEST_INIT__%1(%2) u@(u[_:YTEST_PID0:YTEST_DROP:u@$_F<@Q_y>%1(%2);_F<@Q_y>%1(%2)
 	#if !__COMPILER_STRING_PACKING
-		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:_F<@_Qy,%1>(%2);bool:_F<@_Qy,%1>(%2)for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<_Qy@,%1>(%2);static _F<_Qy@,%1>(%2)
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:_F<@_Qy>%1(%2);bool:_F<@_Qy>%1(%2)for(_Testing_Start(_:"  "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<_Qy@>%1(%2);static _F<_Qy@>%1(%2)
 	#elseif cellbits == 32
 		// Ensure there is always sufficient spacefor the failures linked list.
-		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:_F<@_Qy,%1>(%2);bool:_F<@_Qy,%1>(%2)for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<_Qy@,%1>(%2);static _F<_Qy@,%1>(%2)
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:_F<@_Qy>%1(%2);bool:_F<@_Qy>%1(%2)for(_Testing_Start(_:"        "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<_Qy@>%1(%2);static _F<_Qy@>%1(%2)
 	#elseif cellbits == 64
-		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:_F<@_Qy,%1>(%2);bool:_F<@_Qy,%1>(%2)for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<_Qy@,%1>(%2);static _F<_Qy@,%1>(%2)
+		#define PTEST__%1(%2) u@(u[_:YTEST_PID1:YTEST_ARGS:u@$bool:_F<@_Qy>%1(%2);bool:_F<@_Qy>%1(%2)for(_Testing_Start(_:"                "#%1),TEST_REPORT("*** Player Test %s start",YSI_gCurTestName);__once;_Testing_End())_F<_Qy@>%1(%2);static _F<_Qy@>%1(%2)
 	#else
 		#error Unsupported packed string size.
 	#endif
-	#define PTEST_CLOSE__%1(%2) u@(u[_:YTEST_PID2:YTEST_DROP:u@$_F<@_yQ,%1>(%2);_F<@_yQ,%1>(%2)
+	#define PTEST_CLOSE__%1(%2) u@(u[_:YTEST_PID2:YTEST_DROP:u@$_F<@_yQ>%1(%2);_F<@_yQ>%1(%2)
 	
-	#define TEST_COMPILE__%1() forward _F<Q@y_,%1>();public _F<Q@y_,%1>(){if(FALSE)_F<Q@_y,%1>();Debug_Warning("Compile test " #%1 " called.");}static stock _F<Q@_y,%1>()
+	#define TEST_COMPILE__%1() forward _F<Q@y_>%1();public _F<Q@y_>%1(){if(FALSE)_F<Q@_y>%1();Debug_Warning("Compile test " #%1 " called.");}static stock _F<Q@_y>%1()
 
 	// Use the `PTEST` definitions by default, as they can now detect no
 	// `playerid` and fall back to `TEST` when it isn't present.
@@ -288,13 +288,13 @@ static stock const
 	#define @test(%2)%0(%1) PTEST__ %0(%1)<%2>
 	#define @testclose(%2)%0(%1) PTEST_CLOSE__ %0(%1)<%2>
 #else
-	#define TEST_INIT__%1(%2) static stock _F<y_Q@,%1>(%2)
-	#define TEST__%1(%2) static stock bool:_F<yQ_@,%1>(%2)
-	#define TEST_CLOSE__%1(%2) static stock _F<Qy_@,%1>(%2)
+	#define TEST_INIT__%1(%2) static stock _F<y_Q@>%1(%2)
+	#define TEST__%1(%2) static stock bool:_F<yQ_@>%1(%2)
+	#define TEST_CLOSE__%1(%2) static stock _F<Qy_@>%1(%2)
 	
-	#define PTEST_INIT__%1(%2) static stock _F<Q_y@,%1>(%2)
-	#define PTEST__%1(%2) static stock bool:_F<_Qy@,%1>(%2)
-	#define PTEST_CLOSE__%1(%2) static stock _F<_yQ@,%1>(%2)
+	#define PTEST_INIT__%1(%2) static stock _F<Q_y@>%1(%2)
+	#define PTEST__%1(%2) static stock bool:_F<_Qy@>%1(%2)
+	#define PTEST_CLOSE__%1(%2) static stock _F<_yQ@>%1(%2)
 
 	// Use the `PTEST` definitions by default, as they can now detect no
 	// `playerid` and fall back to `TEST` when it isn't present.

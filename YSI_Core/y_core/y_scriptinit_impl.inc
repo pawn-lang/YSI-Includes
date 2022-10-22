@@ -250,33 +250,30 @@ forward bool:Server_IsOpenMP();
 #define Server_Is_open.mp Server_IsOpenMP
 
 #if __COMPILER___EMIT_U
-	#define Server_IsOpenMP() (bool:(__emit(zero.pri, zero.alt, lctrl 9, neq)))
+	#define Server_IsOpenMP() (bool:(__emit(ZERO.pri, ZERO.alt, LCTRL 9, NEQ)))
 #endif
 
 forward bool:Server_IsSAMP();
 
 #if __COMPILER___EMIT_U
-	#define Server_IsSAMP() (bool:(__emit(zero.pri, lctrl 9, eq.c.pri 0)))
+	#define Server_IsSAMP() (bool:(__emit(ZERO.pri, LCTRL 9, EQ.C.pri 0)))
 #endif
 
 #pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
 {
-	#if __COMPILER_OS == __COMPILER_LINUX
+	#if __COMPILER_OS == __COMPILER_UNIX
 		return true;
 	#else
 		return false;
 	#endif
 }
 
-stock bool:Script_IsLinuxCompiler()
-{
-	#if __COMPILER_OS == __COMPILER_LINUX
-		return true;
-	#else
-		return false;
-	#endif
-}
+#if __COMPILER_OS == __COMPILER_UNIX
+	#define Script_IsLinuxCompiler() (TRUE)
+#else
+	#define Script_IsLinuxCompiler() (FALSE)
+#endif
 
 #pragma deprecated Use `Script_IsWindowsCompiler`.
 stock bool:Server_IsWindowsCompiler()
@@ -288,14 +285,11 @@ stock bool:Server_IsWindowsCompiler()
 	#endif
 }
 
-stock bool:Script_IsWindowsCompiler()
-{
-	#if __COMPILER_OS == __COMPILER_WINDOWS
-		return true;
-	#else
-		return false;
-	#endif
-}
+#if __COMPILER_OS == __COMPILER_WINDOWS
+	#define Script_IsWindowsCompiler() (TRUE)
+#else
+	#define Script_IsWindowsCompiler() (FALSE)
+#endif
 
 #pragma deprecated Use `Script_IsGameMode`.
 stock bool:Server_IsGameMode()
@@ -495,85 +489,55 @@ stock Server_FinishIntroMessage()
 	YSI_gsFirstHeader = true;
 }
 
-stock Server_SetLongCallTime(usTime)
-{
-	// Setting this to `0` doesn't change the internal time, merely disables the check.
-	#emit LOAD.S.pri    usTime
-	#emit SCTRL         0xFE
-}
+#if __COMPILER___EMIT_U
+	#define Server_SetLongCallTime(%0) (__emit(LOAD.U.pri %0, SCTRL 0xFE))
+#endif
 
-stock Server_DisableLongCall()
-{
-	#emit CONST.pri     0
-	#emit SCTRL         0xFE
-}
+#if __COMPILER___EMIT_U
+	#define Server_DisableLongCall() (__emit(CONST.pri 0, SCTRL 0xFE))
+#endif
 
-stock Server_EnableLongCall()
-{
-	#emit CONST.pri     2
-	#emit SCTRL         0xFF
-}
+#if __COMPILER___EMIT_U
+	#define Server_EnableLongCall() (__emit(CONST.pri 2, SCTRL 0xFF))
+#endif
 
-stock Server_ResetLongCallTime()
-{
-	#emit CONST.pri     4
-	#emit SCTRL         0xFF
-}
+#if __COMPILER___EMIT_U
+	#define Server_ResetLongCallTime() (__emit(CONST.pri 4, SCTRL 0xFF))
+#endif
 
-stock Server_RestartLongCall()
-{
-	#emit CONST.pri     8
-	#emit SCTRL         0xFF
-}
+#if __COMPILER___EMIT_U
+	#define Server_RestartLongCall() (__emit(CONST.pri 8, SCTRL 0xFF))
+#endif
 
-stock bool:Server_IsLongCallEnabled()
-{
-	#emit ZERO.pri
-	#emit LCTRL         0xFF
-	#emit CONST.alt     1
-	#emit AND
-	#emit RETN
-	return false;
-}
+forward bool:Server_IsLongCallEnabled();
 
-stock Server_GetLongCallTime()
-{
-	#emit ZERO.pri
-	#emit LCTRL         0xFE
-	#emit SHR.C.pri     1
-	#emit RETN
-	return 0;
-}
+#if __COMPILER___EMIT_U
+	#define Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, CONST.alt 1, AND, RETN)))
+#endif
 
-stock Server_DisableDetectAddr0() {
-	#emit CONST.pri     0
-	#emit SCTRL         0xFD
-}
+#if __COMPILER___EMIT_U
+	#define Server_GetLongCallTime() (__emit(ZERO.pri, LCTRL 0xFE, SHR.C.pri 1, RETN))
+#endif
 
-stock Server_EnableDetectAddr0() {
-	#emit CONST.pri     1
-	#emit SCTRL         0xFD
-}
+#if __COMPILER___EMIT_U
+	#define Server_DisableDetectAddr0() (__emit(CONST.pri 0, SCTRL 0xFD))
+#endif
 
-stock bool:Server_IsDetectAddr0Enabled() {
-	// Is the check enabled?  0 if off or doesn't exist.
-	#emit CONST.pri     0
-	#emit LCTRL 0xFD
-	#emit CONST.alt     1
-	#emit AND
-	#emit RETN
-	return false;
-}
+#if __COMPILER___EMIT_U
+	#define Server_EnableDetectAddr0() (__emit(CONST.pri 1, SCTRL 0xFD))
+#endif
 
-stock bool:Server_HasDetectAddr0() {
-	// Is the check possible?
-	#emit CONST.pri     __minus1     // -1
-	#emit LCTRL 0xFD                 // 0, 1, or -2
-	#emit CONST.alt     0
-	#emit SGEQ                       // >= 0
-	#emit RETN
-	return false;
-}
+forward bool:Server_IsDetectAddr0Enabled();
+
+#if __COMPILER___EMIT_U
+	#define Server_IsDetectAddr0Enabled() (bool:(__emit(CONST.pri 0, LCTRL 0xFD, CONST.alt 1, AND, RETN)))
+#endif
+
+forward bool:Server_HasDetectAddr0();
+
+#if __COMPILER___EMIT_U
+	#define Server_HasDetectAddr0() (bool:(__emit(CONST.pri __minus1, LCTRL 0xFD, CONST.alt 0, SGEQ, RETN)))
+#endif
 
 stock Server_GetStartTime()
 {
@@ -732,6 +696,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			#else
 				#pragma unused jit
 			#endif
+			ScriptInit_CodeInitFuncs_();
 			#if defined ScriptInit_OnCodeInit
 				ScriptInit_OnCodeInit();
 			#endif
@@ -863,6 +828,8 @@ public OnJITCompile()
 
 #define @yI_%0\32; @yI_
 #define @_yI%0\32; @_yI
+#define @y_I%0\32; @y_I
+#define @I_y%0\32; @I_y
 #define @Iy_%0\32; @Iy_
 #define @_Iy%0\32; @_Iy
 
@@ -881,6 +848,7 @@ public OnJITCompile()
 // Finish inits.
 #define _y@I:%8$%0(%1)<%3>(%2) %8$%3:%2%0(%1);%3:%2%0(%1)
 
+
 // Finish final.
 #define _I@y:%8$%0(%1)<%3> %8$@yI_%0();@yI_%0(){new %3:y__;y_@I%0(y__);_YSI_ConstMod(_:%0,_:y__);}static y_@I%0(&%3:y__)y__=
 
@@ -894,6 +862,49 @@ public OnJITCompile()
 
 #define PREEXIT__%0(%1) DO_YSI_INIT__%0(%1)<@Iy_>
 #define POSTEXIT__%0(%1) DO_YSI_INIT__%0(%1)<@_Iy>
+
+// New decorator:
+//
+//   @init(init_code) B()           // OnCodeInit
+//   @init() A()                    // OnScriptInit
+//   @init(init_script) F()         // OnScriptInit
+//   @init(.order = init_mode) C()  // OnGameModeInit
+//   @init(init_mode) D()           // OnFilterScriptInit
+//   @init(.order = init_main) E()  // main
+//
+#define @init(%2)%0(%1) u@(u[_:Iy_@:y_I@%2:u@$@yI_%0(%1);@yI_%0(%1)
+#define @exit(%2)%0(%1) u@(u[_:Iy_@:yI_@%2:u@$@Iy_%0(%1);@Iy_%0(%1)
+
+enum init_order
+{
+	init_code,   // OnCodeInit
+	init_script, // OnScriptInit
+	init_mode,   // OnGameModeInit/OnFilterScriptInit
+	init_main    // main
+}
+
+enum exit_order
+{
+	exit_mode,   // OnGameModeExit/OnFilterScriptExit
+	exit_script  // OnScriptExit
+}
+
+// Strip all spaces within the parameters first.
+#define Iy_@:%0\32;%1$ Iy_@:%0%1$
+
+// Detect the parameters, with or without names.
+#define y_I@.%4=%5: y_I@%4=%5:
+#define y_I@order=%5: y_I@%5:
+#define y_I@init_code:%8$@yI_%0(%1);@yI_%0(%1) %8$@y_I%0(%1);@y_I%0(%1)
+#define y_I@init_script:%8$@yI_%0(%1);@yI_%0(%1) %8$@yI_%0(%1);@yI_%0(%1)
+#define y_I@init_mode:%8$@yI_%0(%1);@yI_%0(%1) %8$@_yI%0(%1);@_yI%0(%1)
+#define y_I@init_main:%8$@yI_%0(%1);@yI_%0(%1) %8$@I_y%0(%1);@I_y%0(%1)
+
+// And do the same for `exit`, but with fewer options.
+#define yI_@.%4=%5: yI_@%4=%5:
+#define yI_@order=%5: yI_@%5:
+#define yI_@exit_script:%8$@Iy_%0(%1);@Iy_%0(%1) %8$@Iy_%0(%1);@Iy_%0(%1)
+#define yI_@exit_mode:%8$@Iy_%0(%1);@Iy_%0(%1) %8$@_Iy%0(%1);@_Iy%0(%1)
 
 // Alternative spellings.
 #define PRE_INIT__ PREINIT__
@@ -1411,6 +1422,90 @@ stock bool:Server_IsSAMP()
 	#emit EQ.C.pri             0
 	#emit RETN
 
+	return false;
+}
+
+stock Server_SetLongCallTime(usTime)
+{
+	// Setting this to `0` doesn't change the internal time, merely disables the check.
+	#emit LOAD.S.pri    usTime
+	#emit SCTRL         0xFE
+}
+
+stock Server_DisableLongCall()
+{
+	#emit CONST.pri     0
+	#emit SCTRL         0xFE
+}
+
+stock Server_EnableLongCall()
+{
+	#emit CONST.pri     2
+	#emit SCTRL         0xFF
+}
+
+stock Server_ResetLongCallTime()
+{
+	#emit CONST.pri     4
+	#emit SCTRL         0xFF
+}
+
+stock Server_RestartLongCall()
+{
+	#emit CONST.pri     8
+	#emit SCTRL         0xFF
+}
+
+stock bool:Server_IsLongCallEnabled()
+{
+	#emit ZERO.pri
+	#emit LCTRL         0xFF
+	#emit CONST.alt     1
+	#emit AND
+	#emit RETN
+	return false;
+}
+
+stock Server_GetLongCallTime()
+{
+	#emit ZERO.pri
+	#emit LCTRL         0xFE
+	#emit SHR.C.pri     1
+	#emit RETN
+	return 0;
+}
+
+stock Server_DisableDetectAddr0()
+{
+	#emit CONST.pri     0
+	#emit SCTRL         0xFD
+}
+
+stock Server_EnableDetectAddr0()
+{
+	#emit CONST.pri     1
+	#emit SCTRL         0xFD
+}
+
+stock bool:Server_IsDetectAddr0Enabled()
+{
+	// Is the check enabled?  0 if off or doesn't exist.
+	#emit CONST.pri     0
+	#emit LCTRL 0xFD
+	#emit CONST.alt     1
+	#emit AND
+	#emit RETN
+	return false;
+}
+
+stock bool:Server_HasDetectAddr0()
+{
+	// Is the check possible?
+	#emit CONST.pri     __minus1     // -1
+	#emit LCTRL 0xFD                 // 0, 1, or -2
+	#emit CONST.alt     0
+	#emit SGEQ                       // >= 0
+	#emit RETN
 	return false;
 }
 

@@ -189,53 +189,8 @@ new
 Iter_Init(MyIters);
 ```
 
-* `Iter_SafeRemove(Iterator, value, next);` - You can't use "Iter_Remove"
-inside a loop that uses that iterator or it may crash:
-
-```pawn
-foreach (new i : MyIter)
-{
-	if (i == 5)
-	{
-		Iter_Remove(MyIter, i);
-	}
-}
-```
-
-The reason that won't work is that the loop needs to use the current slot to get
-the next slot, but we just removed the current slot so it is no longer valid for
-getting the next slot. Instead, we use "Iter_SafeRemove", which takes an
-additional parameter to store the next slot in BEFORE the current slot is
-removed:
-
-```pawn
-foreach (new i : MyIter)
-{
-	new
-		cur = i;
-	if (cur == 5)
-	{
-		Iter_SafeRemove(MyIter, cur, i);
-	}
-}
-```
-
-This is equivalent to doing:
-
-```pawn
-new i = Iter_First(MyIter);
-while (i != Iter_End(MyIter))
-{
-	new
-		cur = i,
-		nxt = Iter_Next(MyIter, cur);
-	if (cur == 5)
-	{
-		Iter_Remove(MyIter, cur);
-	}
-	i = nxt;
-}
-```
+* `Iter_SafeRemove(Iterator, value, next);` - Previously you couldn't use "Iter_Remove"
+inside a loop that uses that iterator or it may crash.  However now you can, so this function is deprecated.
 
 * `Iter_Size(Iterator);` - Returns the declared size of the iterator:
 
@@ -834,17 +789,6 @@ Output:
 >	that this is always last.  Previously I think that the order of
 >	evaluation in y_hooks meant that this got called before the user
 >	"OnPlayerDisconnect".
- 
-***
-
-#### Iter_OPDCInternal
->* **Parameters:**
->	* `playerid`: playerid_INFO
->* **Returns:**
->	* -
->* **Remarks:**
->	Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a
->	"foreach" loop doesn't crash the server due to an OOB error.
  
 ***
 

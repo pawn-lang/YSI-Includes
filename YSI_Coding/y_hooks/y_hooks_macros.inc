@@ -96,10 +96,49 @@ Optional plugins:
 //#define HOOK_PUBLIC__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
 //#define HOOK_public__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
 
-#define Y_HOOKS_CONTINUE_RETURN_1	(1)		// Continue the hook chain, return 1
-#define Y_HOOKS_CONTINUE_RETURN_0	(0)		// Continue the hook chain, return 0
-#define Y_HOOKS_BREAK_RETURN_0		(~0)	// Break the hook chain, return 0
-#define Y_HOOKS_BREAK_RETURN_1		(~1)	// Break the hook chain, return 1
+// We can't deprecate defines or constants, only functions.
+#pragma deprecated Use `return 0;`.
+stock Y_HOOKS_CONTINUE_RETURN_0()
+{
+	return 0;
+}
+
+// Matches `\10;` to avoid a double replacement, so we can use the same name for
+// both the macro and the function, to give a nicer warning message.
+#define Y_HOOKS_CONTINUE_RETURN_0%0\10; Y_HOOKS_CONTINUE_RETURN_0()%0
+
+// We can't deprecate defines or constants, only functions.
+#pragma deprecated Use `return 1;`.
+stock Y_HOOKS_CONTINUE_RETURN_1()
+{
+	return 1;
+}
+
+// Matches `\10;` to avoid a double replacement, so we can use the same name for
+// both the macro and the function, to give a nicer warning message.
+#define Y_HOOKS_CONTINUE_RETURN_1%0\10; Y_HOOKS_CONTINUE_RETURN_1()%0
+
+// We can't deprecate defines or constants, only functions.
+#pragma deprecated Use `return ~0;`.
+stock Y_HOOKS_BREAK_RETURN_0()
+{
+	return ~0;
+}
+
+// Matches `\10;` to avoid a double replacement, so we can use the same name for
+// both the macro and the function, to give a nicer warning message.
+#define Y_HOOKS_BREAK_RETURN_0%0\10; Y_HOOKS_BREAK_RETURN_0()%0
+
+// We can't deprecate defines or constants, only functions.
+#pragma deprecated Use `return ~1;`.
+stock Y_HOOKS_BREAK_RETURN_1()
+{
+	return ~1;
+}
+
+// Matches `\10;` to avoid a double replacement, so we can use the same name for
+// both the macro and the function, to give a nicer warning message.
+#define Y_HOOKS_BREAK_RETURN_1%0\10; Y_HOOKS_BREAK_RETURN_1()%0
 
 #if !defined MAX_HOOK_REPLACEMENTS
 	#define MAX_HOOK_REPLACEMENTS (16)
@@ -107,7 +146,7 @@ Optional plugins:
 
 // Generate a function name using only ONE of the parts, so two replacements for
 // the same long name will collide at compile-time.  Always packed.
-#define DEFINE_HOOK_REPLACEMENT__(%0,%1); forward @_yH%0(); public @_yH%0() { _Hooks_AddReplacement(__COMPILER_PACK#%0, __COMPILER_PACK#%1); }
+#define DEFINE_HOOK_REPLACEMENT__(%0,%1); forward _F<@_yH>%0(); public _F<@_yH>%0() { _Hooks_AddReplacement(__COMPILER_PACK#%0, __COMPILER_PACK#%1); }
 
 // Strip spaces from the generated function names.
 #define @yH_%0\32; @yH_ // @hook entry point
@@ -118,6 +157,15 @@ Optional plugins:
 #define @y_H%0\32; @y_H // DEFINE_HOOK_RETURN
 #define @_yH%0\32; @_yH // DEFINE_HOOK_REPLACEMENT
 
+// And in 64-bit
+#define @yH_0000%0\32; @yH_0000 // @hook entry point
+#define @_Hy0000%0\32; @_Hy0000 // unused
+#define @Hy_0000%0\32; @Hy_0000 // hook stock/native
+#define _@yH0000%0\32; _@yH0000 // hook stock/native
+#define @H_y0000%0\32; @H_y0000 // hook public
+#define @y_H0000%0\32; @y_H0000 // DEFINE_HOOK_RETURN
+#define @_yH0000%0\32; @_yH0000 // DEFINE_HOOK_REPLACEMENT
+
 // Tags.
 #define @yH_Float: Float:@yH_
 #define @yH_File: File:@yH_
@@ -125,13 +173,13 @@ Optional plugins:
 #define @yH_void: void:@yH_
 #define @yH_string: string:@yH_
 
-#define DEFINE_HOOK_RETURN__(%0,%1); forward @y_H%0(); public @y_H%0() { return (%1); }
+#define DEFINE_HOOK_RETURN__(%0,%1); forward _F<@y_H>%0(); public _F<@y_H>%0() { return (%1); }
 
 #if YSI_KEYWORD(HOOK_REPLACEMENT)
 	#define DEFINE_HOOK_REPLACEMENT DEFINE_HOOK_REPLACEMENT__
 #endif
 #if YSI_KEYWORD(HOOK_RET)
-	#define HOOK_RET:%0(%1) forward @y_H%0(); public @y_H%0()
+	#define HOOK_RET:%0(%1) forward _F<@y_H>%0(); public _F<@y_H>%0()
 #endif
 #if YSI_KEYWORD(hook)
 	#define hook HOOK__
@@ -140,7 +188,7 @@ Optional plugins:
 	#define rehook REHOOK__
 #endif
 #if YSI_KEYWORD(Hook)
-	#define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)
+	#define Hook:%0_%1(%2) forward public _F<@yH_>%1@%0(%2);_F<@yH_>%1@%0(%2)
 #endif
 
 // Decorator syntax.
@@ -349,8 +397,8 @@ Optional plugins:
 
 // Helper macro to generate the unique function name without bloating the
 // generated code multiple times.
-#define YHNPS_U0<%1> UNIQUE_FUNCTION<_@yH%1@...>
-#define YHNPS_U1<%1> UNIQUE_FUNCTION<@yH_%1@...>
+#define YHNPS_U0<%1> UNIQUE_FUNCTION<_F<_@yH>%1@...>
+#define YHNPS_U1<%1> UNIQUE_FUNCTION<_F<@yH_>%1@...>
 
 // Remove specified priorities from the original call.
 #define _yH@(%0),%1@%2(%3); _yH@(%0),%1(%3);

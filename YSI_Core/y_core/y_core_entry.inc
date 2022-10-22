@@ -338,6 +338,40 @@ stock const YSIM_VERMAX[] = "X";
 #include "y_utils_impl"
 
 // Part of "y_scriptinit", but requires "y_amx".
+ScriptInit_CodeInitFuncs_()
+{
+	new
+		idx = 0,
+		ptr = 0;
+	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@y_I>)))
+	{
+		#emit PUSH.C     0
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
+		#emit PUSH.pri
+		#emit LOAD.S.pri ptr
+		#emit SCTRL      __cip
+	}
+}
+
+ScriptInit_MainInitFuncs_()
+{
+	new
+		idx = 0,
+		ptr = 0;
+	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@I_y>)))
+	{
+		#emit PUSH.C     0
+		#emit LCTRL      __cip
+		#emit ADD.C      __9_cells
+		#emit LCTRL      __jmp
+		#emit PUSH.pri
+		#emit LOAD.S.pri ptr
+		#emit SCTRL      __cip
+	}
+}
+
 ScriptInit_PreInitFuncs_()
 {
 	new

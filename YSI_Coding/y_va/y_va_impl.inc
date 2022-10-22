@@ -369,9 +369,9 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 				paramCount = CodeScanGetMatchHole(m, len == __3_cells),
 				returningString = 0,
 #if __COMPILER_O2
-				codeLength = 11 * cellbytes;
+				codeLength = __11_cells;
 #else
-				codeLength = 13 * cellbytes;
+				codeLength = __13_cells;
 #endif
 			YSI_g_sPassthroughNestings = pos;
 			if (!pos && YSI_g_sSkips[0] & cellmin)
@@ -390,9 +390,9 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 				{
 					// Check the next instruction instead.
 					case OP_HEAP:
-						returningString = (DisasmNextInsn(dctx) == OP_POP_PRI) ? 3 * cellbytes : 0;
+						returningString = (DisasmNextInsn(dctx) == OP_POP_PRI) ? __3_cells : 0;
 					case OP_POP_PRI:
-						returningString = 1 * cellbytes;
+						returningString = __1_cell;
 					default:
 						returningString = 0;
 				}
@@ -403,21 +403,21 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 			{
 				// Shift the three cells before this code down to make room for
 				// the local storage stack adjustment code.
-				YSI_g_sContexts[0][AsmContext_buffer] -= 3 * cellbytes,
+				YSI_g_sContexts[0][AsmContext_buffer] -= __3_cells,
 				codeLength = ReadAmxMemory(YSI_g_sContexts[0][AsmContext_buffer] + cellbytes),
 				AsmEmitStack(YSI_g_sContexts[0], (YSI_g_sMaxNesting + 1) * -cellbytes),
 				AsmEmitHeap(YSI_g_sContexts[0], codeLength),
 				AsmEmitPushAlt(YSI_g_sContexts[0]);
 #if __COMPILER_O2
-				codeLength = 11 * cellbytes + 5 * cellbytes;
+				codeLength = __11_cells + __5_cells;
 #else
-				codeLength = 13 * cellbytes + 5 * cellbytes;
+				codeLength = __13_cells + __5_cells;
 #endif
 			}
 			else if (!pos)
 			{
 				AsmEmitStack(YSI_g_sContexts[0], (YSI_g_sMaxNesting + 1) * -cellbytes),
-				codeLength += 2 * cellbytes;
+				codeLength += __2_cells;
 			}
 			new
 				dest = YSI_g_sContexts[pos][AsmContext_buffer];
@@ -444,11 +444,11 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 				// Not `-O2`, emit the new push and skip the existing `SYSREQ.C`
 				// or `CALL`, thus this path can be used with `-O2` too.
 				AsmEmitPushS(YSI_g_sContexts[pos], dest),
-				YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
+				YSI_g_sContexts[pos][AsmContext_buffer_offset] += __2_cells;
 			}
 			if (returningString == __3_cells)
-				YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
-			if (len != 16)
+				YSI_g_sContexts[pos][AsmContext_buffer_offset] += __2_cells;
+			if (len != __4_cells)
 				YVA2_CodeGenMainCleanup(YSI_g_sContexts[pos]);
 			if (YSI_g_sPassthroughNestings)
 			{
@@ -720,7 +720,7 @@ stock va_strlen(arg)
 	// the argument required.
 	#emit LOAD.S.pri arg
 	// Then convert that number to bytes from cells.
-	#emit SMUL.C     4
+	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
 	// Get the previous function's frame.  Stored in variable 0 (in the current
 	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
 	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
@@ -752,7 +752,7 @@ stock va_getstring(dest[], arg, len = sizeof (dest))
 	// the argument required.
 	#emit LOAD.S.pri arg
 	// Then convert that number to bytes from cells.
-	#emit SMUL.C     cellbytes
+	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
 	// Get the previous function's frame.  Stored in variable 0 (in the current
 	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
 	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add

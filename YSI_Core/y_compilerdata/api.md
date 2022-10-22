@@ -238,6 +238,15 @@ __COMPILER_THIS
 
 // The script is being compiled with `-O2` on later versions.
 __COMPILER_O2
+
+// The compiler has native `__addressof` support.
+__COMPILER_ADDRESSOF
+
+// The optimisation level used by the compiler, on some versions.  `-1` if unknown.
+__optimisation
+
+// The `debug` constant, but with a better name.
+__debug
 ```
 
 ## Default Values
@@ -300,6 +309,20 @@ main()
 	printf("%d %f %s", a, b, c);
 }
 ```
+
+Example:
+
+```pawn
+PrintPlayerData(playerid)
+{
+	decl name[MAX_PLAYER_NAME + 1], Float:health;
+	GetPlayerName(playerid, name, sizeof (name));
+	GetPlayerHealth(playerid, health);
+	printf("name: %s, health: %f", name, health);
+}
+```
+
+`name` and `health` are both initialised by function calls so there's no need to initialise them to something else first, hence using `decl` doesn't.
 
 ## `THIS__`
 

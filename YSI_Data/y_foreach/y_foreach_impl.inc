@@ -717,10 +717,18 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 			last = next,
 			next = array[last];
 		}
+		if ((last + 1) % size != value)
+		{
+			// Reverse from us to `last`.
+			array[(value - 1) % size] = last * -65536;
+		}
+		if (value + 1 != next)
+		{
+			// Reverse from `next` to us.
+			array[next - 1] = value * -65536;
+		}
 		return
 			++count,
-			array[(value - 1) % size] = (last + 1) % size,
-			array[next - 1] = value + 1,
 			array[value] = next,
 			array[last] = value;
 	}
@@ -791,12 +799,55 @@ stock Iter_Index_Internal(count, const array[], start, size, index, bool:wrap = 
 
 stock Iter_Remove_InternalC(&count, array[], size, value)
 {
-	return Iter_SafeRemove_InternalC(count, array, size, value, value);
+	if (0 <= value < size++ && array[value] > value)
+	{
+		// This version has reverse iterators, which need maintaining, and can
+		// be used in place of a loop to jump backwards in the list.
+		--count;
+		new last = Iter_Prev_InternalD(array, size, value);
+		array[last] = array[value];
+		if (array[last] == value + 1)
+		{
+			// We are going one step later, which means that the removed value
+			// needs to point both forwards and backwards at the same time.
+			return
+				array[value] |= last * -65536;
+		}
+		else
+		{
+			return
+				// For being out the iterator, but still usable in `foreach`.
+				array[value] |= -65536,
+				// Set the reverse pointer.
+				array[(array[last] - 1) % size] = last * -65536;
+		}
+	}
+	else
+	{
+		return INVALID_ITERATOR_SLOT;
+	}
 }
 
 stock Iter_Remove_InternalD(&count, array[], start, size, value)
 {
-	return Iter_SafeRemove_InternalD(count, array, start, size, value, value);
+	new last = start;
+	if (0 <= value < size && start >= size && count && array[value] > value)
+	{
+		// This version doesn't have reverse iterators, so we need to
+		// manually loop through the list.
+		while ((start = array[last]) < size)
+		{
+			if (start == value)
+			{
+				return
+					--count,
+					array[last] = array[value],
+					array[value] |= -65536;
+			}
+			last = start;
+		}
+	}
+	return INVALID_ITERATOR_SLOT;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -810,21 +861,31 @@ stock Iter_Remove_InternalD(&count, array[], start, size, value)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
+#pragma deprecated You can now use `Iter_Remove()` in loops.
+stock Iter_SafeRemove_1(&count, array[], size, value, &last)
 {
 	if (0 <= value < size++ && array[value] > value)
 	{
 		// This version has reverse iterators, which need maintaining, and can
 		// be used in place of a loop to jump backwards in the list.
-		return
-			--count,
-			last = (array[(value - 1) % size] - 1) % size,
-			array[last] = array[value],
-			// Set the current value.
-			array[value] = -123456789,
-			// Set the reverse pointer.  The one before the next is NEVER in the
-			// iterator at this point, because we just removed its previous.
-			array[(array[last] - 1) % size] = (last + 1) % size - size - size;
+		--count,
+		last = Iter_Prev_InternalD(array, size, value);
+		array[last] = array[value];
+		if (array[last] == value + 1)
+		{
+			// We are going one step later, which means that the removed value
+			// needs to point both forwards and backwards at the same time.
+			return
+				array[value] = (array[value] - size) + (-size * last);
+		}
+		else
+		{
+			return
+				// For being out the iterator, but still usable in `foreach`.
+				array[value] = array[value] - size,
+				// Set the reverse pointer.
+				array[(array[last] - 1) % size] = -size * last;
+		}
 	}
 	else
 	{
@@ -834,7 +895,8 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 	}
 }
 
-stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
+#pragma deprecated You can now use `Iter_Remove()` in loops.
+stock Iter_SafeRemove_2(&count, array[], start, size, value, &last)
 {
 	last = start;
 	if (0 <= value < size && start >= size && count && array[value] > value)
@@ -848,7 +910,7 @@ stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
 				return
 					--count,
 					array[last] = array[value],
-					array[value] = -123456789;
+					array[value] |= -65536;
 			}
 			last = start;
 		}
@@ -1060,7 +1122,7 @@ stock
  *//*------------------------------------------------------------------------**/
 
 stock
-	Iter_Prev_Internal(const array[], elems, size, slot)
+	Iter_Prev_InternalC(const array[], elems, size, slot)
 {
 	if ((slot < elems) ?
 		(0 <= slot < array[slot]) :
@@ -1075,5 +1137,30 @@ stock
 		}
 	}
 	return elems;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="array">iterator data.</param>
+ * <param name="size">Size of the iterator.</param>
+ * <param name="slot">The current slot.</param>
+ * <remarks>
+ *  Gets the element in an iterator that points to the current element.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock
+	Iter_Prev_InternalD(const array[], size, slot)
+{
+	new prev = array[(slot - 1) % size];
+	if (prev == slot)
+	{
+		// The previous value is also in.
+		return (prev - 1) % size;
+	}
+	// Otherwise, we use the new `prev` method for values that aren't in, which
+	// involves a division so they can represent both the last value and keep a
+	// vague representation of their old `next` value for removals in loops.
+	//return ceildiv(prev, -65536);
+	return (prev & ~0xFFFF) / -65536;
 }
 

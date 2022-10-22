@@ -247,6 +247,7 @@ Optional plugins:
 
 main()
 {
+	ScriptInit_MainInitFuncs_();
 	#if defined PP_main
 		PP_main();
 	#endif

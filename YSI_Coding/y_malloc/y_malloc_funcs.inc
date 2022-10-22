@@ -491,17 +491,17 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 	new
 		len = 0;
 	#emit LOAD.S.pri arg
-	#emit SMUL.C     4
+	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
 	#emit LOAD.S.alt 0
 	#emit ADD
-	#emit ADD.C      12
+	#emit ADD.C      __3_cells
 	#emit LOAD.I
 	// For later reuse.
 	#emit STOR.S.pri arg
 	#emit PUSH.pri
-	#emit PUSH.C     4
+	#emit PUSH.C     __1_cell
 	#emit SYSREQ.C   strlen
-	#emit STACK      8
+	#emit STACK      __2_cell
 	#emit STOR.S.pri len
 	if (index >= 0 && index + (++len) <= Malloc_GetSlotSize(_:array))
 	{
@@ -526,9 +526,9 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 		#emit CONST.pri  0
 		#emit STOR.I
 		#emit PUSH.alt
-		#emit PUSH.C     12
+		#emit PUSH.C     __3_cells
 		#emit SYSREQ.C   strcat
-		#emit STACK      16
+		#emit STACK      __4_cells
 		//strcat(YSI_gMallocMemory[index], str, cellmax);
 	}
 	#if defined YSI_MALLOC_SECURE
@@ -554,7 +554,7 @@ stock Malloc_GetA(dest[], length, Alloc:array, index)
 		new
 			size = Malloc_GetSlotSize(_:array);
 		Debug_Print5("Malloc_GetA: size = %d, %d.", size, size - index);
-		memcpy(dest, YSI_gMallocMemory[index + _:array], 0, min(size - index, length) * 4, length);
+		memcpy(dest, YSI_gMallocMemory[index + _:array], 0, min(size - index, length) * cellbytes, length);
 		#if defined YSI_MALLOC_SECURE
 			Debug_Code1{if(length > size)Debug_Error("Out of buffer space.");}
 		#endif
@@ -581,7 +581,7 @@ stock Malloc_SetA(Alloc:array, index, const source[], length)
 		new
 			size = Malloc_GetSlotSize(_:array);
 		Debug_Print5("Malloc_SetA: size = %d.", size);
-		memcpy(YSI_gMallocMemory[index + _:array], source, 0, min(size - index, length) * 4, size - index);
+		memcpy(YSI_gMallocMemory[index + _:array], source, 0, min(size - index, length) * cellbytes, size - index);
 		#if defined YSI_MALLOC_SECURE
 			Debug_Code1{if(length > size - index)Debug_Error("Out of buffer space.");}
 		#endif
@@ -604,10 +604,10 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 		len = 0;
 	#emit LOAD.S.pri arg
 	#emit ADD.C      1
-	#emit SMUL.C     4
+	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
 	#emit LOAD.S.alt 0
 	#emit ADD
-	#emit ADD.C      12
+	#emit ADD.C      __3_cells
 	#emit LOAD.I
 	#emit LOAD.I
 	// For later reuse.
@@ -620,15 +620,15 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 		// address in "arg" the first time).
 		#emit LOAD.S.pri len
 		#emit PUSH.pri
-		#emit SMUL.C     4
+		#emit SHL.C.pri  __COMPILER_CELL_SHIFT
 		#emit PUSH.pri
 		#emit PUSH.C     0
 		// Source.
 		#emit LOAD.S.pri arg
-		#emit SMUL.C     4
+		#emit SHL.C.pri  __COMPILER_CELL_SHIFT
 		#emit LOAD.S.alt 0
 		#emit ADD
-		#emit ADD.C      12
+		#emit ADD.C      __3_cells
 		#emit LOAD.I
 		#emit PUSH.pri
 		// Destination.
@@ -640,9 +640,9 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 		#emit STOR.I
 		#emit PUSH.alt
 		// GO!
-		#emit PUSH.C     20
+		#emit PUSH.C     __5_cells
 		#emit SYSREQ.C   memcpy
-		#emit STACK      24
+		#emit STACK      __6_cells
 	}
 	#if defined YSI_MALLOC_SECURE
 		Debug_CodeX{else Debug_Error("Array copy out of memory.");}
@@ -969,7 +969,7 @@ stock Alloc:Malloc_Reconcile(ResolvedAlloc:addr)
 	#emit CONST.alt     YSI_gMallocMemory
 	#emit LOAD.S.pri    addr
 	#emit SUB
-	#emit SHR.C.pri     2
+	#emit SHR.C.pri     __COMPILER_CELL_SHIFT
 	#emit RETN
 	return Alloc:0;
 }

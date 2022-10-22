@@ -80,8 +80,8 @@ Optional plugins:
 // functions.  We thus need to be exceptionally careful about the code run in
 // them.  They need to set the parameters (since there was no value pushed), and
 // preserve both `pri` and `alt` to pass to the child implementation.
-#define @lctrl(%0)%1(%2) _F<@y_L,%0>(); _F<@y_L,%0>() { return %1(0, 0); } %1(%2)
-#define @sctrl(%0)%1(%2) _F<@y_S,%0>(); _F<@y_S,%0>() { %1(0, 0); } %1(%2)
+#define @lctrl(%0)%1(%2) _F<@y_L>%0(); _F<@y_L>%0() { return %1(0, 0); } %1(%2)
+#define @sctrl(%0)%1(%2) _F<@y_S>%0(); _F<@y_S>%0() { %1(0, 0); } %1(%2)
 
 // The code found in the function.  Replaces everything, including `PROC` (so
 // there is no frame update yet):
@@ -321,7 +321,7 @@ static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
 	new
 		ptr,
 		name[FUNCTION_LENGTH];
-	format(name, sizeof (name), #_F<@y_L,%d>,reg);//NOSPACE!
+	format(name, sizeof (name), #_F<@y_L>%d,reg);//NOSPACE!
 	if (AMX_GetPublicPointer(0, ptr, name, true))
 	{
 		@emit CALL.abs         ptr + __4_cells
@@ -350,7 +350,7 @@ static stock CTRL_FoundSCTRL(const scanner[CodeScanner])
 	new
 		ptr,
 		name[FUNCTION_LENGTH];
-	format(name, sizeof (name), #_F<@y_S,%d>,reg);//NOSPACE!
+	format(name, sizeof (name), #_F<@y_S>%d,reg);//NOSPACE!
 	if (AMX_GetPublicPointer(0, ptr, name, true))
 	{
 		@emit CALL.abs         ptr + __4_cells

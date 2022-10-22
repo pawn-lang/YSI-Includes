@@ -486,12 +486,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 				for ( ; ; )
 				{
 					Debug_Print7("Looking for: %s, %d, %d, %d", pattern, idx, mid, count);
-					#emit LREF.S.pri                pos
-					#emit CONST.alt                 0xFFFFFFFF
-					#emit AND
-					#emit LOAD.alt                  AMX_BASE_ADDRESS
-					#emit ADD
-					#emit STOR.S.pri                addr
+					addr = __32(AMX_Read(pos)) + AMX_BASE_ADDRESS;
 					Debug_Code7{AMX_ReadString(addr, str);}
 					Debug_Print7("    %d, %d, %s", pos, addr, Unpack(str));
 					Debug_Print7("    %08x, %08x, %d", quick, Cell_ReverseBytes(AMX_Read(addr)), Cell_ReverseBytes(AMX_Read(addr)) - quick);
@@ -545,12 +540,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 			str[FUNCTION_LENGTH];
 		while (idx++ < count)
 		{
-			#emit LREF.S.pri                pos
-			#emit CONST.alt                 0xFFFFFFFF
-			#emit AND
-			#emit LOAD.alt                  AMX_BASE_ADDRESS
-			#emit ADD
-			#emit STOR.S.pri                addr
+			addr = __32(AMX_Read(pos)) + AMX_BASE_ADDRESS;
 			if (addr != AMX_BASE_ADDRESS)
 			{
 				if (pattern[0] == '\0')
@@ -991,14 +981,7 @@ stock AMX_ReadLength(addr)
 
 stock AMX_GetStringFromEntry(tableEntry, str[], size = sizeof (str))
 {
-	tableEntry += cellbytes;
-	#emit LREF.S.pri                tableEntry
-	#emit CONST.alt                 0xFFFFFFFF
-	#emit AND
-	#emit LOAD.alt                  AMX_BASE_ADDRESS
-	#emit ADD
-	#emit STOR.S.pri                tableEntry
-	AMX_ReadString(tableEntry, str, size);
+	AMX_ReadString(__32(AMX_Read(tableEntry + cellbytes)) + AMX_BASE_ADDRESS, str, size);
 }
 
 stock AMX_ReadString(addr, str[], len = sizeof (str))
@@ -1260,14 +1243,7 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 		if (value & 0x3FFFFFFF == tag & 0x3FFFFFFF)
 		{
 			// Found the tag, get the name.
-			buffer += cellbytes;
-			#emit LREF.S.pri                buffer
-			#emit CONST.alt                 0xFFFFFFFF
-			#emit AND
-			#emit LOAD.alt                  AMX_BASE_ADDRESS
-			#emit ADD
-			#emit STOR.S.pri                buffer
-			AMX_ReadString(buffer, name, len);
+			AMX_ReadString(__32(AMX_Read(buffer + cellbytes)) + AMX_BASE_ADDRESS, name, len);
 			strunpack(name, name, len);
 		}
 	}
@@ -1298,9 +1274,9 @@ stock AMX_DumpHeader()
 
 #if cellbits == 64
 	// Extend the prefix to 8 bytes as simply as possible.
-	#define _F<%0,%1> %00000%1
+	#define _F<%0> %00000
 #elseif cellbits == 32
-	#define _F<%0,%1> %0%1
+	#define _F<%0> %0
 #else
 	#error Unsupported `cellbits`.
 #endif

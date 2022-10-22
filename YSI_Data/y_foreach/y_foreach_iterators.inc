@@ -556,9 +556,21 @@ stock Iter_All_Internal(const array[], size, value)
 	
 	public OnPlayerDisconnect(playerid, reason)
 	{
-		new ret = Iter_OnPlayerDisconnect(playerid, reason);
-		YSI_SetTimerEx__("Iter_OPDCInternal", 0, false, "i", playerid);
-		return ret;
+			new ret = Iter_OnPlayerDisconnect(playerid, reason);
+		#if _FOREACH_BOTS
+			Iter_Remove(Character, playerid);
+			if (IsPlayerNPC(playerid))
+			{
+				Iter_Remove(Bot, playerid);
+			}
+			else
+		#endif
+			{
+		#if _FOREACH_PLAYERS
+				Iter_Remove(Player, playerid);
+		#endif
+			}
+			return ret;
 	}
 
 	#if defined _ALS_OnPlayerDisconnect
@@ -577,27 +589,6 @@ stock Iter_All_Internal(const array[], size, value)
 	 * </remarks>
 	 *//*--------------------------------------------------------------------**/
 	
-	public Iter_OPDCInternal(playerid)
-	{
-		if (IsPlayerConnected(playerid))
-		{
-			return;
-		}
-		#if _FOREACH_BOTS
-			Iter_Remove(Character, playerid);
-			if (IsPlayerNPC(playerid))
-			{
-				Iter_Remove(Bot, playerid);
-			}
-			else
-		#endif
-			{
-		#if _FOREACH_PLAYERS
-				Iter_Remove(Player, playerid);
-		#endif
-			}
-	}
-
 	#if _FOREACH_STREAMED
 		public OnPlayerStreamIn(playerid, forplayerid)
 		{

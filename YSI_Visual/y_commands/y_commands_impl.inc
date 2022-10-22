@@ -1443,7 +1443,7 @@ HOOK__ OnYSIInit()
 	{
 		// Add the command name and pointer, but skip the leading "@yC_".
 		Debug_Print6("Command_OnYSIInit: Adding %d", entryPublic);
-		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entryPublic + 4), buffer),
+		AMX_GetStringFromEntry(entryPublic, buffer),
 		// buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00),
 		buffer[0] = _C<@_yC>,
 		id2 = funcidx(buffer);

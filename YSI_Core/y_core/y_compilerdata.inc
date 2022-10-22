@@ -81,6 +81,9 @@ Optional plugins:
 #pragma tabsize 4
 #define tabsize%00%0\10;%0 _DUMMY_do_not_use_tabsize_0
 
+// For consistency.
+const __debug = debug;
+
 // Enable `P:D(func())` for forcing function-like macros in to documentation.
 // For example:
 //   
@@ -114,6 +117,15 @@ Optional plugins:
 
 #if YSI_OPTIONAL(C)
 	#define C:%1{%2} Debug_Code%1{%2}
+#endif
+
+#if charbits != 8
+	#error YSI assumes `charbits` is 8.
+#endif
+
+// Should be an inbuilt constant!
+#if !defined cellbytes
+	const cellbytes = cellbits / charbits;
 #endif
 
 // This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
@@ -201,6 +213,7 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 #define __COMPILER_PRAGMA (0)
 #define __COMPILER___EMIT_U (0)
 #define __COMPILER_FUNC_DECL_BUG (0)
+#define __COMPILER_ADDRESSOF (0)
 
 #define __COMPILER_STATIC_ENUM enum
 #define __COMPILER_CONST_STATIC const
@@ -289,6 +302,9 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 	#if __PawnBuild >= 10
 		#undef __COMPILER___EMIT_U
 		#define __COMPILER___EMIT_U (1)
+
+		#undef __COMPILER_ADDRESSOF
+		#define __COMPILER_ADDRESSOF (1)
 	#endif
 	// Disable `__COMPILER_PRAGMA` for now, while there's no `PROC` generated.
 	#if __PawnBuild >= 11
@@ -415,7 +431,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __pragma("%0"%1) __pragma_%0(%1)
 
 	// The only two `__pragma`s we can fake.
-	#define __pragma_naked() return 0 //__COMPILER_DEFAULT
+	#define __pragma_naked(); {return 0;} //__COMPILER_DEFAULT
 	#define __pragma_unused(,%0) H@(%0)
 
 	// Unimplemented errors.
@@ -440,8 +456,15 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	forward __pragma_ctrlchar(character);
 	#define __pragma_ctrlchar(,%0) __pragma_ctrlchar(%0)
 
-	forward __pragma_deprecated(const string:symbol[]);
-	#define __pragma_deprecated(,%0) __pragma_deprecated(#%0)
+	// The best warning I can give.
+	#define __pragma_deprecated(,%0); {new deprecated_%0=__deprecated(#%0);}
+
+	#pragma deprecated The parameter is deprecated.
+	stock __deprecated(const symbol[])
+	{
+		return 0;
+	}
+	#define deprecated_%0\32;%1= deprecated_%1=
 
 	forward __pragma_dynamic(ram);
 	#define __pragma_dynamic(,%0) __pragma_dynamic(%0)
@@ -493,6 +516,10 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 // Blank function that does nothing except returns.
 #define __COMPILER_UNUSED(%0) __pragma("unused", %0)
 #define __COMPILER_NAKED() __pragma("naked")
+
+#if defined __optimization
+	const __optimisation = __optimization;
+#endif
 
 #if __COMPILER_MODIFIED
 	#if defined YSI_TESTS
@@ -647,6 +674,68 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	
 	#pragma warning pop
 	
+	#if __PawnBuild >= 10 && !defined __optimisation
+		// Requires __addressof.
+		forward __CompilerAddress1();
+		forward __CompilerAddress2(a, b);
+
+		public __CompilerAddress1()
+		{
+			__CompilerAddress2(1, 2);
+			// Function size in cells for various (-O, -d) combinations:
+			// 0, 0 = 13
+			// 0, 1 = 14
+			// 0, 2 = 15
+			// 1, 0 = 11
+			// 1, 1 = 12
+			// 1, 2 = 13
+			// 2, 0 = 10
+			// 2, 1 = 11
+			// 2, 2 = 12
+		}
+
+		public __CompilerAddress2(a, b)
+		{
+		}
+
+		const __CompilerAddress = __addressof(__CompilerAddress2) - __addressof(__CompilerAddress1);
+
+		#if __debug == 0
+			#if __CompilerAddress == 13 * cellbytes
+				const __optimisation = 0;
+			#elseif __CompilerAddress == 11 * cellbytes
+				const __optimisation = 1;
+			#elseif __CompilerAddress == 10 * cellbytes
+				const __optimisation = 2;
+			#else
+				#error Unknown optimisation level.
+			#endif
+		#elseif __debug == 1
+			#if __CompilerAddress == 14 * cellbytes
+				const __optimisation = 0;
+			#elseif __CompilerAddress == 12 * cellbytes
+				const __optimisation = 1;
+			#elseif __CompilerAddress == 11 * cellbytes
+				const __optimisation = 2;
+			#else
+				#error Unknown optimisation level.
+			#endif
+		#elseif __debug == 2
+			#if __CompilerAddress == 15 * cellbytes
+				const __optimisation = 0;
+			#elseif __CompilerAddress == 13 * cellbytes
+				const __optimisation = 1;
+			#elseif __CompilerAddress == 12 * cellbytes
+				const __optimisation = 2;
+			#else
+				#error Unknown optimisation level.
+			#endif
+		#else
+			// Optimisations are disabled with `-d3`.
+			const __optimisation = 0;
+		#endif
+	#endif
+	
 	// Disable the warning for `const &var`.
 	#define __COMPILER_CONST_REF (1)
 #else
@@ -719,30 +808,32 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	
 	stock __CompilerStringReturn(const str[], size = sizeof (str), dummy = 0)
 	{
-		// Only needed on old compilers.
-		assert(cellbits == 32);
 		#pragma unused dummy
-		#emit PUSH.S       size   // Push the first parameter.
-		#emit PUSH.S       str    // Push the second parameter.
-		#emit LOAD.S.alt   0      // Load the previous frame pointer.
-		#emit MOVE.pri            // Copy the pointer.
-		#emit ADD.C        8      // Get the pointer to the parameter count.
-		#emit LOAD.I              // Load the parameter count.
-		#emit ADD.C        12     // Adjust for the function header size.
-		#emit ADD                 // Get the pointer to after the parameters.
-		#emit LOAD.I              // Load the pointer in the (secret) parameter.
-		#emit PUSH.pri            // Push the destination.
-		#emit MOVE.alt            // Make a copy of the pointer.
-		#emit ZERO.pri            // `pri = 0`.
-		#emit STOR.I              // Set the first cell of the target to NULL.
-		#emit PUSH.C       12     // Push the parameters for `StrCpy`.
-		#emit SYSREQ.C     strcat // Call `strcat`.
-		#emit LOAD.S.pri   0      // Reload the previous frame pointer.
-		#emit SCTRL        __stk      // Wipe out the stack.
-		#emit SCTRL        __frm      // Wipe out the frame (go to parent context).
-		#emit RETN                // Return (now within the parent context).
+		#emit PUSH.S       size           // Push the first parameter.
+		#emit PUSH.S       str            // Push the second parameter.
+		#emit LOAD.S.alt   __frame_offset // Load the previous frame pointer.
+		#emit MOVE.pri                    // Copy the pointer.
+		#emit ADD.C        __args_offset  // Get the pointer to the parameter count.
+		#emit LOAD.I                      // Load the parameter count.
+		#emit ADD.C        __3_cells      // Adjust for the function header size.
+		#emit ADD                         // Get the pointer to after the parameters.
+		#emit LOAD.I                      // Load the pointer in the (secret) parameter.
+		#emit PUSH.pri                    // Push the destination.
+		#emit MOVE.alt                    // Make a copy of the pointer.
+		#emit ZERO.pri                    // `pri = 0`.
+		#emit STOR.I                      // Set the first cell of the target to NULL.
+		#emit PUSH.C       __3_cells      // Push the parameters for `StrCpy`.
+		#emit SYSREQ.C     strcat         // Call `strcat`.
+		#emit LOAD.S.pri   __frame_offset // Reload the previous frame pointer.
+		#emit SCTRL        __stk          // Wipe out the stack.
+		#emit SCTRL        __frm          // Wipe out the frame (go to parent context).
+		#emit RETN                        // Return (now within the parent context).
 		return 0;
 	}
+#endif
+#if !defined __optimisation
+	// Unknown optimisation level.
+	const __optimisation = -1;
 #endif
 
 #define __COMPILER_ARRAY_RETURN __COMPILER_STRING_RETURN	
@@ -753,30 +844,6 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 //	#define const%0:%1[%2]=%3:%4; const _yI@%1[%2]=%4,%0:%1[sizeof(_yI@%1)];PREINIT__ %1()_YSI_ConstCpy__(_:(%1),(_yI@%1),0,sizeof(%1)*4,sizeof(%1));
 //#endif
 
-// Consistent naming of compiler defined values. 
-#define __Line __line
-#define __File __file
-#define __Date __date
-#define __Time __time
-#define __Compat __compat
-#define __Emit __emit
-#define __CellBytes cellbytes
-#define __CellBits cellbits
-#define __CellBits cellbits
-#define __CharBits charbits
-#define __CharMax charmax
-#define __UCharMax ucharmax
-
-// And the other way
-#define __cellbytes cellbytes
-#define __cellbits cellbits
-#define __cell_bytes cellbytes
-#define __cell_bits cellbits
-#define __char_bits charbits
-#define __char_max charmax
-#define __uchar_max ucharmax
-#define __pawn __Pawn
-
 // Don't define `__PawnBuild` if it doesn't exist, but do create an alternate
 // symbol (with a consistent naming scheme) that always exists.
 #if defined __PawnBuild
@@ -785,14 +852,29 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __pawn_build 0
 #endif
 
-// Should be an inbuilt constant!
-#if !defined cellbytes
-	const cellbytes = cellbits / charbits;
-#endif
+// Consistent naming of compiler defined values. 
+#define __Line __line
+#define __File __file
+#define __Date __date
+#define __Time __time
+#define __Compat __compat
+#define __Emit __emit
+const __CellBytes = cellbytes;
+const __CellBits = cellbits;
+const __CellBits = cellbits;
+const __CharBits = charbits;
+const __CharMax = charmax;
+const __UCharMax = ucharmax;
 
-#if charbits != 8
-	#error YSI assumes `charbits` is 8.
-#endif
+// And the other way
+const __cellbytes = cellbytes;
+const __cellbits = cellbits;
+const __cell_bytes = cellbytes;
+const __cell_bits = cellbits;
+const __char_bits = charbits;
+const __char_max = charmax;
+const __uchar_max = ucharmax;
+const __pawn = __Pawn;
 
 const __COMPILER_CELL_BYTES = cellbytes;
 const __COMPILER_CELL_BITS  = cellbits;
