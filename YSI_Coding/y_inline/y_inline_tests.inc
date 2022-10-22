@@ -549,9 +549,11 @@ static stock
 {
 	new
 		Function:f0 = GetRemoteFunction("MyTesterFunc", "m"),
-		Function:f1 = GetRemoteFunction("MyTesterFunc", "m");
+		Function:f1 = GetRemoteFunction("MyTesterFunc", "m"),
+		Function:f2 = GetRemoteFunction("MyTesterFunc", "m"),
+		Function:f3 = GetRemoteFunction("MyTesterFunc", "n");
 //	ASSERT_EQ(f0, f1);
-	ASSERT_NE(GetRemoteFunction("MyTesterFunc", "m"), GetRemoteFunction("MyTesterFunc", "n"));
+	ASSERT_NE(_:f2, _:f3);
 }
 
 forward y_inline_Remote1(v);
@@ -621,6 +623,101 @@ public y_inline_Remote1(v)
 	ASSERT_EQ(YSI_g_sRemoteTestVar, 11);
 	ASSERT_EQ(CallStoredFunction(f, 9), -1);
 	ASSERT_EQ(YSI_g_sRemoteTestVar, 9);
+}
+
+@test(.group = "y_inline") y_inline_Remote3()
+{
+	new
+		Function:a = GetRemoteFunction("MyTesterFunc", "a"),
+		Function:b = GetRemoteFunction("MyTesterFunc", "b"),
+		Function:c = GetRemoteFunction("MyTesterFunc", "c"),
+		Function:d = GetRemoteFunction("MyTesterFunc", "d"),
+		Function:e = GetRemoteFunction("MyTesterFunc", "e"),
+		Function:f = GetRemoteFunction("MyTesterFunc", "f"),
+		Function:g = GetRemoteFunction("MyTesterFunc", "g"),
+		Function:h = GetRemoteFunction("MyTesterFunc", "h"),
+		Function:i = GetRemoteFunction("MyTesterFunc", "i"),
+		Function:j = GetRemoteFunction("MyTesterFunc", "j"),
+		Function:k = GetRemoteFunction("MyTesterFunc", "k"),
+		Function:l = GetRemoteFunction("MyTesterFunc", "l");
+	ASSERT_NZ(_:a);
+	ASSERT_NZ(_:b);
+	ASSERT_NZ(_:c);
+	ASSERT_NZ(_:d);
+	ASSERT_NZ(_:e);
+	ASSERT_NZ(_:f);
+	ASSERT_NZ(_:g);
+	ASSERT_NZ(_:h);
+	ASSERT_NZ(_:i);
+	ASSERT_NZ(_:j);
+	ASSERT_NZ(_:k);
+	ASSERT_NZ(_:l);
+	ASSERT_NE(_:a, _:b);
+	ASSERT_NE(_:a, _:c);
+	ASSERT_NE(_:a, _:d);
+	ASSERT_NE(_:a, _:e);
+	ASSERT_NE(_:a, _:f);
+	ASSERT_NE(_:a, _:g);
+	ASSERT_NE(_:a, _:h);
+	ASSERT_NE(_:a, _:i);
+	ASSERT_NE(_:a, _:j);
+	ASSERT_NE(_:a, _:k);
+	ASSERT_NE(_:a, _:l);
+	ASSERT_NE(_:b, _:c);
+	ASSERT_NE(_:b, _:d);
+	ASSERT_NE(_:b, _:e);
+	ASSERT_NE(_:b, _:f);
+	ASSERT_NE(_:b, _:g);
+	ASSERT_NE(_:b, _:h);
+	ASSERT_NE(_:b, _:i);
+	ASSERT_NE(_:b, _:j);
+	ASSERT_NE(_:b, _:k);
+	ASSERT_NE(_:b, _:l);
+	ASSERT_NE(_:c, _:d);
+	ASSERT_NE(_:c, _:e);
+	ASSERT_NE(_:c, _:f);
+	ASSERT_NE(_:c, _:g);
+	ASSERT_NE(_:c, _:h);
+	ASSERT_NE(_:c, _:i);
+	ASSERT_NE(_:c, _:j);
+	ASSERT_NE(_:c, _:k);
+	ASSERT_NE(_:c, _:l);
+	ASSERT_NE(_:d, _:e);
+	ASSERT_NE(_:d, _:f);
+	ASSERT_NE(_:d, _:g);
+	ASSERT_NE(_:d, _:h);
+	ASSERT_NE(_:d, _:i);
+	ASSERT_NE(_:d, _:j);
+	ASSERT_NE(_:d, _:k);
+	ASSERT_NE(_:d, _:l);
+	ASSERT_NE(_:e, _:f);
+	ASSERT_NE(_:e, _:g);
+	ASSERT_NE(_:e, _:h);
+	ASSERT_NE(_:e, _:i);
+	ASSERT_NE(_:e, _:j);
+	ASSERT_NE(_:e, _:k);
+	ASSERT_NE(_:e, _:l);
+	ASSERT_NE(_:f, _:g);
+	ASSERT_NE(_:f, _:h);
+	ASSERT_NE(_:f, _:i);
+	ASSERT_NE(_:f, _:j);
+	ASSERT_NE(_:f, _:k);
+	ASSERT_NE(_:f, _:l);
+	ASSERT_NE(_:g, _:h);
+	ASSERT_NE(_:g, _:i);
+	ASSERT_NE(_:g, _:j);
+	ASSERT_NE(_:g, _:k);
+	ASSERT_NE(_:g, _:l);
+	ASSERT_NE(_:h, _:i);
+	ASSERT_NE(_:h, _:j);
+	ASSERT_NE(_:h, _:k);
+	ASSERT_NE(_:h, _:l);
+	ASSERT_NE(_:i, _:j);
+	ASSERT_NE(_:i, _:k);
+	ASSERT_NE(_:i, _:l);
+	ASSERT_NE(_:j, _:k);
+	ASSERT_NE(_:j, _:l);
+	ASSERT_NE(_:k, _:l);
 }
 
 @test(.group = "y_inline") CallStoredFunction0()
