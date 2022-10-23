@@ -164,6 +164,7 @@ enum ALS
 
 // ALS Callback.
 #define _ALS_C_INT<%0,%2>(%3) ALS_MAKE<..._On%0>(ALS_RS_%3);
+#define ALS_D_INT<%0,%2>(%3) On%0(ALS_DS_%3)
 #define ALS_C_INT<%0,%2>(%3) return _ALS_C_INT<%0,%2>(%3)
 #define ALS_DC_(%0)%1(%2) %1(S%0%2)
 // ALS Forward.
@@ -414,6 +415,21 @@ enum ALS
 #define ALS_RS_const%9: ALS_RS_%9:
 #define ALS_RS_%0\32; ALS_RS_
 
+#define ALS_DS_more:%0,         0,ALS_DS_
+#define ALS_DS_string:%0[],     __ARR,ALS_DS_
+#define ALS_DS_Float:%0,        0.0,ALS_DS_
+#define ALS_DS_tag:%3:%0,       %3:0,ALS_DS_
+#define ALS_DS_array:%0[%1],    __ARR,ALS_DS_
+#define ALS_DS_end:%0)          0)
+#define ALS_DS_none:)           )
+#define ALS_DS_end_string:%0[]) __ARR)
+#define ALS_DS_end_Float:%0)    0.0)
+#define ALS_DS_end_tag:%3:%0)   %3:0)
+#define ALS_DS_end_array:%0[%1]) __ARR)
+
+#define ALS_DS_const%9: ALS_DS_%9:
+#define ALS_DS_%0\32; ALS_DS_
+
 #define ALS_DO:%9<%0> ALS_DO_%0<%9>
 #define ALS_MAIN_RET_ ALS_MRET_
 #define ALS_main_:%0( ALS_DC_(C)ALS_MAIN_RET_(M) public %0(
@@ -423,4 +439,105 @@ enum ALS
 #define ALS_FORWARD<%0> ALS_DO:ALS_F_INT<%0>
 
 #define call%0On%1(%2) ALS_DO:ALS_G_INT<%1>(%2)
+
+// Convert to the `CALL@` syntax from `addressof()`.
+#define CALL@OnScriptInit ALS_DO_ScriptInit<ALS_D_INT>
+#define CALL@OnScriptExit ALS_DO_ScriptExit<ALS_D_INT>
+#define CALL@OnGameModeInit ALS_DO_GameModeInit<ALS_D_INT>
+#define CALL@OnGameModeExit ALS_DO_GameModeExit<ALS_D_INT>
+#define CALL@OnFilterScriptInit ALS_DO_FilterScriptInit<ALS_D_INT>
+#define CALL@OnFilterScriptExit ALS_DO_FilterScriptExit<ALS_D_INT>
+#define CALL@OnPlayerConnect ALS_DO_PlayerConnect<ALS_D_INT>
+#define CALL@OnPlayerDisconnect ALS_DO_PlayerDisconnect<ALS_D_INT>
+#define CALL@OnPlayerSpawn ALS_DO_PlayerSpawn<ALS_D_INT>
+#define CALL@OnPlayerDeath ALS_DO_PlayerDeath<ALS_D_INT>
+#define CALL@OnVehicleSpawn ALS_DO_VehicleSpawn<ALS_D_INT>
+#define CALL@OnVehicleDeath ALS_DO_VehicleDeath<ALS_D_INT>
+#define CALL@OnPlayerText ALS_DO_PlayerText<ALS_D_INT>
+#define CALL@OnPlayerCommandText ALS_DO_PlayerCommandText<ALS_D_INT>
+#define CALL@OnPlayerRequestClass ALS_DO_PlayerRequestClass<ALS_D_INT>
+#define CALL@OnPlayerEnterVehicle ALS_DO_PlayerEnterVehicle<ALS_D_INT>
+#define CALL@OnPlayerExitVehicle ALS_DO_PlayerExitVehicle<ALS_D_INT>
+#define CALL@OnPlayerStateChange ALS_DO_PlayerStateChange<ALS_D_INT>
+#define CALL@OnPlayerEnterCheckpoint ALS_DO_PlayerEnterCheckpoint<ALS_D_INT>
+#define CALL@OnPlayerLeaveCheckpoint ALS_DO_PlayerLeaveCheckpoint<ALS_D_INT>
+#define CALL@OnPlayerEnterRaceCheckpoint ALS_DO_PlayerEnterRaceCheckpoint<ALS_D_INT>
+#define CALL@OnPlayerLeaveRaceCheckpoint ALS_DO_PlayerLeaveRaceCheckpoint<ALS_D_INT>
+#define CALL@OnRconCommand ALS_DO_RconCommand<ALS_D_INT>
+#define CALL@OnPlayerRequestSpawn ALS_DO_PlayerRequestSpawn<ALS_D_INT>
+#define CALL@OnObjectMoved ALS_DO_ObjectMoved<ALS_D_INT>
+#define CALL@OnPlayerObjectMoved ALS_DO_PlayerObjectMoved<ALS_D_INT>
+#define CALL@OnPlayerPickUpPickup ALS_DO_PlayerPickUpPickup<ALS_D_INT>
+#define CALL@OnVehicleMod ALS_DO_VehicleMod<ALS_D_INT>
+#define CALL@OnEnterExitModShop ALS_DO_EnterExitModShop<ALS_D_INT>
+#define CALL@OnVehiclePaintjob ALS_DO_VehiclePaintjob<ALS_D_INT>
+#define CALL@OnVehicleRespray ALS_DO_VehicleRespray<ALS_D_INT>
+#define CALL@OnVehicleDamageStatusUpdate ALS_DO_VehicleDamageStatusUpdate<ALS_D_INT>
+#define CALL@OnPlayerSelectedMenuRow ALS_DO_PlayerSelectedMenuRow<ALS_D_INT>
+#define CALL@OnPlayerExitedMenu ALS_DO_PlayerExitedMenu<ALS_D_INT>
+#define CALL@OnPlayerInteriorChange ALS_DO_PlayerInteriorChange<ALS_D_INT>
+#define CALL@OnPlayerKeyStateChange ALS_DO_PlayerKeyStateChange<ALS_D_INT>
+#define CALL@OnRconLoginAttempt ALS_DO_RconLoginAttempt<ALS_D_INT>
+#define CALL@OnPlayerUpdate ALS_DO_PlayerUpdate<ALS_D_INT>
+#define CALL@OnPlayerStreamIn ALS_DO_PlayerStreamIn<ALS_D_INT>
+#define CALL@OnPlayerStreamOut ALS_DO_PlayerStreamOut<ALS_D_INT>
+#define CALL@OnVehicleStreamIn ALS_DO_VehicleStreamIn<ALS_D_INT>
+#define CALL@OnVehicleStreamOut ALS_DO_VehicleStreamOut<ALS_D_INT>
+#define CALL@OnDialogResponse ALS_DO_DialogResponse<ALS_D_INT>
+#define CALL@OnPlayerClickPlayer ALS_DO_PlayerClickPlayer<ALS_D_INT>
+#define CALL@OnPlayerLogin ALS_DO_PlayerLogin<ALS_D_INT>
+#define CALL@OnPlayerLogout ALS_DO_PlayerLogout<ALS_D_INT>
+#define CALL@OnPlayerTakeDamage ALS_DO_PlayerTakeDamage<ALS_D_INT>
+#define CALL@OnPlayerGiveDamage ALS_DO_PlayerGiveDamage<ALS_D_INT>
+#define CALL@OnPlayerClickMap ALS_DO_PlayerClickMap<ALS_D_INT>
+#define CALL@OnPlayerCommandReceived ALS_DO_PlayerCommandReceived<ALS_D_INT>
+#define CALL@OnPlayerCommandPerformed ALS_DO_PlayerCommandPerformed<ALS_D_INT>
+#define CALL@OnUnoccupiedVehicleUpdate ALS_DO_UnoccupiedVehicleUpdate<ALS_D_INT>
+// 0.3e
+#define CALL@OnPlayerClickTextDraw ALS_DO_PlayerClickTextDraw<ALS_D_INT>
+#define CALL@OnPlayerClickPlayerTextDraw ALS_DO_PlayerClickPlayerTextDraw<ALS_D_INT>
+#define CALL@OnPlayerEditObject ALS_DO_PlayerEditObject<ALS_D_INT>
+#define CALL@OnPlayerEditAttachedObject ALS_DO_PlayerEditAttachedObject<ALS_D_INT>
+#define CALL@OnPlayerSelectObject ALS_DO_PlayerSelectObject<ALS_D_INT>
+// YSI
+#define CALL@OnPlayerEnterArea ALS_DO_PlayerEnterArea<ALS_D_INT>
+#define CALL@OnPlayerLeaveArea ALS_DO_PlayerLeaveArea<ALS_D_INT>
+#define CALL@OnPlayerFinishRace ALS_DO_PlayerFinishRace<ALS_D_INT>
+#define CALL@OnPlayerExitRace ALS_DO_PlayerExitRace<ALS_D_INT>
+#define CALL@OnRaceEnd ALS_DO_RaceEnd<ALS_D_INT>
+#define CALL@OnMasterSystemClose ALS_DO_MasterSystemClose<ALS_D_INT>
+// Streamer plugins.
+#define CALL@OnDynamicObjectMoved ALS_DO_DynamicObjectMoved<ALS_D_INT>
+#define CALL@OnPlayerEditDynamicObject ALS_DO_PlayerEditDynamicObject<ALS_D_INT>
+#define CALL@OnPlayerSelectDynamicObject ALS_DO_PlayerSelectDynamicObject<ALS_D_INT>
+#define CALL@OnPlayerPickUpDynamicPickup ALS_DO_PlayerPickUpDynamicPickup<ALS_D_INT>
+#define CALL@OnPlayerEnterDynamicCP ALS_DO_PlayerEnterDynamicCP<ALS_D_INT>
+#define CALL@OnPlayerLeaveDynamicCP ALS_DO_PlayerLeaveDynamicCP<ALS_D_INT>
+#define CALL@OnPlayerEnterDynamicRaceCP ALS_DO_PlayerEnterDynamicRaceCP<ALS_D_INT>
+#define CALL@OnPlayerLeaveDynamicRaceCP ALS_DO_PlayerLeaveDynamicRaceCP<ALS_D_INT>
+#define CALL@OnPlayerEnterDynamicArea ALS_DO_PlayerEnterDynamicArea<ALS_D_INT>
+#define CALL@OnPlayerLeaveDynamicArea ALS_DO_PlayerLeaveDynamicArea<ALS_D_INT>
+// Alternates
+#define CALL@OnPlayerLeaveRaceCP ALS_DO_PlayerLeaveRaceCP<ALS_D_INT>
+#define CALL@OnPlayerEnterRaceCP ALS_DO_PlayerEnterRaceCP<ALS_D_INT>
+#define CALL@OnVehicleDamageStatusUpd ALS_DO_VehicleDamageStatusUpd<ALS_D_INT>
+#define CALL@OnUnoccupiedVehicleUpd ALS_DO_UnoccupiedVehicleUpd<ALS_D_INT>
+#define CALL@OnPlayerClickPlayerTD ALS_DO_PlayerClickPlayerTD<ALS_D_INT>
+#define CALL@OnPlayerEditAttachedObj ALS_DO_PlayerEditAttachedObj<ALS_D_INT>
+#define CALL@OnPlayerCmdPerformed ALS_DO_PlayerCmdPerformed<ALS_D_INT>
+#define CALL@OnPlayerEditDynObject ALS_DO_PlayerEditDynObject<ALS_D_INT>
+#define CALL@OnPlayerSelectDynObject ALS_DO_PlayerSelectDynObject<ALS_D_INT>
+#define CALL@OnPlayerPickUpDynPickup ALS_DO_PlayerPickUpDynPickup<ALS_D_INT>
+#define CALL@OnPlayerEnterDynRaceCP ALS_DO_PlayerEnterDynRaceCP<ALS_D_INT>
+#define CALL@OnPlayerLeaveDynRaceCP ALS_DO_PlayerLeaveDynRaceCP<ALS_D_INT>
+#define CALL@OnPlayerEnterDynArea ALS_DO_PlayerEnterDynArea<ALS_D_INT>
+#define CALL@OnPlayerLeaveDynArea ALS_DO_PlayerLeaveDynArea<ALS_D_INT>
+// Added 05/07/17
+#define CALL@OnPlayerWeaponShot ALS_DO_PlayerWeaponShot<ALS_D_INT>
+#define CALL@OnIncomingConnection ALS_DO_IncomingConnection<ALS_D_INT>
+#define CALL@OnTrailerUpdate ALS_DO_TrailerUpdate<ALS_D_INT>
+#define CALL@OnVehicleSirenStateChange ALS_DO_VehicleSirenStateChange<ALS_D_INT>
+#define CALL@OnPlayerGiveDamageActor ALS_DO_PlayerGiveDamageActor<ALS_D_INT>
+#define CALL@OnActorStreamIn ALS_DO_ActorStreamIn<ALS_D_INT>
+#define CALL@OnActorStreamOut ALS_DO_ActorStreamOut<ALS_D_INT>
 
