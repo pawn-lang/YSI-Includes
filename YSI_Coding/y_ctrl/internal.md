@@ -122,7 +122,7 @@ static stock
 	YSI_g_sBaseRelocation,
 	YSI_g_sLCTRLStubAddress;
 
-#define CALL@CTRL_LCTRLStub CTRL_LCTRLStub()
+#define CALL@CTRL_LCTRLStub%8() CTRL_LCTRLStub%8()
 ```
 
 These are both to do with `addressof`.  `addressof`, from *amx_assembly*, returns the address in the
@@ -204,7 +204,7 @@ CodeScanRun(scanner);
 
 `&CTRL_FoundLCTRL` is optional syntax for `addressof (CTRL_FoundLCTRL)` when the type of the
 function is known in advance, and when the receiving function (`CodeScanMatcherInit`) enables the
-syntax.  This is why `#define CALL@CTRL_FoundLCTRL CTRL_FoundLCTRL(something)` isn't needed.
+syntax.  This is why `#define CALL@CTRL_FoundLCTRL%8() CTRL_FoundLCTRL%8(something)` isn't needed.
 
 `CodeScanInit` declares the overall scanner.  `CodeScanMatcherInit` declares a single pattern.
 `CodeScanMatcherPattern` defines the pattern for the matcher.  `CodeScanAddMatcher` adds the

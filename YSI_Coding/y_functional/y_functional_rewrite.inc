@@ -104,27 +104,27 @@ stock LAM@1(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1)
 {
 	#pragma unused idx, pattern0, pattern1, pattern2, pattern3
 }
-#define CALL@LAM@1 LAM@1(1)
+#define CALL@LAM@1%8() LAM@1%8(1)
 
 stock LAM@2(par)
 {
 	#pragma unused par
 }
-#define CALL@LAM@2 LAM@2(1)
+#define CALL@LAM@2%8() LAM@2%8(1)
 
 stock LAM@0(idx = 0)
 {
 	#pragma unused idx
 	return 0;
 }
-#define CALL@LAM@0 LAM@0(1)
+#define CALL@LAM@0%8() LAM@0%8(1)
 
 stock LAM@5(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1, pattern4 = 1, pattern5 = 1, pattern6 = 1)
 {
 	#pragma unused idx, pattern0, pattern1, pattern2, pattern3, pattern4, pattern5, pattern6
 	return 0;
 }
-#define CALL@LAM@5 LAM@5(1)
+#define CALL@LAM@5%8() LAM@5%8(1)
 
 static stock Functional_FoundStart(const scanner[CodeScanner])
 {

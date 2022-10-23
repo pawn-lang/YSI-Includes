@@ -91,8 +91,8 @@ static stock
 	YSI_g_sLCTRLStubAddress,
 	YSI_g_sSCTRLStubAddress;
 
-#define CALL@CTRL_LCTRLStub CTRL_LCTRLStub()
-#define CALL@CTRL_SCTRLStub CTRL_SCTRLStub()
+#define CALL@CTRL_LCTRLStub%8() CTRL_LCTRLStub%8()
+#define CALL@CTRL_SCTRLStub%8() CTRL_SCTRLStub%8()
 
 public OnCodeInit()
 {

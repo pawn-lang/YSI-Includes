@@ -500,7 +500,7 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
-#elseif !defined AMX_TAG_LOCAL
+#elseif !defined prototypeof
 	#error Re-download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 

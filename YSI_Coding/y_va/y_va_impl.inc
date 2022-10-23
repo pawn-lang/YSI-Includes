@@ -85,7 +85,7 @@ static stock
 	YSI_g_sInitialised = 0,
 	YSI_g_sDoPushAddr = 0;
 
-#define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
+#define CALL@YVA2_DoPush%8() YVA2_DoPush%8(__minus1, __minus1, __minus1)
 stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 {
 	// We need to tell the real call how many parameters are being pushed, via
@@ -193,10 +193,10 @@ stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 
 // Enable `&YVA2_DummyPush` WITHOUT matching it within the scanner itself.
 #if __COMPILER_O2
-	#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
+	#define CALL@YVA2_DummyPush%8() YVA2_DummyPush%8(__minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1)
 	#define Y_VA_DUMMIES ,const dummy6=0,const dummy7=0,const dummy8=0,const dummy9=0,const dummy10=0,const dummy11=0
 #else
-	#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1, -1, -1)
+	#define CALL@YVA2_DummyPush%8() YVA2_DummyPush%8(__minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1, __minus1)
 	#define Y_VA_DUMMIES
 #endif
 // IF YOU EVER CHANGE THE NUMBER OF DUMMY PARAMETERS, DON'T FORGET TO CHANGE THE

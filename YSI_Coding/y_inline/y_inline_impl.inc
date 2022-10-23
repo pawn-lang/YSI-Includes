@@ -255,19 +255,19 @@ forward Callback_Release_(ResolvedAlloc:a);
 forward Inline_MaybeFree_(Alloc:slot);
 forward Inline_MaybeConst_(ResolvedAlloc:slot);
 
-#define CALL@I@F I@F()
-#define CALL@I@L I@L()
-#define CALL@I@K I@K(0)
-#define CALL@I@T I@T(__ARR)
+#define CALL@I@F%8() I@F%8()
+#define CALL@I@L%8() I@L%8()
+#define CALL@I@K%8() I@K%8(0)
+#define CALL@I@T%8() I@T%8(__ARR)
 
-#define CALL@Inline_UI_ Inline_UI_(__REF)
+#define CALL@Inline_UI_%8() Inline_UI_%8(__REF)
 
-#define CALL@Callback_Return_ Callback_Return_(0)
+#define CALL@Callback_Return_%8() Callback_Return_%8(0)
 
 static stock
 	YSI_g_sFakeE_INLINE_CALL[E_INLINE_CALL];
 	
-#define CALL@Callback_Claim_ Callback_Claim_(YSI_g_sFakeE_INLINE_CALL)
+#define CALL@Callback_Claim_%8() Callback_Claim_%8(YSI_g_sFakeE_INLINE_CALL)
 
 #define MAX_INLINE_PARAMETERS (32)
 
@@ -619,7 +619,7 @@ CHAIN_FORWARD:Inline_OnRuntimeError(code, &bool:suppress) = 1;
 #endif
 #define OnRuntimeError(%0) CHAIN_PUBLIC:Inline_OnRuntimeError(%0)
 
-#define CALL@Callback_CallHandler_ Callback_CallHandler_()
+#define CALL@Callback_CallHandler_%8() Callback_CallHandler_%8()
 
 public OnCodeInit()
 {
@@ -1944,7 +1944,7 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 	}
 }
 
-#define CALL@Inline_OnAsmError Inline_OnAsmError("", ASM_ERROR_NONE)
+#define CALL@Inline_OnAsmError%8() Inline_OnAsmError%8("", AsmError:0)
 
 static stock Inline_OnAsmError(const ctx[AsmContext], AsmError:error)
 {

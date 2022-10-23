@@ -164,7 +164,7 @@ enum ALS
 
 // ALS Callback.
 #define _ALS_C_INT<%0,%2>(%3) ALS_MAKE<..._On%0>(ALS_RS_%3);
-#define ALS_D_INT<%0,%2>(%3) On%0(ALS_DS_%3)
+#define ALS_D_INT%8<%0,%2>(%3) On%0%8(ALS_DS_%3)
 #define ALS_C_INT<%0,%2>(%3) return _ALS_C_INT<%0,%2>(%3)
 #define ALS_DC_(%0)%1(%2) %1(S%0%2)
 // ALS Forward.
@@ -441,103 +441,96 @@ enum ALS
 #define call%0On%1(%2) ALS_DO:ALS_G_INT<%1>(%2)
 
 // Convert to the `CALL@` syntax from `addressof()`.
-#define CALL@OnScriptInit ALS_DO_ScriptInit<ALS_D_INT>
-#define CALL@OnScriptExit ALS_DO_ScriptExit<ALS_D_INT>
-#define CALL@OnGameModeInit ALS_DO_GameModeInit<ALS_D_INT>
-#define CALL@OnGameModeExit ALS_DO_GameModeExit<ALS_D_INT>
-#define CALL@OnFilterScriptInit ALS_DO_FilterScriptInit<ALS_D_INT>
-#define CALL@OnFilterScriptExit ALS_DO_FilterScriptExit<ALS_D_INT>
-#define CALL@OnPlayerConnect ALS_DO_PlayerConnect<ALS_D_INT>
-#define CALL@OnPlayerDisconnect ALS_DO_PlayerDisconnect<ALS_D_INT>
-#define CALL@OnPlayerSpawn ALS_DO_PlayerSpawn<ALS_D_INT>
-#define CALL@OnPlayerDeath ALS_DO_PlayerDeath<ALS_D_INT>
-#define CALL@OnVehicleSpawn ALS_DO_VehicleSpawn<ALS_D_INT>
-#define CALL@OnVehicleDeath ALS_DO_VehicleDeath<ALS_D_INT>
-#define CALL@OnPlayerText ALS_DO_PlayerText<ALS_D_INT>
-#define CALL@OnPlayerCommandText ALS_DO_PlayerCommandText<ALS_D_INT>
-#define CALL@OnPlayerRequestClass ALS_DO_PlayerRequestClass<ALS_D_INT>
-#define CALL@OnPlayerEnterVehicle ALS_DO_PlayerEnterVehicle<ALS_D_INT>
-#define CALL@OnPlayerExitVehicle ALS_DO_PlayerExitVehicle<ALS_D_INT>
-#define CALL@OnPlayerStateChange ALS_DO_PlayerStateChange<ALS_D_INT>
-#define CALL@OnPlayerEnterCheckpoint ALS_DO_PlayerEnterCheckpoint<ALS_D_INT>
-#define CALL@OnPlayerLeaveCheckpoint ALS_DO_PlayerLeaveCheckpoint<ALS_D_INT>
-#define CALL@OnPlayerEnterRaceCheckpoint ALS_DO_PlayerEnterRaceCheckpoint<ALS_D_INT>
-#define CALL@OnPlayerLeaveRaceCheckpoint ALS_DO_PlayerLeaveRaceCheckpoint<ALS_D_INT>
-#define CALL@OnRconCommand ALS_DO_RconCommand<ALS_D_INT>
-#define CALL@OnPlayerRequestSpawn ALS_DO_PlayerRequestSpawn<ALS_D_INT>
-#define CALL@OnObjectMoved ALS_DO_ObjectMoved<ALS_D_INT>
-#define CALL@OnPlayerObjectMoved ALS_DO_PlayerObjectMoved<ALS_D_INT>
-#define CALL@OnPlayerPickUpPickup ALS_DO_PlayerPickUpPickup<ALS_D_INT>
-#define CALL@OnVehicleMod ALS_DO_VehicleMod<ALS_D_INT>
-#define CALL@OnEnterExitModShop ALS_DO_EnterExitModShop<ALS_D_INT>
-#define CALL@OnVehiclePaintjob ALS_DO_VehiclePaintjob<ALS_D_INT>
-#define CALL@OnVehicleRespray ALS_DO_VehicleRespray<ALS_D_INT>
-#define CALL@OnVehicleDamageStatusUpdate ALS_DO_VehicleDamageStatusUpdate<ALS_D_INT>
-#define CALL@OnPlayerSelectedMenuRow ALS_DO_PlayerSelectedMenuRow<ALS_D_INT>
-#define CALL@OnPlayerExitedMenu ALS_DO_PlayerExitedMenu<ALS_D_INT>
-#define CALL@OnPlayerInteriorChange ALS_DO_PlayerInteriorChange<ALS_D_INT>
-#define CALL@OnPlayerKeyStateChange ALS_DO_PlayerKeyStateChange<ALS_D_INT>
-#define CALL@OnRconLoginAttempt ALS_DO_RconLoginAttempt<ALS_D_INT>
-#define CALL@OnPlayerUpdate ALS_DO_PlayerUpdate<ALS_D_INT>
-#define CALL@OnPlayerStreamIn ALS_DO_PlayerStreamIn<ALS_D_INT>
-#define CALL@OnPlayerStreamOut ALS_DO_PlayerStreamOut<ALS_D_INT>
-#define CALL@OnVehicleStreamIn ALS_DO_VehicleStreamIn<ALS_D_INT>
-#define CALL@OnVehicleStreamOut ALS_DO_VehicleStreamOut<ALS_D_INT>
-#define CALL@OnDialogResponse ALS_DO_DialogResponse<ALS_D_INT>
-#define CALL@OnPlayerClickPlayer ALS_DO_PlayerClickPlayer<ALS_D_INT>
-#define CALL@OnPlayerLogin ALS_DO_PlayerLogin<ALS_D_INT>
-#define CALL@OnPlayerLogout ALS_DO_PlayerLogout<ALS_D_INT>
-#define CALL@OnPlayerTakeDamage ALS_DO_PlayerTakeDamage<ALS_D_INT>
-#define CALL@OnPlayerGiveDamage ALS_DO_PlayerGiveDamage<ALS_D_INT>
-#define CALL@OnPlayerClickMap ALS_DO_PlayerClickMap<ALS_D_INT>
-#define CALL@OnPlayerCommandReceived ALS_DO_PlayerCommandReceived<ALS_D_INT>
-#define CALL@OnPlayerCommandPerformed ALS_DO_PlayerCommandPerformed<ALS_D_INT>
-#define CALL@OnUnoccupiedVehicleUpdate ALS_DO_UnoccupiedVehicleUpdate<ALS_D_INT>
+#define CALL@OnScriptInit%8() OnScriptInit%8()
+#define CALL@OnScriptExit%8() OnScriptExit%8()
+#define CALL@OnGameModeInit%8() OnGameModeInit%8()
+#define CALL@OnGameModeExit%8() OnGameModeExit%8()
+#define CALL@OnFilterScriptInit%8() OnFilterScriptInit%8()
+#define CALL@OnFilterScriptExit%8() OnFilterScriptExit%8()
+#define CALL@OnPlayerConnect%8() OnPlayerConnect%8(0)
+#define CALL@OnPlayerDisconnect%8() OnPlayerDisconnect%8(0,0)
+#define CALL@OnPlayerSpawn%8() OnPlayerSpawn%8(0)
+#define CALL@OnPlayerDeath%8() OnPlayerDeath%8(0,0,0)
+#define CALL@OnVehicleSpawn%8() OnVehicleSpawn%8(0)
+#define CALL@OnVehicleDeath%8() OnVehicleDeath%8(0,0)
+#define CALL@OnPlayerText%8() OnPlayerText%8(0,__ARR)
+#define CALL@OnPlayerCommandText%8() OnPlayerCommandText%8(0,__ARR)
+#define CALL@OnPlayerRequestClass%8() OnPlayerRequestClass%8(0,0)
+#define CALL@OnPlayerEnterVehicle%8() OnPlayerEnterVehicle%8(0,0,0)
+#define CALL@OnPlayerExitVehicle%8() OnPlayerExitVehicle%8(0,0)
+#define CALL@OnPlayerStateChange%8() OnPlayerStateChange%8(0,0,0)
+#define CALL@OnPlayerEnterCheckpoint%8() OnPlayerEnterCheckpoint%8(0)
+#define CALL@OnPlayerLeaveCheckpoint%8() OnPlayerLeaveCheckpoint%8(0)
+#define CALL@OnPlayerEnterRaceCheckpoint%8() OnPlayerEnterRaceCheckpoint%8(0)
+#define CALL@OnPlayerLeaveRaceCheckpoint%8() OnPlayerLeaveRaceCheckpoint%8(0)
+#define CALL@OnRconCommand%8() OnRconCommand%8(__ARR)
+#define CALL@OnPlayerRequestSpawn%8() OnPlayerRequestSpawn%8(0)
+#define CALL@OnObjectMoved%8() OnObjectMoved%8(0)
+#define CALL@OnPlayerObjectMoved%8() OnPlayerObjectMoved%8(0,0)
+#define CALL@OnPlayerPickUpPickup%8() OnPlayerPickUpPickup%8(0,0)
+#define CALL@OnVehicleMod%8() OnVehicleMod%8(0,0,0)
+#define CALL@OnEnterExitModShop%8() OnEnterExitModShop%8(0,0,0)
+#define CALL@OnVehiclePaintjob%8() OnVehiclePaintjob%8(0,0,0)
+#define CALL@OnVehicleRespray%8() OnVehicleRespray%8(0,0,0,0)
+#define CALL@OnVehicleDamageStatusUpdate%8() OnVehicleDamageStatusUpdate%8(0,0)
+#define CALL@OnPlayerSelectedMenuRow%8() OnPlayerSelectedMenuRow%8(0,0)
+#define CALL@OnPlayerExitedMenu%8() OnPlayerExitedMenu%8(0)
+#define CALL@OnPlayerInteriorChange%8() OnPlayerInteriorChange%8(0,0,0)
+#define CALL@OnPlayerKeyStateChange%8() OnPlayerKeyStateChange%8(0,0,0)
+#define CALL@OnRconLoginAttempt%8() OnRconLoginAttempt%8(__ARR,__ARR,0)
+#define CALL@OnPlayerUpdate%8() OnPlayerUpdate%8(0)
+#define CALL@OnPlayerStreamIn%8() OnPlayerStreamIn%8(0,0)
+#define CALL@OnPlayerStreamOut%8() OnPlayerStreamOut%8(0,0)
+#define CALL@OnVehicleStreamIn%8() OnVehicleStreamIn%8(0,0)
+#define CALL@OnVehicleStreamOut%8() OnVehicleStreamOut%8(0,0)
+#define CALL@OnDialogResponse%8() OnDialogResponse%8(0,0,0,0,__ARR)
+#define CALL@OnPlayerClickPlayer%8() OnPlayerClickPlayer%8(0,0,0)
+#define CALL@OnPlayerLogin%8() OnPlayerLogin%8(0,0)
+#define CALL@OnPlayerLogout%8() OnPlayerLogout%8(0,0)
+#if defined GetPlayerLastShotVectors // 0.3z RC4
+	#define CALL@OnPlayerGiveDamage%8() OnPlayerGiveDamage%8(0,0,0.0,0,0)
+	#define CALL@OnPlayerTakeDamage%8() OnPlayerTakeDamage%8(0,0,0.0,0,0)
+#else
+	#define CALL@OnPlayerGiveDamage%8() OnPlayerGiveDamage%8(0,0,0.0,0)
+	#define CALL@OnPlayerTakeDamage%8() OnPlayerTakeDamage%8(0,0,0.0,0)
+#endif
+#define CALL@OnPlayerClickMap%8() OnPlayerClickMap%8(0,0.0,0.0,0.0)
+#define CALL@OnPlayerCommandReceived%8() OnPlayerCommandReceived%8(0,__ARR)
+#define CALL@OnPlayerCommandPerformed%8() OnPlayerCommandPerformed%8(0,__ARR,0)
+#if defined GetServerTickRate // 0.3z RC5
+	#define CALL@OnUnoccupiedVehicleUpdate%8() OnUnoccupiedVehicleUpdate%8(0,0,0,0.0,0.0,0.0)
+#else
+	#define CALL@OnUnoccupiedVehicleUpdate%8() OnUnoccupiedVehicleUpdate%8(0,0,0)
+#endif
 // 0.3e
-#define CALL@OnPlayerClickTextDraw ALS_DO_PlayerClickTextDraw<ALS_D_INT>
-#define CALL@OnPlayerClickPlayerTextDraw ALS_DO_PlayerClickPlayerTextDraw<ALS_D_INT>
-#define CALL@OnPlayerEditObject ALS_DO_PlayerEditObject<ALS_D_INT>
-#define CALL@OnPlayerEditAttachedObject ALS_DO_PlayerEditAttachedObject<ALS_D_INT>
-#define CALL@OnPlayerSelectObject ALS_DO_PlayerSelectObject<ALS_D_INT>
+#define CALL@OnPlayerClickTextDraw%8() OnPlayerClickTextDraw%8(0,Text:0)
+#define CALL@OnPlayerClickPlayerTextDraw%8() OnPlayerClickPlayerTextDraw%8(0,PlayerText:0)
+#define CALL@OnPlayerEditObject%8() OnPlayerEditObject%8(0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0)
+#define CALL@OnPlayerEditAttachedObject%8() OnPlayerEditAttachedObject%8(0,0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
+#define CALL@OnPlayerSelectObject%8() OnPlayerSelectObject%8(0,0,0,0,0.0,0.0,0.0)
 // YSI
-#define CALL@OnPlayerEnterArea ALS_DO_PlayerEnterArea<ALS_D_INT>
-#define CALL@OnPlayerLeaveArea ALS_DO_PlayerLeaveArea<ALS_D_INT>
-#define CALL@OnPlayerFinishRace ALS_DO_PlayerFinishRace<ALS_D_INT>
-#define CALL@OnPlayerExitRace ALS_DO_PlayerExitRace<ALS_D_INT>
-#define CALL@OnRaceEnd ALS_DO_RaceEnd<ALS_D_INT>
-#define CALL@OnMasterSystemClose ALS_DO_MasterSystemClose<ALS_D_INT>
-// Streamer plugins.
-#define CALL@OnDynamicObjectMoved ALS_DO_DynamicObjectMoved<ALS_D_INT>
-#define CALL@OnPlayerEditDynamicObject ALS_DO_PlayerEditDynamicObject<ALS_D_INT>
-#define CALL@OnPlayerSelectDynamicObject ALS_DO_PlayerSelectDynamicObject<ALS_D_INT>
-#define CALL@OnPlayerPickUpDynamicPickup ALS_DO_PlayerPickUpDynamicPickup<ALS_D_INT>
-#define CALL@OnPlayerEnterDynamicCP ALS_DO_PlayerEnterDynamicCP<ALS_D_INT>
-#define CALL@OnPlayerLeaveDynamicCP ALS_DO_PlayerLeaveDynamicCP<ALS_D_INT>
-#define CALL@OnPlayerEnterDynamicRaceCP ALS_DO_PlayerEnterDynamicRaceCP<ALS_D_INT>
-#define CALL@OnPlayerLeaveDynamicRaceCP ALS_DO_PlayerLeaveDynamicRaceCP<ALS_D_INT>
-#define CALL@OnPlayerEnterDynamicArea ALS_DO_PlayerEnterDynamicArea<ALS_D_INT>
-#define CALL@OnPlayerLeaveDynamicArea ALS_DO_PlayerLeaveDynamicArea<ALS_D_INT>
-// Alternates
-#define CALL@OnPlayerLeaveRaceCP ALS_DO_PlayerLeaveRaceCP<ALS_D_INT>
-#define CALL@OnPlayerEnterRaceCP ALS_DO_PlayerEnterRaceCP<ALS_D_INT>
-#define CALL@OnVehicleDamageStatusUpd ALS_DO_VehicleDamageStatusUpd<ALS_D_INT>
-#define CALL@OnUnoccupiedVehicleUpd ALS_DO_UnoccupiedVehicleUpd<ALS_D_INT>
-#define CALL@OnPlayerClickPlayerTD ALS_DO_PlayerClickPlayerTD<ALS_D_INT>
-#define CALL@OnPlayerEditAttachedObj ALS_DO_PlayerEditAttachedObj<ALS_D_INT>
-#define CALL@OnPlayerCmdPerformed ALS_DO_PlayerCmdPerformed<ALS_D_INT>
-#define CALL@OnPlayerEditDynObject ALS_DO_PlayerEditDynObject<ALS_D_INT>
-#define CALL@OnPlayerSelectDynObject ALS_DO_PlayerSelectDynObject<ALS_D_INT>
-#define CALL@OnPlayerPickUpDynPickup ALS_DO_PlayerPickUpDynPickup<ALS_D_INT>
-#define CALL@OnPlayerEnterDynRaceCP ALS_DO_PlayerEnterDynRaceCP<ALS_D_INT>
-#define CALL@OnPlayerLeaveDynRaceCP ALS_DO_PlayerLeaveDynRaceCP<ALS_D_INT>
-#define CALL@OnPlayerEnterDynArea ALS_DO_PlayerEnterDynArea<ALS_D_INT>
-#define CALL@OnPlayerLeaveDynArea ALS_DO_PlayerLeaveDynArea<ALS_D_INT>
-// Added 05/07/17
-#define CALL@OnPlayerWeaponShot ALS_DO_PlayerWeaponShot<ALS_D_INT>
-#define CALL@OnIncomingConnection ALS_DO_IncomingConnection<ALS_D_INT>
-#define CALL@OnTrailerUpdate ALS_DO_TrailerUpdate<ALS_D_INT>
-#define CALL@OnVehicleSirenStateChange ALS_DO_VehicleSirenStateChange<ALS_D_INT>
-#define CALL@OnPlayerGiveDamageActor ALS_DO_PlayerGiveDamageActor<ALS_D_INT>
-#define CALL@OnActorStreamIn ALS_DO_ActorStreamIn<ALS_D_INT>
-#define CALL@OnActorStreamOut ALS_DO_ActorStreamOut<ALS_D_INT>
+#define CALL@OnPlayerEnterArea%8() OnPlayerEnterArea%8(0,0)
+#define CALL@OnPlayerLeaveArea%8() OnPlayerLeaveArea%8(0,0)
+#define CALL@OnPlayerFinishRace%8() OnPlayerFinishRace%8(0,0,0,0,0)
+#define CALL@OnPlayerExitRace%8() OnPlayerExitRace%8(0,0)
+#define CALL@OnRaceEnd%8() OnRaceEnd%8(0)
+// Streamer plugin.
+#define CALL@OnDynamicObjectMoved%8() OnDynamicObjectMoved%8(0)
+#define CALL@OnPlayerEditDynamicObject%8() OnPlayerEditDynamicObject%8(0,0,0,0.0,0.0,0.0,0.0,0.0,0.0)
+#define CALL@OnPlayerSelectDynamicObject%8() OnPlayerSelectDynamicObject%8(0,0,0,0.0,0.0,0.0)
+#define CALL@OnPlayerPickUpDynamicPickup%8() OnPlayerPickUpDynamicPickup%8(0,0)
+#define CALL@OnPlayerEnterDynamicCP%8() OnPlayerEnterDynamicCP%8(0,0)
+#define CALL@OnPlayerLeaveDynamicCP%8() OnPlayerLeaveDynamicCP%8(0,0)
+#define CALL@OnPlayerEnterDynamicRaceCP%8() OnPlayerEnterDynamicRaceCP%8(0,0)
+#define CALL@OnPlayerLeaveDynamicRaceCP%8() OnPlayerLeaveDynamicRaceCP%8(0,0)
+#define CALL@OnPlayerEnterDynamicArea%8() OnPlayerEnterDynamicArea%8(0,0)
+#define CALL@OnPlayerLeaveDynamicArea%8() OnPlayerLeaveDynamicArea%8(0,0)
+
+#define CALL@OnPlayerWeaponShot%8() OnPlayerWeaponShot%8(0,0,0,0,0.0,0.0,0.0)
+#define CALL@OnIncomingConnection%8() OnIncomingConnection%8(0,__ARR,0)
+#define CALL@OnTrailerUpdate%8() OnTrailerUpdate%8(0,0)
+#define CALL@OnVehicleSirenStateChange%8() OnVehicleSirenStateChange%8(0,0,0)
+#define CALL@OnPlayerGiveDamageActor%8() OnPlayerGiveDamageActor%8(0,0,0.0,0,0)
+#define CALL@OnActorStreamIn%8() OnActorStreamIn%8(0,0)
+#define CALL@OnActorStreamOut%8() OnActorStreamOut%8(0,0)
 
