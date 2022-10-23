@@ -268,6 +268,7 @@ static stock
 	YSI_g_sFakeE_INLINE_CALL[E_INLINE_CALL];
 	
 #define CALL@Callback_Claim_%8() Callback_Claim_%8(YSI_g_sFakeE_INLINE_CALL)
+#define P@YSI_g_sFakeE_INLINE_CALL0 P@__ARR0
 
 #define MAX_INLINE_PARAMETERS (32)
 
@@ -1945,6 +1946,7 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 }
 
 #define CALL@Inline_OnAsmError%8() Inline_OnAsmError%8("", AsmError:0)
+#define P@AsmError: P@
 
 static stock Inline_OnAsmError(const ctx[AsmContext], AsmError:error)
 {
