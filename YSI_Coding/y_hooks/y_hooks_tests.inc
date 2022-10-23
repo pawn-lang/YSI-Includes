@@ -1204,7 +1204,7 @@ hook stock TestHookedFunc(a, const string:b[], ...)
 //_@yHTestHookedFunc@FI(a, const b[], ...);
 //@yH_TestHookedFunc@FI(&a,const b[]);
 //@yH_TestHookedFunc@FI(&a,const b[])
-//	return _yH@(1<<1|0,O@A_()?(((_:_@yHTestHookedFunc@FI(a,b)),O@V_)?1:2):(O@V_)), TestHookedFunc(a,b);
+//	return _yH@(1<<1|0,(O@D_:O@A_())?(((_:_@yHTestHookedFunc@FI(a,b)),O@V_)?1:2):(O@V_)), TestHookedFunc(a,b);
 //static _@yHTestHookedFunc@FI(a, const b[], ...)
 {
 	//printf("TestHookedFunc");
