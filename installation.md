@@ -10,13 +10,11 @@ sampctl package install pawn-lang/YSI-Includes@5.x
 
 ## Without *sampctl*
 
-Download the latest version of the library and its dependencies from the following links:
+Download the latest version of the library and its dependencies from:
 
+https://github.com/pawn-lang/YSI-Includes/releases/download/nightly/YSI-Includes-nightly.zip
 
-
-Extract the *YSI* zip to `pawno/includes/`, the *amx_assembly* zip to `pawno/includes/amx`, the
-*md-sort* zip to `pawno/includes/md-sort`, the *indirection* zip to `pawno/includes/indirection`,
-and the *code-parse* zip to `pawno/includes/code-parse`.
+And extract the contents of the contained *YSI-Includes* directory to `pawno/includes/`.
 
 ## Compile-Time Options
 
