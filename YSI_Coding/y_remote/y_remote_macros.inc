@@ -127,3 +127,16 @@ Optional plugins:
 #define I@R:%9;%9;%9;
 #define I@P:%9;%9;%9;%9;
 
+#endinput
+
+@defer.timer[1000](playerid);
+
+@defer(1000).timer(playerid);
+
+@defer.timer(1000)(playerid);
+
+
+
+@defer.timer(playerid);
+@.timer<1000>(playerid);
+

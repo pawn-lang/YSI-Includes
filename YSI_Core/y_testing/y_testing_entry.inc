@@ -216,7 +216,7 @@ static stock
 	YSI_g_sPlayerFails = 0,
 	YSI_g_sFails = 0,
 	YSI_g_sCurrentGroup[32],
-	Text:YSI_g_sQuestionTD = INVALID_TEXT_DRAW;
+	Text:YSI_g_sQuestionTD = Text:INVALID_TEXT_DRAW;
 
 stock
 	YSI_gCurTestName[FUNCTION_LENGTH];
@@ -546,7 +546,7 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 		#if defined YSI_DIALOG_ASK
 			YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
 		#else
-			if (YSI_g_sQuestionTD != INVALID_TEXT_DRAW)
+			if (YSI_g_sQuestionTD != Text:INVALID_TEXT_DRAW)
 			{
 				TextDrawDestroy(YSI_g_sQuestionTD);
 			}
@@ -819,10 +819,10 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 	#endif
 	Testing_Next(playerid)
 	{
-		if (YSI_g_sQuestionTD != INVALID_TEXT_DRAW)
+		if (YSI_g_sQuestionTD != Text:INVALID_TEXT_DRAW)
 		{
 			TextDrawDestroy(YSI_g_sQuestionTD);
-			YSI_g_sQuestionTD = INVALID_TEXT_DRAW;
+			YSI_g_sQuestionTD = Text:INVALID_TEXT_DRAW;
 		}
 		Debug_Print2("Testing_Next() called");
 		YSI_g_sInTest = false;
