@@ -347,49 +347,49 @@ static stock ScriptInit_GetStartTime()
 #endif
 
 #if __COMPILER___EMIT_U
-	#define Server_DisableLongCall() (__emit(CONST.pri 0, SCTRL 0xFE))
+	#define Server_DisableLongCall() (__emit(CONST.pri 32, SCTRL 0xFF))
 #endif
 
 #if __COMPILER___EMIT_U
-	#define Server_EnableLongCall() (__emit(CONST.pri 2, SCTRL 0xFF))
+	#define Server_EnableLongCall() (__emit(CONST.pri 34, SCTRL 0xFF))
 #endif
 
 #if __COMPILER___EMIT_U
-	#define Server_ResetLongCallTime() (__emit(CONST.pri 4, SCTRL 0xFF))
+	#define Server_ResetLongCallTime() (__emit(CONST.pri 36, SCTRL 0xFF))
 #endif
 
 #if __COMPILER___EMIT_U
-	#define Server_RestartLongCall() (__emit(CONST.pri 8, SCTRL 0xFF))
+	#define Server_RestartLongCall() (__emit(CONST.pri 40, SCTRL 0xFF))
 #endif
 
 forward bool:Server_IsLongCallEnabled();
 
 #if __COMPILER___EMIT_U
-	#define Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, CONST.alt 1, AND, RETN)))
+	#define Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 1, CONST.alt 1, AND)))
 #endif
 
 #if __COMPILER___EMIT_U
-	#define Server_GetLongCallTime() (__emit(ZERO.pri, LCTRL 0xFE, SHR.C.pri 1, RETN))
+	#define Server_GetLongCallTime() (__emit(ZERO.pri, LCTRL 0xFE))
 #endif
 
 #if __COMPILER___EMIT_U
-	#define Server_DisableDetectAddr0() (__emit(CONST.pri 0, SCTRL 0xFD))
+	#define Server_DisableDetectAddr0() (__emit(CONST.pri 64, SCTRL 0xFF))
 #endif
 
 #if __COMPILER___EMIT_U
-	#define Server_EnableDetectAddr0() (__emit(CONST.pri 1, SCTRL 0xFD))
+	#define Server_EnableDetectAddr0() (__emit(CONST.pri 192, SCTRL 0xFF))
 #endif
 
 forward bool:Server_IsDetectAddr0Enabled();
 
 #if __COMPILER___EMIT_U
-	#define Server_IsDetectAddr0Enabled() (bool:(__emit(CONST.pri 0, LCTRL 0xFD, CONST.alt 1, AND, RETN)))
+	#define Server_IsDetectAddr0Enabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 7, CONST.alt 1, AND)))
 #endif
 
 forward bool:Server_HasDetectAddr0();
 
 #if __COMPILER___EMIT_U
-	#define Server_HasDetectAddr0() (bool:(__emit(CONST.pri __minus1, LCTRL 0xFD, CONST.alt 0, SGEQ, RETN)))
+	#define Server_HasDetectAddr0() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 6, CONST.alt 1, AND)))
 #endif
 
 native YSI_VAPrintF(const fmt[], addr) = printf;
@@ -1438,25 +1438,25 @@ stock Server_SetLongCallTime(usTime)
 
 stock Server_DisableLongCall()
 {
-	#emit CONST.pri     0
-	#emit SCTRL         0xFE
+	#emit CONST.pri     32
+	#emit SCTRL         0xFF
 }
 
 stock Server_EnableLongCall()
 {
-	#emit CONST.pri     2
+	#emit CONST.pri     34
 	#emit SCTRL         0xFF
 }
 
 stock Server_ResetLongCallTime()
 {
-	#emit CONST.pri     4
+	#emit CONST.pri     36
 	#emit SCTRL         0xFF
 }
 
 stock Server_RestartLongCall()
 {
-	#emit CONST.pri     8
+	#emit CONST.pri     40
 	#emit SCTRL         0xFF
 }
 
@@ -1464,6 +1464,7 @@ stock bool:Server_IsLongCallEnabled()
 {
 	#emit ZERO.pri
 	#emit LCTRL         0xFF
+	#emit SHR.C.pri     1
 	#emit CONST.alt     1
 	#emit AND
 	#emit RETN
@@ -1474,28 +1475,28 @@ stock Server_GetLongCallTime()
 {
 	#emit ZERO.pri
 	#emit LCTRL         0xFE
-	#emit SHR.C.pri     1
 	#emit RETN
 	return 0;
 }
 
 stock Server_DisableDetectAddr0()
 {
-	#emit CONST.pri     0
-	#emit SCTRL         0xFD
+	#emit CONST.pri     64
+	#emit SCTRL         0xFF
 }
 
 stock Server_EnableDetectAddr0()
 {
-	#emit CONST.pri     1
-	#emit SCTRL         0xFD
+	#emit CONST.pri     192
+	#emit SCTRL         0xFF
 }
 
 stock bool:Server_IsDetectAddr0Enabled()
 {
 	// Is the check enabled?  0 if off or doesn't exist.
-	#emit CONST.pri     0
-	#emit LCTRL 0xFD
+	#emit ZERO.pri
+	#emit LCTRL         0xFF
+	#emit SHR.C.pri     7
 	#emit CONST.alt     1
 	#emit AND
 	#emit RETN
@@ -1505,10 +1506,11 @@ stock bool:Server_IsDetectAddr0Enabled()
 stock bool:Server_HasDetectAddr0()
 {
 	// Is the check possible?
-	#emit CONST.pri     __minus1     // -1
-	#emit LCTRL 0xFD                 // 0, 1, or -2
-	#emit CONST.alt     0
-	#emit SGEQ                       // >= 0
+	#emit ZERO.pri
+	#emit LCTRL         0xFF
+	#emit SHR.C.pri     6
+	#emit CONST.alt     1
+	#emit AND
 	#emit RETN
 	return false;
 }
