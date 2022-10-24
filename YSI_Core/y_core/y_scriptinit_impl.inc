@@ -583,7 +583,7 @@ stock Server_GetLongCallDefault()
 	#emit LCTRL         0xFE
 	#emit MOVE.alt
 	// Reset to and read the default.
-	#emit CONST.pri     4
+	#emit CONST.pri     36
 	#emit SCTRL         0xFF
 	#emit ZERO.pri
 	#emit LCTRL         0xFE
@@ -1431,7 +1431,6 @@ stock bool:Server_IsSAMP()
 
 stock Server_SetLongCallTime(usTime)
 {
-	// Setting this to `0` doesn't change the internal time, merely disables the check.
 	#emit LOAD.S.pri    usTime
 	#emit SCTRL         0xFE
 }

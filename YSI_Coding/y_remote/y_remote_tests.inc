@@ -1,5 +1,6 @@
 TODO(000, "Support localfunc and targetfunc");
 
+#endinput
 REMOTE_FUNC__ stock yrt_1(hi);
 
 REMOTE_FUNC__ stock yrt_3(hi, string:you[], there[], len)
