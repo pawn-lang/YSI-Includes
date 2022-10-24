@@ -696,14 +696,14 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			#else
 				#pragma unused jit
 			#endif
-			//new t0, t1;
-			//t0 = GetTickCount();
+			new t0, t1;
+			t0 = GetTickCount();
 			ScriptInit_CodeInitFuncs_();
 			#if defined ScriptInit_OnCodeInit
 				ScriptInit_OnCodeInit();
 			#endif
-			//t1 = GetTickCount();
-			//printf("Script Initialisation: %d", t1 - t0);
+			t1 = GetTickCount();
+			printf("Script Initialisation: %d", t1 - t0);
 			#if _YSI_SAFE_STARTUP
 				Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
 				Server_FinishIntroPart();
