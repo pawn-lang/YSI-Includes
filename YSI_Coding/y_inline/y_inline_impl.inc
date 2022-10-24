@@ -1411,7 +1411,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			setarg(1 + __COMPILER_BUG_317, 0, ret);
 			// Direct function pointer.
 			Indirect_Claim(ret);
-			ret = Indirect_DePtr_(ret);
+			ret = Indirect_DePtr(ret);
 			if (ret < 0 || AMX_Read(ret))
 				return true;
 			// Check the format, since we might have a new one to use here.
