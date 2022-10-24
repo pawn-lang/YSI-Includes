@@ -103,6 +103,74 @@ static stock bool:y_inline_Restore(ret[E_CALLBACK_DATA])
 	@.cc();
 }
 
+static g_y_inlineLoadsCalls = 0;
+
+@test(.group = "y_inline") y_inlineLoads()
+{
+	new Func:a<>;
+	new Func:c<>;
+	new Func:d<>;
+	new Func:e<>;
+	g_y_inlineLoadsCalls = 0;
+	inline A()
+	{
+		g_y_inlineLoadsCalls |= 1;
+		new Func:b<>;
+		inline B()
+		{
+			g_y_inlineLoadsCalls |= 2;
+		}
+		y_inline_GetX(using inline B, b);
+		@.b();
+	}
+	inline C()
+	{
+		g_y_inlineLoadsCalls |= 4;
+	}
+	inline D()
+	{
+		g_y_inlineLoadsCalls |= 8;
+	}
+	inline E()
+	{
+		g_y_inlineLoadsCalls |= 16;
+		new Func:f<>;
+		inline F()
+		{
+			g_y_inlineLoadsCalls |= 32;
+			new Func:g<>;
+			inline G()
+			{
+				g_y_inlineLoadsCalls |= 64;
+				new Func:h<>;
+				inline H()
+				{
+					g_y_inlineLoadsCalls |= 128;
+				}
+				#pragma unused H
+				y_inline_GetX(using inline H, h);
+				@.h();
+			}
+			#pragma unused G
+			y_inline_GetX(using inline G, g);
+			@.g();
+		}
+		#pragma unused F
+		y_inline_GetX(using inline F, f);
+		@.f();
+	}
+	#pragma unused E
+	y_inline_GetX(using inline A, a);
+	@.a();
+	y_inline_GetX(using inline C, c);
+	@.c();
+	y_inline_GetX(using inline D, d);
+	@.d();
+	y_inline_GetX(using inline E, e);
+	@.e();
+	ASSERT_EQ(g_y_inlineLoadsCalls, 255);
+}
+
 @test(.group = "y_inline") y_inline0b()
 {
 	new Func:cc<>;
