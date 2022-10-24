@@ -380,7 +380,7 @@ public OnYSIExit()
  * <param name="group">Group to destroy from the system.</param>
  *//*------------------------------------------------------------------------**/
 
-REMOTE_FUNC__ static void:_Group_Destroy(g, const Iterator@gp[MAX_PLAYERS + 1], s)
+REMOTE_FUNC__ static void:_Group_Destroy(g, const _no_itertag:Iterator@gp[MAX_PLAYERS + 1], s)
 {
 	#pragma unused s
 	new
@@ -426,7 +426,7 @@ GLOBAL__ void:Group_Destroy(Group:group)
 	if (_Group_IsValid(group) && group != GROUP_GLOBAL)
 	{
 		GROUP_FIX(group);
-		BROADCAST_FUNC__ _Group_Destroy(_:group, Iter_TrueArray(GroupPlayers[_:group]), Iter_TrueSize(GroupPlayers[]));
+		BROADCAST_FUNC__ _Group_Destroy(_:group, _no_itertag:Iter_TrueArray(GroupPlayers[_:group]), Iter_TrueSize(GroupPlayers[]));
 		YSI_gGroupData[_:group][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 		YSI_gGroupData[_:group][E_GROUP_DATA_HASH] = 0;
 		Iter_Clear(GroupPlayers[_:group]);
@@ -460,7 +460,7 @@ GLOBAL__ void:_Group_TryRemove()
 		MASTER_EMPTY<i>
 		{
 			//print("removing i");
-			BROADCAST_FUNC__ _Group_Destroy(i, Iter_TrueArray(GroupPlayers[i]), Iter_TrueSize(GroupPlayers[]));
+			BROADCAST_FUNC__ _Group_Destroy(i, _no_itertag:Iter_TrueArray(GroupPlayers[i]), Iter_TrueSize(GroupPlayers[]));
 			YSI_gGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 			YSI_gGroupData[i][E_GROUP_DATA_HASH] = 0;
 			Iter_Clear(GroupPlayers[i]);
