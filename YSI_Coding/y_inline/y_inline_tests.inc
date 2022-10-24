@@ -123,6 +123,7 @@ static g_y_inlineLoadsCalls = 0;
 		y_inline_GetX(using inline B, b);
 		@.b();
 	}
+	y_inline_GetX(using inline A, a);
 	inline C()
 	{
 		g_y_inlineLoadsCalls |= 4;
@@ -133,6 +134,7 @@ static g_y_inlineLoadsCalls = 0;
 	}
 	inline E()
 	{
+		@.a();
 		g_y_inlineLoadsCalls |= 16;
 		new Func:f<>;
 		inline F()
@@ -160,8 +162,6 @@ static g_y_inlineLoadsCalls = 0;
 		@.f();
 	}
 	#pragma unused E
-	y_inline_GetX(using inline A, a);
-	@.a();
 	y_inline_GetX(using inline C, c);
 	@.c();
 	y_inline_GetX(using inline D, d);
