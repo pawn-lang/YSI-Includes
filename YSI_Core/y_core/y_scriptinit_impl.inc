@@ -342,6 +342,56 @@ static stock ScriptInit_GetStartTime()
 	YSI_gsStartDMY = (y << 16) | (m << 8) | d;
 }
 
+#if __COMPILER___EMIT_U
+	#define Server_SetLongCallTime(%0) (__emit(LOAD.U.pri %0, SCTRL 0xFE))
+#endif
+
+#if __COMPILER___EMIT_U
+	#define Server_DisableLongCall() (__emit(CONST.pri 0, SCTRL 0xFE))
+#endif
+
+#if __COMPILER___EMIT_U
+	#define Server_EnableLongCall() (__emit(CONST.pri 2, SCTRL 0xFF))
+#endif
+
+#if __COMPILER___EMIT_U
+	#define Server_ResetLongCallTime() (__emit(CONST.pri 4, SCTRL 0xFF))
+#endif
+
+#if __COMPILER___EMIT_U
+	#define Server_RestartLongCall() (__emit(CONST.pri 8, SCTRL 0xFF))
+#endif
+
+forward bool:Server_IsLongCallEnabled();
+
+#if __COMPILER___EMIT_U
+	#define Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, CONST.alt 1, AND, RETN)))
+#endif
+
+#if __COMPILER___EMIT_U
+	#define Server_GetLongCallTime() (__emit(ZERO.pri, LCTRL 0xFE, SHR.C.pri 1, RETN))
+#endif
+
+#if __COMPILER___EMIT_U
+	#define Server_DisableDetectAddr0() (__emit(CONST.pri 0, SCTRL 0xFD))
+#endif
+
+#if __COMPILER___EMIT_U
+	#define Server_EnableDetectAddr0() (__emit(CONST.pri 1, SCTRL 0xFD))
+#endif
+
+forward bool:Server_IsDetectAddr0Enabled();
+
+#if __COMPILER___EMIT_U
+	#define Server_IsDetectAddr0Enabled() (bool:(__emit(CONST.pri 0, LCTRL 0xFD, CONST.alt 1, AND, RETN)))
+#endif
+
+forward bool:Server_HasDetectAddr0();
+
+#if __COMPILER___EMIT_U
+	#define Server_HasDetectAddr0() (bool:(__emit(CONST.pri __minus1, LCTRL 0xFD, CONST.alt 0, SGEQ, RETN)))
+#endif
+
 native YSI_VAPrintF(const fmt[], addr) = printf;
 forward bool:fautocleanup(const name[], maxAge);
 
@@ -488,56 +538,6 @@ stock Server_FinishIntroMessage()
 	YSI_Print__(YSI_SPACE),
 	YSI_gsFirstHeader = true;
 }
-
-#if __COMPILER___EMIT_U
-	#define Server_SetLongCallTime(%0) (__emit(LOAD.U.pri %0, SCTRL 0xFE))
-#endif
-
-#if __COMPILER___EMIT_U
-	#define Server_DisableLongCall() (__emit(CONST.pri 0, SCTRL 0xFE))
-#endif
-
-#if __COMPILER___EMIT_U
-	#define Server_EnableLongCall() (__emit(CONST.pri 2, SCTRL 0xFF))
-#endif
-
-#if __COMPILER___EMIT_U
-	#define Server_ResetLongCallTime() (__emit(CONST.pri 4, SCTRL 0xFF))
-#endif
-
-#if __COMPILER___EMIT_U
-	#define Server_RestartLongCall() (__emit(CONST.pri 8, SCTRL 0xFF))
-#endif
-
-forward bool:Server_IsLongCallEnabled();
-
-#if __COMPILER___EMIT_U
-	#define Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, CONST.alt 1, AND, RETN)))
-#endif
-
-#if __COMPILER___EMIT_U
-	#define Server_GetLongCallTime() (__emit(ZERO.pri, LCTRL 0xFE, SHR.C.pri 1, RETN))
-#endif
-
-#if __COMPILER___EMIT_U
-	#define Server_DisableDetectAddr0() (__emit(CONST.pri 0, SCTRL 0xFD))
-#endif
-
-#if __COMPILER___EMIT_U
-	#define Server_EnableDetectAddr0() (__emit(CONST.pri 1, SCTRL 0xFD))
-#endif
-
-forward bool:Server_IsDetectAddr0Enabled();
-
-#if __COMPILER___EMIT_U
-	#define Server_IsDetectAddr0Enabled() (bool:(__emit(CONST.pri 0, LCTRL 0xFD, CONST.alt 1, AND, RETN)))
-#endif
-
-forward bool:Server_HasDetectAddr0();
-
-#if __COMPILER___EMIT_U
-	#define Server_HasDetectAddr0() (bool:(__emit(CONST.pri __minus1, LCTRL 0xFD, CONST.alt 0, SGEQ, RETN)))
-#endif
 
 stock Server_GetStartTime()
 {
