@@ -3514,17 +3514,24 @@ stock memcmp(arr1[], arr2[], count)
 	return MemCmp(arr1, arr2, count);
 }
 
-#define MAX_LEVENSHTEIN_STRING (YSI_MAX_STRING)
+//#define MAX_LEVENSHTEIN_STRING (YSI_MAX_STRING)
 
-static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], lenB)
+static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], lenB, matrix[])
 {
+	// Allocate heap space for the matrix and point the array at it.  This is
+	// why we pass a fake array in as a parameter, so we can mess with the
+	// pointer.
+	#emit HEAP         0
+	#emit STOR.S.alt   matrix
+	#emit LOAD.S.pri   lenB
+	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit ADD
+	#emit SCTRL        __hea
 	// "a" is the shorter string in this call.
-	new
-		// Can only compare strings up to this length.
-		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
-	// Initial subsequence equal.
-	//if (!strcmp(a, b, false, lenA))
-	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		matrix[i] = i;
+	}
 	for (new i = 0; i != lenB; ++i)
 	{
 		// Loop over the characters in the longer string, and use the matrix for the shorter string.
@@ -3543,18 +3550,28 @@ static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], len
 			matrix[j + 1] = distance;
 		}
 	}
-	return matrix[lenA];
+	lenA = matrix[lenA];
+	#emit LOAD.S.pri   matrix
+	#emit SCTRL        __hea
+	return lenA;
 }
 
-static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[], lenB)
+static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[], lenB, matrix[])
 {
+	// Allocate heap space for the matrix and point the array at it.  This is
+	// why we pass a fake array in as a parameter, so we can mess with the
+	// pointer.
+	#emit HEAP         0
+	#emit STOR.S.alt   matrix
+	#emit LOAD.S.pri   lenB
+	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit ADD
+	#emit SCTRL        __hea
 	// "a" is the shorter string in this call.
-	new
-		// Can only compare strings up to this length.
-		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
-	// Initial subsequence equal.
-	//if (!strcmp(a, b, false, lenA))
-	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		matrix[i] = i;
+	}
 	for (new i = 0; i != lenB; ++i)
 	{
 		// Loop over the characters in the longer string, and use the matrix for the shorter string.
@@ -3573,18 +3590,28 @@ static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[]
 			matrix[j + 1] = distance;
 		}
 	}
-	return matrix[lenA];
+	lenA = matrix[lenA];
+	#emit LOAD.S.pri   matrix
+	#emit SCTRL        __hea
+	return lenA;
 }
 
-static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[], lenB)
+static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[], lenB, matrix[])
 {
+	// Allocate heap space for the matrix and point the array at it.  This is
+	// why we pass a fake array in as a parameter, so we can mess with the
+	// pointer.
+	#emit HEAP         0
+	#emit STOR.S.alt   matrix
+	#emit LOAD.S.pri   lenB
+	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit ADD
+	#emit SCTRL        __hea
 	// "a" is the shorter string in this call.
-	new
-		// Can only compare strings up to this length.
-		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
-	// Initial subsequence equal.
-	//if (!strcmp(a, b, false, lenA))
-	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		matrix[i] = i;
+	}
 	for (new i = 0; i != lenB; ++i)
 	{
 		// Loop over the characters in the longer string, and use the matrix for the shorter string.
@@ -3603,18 +3630,28 @@ static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[]
 			matrix[j + 1] = distance;
 		}
 	}
-	return matrix[lenA];
+	lenA = matrix[lenA];
+	#emit LOAD.S.pri   matrix
+	#emit SCTRL        __hea
+	return lenA;
 }
 
-static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[], lenB)
+static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[], lenB, matrix[])
 {
+	// Allocate heap space for the matrix and point the array at it.  This is
+	// why we pass a fake array in as a parameter, so we can mess with the
+	// pointer.
+	#emit HEAP         0
+	#emit STOR.S.alt   matrix
+	#emit LOAD.S.pri   lenB
+	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit ADD
+	#emit SCTRL        __hea
 	// "a" is the shorter string in this call.
-	new
-		// Can only compare strings up to this length.
-		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
-	// Initial subsequence equal.
-	//if (!strcmp(a, b, false, lenA))
-	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		matrix[i] = i;
+	}
 	for (new i = 0; i != lenB; ++i)
 	{
 		// Loop over the characters in the longer string, and use the matrix for the shorter string.
@@ -3633,7 +3670,10 @@ static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[
 			matrix[j + 1] = distance;
 		}
 	}
-	return matrix[lenA];
+	lenA = matrix[lenA];
+	#emit LOAD.S.pri   matrix
+	#emit SCTRL        __hea
+	return lenA;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -3649,33 +3689,29 @@ stock LevenshteinDistance(const a[], const b[])
 	// If a string is empty, the other length is the distance.
 	new
 		lenA = strlen(a),
-		lenB = strlen(b);
+		lenB = strlen(b),
+		matrix[1]; // Only exists to trick the compiler.
 	if (!lenA)
 		return lenB;
 	if (!lenB)
 		return lenA;
 	if (lenA > lenB)
 	{
-		if (lenB > MAX_LEVENSHTEIN_STRING)
-		{
-			Debug_Error("`LevenshteinDistance` can currenly only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
-			return 1;
-		}
 		// The calls below are NOT wrong, the parameters are swapped so the A/B
 		// packing calls are also swapped.
 		if (YSI_IsLocalVarPackedString__(a))
 		{
 			if (YSI_IsLocalVarPackedString__(b))
-				return DoLevenshteinDistancePackAB(b, lenB, a, lenA);
+				return DoLevenshteinDistancePackAB(b, lenB, a, lenA, matrix);
 			else
-				return DoLevenshteinDistancePackB(b, lenB, a, lenA);
+				return DoLevenshteinDistancePackB(b, lenB, a, lenA, matrix);
 		}
 		else
 		{
 			if (YSI_IsLocalVarPackedString__(b))
-				return DoLevenshteinDistancePackA(b, lenB, a, lenA);
+				return DoLevenshteinDistancePackA(b, lenB, a, lenA, matrix);
 			else
-				return DoLevenshteinDistance(b, lenB, a, lenA);
+				return DoLevenshteinDistance(b, lenB, a, lenA, matrix);
 		}
 	}
 	else if (lenA == lenB && strcmp(a, b) == 0)
@@ -3683,24 +3719,19 @@ stock LevenshteinDistance(const a[], const b[])
 		// Same string.
 		return 0;
 	}
-	if (lenA > MAX_LEVENSHTEIN_STRING)
-	{
-		Debug_Error("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
-		return 1;
-	}
 	if (YSI_IsLocalVarPackedString__(a))
 	{
 		if (YSI_IsLocalVarPackedString__(b))
-			return DoLevenshteinDistancePackAB(a, lenA, b, lenB);
+			return DoLevenshteinDistancePackAB(a, lenA, b, lenB, matrix);
 		else
-			return DoLevenshteinDistancePackA(a, lenA, b, lenB);
+			return DoLevenshteinDistancePackA(a, lenA, b, lenB, matrix);
 	}
 	else
 	{
 		if (YSI_IsLocalVarPackedString__(b))
-			return DoLevenshteinDistancePackB(a, lenA, b, lenB);
+			return DoLevenshteinDistancePackB(a, lenA, b, lenB, matrix);
 		else
-			return DoLevenshteinDistance(a, lenA, b, lenB);
+			return DoLevenshteinDistance(a, lenA, b, lenB, matrix);
 	}
 }
 
