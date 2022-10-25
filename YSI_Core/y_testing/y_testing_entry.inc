@@ -663,6 +663,7 @@ stock bool:_Testing_End()
 
 stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p = false)
 {
+	Server_DisableLongCall();
 	Debug_Print3("bool:Testing_Run called: %i, %i, \"%s\", %i", tests, fails, lastfail, p);
 	#pragma unused p, lastfail
 #if defined RUN_TESTS
@@ -720,6 +721,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 			}
 			state y_testing_phase : y_testing_phase_call;
 			AMX_GetStringFromEntry(entry, buffer);
+			Server_EnableLongCall();
 			Server_RestartLongCall();
 			// Call the setup function if there is one.
 			buffer[0] = Y_TESTING_INIT;
@@ -758,6 +760,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 #endif
 			buffer[0] = Y_TESTING_SHUT;
 			R@(buffer, YSI_EMPTY);
+			Server_DisableLongCall();
 			// Delete the pointer, which may have moved due to tests playing
 			// with headers.
 			buffer[0] = Y_TESTING_TEST;
@@ -773,6 +776,8 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 	tests = YSI_g_sTests;
 	checks = YSI_g_sChecks;
 	fails = YSI_g_sFails;
+	Server_EnableLongCall();
+	Server_RestartLongCall();
 	return fails == 0;
 #else
 	#pragma unused tests, fails, lastfail

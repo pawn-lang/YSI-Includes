@@ -999,6 +999,7 @@ enum exit_order
 					Server_FinishIntroMessage();
 				#endif
 				ScriptInit_PreInitFuncs_();
+				Server_RestartLongCall();
 				CallLocalFunction("OnScriptInit", YSI_EMPTY);
 				ScriptInit_PostInitFuncs_();
 				if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
@@ -1030,6 +1031,7 @@ enum exit_order
 						}
 					#endif
 				#endif
+				Server_RestartLongCall();
 				CallLocalFunction("OnScriptInit@C", YSI_EMPTY);
 			}
 			return 1;
@@ -1167,6 +1169,7 @@ ScriptInit_Purge_retry:
 						Server_FinishIntroMessage();
 					#endif
 					ScriptInit_PreInitFuncs_();
+					Server_RestartLongCall();
 					CallLocalFunction("OnScriptInit", YSI_EMPTY);
 					ScriptInit_PostInitFuncs_();
 					if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
@@ -1198,6 +1201,7 @@ ScriptInit_Purge_retry:
 			//if (Server_IsSAMP())
 		#endif
 			{
+				Server_RestartLongCall();
 				CallLocalFunction("OnScriptInit@E", YSI_EMPTY);
 			}
 			return 1;
