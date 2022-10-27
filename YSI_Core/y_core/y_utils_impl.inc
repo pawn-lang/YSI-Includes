@@ -956,7 +956,7 @@ stock RandomMax(max)
 #define RandomMinMaxExcept(%0,%1,%2,%3)PP_DISCARD$ RandomMinMaxExceptMany(%0,%1,%2,%3)PP_DISCARD$
 
 /*-------------------------------------------------------------------------*//**
- * <param name="minmax">Lower bound, or upper bound when only parameter.</param>
+ * <param name="min">Lower bound, or upper bound when only parameter.</param>
  * <param name="max">Upper bound.</param>
  * <param name="dp">How small to make the differences</param>
  * <remarks>
@@ -965,29 +965,56 @@ stock RandomMax(max)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
+stock Float:RandomFloatMinMax(Float:min, Float:max = FLOAT_NAN, dp = 2)
 {
-	new
-		Float:mul = floatpower(10.0, float(dp));
 	switch (dp)
 	{
-	case 0: mul = 1.0;
-	case 1: mul = 10.0;
-	case 2: mul = 100.0;
-	case 3: mul = 1000.0;
-	default: mul = floatpower(10.0, float(dp));
+	case 0: dp = _:(1.0);
+	case 1: dp = _:(10.0);
+	case 2: dp = _:(100.0);
+	case 3: dp = _:(1000.0);
+	case 4: dp = _:(10000.0);
+	//case 5: dp = _:(100000.0);
+	//case 6: dp = _:(1000000.0);
+	default:
+	{
+		Debug_Warning("Large `dp` values may produce incorrect results.");
+		dp = _:floatpower(10.0, float(dp));
 	}
+	}
+	//printf("%02f", Float:dp);
+	//printf("%02f", max * (Float:dp) - min * (Float:dp));
+	//printf("%02f", floatround(max * (Float:dp) - min * (Float:dp)));
+	//printf("%02f", float(random(floatround(max * (Float:dp) - min * (Float:dp)))) / (Float:dp));
 	if (IsNaN(max))
 	{
 		if (min < 0.0)
-			return -(float(random(floatround(-min * mul))) / mul);
-		return float(random(floatround(min * mul))) / mul;
+			return -(float(random(floatround(-min * (Float:dp)))) / (Float:dp));
+		return float(random(floatround(min * (Float:dp)))) / (Float:dp);
 	}
 	// Parameters are the wrong way around - do it anyway.
 	if (max < min)
-		return float(random(floatround(min * mul - max * mul))) / mul + max;
-	return float(random(floatround(max * mul - min * mul))) / mul + min;
+		return float(random(floatround(min * (Float:dp) - max * (Float:dp)))) / (Float:dp) + max;
+	return float(random(floatround(max * (Float:dp) - min * (Float:dp)))) / (Float:dp) + min;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="max">Upper bound.</param>
+ * <remarks>
+ *   Generate a random float between <c>0 &lt;= n &lt; max</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Float:RandomFloatMax(Float:max)
+{
+	return float(random(floatround(max * 8192.0))) / 8192.0;
+}
+
+// The macro to detect one parameter.
+#define RandomFloat(%0) RandomFloatMax(%0)PP_DISCARD$
+
+// The macro to detect two+ parameters.
+#define RandomFloatMax(%0,%1)PP_DISCARD$ RandomFloatMinMax(%0,%1)PP_DISCARD$
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">The string to remove whitespace from the end of.</param>
@@ -3411,9 +3438,7 @@ stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius
 	for (sx = 0; sx != sy; ++sx)
 	{
 		randA = RandomFloat(360.0);
-		// Not using `RandomFloat` here because it isn't great for high
-		// precision numbers 0 <= n < 1.
-		randD = radius * floatsqrt(random(100000) / 100000.0);
+		randD = radius * floatsqrt(RandomFloat(1.0));
 		xs[sx] = randD * floatsin(randA, degrees) + centreX;
 		ys[sx] = randD * floatsin(randA, degrees) + centreY;
 	}
@@ -3490,9 +3515,7 @@ stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Flo
 stock RandomPointInCircleDistributed(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
 {
 	new Float:randA = RandomFloat(360.0);
-	// Not using `RandomFloat` here because it isn't great for high
-	// precision numbers 0 <= n < 1.
-	new Float:randD = radius * floatsqrt(random(100000) / 100000.0);
+	new Float:randD = radius * floatsqrt(RandomFloat(1.0));
 	outX = randD * floatsin(randA, degrees) + centreX;
 	outY = randD * floatsin(randA, degrees) + centreY;
 }

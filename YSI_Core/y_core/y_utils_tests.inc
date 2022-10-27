@@ -329,6 +329,73 @@ public y_utils_va_return(const str[])
 	}
 }
 
+@test(.group = "y_utils") RandomFloatDistribution()
+{
+	new boxes[10];
+	for (new i = 0; i != 10000; ++i)
+	{
+		new Float:rnd = RandomFloat(1000.0);
+		ASSERT(0.0 <= rnd < 1000.0);
+		if (0.0 <= rnd < 100.0) ++boxes[0];
+		if (100.0 <= rnd < 200.0) ++boxes[1];
+		if (200.0 <= rnd < 300.0) ++boxes[2];
+		if (300.0 <= rnd < 400.0) ++boxes[3];
+		if (400.0 <= rnd < 500.0) ++boxes[4];
+		if (500.0 <= rnd < 600.0) ++boxes[5];
+		if (600.0 <= rnd < 700.0) ++boxes[6];
+		if (700.0 <= rnd < 800.0) ++boxes[7];
+		if (800.0 <= rnd < 900.0) ++boxes[8];
+		if (900.0 <= rnd < 1000.0) ++boxes[9];
+	}
+	ASSERT_NZ(boxes[0]);
+	ASSERT_NZ(boxes[1]);
+	ASSERT_NZ(boxes[2]);
+	ASSERT_NZ(boxes[3]);
+	ASSERT_NZ(boxes[4]);
+	ASSERT_NZ(boxes[5]);
+	ASSERT_NZ(boxes[6]);
+	ASSERT_NZ(boxes[7]);
+	ASSERT_NZ(boxes[8]);
+	ASSERT_NZ(boxes[9]);
+}
+
+@test(.group = "y_utils") RandomFloat1()
+{
+	for (new i = 0; i != 10000; ++i)
+	{
+		new Float:rnd = RandomFloat(20.0);
+		ASSERT(0.0 <= rnd < 20.0);
+	}
+}
+
+@test(.group = "y_utils") RandomFloat2()
+{
+	for (new i = 0; i != 10000; ++i)
+	{
+		new Float:rnd = RandomFloat(-10.0, 10.0);
+		ASSERT(-10.0 <= rnd < 10.0);
+	}
+}
+
+@test(.group = "y_utils") RandomFloat3()
+{
+	for (new i = 0; i != 10000; ++i)
+	{
+		new Float:rnd = RandomFloat(30.0, 40.0);
+		ASSERT(30.0 <= rnd < 40.0);
+	}
+}
+
+@test(.group = "y_utils") RandomFloat4()
+{
+	for (new i = 0; i != 10000; ++i)
+	{
+		new Float:rnd = RandomFloat(-1000.0, -500.0, 4);
+		//printf("%02f", rnd);
+		ASSERT(-1000.0 <= rnd < -500.0);
+	}
+}
+
 @test(.group = "y_utils") IterativeTextSplitter1A()
 {
 	new end, next, bool:hyphen;
