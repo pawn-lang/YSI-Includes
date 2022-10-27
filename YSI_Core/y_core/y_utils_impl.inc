@@ -2449,6 +2449,39 @@ stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
+ *  GetPlayerRPComponents
+ * </summary>
+ * <param name="playerid">Player whose name you want to get.</param>
+ * <remarks>
+ *  Get a player's name, split in to parts by <c>_</c>.
+ * </remarks>
+ * <returns>
+ *  The number of parts extracted from the name.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock GetPlayerRPComponents(playerid, string:names[][], components = sizeof (names), len = sizeof (names[]))
+{
+	new
+		i = 0,
+		name[MAX_PLAYER_NAME + 1];
+	// Returns an unpacked string.
+	if (GetPlayerName(playerid, name, MAX_PLAYER_NAME))
+	{
+		// Split by `_`.
+		--components;
+		for (new p = -1, n; i < components && (n = strfind(name, __COMPILER_PACK"_", false, p + 1)) != -1; ++i, p = n)
+		{
+			strmid(names[i], name, p + 1, n, len);
+		}
+		strmid(names[i], name, p + 1, strlen(name), len);
+		++i;
+	}
+	return i;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
  *  IsRPName
  * </summary>
  * <param name="name">The name to test.</param>
