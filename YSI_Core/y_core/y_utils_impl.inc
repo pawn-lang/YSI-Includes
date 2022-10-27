@@ -3291,6 +3291,182 @@ stock GetNearestColourSRGBCached(colour, const Float:options[][3], count = sizeo
 #undef FLOAT_SRGB_CUTOFF
 
 /*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Get an array of random points in a circle.
+ * </summary>
+ * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
+ * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
+ * <param name="radius">The size (radius) of the circle.</param>
+ * <param name="xs">The return array for the random x co-ordinates.</param>
+ * <param name="ys">The return array for the random y co-ordinates.</param>
+ * <param name="sx">The size of the x return array (must match <c>sy</c>.</param>
+ * <param name="sy">The size of the y return array (must match <c>sx</c>.</param>
+ * <remarks>
+ *  Most basic method.  Generate points in a square and test them.  Simple but
+ *  unbounded.  Good distribution.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+stock RandomPointsInCircleSampled(Float:centreX, Float:centreY, Float:radius, Float:xs[], Float:ys[], sx = sizeof (xs), sy = sizeof (ys))
+{
+	assert(sx == sy);
+	new Float:randX, Float:randY;
+	new Float:minX = centreX - radius, Float:minY = centreY - radius;
+	new Float:maxX = centreX + radius, Float:maxY = centreY + radius;
+	for (sx = 0; sx != sy; )
+	{
+		randX = RandomFloat(minX, maxX);
+		randY = RandomFloat(minY, maxY);
+		if (VectorSize(centreX - randX, centreY - randY, 0.0) < radius)
+		{
+			xs[sx] = randX;
+			ys[sx] = randY;
+			++sx;
+		}
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Get an array of random points in a circle.
+ * </summary>
+ * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
+ * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
+ * <param name="radius">The size (radius) of the circle.</param>
+ * <param name="xs">The return array for the random x co-ordinates.</param>
+ * <param name="ys">The return array for the random y co-ordinates.</param>
+ * <param name="sx">The size of the x return array (must match <c>sy</c>.</param>
+ * <param name="sy">The size of the y return array (must match <c>sx</c>.</param>
+ * <remarks>
+ *  Medium method.  Generate an angle and distance.  Fixed loop bounds, but
+ *  worst distribution (although actually the best distribution if you want more
+ *  near the centre, as in an explosion).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+stock RandomPointsInCircleCentred(Float:centreX, Float:centreY, Float:radius, Float:xs[], Float:ys[], sx = sizeof (xs), sy = sizeof (ys))
+{
+	assert(sx == sy);
+	new Float:randA, Float:randD;
+	for (sx = 0; sx != sy; ++sx)
+	{
+		randA = RandomFloat(360.0);
+		randD = RandomFloat(radius);
+		xs[sx] = randD * floatsin(randA, degrees) + centreX;
+		ys[sx] = randD * floatsin(randA, degrees) + centreY;
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Get an array of random points in a circle.
+ * </summary>
+ * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
+ * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
+ * <param name="radius">The size (radius) of the circle.</param>
+ * <param name="xs">The return array for the random x co-ordinates.</param>
+ * <param name="ys">The return array for the random y co-ordinates.</param>
+ * <param name="sx">The size of the x return array (must match <c>sy</c>.</param>
+ * <param name="sy">The size of the y return array (must match <c>sx</c>.</param>
+ * <remarks>
+ *  Best method.  Generate an angle and distance, but adjusted for a perfect
+ *  distribution of points throughout the circle.  Fixed loop bounds.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius, Float:xs[], Float:ys[], sx = sizeof (xs), sy = sizeof (ys))
+{
+	assert(sx == sy);
+	new Float:randA, Float:randD;
+	for (sx = 0; sx != sy; ++sx)
+	{
+		randA = RandomFloat(360.0);
+		// Not using `RandomFloat` here because it isn't great for high
+		// precision numbers 0 <= n < 1.
+		randD = radius * floatsqrt(random(100000) / 100000.0);
+		xs[sx] = randD * floatsin(randA, degrees) + centreX;
+		ys[sx] = randD * floatsin(randA, degrees) + centreY;
+	}
+}
+
+#define RandomPointsInCircle RandomPointsInCircleDistributed
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Get a random point in a circle.
+ * </summary>
+ * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
+ * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
+ * <param name="radius">The size (radius) of the circle.</param>
+ * <param name="outX">The return for the random x co-ordinate.</param>
+ * <param name="outY">The return for the random y co-ordinate.</param>
+ * <remarks>
+ *  Most basic method.  Generate points in a square and test them.  Simple but
+ *  unbounded.  Good distribution.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
+{
+	new Float:minX = centreX - radius, Float:minY = centreY - radius;
+	new Float:maxX = centreX + radius, Float:maxY = centreY + radius;
+	for ( ; ; )
+	{
+		outX = RandomFloat(minX, maxX);
+		outY = RandomFloat(minY, maxY);
+		if (VectorSize(centreX - outX, centreY - outY, 0.0) < radius)
+		{
+			return;
+		}
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Get a random point in a circle.
+ * </summary>
+ * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
+ * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
+ * <param name="radius">The size (radius) of the circle.</param>
+ * <param name="outX">The return for the random x co-ordinate.</param>
+ * <param name="outY">The return for the random y co-ordinate.</param>
+ * <remarks>
+ *  Medium method.  Generate an angle and distance.  Fixed loop bounds, but
+ *  worst distribution (although actually the best distribution if you want more
+ *  near the centre, as in an explosion).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
+{
+	new Float:randA = RandomFloat(360.0);
+	new Float:randD = RandomFloat(radius);
+	outX = randD * floatsin(randA, degrees) + centreX;
+	outY = randD * floatsin(randA, degrees) + centreY;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Get a random point in a circle.
+ * </summary>
+ * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
+ * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
+ * <param name="radius">The size (radius) of the circle.</param>
+ * <param name="outX">The return for the random x co-ordinate.</param>
+ * <param name="outY">The return for the random y co-ordinate.</param>
+ * <remarks>
+ *  Best method.  Generate an angle and distance, but adjusted for a perfect
+ *  distribution of points throughout the circle.  Fixed loop bounds.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+stock RandomPointInCircleDistributed(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
+{
+	new Float:randA = RandomFloat(360.0);
+	// Not using `RandomFloat` here because it isn't great for high
+	// precision numbers 0 <= n < 1.
+	new Float:randD = radius * floatsqrt(random(100000) / 100000.0);
+	outX = randD * floatsin(randA, degrees) + centreX;
+	outY = randD * floatsin(randA, degrees) + centreY;
+}
+
+#define RandomPointInCircle RandomPointInCircleDistributed
+
+/*-------------------------------------------------------------------------*//**
  * <param name="str">The string to skip over part of.</param>
  * <param name="pos">The start of the whitespace.</param>
  * <returns>
