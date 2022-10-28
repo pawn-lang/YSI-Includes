@@ -693,19 +693,21 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 						YSI_gscInitMsgD
 					);
 				}
+				new t0, t1;
+				t0 = GetTickCount();
 			#else
 				#pragma unused jit
 			#endif
-			new t0, t1;
-			t0 = GetTickCount();
-			ScriptInit_CodeInitFuncs_();
+				ScriptInit_CodeInitFuncs_();
 			#if defined ScriptInit_OnCodeInit
 				ScriptInit_OnCodeInit();
 			#endif
-			t1 = GetTickCount();
-			printf("Script Initialisation: %d", t1 - t0);
 			#if _YSI_SAFE_STARTUP
-				Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
+				t1 = GetTickCount();
+				//printf("Script Initialisation: %d", t1 - t0);
+				new str[32];
+				format(str, sizeof (str), "            Done in %dms!", t1 - t0);
+				Server_PrintIntroPart(YSI_SPACE, str);
 				Server_FinishIntroPart();
 			#endif
 			#if defined ScriptInit_OnYSIInit
