@@ -317,6 +317,56 @@ stock Float:Weapon_GetMaxRange(weaponid)
 	return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (-1);
 }
 
+new YSI_g_WeaponNames[47][] = {
+    "No gun",
+    "Brass Knuckles",
+    "Golf Club",
+    "Nightstick",
+    "Knife",
+    "Baseball Bat",
+    "Shovel",
+    "Pool Cue",
+    "Katana",
+    "Chainsaw",
+    "Double-ended Dildo",
+    "Dildo",
+    "Vibrator",
+    "Silver Vibrator",
+    "Flowers",
+    "Cane",
+    "Grenade",
+    "Tear Gas",
+    "Molotov Cocktail",
+    "No gun",
+    "No gun",
+    "No gun",
+    "Colt .45",
+    "Silenced Colt .45",
+    "Desert Eagle",
+    "Shotgun",
+    "Sawnoff Shotgun",
+    "Combat Shotgun",
+    "Micro SMG",
+    "MP5",
+    "AK47",
+    "M4",
+    "Tec-9",
+    "Country Rifle",
+    "Sniper Rifle",
+    "RPG",
+    "HS Rocket",
+    "Flamethrower",
+    "Minigun",
+    "Satchel Charge",
+    "Detonator",
+    "Spraycan",
+    "Fire Extinguisher",
+    "Camera",
+    "Night Vis Goggles",
+    "Thermal Goggles",
+    "Parachute"
+};
+
 static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	WEAPONDATA_NO_AMMO, //{"Fist", 0, 0, 0 },
 	WEAPONDATA_NO_AMMO, //{"Brass Knuckles", 1, 0, 331 },
@@ -366,6 +416,17 @@ static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	WEAPONDATA_NO_AMMO, //{"Thermal Goggles", 45, 11, 369 },
 	WEAPONDATA_NO_AMMO  //{"Parachute", 46, 11, 371 }
 };
+
+stock bool:Weapon_GetName(weaponid, dest[], size = sizeof(dest))
+{
+	dest[0] = '\0'l
+	if (Weapon_IsValid(weaponid))
+	{
+		strcat(dest, YSI_g_WeaponNames[weaponid], size);
+		return true;
+	}
+	return false;
+}
 
 stock bool:Weapon_GetAmmoName(weaponid, dest[], size = sizeof (dest))
 {
