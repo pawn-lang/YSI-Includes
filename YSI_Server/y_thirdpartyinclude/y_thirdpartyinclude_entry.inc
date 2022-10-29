@@ -583,3 +583,7 @@ public OnCodeInit()
 
 #include "..\..\YSI_Core\y_core\y_dumpamx"
 
+#if defined YSI_TESTS
+	#include "y_thirdpartyinclude_tests"
+#endif
+
