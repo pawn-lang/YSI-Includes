@@ -419,7 +419,7 @@ static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 
 stock bool:Weapon_GetName(weaponid, dest[], size = sizeof(dest))
 {
-	dest[0] = '\0'l
+	dest[0] = '\0';
 	if (Weapon_IsValid(weaponid))
 	{
 		strcat(dest, YSI_g_WeaponNames[weaponid], size);
