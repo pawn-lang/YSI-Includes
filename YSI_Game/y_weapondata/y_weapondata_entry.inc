@@ -317,8 +317,8 @@ stock Float:Weapon_GetMaxRange(weaponid)
 	return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (-1);
 }
 
-new YSI_g_WeaponNames[47][] = {
-    "No gun",
+new YSI_g_WeaponNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
+    "Fists",
     "Brass Knuckles",
     "Golf Club",
     "Nightstick",
