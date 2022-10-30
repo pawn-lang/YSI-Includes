@@ -4321,3 +4321,68 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 	ASSERT_EQ(n, 16);
 }
 
+@test(.group = "y_iterate") y_iterate_AddInLoop1()
+{
+	new
+		Iterator:iter<20>,
+		n;
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 3);
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 7);
+	n = 0;
+	foreach (new i : iter)
+	{
+		n += i;
+		Iter_Add(iter, i);
+	}
+	ASSERT_EQ(n, 16);
+}
+
+@test(.group = "y_iterate") y_iterate_AddInLoop2()
+{
+	new
+		Iterator:iter<20>,
+		bool:z = false,
+		n;
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 7);
+	n = 0;
+	foreach (new i : iter)
+	{
+		if (i == 10)
+		{
+			z = true;
+			break;
+		}
+		n += i;
+		Iter_Add(iter, i + 1);
+	}
+	ASSERT_EQ(n, 5 + 6 + 7 + 8 + 9);
+	ASSERT(z);
+}
+
+@test(.group = "y_iterate") y_iterate_AddInLoop3()
+{
+	new
+		Iterator:iter<20>,
+		n;
+	Iter_Add(iter, 2);
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 9);
+	Iter_Add(iter, 15);
+	n = 0;
+	foreach (new i : iter)
+	{
+		n += i;
+		Iter_Add(iter, i - 1);
+	}
+	ASSERT_EQ(n, 31);
+	n = 0;
+	foreach (new i : iter)
+	{
+		n += i;
+	}
+	ASSERT_EQ(n, 58);
+}
+
