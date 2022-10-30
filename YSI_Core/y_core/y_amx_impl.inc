@@ -589,10 +589,21 @@ stock AMX_GetEntryLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
 				return idx;
 			}
 			AMX_ReadString(addr, str);
-			if (strfind(str, pattern) != -1)
+			if (exact)
 			{
-				buffer = pos - cellbytes;
-				return idx;
+				if (strcmp(str, pattern) == 0)
+				{
+					buffer = pos - cellbytes;
+					return idx;
+				}
+			}
+			else
+			{
+				if (strfind(str, pattern) != -1)
+				{
+					buffer = pos - cellbytes;
+					return idx;
+				}
 			}
 		}
 		pos += __defsize_cells;
@@ -992,6 +1003,28 @@ stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		#emit SREF.S.pri buffer
 	}
 	return idx;
+}
+
+#define AMX_GetPublicCount( AMX_GetCount(AMX_TABLE_PUBLICS
+#define AMX_GetNativeCount( AMX_GetCount(AMX_TABLE_NATIVES
+#define AMX_GetLibraryCount( AMX_GetCount(AMX_TABLE_LIBRARIES
+#define AMX_GetPubVarCount( AMX_GetCount(AMX_TABLE_PUBVARS
+#define AMX_GetTagCount( AMX_GetCount(AMX_TABLE_TAGS
+
+#pragma deprecated Use `AMX_GetPubVarCount`
+stock AMX_GetPubvarCount()
+{
+	return AMX_GetCount(AMX_TABLE_PUBVARS);
+}
+
+stock AMX_GetCount(E_AMX_TABLE:table)
+{
+	Debug_Print7("AMX_GetCount called: %i", _:table);
+	new
+		base = 0,
+		count = 0;
+	AMX_GetBaseCount(table, base, count);
+	return count;
 }
 
 #define AMX_GetPublicValue( AMX_GetValueBinary(AMX_TABLE_PUBLICS,

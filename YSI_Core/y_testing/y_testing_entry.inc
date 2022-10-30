@@ -1233,7 +1233,9 @@ stock Testing_RunAll()
 	//state ysi_debug : on;
 }
 
-#if defined YSI_TESTS
+#if !defined YSI_TESTS
+	#endinput
+#endif
 
 // Meta tests.
 
@@ -1332,12 +1334,69 @@ static stock y_testing_ReturnHello()
 	ASSERT_NEAR(y_testing_ReturnHello(), "hello");
 }
 
-#endif
+#include "..\y_core\y_utils_tests"
+#include "..\y_core\y_als_tests"
+#include "..\y_core\y_cell_tests"
+#include "..\..\YSI_Coding\y_unique\y_unique_tests"
 
-#if defined YSI_TESTS
-	#include "..\y_core\y_utils_tests"
-	#include "..\y_core\y_als_tests"
-	#include "..\y_core\y_cell_tests"
-	#include "..\..\YSI_Coding\y_unique\y_unique_tests"
-#endif
+// Include these in a non-alphabetical order.
+#include ".\libs\y_testing_b"
+#include ".\libs\y_testing_g"
+#include ".\libs\y_testing_d"
+#include ".\libs\y_testing_i"
+#include ".\libs\y_testing_e"
+#include ".\libs\y_testing_h"
+#include ".\libs\y_testing_a"
+#include ".\libs\y_testing_j"
+#include ".\libs\y_testing_c"
+#include ".\libs\y_testing_f"
+
+@test(.group = "y_testing") y_testing_Libraries()
+{
+	new x = heapspace();
+	new a = y_testing_a_native();
+	new b = y_testing_b_native();
+	new c = y_testing_c_native();
+	new d = y_testing_d_native();
+	new e = y_testing_e_native();
+	new f = y_testing_f_native();
+	new g = y_testing_g_native();
+	new h = y_testing_h_native();
+	new i = y_testing_i_native();
+	new j = y_testing_j_native();
+	ASSERT_EQ(x, a);
+	ASSERT_EQ(x, b);
+	ASSERT_EQ(x, c);
+	ASSERT_EQ(x, d);
+	ASSERT_EQ(x, e);
+	ASSERT_EQ(x, f);
+	ASSERT_EQ(x, g);
+	ASSERT_EQ(x, h);
+	ASSERT_EQ(x, i);
+	ASSERT_EQ(x, j);
+
+	a = AMX_GetLibraryEntry(0, x, "y_testing_a_library");
+	b = AMX_GetLibraryEntry(0, x, "y_testing_b_library");
+	c = AMX_GetLibraryEntry(0, x, "y_testing_c_library");
+	d = AMX_GetLibraryEntry(0, x, "y_testing_d_library");
+	e = AMX_GetLibraryEntry(0, x, "y_testing_e_library");
+	f = AMX_GetLibraryEntry(0, x, "y_testing_f_library");
+	g = AMX_GetLibraryEntry(0, x, "y_testing_g_library");
+	h = AMX_GetLibraryEntry(0, x, "y_testing_h_library");
+	i = AMX_GetLibraryEntry(0, x, "y_testing_i_library");
+	j = AMX_GetLibraryEntry(0, x, "y_testing_j_library");
+	ASSERT_NZ(a);
+	ASSERT_NZ(b);
+	ASSERT_NZ(c);
+	ASSERT_NZ(d);
+	ASSERT_NZ(e);
+	ASSERT_NZ(f);
+	ASSERT_NZ(g);
+	ASSERT_NZ(h);
+	ASSERT_NZ(i);
+	ASSERT_NZ(j);
+	
+	x = AMX_GetLibraryCount();
+	ASSERT(x >= 10);
+}
 
