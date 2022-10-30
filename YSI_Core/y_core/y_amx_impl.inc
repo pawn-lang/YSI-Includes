@@ -187,6 +187,10 @@ enum E_AMX_TABLE
 // found in the PAWN documentation as that's for a later version.
 public OnCodeInit()
 {
+	#if defined ResetStaticAmxHeader
+		// Call this function to sort the header.
+		ResetStaticAmxHeader();
+	#endif
 	new
 		addr = 0,
 		data = 0;
