@@ -1353,27 +1353,28 @@ static stock y_testing_ReturnHello()
 
 @test(.group = "y_testing") y_testing_Libraries()
 {
-	new x = heapspace();
-	new a = y_testing_a_native();
-	new b = y_testing_b_native();
-	new c = y_testing_c_native();
-	new d = y_testing_d_native();
-	new e = y_testing_e_native();
-	new f = y_testing_f_native();
-	new g = y_testing_g_native();
-	new h = y_testing_h_native();
-	new i = y_testing_i_native();
-	new j = y_testing_j_native();
-	ASSERT_EQ(x, a);
-	ASSERT_EQ(x, b);
-	ASSERT_EQ(x, c);
-	ASSERT_EQ(x, d);
-	ASSERT_EQ(x, e);
-	ASSERT_EQ(x, f);
-	ASSERT_EQ(x, g);
-	ASSERT_EQ(x, h);
-	ASSERT_EQ(x, i);
-	ASSERT_EQ(x, j);
+	new a, b, c, d, e, f, g, h, i, j, x;
+	x = heapspace();
+	a = y_testing_a_native();
+	b = y_testing_b_native();
+	c = y_testing_c_native();
+	d = y_testing_d_native();
+	e = y_testing_e_native();
+	f = y_testing_f_native();
+	g = y_testing_g_native();
+	h = y_testing_h_native();
+	i = y_testing_i_native();
+	j = y_testing_j_native();
+	ASSERT_EQ(a, x);
+	ASSERT_EQ(b, x);
+	ASSERT_EQ(c, x);
+	ASSERT_EQ(d, x);
+	ASSERT_EQ(e, x);
+	ASSERT_EQ(f, x);
+	ASSERT_EQ(g, x);
+	ASSERT_EQ(h, x);
+	ASSERT_EQ(i, x);
+	ASSERT_EQ(j, x);
 
 	a = AMX_GetLibraryEntry(0, x, "y_testing_a_library");
 	b = AMX_GetLibraryEntry(0, x, "y_testing_b_library");
