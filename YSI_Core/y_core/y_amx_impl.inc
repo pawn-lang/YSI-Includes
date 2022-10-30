@@ -447,13 +447,13 @@ stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
 	}
 }
 
-#define AMX_GetPublicEntry( AMX_GetEntry(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeEntry( AMX_GetEntry(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryEntry( AMX_GetEntry(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarEntry( AMX_GetEntry(AMX_TABLE_PUBVARS,
-#define AMX_GetTagEntry( AMX_GetEntry(AMX_TABLE_TAGS,
+#define AMX_GetPublicEntry( AMX_GetEntryBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeEntry( AMX_GetEntryLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryEntry( AMX_GetEntryLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubvarEntry( AMX_GetEntryBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagEntry( AMX_GetEntryLinear(AMX_TABLE_TAGS,
 
-stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+stock AMX_GetEntryBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	Debug_Print7("AMX_GetEntry called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
@@ -561,13 +561,46 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 	return 0;
 }
 
-#define AMX_GetPublicEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_PUBVARS,
-#define AMX_GetTagEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_TAGS,
+stock AMX_GetEntryLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+{
+	Debug_Print7("AMX_GetEntry called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
+	new
+		base = 0,
+		count = 0;
+	AMX_GetBaseCount(table, base, count);
+	new
+		addr = 0,
+		pos = idx * __defsize_cells + base + cellbytes,
+		str[FUNCTION_LENGTH];
+	while (idx++ < count)
+	{
+		addr = __32(AMX_Read(pos)) + AMX_BASE_ADDRESS;
+		if (addr != AMX_BASE_ADDRESS)
+		{
+			if (pattern[0] == '\0')
+			{
+				buffer = pos - cellbytes;
+				return idx;
+			}
+			AMX_ReadString(addr, str);
+			if (strfind(str, pattern) != -1)
+			{
+				buffer = pos - cellbytes;
+				return idx;
+			}
+		}
+		pos += __defsize_cells;
+	}
+	return 0;
+}
 
-stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
+#define AMX_GetPublicEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubvarEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_TAGS,
+
+stock AMX_GetEntryPrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
@@ -622,6 +655,36 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
     
 		// Now we re-check the value at `idx`.
 	}
+	// Get the address of the string.
+	pos = idx * __defsize_cells + base + cellbytes;
+	while (idx++ < count)
+	{
+		#emit LREF.S.pri                pos
+		#emit CONST.alt                 0xFFFFFFFF
+		#emit AND
+		#emit LOAD.alt                  AMX_BASE_ADDRESS
+		#emit ADD
+		#emit STOR.S.pri                addr
+		//addr = __32(addr);
+		if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == pattern)
+		{
+			buffer = pos - cellbytes;
+			return idx;
+		}
+		pos += __defsize_cells;
+	}
+	return 0;
+}
+
+stock AMX_GetEntryPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
+{
+	Debug_Print7("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	new
+		base = 0,
+		count = 0,
+		addr = 0,
+		pos;
+	AMX_GetBaseCount(table, base, count);
 	// Get the address of the string.
 	pos = idx * __defsize_cells + base + cellbytes;
 	while (idx++ < count)
@@ -706,18 +769,18 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return 0;
 }
 
-#define AMX_GetPublicName( AMX_GetName(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeName( AMX_GetName(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryName( AMX_GetName(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarName( AMX_GetName(AMX_TABLE_PUBVARS,
-#define AMX_GetTagName( AMX_GetName(AMX_TABLE_TAGS,
+#define AMX_GetPublicName( AMX_GetNameBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeName( AMX_GetNameLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryName( AMX_GetNameLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubvarName( AMX_GetNameBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagName( AMX_GetNameLinear(AMX_TABLE_TAGS,
 
-stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
+stock AMX_GetNameBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
 {
 	Debug_Print7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
-	idx = AMX_GetEntry(table, idx, pointer, pattern, exact);
+	idx = AMX_GetEntryBinary(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
 		AMX_ReadString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
@@ -725,18 +788,44 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern
 	return idx;
 }
 
-#define AMX_GetPublicNamePrefix( AMX_GetNamePrefix(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeNamePrefix( AMX_GetNamePrefix(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryNamePrefix( AMX_GetNamePrefix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarNamePrefix( AMX_GetNamePrefix(AMX_TABLE_PUBVARS,
-#define AMX_GetTagNamePrefix( AMX_GetNamePrefix(AMX_TABLE_TAGS,
+stock AMX_GetNameLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
+{
+	Debug_Print7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
+	new
+		pointer = 0;
+	idx = AMX_GetEntryLinear(table, idx, pointer, pattern, exact);
+	if (idx)
+	{
+		AMX_ReadString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
+	}
+	return idx;
+}
 
-stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
+#define AMX_GetPublicNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubvarNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_TAGS,
+
+stock AMX_GetNamePrefixBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	Debug_Print7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
-	idx = AMX_GetEntryPrefix(table, idx, pointer, pattern);
+	idx = AMX_GetEntryPrefixBinary(table, idx, pointer, pattern);
+	if (idx)
+	{
+		AMX_ReadString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
+	}
+	return idx;
+}
+
+stock AMX_GetNamePrefixLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
+{
+	Debug_Print7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
+	new
+		pointer = 0;
+	idx = AMX_GetEntryPrefixLinear(table, idx, pointer, pattern);
 	if (idx)
 	{
 		AMX_ReadString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
@@ -763,18 +852,18 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 	return idx;
 }
 
-#define AMX_GetPublicPointer( AMX_GetPointer(AMX_TABLE_PUBLICS,
-#define AMX_GetNativePointer( AMX_GetPointer(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryPointer( AMX_GetPointer(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarPointer( AMX_GetPointer(AMX_TABLE_PUBVARS,
-#define AMX_GetTagPointer( AMX_GetPointer(AMX_TABLE_TAGS,
+#define AMX_GetPublicPointer( AMX_GetPointerBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativePointer( AMX_GetPointerLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryPointer( AMX_GetPointerLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubvarPointer( AMX_GetPointerBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagPointer( AMX_GetPointerLinear(AMX_TABLE_TAGS,
 
-stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+stock AMX_GetPointerBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	Debug_Print7("AMX_GetPointer called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
 		pointer = 0;
-	idx = AMX_GetEntry(table, idx, pointer, pattern, exact);
+	idx = AMX_GetEntryBinary(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
 		#emit LREF.S.pri pointer
@@ -783,18 +872,46 @@ stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", cons
 	return idx;
 }
 
-#define AMX_GetPublicPointerPrefix( AMX_GetPointerPrefix(AMX_TABLE_PUBLICS,
-#define AMX_GetNativePointerPrefix( AMX_GetPointerPrefix(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryPointerPrefix( AMX_GetPointerPrefix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarPointerPrefix( AMX_GetPointerPrefix(AMX_TABLE_PUBVARS,
-#define AMX_GetTagPointerPrefix( AMX_GetPointerPrefix(AMX_TABLE_TAGS,
+stock AMX_GetPointerLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+{
+	Debug_Print7("AMX_GetPointer called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
+	new
+		pointer = 0;
+	idx = AMX_GetEntryLinear(table, idx, pointer, pattern, exact);
+	if (idx)
+	{
+		#emit LREF.S.pri pointer
+		#emit SREF.S.pri buffer
+	}
+	return idx;
+}
 
-stock AMX_GetPointerPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
+#define AMX_GetPublicPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativePointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryPointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubvarPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagPointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_TAGS,
+
+stock AMX_GetPointerPrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetPointerPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
-	idx = AMX_GetEntryPrefix(table, idx, pointer, pattern);
+	idx = AMX_GetEntryPrefixBinary(table, idx, pointer, pattern);
+	if (idx)
+	{
+		#emit LREF.S.pri pointer
+		#emit SREF.S.pri buffer
+	}
+	return idx;
+}
+
+stock AMX_GetPointerPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
+{
+	Debug_Print7("AMX_GetPointerPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	new
+		pointer = 0;
+	idx = AMX_GetEntryPrefixLinear(table, idx, pointer, pattern);
 	if (idx)
 	{
 		#emit LREF.S.pri pointer
@@ -1235,7 +1352,7 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 		idx,
 		buffer,
 		value;
-	while ((idx = AMX_GetEntry(AMX_TABLE_TAGS, idx, buffer)))
+	while ((idx = AMX_GetEntryLinear(AMX_TABLE_TAGS, idx, buffer)))
 	{
 		#emit LREF.S.pri buffer
 		#emit STOR.S.pri value
