@@ -450,8 +450,14 @@ stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
 #define AMX_GetPublicEntry( AMX_GetEntryBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeEntry( AMX_GetEntryLinear(AMX_TABLE_NATIVES,
 #define AMX_GetLibraryEntry( AMX_GetEntryLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarEntry( AMX_GetEntryBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetPubVarEntry( AMX_GetEntryBinary(AMX_TABLE_PUBVARS,
 #define AMX_GetTagEntry( AMX_GetEntryLinear(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarEntry`
+stock AMX_GetPubvarEntry(idx, &buffer, const pattern[] = "", const bool:exact = false)
+{
+	return AMX_GetEntryBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
+}
 
 stock AMX_GetEntryBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
@@ -597,8 +603,14 @@ stock AMX_GetEntryLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
 #define AMX_GetPublicEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_NATIVES,
 #define AMX_GetLibraryEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetPubVarEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBVARS,
 #define AMX_GetTagEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarEntryPrefix`
+stock AMX_GetPubvarEntryPrefix(idx, &buffer, pattern)
+{
+	return AMX_GetEntryPrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
+}
 
 stock AMX_GetEntryPrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
@@ -709,8 +721,14 @@ stock AMX_GetEntryPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
 #define AMX_GetPublicEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_NATIVES,
 #define AMX_GetLibraryEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_PUBVARS,
+#define AMX_GetPubVarEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarEntrySuffix`
+stock AMX_GetPubvarEntrySuffix(idx, &buffer, pattern)
+{
+	return AMX_GetEntrySuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
+}
 
 stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
@@ -772,8 +790,14 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 #define AMX_GetPublicName( AMX_GetNameBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeName( AMX_GetNameLinear(AMX_TABLE_NATIVES,
 #define AMX_GetLibraryName( AMX_GetNameLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarName( AMX_GetNameBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetPubVarName( AMX_GetNameBinary(AMX_TABLE_PUBVARS,
 #define AMX_GetTagName( AMX_GetNameLinear(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarName`
+stock AMX_GetPubvarName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
+{
+	return AMX_GetNameBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
+}
 
 stock AMX_GetNameBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
 {
@@ -804,8 +828,14 @@ stock AMX_GetNameLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const p
 #define AMX_GetPublicNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_NATIVES,
 #define AMX_GetLibraryNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetPubVarNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBVARS,
 #define AMX_GetTagNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarNamePrefix`
+stock AMX_GetPubvarNamePrefix(idx, buffer[FUNCTION_LENGTH], pattern)
+{
+	return AMX_GetNamePrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
+}
 
 stock AMX_GetNamePrefixBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
 {
@@ -836,8 +866,14 @@ stock AMX_GetNamePrefixLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], p
 #define AMX_GetPublicNameSuffix( AMX_GetNameSuffix(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeNameSuffix( AMX_GetNameSuffix(AMX_TABLE_NATIVES,
 #define AMX_GetLibraryNameSuffix( AMX_GetNameSuffix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarNameSuffix( AMX_GetNameSuffix(AMX_TABLE_PUBVARS,
+#define AMX_GetPubVarNameSuffix( AMX_GetNameSuffix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagNameSuffix( AMX_GetNameSuffix(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarNameSuffix`
+stock AMX_GetPubvarNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
+{
+	return AMX_GetNameSuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
+}
 
 stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
 {
@@ -855,8 +891,14 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 #define AMX_GetPublicPointer( AMX_GetPointerBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativePointer( AMX_GetPointerLinear(AMX_TABLE_NATIVES,
 #define AMX_GetLibraryPointer( AMX_GetPointerLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarPointer( AMX_GetPointerBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetPubVarPointer( AMX_GetPointerBinary(AMX_TABLE_PUBVARS,
 #define AMX_GetTagPointer( AMX_GetPointerLinear(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarPointer`
+stock AMX_GetPubvarPointer(idx, &buffer, const pattern[] = "", const bool:exact = false)
+{
+	return AMX_GetPointerBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
+}
 
 stock AMX_GetPointerBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
@@ -889,8 +931,14 @@ stock AMX_GetPointerLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = ""
 #define AMX_GetPublicPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativePointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_NATIVES,
 #define AMX_GetLibraryPointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetPubVarPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBVARS,
 #define AMX_GetTagPointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarPointerPrefix`
+stock AMX_GetPubvarPointerPrefix(idx, &buffer, pattern)
+{
+	return AMX_GetPointerPrefixBinary(E_AMX_TABLE:table, idx, buffer, pattern);
+}
 
 stock AMX_GetPointerPrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
@@ -923,8 +971,14 @@ stock AMX_GetPointerPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
 #define AMX_GetPublicPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_PUBLICS,
 #define AMX_GetNativePointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_NATIVES,
 #define AMX_GetLibraryPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_PUBVARS,
+#define AMX_GetPubVarPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarPointerSuffix`
+stock AMX_GetPubvarPointerSuffix(idx, &buffer, pattern)
+{
+	return AMX_GetPointerSuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
+}
 
 stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
@@ -940,18 +994,24 @@ stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return idx;
 }
 
-#define AMX_GetPublicValue( AMX_GetValue(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeValue( AMX_GetValue(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryValue( AMX_GetValue(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarValue( AMX_GetValue(AMX_TABLE_PUBVARS,
-#define AMX_GetTagValue( AMX_GetValue(AMX_TABLE_TAGS,
+#define AMX_GetPublicValue( AMX_GetValueBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeValue( AMX_GetValueLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryValue( AMX_GetValueLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarValue( AMX_GetValueBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagValue( AMX_GetValueLinear(AMX_TABLE_TAGS,
 
-stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+#pragma deprecated Use `AMX_GetPubVarValue`
+stock AMX_GetPubvarValue(idx, &buffer, const pattern[] = "", const bool:exact = false)
+{
+	return AMX_GetValueBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
+}
+
+stock AMX_GetValueBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	Debug_Print7("AMX_GetValue called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
 		pointer = 0;
-	idx = AMX_GetPointer(table, idx, pointer, pattern, exact);
+	idx = AMX_GetPointerBinary(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
 		#emit LREF.S.pri pointer
@@ -960,18 +1020,52 @@ stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 	return idx;
 }
 
-#define AMX_GetPublicValuePrefix( AMX_GetValuePrefix(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeValuePrefix( AMX_GetValuePrefix(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryValuePrefix( AMX_GetValuePrefix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarValuePrefix( AMX_GetValuePrefix(AMX_TABLE_PUBVARS,
-#define AMX_GetTagValuePrefix( AMX_GetValuePrefix(AMX_TABLE_TAGS,
+stock AMX_GetValueLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+{
+	Debug_Print7("AMX_GetValue called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
+	new
+		pointer = 0;
+	idx = AMX_GetPointerLinear(table, idx, pointer, pattern, exact);
+	if (idx)
+	{
+		#emit LREF.S.pri pointer
+		#emit SREF.S.pri buffer
+	}
+	return idx;
+}
 
-stock AMX_GetValuePrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
+#define AMX_GetPublicValuePrefix( AMX_GetValuePrefixBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarValuePrefix( AMX_GetValuePrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarValuePrefix`
+stock AMX_GetPubvarValuePrefix(idx, &buffer, pattern)
+{
+	return AMX_GetValuePrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
+}
+
+stock AMX_GetValuePrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetValuePrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
-	idx = AMX_GetPointerPrefix(table, idx, pointer, pattern);
+	idx = AMX_GetPointerPrefixBinary(table, idx, pointer, pattern);
+	if (idx)
+	{
+		#emit LREF.S.pri pointer
+		#emit SREF.S.pri buffer
+	}
+	return idx;
+}
+
+stock AMX_GetValuePrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
+{
+	Debug_Print7("AMX_GetValuePrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	new
+		pointer = 0;
+	idx = AMX_GetPointerPrefixLinear(table, idx, pointer, pattern);
 	if (idx)
 	{
 		#emit LREF.S.pri pointer
@@ -983,8 +1077,14 @@ stock AMX_GetValuePrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 #define AMX_GetPublicValueSuffix( AMX_GetValueSuffix(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeValueSuffix( AMX_GetValueSuffix(AMX_TABLE_NATIVES,
 #define AMX_GetLibraryValueSuffix( AMX_GetValueSuffix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubvarValueSuffix( AMX_GetValueSuffix(AMX_TABLE_PUBVARS,
+#define AMX_GetPubVarValueSuffix( AMX_GetValueSuffix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagValueSuffix( AMX_GetValueSuffix(AMX_TABLE_TAGS,
+
+#pragma deprecated Use `AMX_GetPubVarValueSuffix`
+stock AMX_GetPubvarValueSuffix(idx, &buffer, pattern)
+{
+	return AMX_GetValueSuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
+}
 
 stock AMX_GetValueSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
