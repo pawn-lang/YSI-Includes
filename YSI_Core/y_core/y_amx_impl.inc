@@ -1241,18 +1241,14 @@ stock AMX_GetStringFromEntry(tableEntry, str[], size = sizeof (str))
 #pragma deprecated Use `AMX_ReadPackedString`
 stock AMX_ReadString(addr, str[], len = sizeof (str))
 {
-	AMX_ReadPackedString(addr, str, len);
-}
-
-stock AMX_ReadPackedString(addr, str[], len = sizeof (str))
-{
 	new
 		buffer = 0,
 		idx = 0;
 	do
 	{
 		// Read 4 bytes.
-		buffer = AMX_Read(addr);
+		#emit LREF.S.pri                addr
+		#emit STOR.S.pri                buffer
 		str[idx] = swapchars(buffer);
 		
 		// https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
@@ -1265,6 +1261,21 @@ stock AMX_ReadPackedString(addr, str[], len = sizeof (str))
 	while (++idx < len);
 }
 
+stock AMX_ReadPackedString(addr, str[], len = sizeof (str))
+{
+	new
+		buffer = 0,
+		idx = 0;
+	len *= cellbytes;
+	do
+	{
+		// Read 4 bytes.
+		buffer = AMX_Read(addr),
+		++addr;
+	}
+	while ((str{idx} = buffer & 0xFF) && (++idx < len));
+}
+
 stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
 {
 	new
@@ -1273,7 +1284,7 @@ stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
 	do
 	{
 		// Read 4 bytes.
-		buffer = AMX_Read(addr);
+		buffer = AMX_Read(addr),
 		++addr;
 	}
 	while ((str[idx] = buffer & 0xFF) && (++idx < len));

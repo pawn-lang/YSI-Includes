@@ -153,7 +153,6 @@ CHAIN_HOOK(Profiling)
 	#define __TZ:%8$%0[%2](%1) %8$%0(%1)
 #endif
 
-
 #if YSI_KEYWORD(ProfileInit)
 	#define ProfileInit:%1() PROFILE_INIT__ %1()
 #endif
@@ -163,6 +162,10 @@ CHAIN_HOOK(Profiling)
 #if YSI_KEYWORD(ProfileClose)
 	#define ProfileClose:%1() PROFILE_CLOSE__ %1()
 #endif
+
+#define @profileinit(%2)%0(%1) PROFILE_INIT__ %0(%1)
+#define @profile(%2)%0(%1) PROFILE__ %0[%2](%1)
+#define @profileclose(%2)%0(%1) PROFILE_CLOSE__ %0(%1)
 
 #define @y_P%0\32; @y_P
 #define @yP_%0\32; @yP_
@@ -213,12 +216,15 @@ stock bool:Profiling_Run(&profilings)
 {
 	Debug_Print3("bool:Profiling_Run called: %i", profilings);
 #if defined RUN_PROFILINGS
+	Server_DisableLongCall();
 	Debug_Print2("Profiling_Run() called");
 	new
 		idx = 0,
 		buffer[FUNCTION_LENGTH];
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_PROFILING_PROFILE_SEARCH)))
 	{
+		//Server_EnableLongCall();
+		//Server_RestartLongCall();
 		buffer[0] = Y_PROFILING_INIT,
 		CallLocalFunction(buffer, YSI_EMPTY),
 		// Call the test.
@@ -231,7 +237,10 @@ stock bool:Profiling_Run(&profilings)
 		CallLocalFunction(buffer, YSI_EMPTY),
 		++profilings;
 		PROFILE_REPORT(YSI_SPACE);
+		//Server_DisableLongCall();
 	}
+	Server_EnableLongCall();
+	Server_RestartLongCall();
 #else
 	#pragma unused profilings
 #endif
