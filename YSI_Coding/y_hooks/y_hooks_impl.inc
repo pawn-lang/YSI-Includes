@@ -431,10 +431,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, &
 				// We don't have an existing callback with this name, only hooks.
 				// We need to add the name of the callback to the AMX header,
 				// and we have enough space in which to do so.
-				new
-					str[FUNCTION_LENGTH];
-				strpack(str, YSI_g_sName),
-				AMX_WriteString(namewrite, str, len);
+				AMX_WriteUnpackedString(namewrite, YSI_g_sName);
 				
 				// Update the space available.
 				namelen -= len + 1;
@@ -800,7 +797,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, en
 			if (nextPtr)
 			{
 				// Is this the insertion point?
-				AMX_ReadString(nextPtr + AMX_BASE_ADDRESS, str, sizeof (str));
+				AMX_ReadPackedString(nextPtr + AMX_BASE_ADDRESS, str, sizeof (str));
 				if (strcmp(str, YSI_g_sName) > 0)
 				{
 					// Save the new name's address.

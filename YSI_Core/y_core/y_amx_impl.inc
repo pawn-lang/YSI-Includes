@@ -497,7 +497,7 @@ stock AMX_GetEntryBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
 				{
 					Debug_Print7("Looking for: %s, %d, %d, %d", pattern, idx, mid, count);
 					addr = __32(AMX_Read(pos)) + AMX_BASE_ADDRESS;
-					Debug_Code7{AMX_ReadString(addr, str);}
+					Debug_Code7{AMX_ReadPackedString(addr, str);}
 					Debug_Print7("    %d, %d, %s", pos, addr, Unpack(str));
 					Debug_Print7("    %08x, %08x, %d", quick, Cell_ReverseBytes(AMX_Read(addr)), Cell_ReverseBytes(AMX_Read(addr)) - quick);
 					if (addr == AMX_BASE_ADDRESS)
@@ -523,7 +523,7 @@ stock AMX_GetEntryBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
 						count = mid;
 						break;
 					}
-					AMX_ReadString(addr, str);
+					AMX_ReadPackedString(addr, str);
 					addr = strcmp(str, pattern);
 					if (addr < 0)
 					{
@@ -558,7 +558,7 @@ stock AMX_GetEntryBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
 					buffer = pos - cellbytes;
 					return idx;
 				}
-				AMX_ReadString(addr, str);
+				AMX_ReadPackedString(addr, str);
 				if (strfind(str, pattern) != -1)
 				{
 					buffer = pos - cellbytes;
@@ -592,7 +592,7 @@ stock AMX_GetEntryLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
 				buffer = pos - cellbytes;
 				return idx;
 			}
-			AMX_ReadString(addr, str);
+			AMX_ReadPackedString(addr, str);
 			if (exact)
 			{
 				if (strcmp(str, pattern) == 0)
@@ -822,7 +822,7 @@ stock AMX_GetNameBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const p
 	idx = AMX_GetEntryBinary(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
-		AMX_ReadString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
+		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
 	}
 	return idx;
 }
@@ -835,7 +835,7 @@ stock AMX_GetNameLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const p
 	idx = AMX_GetEntryLinear(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
-		AMX_ReadString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
+		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
 	}
 	return idx;
 }
@@ -860,7 +860,7 @@ stock AMX_GetNamePrefixBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], p
 	idx = AMX_GetEntryPrefixBinary(table, idx, pointer, pattern);
 	if (idx)
 	{
-		AMX_ReadString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
+		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
 	}
 	return idx;
 }
@@ -873,7 +873,7 @@ stock AMX_GetNamePrefixLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], p
 	idx = AMX_GetEntryPrefixLinear(table, idx, pointer, pattern);
 	if (idx)
 	{
-		AMX_ReadString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
+		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
 	}
 	return idx;
 }
@@ -898,7 +898,7 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 	idx = AMX_GetEntrySuffix(table, idx, pointer, pattern);
 	if (idx)
 	{
-		AMX_ReadString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
+		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
 	}
 	return idx;
 }
@@ -1235,10 +1235,16 @@ stock AMX_ReadLength(addr)
 
 stock AMX_GetStringFromEntry(tableEntry, str[], size = sizeof (str))
 {
-	AMX_ReadString(__32(AMX_Read(tableEntry + cellbytes)) + AMX_BASE_ADDRESS, str, size);
+	AMX_ReadPackedString(__32(AMX_Read(tableEntry + cellbytes)) + AMX_BASE_ADDRESS, str, size);
 }
 
+#pragma deprecated Use `AMX_ReadPackedString`
 stock AMX_ReadString(addr, str[], len = sizeof (str))
+{
+	AMX_ReadPackedString(addr, str, len);
+}
+
+stock AMX_ReadPackedString(addr, str[], len = sizeof (str))
 {
 	new
 		buffer = 0,
@@ -1246,8 +1252,7 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 	do
 	{
 		// Read 4 bytes.
-		#emit LREF.S.pri                addr
-		#emit STOR.S.pri                buffer
+		buffer = AMX_Read(addr);
 		str[idx] = swapchars(buffer);
 		
 		// https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
@@ -1263,22 +1268,21 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
 {
 	new
-		buffer = 1;
-	while (buffer && len--);
+		buffer = 0,
+		idx = 0;
+	do
 	{
 		// Read 4 bytes.
-		#emit LREF.S.pri                addr
-		#emit STOR.S.pri                buffer
-		#emit SREF.S.pri                str
-		#emit LOAD.S.pri                str
-		#emit ADD.C                     __1_cell
-		#emit STOR.S.pri                str
-		addr += cellbytes;
+		buffer = AMX_Read(addr);
+		++addr;
 	}
+	while ((str[idx] = buffer & 0xFF) && (++idx < len));
 }
 
+#pragma deprecated Use `AMX_WritePackedString`
 stock AMX_WriteString(addr, const str[], len = sizeof (str))
 {
+	#pragma unused len
 	new
 		buffer = 0,
 		idx = 0;
@@ -1289,7 +1293,7 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 	const mask2 = 0x000000FF;
 	const mask3 = -1 << 24;
 	const mask4 = 0x0000FFFF;
-	do
+	for ( ; ; ++idx)
 	{
 			buffer = str[idx];
 			Debug_Print7("AMX_WriteString: Writing %04x%04x", buffer >>> 16, buffer & 0xFFFF);
@@ -1434,7 +1438,40 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 				addr += cellbytes;
 			}
 	}
-	while (++idx < len);
+}
+
+stock AMX_WritePackedString(addr, const str[])
+{
+	new
+		buffer = 0,
+		idx = -1,
+		c;
+	do
+	{
+		buffer = AMX_Read(addr),
+		c = str{++idx},
+		buffer = (buffer & ~0xFF) | (c & 0xFF),
+		AMX_Write(addr, buffer),
+		++addr;
+	}
+	while (c);
+}
+
+stock AMX_WriteUnpackedString(addr, const str[])
+{
+	new
+		buffer = 0,
+		idx = -1,
+		c;
+	do
+	{
+		buffer = AMX_Read(addr),
+		c = str[++idx],
+		buffer = (buffer & ~0xFF) | (c & 0xFF),
+		AMX_Write(addr, buffer),
+		++addr;
+	}
+	while (c);
 }
 
 stock AMX_ReadArray(addr, dest[], len = sizeof (dest))
@@ -1497,7 +1534,7 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 		if (value & 0x3FFFFFFF == tag & 0x3FFFFFFF)
 		{
 			// Found the tag, get the name.
-			AMX_ReadString(__32(AMX_Read(buffer + cellbytes)) + AMX_BASE_ADDRESS, name, len);
+			AMX_ReadPackedString(__32(AMX_Read(buffer + cellbytes)) + AMX_BASE_ADDRESS, name, len);
 			strunpack(name, name, len);
 		}
 	}

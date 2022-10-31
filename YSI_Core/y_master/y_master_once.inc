@@ -938,7 +938,7 @@ static stock _Master_Unname(const name[])
 			#emit ADD
 			#emit STOR.S.pri addr
 			new str[FUNCTION_LENGTH];
-			AMX_ReadString(addr, str);
+			AMX_ReadPackedString(addr, str);
 			Debug_Print5("_Master_Unname: Comparing \"%s\" and \"%s\" to %d", name, Unpack(str), len);
 			// Check if the strings are identical.
 			if (strlen(str) == len)
