@@ -1268,8 +1268,32 @@ stock AMX_ReadPackedString(addr, str[], len = sizeof (str))
 
 stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
 {
-	AMX_ReadPackedString(addr, str, len);
-	strunpack(str, str, len);
+	new
+		buffer = 0,
+		idx = 0;
+	for ( ; ; )
+	{
+		// Read 4 bytes.
+		#emit LREF.S.pri                addr
+		#emit STOR.S.pri                buffer
+		if (!(str[idx++] = buffer >>> 24) || (idx == len))
+		{
+			return;
+		}
+		if (!(str[idx++] = (buffer >>> 16) & 0xFF) || (idx == len))
+		{
+			return;
+		}
+		if (!(str[idx++] = (buffer >>> 8) & 0xFF) || (idx == len))
+		{
+			return;
+		}
+		if (!(str[idx++] = buffer & 0xFF) || (idx == len))
+		{
+			return;
+		}
+		addr += cellbytes;
+	}
 }
 
 #pragma deprecated Use `AMX_WritePackedString`
