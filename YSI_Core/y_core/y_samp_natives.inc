@@ -129,16 +129,6 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 
 const YSI_PackedStringMax__ = 1 << (cellbits - charbits);
 
-//#if __COMPILER___EMIT_U
-//	#define YSI_IsLocalVarPackedString__(%0) \
-//		__emit(                                \
-//			LREF.S.pri  %0                   , \
-//			CONST.alt   YSI_PackedStringMax__, \
-//			GEQ                                \
-//		)
-//	#endinput
-//#endif
-
 /*-------------------------------------------------------------------------*//**
  * <summary>
  *  IsPacked(str[]);
