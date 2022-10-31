@@ -322,7 +322,7 @@ stock __PA(const name[])
 stock __PB(const name[], results[], iters, size = sizeof (results))
 {
 	#if defined PROFILINGS_FILE
-		DumpProfilingTime(PROFILINGS_FILE(name), results, iters);
+		DumpProfilingTime(PROFILINGS_FILE(name), results, iters, size);
 	#else
 		#pragma unused name
 	#endif
