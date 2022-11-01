@@ -1900,7 +1900,7 @@ Hooks_NumArgs_negative:
 #else
 	#define _ALS_numargs
 #endif
-#define numargs Hooks_NumArgs
+#define numargs( Hooks_NumArgs(
 
 public OnRuntimeError(code, &bool:suppress)
 {

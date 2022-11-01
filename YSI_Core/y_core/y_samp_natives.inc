@@ -127,6 +127,18 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 	native bool:Dialog_ShowPlayerNative(playerid, dialogid, DIALOG_STYLE:style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
 #endif
 
+native YSI_NumArgs() = numargs;
+#if __COMPILER___EMIT_U
+	#if defined _ALS_numargs
+		#undef numargs
+	#else
+		#define _ALS_numargs
+	#endif
+	// `numargs` implementation in fewer instructions than just calling the
+	// native, let alone adding in what the native does.
+	#define numargs() __emit(LOAD.S.pri __args_offset, SHR.C.pri __COMPILER_CELL_SHIFT)
+#endif
+
 const YSI_PackedStringMax__ = 1 << (cellbits - charbits);
 
 /*-------------------------------------------------------------------------*//**
