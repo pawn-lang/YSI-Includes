@@ -148,7 +148,7 @@ CHAIN_HOOK(Profiling)
 
 #else
 	#define PROFILE_INIT__%0(%1) static stock yP_@%0()
-	#define PROFILE__ u@(u[_:__TZ:u@$
+	#define PROFILE__%0(%1) u@(u[_:__TZ:u@$static stock%0()
 	#define PROFILE_CLOSE__%0(%1) static stock P_y@%0()
 	#define __TZ:%8$%0[%2](%1) %8$%0(%1)
 #endif
