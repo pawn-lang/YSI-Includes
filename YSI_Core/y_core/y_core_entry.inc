@@ -299,6 +299,12 @@ stock const YSIM_VERMAX[] = "X";
 #include "y_shortfunc"
 #include "..\..\YSI_Players\y_android\y_android_entry"
 
+forward Y_Less_says_ta_for_using_YSI();
+
+public Y_Less_says_ta_for_using_YSI()
+{
+}
+
 #if defined YSI_TESTS && __COMPILER_FUNC_DECL_BUG
 	#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumericTest__
 		// Test a compiler crash doesn't.
