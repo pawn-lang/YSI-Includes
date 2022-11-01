@@ -1334,11 +1334,6 @@ static stock y_testing_ReturnHello()
 	ASSERT_NEAR(y_testing_ReturnHello(), "hello");
 }
 
-#include "..\y_core\y_utils_tests"
-#include "..\y_core\y_als_tests"
-#include "..\y_core\y_cell_tests"
-#include "..\..\YSI_Coding\y_unique\y_unique_tests"
-
 // Include these in a non-alphabetical order.
 #include ".\libs\y_testing_b"
 #include ".\libs\y_testing_g"
@@ -1351,53 +1346,9 @@ static stock y_testing_ReturnHello()
 #include ".\libs\y_testing_c"
 #include ".\libs\y_testing_f"
 
-@test(.group = "y_testing") y_testing_Libraries()
-{
-	new a, b, c, d, e, f, g, h, i, j, x;
-	x = heapspace();
-	a = y_testing_a_native();
-	b = y_testing_b_native();
-	c = y_testing_c_native();
-	d = y_testing_d_native();
-	e = y_testing_e_native();
-	f = y_testing_f_native();
-	g = y_testing_g_native();
-	h = y_testing_h_native();
-	i = y_testing_i_native();
-	j = y_testing_j_native();
-	ASSERT_EQ(a, x);
-	ASSERT_EQ(b, x);
-	ASSERT_EQ(c, x);
-	ASSERT_EQ(d, x);
-	ASSERT_EQ(e, x);
-	ASSERT_EQ(f, x);
-	ASSERT_EQ(g, x);
-	ASSERT_EQ(h, x);
-	ASSERT_EQ(i, x);
-	ASSERT_EQ(j, x);
-
-	a = AMX_GetLibraryEntry(0, x, "y_testing_a_library");
-	b = AMX_GetLibraryEntry(0, x, "y_testing_b_library");
-	c = AMX_GetLibraryEntry(0, x, "y_testing_c_library");
-	d = AMX_GetLibraryEntry(0, x, "y_testing_d_library");
-	e = AMX_GetLibraryEntry(0, x, "y_testing_e_library");
-	f = AMX_GetLibraryEntry(0, x, "y_testing_f_library");
-	g = AMX_GetLibraryEntry(0, x, "y_testing_g_library");
-	h = AMX_GetLibraryEntry(0, x, "y_testing_h_library");
-	i = AMX_GetLibraryEntry(0, x, "y_testing_i_library");
-	j = AMX_GetLibraryEntry(0, x, "y_testing_j_library");
-	ASSERT_NZ(a);
-	ASSERT_NZ(b);
-	ASSERT_NZ(c);
-	ASSERT_NZ(d);
-	ASSERT_NZ(e);
-	ASSERT_NZ(f);
-	ASSERT_NZ(g);
-	ASSERT_NZ(h);
-	ASSERT_NZ(i);
-	ASSERT_NZ(j);
-	
-	x = AMX_GetLibraryCount();
-	ASSERT(x >= 10);
-}
+#include "..\y_core\y_utils_tests"
+#include "..\y_core\y_als_tests"
+#include "..\y_core\y_cell_tests"
+#include "..\y_core\y_amx_tests"
+#include "..\..\YSI_Coding\y_unique\y_unique_tests"
 
