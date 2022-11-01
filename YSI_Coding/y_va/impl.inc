@@ -83,7 +83,7 @@ static stock
 	YSI_g_sPassthroughNestings = 0,
 	YSI_g_sInitialised = 0;
 
-#define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
+#define CALL@YVA2_DoPush%8() YVA2_DoPush(-1, -1, -1)
 static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 {
 	// We need to tell the real call how many parameters are being pushed, via
@@ -190,7 +190,7 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 }
 
 // Enable `&YVA2_DummyPush` WITHOUT matching it within the scanner itself.
-#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1, -1, -1)
+#define CALL@YVA2_DummyPush%8() YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1, -1, -1)
 // IF YOU EVER CHANGE THE NUMBER OF DUMMY PARAMETERS, DON'T FORGET TO CHANGE THE
 // PARAMETER BYTE COUNT IN THE SCANNER!  ONLY DONE IT EVERY TIME SO FAR...
 stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0, const dummy4 = 0, const dummy5 = 0)
