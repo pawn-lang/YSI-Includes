@@ -132,11 +132,14 @@ native YSI_NumArgs() = numargs;
 	#if defined _ALS_numargs
 		#undef numargs
 	#else
+		native BAD_numargs() = numargs;
 		#define _ALS_numargs
 	#endif
 	// `numargs` implementation in fewer instructions than just calling the
 	// native, let alone adding in what the native does.
 	#define numargs() __emit(LOAD.S.pri __args_offset, SHR.C.pri __COMPILER_CELL_SHIFT)
+#elseif !defined _ALS_numargs
+	native BAD_numargs() = numargs;
 #endif
 
 const YSI_PackedStringMax__ = 1 << (cellbits - charbits);

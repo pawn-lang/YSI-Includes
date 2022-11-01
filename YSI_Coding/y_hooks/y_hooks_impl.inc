@@ -1856,10 +1856,6 @@ _Y_HOOKS_STATIC Hooks_RepairJITInit()
 	AMX_Write(base, stub);
 }
 
-#if !defined _ALS_numargs
-	native BAD_numargs() = numargs;
-#endif
-
 stock Hooks_NumArgs()
 {
 	// Awkward code that allows us to jump backwards.  It might appear that this
