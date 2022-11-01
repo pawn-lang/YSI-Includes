@@ -1271,28 +1271,41 @@ stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
 	new
 		buffer = 0,
 		idx = 0;
-	for ( ; ; )
+	len -= cellbytes - 1;
+	while (idx < len)
 	{
 		// Read 4 bytes.
 		#emit LREF.S.pri                addr
 		#emit STOR.S.pri                buffer
-		if (!(str[idx++] = buffer >>> 24) || (idx == len))
-		{
-			return;
-		}
-		if (!(str[idx++] = (buffer >>> 16) & 0xFF) || (idx == len))
-		{
-			return;
-		}
-		if (!(str[idx++] = (buffer >>> 8) & 0xFF) || (idx == len))
-		{
-			return;
-		}
-		if (!(str[idx++] = buffer & 0xFF) || (idx == len))
+		if (
+			((str[idx++] = buffer & 0xFF) == 0) ||
+			((str[idx++] = (buffer >>> 8) & 0xFF) == 0) ||
+			((str[idx++] = (buffer >>> 16) & 0xFF) == 0) ||
+			((str[idx++] = buffer >>> 24) == 0))
 		{
 			return;
 		}
 		addr += cellbytes;
+	}
+	len += cellbytes - 1;
+	// Read 4 bytes.
+	#emit LREF.S.pri                addr
+	#emit STOR.S.pri                buffer
+	if (!(str[idx++] = buffer & 0xFF) || (idx == len))
+	{
+		return;
+	}
+	if (!(str[idx++] = (buffer >>> 8) & 0xFF) || (idx == len))
+	{
+		return;
+	}
+	if (!(str[idx++] = (buffer >>> 16) & 0xFF) || (idx == len))
+	{
+		return;
+	}
+	if (!(str[idx++] = buffer >>> 24) || (idx == len))
+	{
+		return;
 	}
 }
 
