@@ -1329,6 +1329,8 @@ static stock y_testing_ReturnHello()
 	ASSERT_GE(y_testing_Return7(), 7);
 	ASSERT_GE(y_testing_Return7(), 6);
 	ASSERT_GT(y_testing_Return7(), 6);
+	ASSERT_ZE(y_testing_Return7() - 7);
+	ASSERT_NZ(y_testing_Return7());
 	ASSERT_SAME(y_testing_ReturnHello(), "Hello");
 	ASSERT_DIFF(y_testing_ReturnHello(), "hello");
 	ASSERT_NEAR(y_testing_ReturnHello(), "hello");
