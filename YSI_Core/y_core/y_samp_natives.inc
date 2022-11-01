@@ -83,7 +83,7 @@ Optional plugins:
 		#define _ALS_printf
 	#endif
 #endif
-	
+
 // These should pretty much always exist, but are defined in "a_samp" in SA:MP,
 // when they should really be "core" functions.
 // 
@@ -141,6 +141,18 @@ const YSI_PackedStringMax__ = 1 << (cellbits - charbits);
  *   version above is actually faster than the native for locals.
  * </remarks>
  *//*------------------------------------------------------------------------**/
+forward bool:YSI_IsLocalVarPackedString__(const string:str[]);
+
+#if __COMPILER___EMIT_U
+	#define YSI_IsLocalVarPackedString__(%0) \
+		__emit(                                         \
+			LREF.S.pri           %0                    ,\
+			CONST.alt            YSI_PackedStringMax__ ,\
+			GEQ                                         \
+		)
+	#endinput
+#endif
+
 stock bool:YSI_IsLocalVarPackedString__(const string:str[])
 {
 	#emit LREF.S.pri           str
