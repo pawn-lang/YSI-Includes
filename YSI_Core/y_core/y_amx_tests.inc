@@ -6,25 +6,25 @@ static stock
 @test(.group = "y_amx") y_amx_StringRead1B()
 {
 	YSI_gsAddr = ref(YSI_gsInput);
-	AMX_WriteUnpackedString(YSI_gsAddr, __COMPILER_UNPACK"Shorter_string.");
+	AMX_WriteUnpackedString(YSI_gsAddr, __COMPILER_UNPACK"Shorter string.");
 	AMX_ReadString(YSI_gsAddr, YSI_gsOutput);
-	ASSERT_SAME(YSI_gsOutput, "Shorter_string.");
+	ASSERT_SAME(YSI_gsOutput, "Shorter string.");
 }
 
 @test(.group = "y_amx") y_amx_StringRead2B()
 {
 	YSI_gsAddr = ref(YSI_gsInput);
-	AMX_WriteUnpackedString(YSI_gsAddr, __COMPILER_UNPACK"Shorter_string.");
+	AMX_WriteUnpackedString(YSI_gsAddr, __COMPILER_UNPACK"Shorter string.");
 	AMX_ReadPackedString(YSI_gsAddr, YSI_gsOutput);
-	ASSERT_SAME(YSI_gsOutput, "Shorter_string.");
+	ASSERT_SAME(YSI_gsOutput, "Shorter string.");
 }
 
 @test(.group = "y_amx") y_amx_StringRead3B()
 {
 	YSI_gsAddr = ref(YSI_gsInput);
-	AMX_WriteUnpackedString(YSI_gsAddr, __COMPILER_UNPACK"Shorter_string.");
+	AMX_WriteUnpackedString(YSI_gsAddr, __COMPILER_UNPACK"Shorter string.");
 	AMX_ReadUnpackedString(YSI_gsAddr, YSI_gsOutput);
-	ASSERT_SAME(YSI_gsOutput, "Shorter_string.");
+	ASSERT_SAME(YSI_gsOutput, "Shorter string.");
 }
 
 @test(.group = "y_amx") y_amx_Libraries()

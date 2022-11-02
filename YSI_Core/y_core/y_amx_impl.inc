@@ -1256,30 +1256,6 @@ stock AMX_ReadPackedString(addr, str[], len = sizeof (str))
 		#emit STOR.S.pri                buffer
 		str[idx] = swapchars(buffer);
 		
-		if (Cell_HasSpaceByte(buffer))
-		{
-				// Special case for y_master.
-				if (buffer & 0x000000FF == ' ' << 0)
-					str[idx] = 0;
-				else if (buffer & 0x0000FF00 == ' ' << 8)
-					str[idx] &= (-1 << (cellbits - 8));
-				else if (buffer & 0x00FF0000 == ' ' << 16)
-					str[idx] &= (-1 << (cellbits - 16));
-				else if (buffer & 0xFF000000 == ' ' << 24)
-					str[idx] &= (-1 << (cellbits - 24));
-			#if cellbits == 64
-				else if (buffer & 0x000000FF00000000 == ' ' << 32)
-					str[idx] &= (-1 << (cellbits - 32));
-				else if (buffer & 0x0000FF0000000000 == ' ' << 40)
-					str[idx] &= (-1 << (cellbits - 40));
-				else if (buffer & 0x00FF000000000000 == ' ' << 48)
-					str[idx] &= (-1 << (cellbits - 48));
-				else if (buffer & 0xFF00000000000000 == ' ' << 56)
-					str[idx] &= (-1 << (cellbits - 56));
-			#endif
-			printf("Found space in %s", unpack(str));
-				return;
-		}
 		// https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
 		if (Cell_HasZeroByte(buffer))
 		{

@@ -174,11 +174,9 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 #if cellbits == 32
 	const YSI_g_cFEs = -0x01010101; // 0xFEFEFEFE
 	const YSI_g_c80s = 0x80808080;
-	const YSI_g_c20s = ~0x20202020;
 #else
 	const YSI_g_cFEs = -0x0101010101010101; // 0xFEFEFEFEFEFEFEFE
 	const YSI_g_c80s = 0x8080808080808080;
-	const YSI_g_c20s = ~0x2020202020202020;
 #endif
 
 #if __COMPILER___EMIT_U
@@ -203,19 +201,6 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 		__emit(                         \
 			LOAD.U.pri  %0             ,\
 			INVERT                     ,\
-			MOVE.alt                   ,\
-			INVERT                     ,\
-			ADD.C       YSI_g_cFEs     ,\
-			AND                        ,\
-			CONST.alt   YSI_g_c80s     ,\
-			AND                         \
-		)
-	
-	#define Cell_HasSpaceByte(%0) \
-		__emit(                         \
-			LOAD.U.pri  %0             ,\
-			CONST.alt   YSI_g_c20s     ,\
-			XOR                        ,\
 			MOVE.alt                   ,\
 			INVERT                     ,\
 			ADD.C       YSI_g_cFEs     ,\

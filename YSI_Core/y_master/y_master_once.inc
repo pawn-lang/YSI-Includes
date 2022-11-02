@@ -899,18 +899,16 @@ static stock _Master_Rename(const name[])
 		// we don't care about that because the function isn't to be called
 		// anyway.
 		entry += cellbytes;
-		const subtraction = -0x20;
 		#emit LREF.S.pri entry
-		#emit CONST.alt  0xFFFFFFFF
-		#emit AND
 		#emit LOAD.alt   AMX_BASE_ADDRESS
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
+		#emit ADD.C      __minus1
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry
-		#emit ADD.C      subtraction // Turn the space in to a NULL.
+		#emit DEC.pri
 		#emit SREF.S.pri entry
 	}
 }
@@ -918,29 +916,65 @@ static stock _Master_Rename(const name[])
 static stock _Master_Unname(const name[])
 {
 	Debug_Print3("_Master_Unname called: \"%s\"", name);
-	// Append a space on to the function name.  This makes it a totally invalid
-	// function name that can't be called, but perfectly keeps its position in
-	// the binary tree.
+	// Rename the public function to exactly the same thing with the last letter
+	// increased by one.  This ensures that it can't be called, but keeps its
+	// position in the binary tree (so that we don't need to sort the public
+	// functions table again).
 	new
 		entry,
 		idx = AMX_GetPublicEntry(0, entry, name, true);
 	if (idx)
 	{
-		Debug_Print5("_Master_Unname: found %d", entry);
 		new
 			len = strlen(name);
+		// This check isn't needed if this is the very last function.
+		if (idx < (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / __defsize_cells)
+		{
+			// Load the NEXT string entry for comparison.
+			new
+				addr = entry + 3 * cellbytes;
+			#emit LREF.S.pri addr
+			#emit LOAD.alt   AMX_BASE_ADDRESS
+			#emit ADD
+			#emit STOR.S.pri addr
+			new str[FUNCTION_LENGTH];
+			AMX_ReadPackedString(addr, str);
+			Debug_Print5("_Master_Unname: Comparing \"%s\" and \"%s\" to %d", name, Unpack(str), len);
+			// Check if the strings are identical.
+			if (strlen(str) == len)
+			{
+				_YSI_ConstMod(name[len - 1], name[len - 1] + 1);
+				idx = strcmp(name, str);
+				_YSI_ConstMod(name[len - 1], name[len - 1] - 1);
+				if (!idx)
+				{
+					// The two adjacent functions are identical.  You might
+					// think this isn't a problem if the next function is also
+					// about to be renamed but it is, because this will then
+					// take the place of the next function and be called instead
+					// of it, when neither should be called.
+					strunpack(str, str);
+					Debug_Fatal("_Master_Unname: Function \"%s\" is adjacent to \"%s\"; cannot hide it.", name, str);
+					return;
+				}
+			}
+		}
+		// These function names are stored in C order, not packed string order.
+		// The strings are ASCII so we don't need to worry about any overflows.
+		// It is possible that this will result in an invalid function name, but
+		// we don't care about that because the function isn't to be called
+		// anyway
 		entry += cellbytes;
 		#emit LREF.S.pri entry
-		#emit CONST.alt  0xFFFFFFFF
-		#emit AND
 		#emit LOAD.alt   AMX_BASE_ADDRESS
 		#emit ADD
 		#emit LOAD.S.alt len
 		#emit ADD
+		#emit ADD.C      __minus1
 		#emit STOR.S.pri entry
 		// Use an unaligned read/write here.
 		#emit LREF.S.pri entry
-		#emit ADD.C      0x20 // Turn the NULL in to a space.
+		#emit INC.pri
 		#emit SREF.S.pri entry
 	}
 	Debug_CodeX{else Debug_Error("_Master_Unname: Could not function \"%s\"", name);}
@@ -959,7 +993,7 @@ stock _Master_UnnameAll(master)
 		{
 			buffer[0] = 0x40404040, // '@@@@',
 			strunpack(buffer, buffer),
-			_Master_Unname(buffer[cellbytes - 2]);
+			_Master_Unname(buffer[2]);
 		}
 	}
 }
@@ -980,7 +1014,7 @@ stock _Master_RenameAll(master)
 			Debug_Print6("_Master_RenameAll: Renaming to \"%s\"", buffer);
 			++buffer[strlen(buffer) - 1];
 			Debug_Print6("_Master_RenameAll: Renaming from \"%s\"", buffer);
-			_Master_Rename(buffer[cellbytes - 2]);
+			_Master_Rename(buffer[2]);
 		}
 	}
 }
