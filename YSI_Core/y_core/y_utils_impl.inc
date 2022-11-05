@@ -5519,6 +5519,13 @@ FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 
 #if __COMPILER___EMIT_U
 	// Basically `x - (2 * x)`, if x is negative.
+	// Technically:
+	//
+	//    x = x - (x >>> 31 << 1) * X
+	//
+	// If `x < 0` then `x >>> 31 << 1` gives `2`.  If `x >= 0` then
+	// `x >>> 31 << 1` gives `0`.  So we add either `2 * x` or `0` to `x`
+	// depending on the original sign of `x`.
 	#define Abs(%0) \
 		__emit(                            \
 			LOAD.U.alt  %0                ,\

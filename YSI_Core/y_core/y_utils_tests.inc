@@ -1397,6 +1397,7 @@ public y_utils_va_return(const str[])
 	ASSERT_EQ(Cell_Abs(0), 0);
 	ASSERT_EQ(Cell_Abs(999999999),  999999999);
 	ASSERT_EQ(Cell_Abs(-999999999), 999999999);
+	ASSERT_EQ(Cell_Abs(cellmin + 1), cellmax);
 	ASSERT_EQ(Cell_Abs(-500), 500);
 	ASSERT_EQ(Cell_Abs(-600), 600);
 	ASSERT_EQ(Cell_Abs(500), 500);
