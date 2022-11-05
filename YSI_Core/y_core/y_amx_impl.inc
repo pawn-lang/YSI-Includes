@@ -1570,6 +1570,75 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 	}
 }
 
+#define AMX_GetFirstPublicString( AMX_GetFirstString(AMX_TABLE_PUBLICS
+#define AMX_GetFirstLibraryString( AMX_GetFirstString(AMX_TABLE_LIBRARIES
+#define AMX_GetFirstPubVarString( AMX_GetFirstString(AMX_TABLE_PUBVARS
+#define AMX_GetFirstTagString( AMX_GetFirstString(AMX_TABLE_TAGS
+
+static stock AMX_GetFirstString(table)
+{
+	// Get the first item in this table and resolve the name.
+	table += cellbytes;
+	#emit LREF.S.pri                table
+	#emit CONST.alt                 0xFFFFFFFF
+	#emit AND
+	#emit LOAD.alt                  AMX_BASE_ADDRESS
+	#emit ADD
+	#emit RETN
+	__pragma("naked");
+}
+
+static stock AMX_GetFirstNativeString()
+{
+	// This can't use simple pointers because some VM versions clobber the
+	// native name pointers.  Instead get the last public function and go beyond
+	// it.
+	new
+		base = 0,
+		count = 0;
+	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base, count);
+	base = AMX_GetEntryFromPublicIndex(count - 1);
+	base += cellbytes;
+	#emit LREF.S.pri                base
+	#emit CONST.alt                 0xFFFFFFFF
+	#emit AND
+	#emit LOAD.alt                  AMX_BASE_ADDRESS
+	#emit ADD
+	#emit STOR.S.pri                base
+	return base + AMX_ReadLength(base) + 1;
+}
+
+stock AMX_GetPublicStringSpace()
+{
+	// How many bytes in the header do the public strings take up?
+	return AMX_GetFirstNativeString() - AMX_GetFirstPublicString();
+}
+
+stock AMX_GetNativeStringSpace()
+{
+	// How many bytes in the header do the native strings take up?
+	return AMX_GetFirstLibraryString() - AMX_GetFirstNativeString();
+}
+
+stock AMX_GetLibraryStringSpace()
+{
+	// How many bytes in the header do the library strings take up?
+	return AMX_GetFirstPubVarString() - AMX_GetFirstLibraryString();
+}
+
+stock AMX_GetPubVarStringSpace()
+{
+	// How many bytes in the header do the pub var strings take up?
+	return AMX_GetFirstTagString() - AMX_GetFirstPubVarString();
+}
+
+stock AMX_GetTagStringSpace()
+{
+	// How many bytes in the header do the tag strings take up?  Everything up
+	// to the start of code.
+	return (AMX_HEADER_COD - AMX_BASE_ADDRESS) - AMX_GetFirstTagString();
+}
+
 //stock AMX_CodToDat(ptr)
 //{
 //	// Convert a pointer in to the code segment in to a data offset.

@@ -464,9 +464,21 @@ static stock const
 public OnYSIInit()
 {
 	Debug_Print1("Master_OnYSIInit");
+	new
+		idx = 0,
+		count = 0,
+		space;
+	while ((idx = AMX_GetPublicEntryPrefix(idx, space, _A<@yM_>)))
+	{
+		++count;
+	}
+	space = AMX_GetLibraryStringSpace() + AMX_GetNativeStringSpace();
+	// Ensure that there is sufficient space in the header for injecting our
+	// name changes (appending a space to currently unused ones).
+	assert(space >= count);
 	state _ALS : _ALS_go;
 	#if !defined YSI_NO_MASTER
-		getproperty(8, YSI_EMPTY, YSIM_STRING + 1, YSI_g_sModuleName);
+		getproperty(8, YSI_EMPTY, YSIM_STRING + 1, YSI_g_sModuleName),
 		deleteproperty(8, YSI_EMPTY, YSIM_STRING + 1);
 		// This will fix `OnRconCommand` for the gamemode, so we can use the `module` commands.  It
 		// also takes up a filterscript slot, a fact we can abuse to get swap space while reloading
@@ -476,18 +488,17 @@ public OnYSIInit()
 		#endif
 	#endif
 	// Properties get lost between script changes so we need to force a rebuild.
-	@_ = 0;
-	setproperty(8, YSIM_MASTER, 0);
-	CallRemoteFunction("Master_Reassert", YSI_EMPTY);
+	@_ = 0,
+	setproperty(8, YSIM_MASTER, 0),
+	CallRemoteFunction("Master_Reassert", YSI_EMPTY),
 	// For fixes.inc.  If it exists we just override its result.
-	@_ = -1;
-	setproperty(5, YSI_FIXES_gscSingleProperty, 0);
-	CallRemoteFunction("_FIXES_DetermineID", YSI_EMPTY);
-	new
-		masters = getproperty(8, YSIM_MASTER) | getproperty(5, YSI_FIXES_gscSingleProperty);
-	@_ = Cell_GetLowestEmpty(masters);
+	@_ = -1,
+	setproperty(5, YSI_FIXES_gscSingleProperty, 0),
+	CallRemoteFunction("_FIXES_DetermineID", YSI_EMPTY),
+	count = getproperty(8, YSIM_MASTER) | getproperty(5, YSI_FIXES_gscSingleProperty),
+	@_ = Cell_GetLowestEmpty(count);
 	Debug_Info("YSI Script ID: %d", @_);
-	setproperty(8, YSIM_MASTER, masters | Master_ID());
+	setproperty(8, YSIM_MASTER, count | Master_ID());
 	Debug_Code1{if (!Master_ID()) Debug_Error("MasterID not assigned");}
 	#if !defined YSI_NO_MASTER
 		if (Master_ID() && YSI_g_sModuleName[0])
@@ -497,7 +508,7 @@ public OnYSIInit()
 	#endif
 	// Make sure this is called before all other YSI initialisations, at least all the ones which
 	// use the master system.
-	CallLocalFunction("OnMasterSystemInit", "i", Master_ID());
+	CallLocalFunction("OnMasterSystemInit", "i", Master_ID()),
 	Master_OnYSIInit();
 	return 1;
 }

@@ -272,3 +272,19 @@ HOOK__ OnMasterSystemInit(id)
 	ASSERT_SAME(#_YCM, "@6");
 }
 
+@test(.group = "y_master") y_master_Space()
+{
+	new
+		idx = 0,
+		count = 0,
+		buffer;
+	while ((idx = AMX_GetPublicEntryPrefix(idx, buffer, _A<@yM_>)))
+	{
+		++count;
+	}
+	buffer = AMX_GetLibraryStringSpace() + AMX_GetNativeStringSpace();
+	Debug_PrintQ(count);
+	Debug_PrintQ(buffer);
+	ASSERT_GE(count, buffer);
+}
+
