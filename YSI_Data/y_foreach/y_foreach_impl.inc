@@ -714,25 +714,11 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		new
 			last = size++,
 			next = array[last];
-		new cccc = 0;
 		while (next < value)
 		{
 			Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
 			last = next,
 			next = array[last];
-			++cccc;
-			if (cccc >= 1000000)
-			{
-				printf("Abort!");
-				for (new i = 0; i != size; ++i)
-				{
-					printf("array[%d] = %d", i, array[i]);
-				}
-				{}
-				#emit CONST.pri 0
-				#emit HALT 1
-				for (;;){}
-			}
 		}
 		Debug_Print5("Iter_Add: Removing %d, %d, %d, %d, %d, %d", last, value, size, next, next - 1, (value - 1) % size);
 		if ((last + 1) % size != value)

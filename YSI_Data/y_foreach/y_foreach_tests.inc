@@ -4390,6 +4390,9 @@ static stock
 
 @test(.group = "y_iterate", .slow = true) y_iterate_StressTest()
 {
+	printf(" ");
+	printf("Starting initialisation");
+	printf(" ");
 	Server_DisableLongCall();
 	//Debug_Level(7);
 	//Debug_Enable();
@@ -4399,7 +4402,7 @@ static stock
 	{
 		if (i % (YSI_G_C_STRESS_SIZE / 100) == 0)
 		{
-			printf("Initialisation %d%% done", i / (YSI_G_C_STRESS_SIZE / 100));
+			printf("    %d%%", i / (YSI_G_C_STRESS_SIZE / 100));
 		}
 		n = Iter_RandomAdd(YSI_g_sStressTest);
 		ASSERT(Iterator@YSI_g_sStressTest[n] >= 0);
@@ -4415,7 +4418,10 @@ static stock
 			}
 		}
 	}
+	printf("    100%%");
+	printf(" ");
 	printf("Starting randomisation");
+	printf(" ");
 	Iterator@YSI_g_sStressPrev = Iterator@YSI_g_sStressTest;
 	Iter_Single@YSI_g_sStressPrev = Iter_Single@YSI_g_sStressTest;
 	n = YSI_G_C_STRESS_SIZE;
@@ -4423,7 +4429,7 @@ static stock
 	{
 		if (i % 10000 == 0)
 		{
-			printf("Randomisation %d%% done", i / 10000);
+			printf("    %d%%", i / 10000);
 		}
 		new id = random(2 * YSI_G_C_STRESS_SIZE);
 		new bool:change = false;
@@ -4495,6 +4501,8 @@ static stock
 			ASSERT_EQ(Iter_Single@YSI_g_sStressPrev, Iter_Single@YSI_g_sStressTest);
 		}
 	}
+	printf("    100%%");
+	printf(" ");
 	//Debug_Disable();
 	ASSERT_NZ(n);
 	ASSERT_EQ(n, Iter_Count(YSI_g_sStressTest));
