@@ -129,8 +129,11 @@ CHAIN_HOOK(Profiling)
 
 #if defined RUN_PROFILINGS
 	#define PROFILE_INIT__%0(%1) @yP_%0();@yP_%0()
-	#define PROFILE__ u@(u[_:__TZ:__TB:__TC:u@$
+	#define PROFILE__ u@(u[_:__TD:__TZ:__TB:__TC:u@$
 	#define PROFILE_CLOSE__%0(%1) @P_y%0();@P_y%0()
+
+	// `@profile` default count.
+	#define __TD:__TZ:__TB:%8$%0[](%1) __TB:%8$%0(%1)
 
 	// With explicit count.
 	#define __TZ:__TB:%8$%0[%2](%1) %8$%0(%1);@y_P%0();@y_P%0()RUN_TIMING(#%0,%2)%0();%0(%1)

@@ -380,7 +380,7 @@ forward _YCM();
  * <transition keep="true" target="_YCM : n" />
  *//*----------------------------------------------------------------**/
 
-static stock Master_GetCurrentMaster(installState)
+static stock Master_GetCurrentMaster()
 {
 	// THIS CODE IS COPIED IN y_classes (mostly).
 	#if _YSIM_IS_SERVER
@@ -397,9 +397,6 @@ static stock Master_GetCurrentMaster(installState)
 				Debug_Print2("Master_GetCurrentMaster: Got master " #_YCM);
 				state _YCM:y;
 				_YCM@ = _E_YCM@y;
-				// Already installed = 1 + 1, does nothing.
-				// Not installed = 0 + 1, installs.
-				++installState;
 			}
 			case e_YSIM_GET_TYPE_STOLE:
 			{
@@ -413,44 +410,27 @@ static stock Master_GetCurrentMaster(installState)
 				CallRemoteFunction(#_YCM, YSI_EMPTY);
 				// Servers always get all data, so it doesn't matter that
 				// for now this is state "u".
-				++installState;
 			}
 			case e_YSIM_GET_TYPE_NOT_GOT:
 			{
 				Debug_Print2("Master_GetCurrentMaster: Not master " #_YCM);
 				state _YCM:n;
 				_YCM@ = _E_YCM@n;
-				// Already installed = 1 - 1, uninstalls.
-				// Not installed = 0 - 1, does nothing.
-				--installState;
 			}
 			default:
 			{
 				Debug_Error("Master_GetCurrentMaster: Unknown return " #_YCM);
 				state _YCM:n;
 				_YCM@ = _E_YCM@n;
-				--installState;
 			}
 		}
-		// We are now in charge of `_MASTER`.  Rename relevant functions.
-		if (installState == 1)
-		{
-			Debug_Print6("Master_GetCurrentMaster: Installing %d", _MASTER);
-			_Master_RenameAll(_MASTER);
-		}
-		else if (installState == 0)
-		{
-			Debug_Print6("Master_GetCurrentMaster: Uninstalling %d", _MASTER);
-			_Master_UnnameAll(_MASTER);
-		}
-		Debug_CodeX{else { Debug_Print6("Master_GetCurrentMaster: Neither %d", _MASTER); }}
 }
 
 public OnMasterSystemInit(id)
 {
 	Debug_Print1(#_YCM "_OGM");
 	deleteproperty(8, YSIM_VERMAX);
-	Master_GetCurrentMaster(1);
+	Master_GetCurrentMaster();
 	#if defined _ALS_OnMasterSystemInit
 		#undef OnMasterSystemInit
 	#else
@@ -827,7 +807,6 @@ public _YCM() <_YCM:y>
 		CallRemoteFunction(#MAKE_YCM<YSIM_VERSION...>, YSI_EMPTY);
 		setproperty(9, #_YCM, 0);
 		// Called locally to begin the hand off process.
-		_Master_UnnameAll(_MASTER);
 		CallRemoteFunction(#_YCM, YSI_EMPTY);
 	}
 	else
@@ -837,7 +816,6 @@ public _YCM() <_YCM:y>
 		state _YCM:n;
 		_YCM@ = _E_YCM@n;
 		_Master_Relinquish(#_YCM);
-		_Master_UnnameAll(_MASTER);
 	}
 	if (getproperty(9, #_YCM))
 	{
@@ -861,7 +839,7 @@ public _YCM() <_YCM:n>
 	{
 		// This has been called remotely from a script which owns the
 		// library masterhood (that's the only way this can ever be called).
-		Master_GetCurrentMaster(0);
+		Master_GetCurrentMaster();
 	}
 }
 
