@@ -3615,53 +3615,49 @@ iterfunc stock y_iter_yield4(const arr[], size = sizeof (arr))
 	}
 }
 
-#if defined YSI_SLOW_TESTS
-
-	iterfunc stock y_iter_yield5()
+iterfunc stock y_iter_yield5()
+{
+	new
+		k = 0;
+	for (new i = 0; i != 65536; ++i)
 	{
-		new
-			k = 0;
-		for (new i = 0; i != 65536; ++i)
+		if (i % 655 == 0)
+			printf("%d%%...", i / 655);
+		for (new j = 0; j != 65536; ++j)
 		{
-			if (i % 655 == 0)
-				printf("%d%%...", i / 655);
-			for (new j = 0; j != 65536; ++j)
-			{
-				YIELD__ return k;
-				++k;
-			}
+			YIELD__ return k;
+			++k;
 		}
 	}
-	#define Iterator@y_iter_yield5 iteryield
-	
-	@test(.group = "y_iterate") y_iter_yield5a()
-	{
-		new
-			k = 0;
-		for (new i = 0; i != 65536; ++i)
-		{
-			if (i % 655 == 0)
-				printf("%d%%...", i / 655);
-			for (new j = 0; j != 65536; ++j)
-			{
-				++k;
-			}
-		}
-		ASSERT_ZE(k); // Overflow.
-		new
-			count = 0,
-			bool:ever = false;
-		FOREACH__ (new i : y_iter_yield5)
-		{
-			#pragma unused i
-			++count;
-			ever = true;
-		}
-		ASSERT_ZE(count); // Overflow.
-		ASSERT(ever);
-	}
+}
+#define Iterator@y_iter_yield5 iteryield
 
-#endif
+@test(.group = "y_iterate", .slow = true) y_iter_yield5a()
+{
+	new
+		k = 0;
+	for (new i = 0; i != 65536; ++i)
+	{
+		if (i % 655 == 0)
+			printf("%d%%...", i / 655);
+		for (new j = 0; j != 65536; ++j)
+		{
+			++k;
+		}
+	}
+	ASSERT_ZE(k); // Overflow.
+	new
+		count = 0,
+		bool:ever = false;
+	FOREACH__ (new i : y_iter_yield5)
+	{
+		#pragma unused i
+		++count;
+		ever = true;
+	}
+	ASSERT_ZE(count); // Overflow.
+	ASSERT(ever);
+}
 
 iterfunc stock y_iter_yield6()
 {
@@ -4384,5 +4380,145 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 		n += i;
 	}
 	ASSERT_EQ(n, 58);
+}
+
+const YSI_G_C_STRESS_SIZE = 10000;
+
+static stock
+	Iterator:YSI_g_sStressPrev<2 * YSI_G_C_STRESS_SIZE>,
+	Iterator:YSI_g_sStressTest<2 * YSI_G_C_STRESS_SIZE>;
+
+@test(.group = "y_iterate", .slow = true) y_iterate_StressTest()
+{
+	Server_DisableLongCall();
+	//Debug_Level(7);
+	//Debug_Enable();
+	new n = 0;
+	new action = cellmin;
+	for (new i = 0; i != YSI_G_C_STRESS_SIZE; ++i)
+	{
+		if (i % (YSI_G_C_STRESS_SIZE / 100) == 0)
+		{
+			printf("Initialisation %d%% done", i / (YSI_G_C_STRESS_SIZE / 100));
+		}
+		n = Iter_RandomAdd(YSI_g_sStressTest);
+		ASSERT(Iterator@YSI_g_sStressTest[n] >= 0);
+		//for (new j = 0; j != 2 * YSI_G_C_STRESS_SIZE + 1; ++j)
+		foreach (new j : YSI_g_sStressTest)
+		{
+			ASSERT(Iterator@YSI_g_sStressTest[j] >= 0);
+			if (Iterator@YSI_g_sStressTest[j] < 0)
+			{
+				printf("Failed adding %d", n);
+				printf("iter[%d] = %d", j, Iterator@YSI_g_sStressTest[j]);
+				Server_Abort(0);
+			}
+		}
+	}
+	printf("Starting randomisation");
+	Iterator@YSI_g_sStressPrev = Iterator@YSI_g_sStressTest;
+	Iter_Single@YSI_g_sStressPrev = Iter_Single@YSI_g_sStressTest;
+	n = YSI_G_C_STRESS_SIZE;
+	for (new i = 0; i != 1000000; ++i)
+	{
+		if (i % 10000 == 0)
+		{
+			printf("Randomisation %d%% done", i / 10000);
+		}
+		new id = random(2 * YSI_G_C_STRESS_SIZE);
+		new bool:change = false;
+		if (random(2))
+		{
+			// Add.
+			if (!Iter_Contains(YSI_g_sStressTest, id))
+			{
+				//printf("Added %d", id);
+				action = id;
+				++n;
+				change = true;
+			}
+			Iter_Add(YSI_g_sStressTest, id);
+		}
+		else
+		{
+			if (Iter_Contains(YSI_g_sStressTest, id))
+			{
+				action = id + cellmin;
+				--n;
+				change = true;
+			}
+			Iter_Remove(YSI_g_sStressTest, id);
+		}
+		if (change)
+		{
+			foreach (new j : YSI_g_sStressTest)
+			{
+				ASSERT(Iterator@YSI_g_sStressTest[j] >= 0);
+				if (Iterator@YSI_g_sStressTest[j] < 0)
+				{
+					if (action < 0)
+						printf("Removed %d", action - cellmin);
+					else
+						printf("Added %d", action);
+					printf("=====PRE=====");
+					for (new k = 0; k != 2 * YSI_G_C_STRESS_SIZE + 1; ++k)
+					{
+						printf("iter[%d] = %d", k, Iterator@YSI_g_sStressPrev[k]);
+					}
+					printf("=====POST=====");
+					for (new k = 0; k != 2 * YSI_G_C_STRESS_SIZE + 1; ++k)
+					{
+						printf("iter[%d] = %d", k, Iterator@YSI_g_sStressTest[k]);
+					}
+					// Fully debug the internals.
+					Debug_Level(7);
+					Debug_Enable();
+					//printf("iter[%d] = %d", j, Iterator@YSI_g_sStressTest[j]);
+					if (action < 0)
+						Iter_Remove(YSI_g_sStressPrev, action - cellmin);
+					else
+						Iter_Remove(YSI_g_sStressPrev, action);
+					Debug_Level(0);
+					Debug_Disable();
+					Server_Abort(0);
+				}
+			}
+			Iterator@YSI_g_sStressPrev = Iterator@YSI_g_sStressTest;
+			Iter_Single@YSI_g_sStressPrev = Iter_Single@YSI_g_sStressTest;
+		}
+		else
+		{
+			for (new j = 0; j != 2 * YSI_G_C_STRESS_SIZE + 1; ++j)
+			{
+				ASSERT_EQ(Iterator@YSI_g_sStressPrev[j], Iterator@YSI_g_sStressTest[j]);
+			}
+			ASSERT_EQ(Iter_Single@YSI_g_sStressPrev, Iter_Single@YSI_g_sStressTest);
+		}
+	}
+	//Debug_Disable();
+	ASSERT_NZ(n);
+	ASSERT_EQ(n, Iter_Count(YSI_g_sStressTest));
+	Server_EnableLongCall();
+}
+
+@test(.group = "y_iterate") y_iterate_Regression1()
+{
+	Server_DisableLongCall();
+	//Debug_Level(7);
+	//Debug_Enable();
+	new Iterator:iter<10>;
+	Iter_Add(iter, 0);
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 2);
+	Iter_Add(iter, 3);
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 9);
+	Iter_Remove(iter, 1);
+	Iter_Remove(iter, 3);
+	Iter_Remove(iter, 2);
+	ASSERT_EQ(Iterator@iter[0], 5);
+	//Debug_Level(0);
+	//Debug_Disable();
+	Server_EnableLongCall();
 }
 

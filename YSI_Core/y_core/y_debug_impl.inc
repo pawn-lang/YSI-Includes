@@ -669,14 +669,37 @@ static stock Debug_SetState() <>
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
+ * <remarks>
+ *  Get the current debug state.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Debug_GetState() <ysi_debug : off>
+{
+	return false;
+}
+
+stock bool:Debug_GetState() <>
+{
+	return true;
+}
+
+/*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Turn on level 0 prints.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Debug_Enable()
+stock bool:Debug_Enable() <ysi_debug : off>
 {
 	state ysi_debug : on;
+	return true;
+}
+
+stock bool:Debug_Enable() <>
+{
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -685,9 +708,15 @@ stock Debug_Enable()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Debug_Disable()
+stock bool:Debug_Disable() <ysi_debug : off>
+{
+	return false;
+}
+
+stock bool:Debug_Disable() <>
 {
 	state ysi_debug : off;
+	return true;
 }
 
 /*-------------------------------------------------------------------------*//**

@@ -707,25 +707,45 @@ stock Iter_FreeMulti_Internal(const array[], trueSize, start)
 
 stock Iter_Add_InternalC(&count, array[], size, value)
 {
+	Debug_Print3("Iter_Add called: %d, %d, %d", count, size, value);
 	if (0 <= value < size && array[value] <= value)
 	{
+		Debug_Print5("Iter_Add: In iterator");
 		new
 			last = size++,
 			next = array[last];
+		new cccc = 0;
 		while (next < value)
 		{
+			Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
 			last = next,
 			next = array[last];
+			++cccc;
+			if (cccc >= 1000000)
+			{
+				printf("Abort!");
+				for (new i = 0; i != size; ++i)
+				{
+					printf("array[%d] = %d", i, array[i]);
+				}
+				{}
+				#emit CONST.pri 0
+				#emit HALT 1
+				for (;;){}
+			}
 		}
+		Debug_Print5("Iter_Add: Removing %d, %d, %d, %d, %d, %d", last, value, size, next, next - 1, (value - 1) % size);
 		if ((last + 1) % size != value)
 		{
+			Debug_Print5("Iter_Add: Type A");
 			// Reverse from us to `last`.
-			array[(value - 1) % size] = last * -65536;
+			array[(value - 1) % size] = (last + 1) * -65536;
 		}
 		if (value + 1 != next)
 		{
+			Debug_Print5("Iter_Add: Type B");
 			// Reverse from `next` to us.
-			array[next - 1] = value * -65536;
+			array[next - 1] = (value + 1) * -65536;
 		}
 		return
 			++count,
@@ -799,27 +819,33 @@ stock Iter_Index_Internal(count, const array[], start, size, index, bool:wrap = 
 
 stock Iter_Remove_InternalC(&count, array[], size, value)
 {
+	Debug_Print3("Iter_Remove called: %d, %d, %d", count, size, value);
 	if (0 <= value < size++ && array[value] > value)
 	{
 		// This version has reverse iterators, which need maintaining, and can
 		// be used in place of a loop to jump backwards in the list.
 		--count;
 		new last = Iter_Prev_InternalD(array, size, value);
+		Debug_Print5("Iter_Remove: found %d", last);
 		array[last] = array[value];
 		if (array[last] == value + 1)
 		{
+			Debug_Print5("Iter_Remove: type A");
+			Debug_Print5("Iter_Remove: %d, %d, %d, %d", array[last], array[value], (array[last] - 1) % size, array[(array[last] - 1) % size]);
 			// We are going one step later, which means that the removed value
 			// needs to point both forwards and backwards at the same time.
 			return
-				array[value] |= last * -65536;
+				array[value] |= (last + 1) * -65536;
 		}
 		else
 		{
+			Debug_Print5("Iter_Remove: type B");
+			Debug_Print5("Iter_Remove: %d, %d, %d, %d", array[last], array[value], (array[last] - 1) % size, array[(array[last] - 1) % size]);
 			return
 				// For being out the iterator, but still usable in `foreach`.
 				array[value] |= -65536,
 				// Set the reverse pointer.
-				array[(array[last] - 1) % size] = last * -65536;
+				array[(array[last] - 1) % size] = (last + 1) * -65536;
 		}
 	}
 	else
@@ -1161,6 +1187,6 @@ stock
 	// involves a division so they can represent both the last value and keep a
 	// vague representation of their old `next` value for removals in loops.
 	//return ceildiv(prev, -65536);
-	return (prev & ~0xFFFF) / -65536;
+	return (prev & ~0xFFFF) / -65536 - 1;
 }
 

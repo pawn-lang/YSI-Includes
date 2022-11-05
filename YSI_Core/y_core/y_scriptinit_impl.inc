@@ -392,6 +392,10 @@ forward bool:Server_HasDetectAddr0();
 	#define Server_HasDetectAddr0() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 6, CONST.alt 1, AND)))
 #endif
 
+#if __COMPILER___EMIT_U
+	#define Server_Abort(%0) (__emit(LOAD.U.pri %0, HALT 0))
+#endif
+
 native YSI_VAPrintF(const fmt[], addr) = printf;
 forward bool:fautocleanup(const name[], maxAge);
 
@@ -1518,5 +1522,11 @@ stock bool:Server_HasDetectAddr0()
 	#emit AND
 	#emit RETN
 	return false;
+}
+
+stock void:Server_Abort(n)
+{
+	#emit LOAD.S.pri    n
+	#emit HALT          0
 }
 
