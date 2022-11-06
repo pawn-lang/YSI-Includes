@@ -3592,32 +3592,55 @@ stock Trim(const string:str[], &start, &end)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="arr">The array to sort.</param>
- * <param name="num">The size of the array.</param>
+ * <param name="low">The lowest index to sort.</param>
+ * <param name="high">The highest index (inclusive) to sort.</param>
  * <remarks>
- *  Sorts the array in place.  Uses bubble sort because it is easy and fast for
- *  pre-sorted arrays (which the callers are likely to be).
+ *  Internal recursive call for quicksorting.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Utils_PreSort(arr[], num = sizeof (arr))
+static stock Utils_QuickSort(arr[], low, high)
 {
-	// Very simple bubble sort (fast for pre-sorted arrays).
-	new
-		bool:sort = false;
-	do
+	Debug_Print6("Utils_QuickSort: %d, %d", low, high);
+	if (low < high)
 	{
-		sort = false;
-		for (new j = 1, temp = 0; j != num; ++j)
+		new
+			partition = (low + high) / 2,
+			pivot = arr[partition];
+		arr[partition] = arr[high],
+		arr[high] = pivot,
+		partition = low - 1;
+		for (new j = low, tmp; j != high; ++j)
 		{
-			if ((temp = arr[j]) < arr[j - 1])
+			Debug_Print7("Utils_QuickSort: Test %d, %d, %d", j, arr[j], pivot);
+			if ((tmp = arr[j]) < pivot)
 			{
-				arr[j] = arr[j - 1],
-				arr[j - 1] = temp,
-				sort = true;
+				Debug_Print7("Utils_QuickSort: Swap [%d] = %d, [%d] = %d", j, arr[j], partition + 1, arr[partition + 1]);
+				// Swap.
+				arr[j] = arr[++partition],
+				arr[partition] = tmp;
 			}
 		}
+		arr[high] = arr[++partition],
+		arr[partition] = pivot,
+		Utils_QuickSort(arr, low, partition - 1),
+		Utils_QuickSort(arr, partition + 1, high);
 	}
-	while (sort);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="arr">The array to sort.</param>
+ * <param name="num">The size of the array.</param>
+ * <remarks>
+ *  Sorts the array in place.  Uses quick sort because it is relatively simple
+ *  and pretty "quick".
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock QuickSort(arr[], num = sizeof (arr))
+{
+	Debug_Print5("QuickSort called: %d", num);
+	Utils_QuickSort(arr, 0, num - 1);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -3655,11 +3678,14 @@ stock Mean(const arr[], num = sizeof (arr))
  * <returns>
  *  The mathematical modal value of the array.
  * </returns>
+ * <remarks>
+ *  Must sort the array first.
+ * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock Mode(arr[], num = sizeof (arr))
 {
-	Utils_PreSort(arr, num);
+	QuickSort(arr, num);
 	new
 		ret = 0,
 		count = 0,
@@ -3684,11 +3710,14 @@ stock Mode(arr[], num = sizeof (arr))
  * <returns>
  *  The mathematical median value of the array.
  * </returns>
+ * <remarks>
+ *  Must sort the array first.
+ * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock Median(arr[], num = sizeof (arr))
 {
-	Utils_PreSort(arr, num);
+	QuickSort(arr, num);
 	new
 		idx = num >>> 1;
 	if (num & 1) return arr[idx];
@@ -3727,18 +3756,34 @@ stock Range(const arr[], num = sizeof (arr))
  * <returns>
  *  The difference (0 if the same).
  * </returns>
+ * <remarks>
+ *  Returns the first found difference between two arrays.  If they are the same
+ *  the return value is <c>0</c>, otherwise it is <c>arr1[i] - arr2[i]</c>.
+ * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock MemCmp(arr1[], arr2[], count)
 {
 	for (new diff = 0, i = 0; i != count; ++i)
 	{
-		diff = arr1[i] - arr2[i];
-		if (diff)
+		if ((diff = arr1[i] - arr2[i]))
 			return diff;
 	}
 	return 0;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="arr1">First array to compare.</param>
+ * <param name="arr2">Second array to compare.</param>
+ * <param name="count">How many cells to compare.</param>
+ * <returns>
+ *  The difference (0 if the same).
+ * </returns>
+ * <remarks>
+ *  Returns the first found difference between two arrays.  If they are the same
+ *  the return value is <c>0</c>, otherwise it is <c>arr1[i] - arr2[i]</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `MemCmp` (i.e. use proper capitalisation).
 stock memcmp(arr1[], arr2[], count)
@@ -3746,7 +3791,22 @@ stock memcmp(arr1[], arr2[], count)
 	return MemCmp(arr1, arr2, count);
 }
 
-//#define MAX_LEVENSHTEIN_STRING (YSI_MAX_STRING)
+/*-------------------------------------------------------------------------*//**
+ * <param name="a">First string to compare.</param>
+ * <param name="lenA">Length of the first string.</param>
+ * <param name="b">Second string to compare.</param>
+ * <param name="lenB">Length of the second string.</param>
+ * <param name="matrix">Storage for the calculations.</param>
+ * <returns>
+ *  The levenshtein difference (0 if the same).
+ * </returns>
+ * <remarks>
+ *  This function is the internal implementation of a Levenshtein distance when
+ *  neither string is packed.  The <c>matrix</c> parameter is rewritten at the
+ *  start of the function to a larger block of memory, but is still passed in so
+ *  that the rest of the generated code is correct in terms of lookups.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], lenB, matrix[])
 {
@@ -3789,6 +3849,23 @@ static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], len
 	return lenA;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="a">First string to compare.</param>
+ * <param name="lenA">Length of the first string.</param>
+ * <param name="b">Second string to compare.</param>
+ * <param name="lenB">Length of the second string.</param>
+ * <param name="matrix">Storage for the calculations.</param>
+ * <returns>
+ *  The levenshtein difference (0 if the same).
+ * </returns>
+ * <remarks>
+ *  This function is the internal implementation of a Levenshtein distance when
+ *  the shorter string is packed.  The <c>matrix</c> parameter is rewritten at
+ *  the start of the function to a larger block of memory, but is still passed
+ *  in so that the rest of the generated code is correct in terms of lookups.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[], lenB, matrix[])
 {
 	// Allocate heap space for the matrix and point the array at it.  This is
@@ -3830,6 +3907,23 @@ static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[]
 	return lenA;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="a">First string to compare.</param>
+ * <param name="lenA">Length of the first string.</param>
+ * <param name="b">Second string to compare.</param>
+ * <param name="lenB">Length of the second string.</param>
+ * <param name="matrix">Storage for the calculations.</param>
+ * <returns>
+ *  The levenshtein difference (0 if the same).
+ * </returns>
+ * <remarks>
+ *  This function is the internal implementation of a Levenshtein distance when
+ *  th elongest stringis  packed.  The <c>matrix</c> parameter is rewritten at
+ *  the start of the function to a larger block of memory, but is still passed
+ *  in so that the rest of the generated code is correct in terms of lookups.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[], lenB, matrix[])
 {
 	// Allocate heap space for the matrix and point the array at it.  This is
@@ -3870,6 +3964,23 @@ static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[]
 	#emit SCTRL        __hea
 	return lenA;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="a">First string to compare.</param>
+ * <param name="lenA">Length of the first string.</param>
+ * <param name="b">Second string to compare.</param>
+ * <param name="lenB">Length of the second string.</param>
+ * <param name="matrix">Storage for the calculations.</param>
+ * <returns>
+ *  The levenshtein difference (0 if the same).
+ * </returns>
+ * <remarks>
+ *  This function is the internal implementation of a Levenshtein distance when
+ *  both strings are packed.  The <c>matrix</c> parameter is rewritten at the
+ *  start of the function to a larger block of memory, but is still passed in so
+ *  that the rest of the generated code is correct in terms of lookups.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[], lenB, matrix[])
 {
@@ -3913,19 +4024,28 @@ static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="a">First string to compare.</param>
- * <param name="b">Second string to compare.</param>
+ * <param name="stringA">First string to compare.</param>
+ * <param name="stringB">Second string to compare.</param>
  * <returns>
  *  The levenshtein difference (0 if the same).
  * </returns>
+ * <remarks>
+ *  The levenshtein difference is a measure of the difference between two
+ *  strings, given as the number of operations required to change one string in
+ *  to the other one.  A lower number means that the strings are more similar,
+ *  with <c>0</c> meaning that they are identical.
+ *
+ *  Either string can be packed, and this function now has no upper limit on the
+ *  size of strings that can be compared, as long as they can fit in the heap.
+ * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock LevenshteinDistance(const a[], const b[])
+stock LevenshteinDistance(const stringA[], const stringB[])
 {
 	// If a string is empty, the other length is the distance.
 	new
-		lenA = strlen(a),
-		lenB = strlen(b),
+		lenA = strlen(stringA),
+		lenB = strlen(stringB),
 		matrix[1]; // Only exists to trick the compiler.
 	if (!lenA)
 		return lenB;
@@ -3935,39 +4055,39 @@ stock LevenshteinDistance(const a[], const b[])
 	{
 		// The calls below are NOT wrong, the parameters are swapped so the A/B
 		// packing calls are also swapped.
-		if (YSI_IsLocalVarPackedString__(a))
+		if (YSI_IsLocalVarPackedString__(stringA))
 		{
-			if (YSI_IsLocalVarPackedString__(b))
-				return DoLevenshteinDistancePackAB(b, lenB, a, lenA, matrix);
+			if (YSI_IsLocalVarPackedString__(stringB))
+				return DoLevenshteinDistancePackAB(stringB, lenB, stringA, lenA, matrix);
 			else
-				return DoLevenshteinDistancePackB(b, lenB, a, lenA, matrix);
+				return DoLevenshteinDistancePackB(stringB, lenB, stringA, lenA, matrix);
 		}
 		else
 		{
-			if (YSI_IsLocalVarPackedString__(b))
-				return DoLevenshteinDistancePackA(b, lenB, a, lenA, matrix);
+			if (YSI_IsLocalVarPackedString__(stringB))
+				return DoLevenshteinDistancePackA(stringB, lenB, stringA, lenA, matrix);
 			else
-				return DoLevenshteinDistance(b, lenB, a, lenA, matrix);
+				return DoLevenshteinDistance(stringB, lenB, stringA, lenA, matrix);
 		}
 	}
-	else if (lenA == lenB && strcmp(a, b) == 0)
+	else if (lenA == lenB && strcmp(stringA, stringB) == 0)
 	{
 		// Same string.
 		return 0;
 	}
-	if (YSI_IsLocalVarPackedString__(a))
+	if (YSI_IsLocalVarPackedString__(stringA))
 	{
-		if (YSI_IsLocalVarPackedString__(b))
-			return DoLevenshteinDistancePackAB(a, lenA, b, lenB, matrix);
+		if (YSI_IsLocalVarPackedString__(stringB))
+			return DoLevenshteinDistancePackAB(stringA, lenA, stringB, lenB, matrix);
 		else
-			return DoLevenshteinDistancePackA(a, lenA, b, lenB, matrix);
+			return DoLevenshteinDistancePackA(stringA, lenA, stringB, lenB, matrix);
 	}
 	else
 	{
-		if (YSI_IsLocalVarPackedString__(b))
-			return DoLevenshteinDistancePackB(a, lenA, b, lenB, matrix);
+		if (YSI_IsLocalVarPackedString__(stringB))
+			return DoLevenshteinDistancePackB(stringA, lenA, stringB, lenB, matrix);
 		else
-			return DoLevenshteinDistance(a, lenA, b, lenB, matrix);
+			return DoLevenshteinDistance(stringA, lenA, stringB, lenB, matrix);
 	}
 }
 
@@ -4024,6 +4144,16 @@ stock PrintArg(n)
 }
 
 #define printarg PrintArg
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Storage for the return value.</param>
+ * <param name="ext">Extension.</param>
+ * <param name="path">Directory in which to place temporary files.</param>
+ * <param name="len">Maximum string length.</param>
+ * <remarks>
+ *  Internal detail for <c>ftemporary</c>.  Should not be called directly.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock File:ftemporary_(string:name[], const string:ext[] = "tmp", const string:path[] = "", len = sizeof (name))
 {
@@ -4138,7 +4268,7 @@ stock bool:fautocleanup(const string:name[], maxAge)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="name">Storage.</param>
+ * <param name="ret">Storage for the return value.</param>
  * <param name="ext">Extension.</param>
  * <param name="len">Maximum string length.</param>
  * <param name="maxAge">Maximum temporary file age.</param>

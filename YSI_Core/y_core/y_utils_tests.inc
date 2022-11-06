@@ -1408,3 +1408,49 @@ public y_utils_va_return(const str[])
 	ASSERT_EQ(Float:Cell_Abs(-100.5), 100.5);
 }
 
+@test(.group = "y_utils") y_utils_QuickSort1()
+{
+	new arr[] = { 5, 7, 2, 9, 1, 8, 0, 15 };
+	QuickSort(arr);
+	ASSERT_EQ(arr[0], 0);
+	ASSERT_EQ(arr[1], 1);
+	ASSERT_EQ(arr[2], 2);
+	ASSERT_EQ(arr[3], 5);
+	ASSERT_EQ(arr[4], 7);
+	ASSERT_EQ(arr[5], 8);
+	ASSERT_EQ(arr[6], 9);
+	ASSERT_EQ(arr[7], 15);
+}
+
+@test(.group = "y_utils") y_utils_QuickSort2()
+{
+	new arr[100];
+	for (new i = 0; i != sizeof (arr); ++i)
+	{
+		arr[i] = Random(1000);
+	}
+	QuickSort(arr);
+	for (new i = 0, prev = -1; i != sizeof (arr); ++i)
+	{
+		ASSERT_GE(arr[i], prev);
+		prev = arr[i];
+	}
+}
+
+static stock
+	YSI_g_sQuickSortData[100000];
+
+@test(.group = "y_utils") y_utils_QuickSort3()
+{
+	for (new i = 0; i != sizeof (YSI_g_sQuickSortData); ++i)
+	{
+		YSI_g_sQuickSortData[i] = Random(-100000, 100000);
+	}
+	QuickSort(YSI_g_sQuickSortData);
+	for (new i = 0, prev = cellmin; i != sizeof (YSI_g_sQuickSortData); ++i)
+	{
+		ASSERT_GE(YSI_g_sQuickSortData[i], prev);
+		prev = YSI_g_sQuickSortData[i];
+	}
+}
+
