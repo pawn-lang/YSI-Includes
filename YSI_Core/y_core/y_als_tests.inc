@@ -427,11 +427,11 @@ public OnFakeCallback(playerid, const text[], Float:pos, last)
 		// Floats give subtly different rounding results on the two systems.
 		if (Server_IsOpenMP())
 		{
-			Y_ALS_TEST_PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.01000, 202.02000, 303.02999, 20.23999, 21.34000, 22.44000, 404.04000, 505.04998, 606.05999)">;
+			Y_ALS_TEST_PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.01000, 202.02000, 303.02999, 20.23999, 21.33999, 22.44000, 404.04000, 505.05000, 606.05999)">;
 		}
 		else
 		{
-			Y_ALS_TEST_PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.01000, 202.02000, 303.02999, 20.23999, 21.33999, 22.44000, 404.04000, 505.05000, 606.05999)">;
+			Y_ALS_TEST_PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.01000, 202.02000, 303.02999, 20.23999, 21.34000, 22.44000, 404.04000, 505.04998, 606.05999)">;
 		}
 	#endif
 }
