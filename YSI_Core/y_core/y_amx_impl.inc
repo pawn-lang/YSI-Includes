@@ -477,7 +477,7 @@ stock AMX_TraceMemory(pattern[], &addrRet, &dataRet, size = sizeof (pattern))
  *  lists of address/name pairs.  The address is one cell long, and points to
  *  where in code/data/vm the corresponding symbol is located.  The name is
  *  <c>defsize - cellbytes</c> long, which may not be exactly one cell (all of
- *  y_amx assumes that this value is known at compile-time, but amx-assembly
+ *  y_amx assumes that this value is known at compile-time, but amx_assembly
  *  more correctly reads it from the header), and points to the start of the
  *  name as a C string in the AMX header's nametable.  This function just gets
  *  where in memory (relative to DAT) the table starts, and how many items there
@@ -1410,6 +1410,14 @@ stock AMX_GetValueSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return idx;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="tableEntry">The table entry in the AMX header to use.</param>
+ * <returns>
+ *   The data pointer in this table (the first cell in the struct).
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetEntryPointer(tableEntry)
 {
 	#emit LREF.S.pri tableEntry
@@ -1417,10 +1425,26 @@ stock AMX_GetEntryPointer(tableEntry)
 	__pragma("naked");
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="index">The position in the native functions table.</param>
+ * <returns>
+ *   A pointer to this table entry.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetEntryFromNativeIndex(index)
 {
 	return index * __defsize_cells + AMX_HEADER_NATIVES;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="index">The position in the public functions table.</param>
+ * <returns>
+ *   A pointer to this table entry.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetEntryFromPublicIndex(index)
 {
@@ -1428,15 +1452,42 @@ stock AMX_GetEntryFromPublicIndex(index)
 	return index * __defsize_cells + AMX_HEADER_PUBLICS;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="tableEntry">The AMX header native function entry to use.</param>
+ * <returns>
+ *   The index (i.e the position in the table) of this native function entry.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetNativeIndexFromEntry(tableEntry) 
 {
 	return (tableEntry - AMX_HEADER_NATIVES) / __defsize_cells;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="tableEntry">The AMX header public function entry to use.</param>
+ * <returns>
+ *   The index (i.e the position in the table) of this public function entry.
+ * </returns>
+ * <remarks>
+ *   The value returned corresponds to the return value of <c>funcidx</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetPublicIndexFromEntry(tableEntry)
 {
 	return (tableEntry - AMX_HEADER_PUBLICS) / __defsize_cells;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="tableEntry">The AMX header table entry to use.</param>
+ * <returns>
+ *   The length of the name of this entry.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetLengthFromEntry(tableEntry)
 {
@@ -1449,6 +1500,18 @@ stock AMX_GetLengthFromEntry(tableEntry)
 	#emit STOR.S.pri                tableEntry
 	return AMX_ReadLength(tableEntry);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Pointer to a C string.</param>
+ * <returns>
+ *   The length of the string.
+ * </returns>
+ * <remarks>
+ *   Operates on C strings, as found in the header, not pawn packed strings,
+ *   which have their bytes reversed in a cell.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_ReadLength(addr)
 {
@@ -1506,16 +1569,60 @@ stock AMX_ReadLength(addr)
 	return len;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="tableEntry">The header entry that has a name pointer.</param>
+ * <param name="str">The destination array.</param>
+ * <param name="size">The size of the destination array.</param>
+ * <returns>
+ * </returns>
+ * <remarks>
+ *   Copies a C string in AMX memory out to a packed string.  The pointer does
+ *   not point straight to the string, but instead points to a header
+ *   <em>entry</em>, i.e. part of a table with a data pointer and a name
+ *   pointer.  This thus abstracts the weirdness of the size of the name
+ *   pointer, which may not be a whole cell.  There is no unpacked equivalent.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetStringFromEntry(tableEntry, str[], size = sizeof (str))
 {
 	AMX_ReadPackedString(__32(AMX_Read(tableEntry + cellbytes)) + AMX_BASE_ADDRESS, str, size);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Where in DAT to read the string from.</param>
+ * <param name="str">The destination array.</param>
+ * <param name="len">The size of the destination array.</param>
+ * <returns>
+ * </returns>
+ * <remarks>
+ *   Copies a C string in AMX memory out to a packed string.  Mainly used to
+ *   read function names from the header, as they are not in pawn order.  Uses a
+ *   clever trick to detect <c>NULL</c> in four bytes at once.  Deprecated name.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_ReadPackedString`
 stock AMX_ReadString(addr, str[], len = sizeof (str))
 {
 	AMX_ReadPackedString(addr, str, len);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Where in DAT to read the string from.</param>
+ * <param name="str">The destination array.</param>
+ * <param name="len">The size of the destination array.</param>
+ * <returns>
+ * </returns>
+ * <remarks>
+ *   Copies a C string in AMX memory out to a packed string.  Mainly used to
+ *   read function names from the header, as they are not in pawn order.  Uses a
+ *   clever trick to detect <c>NULL</c> in four bytes at once.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_ReadPackedString(addr, str[], len = sizeof (str))
 {
@@ -1538,6 +1645,19 @@ stock AMX_ReadPackedString(addr, str[], len = sizeof (str))
 	}
 	while (++idx < len);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Where in DAT to read the string from.</param>
+ * <param name="str">The destination array.</param>
+ * <param name="len">The size of the destination array.</param>
+ * <returns>
+ * </returns>
+ * <remarks>
+ *   Copies a C string in AMX memory out to an unpacked string.  Mainly used to
+ *   read function names from the header, as they are not in pawn order.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
 {
@@ -1581,6 +1701,20 @@ stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
 		return;
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Where in DAT to write the string to.</param>
+ * <param name="str">The packed string to write.</param>
+ * <returns>
+ * </returns>
+ * <remarks>
+ *   Copies a packed string in to AMX memory, as a C string.  Mainly used to
+ *   write function names in to the header, as they are not in pawn order.  Old
+ *   attempt at efficiently detecting the end of the string and short-circuiting
+ *   the common case, but turned out to be way slower.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_WritePackedString`
 stock AMX_WriteString(addr, const str[], len = sizeof (str))
@@ -1743,6 +1877,18 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 	}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Where in DAT to write the string to.</param>
+ * <param name="str">The packed string to write.</param>
+ * <returns>
+ * </returns>
+ * <remarks>
+ *   Copies a packed string in to AMX memory, as a C string.  Mainly used to
+ *   write function names in to the header, as they are not in pawn order.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_WritePackedString(addr, const str[])
 {
 	new
@@ -1760,6 +1906,18 @@ stock AMX_WritePackedString(addr, const str[])
 	while (c);
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Where in DAT to write the string to.</param>
+ * <param name="str">The unpacked string to write.</param>
+ * <returns>
+ * </returns>
+ * <remarks>
+ *   Copies an unpacked string in to AMX memory, as a C string.  Mainly used to
+ *   write function names in to the header, as they are not in pawn order.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_WriteUnpackedString(addr, const str[])
 {
 	new
@@ -1776,6 +1934,16 @@ stock AMX_WriteUnpackedString(addr, const str[])
 	}
 	while (c);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Data source address.</param>
+ * <param name="dest">Where to copy the data to.</param>
+ * <param name="len">Amount of data to copy.</param>
+ * <remarks>
+ *   Read data out of a memory location, which may be outside the bounds of DAT.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_ReadArray(addr, dest[], len = sizeof (dest))
 {
@@ -1796,6 +1964,16 @@ stock AMX_ReadArray(addr, dest[], len = sizeof (dest))
 	}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Where to copy the data to.</param>
+ * <param name="src">Data source.</param>
+ * <param name="len">Amount of data to copy.</param>
+ * <remarks>
+ *   Write data to a memory location, which may be outside the bounds of DAT.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_WriteArray(addr, const src[], len = sizeof (src))
 {
 	while (len--)
@@ -1813,15 +1991,34 @@ stock AMX_WriteArray(addr, const src[], len = sizeof (src))
 	}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">A DAT pointer.</param>
+ * <returns>
+ *   An array whose data is at <c>addr</c>.  Converts a pointer to a pawn usable
+ *   array.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_Deref(addr)
 {
 	Debug_Print7("AMX_Deref called: %i", addr);
 	#emit LOAD.S.pri                    addr
-	#emit STOR.S.pri                    __4_cells
+	#emit STOR.S.pri                    __param1_offset
 	#emit RETN
 	new ret[2];
 	return ret;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="tag">The tag value to look up (e.g. from <c>tagof</c>).</param>
+ * <param name="name">The destination for the name.</param>
+ * <param name="len">The destination size.</param>
+ * <remarks>
+ *   Get the original string (code) name of a tag from its ID.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 {
@@ -1848,6 +2045,20 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 #define AMX_GetFirstPubVarString( AMX_GetFirstString(AMX_TABLE_PUBVARS
 #define AMX_GetFirstTagString( AMX_GetFirstString(AMX_TABLE_TAGS
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which header table to report on.</param>
+ * <returns>
+ *   The address in the nametable of the first string name referenced by this
+ *   table.  Should be called via the table-specific wrappers:
+ *
+ *   <c>AMX_GetFirstPublicString</c>
+ *   <c>AMX_GetFirstLibraryString</c>
+ *   <c>AMX_GetFirstPubVarString</c>
+ *   <c>AMX_GetFirstTagString</c>
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 static stock AMX_GetFirstString(E_AMX_TABLE:table)
 {
 	// Get the first item in this table and resolve the name.
@@ -1860,6 +2071,15 @@ static stock AMX_GetFirstString(E_AMX_TABLE:table)
 	#emit RETN
 	__pragma("naked");
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <returns>
+ *   The address in the nametable of the first string name referenced by this
+ *   table.  Same as <c>AMX_GetFirstString</c>, but specialised for natives as
+ *   their pointers may be clobbered in some VM versions.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 static stock AMX_GetFirstNativeString()
 {
@@ -1881,11 +2101,25 @@ static stock AMX_GetFirstNativeString()
 	return base + AMX_ReadLength(base) + 1;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <returns>
+ *   The number of bytes used by all public function names in the nametable.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetPublicStringSpace()
 {
 	// How many bytes in the header do the public strings take up?
 	return AMX_GetFirstNativeString() - AMX_GetFirstPublicString();
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <returns>
+ *   The number of bytes used by all native function names in the nametable.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetNativeStringSpace()
 {
@@ -1893,17 +2127,38 @@ stock AMX_GetNativeStringSpace()
 	return AMX_GetFirstLibraryString() - AMX_GetFirstNativeString();
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <returns>
+ *   The number of bytes used by all library names in the nametable.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetLibraryStringSpace()
 {
 	// How many bytes in the header do the library strings take up?
 	return AMX_GetFirstPubVarString() - AMX_GetFirstLibraryString();
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <returns>
+ *   The number of bytes used by all public variable names in the nametable.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetPubVarStringSpace()
 {
 	// How many bytes in the header do the pub var strings take up?
 	return AMX_GetFirstTagString() - AMX_GetFirstPubVarString();
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <returns>
+ *   The number of bytes used by all tag names in the nametable.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetTagStringSpace()
 {
@@ -1920,6 +2175,15 @@ stock AMX_GetTagStringSpace()
 
 #define AMX_CodToDat(%0) ((%0) + AMX_HEADER_COD)
 #define AMX_DatToCod(%0) ((%0) - AMX_HEADER_COD)
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <remarks>
+ *   Print all the names of all the public functions from the AMX header.  There
+ *   is now a more complete version of this function in amx_assembly called
+ *   <c>PrintAmxHeader</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_DumpHeader()
 {
@@ -2269,6 +2533,17 @@ stock AMX_DumpHeader()
 	#endinput
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Where to write the data (relative to DAT).</param>
+ * <param name="value">What to write.</param>
+ * <remarks>
+ *   Writes some data to any arbitrary location in the AMX, bypassing the
+ *   DAT-only restriction.  This is the old function version in case the
+ *   compiler being used doesn't have inline assembly.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 // Function call versions of `AMX_Read` and `AMX_Write`.
 stock AMX_Write(addr, value)
 {
@@ -2276,6 +2551,18 @@ stock AMX_Write(addr, value)
 	#emit LOAD.S.pri                    value
 	#emit SREF.S.pri                    addr
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">Where to read the data from (relative to DAT).</param>
+ * <returns>
+ *   The data at this address.
+ * </returns>
+ * <remarks>
+ *   Read some data from any arbitrary location in the AMX, bypassing the
+ *   DAT-only restriction.  
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_Read(addr)
 {
@@ -2289,6 +2576,18 @@ stock AMX_Read(addr)
 	#pragma warning push
 	#pragma warning disable 238
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="addr">A variable that you want to get the address of.</param>
+ * <returns>
+ *   The address of the given parameter.
+ * </returns>
+ * <remarks>
+ *   This is the old function version in case the compiler being used doesn't
+ *   have inline assembly.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_Ref(const &addr)
 {
