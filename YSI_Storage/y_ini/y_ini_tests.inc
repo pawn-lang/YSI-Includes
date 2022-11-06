@@ -1157,6 +1157,12 @@ public INI_WriteOne(tag[], name[], value[])
 
 @test(.group = "y_ini") fseek()
 {
+	if (Server_IsSAMP())
+	{
+		// Always fails on SA:MP, no point even testing it!  The native is
+		// broken.
+		return;
+	}
 	fremove(MakeYINITestPath("fseek.ini"));
 	new File:f = fopen(MakeYINITestPath("fseek.ini"), io_write);
 	ASSERT(!!f);

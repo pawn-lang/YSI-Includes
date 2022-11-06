@@ -987,10 +987,10 @@ HOOK__ y_hooks_Crash@4()
 		CallLocalFunction("y_hooks_Crash", "");
 		Testing_SurpressOneFail();
 	}
-	else
-	{
-		ASSERT(Server_CrashDetectExists());
-	}
+	//else
+	//{
+	//	ASSERT(Server_CrashDetectExists());
+	//}
 }
 
 static stock
