@@ -1848,7 +1848,7 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 #define AMX_GetFirstPubVarString( AMX_GetFirstString(AMX_TABLE_PUBVARS
 #define AMX_GetFirstTagString( AMX_GetFirstString(AMX_TABLE_TAGS
 
-static stock AMX_GetFirstString(table)
+static stock AMX_GetFirstString(E_AMX_TABLE:table)
 {
 	// Get the first item in this table and resolve the name.
 	table += cellbytes;
