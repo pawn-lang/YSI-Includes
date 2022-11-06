@@ -5660,12 +5660,27 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
  * <param name="string1">The first string to compare.</param>
  * <param name="string1">The second string to compare.</param>
  * <returns>
- *  The normalised similarity between the strings.
+ *  The normalised similarity between the strings (<c>0.0 - 1.0</c>).
  * </returns>
  * <remarks>
  *  Compares the pairs of letters and numbers in each string with each other to
  *  find a measure of how much of one ordered string is in the other.  Useful
- *  for seeing if two strings are similar to humans.
+ *  for seeing if two strings are similar to humans.  This is nothing like the
+ *  more common <em>Levenshtein Distance</em>, which pretty much compares
+ *  strings at an ASCII character level, so two very different strings can be
+ *  apparently more similar than two others.
+ *
+ *  A good example of this, which was the motivation for writing this function,
+ *  was in <em>sscanf</em>.  When checking to see what vehicle a player wrote,
+ *  the input <c>NRG</c> would return <c>TUG</c> as the closest match.  Why?
+ *  Because they're both three letters and share the last <c>G</c>, so
+ *  mechanically they are only two transformations apart; whereas <c>NRG-400</c>
+ *  needs four transforms to get to from the input.  So this code looks at how
+ *  much of each string is in the other string.  Very little of <c>TUG</c> is in
+ *  <c>NRG</c> and vice-versa, while all of <c>NRG</c> is in <c>NRG-400</c> and
+ *  a lot of the reverse is true.
+ *
+ *  This entirely ignores case, spaces, and punctuation in the comparisons.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
