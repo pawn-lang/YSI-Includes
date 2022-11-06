@@ -468,12 +468,6 @@ FUNC_PAWNDOC(bool:IsNull(const string:str[]));
 #define isnull(%0) ((%0[(%0[0])=='\1'])=='\0')
 #define _ALS_isnull
 
-//#pragma deprecated Use `IsNull` (i.e. use proper capitalisation).
-//stock bool:isnull(const string:str[])
-//{
-//	return IsNull(str);
-//}
-
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
@@ -487,12 +481,6 @@ FUNC_PAWNDOC(bool:IsOdd(value));
 #define isodd(%0) ((%0)&1)
 #define _ALS_isodd
 
-//#pragma deprecated Use `IsOdd` (i.e. use proper capitalisation).
-//stock bool:isodd(const str[])
-//{
-//	return IsOdd(str);
-//}
-
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
@@ -505,12 +493,6 @@ FUNC_PAWNDOC(bool:IsEven(value));
 #endif
 #define iseven(%0) (~(%0)&1)
 #define _ALS_iseven
-
-//#pragma deprecated Use `IsEven` (i.e. use proper capitalisation).
-//stock bool:iseven(const str[])
-//{
-//	return IsEven(str);
-//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="dest">Destination string.</param>
@@ -526,12 +508,6 @@ FUNC_PAWNDOC(StrCpy(string:dest[], const string:src[], len = sizeof (dest)));
 #endif
 #define strcpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
 #define _ALS_strcpy
-
-//#pragma deprecated Use `StrCpy` (i.e. use proper capitalisation).
-//stock strcpy(dest[], const src[], len = sizeof (dest))
-//{
-//	return StrCpy(dest, src, len);
-//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to convert.</param>
@@ -1134,6 +1110,14 @@ stock bool:EndOfLine(const string:line[], pos)
 	}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="line">String to check.</param>
+ * <param name="pos">Postion to start from.</param>
+ * <remarks>
+ *   Checks if the current point in a line is the end of non-whitespace data.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `EndOfLine` (i.e. use proper capitalisation).
 stock bool:endofline(const string:line[], pos)
 {
@@ -1156,6 +1140,15 @@ stock ChrFind(needle, const string:haystack[], start = 0)
 	search[0] = needle;
 	return strfind(haystack, search, false, start);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="needle">The character to find.</param>
+ * <param name="haystack">The string to find it in.</param>
+ * <param name="start">The offset to start from.</param>
+ * <returns>
+ *   Fail - -1, Success - pos
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `ChrFind` (i.e. use proper capitalisation).
 stock chrfind(needle, const string:haystack[], start = 0)
@@ -1271,6 +1264,38 @@ stock BernsteinHash(const string:str[] /* 12 */)
 	#endif
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="string">the string to hash.</param>
+ * <returns>
+ *   The bernstein hash of the input string
+ * </returns>
+ * <remarks>
+ *   This is a 32bit hash system so is not very secure, however we're only using
+ *   this as a string enumerator to uniquely identify strings easilly and allow
+ *   for a binary search of strings based on the hash of their name.
+ *   <em>crc32</em>, then <em>jenkins</em> were originally used however this is
+ *   far faster, if a little collision prone, but we're checking the strings
+ *   manually anyway.  This doesn't matter as it would be done regardless of
+ *   hash method, so this doesn't need to be accounted for.  Speed is all that
+ *   matters with at least least a bit of non collision (the number of strings
+ *   we're dealing with, this should have none-to-few collisions).
+ *   <p/>
+ *   I modified it slightly from the original code pasted by aru, to code closer
+ *   to <a href="http://www.burtleburtle.net/bob/hash/doobs.html">the code</a>
+ *   and to work with PAWN (and shaved 0.2us off the time for one call :D).
+ *   <p/>
+ *   Uber reduced version (just for fun):
+ *   <code>
+ *   b(s[]){new h=-1,i,j;while((j=s[i++]))h=h*33+j;return h;}
+ *   </code>
+ *   <p/>
+ *   Update: Contrary to what I said above this is also used to identify colour
+ *   strings for the updated text system involving file based styling and this
+ *   is not checked for collisions as it's unimportant.  But this doesn't affect
+ *   the function at all, I just mentioned it here for "interest".
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
 stock bernstein(const string:str[] /* 12 */)
 {
@@ -1363,6 +1388,13 @@ stock bool:IsHex(const string:str[])
 	return !cur; // Valid if this is the end of the string.
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">String to check.</param>
+ * <returns>
+ *   true/false.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `IsHex` (i.e. use proper capitalisation).
 stock bool:ishex(const string:str[])
 {
@@ -1390,6 +1422,16 @@ stock Unpack(const string:str[])
 	}
 	return ret;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">String to unpack</param>
+ * <returns>
+ *   unpacked string
+ * </returns>
+ * <remarks>
+ *   Mainly used for debugging.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Unpack` (i.e. use proper capitalisation).
 stock unpack(const string:str[])
@@ -1635,7 +1677,6 @@ stock Utils_ChaosMod(playerid)
 	}
 #endif
 
-
 /*-------------------------------------------------------------------------*//**
  * <param name="string">String to convert to a number.</param>
  * <returns>
@@ -1703,6 +1744,16 @@ stock HexStr(const string:str[])
 	return ret;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="string">String to convert to a number.</param>
+ * <returns>
+ *   value of the passed hex string.
+ * </returns>
+ * <remarks>
+ *   Now stops on invalid characters.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `HexStr` (i.e. use proper capitalisation).
 stock hexstr(const string:str[])
 {
@@ -1726,6 +1777,18 @@ stock bool:BoolStr(const string:str[])
 	// Hooray for De Morgan's rules!
 	return str[0] && ((YSI_IsLocalVarPackedString__(str) ? str{0} : str[0]) != '0') && strcmp(str, "false", true);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="string">String to try convert to a boolean.</param>
+ * <returns>
+ *   bool: passed boolean.
+ * </returns>
+ * <remarks>
+ *   This can take a number of ways of representing booleans - 0, false and
+ *   nothing there.  Anything not one of those things (false is not case
+ *   sensitive) is assumed true.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `BoolStr` (i.e. use proper capitalisation).
 stock bool:boolstr(const string:str[])
@@ -1833,6 +1896,17 @@ stock BinStr(const string:str[])
 		return value;
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="string">String to try convert to a boolean.</param>
+ * <returns>
+ *   bool: passed boolean.
+ * </returns>
+ * <remarks>
+ *   This takes a value in 0110101 (boolean) format and returns it as a
+ *   regular value.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `BinStr` (i.e. use proper capitalisation).
 stock binstr(const string:str[])
@@ -2227,9 +2301,6 @@ stock Base64Decode(dest[], const string:src[], len = sizeof (dest), offset = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <summary>
- *   RawMemCpy
- * </summary>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
  * <param name="numbytes">Number of bytes to copy.</param>
@@ -2242,6 +2313,17 @@ stock Base64Decode(dest[], const string:src[], len = sizeof (dest), offset = 0)
 
 native RawMemCpy_(dest, src, index, numbytes, maxlength) = memcpy;
 #define RawMemCpy(%0,%1,%2) RawMemCpy_((%0),(%1),0,(%2),(cellmax>>>2))
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="dest">Destination address.</param>
+ * <param name="src">Source data.</param>
+ * <param name="numbytes">Number of bytes to copy.</param>
+ * <remarks>
+ *   Like memcpy, but takes addresses instead of arrays.  Also far less secure
+ *   because it doesn't check the destination size - it just assumes it is large
+ *   enough.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `RawMemCpy` (i.e. use proper capitalisation).
 stock rawMemcpy(dest, src, numbytes)
@@ -2413,6 +2495,26 @@ stock RawMemSet(address /* 12 */, value /* 16 */, size /* 20 */)
 //		return 1;
 //	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="address">Array or address to set to a value.</param>
+ * <param name="value">What to set the cells to.</param>
+ * <param name="size">Number of bytes to fill.</param>
+ * <remarks>
+ *  Based on code by Slice:
+ *
+ *  <a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781" />
+ *
+ *  Modified to use binary flags instead of a loop.
+ *
+ *  "MemSet" takes an array, the size of the array, and a value to fill it with
+ *  and sets the whole array to that value.
+ *
+ *  "RawMemSet" is similar, but takes an AMX data segment address instead and
+ *  the size is in bytes, not cells.  However, the size must still be a multiple
+ *  of 4.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `RawMemSet` (i.e. use proper capitalisation).
 stock rawMemset(address /* 12 */, value /* 16 */, size /* 20 */)
@@ -2841,6 +2943,23 @@ stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN
 	// final locations in the number we can skip a manipulation stage.
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="startColour">One of the two colours.</param>
+ * <param name="endColour">The other of the two colours.</param>
+ * <param name="fraction">How far to interpolate between the colours.</param>
+ * <remarks>
+ *  This function takes a value (fraction) which is a distance between the two
+ *  endpoints as a fraction.  This fraction is applied to the two colours given
+ *  to find a third colour at some point between those two colours.
+ *
+ *  This function performs linear interpolation between the colours, which isn't
+ *  usually the best way wrt human vision, but is fast.
+ *
+ *  The fraction is optional, and uses the second colour's alpha for blending
+ *  if not given.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 {
@@ -2848,11 +2967,45 @@ stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 	return InterpolateColourLinear(startColour, endColour, value, maxvalue, minvalue);
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="startColour">One of the two colours.</param>
+ * <param name="endColour">The other of the two colours.</param>
+ * <param name="fraction">How far to interpolate between the colours.</param>
+ * <remarks>
+ *  This function takes a value (fraction) which is a distance between the two
+ *  endpoints as a fraction.  This fraction is applied to the two colours given
+ *  to find a third colour at some point between those two colours.
+ *
+ *  This function performs linear interpolation between the colours, which isn't
+ *  usually the best way wrt human vision, but is fast.
+ *
+ *  The fraction is optional, and uses the second colour's alpha for blending
+ *  if not given.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColor(startColour, endColour, value, maxvalue, minvalue = 0)
 {
 	return InterpolateColourLinear(startColour, endColour, floatdiv(value - minvalue, maxvalue - minvalue));
 }
+/*-------------------------------------------------------------------------*//**
+ * <param name="startColour">One of the two colours.</param>
+ * <param name="endColour">The other of the two colours.</param>
+ * <param name="fraction">How far to interpolate between the colours.</param>
+ * <remarks>
+ *  This function takes a value (fraction) which is a distance between the two
+ *  endpoints as a fraction.  This fraction is applied to the two colours given
+ *  to find a third colour at some point between those two colours.
+ *
+ *  This function performs linear interpolation between the colours, which isn't
+ *  usually the best way wrt human vision, but is fast.
+ *
+ *  The fraction is optional, and uses the second colour's alpha for blending
+ *  if not given.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 
 #pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColour(startColour, endColour, value, maxvalue, minvalue = 0)
@@ -2933,6 +3086,23 @@ stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 		(a & 0xFF);
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="startColour">One of the two colours.</param>
+ * <param name="endColour">The other of the two colours.</param>
+ * <param name="fraction">How far to interpolate between the colours.</param>
+ * <remarks>
+ *  This function takes a value (fraction) which is a distance between the two
+ *  endpoints as a fraction.  This fraction is applied to the two colours given
+ *  to find a third colour at some point between those two colours.
+ *
+ *  This function performs gamma interpolation between the colours, which is a
+ *  good balance between complexity and perception.
+ *
+ *  The fraction is optional, and uses the second colour's alpha for blending
+ *  if not given.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `InterpolateColourGamma` instead.
 stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
@@ -2952,11 +3122,26 @@ stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 #define FLOAT_CIE_GAMMA     (0.41666666666666666666666666666667) // 1 / 2.4
 #define FLOAT_CIE_CUTOFF    (0.0031308)
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="r">The red colour component.</param>
+ * <param name="g">The green colour component.</param>
+ * <param name="b">The blue colour component.</param>
+ * <param name="x">The x return value.</param>
+ * <param name="y">The y return value.</param>
+ * <param name="z">The z return value.</param>
+ * <remarks>
+ *  Performs one step of the sRGB to CIE colour space conversion process.  See:
+ *
+ *      https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ)
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock CIEMultiply(Float:r, Float:g, Float:b, &Float:x, &Float:y, &Float:z)
 {
 	// See: https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ)
-	x = 0.4124 * r + 0.3576 * g + 0.1805 * b;
-	y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+	x = 0.4124 * r + 0.3576 * g + 0.1805 * b,
+	y = 0.2126 * r + 0.7152 * g + 0.0722 * b,
 	z = 0.0193 * r + 0.1192 * g + 0.9505 * b;
 }
 
@@ -3093,6 +3278,23 @@ stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 	// Now a simple linear interpolation.
 	return CIEToSRGB(a, x1 + (x2 - x1) * fraction, y1 + (y2 - y1) * fraction, z1 + (z2 - z1) * fraction);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="startColour">One of the two colours.</param>
+ * <param name="endColour">The other of the two colours.</param>
+ * <param name="fraction">How far to interpolate between the colours.</param>
+ * <remarks>
+ *  This function takes a value (fraction) which is a distance between the two
+ *  endpoints as a fraction.  This fraction is applied to the two colours given
+ *  to find a third colour at some point between those two colours.
+ *
+ *  This function performs full sRGB colour space interpolation, which is more
+ *  exact even than gamma interpolation, but also a lot slower.
+ *
+ *  The fraction is optional, and uses the second colour's alpha for blending
+ *  if not given.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `InterpolateColourSRGB` instead.
 stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
@@ -3366,6 +3568,7 @@ stock GetNearestColourSRGBCached(colour, const Float:options[][3], count = sizeo
  *  unbounded.  Good distribution.
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
 stock RandomPointsInCircleSampled(Float:centreX, Float:centreY, Float:radius, Float:xs[], Float:ys[], sx = sizeof (xs), sy = sizeof (ys))
 {
 	assert(sx == sy);
@@ -3402,6 +3605,7 @@ stock RandomPointsInCircleSampled(Float:centreX, Float:centreY, Float:radius, Fl
  *  near the centre, as in an explosion).
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
 stock RandomPointsInCircleCentred(Float:centreX, Float:centreY, Float:radius, Float:xs[], Float:ys[], sx = sizeof (xs), sy = sizeof (ys))
 {
 	assert(sx == sy);
@@ -3431,6 +3635,7 @@ stock RandomPointsInCircleCentred(Float:centreX, Float:centreY, Float:radius, Fl
  *  distribution of points throughout the circle.  Fixed loop bounds.
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
 stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius, Float:xs[], Float:ys[], sx = sizeof (xs), sy = sizeof (ys))
 {
 	assert(sx == sy);
@@ -3460,6 +3665,7 @@ stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius
  *  unbounded.  Good distribution.
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
 stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
 {
 	new Float:minX = centreX - radius, Float:minY = centreY - radius;
@@ -3490,6 +3696,7 @@ stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Flo
  *  near the centre, as in an explosion).
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
 stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
 {
 	new Float:randA = RandomFloat(360.0);
@@ -3512,6 +3719,7 @@ stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Flo
  *  distribution of points throughout the circle.  Fixed loop bounds.
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
 stock RandomPointInCircleDistributed(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
 {
 	new Float:randA = RandomFloat(360.0);
