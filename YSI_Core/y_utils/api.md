@@ -1,857 +1,5438 @@
-# Constants
+y_utils - v0.1.3
+==========================================
 
-* `Float:FLOAT_INFINITY`: IEEE754 Infinity
-* `Float:FLOAT_NEG_INFINITY`: IEEE754 -Infinity
-* `Float:FLOAT_NEGATIVE_INFINITY`: IEEE754 -Infinity
-* `Float:FLOAT_NAN`: IEEE754 Not A Number
-* `Float:FLOAT_NOT_A_NUMBER`: IEEE754 Not A Number
-* `Float:FLOAT_QNAN`: IEEE754 Not A Number (quiet)
-* `Float:FLOAT_QUIET_NAN`: IEEE754 Not A Number (quiet)
-* `Float:FLOAT_QUIET_NOT_A_NUMBER`: IEEE754 Not A Number (quiet)
-* `Float:FLOAT_SNAN`: IEEE754 Not A Number (signalling)
-* `Float:FLOAT_SIGNALING_NAN`: IEEE754 Not A Number (signalling)
-* `Float:FLOAT_SIGNALING_NOT_A_NUMBER`: IEEE754 Not A Number (signalling)
-* `Float:FLOAT_E`: e
-* `Float:FLOAT_PI`: pi
-* `Float:FLOAT_ROOT_2`: sqrt(2)
+Misc functions used throughout.
+------------------------------------------
 
-# Macros
+(c) 2022 YSI contibutors, licensed under MPL 1.1
 
-## `NO_VALUE(%0)`
 
-* **Parameters:**
-    * `%0`: Another macro to test if is empty.
-* **Returns:**
-    * `true`: The macro has no value.
-    * `false`: The macro has a defined value (including `0`).
-* **Remarks:**
-Differentiates between:
+##  Functions 
+
+### Stock
+
+* [`StrToLower`](#StrToLower): Convert a whole string to lower-case.
+* [`StrToUpper`](#StrToUpper): Convert a whole string to upper-case.
+* [`Random`](#Random): Generate a random number, optionally takes lower and upper bounds.
+* [`RandomFloat`](#RandomFloat): Same as [`Random`](#Random), but for floats.
+* [`StripNL`](#StripNL): Strips the newline characters from the end of a string.
+* [`StripL`](#StripL): Remove whitespace from the start of a string.
+* [`Strip`](#Strip): Remove whitespace from both ends of a string.
+* [`endofline`](#endofline): Check if the given position is the end of a string (ignoring whitespace).
+* [`chrfind`](#chrfind): Return the first position (after [`start`](#start)) of the given character.
+* [`chrfindp`](#chrfindp): Like [`chrfind`](#chrfind), but without the upper-bounds check.
+* [`bernstein`](#bernstein): Generate the Bernstein hash of the given string.
+* [`ishex`](#ishex): Is the given string hexadecimal?
+* [`Unpack`](#Unpack): Version of [`strunpack`](#strunpack) that returns the result.
+* [`returnstringarg`](#returnstringarg): Get the string passed as a variable argument from the given index.
+* [`va_return`](#va_return): Like [`sprintf`](#sprintf), formats a string and returns the result.
+* [`isnumeric`](#isnumeric): Is the given string a number?
+* [`hexstr`](#hexstr): Return the value of the given hexadecimal string.
+* [`boolstr`](#boolstr): Return the value of the given boolean string.
+* [`binstr`](#binstr): Return the value of the given binary string.
+* [`RawMemCpy`](#RawMemCpy): Copy memory between two address, instead of two arrays.
+* [`MemSet`](#MemSet): Set all of an array to a value.
+* [`RawMemSet`](#RawMemSet): Set all of a given memory region to a value.
+* [`ReturnPlayerName`](#ReturnPlayerName): Return a player's name.
+* [`ftouch`](#ftouch): Ensures that a file exists, but nothing more.
+* [`InterpolateColour`](#InterpolateColour): Get the colour (in 3D RGB space) between two other colours.
+* [`SkipWhitespace`](#SkipWhitespace): Return the first position in a string of a non-whitespace character.
+* [`Trim`](#Trim): Get the first and last positions of non-whitespace characters in the string. Like [`Strip`](#Strip), but doesn't modify the string.
+* [`Sum`](#Sum): Get the total (sum) of an array.
+* [`Mean`](#Mean): Get the mathematical mean of an array.
+* [`Mode`](#Mode): Get the mathematical mode of an array.
+* [`Median`](#Median): Get the mathematical median of an array.
+* [`Range`](#Range): Get the mathematical range of an array.
+
+
+### Inline
+
+* [`UCMP`](#UCMP): Unsigned compare.
+* [`VALID_PLAYERID`](#VALID_PLAYERID): Check if a player ID is valid (in range).
+* [`IS_IN_RANGE`](#IS_IN_RANGE): Check if a number is in range.
+* [`NOT_IN_RANGE`](#NOT_IN_RANGE): Check if a number is outside a range.
+* [`ceildiv`](#ceildiv): Divide two numbers and round up.
+* [`floordiv`](#floordiv): Divide two numbers and round down.
+* [`IsNull`](#IsNull): Checks if a string is NULL (`\1\0` or `\0`).
+* [`IsOdd`](#IsOdd): Checks if a number is odd.
+* [`IsEven`](#IsEven): Checks if a number is even.
+* [`StrCpy`](#StrCpy): Copy one string to another.
+* [`GetIP`](#GetIP): Return the encoded (32-bit) version of a player's IP.
+* `getstring`: Synonym for `returnstringarg` (there are a lot).
+* `GetString`: Synonym for `returnstringarg` (there are a lot).
+* `getstringarg`: Synonym for `returnstringarg` (there are a lot).
+* `GetStringArg`: Synonym for `returnstringarg` (there are a lot).
+* `ReturnStringArg`: Synonym for `returnstringarg` (there are a lot).
+* `InterpolateColor`: Synonym for `InterpolateColour`.
+* `StripR`: Synonym for `StripNL`.
+
+
+##  Variables 
+
+### Global
+
+* [`TRUE`](#TRUE): True hack for infinate loops.
+* [`FALSE`](#FALSE): False hack for one-time loops.
+* [`NULL`](#NULL): 1 long string for passing via Call(Remote|Local)Function.
+
+
+
+
+
+
+
+
+
+## Functions
+
+
+
+
+### `Base64Decode`:
+
+
+Base64Decode 
+
+
+
+#### Syntax
+
 
 ```pawn
-#define MY_MACRO_A
-NO_VALUE(MY_MACRO_A) // true
+Base64Decode(dest[], src[], len, offset)
 ```
 
-And:
+
+
+|  `dest`  |  ` [] `   | 
+|  `src`  |  ` [] `   | 
+|  `len`  |    | 
+|  `offset`  |    | 
+
+
+
+
+#### Remarks
+
+Decodes data using proper base64. 
+
+
+#### Depends on
+* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__m1_cells`](#__m1_cells)
+* [`min`](#min)
+* [`strlen`](#strlen)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `BeautifyProfilingTime`:
+
+
+
+#### Syntax
+
 
 ```pawn
-#define MY_MACRO_B 0
-NO_VALUE(MY_MACRO_B) // false
+BeautifyProfilingTime(t, iters)
 ```
 
-## `__once`
 
-* **Remarks:**
-Use to only run a loop once.  Useful for scoping variables:
+
+|  `t`  |  The time in ms.   | 
+|  `iters`  |  The number of iterations completed in this time.   | 
+
+
+
+
+#### Remarks
+
+Formats and returns a string representing the time taken for one iteration, given the time required for many iterations. This attempts to format the number using a reasonable fraction of a second. 
+
+
+#### Depends on
+* [`operator/(Float:,Float:)`](#operator/(Float:,Float:))
+* [`BeautifyProfilingTime`](#BeautifyProfilingTime)
+* [`FIXES_format`](#FIXES_format)
+* [`float`](#float)
+
+#### Estimated stack usage
+
+27 cells
+
+
+
+
+
+
+
+
+
+### `BernsteinHash`:
+
+
+
+#### Syntax
+
 
 ```pawn
-for (new i = 0; __once; )
-{
-	// This loop happens once.
-}
+BernsteinHash(str[])
 ```
 
-Can be combined with other conditions:
+
+
+|  `str`  |  ` [] `   | 
+|  `string`  |  the string to hash.  | 
+
+
+
+
+#### Returns
+
+The bernstein hash of the input string 
+
+
+#### Remarks
+
+This is a 32bit hash system so is not very secure, however we're only using this as a string enumerator to uniquely identify strings easilly and allow for a binary search of strings based on the hash of their name. *crc32*, then *jenkins* were originally used however this is far faster, if a little collision prone, but we're checking the strings manually anyway. This doesn't matter as it would be done regardless of hash method, so this doesn't need to be accounted for. Speed is all that matters with at least least a bit of non collision (the number of strings we're dealing with, this should have none-to-few collisions). 
+
+
+
+ I modified it slightly from the original code pasted by aru, to code closer to [the code](http://www.burtleburtle.net/bob/hash/doobs.html) and to work with PAWN (and shaved 0.2us off the time for one call :D). 
+
+
+ Uber reduced version (just for fun): 
+```pawn
+  b(s[]){new h=-1,i,j;while((j=s[i++]))h=h*33+j;return h;}  
+```
+
+
+
+
+ Update: Contrary to what I said above this is also used to identify colour strings for the updated text system involving file based styling and this is not checked for collisions as it's unimportant. But this doesn't affect the function at all, I just mentioned it here for "interest". 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`cellbits`](#cellbits)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `BiGramSimilarity`:
+
+
+BiGramSimilarity(const string1[], const string2[]); 
+
+
+
+#### Syntax
+
 
 ```pawn
-for (new i = 0; __once && SomeCheck(); )
-{
-	// This loop happens maybe once.
-}
+BiGramSimilarity(string1[], string2[])
 ```
 
-This is seemingly the same as `if (SomeCheck())`, but useful mainly in macros.
-
-# Functions
-
-## `stock GetIP(playerid);`
-
-* **Parameters:**
-    * `playerid`: Player to get IP of.
-* **Returns:**
-    * IP as a 32bit int.
 
 
-## `stock bool:UCMP(value, upper);`
-
-* **Parameters:**
-    * `value`: The unsigned number to compare.
-    * `upper`: The upper limit.
-* **Returns:**
-    * An unsigned comparison between the two values.
+|  `string1`  |  ` [] `The first string to compare.   | 
+|  `string2`  |  ` [] `   | 
+|  `string1`  |  The second string to compare.  | 
 
 
-## `stock bool:IsNaN(Float:value);`
 
-* **Parameters:**
-    * `value`: The IEEE754 floating point number (`Float:`) to check.
-* **Returns:**
-    * An IEEE754 floating-point number is defined as Not-A-Number when all the exponent bits are set, and the mantissa is non-zero.  The sign bit is ignored, so we first remove that and test the result is `> 0x7F800000`.  Because any signed number bigger than that must have all the MSBs set, plus at least one more.
+|  **Tag**  |  `Float:`  | 
 
 
-## `stock bool:VALID_PLAYERID(playerid);`
+#### Returns
 
-* **Parameters:**
-    * `playerid`: The player to check.
-* **Returns:**
-    * Is this a valid playerid (NOT, is the player connected).
+The normalised similarity between the strings (`0.0 - 1.0`). 
 
 
-## `stock bool:IS_IN_RANGE(value, lower, upper);`
+#### Remarks
 
-* **Parameters:**
-    * `value`: The number to compare.
-    * `lower`: The lower limit.
-    * `upper`: The upper limit.
-* **Returns:**
-    * Is the value in the given range.
-* **Remarks:**
-Equivalent to:
+Compares the pairs of letters and numbers in each string with each other to find a measure of how much of one ordered string is in the other. Useful for seeing if two strings are similar to humans. This is nothing like the more common *Levenshtein Distance*, which pretty much compares strings at an ASCII character level, so two very different strings can be apparently more similar than two others. A good example of this, which was the motivation for writing this function, was in *sscanf*. When checking to see what vehicle a player wrote, the input `NRG` would return `TUG` as the closest match. Why? Because they're both three letters and share the last `G`, so mechanically they are only two transformations apart; whereas `NRG-400` needs four transforms to get to from the input. So this code looks at how much of each string is in the other string. Very little of `TUG` is in `NRG` and vice-versa, while all of `NRG` is in `NRG-400` and a lot of the reverse is true. This entirely ignores case, spaces, and punctuation in the comparisons. 
+
+
+#### Depends on
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`Float:operator=(_:)`](#Float:operator=(_:))
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`floatdiv`](#floatdiv)
+
+#### Estimated stack usage
+
+1306 cells
+
+
+
+
+
+
+
+
+
+### `BinStr`:
+
+
+
+#### Syntax
+
 
 ```pawn
-(%1) <= (%0) < (%2)
+BinStr(str[])
 ```
 
- 
 
 
-## `stock bool:NOT_IN_RANGE(value, lower, upper);`
+|  `str`  |  ` [] `   | 
+|  `string`  |  String to try convert to a boolean.  | 
 
-* **Parameters:**
-    * `value`: The number to compare.
-    * `lower`: The lower limit.
-    * `upper`: The upper limit.
-* **Returns:**
-    * Is the value outside the given range.
-* **Remarks:**
-Equivalent to:
+
+
+
+#### Returns
+
+bool: passed boolean. 
+
+
+#### Remarks
+
+This takes a value in 0110101 (boolean) format and returns it as a regular value. 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+
+#### Estimated stack usage
+
+3 cells
+
+
+
+
+
+
+
+
+
+### `BoolStr`:
+
+
+
+#### Syntax
+
 
 ```pawn
-(%1) <= (%0) < (%2)
+BoolStr(str[])
 ```
 
- 
 
 
-## `stock ceildiv(numerator, denominator);`
-
-* **Parameters:**
-    * `numerator`: The top of the division.
-    * `denominator`: The bottom of the division.
-* **Returns:**
-    * (numerator / denominator) rounded up.
-* **Remarks:**
-Normal integer division ALWAYS rounds down - this always rounds up.
- 
+|  `str`  |  ` [] `   | 
+|  `string`  |  String to try convert to a boolean.  | 
 
 
-## `stock floordiv(numerator, denominator);`
 
-* **Parameters:**
-    * `numerator`: The top of the division.
-    * `denominator`: The bottom of the division.
-* **Returns:**
-    * (numerator / denominator) rounded down.
-* **Remarks:**
-Normal integer division ALWAYS rounds down - this also always rounds down,
-making it a little pointless, but also more explicit in function.
- 
+|  **Tag**  |  `bool:`  | 
 
 
-## `stock bool:isnull(str[]);`
+#### Returns
 
-* **Parameters:**
-    * `str`: String to check if is null.
-* **Remarks:**
-Uses a new shorter and branchless method, which also works with offsets so
-this is valid:
+bool: passed boolean. 
+
+
+#### Remarks
+
+This can take a number of ways of representing booleans - 0, false and nothing there. Anything not one of those things (false is not case sensitive) is assumed true. 
+
+
+#### Depends on
+* [`FIXES_strcmp`](#FIXES_strcmp)
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`true`](#true)
+
+#### Estimated stack usage
+
+7 cells
+
+
+
+
+
+
+
+
+
+### `CIEMultiply`:
+
+
+
+#### Syntax
+
 
 ```pawn
-
-new str[32];
-isnull(str[5]);
-  
+CIEMultiply(r, g, b, &x, &y, &z)
 ```
- 
 
 
-## `stock bool:isodd(value);`
 
-* **Remarks:**
-Check if the value is odd.
-
-
-## `stock bool:iseven(value);`
-
-* **Remarks:**
-Check if the value is even.
+|  `r`  |  `Float `The red colour component.   | 
+|  `g`  |  `Float `The green colour component.   | 
+|  `b`  |  `Float `The blue colour component.   | 
+|  `x`  |  `Float & `The x return value.   | 
+|  `y`  |  `Float & `The y return value.   | 
+|  `z`  |  `Float & `The z return value.   | 
 
 
-## `stock strcpy(dest[], const src[], len = sizeof (dest));`
-
-* **Remarks:**
-Copy a string from `src` to `dest`.
 
 
-## `stock StrToLower(str[], len = sizeof (str));`
+#### Remarks
 
-* **Remarks:**
-Convert a string to lower-case.
-
-
-## `stock StrToUpper(str[], len = sizeof (str));`
-
-* **Remarks:**
-Convert a string to upper-case.
+Performs one step of the sRGB to CIE colour space conversion process. See: https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ) 
 
 
-## `stock Random(min, max = cellmin);`
+#### Depends on
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
 
-* **Parameters:**
-    * `minmax`: Lower bound, or upper bound when only parameter.
-    * `max`: Upper bound.
-* **Remarks:**
-Generate a random float between the given numbers (`min <= n < max`).
-Default minimum is `0` (changes the parameter order).
- 
+#### Estimated stack usage
+
+1 cells
 
 
-## `stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2);`
-
-* **Parameters:**
-    * `minmax`: Lower bound, or upper bound when only parameter.
-    * `max`: Upper bound.
-    * `dp`: How small to make the differences
-* **Remarks:**
-Generate a random float between the given numbers (`min <= n < max`).  Default
-minimum is `0.0` (changes the parameter order).
- 
 
 
-## `stock StripNL(str[]);`
-
-* **Remarks:**
-Remove whitespace from the end of a string.
 
 
-## `stock StripR(str[]);`
-
-* **Remarks:**
-Remove whitespace from the end of a string.
 
 
-## `stock StripL(str[]);`
 
-* **Remarks:**
-Remove whitespace from the start of a string.
+### `CIEToSRGB`:
 
 
-## `stock Strip(str[]);`
-
-* **Remarks:**
-Remove whitespace from the start and end of a string.
+SRGBToCIE(colour, &Float:x, &Float:y, &Float:z); 
 
 
-## `stock endofline(const line[], pos);`
 
-* **Parameters:**
-    * `line`: String to check.
-    * `pos`: Postion to start from.
-* **Remarks:**
-Checks if the current point in a line is the end of non-whitespace data.
- 
+#### Syntax
 
-
-## `stock chrfind(needle, const haystack[], start = 0);`
-
-* **Parameters:**
-    * `needle`: The character to find.
-    * `haystack`: The string to find it in.
-    * `start`: The offset to start from.
-* **Returns:**
-    * `-1`: Fail
-	* `pos`: Success
-
-
-## `stock chrfindp(needle, const haystack[], start = 0);`
-
-* **Parameters:**
-    * `needle`: The character to find.
-    * `haystack`: The string to find it in.
-    * `start`: The offset to start from.
-* **Returns:**
-    * `-1`: Fail
-	* `pos`: Success
-* **Remarks:**
-Like `chrfind`, but with no upper-bounds check on `start`.
- 
-
-
-## `stock IPToInt(const ip[]);`
-
-* **Remarks:**
-Convert a dot notation IP string to to an integer.
-
-
-## `stock BernsteinHash(const string[] /* 12 */);`
-
-* **Parameters:**
-    * `string`: the string to hash.
-* **Returns:**
-    * the bernstein hash of the input string
-* **Remarks:**
-This is a 32bit hash system so is not very secure, however we're only
-using this as a string enumerator to uniquely identify strings easilly
-and allow for a binary search of strings based on the hash of their name.
-crc32, then jenkins were originally used however this is far faster, if a
-little collision prone, but we're checking the strings manually anyway.
-This doesn't matter as it would be done regardless of hash method, so this
-doesn't need to be accounted for.  Speed is all that matters with at 
-least a bit of non collision (the number of strings we're dealing with,
-this should have none-few collisions).
-
-I modified it slightly from the original code pasted by aru, to code
-closer to the code http://www.burtleburtle.net/bob/hash/doobs.html
-and to work with PAWN (and shaved 0.2us off the time for one call :D).
-
-Uber reduced version (just for fun):
 
 ```pawn
-b(s[]){new h=-1,i,j;while((j=s[i++]))h=h*33+j;return h;}
+CIEToSRGB(a, x, y, z)
 ```
 
-Update: Contrary to what I said above this is also used to identify colour
-strings for the updated text system involving file based styling and this
-is not checked for collisions as it's unimportant.  But this doesn't affect
-the function at all, I just mentioned it here for "interest".
- 
 
 
-## `stock JenkinsHash(const string[] /* 12 */);`
+|  `a`  |  The alpha to add on.   | 
+|  `x`  |  `Float `The x return value.   | 
+|  `y`  |  `Float `The y return value.   | 
+|  `z`  |  `Float `The z return value.   | 
 
-* **Parameters:**
-    * `string`: the string to hash.
-* **Returns:**
-    * the Jenkins hash of the input string
-* **Remarks:**
-This is a 32bit hash system so is not very secure, however we're only
-using this as a string enumerator to uniquely identify strings easilly
-and allow for a binary search of strings based on the hash of their name.
- 
 
 
-## `stock ishex(const str[]);`
 
-* **Remarks:**
-Check if a string looks like a hex number.
- 
+#### Remarks
 
+Converts a colour from CIE XYZ colour space to sRGB colour space. See: https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB) 
 
-## `stock unpack(const str[]);`
 
-* **Parameters:**
-    * `str`: String to unpack
-* **Returns:**
-    * unpacked string
-* **Remarks:**
-Mainly used for debugging.
- 
+#### Depends on
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`operator<=(Float:,Float:)`](#operator<=(Float:,Float:))
+* [`floatpower`](#floatpower)
+* [`floatround`](#floatround)
 
+#### Estimated stack usage
 
-## `stock getstringarg(idx);`
+10 cells
 
-* **Parameters:**
-    * `idx`: Index of the string in the parameters.
-* **Returns:**
-    * string
-* **Remarks:**
-Is passed the result of getarg, which will be the address of a string (in
-theory) and uses that for DMA to get the string.
- 
 
 
-## `stock va_return(const fmat[], GLOBAL_TAG_TYPES:...);`
 
-* **Parameters:**
-    * `fmat`: String format.
-    * ``: Parameters.
-* **Returns:**
-    * Formatted string.
-* **Remarks:**
-Just wraps `format` and returns a string instead.
 
-Has extra code to ensure that it works correct on the old compiler.
- 
 
 
-## `stock isnumeric(const str[]);`
 
-* **Parameters:**
-    * `str`: String to check
-* **Remarks:**
-Checks if a given string is numeric.
- 
 
+### `ChrFind`:
 
-## `stock hexstr(const string[]);`
 
 
-* **Parameters:**
-    * `string`: String to convert to a number.
-* **Returns:**
-    * value of the passed hex string.
-* **Remarks:**
-Convert a hex string to a number.  Now stops on invalid characters.
- 
+#### Syntax
 
 
-## `stock bool:boolstr(const string[]);`
+```pawn
+ChrFind(needle, haystack[], start)
+```
 
 
-* **Parameters:**
-    * `string`: String to try convert to a boolean.
-* **Returns:**
-    * bool: passed boolean.
-* **Remarks:**
-This can take a number of ways of representing booleans - 0, false and
-nothing there.  Anything not one of those things (false is not case
-sensitive) is assumed true.
 
+|  `needle`  |  The character to find.   | 
+|  `haystack`  |  ` [] `The string to find it in.   | 
+|  `start`  |  The offset to start from.   | 
 
 
-## `stock binstr(const string[]);`
 
 
-* **Parameters:**
-    * `string`: String to try convert to a boolean.
-* **Returns:**
-    * bool: passed boolean.
-* **Remarks:**
-This takes a value in `0110101` (boolean) format and returns it as a
-regular value.
- 
+#### Returns
 
+Fail - -1, Success - pos 
 
-## `stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest), offset = 0);`
 
-* **Remarks:**
-Encodes data using proper base64.  This code is complicated by the fact that
-PAWN packed strings are backwards by cells in memory, so we need to do the
-writes in what seems like a strange order.
- 
+#### Depends on
+* [`FIXES_strfind`](#FIXES_strfind)
+* [`false`](#false)
 
+#### Estimated stack usage
 
-## `stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0);`
+9 cells
 
-* **Remarks:**
-Decodes data using proper base64.
- 
 
 
-## `stock rawMemcpy_(dest, src, index, numbytes, maxlength);`
 
-* **Parameters:**
-    * `dest`: Destination address.
-    * `src`: Source data.
-    * `numbytes`: Number of bytes to copy.
-* **Remarks:**
-Like memcpy, but takes addresses instead of arrays.  Also far less secure
-because it doesn't check the destination size - it just assumes it is large
-enough.
- 
-## `stock memset(arr[], val = 0, size = sizeof (arr));`
 
-* **Parameters:**
-    * `arr`: Array or address to set to a value.
-    * `iValue`: What to set the cells to.
-    * `iSize`: Number of cells to fill.
-* **Remarks:**
-Based on code by Slice:
 
-http://forum.sa-mp.com/showthread.php?p=1606781#post1606781
 
-Modified to use binary flags instead of a loop.
 
-`memset` takes an array, the size of the array, and a value to fill it with
-and sets the whole array to that value.
 
-`rawmemset` is similar, but takes an AMX data segment address instead and
-the size is in bytes, not cells.  However, the size must still be a multiple
-of 4.
- 
+### `DoLevenshteinDistance`:
 
 
-## `stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */);`
 
-* **Parameters:**
-    * `iAddress`: Array or address to set to a value.
-    * `iValue`: What to set the cells to.
-    * `iSize`: Number of cells to fill.
-* **Remarks:**
-Based on code by Slice:
+#### Syntax
 
-http://forum.sa-mp.com/showthread.php?p=1606781#post1606781
 
-Modified to use binary flags instead of a loop.
+```pawn
+DoLevenshteinDistance(a[], lenA, b[], lenB, matrix[])
+```
 
-`memset` takes an array, the size of the array, and a value to fill it with
-and sets the whole array to that value.
 
-`rawmemset` is similar, but takes an AMX data segment address instead and
-the size is in bytes, not cells.  However, the size must still be a multiple
-of 4.
 
+|  `a`  |  ` [] `First string to compare.   | 
+|  `lenA`  |  Length of the first string.   | 
+|  `b`  |  ` [] `Second string to compare.   | 
+|  `lenB`  |  Length of the second string.   | 
+|  `matrix`  |  ` [] `Storage for the calculations.   | 
 
 
-## `stock ReturnPlayerName(playerid);`
 
-* **Parameters:**
-    * `playerid`: Player whose name you want to get.
-* **Remarks:**
-Now uses a global array to avoid repeated function calls.  Actually doesn't
-because that causes issues with multiple scripts.
- 
 
+#### Returns
 
-## `stock ftouch(const filename[]);`
+The levenshtein difference (0 if the same). 
 
-* **Parameters:**
-    * `filename`: The file to "touch".
-* **Returns:**
-    * `0`: File already exists.
-    * `1`: File was created.
-    * `-1`: File was not created.
-* **Remarks:**
-This "touches" a file in the Unix sense of creating it but not opening or
-editing it in any way.
- 
 
+#### Remarks
 
-## `stock InterpolateColorLinear(startColour, endColour, Float:fraction);`
+This function is the internal implementation of a Levenshtein distance when neither string is packed. The `matrix` parameter is rewritten at the start of the function to a larger block of memory, but is still passed in so that the rest of the generated code is correct in terms of lookups. 
 
-* **Parameters:**
-    * `startColour`: One of the two colours.
-    * `endColour`: The other of the two colours.
-    * `fraction`: How far to interpolate between the colours.
-* **Remarks:**
-This function takes a value (fraction) which is a distance between the two
-endpoints as a fraction.  This fraction is applied to the two colours given
-to find a third colour at some point between those two colours.
 
-This function performs linear interpolation between the colours, which isn't
-usually the best way wrt human vision, but is fast.
+#### Depends on
+* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__hea`](#__hea)
+* [`min`](#min)
 
-The fraction is optional, and uses the second colour's alpha for blending
-if not given.
+#### Estimated stack usage
 
-## `stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN);`
+9 cells
 
-* **Remarks:**
-Alternate (deprecated) spelling of `InterpolateColourLinear`.
- 
 
 
-## `stock InterpolateColor(startColour, endColour, value, maxvalue, minvalue = 0);`
 
-* **Remarks:**
-Alternate (deprecated) spelling of `InterpolateColourLinear`.
- 
 
 
-## `stock InterpolateColour(startColour, endColour, value, maxvalue, minvalue = 0);`
 
-* **Remarks:**
-Alternate (deprecated) spelling of `InterpolateColourLinear`.
- 
 
 
-## `stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN);`
+### `DoLevenshteinDistancePackA`:
 
-* **Parameters:**
-    * `startColour`: One of the two colours.
-    * `endColour`: The other of the two colours.
-    * `fraction`: How far to interpolate between the colours.
-* **Remarks:**
-This function takes a value (fraction) which is a distance between the two
-endpoints as a fraction.  This fraction is applied to the two colours given
-to find a third colour at some point between those two colours.
 
-This function performs gamma interpolation between the colours, which is a
-good balance between complexity and perception.
 
-The fraction is optional, and uses the second colour's alpha for blending
-if not given.
+#### Syntax
 
 
+```pawn
+DoLevenshteinDistancePackA(a[], lenA, b[], lenB, matrix[])
+```
 
-## `stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN);`
 
-* **Remarks:**
-Alternate (deprecated) spelling of `InterpolateColourGamma`.
- 
 
+|  `a`  |  ` [] `First string to compare.   | 
+|  `lenA`  |  Length of the first string.   | 
+|  `b`  |  ` [] `Second string to compare.   | 
+|  `lenB`  |  Length of the second string.   | 
+|  `matrix`  |  ` [] `Storage for the calculations.   | 
 
-## `stock SRGBToCIE(colour, &Float:x, &Float:y, &Float:z);`
 
-* **Parameters:**
-    * `colour`: The sRGB colour to convert.
-    * `x`: The x return value.
-    * `y`: The y return value.
-    * `z`: The z return value.
-* **Remarks:**
-Converts a colour from sRGB colour space to CIE XYZ colour space.  See:
 
-https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ)
 
+#### Returns
 
+The levenshtein difference (0 if the same). 
 
 
-## `stock CIEToSRGB(a, Float:x, Float:y, Float:z);`
+#### Remarks
 
-* **Parameters:**
-    * `a`: The alpha to add on.
-    * `x`: The x return value.
-    * `y`: The y return value.
-    * `z`: The z return value.
-* **Remarks:**
-Converts a colour from CIE XYZ colour space to sRGB colour space.  See:
+This function is the internal implementation of a Levenshtein distance when the shorter string is packed. The `matrix` parameter is rewritten at the start of the function to a larger block of memory, but is still passed in so that the rest of the generated code is correct in terms of lookups. 
 
-https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB)
 
+#### Depends on
+* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__hea`](#__hea)
+* [`min`](#min)
 
+#### Estimated stack usage
 
+9 cells
 
-## `stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN);`
 
-* **Parameters:**
-    * `startColour`: One of the two colours.
-    * `endColour`: The other of the two colours.
-    * `fraction`: How far to interpolate between the colours.
-* **Remarks:**
-This function takes a value (fraction) which is a distance between the two
-endpoints as a fraction.  This fraction is applied to the two colours given
-to find a third colour at some point between those two colours.
 
-This function performs full sRGB colour space interpolation, which is more
-exact even than gamma interpolation, but also a lot slower.
 
-The fraction is optional, and uses the second colour's alpha for blending
-if not given.
- 
 
 
-## `stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN);`
 
-* **Remarks:**
-  Alternate (deprecated) spelling of `InterpolateColourSRGB`.
- 
 
 
-## `stock GetNearestColourLinear(colour, const options[], count = sizeof (options));`
+### `DoLevenshteinDistancePackAB`:
 
-* **Parameters:**
-    * `colour`: The RGB(A) colour to restrict.
-    * `options`: The list of valid RGB(A) colour options.
-    * `count`: The size of the options array.
-* **Returns:**
-    * The INDEX of the nearst colour.  Or `-1` for errors.
-* **Remarks:**
-Find the closest colour to the given colour from the array.  Uses RGB colour
-space for the distance function, which is not very accurate.
 
 
+#### Syntax
 
-## `stock GetNearestColourGamma(colour, const options[], count = sizeof (options));`
 
-* **Parameters:**
-    * `colour`: The RGB(A) colour to restrict.
-    * `options`: The list of valid RGB(A) colour options.
-    * `count`: The size of the options array.
-* **Returns:**
-    * The INDEX of the nearst colour.  Or `-1` for errors.
-* **Remarks:**
-Find the closest colour to the given colour from the array.  Uses gamma
-colour space for slightly more accuracy.
- 
+```pawn
+DoLevenshteinDistancePackAB(a[], lenA, b[], lenB, matrix[])
+```
 
 
-## `stock GetNearestColourGammaCached(colour, const Float:options[][3], count = sizeof (options));`
 
-* **Parameters:**
-    * `colour`: The RGB(A) colour to restrict.
-    * `options`: The list of valid gamma colour options.
-    * `count`: The size of the options array.
-* **Returns:**
-    * The INDEX of the nearst colour.  Or `-1` for errors.
-* **Remarks:**
-Find the closest colour to the given colour from the array.  Uses gamma
-colour space for slightly more accuracy.  Options are in gamma format.
+|  `a`  |  ` [] `First string to compare.   | 
+|  `lenA`  |  Length of the first string.   | 
+|  `b`  |  ` [] `Second string to compare.   | 
+|  `lenB`  |  Length of the second string.   | 
+|  `matrix`  |  ` [] `Storage for the calculations.   | 
 
 
 
-## `stock GetNearestColourSRGB(colour, const options[], count = sizeof (options));`
 
-* **Parameters:**
-    * `colour`: The RGB(A) colour to restrict.
-    * `options`: The list of valid RGB(A) colour options.
-    * `count`: The size of the options array.
-* **Returns:**
-    * The INDEX of the nearst colour.  Or `-1` for errors.
-* **Remarks:**
-Find the closest colour to the given colour from the array.  Uses SRGB
-colour space for the most accuracy.
+#### Returns
 
+The levenshtein difference (0 if the same). 
 
 
-## `stock GetNearestColourSRGBCached(colour, const Float:options[][3], count = sizeof (options));`
+#### Remarks
 
-* **Parameters:**
-    * `colour`: The RGB(A) colour to restrict.
-    * `options`: The list of valid SRGB colour options.
-    * `count`: The size of the options array.
-* **Returns:**
-    * The INDEX of the nearst colour.  Or `-1` for errors.
-* **Remarks:**
-Find the closest colour to the given colour from the array.  Uses SRGB
-colour space for the most accuracy.  Options are in SRGB format.
+This function is the internal implementation of a Levenshtein distance when both strings are packed. The `matrix` parameter is rewritten at the start of the function to a larger block of memory, but is still passed in so that the rest of the generated code is correct in terms of lookups. 
 
 
+#### Depends on
+* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__hea`](#__hea)
+* [`min`](#min)
 
-## `stock SkipWhitespace(const str[], pos);`
+#### Estimated stack usage
 
-* **Parameters:**
-    * `str`: The string to skip over part of.
-    * `pos`: The start of the whitespace.
-* **Returns:**
-    * The end of the whitespace.
-* **Remarks:**
-Doesn't skip over `NULL` terminators.
- 
+9 cells
 
 
-## `stock Trim(const str[], &start, &end);`
 
-* **Parameters:**
-    * `str`: The string to trim.
-    * `start`: Start of the substring.
-    * `end`: End of the substring.
-* **Remarks:**
-Modifies "start" and "end" to be tight on text in "str".  `Strip` removes
-the characters from the end, so needs a modifiable string, this just tells
-you where the ends are.
- 
 
 
-## `stock Sum(const arr[], num = sizeof (arr));`
 
-* **Parameters:**
-    * `arr`: The array whose values need summing.
-    * `num`: The size of the array.
-* **Returns:**
-    * All the values in the array added together.
 
 
-## `stock Mean(const arr[], num = sizeof (arr));`
 
-* **Parameters:**
-    * `arr`: The array whose values need averaging.
-    * `num`: The size of the array.
-* **Returns:**
-    * The mathematical mean value of the array.
+### `DoLevenshteinDistancePackB`:
 
 
-## `stock Mode(arr[], num = sizeof (arr));`
 
-* **Parameters:**
-    * `arr`: The array whose values need averaging.
-    * `num`: The size of the array.
-* **Returns:**
-    * The mathematical modal value of the array.
+#### Syntax
 
 
-## `stock Median(arr[], num = sizeof (arr));`
+```pawn
+DoLevenshteinDistancePackB(a[], lenA, b[], lenB, matrix[])
+```
 
-* **Parameters:**
-    * `arr`: The array whose values need averaging.
-    * `num`: The size of the array.
-* **Returns:**
-    * The mathematical median value of the array.
 
 
-## `stock Range(const arr[], num = sizeof (arr));`
+|  `a`  |  ` [] `First string to compare.   | 
+|  `lenA`  |  Length of the first string.   | 
+|  `b`  |  ` [] `Second string to compare.   | 
+|  `lenB`  |  Length of the second string.   | 
+|  `matrix`  |  ` [] `Storage for the calculations.   | 
 
-* **Parameters:**
-    * `arr`: The array whose values need averaging.
-    * `num`: The size of the array.
-* **Returns:**
-    * The mathematical range of the values of the array.
 
 
-## `stock memcmp(arr1[], arr2[], count);`
 
-* **Parameters:**
-    * `arr1`: First array to compare.
-    * `arr2`: Second array to compare.
-    * `count`: How many cells to compare.
-* **Returns:**
-    * The difference (`0` if the same).
+#### Returns
 
+The levenshtein difference (0 if the same). 
 
-## `stock LevenshteinDistance(const a[], const b[]);`
 
-* **Parameters:**
-    * `a`: First string to compare.
-    * `b`: Second string to compare.
-* **Returns:**
-    * The levenshtein difference (`0` if the same).
+#### Remarks
 
+This function is the internal implementation of a Levenshtein distance when th elongest stringis packed. The `matrix` parameter is rewritten at the start of the function to a larger block of memory, but is still passed in so that the rest of the generated code is correct in terms of lookups. 
 
-## `stock ValstrWithOrdinal(n);`
 
-* **Parameters:**
-    * `n`: The number to convert to a string with ordinal.
-* **Returns:**
-    * Stringises a number, then adds `st`/`nd`/`rd`/`th`.
+#### Depends on
+* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__hea`](#__hea)
+* [`min`](#min)
 
+#### Estimated stack usage
 
-## `stock PrintArg(n);`
+9 cells
 
-* **Parameters:**
-    * `n`: The numeric parameter position to print.
-* **Returns:**
-    * Prints a string passed as a vararg to the calling function.
 
 
-## `stock File:ftemporary(name[], const ext[] = "tmp", len = sizeof (name), maxAge = YSI_TEMP_FILE_AGE);`
 
-* **Parameters:**
-    * `name`: Storage.
-    * `ext`: Extension.
-    * `len`: Maximum string length.
-    * `maxAge`: Maximum temporary file age.
-* **Remarks:**
-Generate a random temporary filename and open it.  Also redefines `ftemp` to call this function instead if called with extra parameters.
 
 
-## `stock Float:FloatAbs(Float:value);`
 
-* **Parameters:**
-    * `number`: The number to get the absolute value of.
-* **Returns:**
-    * The absolute value of a number.
-* **Remarks:**
-Get the absolute value of a number.  Easy in IEEE754, just remove the MSB.
- 
 
 
-## `stock Abs(number);`
+### `DumpProfilingTime`:
 
-* **Parameters:**
-    * `number`: The number to get the absolute value of.
-* **Returns:**
-    * The absolute value of a number.
-* **Remarks:**
-Get the absolute value of a number.
- 
+
+
+#### Syntax
+
+
+```pawn
+DumpProfilingTime(name[], timings[], iters, size)
+```
+
+
+
+|  `name`  |  ` [] `The name of the profile.   | 
+|  `timings`  |  ` [] `The raw profiling results.   | 
+|  `iters`  |  The number of iterations per run.   | 
+|  `size`  |  The number of repeats.   | 
+
+
+
+
+#### Remarks
+
+"WTF" here stands for "Write To File". The output looks like: 
+
+```pawn
+  timestamp,runs,repeats,results (ms)  1546082820,10,1000000,122,121,121,120,121,121,121,119,119,121  1546082822,10,1000000,123,124,123,123,121,121,121,120,122,122  
+```
+
+ The timestamp is the unix timestamp at which the line was WRITTEN, not the time at which the profilings started or ended. "runs" is the number of times the whole profile was repeated. "repeats" is the number of times the code was run for each repeat. "results" are the total times for each repeat, in milliseconds. The time for an individual piece of code is `result[n] / repeats`. This is equivalent to: 
+```pawn
+  for (new i = 0; i != runs; ++i)  {  start = GetTickCount();  for (new i = 0; i != repeats; ++i)  {  USER_CODE_HERE();  }  end = GetTickCount();  WriteToFile(end - start);  }  
+```
+
+ The repeats help to time very short pieces of code. The runs help to average. The console reports average results (mean, mode, median, range). Thus the even more accurate result for a single iteration would be: `sum(results) / (runs * repeats)`. 
+
+
+#### Depends on
+* [`Debug_Print0`](#Debug_Print0)
+* [`FIXES_fclose`](#FIXES_fclose)
+* [`FIXES_fwrite`](#FIXES_fwrite)
+* [`fexist`](#fexist)
+* [`fopen`](#fopen)
+* [`gettime`](#gettime)
+* [`io_append`](#io_append)
+* [`io_write`](#io_write)
+* [`va_fprintf`](#va_fprintf)
+
+#### Estimated stack usage
+
+11 cells
+
+
+
+
+
+
+
+
+
+### `EndOfLine`:
+
+
+
+#### Syntax
+
+
+```pawn
+EndOfLine(line[], pos)
+```
+
+
+
+|  `line`  |  ` [] `String to check.   | 
+|  `pos`  |  Postion to start from.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Checks if the current point in a line is the end of non-whitespace data. 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`cellmin`](#cellmin)
+* [`false`](#false)
+* [`strlen`](#strlen)
+
+#### Estimated stack usage
+
+3 cells
+
+
+
+
+
+
+
+
+
+### `Files_Copy`:
+
+
+
+#### Syntax
+
+
+```pawn
+Files_Copy(src[], dst[])
+```
+
+
+
+|  `src`  |  ` [] `The name of the input file.   | 
+|  `dst`  |  ` [] `The name of the output file.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Copies a file from `src` to `dst`. 
+
+
+#### Depends on
+* [`FIXES_fclose`](#FIXES_fclose)
+* [`FIXES_flength`](#FIXES_flength)
+* [`Files_CopyRange`](#Files_CopyRange)
+* [`I@`](#I@)
+* [`false`](#false)
+* [`fopen`](#fopen)
+* [`io_read`](#io_read)
+
+#### Estimated stack usage
+
+7 cells
+
+
+
+
+
+
+
+
+
+### `Files_CopyRange`:
+
+
+
+#### Syntax
+
+
+```pawn
+Files_CopyRange(i, end, dst[])
+```
+
+
+
+|  `i`  |  `File `Handle to the file to copy.   | 
+|  `end`  |  How much of the file to copy.   | 
+|  `dst`  |  ` [] `The name of the output file.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Copy part of a file from the current read pointer, for `end` bytes. 
+
+
+#### Depends on
+* [`FIXES_fblockread`](#FIXES_fblockread)
+* [`FIXES_fblockwrite`](#FIXES_fblockwrite)
+* [`FIXES_fclose`](#FIXES_fclose)
+* [`FIXES_fputchar`](#FIXES_fputchar)
+* [`YSI_gUnsafeHugeString`](#YSI_gUnsafeHugeString)
+* [`YSI_gUnsafeHugeString`](#YSI_gUnsafeHugeString)
+* [`_YSI_FGetChar__`](#_YSI_FGetChar__)
+* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`cellbytes`](#cellbytes)
+* [`false`](#false)
+* [`fopen`](#fopen)
+* [`io_write`](#io_write)
+* [`min`](#min)
+
+#### Estimated stack usage
+
+8 cells
+
+
+
+
+
+
+
+
+
+### `Files_DoCopy`:
+
+
+
+#### Syntax
+
+
+```pawn
+Files_DoCopy(i, dst[])
+```
+
+
+
+|  `i`  |  `File `Handle to the file to copy.   | 
+|  `dst`  |  ` [] `The name of the output file.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Fast file copy routine. Surprisingly widely used in YSI, in places where temp files were used and `fseek`ed to the start. Closes the file. 
+
+
+#### Depends on
+* [`FIXES_fclose`](#FIXES_fclose)
+* [`FIXES_flength`](#FIXES_flength)
+* [`FIXES_fseek`](#FIXES_fseek)
+* [`Files_CopyRange`](#Files_CopyRange)
+* [`I@`](#I@)
+* [`seek_start`](#seek_start)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `Files_Move`:
+
+
+
+#### Syntax
+
+
+```pawn
+Files_Move(src[], dst[])
+```
+
+
+
+|  `src`  |  ` [] `The name of the input file.   | 
+|  `dst`  |  ` [] `The name of the output file.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Moves a file from `src` to `dst`. 
+
+
+#### Depends on
+* [`FIXES_fclose`](#FIXES_fclose)
+* [`FIXES_flength`](#FIXES_flength)
+* [`Files_CopyRange`](#Files_CopyRange)
+* [`I@`](#I@)
+* [`false`](#false)
+* [`fopen`](#fopen)
+* [`fremove`](#fremove)
+* [`io_read`](#io_read)
+
+#### Estimated stack usage
+
+7 cells
+
+
+
+
+
+
+
+
+
+### `FloatAbs`:
+
+
+Float:FloatAbs(Float:number); 
+
+
+
+#### Syntax
+
+
+```pawn
+FloatAbs(value)
+```
+
+
+
+|  `value`  |  `Float `   | 
+|  `number`  |  The number to get the absolute value of.  | 
+
+
+
+|  **Tag**  |  `Float:`  | 
+
+
+#### Returns
+
+The absolute value of a number. 
+
+
+#### Remarks
+
+Get the absolute value of a number. Easy in IEEE754, just remove the MSB. 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `GetIP`:
+
+
+
+#### Syntax
+
+
+```pawn
+GetIP(playerid)
+```
+
+
+
+|  `playerid`  |  Player to get IP of.   | 
+
+
+
+
+#### Returns
+
+IP as a 32bit int. 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `GetNearestColourGamma`:
+
+
+GetNearestColourGamma(colour, const options[], count = sizeof (options)); 
+
+
+
+#### Syntax
+
+
+```pawn
+GetNearestColourGamma(colour, options[], count)
+```
+
+
+
+|  `colour`  |  The RGB(A) colour to restrict.   | 
+|  `options`  |  ` [] `The list of valid RGB(A) colour options.   | 
+|  `count`  |  The size of the options array.   | 
+
+
+
+
+#### Returns
+
+The INDEX of the nearst colour. Or `-1` for errors. 
+
+
+#### Remarks
+
+Find the closest colour to the given colour from the array. Uses gamma colour space for slightly more accuracy. 
+
+
+#### Depends on
+* [`operator/(_:,Float:)`](#operator/(_:,Float:))
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`operator<(Float:,Float:)`](#operator<(Float:,Float:))
+* [`floatpower`](#floatpower)
+
+#### Estimated stack usage
+
+13 cells
+
+
+
+
+
+
+
+
+
+### `GetNearestColourGammaCached`:
+
+
+GetNearestColourGammaCached(colour, const options[], count = sizeof (options)); 
+
+
+
+#### Syntax
+
+
+```pawn
+GetNearestColourGammaCached(colour, options[][], count)
+```
+
+
+
+|  `colour`  |  The RGB(A) colour to restrict.   | 
+|  `options`  |  `Float [][3] `The list of valid gamma colour options.   | 
+|  `count`  |  The size of the options array.   | 
+
+
+
+
+#### Returns
+
+The INDEX of the nearst colour. Or `-1` for errors. 
+
+
+#### Remarks
+
+Find the closest colour to the given colour from the array. Uses gamma colour space for slightly more accuracy. Options are in gamma format. 
+
+
+#### Depends on
+* [`operator/(_:,Float:)`](#operator/(_:,Float:))
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`operator<(Float:,Float:)`](#operator<(Float:,Float:))
+* [`floatpower`](#floatpower)
+
+#### Estimated stack usage
+
+10 cells
+
+
+
+
+
+
+
+
+
+### `GetNearestColourLinear`:
+
+
+GetNearestColourLinear(colour, const options[], count = sizeof (options)); 
+
+
+
+#### Syntax
+
+
+```pawn
+GetNearestColourLinear(colour, options[], count)
+```
+
+
+
+|  `colour`  |  The RGB(A) colour to restrict.   | 
+|  `options`  |  ` [] `The list of valid RGB(A) colour options.   | 
+|  `count`  |  The size of the options array.   | 
+
+
+
+
+#### Returns
+
+The INDEX of the nearst colour. Or `-1` for errors. 
+
+
+#### Remarks
+
+Find the closest colour to the given colour from the array. Uses RGB colour space for the distance function, which is not very accurate. 
+
+
+#### Depends on
+* [`cellmax`](#cellmax)
+
+#### Estimated stack usage
+
+10 cells
+
+
+
+
+
+
+
+
+
+### `GetNearestColourSRGB`:
+
+
+GetNearestColourGamma(colour, const options[], count = sizeof (options)); 
+
+
+
+#### Syntax
+
+
+```pawn
+GetNearestColourSRGB(colour, options[], count)
+```
+
+
+
+|  `colour`  |  The RGB(A) colour to restrict.   | 
+|  `options`  |  ` [] `The list of valid RGB(A) colour options.   | 
+|  `count`  |  The size of the options array.   | 
+
+
+
+
+#### Returns
+
+The INDEX of the nearst colour. Or `-1` for errors. 
+
+
+#### Remarks
+
+Find the closest colour to the given colour from the array. Uses SRGB colour space for the most accuracy. 
+
+
+#### Depends on
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`operator<(Float:,Float:)`](#operator<(Float:,Float:))
+* [`SRGBToCIE`](#SRGBToCIE)
+
+#### Estimated stack usage
+
+16 cells
+
+
+
+
+
+
+
+
+
+### `GetNearestColourSRGBCached`:
+
+
+GetNearestColourSRGBCached(colour, const options[], count = sizeof (options)); 
+
+
+
+#### Syntax
+
+
+```pawn
+GetNearestColourSRGBCached(colour, options[][], count)
+```
+
+
+
+|  `colour`  |  The RGB(A) colour to restrict.   | 
+|  `options`  |  `Float [][3] `The list of valid SRGB colour options.   | 
+|  `count`  |  The size of the options array.   | 
+
+
+
+
+#### Returns
+
+The INDEX of the nearst colour. Or `-1` for errors. 
+
+
+#### Remarks
+
+Find the closest colour to the given colour from the array. Uses SRGB colour space for the most accuracy. Options are in SRGB format. 
+
+
+#### Depends on
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`operator<(Float:,Float:)`](#operator<(Float:,Float:))
+* [`SRGBToCIE`](#SRGBToCIE)
+
+#### Estimated stack usage
+
+16 cells
+
+
+
+
+
+
+
+
+
+### `GetPlayerRPComponents`:
+
+
+GetPlayerRPComponents 
+
+
+
+#### Syntax
+
+
+```pawn
+GetPlayerRPComponents(playerid, names[][], components, len)
+```
+
+
+
+|  `playerid`  |  Player whose name you want to get.   | 
+|  `names`  |  ` [][] `   | 
+|  `components`  |    | 
+|  `len`  |    | 
+
+
+
+
+#### Returns
+
+The number of parts extracted from the name. 
+
+
+#### Remarks
+
+Get a player's name, split in to parts by `_`. 
+
+
+#### Depends on
+* [`FIXES_GetPlayerName`](#FIXES_GetPlayerName)
+* [`FIXES_strfind`](#FIXES_strfind)
+* [`false`](#false)
+* [`strlen`](#strlen)
+* [`strmid`](#strmid)
+
+#### Estimated stack usage
+
+35 cells
+
+
+
+
+
+
+
+
+
+### `GetPlayerRPName`:
+
+
+GetPlayerRPName 
+
+
+
+#### Syntax
+
+
+```pawn
+GetPlayerRPName(playerid, name[], len)
+```
+
+
+
+|  `playerid`  |  Player whose name you want to get.   | 
+|  `name`  |  ` [] `   | 
+|  `len`  |    | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Get a player's name, with `_` replaced by ` `. 
+
+
+#### Depends on
+* [`FIXES_GetPlayerName`](#FIXES_GetPlayerName)
+* [`FIXES_strfind`](#FIXES_strfind)
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`false`](#false)
+* [`true`](#true)
+
+#### Estimated stack usage
+
+7 cells
+
+
+
+
+
+
+
+
+
+### `GetYSIScriptfilesDir`:
+
+
+
+#### Syntax
+
+
+```pawn
+GetYSIScriptfilesDir(dir)
+```
+
+
+
+|  `dir`  |  `E_YSI_DIR `The ID of the directory.   | 
+
+
+
+
+#### Returns
+
+A directory. 
+
+
+#### Remarks
+
+Get a YSI scriptfiles directory, or a fallback. 
+
+
+#### Depends on
+* [`GetYSIScriptfilesDir`](#GetYSIScriptfilesDir)
+* [`YSI_gsDefaultDirs`](#YSI_gsDefaultDirs)
+
+#### Estimated stack usage
+
+1 cells
+
+
+
+
+
+
+
+
+
+### `HasRPName`:
+
+
+HasRPName 
+
+
+
+#### Syntax
+
+
+```pawn
+HasRPName(playerid, casing, longNames)
+```
+
+
+
+|  `playerid`  |  Player whose name you want to test.   | 
+|  `casing`  |  `bool `Check for string casing? I.e. allow `James` but not `james`.   | 
+|  `longNames`  |  `bool `Allow more than two name parts?   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Is this player's name in the form `First_Last`? 
+
+
+#### Depends on
+* [`FIXES_GetPlayerName`](#FIXES_GetPlayerName)
+* [`IsRPName`](#IsRPName)
+
+#### Estimated stack usage
+
+31 cells
+
+
+
+
+
+
+
+
+
+### `HexStr`:
+
+
+
+#### Syntax
+
+
+```pawn
+HexStr(str[])
+```
+
+
+
+|  `str`  |  ` [] `   | 
+|  `string`  |  String to convert to a number.  | 
+
+
+
+
+#### Returns
+
+value of the passed hex string. 
+
+
+#### Remarks
+
+Now stops on invalid characters. 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `IPToInt`:
+
+
+
+#### Syntax
+
+
+```pawn
+IPToInt(ip[])
+```
+
+
+
+|  `ip`  |  ` [] `Dot notation IP to convert to an integer.   | 
+
+
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`strval`](#strval)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `IS_IN_RANGE`:
+
+
+
+#### Syntax
+
+
+```pawn
+IS_IN_RANGE(value, lower, upper)
+```
+
+
+
+|  `value`  |  The number to compare.   | 
+|  `lower`  |  The lower limit.   | 
+|  `upper`  |  The upper limit.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+Is the value in the given range. 
+
+
+#### Remarks
+
+Equivalent to: 
+
+```pawn
+		(%1) <= (%0) < (%2)
+```
+
+
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `InterpolateColor`:
+
+
+
+#### Syntax
+
+
+```pawn
+InterpolateColor(startColour, endColour, value, maxvalue, minvalue)
+```
+
+
+
+|  `startColour`  |  One of the two colours.   | 
+|  `endColour`  |  The other of the two colours.   | 
+|  `value`  |    | 
+|  `maxvalue`  |    | 
+|  `minvalue`  |    | 
+|  `fraction`  |  How far to interpolate between the colours.  | 
+
+
+
+
+#### Remarks
+
+This function takes a value (fraction) which is a distance between the two endpoints as a fraction. This fraction is applied to the two colours given to find a third colour at some point between those two colours. This function performs linear interpolation between the colours, which isn't usually the best way wrt human vision, but is fast. The fraction is optional, and uses the second colour's alpha for blending if not given. 
+
+
+#### Depends on
+* [`Float:operator=(_:)`](#Float:operator=(_:))
+* [`InterpolateColourLinear`](#InterpolateColourLinear)
+* [`floatdiv`](#floatdiv)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `InterpolateColorGamma`:
+
+
+
+#### Syntax
+
+
+```pawn
+InterpolateColorGamma(startColour, endColour, fraction)
+```
+
+
+
+|  `startColour`  |  One of the two colours.   | 
+|  `endColour`  |  The other of the two colours.   | 
+|  `fraction`  |  `Float `How far to interpolate between the colours.   | 
+
+
+
+
+#### Remarks
+
+This function takes a value (fraction) which is a distance between the two endpoints as a fraction. This fraction is applied to the two colours given to find a third colour at some point between those two colours. This function performs gamma interpolation between the colours, which is a good balance between complexity and perception. The fraction is optional, and uses the second colour's alpha for blending if not given. 
+
+
+#### Depends on
+* [`Debug_Print0`](#Debug_Print0)
+* [`InterpolateColourGamma`](#InterpolateColourGamma)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `InterpolateColorLinear`:
+
+
+
+#### Syntax
+
+
+```pawn
+InterpolateColorLinear(startColour, endColour, fraction)
+```
+
+
+
+|  `startColour`  |  One of the two colours.   | 
+|  `endColour`  |  The other of the two colours.   | 
+|  `fraction`  |  `Float `How far to interpolate between the colours.   | 
+
+
+
+
+#### Remarks
+
+This function takes a value (fraction) which is a distance between the two endpoints as a fraction. This fraction is applied to the two colours given to find a third colour at some point between those two colours. This function performs linear interpolation between the colours, which isn't usually the best way wrt human vision, but is fast. The fraction is optional, and uses the second colour's alpha for blending if not given. 
+
+
+#### Depends on
+* [`Float:operator=(_:)`](#Float:operator=(_:))
+* [`Debug_Print0`](#Debug_Print0)
+* [`InterpolateColourLinear`](#InterpolateColourLinear)
+
+#### Estimated stack usage
+
+8 cells
+
+
+
+
+
+
+
+
+
+### `InterpolateColorSRGB`:
+
+
+
+#### Syntax
+
+
+```pawn
+InterpolateColorSRGB(startColour, endColour, fraction)
+```
+
+
+
+|  `startColour`  |  One of the two colours.   | 
+|  `endColour`  |  The other of the two colours.   | 
+|  `fraction`  |  `Float `How far to interpolate between the colours.   | 
+
+
+
+
+#### Remarks
+
+This function takes a value (fraction) which is a distance between the two endpoints as a fraction. This fraction is applied to the two colours given to find a third colour at some point between those two colours. This function performs full sRGB colour space interpolation, which is more exact even than gamma interpolation, but also a lot slower. The fraction is optional, and uses the second colour's alpha for blending if not given. 
+
+
+#### Depends on
+* [`Debug_Print0`](#Debug_Print0)
+* [`InterpolateColourSRGB`](#InterpolateColourSRGB)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `InterpolateColour`:
+
+
+
+#### Syntax
+
+
+```pawn
+InterpolateColour(startColour, endColour, value, maxvalue, minvalue)
+```
+
+
+
+|  `startColour`  |  One of the two colours.   | 
+|  `endColour`  |  The other of the two colours.   | 
+|  `value`  |    | 
+|  `maxvalue`  |    | 
+|  `minvalue`  |    | 
+|  `fraction`  |  How far to interpolate between the colours.  | 
+
+
+
+
+#### Remarks
+
+This function takes a value (fraction) which is a distance between the two endpoints as a fraction. This fraction is applied to the two colours given to find a third colour at some point between those two colours. This function performs linear interpolation between the colours, which isn't usually the best way wrt human vision, but is fast. The fraction is optional, and uses the second colour's alpha for blending if not given. 
+
+
+#### Depends on
+* [`Float:operator=(_:)`](#Float:operator=(_:))
+* [`InterpolateColourLinear`](#InterpolateColourLinear)
+* [`floatdiv`](#floatdiv)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `InterpolateColourGamma`:
+
+
+InterpolateColourGamma(startColour, endColour, Float:fraction); 
+
+
+
+#### Syntax
+
+
+```pawn
+InterpolateColourGamma(startColour, endColour, fraction)
+```
+
+
+
+|  `startColour`  |  One of the two colours.   | 
+|  `endColour`  |  The other of the two colours.   | 
+|  `fraction`  |  `Float `How far to interpolate between the colours.   | 
+
+
+
+
+#### Remarks
+
+This function takes a value (fraction) which is a distance between the two endpoints as a fraction. This fraction is applied to the two colours given to find a third colour at some point between those two colours. This function performs gamma interpolation between the colours, which is a good balance between complexity and perception. The fraction is optional, and uses the second colour's alpha for blending if not given. 
+
+
+#### Depends on
+* [`operator/(_:,Float:)`](#operator/(_:,Float:))
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator/(Float:,Float:)`](#operator/(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`operator>=(Float:,Float:)`](#operator>=(Float:,Float:))
+* [`operator<=(Float:,Float:)`](#operator<=(Float:,Float:))
+* [`floatpower`](#floatpower)
+* [`floatround`](#floatround)
+
+#### Estimated stack usage
+
+14 cells
+
+
+
+
+
+
+
+
+
+### `InterpolateColourLinear`:
+
+
+InterpolateColourLinear(startColour, endColour, Float:fraction); 
+
+
+
+#### Syntax
+
+
+```pawn
+InterpolateColourLinear(startColour, endColour, fraction)
+```
+
+
+
+|  `startColour`  |  One of the two colours.   | 
+|  `endColour`  |  The other of the two colours.   | 
+|  `fraction`  |  `Float `How far to interpolate between the colours.   | 
+
+
+
+
+#### Remarks
+
+This function takes a value (fraction) which is a distance between the two endpoints as a fraction. This fraction is applied to the two colours given to find a third colour at some point between those two colours. This function performs linear interpolation between the colours, which isn't usually the best way wrt human vision, but is fast. The fraction is optional, and uses the second colour's alpha for blending if not given. 
+
+
+#### Depends on
+* [`operator/(_:,Float:)`](#operator/(_:,Float:))
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator/(Float:,Float:)`](#operator/(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`operator>=(Float:,Float:)`](#operator>=(Float:,Float:))
+* [`operator<=(Float:,Float:)`](#operator<=(Float:,Float:))
+* [`floatround`](#floatround)
+
+#### Estimated stack usage
+
+9 cells
+
+
+
+
+
+
+
+
+
+### `InterpolateColourSRGB`:
+
+
+InterpolateColourSRGB(startColour, endColour, Float:fraction); 
+
+
+
+#### Syntax
+
+
+```pawn
+InterpolateColourSRGB(startColour, endColour, fraction)
+```
+
+
+
+|  `startColour`  |  One of the two colours.   | 
+|  `endColour`  |  The other of the two colours.   | 
+|  `fraction`  |  `Float `How far to interpolate between the colours.   | 
+
+
+
+
+#### Remarks
+
+This function takes a value (fraction) which is a distance between the two endpoints as a fraction. This fraction is applied to the two colours given to find a third colour at some point between those two colours. This function performs full sRGB colour space interpolation, which is more exact even than gamma interpolation, but also a lot slower. The fraction is optional, and uses the second colour's alpha for blending if not given. 
+
+
+#### Depends on
+* [`operator/(_:,Float:)`](#operator/(_:,Float:))
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator/(Float:,Float:)`](#operator/(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`operator>=(Float:,Float:)`](#operator>=(Float:,Float:))
+* [`operator<=(Float:,Float:)`](#operator<=(Float:,Float:))
+* [`CIEToSRGB`](#CIEToSRGB)
+* [`SRGBToCIE`](#SRGBToCIE)
+* [`floatround`](#floatround)
+
+#### Estimated stack usage
+
+14 cells
+
+
+
+
+
+
+
+
+
+### `IsEven`:
+
+
+
+#### Syntax
+
+
+```pawn
+IsEven(value)
+```
+
+
+
+|  `value`  |  Value to check if is even.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `IsHex`:
+
+
+
+#### Syntax
+
+
+```pawn
+IsHex(str[])
+```
+
+
+
+|  `str`  |  ` [] `String to check.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+true/false. 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`cellmin`](#cellmin)
+
+#### Estimated stack usage
+
+3 cells
+
+
+
+
+
+
+
+
+
+### `IsNaN`:
+
+
+
+#### Syntax
+
+
+```pawn
+IsNaN(value)
+```
+
+
+
+|  `value`  |  `Float `The IEEE754 floating point number (`Float:`) to check.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+An IEEE754 floating-point number is defined as Not-A-Number when all the exponent bits are set, and the mantissa is non-zero. The sign bit is ignored, so we first remove that and test the result is `> 0x7F800000`. Because any signed number bigger than that must have all the MSBs set, plus at least one more. 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `IsNull`:
+
+
+
+#### Syntax
+
+
+```pawn
+IsNull(str[])
+```
+
+
+
+|  `str`  |  ` [] `String to check if is null.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Uses a new shorter and branchless method, which also works with offsets so this is valid: 
+
+```pawn
+  new str[32]; IsNull(str[5]);  
+```
+
+
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `IsOdd`:
+
+
+
+#### Syntax
+
+
+```pawn
+IsOdd(value)
+```
+
+
+
+|  `value`  |  Value to check if is odd.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `IsRPName`:
+
+
+IsRPName 
+
+
+
+#### Syntax
+
+
+```pawn
+IsRPName(name[], casing, longNames)
+```
+
+
+
+|  `name`  |  ` [] `The name to test.   | 
+|  `casing`  |  `bool `Check for string casing? I.e. allow `James` but not `james`.   | 
+|  `longNames`  |  `bool `Allow more than two name parts?   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Is this name in the form `First_Last`? 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`cellmin`](#cellmin)
+* [`false`](#false)
+* [`true`](#true)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `IterativeColouredTextSplitter`:
+
+
+bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next, &bool:hyphen) 
+
+
+
+#### Syntax
+
+
+```pawn
+IterativeColouredTextSplitter(text[], width, start, &end, &next, &hyphen, &colour, useHyphen)
+```
+
+
+
+|  `text`  |  ` [] `The input string to split up.   | 
+|  `width`  |  The maximum size of the output (including hyphen).   | 
+|  `start`  |  Where in the string to start the next line.   | 
+|  `end`  |  ` & `The index to end the current line at (excluding hyphen).   | 
+|  `next`  |  ` & `The index to start the next line from (skips trailing spaces).   | 
+|  `hyphen`  |  `bool & `Should a hyphen be inserted in to the output?   | 
+|  `colour`  |  ` & `The colour for the start of the next line.   | 
+|  `useHyphen`  |  `bool `May a hyphen be included?   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+Does the function need to be called again to show another line? 
+
+
+#### Remarks
+
+Split some text in to multiple lines. With sensible breaks at spaces or mid-word if they're long enough. Unlike `IterativeTextSplitter` it will never split in the middle of `{RRGGBB}` colour sequences, and can ignore them for many checks. 
+
+
+#### Depends on
+* [`IterativeColouredSkipSPacked`](#IterativeColouredSkipSPacked)
+* [`IterativeColouredSkipSUnpacked`](#IterativeColouredSkipSUnpacked)
+* [`IterativeColouredSkipWPacked`](#IterativeColouredSkipWPacked)
+* [`IterativeColouredSkipWUnpacked`](#IterativeColouredSkipWUnpacked)
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`cellmin`](#cellmin)
+* [`false`](#false)
+* [`true`](#true)
+
+#### Estimated stack usage
+
+10 cells
+
+
+
+
+
+
+
+
+
+### `IterativeTextSplitter`:
+
+
+bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:hyphen) 
+
+
+
+#### Syntax
+
+
+```pawn
+IterativeTextSplitter(text[], width, start, &end, &next, &hyphen, useHyphen)
+```
+
+
+
+|  `text`  |  ` [] `The input string to split up.   | 
+|  `width`  |  The maximum size of the output (including hyphen).   | 
+|  `start`  |  Where in the string to start the next line.   | 
+|  `end`  |  ` & `The index to end the current line at (excluding hyphen).   | 
+|  `next`  |  ` & `The index to start the next line from (skips trailing spaces).   | 
+|  `hyphen`  |  `bool & `Should a hyphen be inserted in to the output?   | 
+|  `useHyphen`  |  `bool `May a hyphen be included?   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+Does the function need to be called again to show another line? 
+
+
+#### Remarks
+
+Split some text in to multiple lines. With sensible breaks at spaces or mid-word if they're long enough. 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`false`](#false)
+* [`true`](#true)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `JenkinsHash`:
+
+
+
+#### Syntax
+
+
+```pawn
+JenkinsHash(str[])
+```
+
+
+
+|  `str`  |  ` [] `the string to hash.   | 
+
+
+
+
+#### Returns
+
+the Jenkins hash of the input string 
+
+
+#### Remarks
+
+This is a 32bit hash system so is not very secure, however we're only using this as a string enumerator to uniquely identify strings easilly and allow for a binary search of strings based on the hash of their name. 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `LevenshteinDistance`:
+
+
+
+#### Syntax
+
+
+```pawn
+LevenshteinDistance(stringA[], stringB[])
+```
+
+
+
+|  `stringA`  |  ` [] `First string to compare.   | 
+|  `stringB`  |  ` [] `Second string to compare.   | 
+
+
+
+
+#### Returns
+
+The levenshtein difference (0 if the same). 
+
+
+#### Remarks
+
+The levenshtein difference is a measure of the difference between two strings, given as the number of operations required to change one string in to the other one. A lower number means that the strings are more similar, with `0` meaning that they are identical. Either string can be packed, and this function now has no upper limit on the size of strings that can be compared, as long as they can fit in the heap. 
+
+
+#### Depends on
+* [`DoLevenshteinDistance`](#DoLevenshteinDistance)
+* [`DoLevenshteinDistancePackA`](#DoLevenshteinDistancePackA)
+* [`DoLevenshteinDistancePackAB`](#DoLevenshteinDistancePackAB)
+* [`DoLevenshteinDistancePackB`](#DoLevenshteinDistancePackB)
+* [`FIXES_strcmp`](#FIXES_strcmp)
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`strlen`](#strlen)
+
+#### Estimated stack usage
+
+11 cells
+
+
+
+
+
+
+
+
+
+### `Mean`:
+
+
+
+#### Syntax
+
+
+```pawn
+Mean(arr[], num)
+```
+
+
+
+|  `arr`  |  ` [] `The array whose values need averaging.   | 
+|  `num`  |  The size of the array.   | 
+
+
+
+
+#### Returns
+
+The mathematical mean value of the array. 
+
+
+#### Depends on
+* [`Sum`](#Sum)
+
+#### Estimated stack usage
+
+5 cells
+
+
+
+
+
+
+
+
+
+### `Median`:
+
+
+
+#### Syntax
+
+
+```pawn
+Median(arr[], num)
+```
+
+
+
+|  `arr`  |  ` [] `The array whose values need averaging.   | 
+|  `num`  |  The size of the array.   | 
+
+
+
+
+#### Returns
+
+The mathematical median value of the array. 
+
+
+#### Remarks
+
+Must sort the array first. 
+
+
+#### Depends on
+* [`QuickSort`](#QuickSort)
+
+#### Estimated stack usage
+
+5 cells
+
+
+
+
+
+
+
+
+
+### `MemCmp`:
+
+
+
+#### Syntax
+
+
+```pawn
+MemCmp(arr1[], arr2[], count)
+```
+
+
+
+|  `arr1`  |  ` [] `First array to compare.   | 
+|  `arr2`  |  ` [] `Second array to compare.   | 
+|  `count`  |  How many cells to compare.   | 
+
+
+
+
+#### Returns
+
+The difference (0 if the same). 
+
+
+#### Remarks
+
+Returns the first found difference between two arrays. If they are the same the return value is `0`, otherwise it is `arr1[i] - arr2[i]`. 
+
+
+#### Estimated stack usage
+
+3 cells
+
+
+
+
+
+
+
+
+
+### `MemSet`:
+
+
+
+#### Syntax
+
+
+```pawn
+MemSet(arr[], value, size)
+```
+
+
+
+|  `arr`  |  ` [] `Array or address to set to a value.   | 
+|  `value`  |  What to set the cells to.   | 
+|  `size`  |  Number of cells to fill.   | 
+
+
+
+
+#### Remarks
+
+Based on [ code by Slice](http://forum.sa-mp.com/showthread.php?p=1606781#post1606781), modified to use binary flags instead of a loop. "MemSet" takes an array, the size of the array, and a value to fill it with and sets the whole array to that value. "rawmemset" is similar, but takes an AMX data segment address instead and the size is in bytes, not cells. However, the size must still be a multiple of 4. 
+
+
+#### Depends on
+* [`RawMemSet`](#RawMemSet)
+* [`cellbytes`](#cellbytes)
+
+#### Estimated stack usage
+
+7 cells
+
+
+
+
+
+
+
+
+
+### `Mode`:
+
+
+
+#### Syntax
+
+
+```pawn
+Mode(arr[], num)
+```
+
+
+
+|  `arr`  |  ` [] `The array whose values need averaging.   | 
+|  `num`  |  The size of the array.   | 
+
+
+
+
+#### Returns
+
+The mathematical modal value of the array. 
+
+
+#### Remarks
+
+Must sort the array first. 
+
+
+#### Depends on
+* [`QuickSort`](#QuickSort)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `NOT_IN_RANGE`:
+
+
+
+#### Syntax
+
+
+```pawn
+NOT_IN_RANGE(value, lower, upper)
+```
+
+
+
+|  `value`  |  The number to compare.   | 
+|  `lower`  |  The lower limit.   | 
+|  `upper`  |  The upper limit.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+Is the value outside the given range. 
+
+
+#### Remarks
+
+Equivalent to: 
+
+```pawn
+		(%1) <= (%0) < (%2)
+```
+
+
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `PrintArg`:
+
+
+
+#### Syntax
+
+
+```pawn
+PrintArg(n)
+```
+
+
+
+|  `n`  |  The numeric parameter position to print.   | 
+
+
+
+
+#### Returns
+
+Prints a string passed as a vararg to the calling function. 
+
+
+#### Depends on
+* [`__1_cell`](#__1_cell)
+* [`__2_cells`](#__2_cells)
+* [`__3_cells`](#__3_cells)
+* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__frame_offset`](#__frame_offset)
+* [`print`](#print)
+
+#### Estimated stack usage
+
+1 cells
+
+
+
+
+
+
+
+
+
+### `QuickSort`:
+
+
+
+#### Syntax
+
+
+```pawn
+QuickSort(arr[], num)
+```
+
+
+
+|  `arr`  |  ` [] `The array to sort.   | 
+|  `num`  |  The size of the array.   | 
+
+
+
+
+#### Remarks
+
+Sorts the array in place. Uses quick sort because it is relatively simple and pretty "quick". 
+
+
+#### Depends on
+* [`Utils_QuickSort`](#Utils_QuickSort)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `Random`:
+
+
+
+#### Syntax
+
+
+```pawn
+Random(minOrMax, max, ...)
+```
+
+
+
+|  `minOrMax`  |  Upper bound, or lower bound with 2+ parameters or when less than naught.   | 
+|  `max`  |  Upper bound.   | 
+|  `...`  |    | 
+|  ``  |  Value(s) to not return.  | 
+
+
+
+
+#### Remarks
+
+Generate a random number between the given numbers (min <= n < max). Default minimum is 0 (changes the parameter order). This uses a compile- time macro to detect the number of parameters and adjust the implementation accordingly. Also when there is only one parameter and it is below naught, it uses naught as the max and the parameter as the min instead. Won't return the value `except` if it is between the limits. So can be called with one, two, or three parameters. Don't try `Random(0, _, 2);` for example, it won't work. With more than two parameters all the rest are numbers that should not be returned. 
+
+
+#### Estimated stack usage
+
+1 cells
+
+
+
+
+
+
+
+
+
+### `RandomFloatMax`:
+
+
+
+#### Syntax
+
+
+```pawn
+RandomFloatMax(max)
+```
+
+
+
+|  `max`  |  `Float `Upper bound.   | 
+
+
+
+|  **Tag**  |  `Float:`  | 
+
+
+#### Remarks
+
+Generate a random float between `0 <= n < max`. 
+
+
+#### Depends on
+* [`operator/(Float:,Float:)`](#operator/(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`FIXES_random`](#FIXES_random)
+* [`float`](#float)
+* [`floatround`](#floatround)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `RandomFloatMinMax`:
+
+
+
+#### Syntax
+
+
+```pawn
+RandomFloatMinMax(min, max, dp)
+```
+
+
+
+|  `min`  |  `Float `Lower bound, or upper bound when only parameter.   | 
+|  `max`  |  `Float `Upper bound.   | 
+|  `dp`  |  How small to make the differences   | 
+
+
+
+|  **Tag**  |  `Float:`  | 
+
+
+#### Remarks
+
+Generate a random float between the given numbers (min <= n < max). Default minimum is 0.0 (changes the parameter order). 
+
+
+#### Depends on
+* [`operator-(Float:)`](#operator-(Float:))
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator/(Float:,Float:)`](#operator/(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`operator<(Float:,Float:)`](#operator<(Float:,Float:))
+* [`Debug_Print0`](#Debug_Print0)
+* [`FIXES_random`](#FIXES_random)
+* [`float`](#float)
+* [`floatpower`](#floatpower)
+* [`floatround`](#floatround)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `RandomMax`:
+
+
+
+#### Syntax
+
+
+```pawn
+RandomMax(max)
+```
+
+
+
+|  `max`  |  Upper bound.   | 
+
+
+
+
+#### Remarks
+
+Generate a random number between the given numbers (min <= n < max). Default minimum is 0 (changes the parameter order). This uses a compile- time macro to detect the number of parameters and adjust the implementation accordingly. Also when there is only one parameter and it is below naught, it uses naught as the max and the parameter as the min instead. 
+
+
+#### Depends on
+* [`YSI_Random__`](#YSI_Random__)
+
+#### Estimated stack usage
+
+3 cells
+
+
+
+
+
+
+
+
+
+### `RandomMinMax`:
+
+
+
+#### Syntax
+
+
+```pawn
+RandomMinMax(min, max)
+```
+
+
+
+|  `min`  |  Lower bound.   | 
+|  `max`  |  Upper bound.   | 
+
+
+
+
+#### Remarks
+
+Generate a random number between the given numbers (min <= n < max). 
+
+
+#### Depends on
+* [`YSI_Random__`](#YSI_Random__)
+
+#### Estimated stack usage
+
+3 cells
+
+
+
+
+
+
+
+
+
+### `RandomMinMaxExcept`:
+
+
+
+#### Syntax
+
+
+```pawn
+RandomMinMaxExcept(min, max, except)
+```
+
+
+
+|  `min`  |  Lower bound.   | 
+|  `max`  |  Upper bound.   | 
+|  `except`  |  Value to not return.   | 
+
+
+
+
+#### Remarks
+
+Generate a random number between the given numbers (min <= n < max). Won't return the value `except` if it is between the limits. 
+
+
+#### Depends on
+* [`YSI_Random__`](#YSI_Random__)
+
+#### Estimated stack usage
+
+3 cells
+
+
+
+
+
+
+
+
+
+### `RandomMinMaxExceptMany`:
+
+
+
+#### Syntax
+
+
+```pawn
+RandomMinMaxExceptMany(min, max, ...)
+```
+
+
+
+|  `min`  |  Lower bound.   | 
+|  `max`  |  Upper bound.   | 
+|  `...`  |  Values to not return.   | 
+
+
+
+
+#### Remarks
+
+Generate a random number between the given numbers (min <= n < max). Default minimum is 0 (changes the parameter order). Won't return any of the extra parameter values, so you can do: 
+
+```pawn
+  Random(0, 20, 11, 12, 13);  
+```
+
+ To randomly select `0-10, 14-19` (inclusive). 
+
+
+#### Depends on
+* [`YSI_Random__`](#YSI_Random__)
+* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__args_offset`](#__args_offset)
+* [`getarg`](#getarg)
+
+#### Estimated stack usage
+
+7 cells
+
+
+
+
+
+
+
+
+
+### `RandomMulberry32`:
+
+
+
+#### Syntax
+
+
+```pawn
+RandomMulberry32()
+```
+
+
+
+
+#### Remarks
+
+Relatively high quality 32-bit PRNG. 
+
+
+#### Estimated stack usage
+
+1 cells
+
+
+
+
+
+
+
+
+
+### `RandomMulberry32__`:
+
+
+
+#### Syntax
+
+
+```pawn
+RandomMulberry32__()
+```
+
+
+
+
+#### Remarks
+
+Relatively high quality 32-bit PRNG. 
+
+
+#### Estimated stack usage
+
+1 cells
+
+
+
+
+
+
+
+
+
+### `RandomPointInCircleCentred`:
+
+
+Get a random point in a circle. 
+
+
+
+#### Syntax
+
+
+```pawn
+RandomPointInCircleCentred(centreX, centreY, radius, outX, outY)
+```
+
+
+
+|  `centreX`  |  `Float `The x co-ordinate of the centre of the circle.   | 
+|  `centreY`  |  `Float `The y co-ordinate of the centre of the circle.   | 
+|  `radius`  |  `Float `The size (radius) of the circle.   | 
+|  `outX`  |  `Float `The return for the random x co-ordinate.   | 
+|  `outY`  |  `Float `The return for the random y co-ordinate.   | 
+
+
+
+
+#### Remarks
+
+Medium method. Generate an angle and distance. Fixed loop bounds, but worst distribution (although actually the best distribution if you want more near the centre, as in an explosion). 
+
+
+#### Depends on
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`RandomFloatMax`](#RandomFloatMax)
+* [`degrees`](#degrees)
+* [`floatsin`](#floatsin)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `RandomPointInCircleDistributed`:
+
+
+Get a random point in a circle. 
+
+
+
+#### Syntax
+
+
+```pawn
+RandomPointInCircleDistributed(centreX, centreY, radius, outX, outY)
+```
+
+
+
+|  `centreX`  |  `Float `The x co-ordinate of the centre of the circle.   | 
+|  `centreY`  |  `Float `The y co-ordinate of the centre of the circle.   | 
+|  `radius`  |  `Float `The size (radius) of the circle.   | 
+|  `outX`  |  `Float `The return for the random x co-ordinate.   | 
+|  `outY`  |  `Float `The return for the random y co-ordinate.   | 
+
+
+
+
+#### Remarks
+
+Best method. Generate an angle and distance, but adjusted for a perfect distribution of points throughout the circle. Fixed loop bounds. 
+
+
+#### Depends on
+* [`operator*(Float:,_:)`](#operator*(Float:,_:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`RandomFloatMax`](#RandomFloatMax)
+* [`degrees`](#degrees)
+* [`floatsin`](#floatsin)
+* [`floatsqrt`](#floatsqrt)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `RandomPointInCircleSampled`:
+
+
+Get a random point in a circle. 
+
+
+
+#### Syntax
+
+
+```pawn
+RandomPointInCircleSampled(centreX, centreY, radius, outX, outY)
+```
+
+
+
+|  `centreX`  |  `Float `The x co-ordinate of the centre of the circle.   | 
+|  `centreY`  |  `Float `The y co-ordinate of the centre of the circle.   | 
+|  `radius`  |  `Float `The size (radius) of the circle.   | 
+|  `outX`  |  `Float `The return for the random x co-ordinate.   | 
+|  `outY`  |  `Float `The return for the random y co-ordinate.   | 
+
+
+
+
+#### Remarks
+
+Most basic method. Generate points in a square and test them. Simple but unbounded. Good distribution. 
+
+
+#### Depends on
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator<(Float:,Float:)`](#operator<(Float:,Float:))
+* [`RandomFloatMinMax`](#RandomFloatMinMax)
+* [`VectorSize`](#VectorSize)
+
+#### Estimated stack usage
+
+10 cells
+
+
+
+
+
+
+
+
+
+### `RandomPointsInCircleCentred`:
+
+
+Get an array of random points in a circle. 
+
+
+
+#### Syntax
+
+
+```pawn
+RandomPointsInCircleCentred(centreX, centreY, radius, xs[], ys[], sx, sy)
+```
+
+
+
+|  `centreX`  |  `Float `The x co-ordinate of the centre of the circle.   | 
+|  `centreY`  |  `Float `The y co-ordinate of the centre of the circle.   | 
+|  `radius`  |  `Float `The size (radius) of the circle.   | 
+|  `xs`  |  `Float [] `The return array for the random x co-ordinates.   | 
+|  `ys`  |  `Float [] `The return array for the random y co-ordinates.   | 
+|  `sx`  |  The size of the x return array (must match `sy`.   | 
+|  `sy`  |  The size of the y return array (must match `sx`.   | 
+
+
+
+
+#### Remarks
+
+Medium method. Generate an angle and distance. Fixed loop bounds, but worst distribution (although actually the best distribution if you want more near the centre, as in an explosion). 
+
+
+#### Depends on
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`RandomFloatMax`](#RandomFloatMax)
+* [`degrees`](#degrees)
+* [`floatsin`](#floatsin)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `RandomPointsInCircleDistributed`:
+
+
+Get an array of random points in a circle. 
+
+
+
+#### Syntax
+
+
+```pawn
+RandomPointsInCircleDistributed(centreX, centreY, radius, xs[], ys[], sx, sy)
+```
+
+
+
+|  `centreX`  |  `Float `The x co-ordinate of the centre of the circle.   | 
+|  `centreY`  |  `Float `The y co-ordinate of the centre of the circle.   | 
+|  `radius`  |  `Float `The size (radius) of the circle.   | 
+|  `xs`  |  `Float [] `The return array for the random x co-ordinates.   | 
+|  `ys`  |  `Float [] `The return array for the random y co-ordinates.   | 
+|  `sx`  |  The size of the x return array (must match `sy`.   | 
+|  `sy`  |  The size of the y return array (must match `sx`.   | 
+
+
+
+
+#### Remarks
+
+Best method. Generate an angle and distance, but adjusted for a perfect distribution of points throughout the circle. Fixed loop bounds. 
+
+
+#### Depends on
+* [`operator*(Float:,_:)`](#operator*(Float:,_:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`RandomFloatMax`](#RandomFloatMax)
+* [`degrees`](#degrees)
+* [`floatsin`](#floatsin)
+* [`floatsqrt`](#floatsqrt)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `RandomPointsInCircleSampled`:
+
+
+Get an array of random points in a circle. 
+
+
+
+#### Syntax
+
+
+```pawn
+RandomPointsInCircleSampled(centreX, centreY, radius, xs[], ys[], sx, sy)
+```
+
+
+
+|  `centreX`  |  `Float `The x co-ordinate of the centre of the circle.   | 
+|  `centreY`  |  `Float `The y co-ordinate of the centre of the circle.   | 
+|  `radius`  |  `Float `The size (radius) of the circle.   | 
+|  `xs`  |  `Float [] `The return array for the random x co-ordinates.   | 
+|  `ys`  |  `Float [] `The return array for the random y co-ordinates.   | 
+|  `sx`  |  The size of the x return array (must match `sy`.   | 
+|  `sy`  |  The size of the y return array (must match `sx`.   | 
+
+
+
+
+#### Remarks
+
+Most basic method. Generate points in a square and test them. Simple but unbounded. Good distribution. 
+
+
+#### Depends on
+* [`operator-(Float:,Float:)`](#operator-(Float:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator<(Float:,Float:)`](#operator<(Float:,Float:))
+* [`RandomFloatMinMax`](#RandomFloatMinMax)
+* [`VectorSize`](#VectorSize)
+
+#### Estimated stack usage
+
+12 cells
+
+
+
+
+
+
+
+
+
+### `RandomSplitMix32`:
+
+
+
+#### Syntax
+
+
+```pawn
+RandomSplitMix32()
+```
+
+
+
+
+#### Remarks
+
+Slightly lower quality 32-bit PRNG. 
+
+
+#### Estimated stack usage
+
+1 cells
+
+
+
+
+
+
+
+
+
+### `RandomSplitMix32__`:
+
+
+
+#### Syntax
+
+
+```pawn
+RandomSplitMix32__()
+```
+
+
+
+
+#### Remarks
+
+Slightly lower quality 32-bit PRNG. 
+
+
+#### Estimated stack usage
+
+1 cells
+
+
+
+
+
+
+
+
+
+### `Range`:
+
+
+
+#### Syntax
+
+
+```pawn
+Range(arr[], num)
+```
+
+
+
+|  `arr`  |  ` [] `The array whose values need averaging.   | 
+|  `num`  |  The size of the array.   | 
+
+
+
+
+#### Returns
+
+The mathematical range of the values of the array. 
+
+
+#### Depends on
+* [`cellmax`](#cellmax)
+* [`cellmin`](#cellmin)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `RawMemCpy_`:
+
+
+
+#### Syntax
+
+
+```pawn
+RawMemCpy_(dest, src, index, numbytes, maxlength)
+```
+
+
+
+|  `dest`  |  Destination address.   | 
+|  `src`  |  Source data.   | 
+|  `index`  |    | 
+|  `numbytes`  |  Number of bytes to copy.   | 
+|  `maxlength`  |    | 
+
+
+
+
+#### Remarks
+
+Like memcpy, but takes addresses instead of arrays. Also far less secure because it doesn't check the destination size - it just assumes it is large enough. 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `RawMemSet`:
+
+
+
+#### Syntax
+
+
+```pawn
+RawMemSet(address, value, size)
+```
+
+
+
+|  `address`  |  Array or address to set to a value.   | 
+|  `value`  |  What to set the cells to.   | 
+|  `size`  |  Number of bytes to fill.   | 
+
+
+
+
+#### Remarks
+
+Based on code by Slice: [http://forum.sa-mp.com/showthread.php?p=1606781#post1606781](http://forum.sa-mp.com/showthread.php?p=1606781#post1606781) Modified to use binary flags instead of a loop. "MemSet" takes an array, the size of the array, and a value to fill it with and sets the whole array to that value. "RawMemSet" is similar, but takes an AMX data segment address instead and the size is in bytes, not cells. However, the size must still be a multiple of 4. 
+
+
+#### Depends on
+* [`cellbytes`](#cellbytes)
+
+#### Estimated stack usage
+
+1 cells
+
+
+
+
+
+
+
+
+
+### `ResolveYSIScriptfileDirs`:
+
+
+
+#### Syntax
+
+
+```pawn
+ResolveYSIScriptfileDirs()
+```
+
+
+
+
+#### Remarks
+
+Check if all the YSI scriptfiles directories exist. Checks for `.gitkeep` in each folder, then each folder without `YSI/` prefix, then just nothing. 
+
+
+#### Depends on
+* [`E_YSI_DIR`](#E_YSI_DIR)
+* [`FIXES_fclose`](#FIXES_fclose)
+* [`Server_FinishIntroPart`](#Server_FinishIntroPart)
+* [`Server_PrintIntroPart`](#Server_PrintIntroPart)
+* [`YSI_EMPTY`](#YSI_EMPTY)
+* [`YSI_gsDefaultDirs`](#YSI_gsDefaultDirs)
+* [`YSI_gsDefaultDirs`](#YSI_gsDefaultDirs)
+* [`false`](#false)
+* [`fopen`](#fopen)
+* [`io_write`](#io_write)
+* [`strcat`](#strcat)
+* [`true`](#true)
+
+#### Estimated stack usage
+
+66 cells
+
+
+
+
+
+
+
+
+
+### `ReturnPlayerName`:
+
+
+ReturnPlayerName 
+
+
+
+#### Syntax
+
+
+```pawn
+ReturnPlayerName(playerid)
+```
+
+
+
+|  `playerid`  |  Player whose name you want to get.   | 
+
+
+
+
+#### Remarks
+
+Get a player's name. 
+
+
+#### Depends on
+* [`FIXES_GetPlayerName`](#FIXES_GetPlayerName)
+* [`ReturnPlayerName`](#ReturnPlayerName)
+
+#### Estimated stack usage
+
+29 cells
+
+
+
+
+
+
+
+
+
+### `ReturnPlayerRPName`:
+
+
+ReturnPlayerRPName 
+
+
+
+#### Syntax
+
+
+```pawn
+ReturnPlayerRPName(playerid)
+```
+
+
+
+|  `playerid`  |  Player whose name you want to get.   | 
+
+
+
+
+#### Remarks
+
+Get a player's name, with `_` replaced by ` `. 
+
+
+#### Depends on
+* [`GetPlayerRPName`](#GetPlayerRPName)
+* [`ReturnPlayerRPName`](#ReturnPlayerRPName)
+
+#### Estimated stack usage
+
+30 cells
+
+
+
+
+
+
+
+
+
+### `ReturnStringArg`:
+
+
+
+#### Syntax
+
+
+```pawn
+ReturnStringArg(idx)
+```
+
+
+
+|  `idx`  |  Index of the string in the parameters.   | 
+
+
+
+
+#### Returns
+
+string 
+
+
+#### Remarks
+
+Is passed the result of getarg, which will be the address of a string (in theory) and uses that for DMA to get the string. 
+
+
+#### Depends on
+* [`ReturnStringArg`](#ReturnStringArg)
+* [`__3_cells`](#__3_cells)
+* [`__4_cells`](#__4_cells)
+* [`__param0_offset`](#__param0_offset)
+* [`__param1_offset`](#__param1_offset)
+* [`cellbytes`](#cellbytes)
+* [`strcat`](#strcat)
+
+#### Estimated stack usage
+
+145 cells
+
+
+
+
+
+
+
+
+
+### `SRGBToCIE`:
+
+
+SRGBToCIE(colour, &Float:x, &Float:y, &Float:z); 
+
+
+
+#### Syntax
+
+
+```pawn
+SRGBToCIE(colour, &x, &y, &z)
+```
+
+
+
+|  `colour`  |  The sRGB colour to convert.   | 
+|  `x`  |  `Float & `The x return value.   | 
+|  `y`  |  `Float & `The y return value.   | 
+|  `z`  |  `Float & `The z return value.   | 
+
+
+
+
+#### Remarks
+
+Converts a colour from sRGB colour space to CIE XYZ colour space. See: https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ) 
+
+
+#### Depends on
+* [`operator+(Float:,_:)`](#operator+(Float:,_:))
+* [`operator/(_:,Float:)`](#operator/(_:,Float:))
+* [`operator+(Float:,Float:)`](#operator+(Float:,Float:))
+* [`operator/(Float:,Float:)`](#operator/(Float:,Float:))
+* [`operator*(Float:,Float:)`](#operator*(Float:,Float:))
+* [`floatpower`](#floatpower)
+
+#### Estimated stack usage
+
+10 cells
+
+
+
+
+
+
+
+
+
+### `SkipWhitespace`:
+
+
+
+#### Syntax
+
+
+```pawn
+SkipWhitespace(str[], pos)
+```
+
+
+
+|  `str`  |  ` [] `The string to skip over part of.   | 
+|  `pos`  |  The start of the whitespace.   | 
+
+
+
+
+#### Returns
+
+The end of the whitespace. 
+
+
+#### Remarks
+
+Doesn't skip over NULL terminators. 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`cellmin`](#cellmin)
+
+#### Estimated stack usage
+
+1 cells
+
+
+
+
+
+
+
+
+
+### `StrCpy`:
+
+
+
+#### Syntax
+
+
+```pawn
+StrCpy(dest[], src[], len)
+```
+
+
+
+|  `dest`  |  ` [] `Destination string.   | 
+|  `src`  |  ` [] `Source string.   | 
+|  `len`  |  (Implicit) maximum length of the destination.   | 
+
+
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `StrToLower`:
+
+
+
+#### Syntax
+
+
+```pawn
+StrToLower(str[], len)
+```
+
+
+
+|  `str`  |  ` [] `String to convert.   | 
+|  `len`  |  How much of the string to convert.   | 
+
+
+
+
+#### Depends on
+* [`FIXES_tolower`](#FIXES_tolower)
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `StrToUpper`:
+
+
+
+#### Syntax
+
+
+```pawn
+StrToUpper(str[], len)
+```
+
+
+
+|  `str`  |  ` [] `String to convert.   | 
+|  `len`  |  How much of the string to convert.   | 
+
+
+
+
+#### Depends on
+* [`FIXES_toupper`](#FIXES_toupper)
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `Strip`:
+
+
+
+#### Syntax
+
+
+```pawn
+Strip(str[])
+```
+
+
+
+|  `str`  |  ` [] `The string to remove whitespace from the start and end of.   | 
+
+
+
+
+#### Depends on
+* [`FIXES_memcpy`](#FIXES_memcpy)
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`cellbytes`](#cellbytes)
+* [`cellmin`](#cellmin)
+* [`strlen`](#strlen)
+
+#### Estimated stack usage
+
+10 cells
+
+
+
+
+
+
+
+
+
+### `StripL`:
+
+
+
+#### Syntax
+
+
+```pawn
+StripL(str[])
+```
+
+
+
+|  `str`  |  ` [] `The string to remove whitespace from the start of.   | 
+
+
+
+
+#### Depends on
+* [`FIXES_memcpy`](#FIXES_memcpy)
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`cellbytes`](#cellbytes)
+* [`cellmin`](#cellmin)
+* [`strlen`](#strlen)
+
+#### Estimated stack usage
+
+10 cells
+
+
+
+
+
+
+
+
+
+### `StripNL`:
+
+
+
+#### Syntax
+
+
+```pawn
+StripNL(str[])
+```
+
+
+
+|  `str`  |  ` [] `The string to remove whitespace from the end of.   | 
+
+
+
+
+#### Remarks
+
+Updated from old versions, should be more efficient 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`strlen`](#strlen)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `StripR`:
+
+
+
+#### Syntax
+
+
+```pawn
+StripR(str[])
+```
+
+
+
+|  `str`  |  ` [] `The string to remove whitespace from the end of.   | 
+
+
+
+
+#### Remarks
+
+Updated from old versions, should be more efficient 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `Sum`:
+
+
+
+#### Syntax
+
+
+```pawn
+Sum(arr[], num)
+```
+
+
+
+|  `arr`  |  ` [] `The array whose values need summing.   | 
+|  `num`  |  The size of the array.   | 
+
+
+
+
+#### Returns
+
+All the values in the array added together. 
+
+
+#### Estimated stack usage
+
+2 cells
+
+
+
+
+
+
+
+
+
+### `Trim`:
+
+
+
+#### Syntax
+
+
+```pawn
+Trim(str[], &start, &end)
+```
+
+
+
+|  `str`  |  ` [] `The string to trim.   | 
+|  `start`  |  ` & `Start of the substring.   | 
+|  `end`  |  ` & `End of the substring.   | 
+
+
+
+
+#### Remarks
+
+Modifies "start" and "end" to be tight on text in "str". `Strip` removes the characters from the end, so needs a modifiable string, this just tells you where the ends are. 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`cellmin`](#cellmin)
+
+#### Estimated stack usage
+
+1 cells
+
+
+
+
+
+
+
+
+
+### `TryPPM`:
+
+
+TryPPM(ppm); 
+
+
+
+#### Syntax
+
+
+```pawn
+TryPPM(ppm)
+```
+
+
+
+|  `ppm`  |  The likelihood of returning `true`.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+`true`, `ppm%oooo` of the time; or `false` 
+
+
+#### Remarks
+
+Basically a ppm random number generator (that's out of 1000000). Could be used to replicate something with a `1.0001%` chance of happening via: 
+`TryPPM(10001)` 
+
+
+#### Depends on
+* [`FIXES_random`](#FIXES_random)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `TryPercentage`:
+
+
+TryPercentage(percentage); 
+
+
+
+#### Syntax
+
+
+```pawn
+TryPercentage(percentage)
+```
+
+
+
+|  `percentage`  |  The likelihood of returning `true`.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+`true`, `percentage%` of the time; or `false` 
+
+
+#### Remarks
+
+Basically a percentage random number generator. 
+
+
+#### Depends on
+* [`FIXES_random`](#FIXES_random)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `TryPermille`:
+
+
+TryPermille(permille); 
+
+
+
+#### Syntax
+
+
+```pawn
+TryPermille(permille)
+```
+
+
+
+|  `permille`  |  The likelihood of returning `true`.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+`true`, `permille%o` of the time; or `false` 
+
+
+#### Remarks
+
+Basically a permille random number generator (that's out of 1000). Could be used to replicate something with a `42.1%` chance of happening via: 
+`TryPermille(421)` 
+
+
+#### Depends on
+* [`FIXES_random`](#FIXES_random)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `UCMP`:
+
+
+
+#### Syntax
+
+
+```pawn
+UCMP(value, upper)
+```
+
+
+
+|  `value`  |  The unsigned number to compare.   | 
+|  `upper`  |  The upper limit.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+An unsigned comparison between the two values. 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `Unpack`:
+
+
+
+#### Syntax
+
+
+```pawn
+Unpack(str[])
+```
+
+
+
+|  `str`  |  ` [] `String to unpack   | 
+
+
+
+
+#### Returns
+
+unpacked string 
+
+
+#### Remarks
+
+Mainly used for debugging. 
+
+
+#### Depends on
+* [`Unpack`](#Unpack)
+* [`strlen`](#strlen)
+* [`strunpack`](#strunpack)
+
+#### Estimated stack usage
+
+149 cells
+
+
+
+
+
+
+
+
+
+### `Utils_ChaosMod`:
+
+
+
+#### Syntax
+
+
+```pawn
+Utils_ChaosMod(playerid)
+```
+
+
+
+|  `playerid`  |  Player to mess up   | 
+
+
+
+
+#### Remarks
+
+Make some random effects on the player. 
+
+
+#### Depends on
+* [`FIXES_GetPlayerInterior`](#FIXES_GetPlayerInterior)
+* [`FIXES_SetPlayerArmedWeapon`](#FIXES_SetPlayerArmedWeapon)
+* [`FIXES_SetPlayerInterior`](#FIXES_SetPlayerInterior)
+* [`FIXES_SetPlayerWorldBounds`](#FIXES_SetPlayerWorldBounds)
+* [`FIXES_random`](#FIXES_random)
+* [`GetPlayerVehicleID`](#GetPlayerVehicleID)
+* [`LinkVehicleToInterior`](#LinkVehicleToInterior)
+* [`SetPlayerHealth`](#SetPlayerHealth)
+* [`SetPlayerVelocity`](#SetPlayerVelocity)
+* [`SetVehicleHealth`](#SetVehicleHealth)
+* [`SetVehicleVelocity`](#SetVehicleVelocity)
+
+#### Estimated stack usage
+
+9 cells
+
+
+
+
+
+
+
+
+
+### `Utils_QuickSort`:
+
+
+
+#### Syntax
+
+
+```pawn
+Utils_QuickSort(arr[], low, high)
+```
+
+
+
+|  `arr`  |  ` [] `The array to sort.   | 
+|  `low`  |  The lowest index to sort.   | 
+|  `high`  |  The highest index (inclusive) to sort.   | 
+
+
+
+
+#### Remarks
+
+Internal recursive call for quicksorting. 
+
+
+#### Estimated stack usage
+
+8 cells
+
+
+
+
+
+
+
+
+
+### `VALID_PLAYERID`:
+
+
+
+#### Syntax
+
+
+```pawn
+VALID_PLAYERID(playerid)
+```
+
+
+
+|  `playerid`  |  The player to check.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+Is this a valid playerid (NOT, is the player connected). 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `ValstrWithOrdinal`:
+
+
+
+#### Syntax
+
+
+```pawn
+ValstrWithOrdinal(n)
+```
+
+
+
+|  `n`  |  The number to convert to a string with ordinal.   | 
+
+
+
+
+#### Returns
+
+Stringises a number, then adds `st/nd/rd/th`. 
+
+
+#### Depends on
+* [`FIXES_valstr`](#FIXES_valstr)
+* [`ValstrWithOrdinal`](#ValstrWithOrdinal)
+* [`strcat`](#strcat)
+
+#### Estimated stack usage
+
+38 cells
+
+
+
+
+
+
+
+
+
+### `bernstein`:
+
+
+
+#### Syntax
+
+
+```pawn
+bernstein(str[])
+```
+
+
+
+|  `str`  |  ` [] `   | 
+|  `string`  |  the string to hash.  | 
+
+
+
+
+#### Returns
+
+The bernstein hash of the input string 
+
+
+#### Remarks
+
+This is a 32bit hash system so is not very secure, however we're only using this as a string enumerator to uniquely identify strings easilly and allow for a binary search of strings based on the hash of their name. *crc32*, then *jenkins* were originally used however this is far faster, if a little collision prone, but we're checking the strings manually anyway. This doesn't matter as it would be done regardless of hash method, so this doesn't need to be accounted for. Speed is all that matters with at least least a bit of non collision (the number of strings we're dealing with, this should have none-to-few collisions). 
+
+
+
+ I modified it slightly from the original code pasted by aru, to code closer to [the code](http://www.burtleburtle.net/bob/hash/doobs.html) and to work with PAWN (and shaved 0.2us off the time for one call :D). 
+
+
+ Uber reduced version (just for fun): 
+```pawn
+  b(s[]){new h=-1,i,j;while((j=s[i++]))h=h*33+j;return h;}  
+```
+
+
+
+
+ Update: Contrary to what I said above this is also used to identify colour strings for the updated text system involving file based styling and this is not checked for collisions as it's unimportant. But this doesn't affect the function at all, I just mentioned it here for "interest". 
+
+
+#### Depends on
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`cellbits`](#cellbits)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `binstr`:
+
+
+
+#### Syntax
+
+
+```pawn
+binstr(str[])
+```
+
+
+
+|  `str`  |  ` [] `   | 
+|  `string`  |  String to try convert to a boolean.  | 
+
+
+
+
+#### Returns
+
+bool: passed boolean. 
+
+
+#### Remarks
+
+This takes a value in 0110101 (boolean) format and returns it as a regular value. 
+
+
+#### Depends on
+* [`BinStr`](#BinStr)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `boolstr`:
+
+
+
+#### Syntax
+
+
+```pawn
+boolstr(str[])
+```
+
+
+
+|  `str`  |  ` [] `   | 
+|  `string`  |  String to try convert to a boolean.  | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+bool: passed boolean. 
+
+
+#### Remarks
+
+This can take a number of ways of representing booleans - 0, false and nothing there. Anything not one of those things (false is not case sensitive) is assumed true. 
+
+
+#### Depends on
+* [`BoolStr`](#BoolStr)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `ceildiv`:
+
+
+
+#### Syntax
+
+
+```pawn
+ceildiv(numerator, denominator)
+```
+
+
+
+|  `numerator`  |  The top of the division.   | 
+|  `denominator`  |  The bottom of the division.   | 
+
+
+
+
+#### Returns
+
+(numerator / denominator) rounded up. 
+
+
+#### Remarks
+
+Normal integer division ALWAYS rounds down - this always rounds up. 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `chrfind`:
+
+
+
+#### Syntax
+
+
+```pawn
+chrfind(needle, haystack[], start)
+```
+
+
+
+|  `needle`  |  The character to find.   | 
+|  `haystack`  |  ` [] `The string to find it in.   | 
+|  `start`  |  The offset to start from.   | 
+
+
+
+
+#### Returns
+
+Fail - -1, Success - pos 
+
+
+#### Depends on
+* [`ChrFind`](#ChrFind)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `chrfindp`:
+
+
+
+#### Syntax
+
+
+```pawn
+chrfindp(needle, haystack[], start)
+```
+
+
+
+|  `needle`  |  The character to find.   | 
+|  `haystack`  |  ` [] `The string to find it in.   | 
+|  `start`  |  The offset to start from.   | 
+
+
+
+
+#### Returns
+
+Fail - -1, Success - pos 
+
+
+#### Remarks
+
+Like [`ChrFind`](#ChrFind), but with no upper-bounds check on start. Now it has them anyway... 
+
+
+#### Depends on
+* [`ChrFind`](#ChrFind)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `endofline`:
+
+
+
+#### Syntax
+
+
+```pawn
+endofline(line[], pos)
+```
+
+
+
+|  `line`  |  ` [] `String to check.   | 
+|  `pos`  |  Postion to start from.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Checks if the current point in a line is the end of non-whitespace data. 
+
+
+#### Depends on
+* [`EndOfLine`](#EndOfLine)
+
+#### Estimated stack usage
+
+5 cells
+
+
+
+
+
+
+
+
+
+### `fautocleanup`:
+
+
+
+#### Syntax
+
+
+```pawn
+fautocleanup(name[], maxAge)
+```
+
+
+
+|  `name`  |  ` [] `File to clean up.   | 
+|  `maxAge`  |  Maximum temporary file age.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Remarks
+
+Add a file to the temporary cleanup list. 
+
+
+#### Depends on
+* [`FIXES_fclose`](#FIXES_fclose)
+* [`FIXES_format`](#FIXES_format)
+* [`FIXES_fwrite`](#FIXES_fwrite)
+* [`YSI_TEMP_FILE_NAME`](#YSI_TEMP_FILE_NAME)
+* [`false`](#false)
+* [`fexist`](#fexist)
+* [`fopen`](#fopen)
+* [`gettime`](#gettime)
+* [`io_append`](#io_append)
+* [`true`](#true)
+
+#### Estimated stack usage
+
+77 cells
+
+
+
+
+
+
+
+
+
+### `floordiv`:
+
+
+floordiv(numerator, denominator); 
+
+
+
+#### Syntax
+
+
+```pawn
+floordiv(numerator, denominator)
+```
+
+
+
+|  `numerator`  |  The top of the division.   | 
+|  `denominator`  |  The bottom of the division.   | 
+
+
+
+
+#### Returns
+
+(numerator / denominator) rounded down. 
+
+
+#### Remarks
+
+Normal integer division ALWAYS rounds down - this also always rounds down, making it a little pointless, but also more explicit in function. 
+
+
+#### Attributes
+* `native`
+
+
+
+
+
+
+
+
+### `ftemporary`:
+
+
+
+#### Syntax
+
+
+```pawn
+ftemporary(ret[], ext[], len, maxAge)
+```
+
+
+
+|  `ret`  |  ` [] `Storage for the return value.   | 
+|  `ext`  |  ` [] `Extension.   | 
+|  `len`  |  Maximum string length.   | 
+|  `maxAge`  |  Maximum temporary file age.   | 
+
+
+
+|  **Tag**  |  `File:`  | 
+
+
+#### Remarks
+
+Generate a random temporary filename and open it. Also redefines `ftemp` to call this function instead if called with extra parameters. 
+
+
+#### Depends on
+* [`E_YSI_DIR_TEMP`](#E_YSI_DIR_TEMP)
+* [`GetYSIScriptfilesDir`](#GetYSIScriptfilesDir)
+* [`fautocleanup`](#fautocleanup)
+* [`ftemporary_`](#ftemporary_)
+* [`strcat`](#strcat)
+
+#### Estimated stack usage
+
+40 cells
+
+
+
+
+
+
+
+
+
+### `ftemporary_`:
+
+
+
+#### Syntax
+
+
+```pawn
+ftemporary_(name[], ext[], path[], len)
+```
+
+
+
+|  `name`  |  ` [] `Storage for the return value.   | 
+|  `ext`  |  ` [] `Extension.   | 
+|  `path`  |  ` [] `Directory in which to place temporary files.   | 
+|  `len`  |  Maximum string length.   | 
+
+
+
+|  **Tag**  |  `File:`  | 
+
+
+#### Remarks
+
+Internal detail for `ftemporary`. Should not be called directly. 
+
+
+#### Depends on
+* [`FIXES_random`](#FIXES_random)
+* [`YSI_PackedStringMax__`](#YSI_PackedStringMax__)
+* [`fexist`](#fexist)
+* [`fopen`](#fopen)
+* [`io_readwrite`](#io_readwrite)
+* [`strcat`](#strcat)
+* [`strlen`](#strlen)
+
+#### Estimated stack usage
+
+7 cells
+
+
+
+
+
+
+
+
+
+### `ftouch`:
+
+
+ftouch(filename); 
+
+
+
+#### Syntax
+
+
+```pawn
+ftouch(filename[])
+```
+
+
+
+|  `filename`  |  ` [] `The file to "touch".   | 
+
+
+
+
+#### Returns
+
+0 - File already exists. 1 - File was created. -1 - File was not created. 
+
+
+#### Remarks
+
+This "touches" a file in the Unix sense of creating it but not opening or editing it in any way. 
+
+
+#### Depends on
+* [`FIXES_fclose`](#FIXES_fclose)
+* [`fexist`](#fexist)
+* [`fopen`](#fopen)
+* [`io_write`](#io_write)
+
+#### Estimated stack usage
+
+5 cells
+
+
+
+
+
+
+
+
+
+### `hexstr`:
+
+
+
+#### Syntax
+
+
+```pawn
+hexstr(str[])
+```
+
+
+
+|  `str`  |  ` [] `   | 
+|  `string`  |  String to convert to a number.  | 
+
+
+
+
+#### Returns
+
+value of the passed hex string. 
+
+
+#### Remarks
+
+Now stops on invalid characters. 
+
+
+#### Depends on
+* [`HexStr`](#HexStr)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `ishex`:
+
+
+
+#### Syntax
+
+
+```pawn
+ishex(str[])
+```
+
+
+
+|  `str`  |  ` [] `String to check.   | 
+
+
+
+|  **Tag**  |  `bool:`  | 
+
+
+#### Returns
+
+true/false. 
+
+
+#### Depends on
+* [`IsHex`](#IsHex)
+
+#### Estimated stack usage
+
+4 cells
+
+
+
+
+
+
+
+
+
+### `memcmp`:
+
+
+
+#### Syntax
+
+
+```pawn
+memcmp(arr1[], arr2[], count)
+```
+
+
+
+|  `arr1`  |  ` [] `First array to compare.   | 
+|  `arr2`  |  ` [] `Second array to compare.   | 
+|  `count`  |  How many cells to compare.   | 
+
+
+
+
+#### Returns
+
+The difference (0 if the same). 
+
+
+#### Remarks
+
+Returns the first found difference between two arrays. If they are the same the return value is `0`, otherwise it is `arr1[i] - arr2[i]`. 
+
+
+#### Depends on
+* [`MemCmp`](#MemCmp)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `rawMemcpy`:
+
+
+
+#### Syntax
+
+
+```pawn
+rawMemcpy(dest, src, numbytes)
+```
+
+
+
+|  `dest`  |  Destination address.   | 
+|  `src`  |  Source data.   | 
+|  `numbytes`  |  Number of bytes to copy.   | 
+
+
+
+
+#### Remarks
+
+Like memcpy, but takes addresses instead of arrays. Also far less secure because it doesn't check the destination size - it just assumes it is large enough. 
+
+
+#### Depends on
+* [`RawMemCpy_`](#RawMemCpy_)
+* [`cellmax`](#cellmax)
+
+#### Estimated stack usage
+
+7 cells
+
+
+
+
+
+
+
+
+
+### `rawMemset`:
+
+
+
+#### Syntax
+
+
+```pawn
+rawMemset(address, value, size)
+```
+
+
+
+|  `address`  |  Array or address to set to a value.   | 
+|  `value`  |  What to set the cells to.   | 
+|  `size`  |  Number of bytes to fill.   | 
+
+
+
+
+#### Remarks
+
+Based on code by Slice: [http://forum.sa-mp.com/showthread.php?p=1606781#post1606781](http://forum.sa-mp.com/showthread.php?p=1606781#post1606781) Modified to use binary flags instead of a loop. "MemSet" takes an array, the size of the array, and a value to fill it with and sets the whole array to that value. "RawMemSet" is similar, but takes an AMX data segment address instead and the size is in bytes, not cells. However, the size must still be a multiple of 4. 
+
+
+#### Depends on
+* [`RawMemSet`](#RawMemSet)
+
+#### Estimated stack usage
+
+6 cells
+
+
+
+
+
+
+
+
+
+### `unpack`:
+
+
+
+#### Syntax
+
+
+```pawn
+unpack(str[])
+```
+
+
+
+|  `str`  |  ` [] `String to unpack   | 
+
+
+
+
+#### Returns
+
+unpacked string 
+
+
+#### Remarks
+
+Mainly used for debugging. 
+
+
+#### Depends on
+* [`strlen`](#strlen)
+* [`strunpack`](#strunpack)
+* [`unpack`](#unpack)
+
+#### Estimated stack usage
+
+149 cells
+
 
 
