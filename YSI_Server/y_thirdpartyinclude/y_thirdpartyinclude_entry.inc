@@ -1,6 +1,7 @@
 #if defined _INC_y_thirdpartyinclude
 	#endinput
 #endif
+#define _INC_y_thirdpartyinclude
 
 /*+
  * <library
