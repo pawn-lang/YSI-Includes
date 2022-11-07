@@ -1,23 +1,4 @@
-/*                                                                                             *
- *                                                                                             *
- *     _____ ______ ______   ____  ______ _      ______          __  ______ ____  _____        *
- *    / ____|  ____|  ____| |  _ \|  ____| |    / __ \ \        / / |  ____/ __ \|  __ \       *
- *   | (___ | |__  | |__    | |_) | |__  | |   | |  | \ \  /\  / /  | |__ | |  | | |__) |      *
- *    \___ \|  __| |  __|   |  _ <|  __| | |   | |  | |\ \/  \/ /   |  __|| |  | |  _  /       *
- *    ____) | |____| |____  | |_) | |____| |___| |__| | \  /\  /    | |   | |__| | | \ \       *
- *   |_____/|______|______| |____/|______|______\____/   \/  \/     |_|    \____/|_|  \_\      *
- *                                                                                             *
- *    _____   ____   _____ _    _ __  __ ______ _   _ _______    _______ _____ ____  _   _     *
- *   |  __ \ / __ \ / ____| |  | |  \/  |  ____| \ | |__   __|/\|__   __|_   _/ __ \| \ | |    *
- *   | |  | | |  | | |    | |  | | \  / | |__  |  \| |  | |  /  \  | |    | || |  | |  \| |    *
- *   | |  | | |  | | |    | |  | | |\/| |  __| | . ` |  | | / /\ \ | |    | || |  | | . ` |    *
- *   | |__| | |__| | |____| |__| | |  | | |____| |\  |  | |/ ____ \| |   _| || |__| | |\  |    *
- *   |_____/ \____/ \_____|\____/|_|  |_|______|_| \_|  |_/_/    \_\_|  |_____\____/|_| \_|    *
- *                                                                                             *
- *   This is required for technical reasons - to place it after `#endinput` to not generate    *
- *                   multiple copies of it in XML when compiling with `-r`.                    *
- *                                                                                             *
-*//*
+/*
 Legal:
 	Version: MPL 1.1
 	
@@ -108,22 +89,6 @@ Optional plugins:
 #if !defined _INC_y_core
 	#error Could not find y_utils
 #endif
-
-/**
- * <library
- *   name="y_als"
- *   version="1.0"
- *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary="Provides a number of macros for making ALS (Advanced Library System) callback hooking simpler."
- * >
- *   <summary pawndoc="true">
- *     This library uses the enhanced <em>pawndoc.xsl</em> from
- *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
- *     This XSL has features such as library and markdown support, and will not
- *     render this message when used.
- *   </summary>
- * </library>
- *//** */
 
 // Allow multiple inclusions.
 #if defined _inc_y_als

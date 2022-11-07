@@ -1,9 +1,12 @@
+#if defined _INC_y_stringise
+	#endinput
+#endif
+
 /**
  * <library
- *   name="y_scriptinit"
+ *   name="y_stringise"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary="Converts symbols to strings at runtime, bypassing some compiler limitations."
  * >
  *   <summary pawndoc="true">
  *     This library uses the enhanced <em>pawndoc.xsl</em> from
@@ -11,12 +14,22 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
+ *   <remarks>
+ *     Similar to <c>#</c>, but more complete in that it handles brackets, commas,
+ *     and more.  Note that the brackets it handles must be matched.  It is also
+ *     different to <c>#</c> in other ways - quotes are converted to <c>`</c>,
+ *     concatenation is not allowed, and te output is enclosed in <c>"</c>s:
+ *   
+ *     <table>
+ *       <tr><th>Input</th><th>Output</th></tr>
+ *       <tr><td><c>#A "B"</c></td><td><c>"AB"</c></td></tr>
+ *       <tr><td><c>STRINGISE__(A)"B"</c></td><td><c>&lt;invalid&gt;</c></td></tr>
+ *       <tr><td><c>STRINGISE__(A "B")</c></td><td><c>"A`B`"</c></td></tr>
+ *     </table>
+ *   
+ *   </remarks>
  * </library>
  *//** *//*
-	
-	Now also provides OnCodeInit, which comes before OnYSIInit and should
-	mostly be used for @emit code generation and other assembly related stuff
-	(since it is called by the JIT if that exists).
 Legal:
 	Version: MPL 1.1
 	

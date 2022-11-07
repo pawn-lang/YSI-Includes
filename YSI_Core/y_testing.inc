@@ -1,3 +1,7 @@
+#if defined _INC_y_testing
+	#endinput
+#endif
+
 /**
  * <library
  *   name="y_testing"

@@ -1,4 +1,8 @@
-/**
+#if defined _INC_y_amx
+	#endinput
+#endif
+
+/*+
  * <library
  *   name="y_amx"
  *   version="1.0"

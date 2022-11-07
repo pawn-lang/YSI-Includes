@@ -1,3 +1,7 @@
+#if defined _INC_y_hashmap
+	#endinput
+#endif
+
 /**
  * <library
  *   name="y_hashmap"

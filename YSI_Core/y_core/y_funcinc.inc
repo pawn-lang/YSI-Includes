@@ -1,4 +1,9 @@
-/*+
+#if defined _INC_y_funcinc
+	#endinput
+#endif
+#define _INC_y_funcinc
+
+/**
  * <library
  *   name="y_funcinc"
  *   version="1.0"

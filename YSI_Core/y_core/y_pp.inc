@@ -1,4 +1,9 @@
-/*+
+#if defined _INC_y_pp
+	#endinput
+#endif
+#define _INC_y_pp
+
+/**
  * <library
  *   name="y_pp"
  *   version="1.0"

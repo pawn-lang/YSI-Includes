@@ -1,4 +1,9 @@
-/*+
+#if defined _INC_y_globaltags
+	#endinput
+#endif
+#define _INC_y_globaltags
+
+/**
  * <library
  *   name="y_globaltags"
  *   version="0.1"

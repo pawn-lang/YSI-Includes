@@ -1,4 +1,9 @@
-/*+
+#if defined _INC_y_shortfunc
+	#endinput
+#endif
+#define _INC_y_shortfunc
+
+/**
  * <library
  *   name="y_shortfunc"
  *   version="0.2"

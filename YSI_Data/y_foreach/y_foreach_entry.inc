@@ -108,7 +108,7 @@ Optional plugins:
 #include "..\..\YSI_Core\y_utils"
 
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        44
+#define _Y_ITERATE_LOCAL_VERSION        45
 
 #if __Pawn != 0x030A
 	#define NO_CUSTOM_WARNINGS
@@ -179,6 +179,95 @@ Optional plugins:
 #endif
 
 #define _INC_y_iterate
+
+/**
+ * <library
+ *   name="y_iterate"
+ *   version="0.4"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *    <p>
+ *    Provides efficient looping through sparse data sets, such as connected
+ *    players.  Significantly improved from the original version to be a generic
+ *    loop system, rather then purely a player loop system.  When used for
+ *    players this has constant time O(n) for number of connected players (n),
+ *    unlike standard player loops which are O(MAX_PLAYERS), regardless of the
+ *    actual number of connected players.  Even when n is MAX_PLAYERS this is
+ *    still faster.
+ *    </p>
+ *   
+ *    <p>
+ *    For extensive documentation on writing and using iterators, see
+ *    <a href="http://forum.sa-mp.com/showthread.php?t=481877">this topic</a>
+ *    </p>
+ *   </remarks>
+ *   <section>
+ *     Examples
+ *   </section>
+ *   
+ *   
+ *   
+ *   
+ *   <subsection>Basic Iterators</subsection>
+ *   
+ *     <p>
+ *     Basic iterators are simply collections of numbers - little more than an array.
+ *     A number is either in the array, or not in the array, <em>y_iterate</em> loops
+ *     through only the <em>in</em> numbers.</p>
+ *     
+ *     <p><em>Players</em><br /><br />
+ *     
+ *     This code will loop through every player connected to the server.
+ *     
+ *     <code>
+ *     foreach (new i : Player)																				<br />
+ *     {																				<br /><indent />
+ *      printf("player %d is connected", i);																				<br />
+ *     }
+ *     </code>
+ *     </p>
+ *     
+ *     <p><em>Vehicles</em><br /><br />
+ *     
+ *     This code will loop through all the created vehicles on the server (including
+ *     those made in other running scripts).
+ *     
+ *     <code>
+ *     foreach (new vid : Vehicle)																				<br />
+ *     {																				<br /><indent />
+ *      printf("vehicleid %d has been created", vid);																				<br />
+ *     }
+ *     </code>
+ *     </p>
+ *     
+ *     <p><em>Create An Iterator</em><br /><br />
+ *     
+ *     To create your own iterator, first declare it, then add things to it, then loop
+ *     over it:
+ *     
+ *     <code>
+ *     new																				<br /><indent />
+ *      Iterator:MyIter&lt;100&gt;; // First declare it (this has room for 100 items numbered 0-99).																				<br />
+ *     // Then add things to it.																				<br />
+ *     Iter_Add(MyIter, 0);  // Fine.																				<br />
+ *     Iter_Add(MyIter, 55); // Fine.																				<br />
+ *     Iter_Add(MyIter, 100); // Will fail.																				<br />
+ *     // Then loop over it.																				<br />
+ *     foreach (new i : MyIter)																				<br />
+ *     {																				<br /><indent />
+ *      printf("%d", i); // Will print "0" then "55".																				<br />
+ *     }
+ *     </code>
+ *     </p>
+ * </library>
+ *//** */
 
 // Set `FOREACH_VERSION` as this file's version.
 #if defined FOREACH_VERSION

@@ -1,3 +1,7 @@
+#if defined _INC_y_timers
+	#endinput
+#endif
+
 /**
  * <library
  *   name="y_timers"

@@ -1,3 +1,7 @@
+#if defined _INC_y_va
+	#endinput
+#endif
+
 /**
  * <library
  *   name="y_va"

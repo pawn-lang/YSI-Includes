@@ -1,4 +1,9 @@
-/*+
+#if defined _INC_y_shortvar
+	#endinput
+#endif
+#define _INC_y_shortvar
+
+/**
  * <library
  *   name="y_shortvar"
  *   version="0.2"

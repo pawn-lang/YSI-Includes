@@ -1,7 +1,6 @@
 #if defined _INC_y_classgroups
 	#endinput
 #endif
-#define _INC_y_classgroups
 
 /*+
  * <library

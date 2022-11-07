@@ -1,3 +1,7 @@
+#if defined _INC_y_stringhash
+	#endinput
+#endif
+
 /**
  * <library
  *   name="y_stringhash"
@@ -11,7 +15,6 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *   </ul>
  * </library>
  *//** *//*
 Legal:

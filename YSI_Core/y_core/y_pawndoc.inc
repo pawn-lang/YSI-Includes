@@ -1,4 +1,9 @@
-/*+
+#if defined _INC_y_pawndoc
+	#endinput
+#endif
+#define _INC_y_pawndoc
+
+/**
  * <library
  *   name="y_pawndoc"
  *   version="0.2"

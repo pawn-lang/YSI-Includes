@@ -1,3 +1,6 @@
+#if defined _INC_y_zonepulse
+	#endinput
+#endif
 /**
  * <library
  *   name="y_zonepulse"

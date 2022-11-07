@@ -1,3 +1,8 @@
+#if defined _INC_y_version
+	#endinput
+#endif
+#define _INC_y_version
+
 /**
  * <library
  *   name="y_version"
@@ -14,7 +19,7 @@
  * </library>
  *//** *//*
 Legal:
-	Version: MPL 1.1
+	Version: MPL 1.15
 	
 	The contents of this file are subject to the Mozilla Public License Version 
 	1.1 the "License"; you may not use this file except in compliance with 

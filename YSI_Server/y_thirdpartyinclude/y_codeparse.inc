@@ -1,7 +1,6 @@
 #if defined _INC_y_codeparse
 	#endinput
 #endif
-#define _INC_y_codeparse
 
 /*+
  * <library

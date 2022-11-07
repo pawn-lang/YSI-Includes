@@ -1,4 +1,9 @@
-/*+
+#if defined _INC_y_prehook
+	#endinput
+#endif
+#define _INC_y_prehook
+
+/**
  * <library
  *   name="y_prehook"
  *   version="1.0"
