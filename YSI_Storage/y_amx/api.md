@@ -1,106 +1,94 @@
 y_amx - v1.0
 ==========================================
-
+Allows a script access to information about itself, such as function names.
+------------------------------------------
 (c) 2022 YSI contibutors, licensed under MPL 1.1
 
+This can be used for a range of things, including automatic callback hooking and testing.
 
-Allows a script access to information about itself, such as function names. This can be used for a range of things, including automatic callback hooking and testing. 
 
 
 
+## Enums
 
 
+### `E_AMX_TABLE`:
 
+#### Members
 
-## Constants
+* `AMX_TABLE_PUBLICS = 0`
+* `AMX_TABLE_NATIVES = 1`
+* `AMX_TABLE_LIBRARIES = 2`
+* `AMX_TABLE_PUBVARS = 3`
+* `AMX_TABLE_TAGS = 4`
 
+## Variables
 
 
+### `AMX_BASE_ADDRESS`:
 
-### `EMIT_MINUS_16`:
 
+### `AMX_HEADER_AMX_VERSION`:
 
 
--16, for use in `#emit` which fails with `-`. 
+### `AMX_HEADER_CIP`:
 
 
+### `AMX_HEADER_COD`:
 
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-|  **Value**  |  `-16`  | 
 
+### `AMX_HEADER_DAT`:
 
 
+### `AMX_HEADER_DEFSIZE`:
 
 
+### `AMX_HEADER_FILE_VERSION`:
 
 
+### `AMX_HEADER_FLAGS`:
 
 
-### `EMIT_MINUS_28`:
+### `AMX_HEADER_HEA`:
 
 
+### `AMX_HEADER_LIBRARIES`:
 
--28, for use in `#emit` which fails with `-`. 
 
+### `AMX_HEADER_MAGIC`:
 
 
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-|  **Value**  |  `-28`  | 
+### `AMX_HEADER_NAMETABLE`:
 
 
+### `AMX_HEADER_NATIVES`:
 
 
+### `AMX_HEADER_PUBLICS`:
 
 
+### `AMX_HEADER_PUBVARS`:
 
 
+### `AMX_HEADER_SIZE`:
 
-### `EMIT_MINUS_4`:
 
+### `AMX_HEADER_STP`:
 
 
--4, for use in `#emit` which fails with `-`. 
+### `AMX_HEADER_TAGS`:
 
 
+### `AMX_REAL_ADDRESS`:
 
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-|  **Value**  |  `-4`  | 
 
-
-
-
-
-
-
-
-
-### `EMIT_MINUS_8`:
-
-
-
--8, for use in `#emit` which fails with `-`. 
-
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-|  **Value**  |  `-8`  | 
-
-
-
-
+### `AMX_REAL_DATA`:
 
 
 ## Functions
 
 
-
-
 ### `AMX_Deref`:
-
 
 
 #### Syntax
@@ -111,40 +99,26 @@ AMX_Deref(addr)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `addr`  |  A DAT pointer.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	A DAT pointer.	 |
 
 #### Returns
-
-An array whose data is at `addr`. Converts a pointer to a pawn usable array. 
+An array whose data is at `addr`. Converts a pointer to a pawn usable array.
 
 
 #### Depends on
 * [`AMX_Deref`](#AMX_Deref)
 * [`__param1_offset`](#__param1_offset)
-
 #### Estimated stack usage
-
 3 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_DoNothing`:
-
 
 
 #### Syntax
@@ -154,31 +128,16 @@ An array whose data is at `addr`. Converts a pointer to a pawn usable array.
 AMX_DoNothing()
 ```
 
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
-
 #### Remarks
-
-A dummy function used to get the address of. 
+A dummy function used to get the address of.
 
 
 #### Estimated stack usage
-
 1 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_DumpHeader`:
-
 
 
 #### Syntax
@@ -188,15 +147,8 @@ A dummy function used to get the address of.
 AMX_DumpHeader()
 ```
 
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
-
 #### Remarks
-
-Print all the names of all the public functions from the AMX header. There is now a more complete version of this function in amx_assembly called `PrintAmxHeader`. 
+Print all the names of all the public functions from the AMX header. There is now a more complete version of this function in amx_assembly called `PrintAmxHeader`.
 
 
 #### Depends on
@@ -206,21 +158,12 @@ Print all the names of all the public functions from the AMX header. There is no
 * [`print`](#print)
 * [`printf`](#printf)
 * [`strunpack`](#strunpack)
-
 #### Estimated stack usage
-
 41 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetBaseCount`:
-
 
 
 #### Syntax
@@ -231,22 +174,17 @@ AMX_GetBaseCount(table, &base, &count)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `The table in the header (publics, tags, etc).   | 
-|  `base`  |  ` & `Return for the start pointer.   | 
-|  `count`  |  ` & `Return for the count.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` The table in the header (publics, tags, etc).	 |
+| 	`base`	 | 	` & ` Return for the start pointer.	 |
+| 	`count`	 | 	` & ` Return for the count.	 |
 
 #### Remarks
-
-Get information about one of the tables in the AMX header. These are lists of address/name pairs. The address is one cell long, and points to where in code/data/vm the corresponding symbol is located. The name is `defsize - cellbytes` long, which may not be exactly one cell (all of y_amx assumes that this value is known at compile-time, but amx_assembly more correctly reads it from the header), and points to the start of the name as a C string in the AMX header's nametable. This function just gets where in memory (relative to DAT) the table starts, and how many items there are in the table. 
+Get information about one of the tables in the AMX header. These are lists of address/name pairs. The address is one cell long, and points to where in code/data/vm the corresponding symbol is located. The name is `defsize - cellbytes` long, which may not be exactly one cell (all of y_amx assumes that this value is known at compile-time, but amx_assembly more correctly reads it from the header), and points to the start of the name as a C string in the AMX header's nametable. This function just gets where in memory (relative to DAT) the table starts, and how many items there are in the table.
 
 
 #### Depends on
@@ -262,21 +200,12 @@ Get information about one of the tables in the AMX header. These are lists of ad
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 * [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
 * [`__defsize_cells`](#__defsize_cells)
-
 #### Estimated stack usage
-
 1 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetCount`:
-
 
 
 #### Syntax
@@ -287,39 +216,25 @@ AMX_GetCount(table)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which table to get the size of.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which table to get the size of.	 |
 
 #### Returns
-
-The number of entries in this table. 
+The number of entries in this table.
 
 
 #### Depends on
 * [`AMX_GetBaseCount`](#AMX_GetBaseCount)
-
 #### Estimated stack usage
-
 6 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetEntryBinary`:
-
 
 
 #### Syntax
@@ -330,29 +245,23 @@ AMX_GetEntryBinary(table, idx, &buffer, pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
-|  `pattern`  |  ` [] `An optional name to look for.   | 
-|  `exact`  |  `bool `When true find the pattern exactly, otherwise just include it.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which sorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The return value, with a pointer to a table entry.	 |
+| 	`pattern`	 | 	` [] ` An optional name to look for.	 |
+| 	`exact`	 | 	`bool ` When true find the pattern exactly, otherwise just include it.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given sorted table to find one matching the given name pattern, or just the next one when no pattern is given. Loop over all public functions with: 
+This scans through the given sorted table to find one matching the given name pattern, or just the next one when no pattern is given. Loop over all public functions with:
 
 
 
@@ -366,15 +275,13 @@ This scans through the given sorted table to find one matching the given name pa
 
 
 
-
- The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`. You should not use this function directly, but one of the macro wrappers defined for sorted tables: 
-
-
-`AMX_GetPublicEntry` `AMX_GetPubVarEntry` 
+The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`. You should not use this function directly, but one of the macro wrappers defined for sorted tables:
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
+`AMX_GetPublicEntry` `AMX_GetPubVarEntry`
 
+
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that.
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -389,21 +296,12 @@ This scans through the given sorted table to find one matching the given name pa
 * [`cellbits`](#cellbits)
 * [`cellbytes`](#cellbytes)
 * [`cellmax`](#cellmax)
-
 #### Estimated stack usage
-
 45 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetEntryFromNativeIndex`:
-
 
 
 #### Syntax
@@ -414,40 +312,26 @@ AMX_GetEntryFromNativeIndex(index)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `index`  |  The position in the native functions table.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`index`	 | 	The position in the native functions table.	 |
 
 #### Returns
-
-A pointer to this table entry. 
+A pointer to this table entry.
 
 
 #### Depends on
 * [`AMX_HEADER_NATIVES`](#AMX_HEADER_NATIVES)
 * [`__defsize_cells`](#__defsize_cells)
-
 #### Estimated stack usage
-
 1 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetEntryFromPublicIndex`:
-
 
 
 #### Syntax
@@ -458,40 +342,26 @@ AMX_GetEntryFromPublicIndex(index)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `index`  |  The position in the public functions table.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`index`	 | 	The position in the public functions table.	 |
 
 #### Returns
-
-A pointer to this table entry. 
+A pointer to this table entry.
 
 
 #### Depends on
 * [`AMX_HEADER_PUBLICS`](#AMX_HEADER_PUBLICS)
 * [`__defsize_cells`](#__defsize_cells)
-
 #### Estimated stack usage
-
 1 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetEntryLinear`:
-
 
 
 #### Syntax
@@ -502,29 +372,23 @@ AMX_GetEntryLinear(table, idx, &buffer, pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
-|  `pattern`  |  ` [] `An optional name to look for.   | 
-|  `exact`  |  `bool `When true find the pattern exactly, otherwise just include it.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which unsorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The return value, with a pointer to a table entry.	 |
+| 	`pattern`	 | 	` [] ` An optional name to look for.	 |
+| 	`exact`	 | 	`bool ` When true find the pattern exactly, otherwise just include it.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given unsorted table to find one matching the given name pattern, or just the next one when no pattern is given. Loop over all libraries with: 
+This scans through the given unsorted table to find one matching the given name pattern, or just the next one when no pattern is given. Loop over all libraries with:
 
 
 
@@ -538,15 +402,13 @@ This scans through the given unsorted table to find one matching the given name 
 
 
 
-
- The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`. You should not use this function directly, but one of the macro wrappers defined for unsorted tables: 
-
-
-`AMX_GetNativeEntry` `AMX_GetLibraryEntry` `AMX_GetTagEntry` 
+The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`. You should not use this function directly, but one of the macro wrappers defined for unsorted tables:
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
+`AMX_GetNativeEntry` `AMX_GetLibraryEntry` `AMX_GetTagEntry`
 
+
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering.
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -558,21 +420,12 @@ This scans through the given unsorted table to find one matching the given name 
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`__defsize_cells`](#__defsize_cells)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 43 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetEntryPointer`:
-
 
 
 #### Syntax
@@ -583,36 +436,23 @@ AMX_GetEntryPointer(tableEntry)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `tableEntry`  |  The table entry in the AMX header to use.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`tableEntry`	 | 	The table entry in the AMX header to use.	 |
 
 #### Returns
-
-The data pointer in this table (the first cell in the struct). 
+The data pointer in this table (the first cell in the struct).
 
 
 #### Estimated stack usage
-
 1 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetEntryPrefixBinary`:
-
 
 
 #### Syntax
@@ -623,32 +463,26 @@ AMX_GetEntryPrefixBinary(table, idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
-|  `pattern`  |  A prefix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which sorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The return value, with a pointer to a table entry.	 |
+| 	`pattern`	 | 	A prefix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given sorted table to find one whose name starts with the given prefix. Prefixes are four bytes built from the first four characters in a name. Prefixes are used extensively for looping over special function types as they require no string decoding and so can be compared very quickly. The `_A` macro can be used to convert four characters in to the special format used by `pattern` (which is really just the C string as a 32-bit number). 
-
+This scans through the given sorted table to find one whose name starts with the given prefix. Prefixes are four bytes built from the first four characters in a name. Prefixes are used extensively for looping over special function types as they require no string decoding and so can be compared very quickly. The `_A` macro can be used to convert four characters in to the special format used by `pattern` (which is really just the C string as a 32-bit number).
 
 
-*y_hooks* uses this function to find all of its special hook functions, which start with the magic four character sequence `"@yH_"` (both a prefix for this function, and a public function declaration as it starts with `@`), like so: 
+
+*y_hooks* uses this function to find all of its special hook functions, which start with the magic four character sequence `"@yH_"` (both a prefix for this function, and a public function declaration as it starts with `@`), like so:
 
 
 
@@ -661,18 +495,16 @@ This scans through the given sorted table to find one whose name starts with the
 
 
 
-
- The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`. You should not use this function directly, but one of the macro wrappers defined for sorted tables: 
-
-
-`AMX_GetPublicEntryPrefix` `AMX_GetPubVarEntryPrefix` 
+The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`. You should not use this function directly, but one of the macro wrappers defined for sorted tables:
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
+`AMX_GetPublicEntryPrefix` `AMX_GetPubVarEntryPrefix`
 
 
- Prefixes are widely used in YSI as the names are sorted and so can be binary searched, the entries point to the start of the names, and once a prefix is passed there can be no more later (thanks to sorting). Thus binary prefix searches are extremely efficient. 
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that.
 
+
+Prefixes are widely used in YSI as the names are sorted and so can be binary searched, the entries point to the start of the names, and once a prefix is passed there can be no more later (thanks to sorting). Thus binary prefix searches are extremely efficient.
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -681,21 +513,12 @@ This scans through the given sorted table to find one whose name starts with the
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`__defsize_cells`](#__defsize_cells)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 10 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetEntryPrefixLinear`:
-
 
 
 #### Syntax
@@ -706,32 +529,26 @@ AMX_GetEntryPrefixLinear(table, idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
-|  `pattern`  |  A prefix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which unsorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The return value, with a pointer to a table entry.	 |
+| 	`pattern`	 | 	A prefix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given unsorted table to find one whose name starts with the given prefix. Prefixes are four bytes built from the first four characters in a name. Prefixes are used extensively for looping over special function types as they require no string decoding and so can be compared very quickly. The `_A` macro can be used to convert four characters in to the special format used by `pattern` (which is really just the C string as a 32-bit number). 
-
+This scans through the given unsorted table to find one whose name starts with the given prefix. Prefixes are four bytes built from the first four characters in a name. Prefixes are used extensively for looping over special function types as they require no string decoding and so can be compared very quickly. The `_A` macro can be used to convert four characters in to the special format used by `pattern` (which is really just the C string as a 32-bit number).
 
 
- All the special `Func:` tags which encode parameter types could be looped over like so: 
+
+All the special `Func:` tags which encode parameter types could be looped over like so:
 
 
 
@@ -744,15 +561,13 @@ This scans through the given unsorted table to find one whose name starts with t
 
 
 
-
- The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`. You should not use this function directly, but one of the macro wrappers defined for unsorted tables: 
-
-
-`AMX_GetNativeEntryPrefix` `AMX_GetLibraryEntryPrefix` `AMX_GetTagEntryPrefix` 
+The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`. You should not use this function directly, but one of the macro wrappers defined for unsorted tables:
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
+`AMX_GetNativeEntryPrefix` `AMX_GetLibraryEntryPrefix` `AMX_GetTagEntryPrefix`
 
+
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering.
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -760,21 +575,12 @@ This scans through the given unsorted table to find one whose name starts with t
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`__defsize_cells`](#__defsize_cells)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 10 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetEntrySuffix`:
-
 
 
 #### Syntax
@@ -785,28 +591,22 @@ AMX_GetEntrySuffix(table, idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
-|  `pattern`  |  A suffix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The return value, with a pointer to a table entry.	 |
+| 	`pattern`	 | 	A suffix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns the table entry. 
+This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns the table entry.
 
 
 #### Depends on
@@ -816,21 +616,12 @@ This scans through any table to look for names ending with the given four byte s
 * [`__defsize_cells`](#__defsize_cells)
 * [`cellbits`](#cellbits)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 10 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetFirstNativeString`:
-
 
 
 #### Syntax
@@ -840,15 +631,8 @@ This scans through any table to look for names ending with the given four byte s
 AMX_GetFirstNativeString()
 ```
 
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
-
 #### Returns
-
-The address in the nametable of the first string name referenced by this table. Same as `AMX_GetFirstString`, but specialised for natives as their pointers may be clobbered in some VM versions. 
+The address in the nametable of the first string name referenced by this table. Same as `AMX_GetFirstString`, but specialised for natives as their pointers may be clobbered in some VM versions.
 
 
 #### Depends on
@@ -858,21 +642,12 @@ The address in the nametable of the first string name referenced by this table. 
 * [`AMX_ReadLength`](#AMX_ReadLength)
 * [`AMX_TABLE_PUBLICS`](#AMX_TABLE_PUBLICS)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetFirstString`:
-
 
 
 #### Syntax
@@ -883,44 +658,29 @@ AMX_GetFirstString(table)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which header table to report on.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which header table to report on.	 |
 
 #### Returns
-
-The address in the nametable of the first string name referenced by this table. Should be called via the table-specific wrappers: 
-
+The address in the nametable of the first string name referenced by this table. Should be called via the table-specific wrappers:
 
 
-`AMX_GetFirstPublicString` `AMX_GetFirstLibraryString` `AMX_GetFirstPubVarString` `AMX_GetFirstTagString` 
 
+`AMX_GetFirstPublicString` `AMX_GetFirstLibraryString` `AMX_GetFirstPubVarString` `AMX_GetFirstTagString`
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 1 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetGlobal`:
-
 
 
 #### Syntax
@@ -930,15 +690,8 @@ The address in the nametable of the first string name referenced by this table. 
 AMX_GetGlobal()
 ```
 
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
-
 #### Returns
-
-The address of the AMX in the server. 
+The address of the AMX in the server.
 
 
 #### Depends on
@@ -947,21 +700,12 @@ The address of the AMX in the server.
 * [`__cip`](#__cip)
 * [`__dat`](#__dat)
 * [`__m3_cells`](#__m3_cells)
-
 #### Estimated stack usage
-
 4 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetGlobalAddress`:
-
 
 
 #### Syntax
@@ -972,20 +716,15 @@ AMX_GetGlobalAddress(...)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `...`  |    | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`...`	 | 		 |
 
 #### Returns
-
-The passed address, in the server not the AMX. 
+The passed address, in the server not the AMX.
 
 
 #### Depends on
@@ -993,21 +732,12 @@ The passed address, in the server not the AMX.
 * [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
 * [`__args_offset`](#__args_offset)
 * [`__param0_offset`](#__param0_offset)
-
 #### Estimated stack usage
-
 2 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetLengthFromEntry`:
-
 
 
 #### Syntax
@@ -1018,41 +748,27 @@ AMX_GetLengthFromEntry(tableEntry)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `tableEntry`  |  The AMX header table entry to use.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`tableEntry`	 | 	The AMX header table entry to use.	 |
 
 #### Returns
-
-The length of the name of this entry. 
+The length of the name of this entry.
 
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_ReadLength`](#AMX_ReadLength)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 4 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetLibraryStringSpace`:
-
 
 
 #### Syntax
@@ -1062,36 +778,20 @@ The length of the name of this entry.
 AMX_GetLibraryStringSpace()
 ```
 
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
-
 #### Returns
-
-The number of bytes used by all library names in the nametable. 
+The number of bytes used by all library names in the nametable.
 
 
 #### Depends on
 * [`AMX_GetFirstString`](#AMX_GetFirstString)
 * [`AMX_TABLE_LIBRARIES`](#AMX_TABLE_LIBRARIES)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 4 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetNameBinary`:
-
 
 
 #### Syntax
@@ -1102,29 +802,23 @@ AMX_GetNameBinary(table, idx, buffer[], pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` [32] `The name return value, as a packed sring.   | 
-|  `pattern`  |  ` [] `A prefix to look for.   | 
-|  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which sorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` [32] ` The name return value, as a packed sring.	 |
+| 	`pattern`	 | 	` [] ` A prefix to look for.	 |
+| 	`exact`	 | 	`bool ` True to match the pattern exactly, false for contains.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given sorted table to find one whose name contains the given pattern, or all of them when there is no pattern. Loop over all the defined player callbacks like so: 
+This scans through the given sorted table to find one whose name contains the given pattern, or all of them when there is no pattern. Loop over all the defined player callbacks like so:
 
 
 
@@ -1138,15 +832,13 @@ This scans through the given sorted table to find one whose name contains the gi
 
 
 
-
- You should not use this function directly, but one of the macro wrappers defined for sorted tables: 
-
-
-`AMX_GetPublicNamePrefix` `AMX_GetPubVarNamePrefix` 
+You should not use this function directly, but one of the macro wrappers defined for sorted tables:
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
+`AMX_GetPublicNamePrefix` `AMX_GetPubVarNamePrefix`
 
+
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that.
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -1154,21 +846,12 @@ This scans through the given sorted table to find one whose name contains the gi
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 9 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetNameLinear`:
-
 
 
 #### Syntax
@@ -1179,29 +862,23 @@ AMX_GetNameLinear(table, idx, buffer[], pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` [32] `The name return value, as a packed sring.   | 
-|  `pattern`  |  ` [] `A prefix to look for.   | 
-|  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which unsorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` [32] ` The name return value, as a packed sring.	 |
+| 	`pattern`	 | 	` [] ` A prefix to look for.	 |
+| 	`exact`	 | 	`bool ` True to match the pattern exactly, false for contains.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given unsorted table to find one whose name contains the given pattern, or all of them when there is no pattern. Loop over all the defined player callbacks like so: 
+This scans through the given unsorted table to find one whose name contains the given pattern, or all of them when there is no pattern. Loop over all the defined player callbacks like so:
 
 
 
@@ -1215,15 +892,13 @@ This scans through the given unsorted table to find one whose name contains the 
 
 
 
-
- You should not use this function directly, but one of the macro wrappers defined for sorted tables: 
-
-
-`AMX_GetNativeNameLinear` `AMX_GetLibraryNameLinear` `AMX_GetTagNameLinear` 
+You should not use this function directly, but one of the macro wrappers defined for sorted tables:
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
+`AMX_GetNativeNameLinear` `AMX_GetLibraryNameLinear` `AMX_GetTagNameLinear`
 
+
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering.
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -1231,21 +906,12 @@ This scans through the given unsorted table to find one whose name contains the 
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 9 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetNamePrefixBinary`:
-
 
 
 #### Syntax
@@ -1256,36 +922,29 @@ AMX_GetNamePrefixBinary(table, idx, buffer[], pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` [32] `The name return value, as a packed string.   | 
-|  `pattern`  |  A prefix to scan for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which sorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` [32] ` The name return value, as a packed string.	 |
+| 	`pattern`	 | 	A prefix to scan for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given sorted table to find the next entry matching the given prefix, and returns the full name of the entry. You should not use this function directly, but one of the macro wrappers defined for sorted tables: 
-
+This scans through the given sorted table to find the next entry matching the given prefix, and returns the full name of the entry. You should not use this function directly, but one of the macro wrappers defined for sorted tables:
 
 
-`AMX_GetPublicNamePrefix` `AMX_GetPubVarNamePrefix` 
+
+`AMX_GetPublicNamePrefix` `AMX_GetPubVarNamePrefix`
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
-
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that.
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -1293,21 +952,12 @@ This scans through the given sorted table to find the next entry matching the gi
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetNamePrefixLinear`:
-
 
 
 #### Syntax
@@ -1318,36 +968,29 @@ AMX_GetNamePrefixLinear(table, idx, buffer[], pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` [32] `The name return value, as a packed string.   | 
-|  `pattern`  |  A prefix to scan for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which unsorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` [32] ` The name return value, as a packed string.	 |
+| 	`pattern`	 | 	A prefix to scan for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given unsorted table to find the next entry matching the given prefix, and returns the full name of the entry. You should not use this function directly, but one of the macro wrappers defined for unsorted tables: 
-
+This scans through the given unsorted table to find the next entry matching the given prefix, and returns the full name of the entry. You should not use this function directly, but one of the macro wrappers defined for unsorted tables:
 
 
-`AMX_GetNativeNamePrefix` `AMX_GetLibraryNamePrefix` `AMX_GetTagNamePrefix` 
+
+`AMX_GetNativeNamePrefix` `AMX_GetLibraryNamePrefix` `AMX_GetTagNamePrefix`
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
-
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering.
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -1355,21 +998,12 @@ This scans through the given unsorted table to find the next entry matching the 
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetNameSuffix`:
-
 
 
 #### Syntax
@@ -1380,28 +1014,22 @@ AMX_GetNameSuffix(table, idx, buffer[], pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` [32] `The name return value, as a packed sring.   | 
-|  `pattern`  |  A suffix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` [32] ` The name return value, as a packed sring.	 |
+| 	`pattern`	 | 	A suffix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns the full name. 
+This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns the full name.
 
 
 #### Depends on
@@ -1410,21 +1038,12 @@ This scans through any table to look for names ending with the given four byte s
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetNativeIndexFromEntry`:
-
 
 
 #### Syntax
@@ -1435,40 +1054,26 @@ AMX_GetNativeIndexFromEntry(tableEntry)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `tableEntry`  |  The AMX header native function entry to use.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`tableEntry`	 | 	The AMX header native function entry to use.	 |
 
 #### Returns
-
-The index (i.e the position in the table) of this native function entry. 
+The index (i.e the position in the table) of this native function entry.
 
 
 #### Depends on
 * [`AMX_HEADER_NATIVES`](#AMX_HEADER_NATIVES)
 * [`__defsize_cells`](#__defsize_cells)
-
 #### Estimated stack usage
-
 1 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetNativeStringSpace`:
-
 
 
 #### Syntax
@@ -1478,36 +1083,20 @@ The index (i.e the position in the table) of this native function entry.
 AMX_GetNativeStringSpace()
 ```
 
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
-
 #### Returns
-
-The number of bytes used by all native function names in the nametable. 
+The number of bytes used by all native function names in the nametable.
 
 
 #### Depends on
 * [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
 * [`AMX_GetFirstString`](#AMX_GetFirstString)
 * [`AMX_TABLE_LIBRARIES`](#AMX_TABLE_LIBRARIES)
-
 #### Estimated stack usage
-
 4 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPointerBinary`:
-
 
 
 #### Syntax
@@ -1518,55 +1107,39 @@ AMX_GetPointerBinary(table, idx, &buffer, pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The pointer return value.   | 
-|  `pattern`  |  ` [] `A prefix to look for.   | 
-|  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which sorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The pointer return value.	 |
+| 	`pattern`	 | 	` [] ` A prefix to look for.	 |
+| 	`exact`	 | 	`bool ` True to match the pattern exactly, false for contains.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given sorted table to find one whose name includes or exactly matches the given pattern. The return value is the pointer from in the entry, not the entry itself, nor the data the pointer references (e.g. a funcion). You should not use this function directly, but one of the macro wrappers defined for sorted tables: 
-
+This scans through the given sorted table to find one whose name includes or exactly matches the given pattern. The return value is the pointer from in the entry, not the entry itself, nor the data the pointer references (e.g. a funcion). You should not use this function directly, but one of the macro wrappers defined for sorted tables:
 
 
-`AMX_GetPublicPointer` `AMX_GetPubVarPointer` 
+
+`AMX_GetPublicPointer` `AMX_GetPubVarPointer`
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
-
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering.
 
 #### Depends on
 * [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
-
 #### Estimated stack usage
-
 9 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPointerLinear`:
-
 
 
 #### Syntax
@@ -1577,55 +1150,39 @@ AMX_GetPointerLinear(table, idx, &buffer, pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The pointer return value.   | 
-|  `pattern`  |  ` [] `A prefix to look for.   | 
-|  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which unsorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The pointer return value.	 |
+| 	`pattern`	 | 	` [] ` A prefix to look for.	 |
+| 	`exact`	 | 	`bool ` True to match the pattern exactly, false for contains.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given unsorted table to find one whose name includes or exactly matches the given pattern. The return value is the pointer from in the entry, not the entry itself, nor the data the pointer references (e.g. a funcion). You should not use this function directly, but one of the macro wrappers defined for unsorted tables: 
-
+This scans through the given unsorted table to find one whose name includes or exactly matches the given pattern. The return value is the pointer from in the entry, not the entry itself, nor the data the pointer references (e.g. a funcion). You should not use this function directly, but one of the macro wrappers defined for unsorted tables:
 
 
-`AMX_GetNativePointer` `AMX_GetLibraryPointer` `AMX_GetTagPointer` 
+
+`AMX_GetNativePointer` `AMX_GetLibraryPointer` `AMX_GetTagPointer`
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
-
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering.
 
 #### Depends on
 * [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
-
 #### Estimated stack usage
-
 9 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPointerPrefixBinary`:
-
 
 
 #### Syntax
@@ -1636,54 +1193,38 @@ AMX_GetPointerPrefixBinary(table, idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The pointer return value.   | 
-|  `pattern`  |  A prefix to scan for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which sorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The pointer return value.	 |
+| 	`pattern`	 | 	A prefix to scan for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given sorted table to find the next entry matching the given prefix, and returns a pointer to the data. You should not use this function directly, but one of the macro wrappers defined for sorted tables: 
-
+This scans through the given sorted table to find the next entry matching the given prefix, and returns a pointer to the data. You should not use this function directly, but one of the macro wrappers defined for sorted tables:
 
 
-`AMX_GetPublicPointerPrefix` `AMX_GetPubVarPointerPrefix` 
+
+`AMX_GetPublicPointerPrefix` `AMX_GetPubVarPointerPrefix`
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
-
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that.
 
 #### Depends on
 * [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPointerPrefixLinear`:
-
 
 
 #### Syntax
@@ -1694,54 +1235,38 @@ AMX_GetPointerPrefixLinear(table, idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The pointer return value.   | 
-|  `pattern`  |  A prefix to scan for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which unsorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The pointer return value.	 |
+| 	`pattern`	 | 	A prefix to scan for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given unsorted table to find the next entry matching the given prefix, and returns a pointer to the data. You should not use this function directly, but one of the macro wrappers defined for unsorted tables: 
-
+This scans through the given unsorted table to find the next entry matching the given prefix, and returns a pointer to the data. You should not use this function directly, but one of the macro wrappers defined for unsorted tables:
 
 
-`AMX_GetNativePointerPrefix` `AMX_GetLibraryPointerPrefix` `AMX_GetTagPointerPrefix` 
+
+`AMX_GetNativePointerPrefix` `AMX_GetLibraryPointerPrefix` `AMX_GetTagPointerPrefix`
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
-
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering.
 
 #### Depends on
 * [`AMX_GetEntryPrefixLinear`](#AMX_GetEntryPrefixLinear)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPointerSuffix`:
-
 
 
 #### Syntax
@@ -1752,47 +1277,32 @@ AMX_GetPointerSuffix(table, idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The data pointer return value.   | 
-|  `pattern`  |  A suffix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The data pointer return value.	 |
+| 	`pattern`	 | 	A suffix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns the data pointer. 
+This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns the data pointer.
 
 
 #### Depends on
 * [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubVarStringSpace`:
-
 
 
 #### Syntax
@@ -1802,36 +1312,20 @@ This scans through any table to look for names ending with the given four byte s
 AMX_GetPubVarStringSpace()
 ```
 
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
-
 #### Returns
-
-The number of bytes used by all public variable names in the nametable. 
+The number of bytes used by all public variable names in the nametable.
 
 
 #### Depends on
 * [`AMX_GetFirstString`](#AMX_GetFirstString)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 * [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
-
 #### Estimated stack usage
-
 4 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPublicIndexFromEntry`:
-
 
 
 #### Syntax
@@ -1842,45 +1336,30 @@ AMX_GetPublicIndexFromEntry(tableEntry)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `tableEntry`  |  The AMX header public function entry to use.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`tableEntry`	 | 	The AMX header public function entry to use.	 |
 
 #### Returns
-
-The index (i.e the position in the table) of this public function entry. 
+The index (i.e the position in the table) of this public function entry.
 
 
 #### Remarks
-
-The value returned corresponds to the return value of `funcidx`. 
+The value returned corresponds to the return value of `funcidx`.
 
 
 #### Depends on
 * [`AMX_HEADER_PUBLICS`](#AMX_HEADER_PUBLICS)
 * [`__defsize_cells`](#__defsize_cells)
-
 #### Estimated stack usage
-
 1 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPublicStringSpace`:
-
 
 
 #### Syntax
@@ -1890,36 +1369,20 @@ The value returned corresponds to the return value of `funcidx`.
 AMX_GetPublicStringSpace()
 ```
 
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
-
 #### Returns
-
-The number of bytes used by all public function names in the nametable. 
+The number of bytes used by all public function names in the nametable.
 
 
 #### Depends on
 * [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
 * [`AMX_GetFirstString`](#AMX_GetFirstString)
 * [`AMX_TABLE_PUBLICS`](#AMX_TABLE_PUBLICS)
-
 #### Estimated stack usage
-
 4 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarCount`:
-
 
 
 #### Syntax
@@ -1929,35 +1392,19 @@ The number of bytes used by all public function names in the nametable.
 AMX_GetPubvarCount()
 ```
 
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
-
 #### Returns
-
-The number of entries in this table. 
+The number of entries in this table.
 
 
 #### Depends on
 * [`AMX_GetCount`](#AMX_GetCount)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 4 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarEntry`:
-
 
 
 #### Syntax
@@ -1968,28 +1415,22 @@ AMX_GetPubvarEntry(idx, &buffer, pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
-|  `pattern`  |  ` [] `An optional name to look for.   | 
-|  `exact`  |  `bool `When true find the pattern exactly, otherwise just include it.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The return value, with a pointer to a table entry.	 |
+| 	`pattern`	 | 	` [] ` An optional name to look for.	 |
+| 	`exact`	 | 	`bool ` When true find the pattern exactly, otherwise just include it.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the public variables table to find one matching the given name pattern, or just the next one when no pattern is given. Loop over all public variables with: 
+This scans through the public variables table to find one matching the given name pattern, or just the next one when no pattern is given. Loop over all public variables with:
 
 
 
@@ -2003,28 +1444,17 @@ This scans through the public variables table to find one matching the given nam
 
 
 
-
- The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`. 
-
+The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`.
 
 #### Depends on
 * [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarEntryPrefix`:
-
 
 
 #### Syntax
@@ -2035,31 +1465,25 @@ AMX_GetPubvarEntryPrefix(idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
-|  `pattern`  |  A prefix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The return value, with a pointer to a table entry.	 |
+| 	`pattern`	 | 	A prefix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the public variables table to find one whose name starts with the given prefix. Prefixes are four bytes built from the first four characters in a name. Prefixes are used extensively for looping over special function types as they require no string decoding and so can be compared very quickly. The `_A` macro can be used to convert four characters in to the special format used by `pattern` (which is really just the C string as a 32-bit number). 
-
+This scans through the public variables table to find one whose name starts with the given prefix. Prefixes are four bytes built from the first four characters in a name. Prefixes are used extensively for looping over special function types as they require no string decoding and so can be compared very quickly. The `_A` macro can be used to convert four characters in to the special format used by `pattern` (which is really just the C string as a 32-bit number).
 
 
- To loop over all public variables that start with `"var_"`: 
+
+To loop over all public variables that start with `"var_"`:
 
 
 
@@ -2072,28 +1496,17 @@ This scans through the public variables table to find one whose name starts with
 
 
 
-
- The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`. 
-
+The *entry* is a pointer in to the table itself, i.e. address/name pair relative to `DAT`.
 
 #### Depends on
 * [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 7 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarEntrySuffix`:
-
 
 
 #### Syntax
@@ -2104,47 +1517,32 @@ AMX_GetPubvarEntrySuffix(idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
-|  `pattern`  |  A suffix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The return value, with a pointer to a table entry.	 |
+| 	`pattern`	 | 	A suffix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-See *AMX_GetEntrySuffix*. 
+See *AMX_GetEntrySuffix*.
 
 
 #### Depends on
 * [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 7 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarName`:
-
 
 
 #### Syntax
@@ -2155,48 +1553,33 @@ AMX_GetPubvarName(idx, buffer[], pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` [32] `The name return value, as a packed sring.   | 
-|  `pattern`  |  ` [] `A prefix to look for.   | 
-|  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` [32] ` The name return value, as a packed sring.	 |
+| 	`pattern`	 | 	` [] ` A prefix to look for.	 |
+| 	`exact`	 | 	`bool ` True to match the pattern exactly, false for contains.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-See *AMX_GetNameBinary*. 
+See *AMX_GetNameBinary*.
 
 
 #### Depends on
 * [`AMX_GetNameBinary`](#AMX_GetNameBinary)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarNamePrefix`:
-
 
 
 #### Syntax
@@ -2207,48 +1590,33 @@ AMX_GetPubvarNamePrefix(idx, buffer[], pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` [32] `The name return value, as a packed string.   | 
-|  `pattern`  |  A prefix to scan for.   | 
-|  `table`  |  Which sorted table to scan through.  | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` [32] ` The name return value, as a packed string.	 |
+| 	`pattern`	 | 	A prefix to scan for.	 |
+| 	`table`	 | 	Which sorted table to scan through.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-See `AMX_GetNamePrefixBinary` 
+See `AMX_GetNamePrefixBinary`
 
 
 #### Depends on
 * [`AMX_GetNamePrefixBinary`](#AMX_GetNamePrefixBinary)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 7 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarNameSuffix`:
-
 
 
 #### Syntax
@@ -2259,47 +1627,32 @@ AMX_GetPubvarNameSuffix(idx, buffer[], pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` [32] `The name return value, as a packed sring.   | 
-|  `pattern`  |  A suffix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` [32] ` The name return value, as a packed sring.	 |
+| 	`pattern`	 | 	A suffix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-See *AMX_GetNameSuffix*. 
+See *AMX_GetNameSuffix*.
 
 
 #### Depends on
 * [`AMX_GetNameSuffix`](#AMX_GetNameSuffix)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 7 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarPointer`:
-
 
 
 #### Syntax
@@ -2310,49 +1663,34 @@ AMX_GetPubvarPointer(idx, &buffer, pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The pointer return value.   | 
-|  `pattern`  |  ` [] `A prefix to look for.   | 
-|  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
-|  `table`  |  Which unsorted table to scan through.  | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The pointer return value.	 |
+| 	`pattern`	 | 	` [] ` A prefix to look for.	 |
+| 	`exact`	 | 	`bool ` True to match the pattern exactly, false for contains.	 |
+| 	`table`	 | 	Which unsorted table to scan through.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-See `AMX_GetPointerBinary`. 
+See `AMX_GetPointerBinary`.
 
 
 #### Depends on
 * [`AMX_GetPointerBinary`](#AMX_GetPointerBinary)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarPointerPrefix`:
-
 
 
 #### Syntax
@@ -2363,47 +1701,32 @@ AMX_GetPubvarPointerPrefix(idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The pointer return value.   | 
-|  `pattern`  |  A prefix to scan for.   | 
-|  `table`  |  Which unsorted table to scan through.  | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The pointer return value.	 |
+| 	`pattern`	 | 	A prefix to scan for.	 |
+| 	`table`	 | 	Which unsorted table to scan through.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-See `AMX_GetPointerPrefixBinary` 
+See `AMX_GetPointerPrefixBinary`
 
 
 #### Depends on
 * [`AMX_GetPointerPrefixBinary`](#AMX_GetPointerPrefixBinary)
-
 #### Estimated stack usage
-
 7 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarPointerSuffix`:
-
 
 
 #### Syntax
@@ -2414,47 +1737,32 @@ AMX_GetPubvarPointerSuffix(idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The data pointer return value.   | 
-|  `pattern`  |  A suffix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The data pointer return value.	 |
+| 	`pattern`	 | 	A suffix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-See *AMX_GetPointerSuffix*. 
+See *AMX_GetPointerSuffix*.
 
 
 #### Depends on
 * [`AMX_GetPointerSuffix`](#AMX_GetPointerSuffix)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 7 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarValue`:
-
 
 
 #### Syntax
@@ -2465,49 +1773,34 @@ AMX_GetPubvarValue(idx, &buffer, pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The data return value.   | 
-|  `pattern`  |  ` [] `A prefix to look for.   | 
-|  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
-|  `table`  |  Which sorted table to scan through.  | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The data return value.	 |
+| 	`pattern`	 | 	` [] ` A prefix to look for.	 |
+| 	`exact`	 | 	`bool ` True to match the pattern exactly, false for contains.	 |
+| 	`table`	 | 	Which sorted table to scan through.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-See `AMX_GetValueBinary`. 
+See `AMX_GetValueBinary`.
 
 
 #### Depends on
 * [`AMX_GetValueBinary`](#AMX_GetValueBinary)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarValuePrefix`:
-
 
 
 #### Syntax
@@ -2518,47 +1811,32 @@ AMX_GetPubvarValuePrefix(idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The data return value.   | 
-|  `pattern`  |  A prefix to scan for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The data return value.	 |
+| 	`pattern`	 | 	A prefix to scan for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-See `AMX_GetValuePrefixBinary`. 
+See `AMX_GetValuePrefixBinary`.
 
 
 #### Depends on
 * [`AMX_GetValuePrefixBinary`](#AMX_GetValuePrefixBinary)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 7 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetPubvarValueSuffix`:
-
 
 
 #### Syntax
@@ -2569,47 +1847,32 @@ AMX_GetPubvarValueSuffix(idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The data return value.   | 
-|  `pattern`  |  A suffix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The data return value.	 |
+| 	`pattern`	 | 	A suffix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-See *AMX_GetNameSuffix*. 
+See *AMX_GetNameSuffix*.
 
 
 #### Depends on
 * [`AMX_GetValueSuffix`](#AMX_GetValueSuffix)
 * [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-
 #### Estimated stack usage
-
 7 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetRelativeAddress`:
-
 
 
 #### Syntax
@@ -2620,41 +1883,27 @@ AMX_GetRelativeAddress(...)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `...`  |    | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`...`	 | 		 |
 
 #### Returns
-
-The passed address in the AMX. 
+The passed address in the AMX.
 
 
 #### Depends on
 * [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
 * [`__args_offset`](#__args_offset)
 * [`__param0_offset`](#__param0_offset)
-
 #### Estimated stack usage
-
 2 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetStringFromEntry`:
-
 
 
 #### Syntax
@@ -2665,27 +1914,19 @@ AMX_GetStringFromEntry(tableEntry, str[], size)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `tableEntry`  |  The header entry that has a name pointer.   | 
-|  `str`  |  ` [] `The destination array.   | 
-|  `size`  |  The size of the destination array.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`tableEntry`	 | 	The header entry that has a name pointer.	 |
+| 	`str`	 | 	` [] ` The destination array.	 |
+| 	`size`	 | 	The size of the destination array.	 |
 
 #### Returns
 
-
-
-
 #### Remarks
-
-Copies a C string in AMX memory out to a packed string. The pointer does not point straight to the string, but instead points to a header *entry*, i.e. part of a table with a data pointer and a name pointer. This thus abstracts the weirdness of the size of the name pointer, which may not be a whole cell. There is no unpacked equivalent. 
+Copies a C string in AMX memory out to a packed string. The pointer does not point straight to the string, but instead points to a header *entry*, i.e. part of a table with a data pointer and a name pointer. This thus abstracts the weirdness of the size of the name pointer, which may not be a whole cell. There is no unpacked equivalent.
 
 
 #### Depends on
@@ -2693,21 +1934,12 @@ Copies a C string in AMX memory out to a packed string. The pointer does not poi
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 6 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetTagByValue`:
-
 
 
 #### Syntax
@@ -2718,22 +1950,17 @@ AMX_GetTagByValue(tag, name[], len)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `tag`  |  The tag value to look up (e.g. from `tagof`).   | 
-|  `name`  |  ` [] `The destination for the name.   | 
-|  `len`  |  The destination size.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`tag`	 | 	The tag value to look up (e.g. from `tagof`).	 |
+| 	`name`	 | 	` [] ` The destination for the name.	 |
+| 	`len`	 | 	The destination size.	 |
 
 #### Remarks
-
-Get the original string (code) name of a tag from its ID. 
+Get the original string (code) name of a tag from its ID.
 
 
 #### Depends on
@@ -2744,21 +1971,12 @@ Get the original string (code) name of a tag from its ID.
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
 * [`strunpack`](#strunpack)
-
 #### Estimated stack usage
-
 11 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetTagStringSpace`:
-
 
 
 #### Syntax
@@ -2768,15 +1986,8 @@ Get the original string (code) name of a tag from its ID.
 AMX_GetTagStringSpace()
 ```
 
-
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
-
 #### Returns
-
-The number of bytes used by all tag names in the nametable. 
+The number of bytes used by all tag names in the nametable.
 
 
 #### Depends on
@@ -2784,21 +1995,12 @@ The number of bytes used by all tag names in the nametable.
 * [`AMX_GetFirstString`](#AMX_GetFirstString)
 * [`AMX_HEADER_COD`](#AMX_HEADER_COD)
 * [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
-
 #### Estimated stack usage
-
 4 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetValueBinary`:
-
 
 
 #### Syntax
@@ -2809,55 +2011,39 @@ AMX_GetValueBinary(table, idx, &buffer, pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The data return value.   | 
-|  `pattern`  |  ` [] `A prefix to look for.   | 
-|  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which sorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The data return value.	 |
+| 	`pattern`	 | 	` [] ` A prefix to look for.	 |
+| 	`exact`	 | 	`bool ` True to match the pattern exactly, false for contains.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given sorted table to find one whose name includes or exactly matches the given pattern. The return value is the data pointed to by the entry. You should not use this function directly, but one of the macro wrappers defined for sorted tables: 
-
+This scans through the given sorted table to find one whose name includes or exactly matches the given pattern. The return value is the data pointed to by the entry. You should not use this function directly, but one of the macro wrappers defined for sorted tables:
 
 
-`AMX_GetPublicValue` `AMX_GetPubVarValue` 
+
+`AMX_GetPublicValue` `AMX_GetPubVarValue`
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
-
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that.
 
 #### Depends on
 * [`AMX_GetPointerBinary`](#AMX_GetPointerBinary)
-
 #### Estimated stack usage
-
 9 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetValueLinear`:
-
 
 
 #### Syntax
@@ -2868,55 +2054,39 @@ AMX_GetValueLinear(table, idx, &buffer, pattern[], exact)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The data return value.   | 
-|  `pattern`  |  ` [] `A prefix to look for.   | 
-|  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which unsorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The data return value.	 |
+| 	`pattern`	 | 	` [] ` A prefix to look for.	 |
+| 	`exact`	 | 	`bool ` True to match the pattern exactly, false for contains.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given unsorted table to find one whose name includes or exactly matches the given pattern. The return value is the data pointed to by the entry. You should not use this function directly, but one of the macro wrappers defined for unsorted tables: 
-
+This scans through the given unsorted table to find one whose name includes or exactly matches the given pattern. The return value is the data pointed to by the entry. You should not use this function directly, but one of the macro wrappers defined for unsorted tables:
 
 
-`AMX_GetNativeValue` `AMX_GetLibraryValue` `AMX_GetTagValue` 
+
+`AMX_GetNativeValue` `AMX_GetLibraryValue` `AMX_GetTagValue`
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
-
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering.
 
 #### Depends on
 * [`AMX_GetPointerLinear`](#AMX_GetPointerLinear)
-
 #### Estimated stack usage
-
 9 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetValuePrefixBinary`:
-
 
 
 #### Syntax
@@ -2927,54 +2097,38 @@ AMX_GetValuePrefixBinary(table, idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The data return value.   | 
-|  `pattern`  |  A prefix to scan for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which sorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The data return value.	 |
+| 	`pattern`	 | 	A prefix to scan for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given sorted table to find the next entry matching the given prefix, and returns the data pointed to by that entry. You should not use this function directly, but one of the macro wrappers defined for sorted tables: 
-
+This scans through the given sorted table to find the next entry matching the given prefix, and returns the data pointed to by that entry. You should not use this function directly, but one of the macro wrappers defined for sorted tables:
 
 
-`AMX_GetPublicValuePrefix` `AMX_GetPubVarValuePrefix` 
+
+`AMX_GetPublicValuePrefix` `AMX_GetPubVarValuePrefix`
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
-
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that.
 
 #### Depends on
 * [`AMX_GetPointerPrefixBinary`](#AMX_GetPointerPrefixBinary)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetValuePrefixLinear`:
-
 
 
 #### Syntax
@@ -2985,54 +2139,38 @@ AMX_GetValuePrefixLinear(table, idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The data return value.   | 
-|  `pattern`  |  A prefix to scan for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which unsorted table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The data return value.	 |
+| 	`pattern`	 | 	A prefix to scan for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through the given unsorted table to find the next entry matching the given prefix, and returns the data pointed to by that entry. You should not use this function directly, but one of the macro wrappers defined for unsorted tables: 
-
+This scans through the given unsorted table to find the next entry matching the given prefix, and returns the data pointed to by that entry. You should not use this function directly, but one of the macro wrappers defined for unsorted tables:
 
 
-`AMX_GetNativeValuePrefix` `AMX_GetLibraryValuePrefix` `AMX_GetTagValuePrefix` 
+
+`AMX_GetNativeValuePrefix` `AMX_GetLibraryValuePrefix` `AMX_GetTagValuePrefix`
 
 
- Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
-
+Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering.
 
 #### Depends on
 * [`AMX_GetPointerPrefixLinear`](#AMX_GetPointerPrefixLinear)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_GetValueSuffix`:
-
 
 
 #### Syntax
@@ -3043,47 +2181,32 @@ AMX_GetValueSuffix(table, idx, &buffer, pattern)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `table`  |  `E_AMX_TABLE `Which table to scan through.   | 
-|  `idx`  |  When iterating, the offset to start at.   | 
-|  `buffer`  |  ` & `The data return value.   | 
-|  `pattern`  |  A suffix to look for.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`table`	 | 	`E_AMX_TABLE ` Which table to scan through.	 |
+| 	`idx`	 | 	When iterating, the offset to start at.	 |
+| 	`buffer`	 | 	` & ` The data return value.	 |
+| 	`pattern`	 | 	A suffix to look for.	 |
 
 #### Returns
-
-The next index (`idx`) to continue scanning from, or `0`. 
+The next index (`idx`) to continue scanning from, or `0`.
 
 
 #### Remarks
-
-This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns data from the data pointer. 
+This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns data from the data pointer.
 
 
 #### Depends on
 * [`AMX_GetPointerSuffix`](#AMX_GetPointerSuffix)
-
 #### Estimated stack usage
-
 8 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_ReadArray`:
-
 
 
 #### Syntax
@@ -3094,41 +2217,27 @@ AMX_ReadArray(addr, dest[], len)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `addr`  |  Data source address.   | 
-|  `dest`  |  ` [] `Where to copy the data to.   | 
-|  `len`  |  Amount of data to copy.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	Data source address.	 |
+| 	`dest`	 | 	` [] ` Where to copy the data to.	 |
+| 	`len`	 | 	Amount of data to copy.	 |
 
 #### Remarks
-
-Read data out of a memory location, which may be outside the bounds of DAT. 
+Read data out of a memory location, which may be outside the bounds of DAT.
 
 
 #### Depends on
 * [`__1_cell`](#__1_cell)
-
 #### Estimated stack usage
-
 1 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_ReadLength`:
-
 
 
 #### Syntax
@@ -3139,25 +2248,19 @@ AMX_ReadLength(addr)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `addr`  |  Pointer to a C string.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	Pointer to a C string.	 |
 
 #### Returns
-
-The length of the string. 
+The length of the string.
 
 
 #### Remarks
-
-Operates on C strings, as found in the header, not pawn packed strings, which have their bytes reversed in a cell. 
+Operates on C strings, as found in the header, not pawn packed strings, which have their bytes reversed in a cell.
 
 
 #### Depends on
@@ -3165,21 +2268,12 @@ Operates on C strings, as found in the header, not pawn packed strings, which ha
 * [`YSI_g_cFEs`](#YSI_g_cFEs)
 * [`cellbits`](#cellbits)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 3 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_ReadPackedString`:
-
 
 
 #### Syntax
@@ -3190,27 +2284,19 @@ AMX_ReadPackedString(addr, str[], len)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `addr`  |  Where in DAT to read the string from.   | 
-|  `str`  |  ` [] `The destination array.   | 
-|  `len`  |  The size of the destination array.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	Where in DAT to read the string from.	 |
+| 	`str`	 | 	` [] ` The destination array.	 |
+| 	`len`	 | 	The size of the destination array.	 |
 
 #### Returns
 
-
-
-
 #### Remarks
-
-Copies a C string in AMX memory out to a packed string. Mainly used to read function names from the header, as they are not in pawn order. Uses a clever trick to detect `NULL` in four bytes at once. 
+Copies a C string in AMX memory out to a packed string. Mainly used to read function names from the header, as they are not in pawn order. Uses a clever trick to detect `NULL` in four bytes at once.
 
 
 #### Depends on
@@ -3218,21 +2304,12 @@ Copies a C string in AMX memory out to a packed string. Mainly used to read func
 * [`YSI_g_cFEs`](#YSI_g_cFEs)
 * [`cellbytes`](#cellbytes)
 * [`swapchars`](#swapchars)
-
 #### Estimated stack usage
-
 5 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_ReadString`:
-
 
 
 #### Syntax
@@ -3243,46 +2320,29 @@ AMX_ReadString(addr, str[], len)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `addr`  |  Where in DAT to read the string from.   | 
-|  `str`  |  ` [] `The destination array.   | 
-|  `len`  |  The size of the destination array.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	Where in DAT to read the string from.	 |
+| 	`str`	 | 	` [] ` The destination array.	 |
+| 	`len`	 | 	The size of the destination array.	 |
 
 #### Returns
 
-
-
-
 #### Remarks
-
-Copies a C string in AMX memory out to a packed string. Mainly used to read function names from the header, as they are not in pawn order. Uses a clever trick to detect `NULL` in four bytes at once. Deprecated name. 
+Copies a C string in AMX memory out to a packed string. Mainly used to read function names from the header, as they are not in pawn order. Uses a clever trick to detect `NULL` in four bytes at once. Deprecated name.
 
 
 #### Depends on
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-
 #### Estimated stack usage
-
 6 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_ReadUnpackedString`:
-
 
 
 #### Syntax
@@ -3293,46 +2353,29 @@ AMX_ReadUnpackedString(addr, str[], len)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `addr`  |  Where in DAT to read the string from.   | 
-|  `str`  |  ` [] `The destination array.   | 
-|  `len`  |  The size of the destination array.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	Where in DAT to read the string from.	 |
+| 	`str`	 | 	` [] ` The destination array.	 |
+| 	`len`	 | 	The size of the destination array.	 |
 
 #### Returns
 
-
-
-
 #### Remarks
-
-Copies a C string in AMX memory out to an unpacked string. Mainly used to read function names from the header, as they are not in pawn order. 
+Copies a C string in AMX memory out to an unpacked string. Mainly used to read function names from the header, as they are not in pawn order.
 
 
 #### Depends on
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 3 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_TraceCode`:
-
 
 
 #### Syntax
@@ -3343,23 +2386,18 @@ AMX_TraceCode(pattern[], &addrRet, &dataRet, size)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `pattern`  |  ` [] `The pattern to scan for in code.   | 
-|  `addrRet`  |  ` & `The return for the address.   | 
-|  `dataRet`  |  ` & `The return for the parameter.   | 
-|  `size`  |  The size of the pattern.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`pattern`	 | 	` [] ` The pattern to scan for in code.	 |
+| 	`addrRet`	 | 	` & ` The return for the address.	 |
+| 	`dataRet`	 | 	` & ` The return for the parameter.	 |
+| 	`size`	 | 	The size of the pattern.	 |
 
 #### Remarks
-
-An extremely poor-mans version of codescan. Just takes a pure array of opcodes and searches for it in memory. No data wildcards, no stack tracing, no opcode value lookup, etc. Returns the next cell after the end of a found pattern as if it were an opcode parameter. 
+An extremely poor-mans version of codescan. Just takes a pure array of opcodes and searches for it in memory. No data wildcards, no stack tracing, no opcode value lookup, etc. Returns the next cell after the end of a found pattern as if it were an opcode parameter.
 
 
 #### Depends on
@@ -3367,21 +2405,12 @@ An extremely poor-mans version of codescan. Just takes a pure array of opcodes a
 * [`AMX_HEADER_DAT`](#AMX_HEADER_DAT)
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 3 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_TraceMemory`:
-
 
 
 #### Syntax
@@ -3392,23 +2421,18 @@ AMX_TraceMemory(pattern[], &addrRet, &dataRet, size)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `pattern`  |  ` [] `The pattern to scan for in data.   | 
-|  `addrRet`  |  ` & `The return for the address.   | 
-|  `dataRet`  |  ` & `The return for the parameter.   | 
-|  `size`  |  The size of the pattern.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`pattern`	 | 	` [] ` The pattern to scan for in data.	 |
+| 	`addrRet`	 | 	` & ` The return for the address.	 |
+| 	`dataRet`	 | 	` & ` The return for the parameter.	 |
+| 	`size`	 | 	The size of the pattern.	 |
 
 #### Remarks
-
-Search for the given pattern in the data segment. Return the address of the match and the data immediately following the match. 
+Search for the given pattern in the data segment. Return the address of the match and the data immediately following the match.
 
 
 #### Depends on
@@ -3416,21 +2440,12 @@ Search for the given pattern in the data segment. Return the address of the matc
 * [`AMX_HEADER_HEA`](#AMX_HEADER_HEA)
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
-
 #### Estimated stack usage
-
 3 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_WriteArray`:
-
 
 
 #### Syntax
@@ -3441,41 +2456,27 @@ AMX_WriteArray(addr, src[], len)
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `addr`  |  Where to copy the data to.   | 
-|  `src`  |  ` [] `Data source.   | 
-|  `len`  |  Amount of data to copy.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	Where to copy the data to.	 |
+| 	`src`	 | 	` [] ` Data source.	 |
+| 	`len`	 | 	Amount of data to copy.	 |
 
 #### Remarks
-
-Write data to a memory location, which may be outside the bounds of DAT. 
+Write data to a memory location, which may be outside the bounds of DAT.
 
 
 #### Depends on
 * [`__1_cell`](#__1_cell)
-
 #### Estimated stack usage
-
 1 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_WritePackedString`:
-
 
 
 #### Syntax
@@ -3486,45 +2487,28 @@ AMX_WritePackedString(addr, str[])
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `addr`  |  Where in DAT to write the string to.   | 
-|  `str`  |  ` [] `The packed string to write.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	Where in DAT to write the string to.	 |
+| 	`str`	 | 	` [] ` The packed string to write.	 |
 
 #### Returns
 
-
-
-
 #### Remarks
-
-Copies a packed string in to AMX memory, as a C string. Mainly used to write function names in to the header, as they are not in pawn order. 
+Copies a packed string in to AMX memory, as a C string. Mainly used to write function names in to the header, as they are not in pawn order.
 
 
 #### Depends on
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-
 #### Estimated stack usage
-
 4 cells
 
 
 
-
-
-
-
-
-
 ### `AMX_WriteUnpackedString`:
-
 
 
 #### Syntax
@@ -3535,31 +2519,25 @@ AMX_WriteUnpackedString(addr, str[])
 ```
 
 
-
-|  **Name**  |  **Info**  | 
-| --- | --- | 
-|  `addr`  |  Where in DAT to write the string to.   | 
-|  `str`  |  ` [] `The unpacked string to write.   | 
+#### Parameters
 
 
-
-|  **Property**  |  **Value**  | 
-| --- | --- | 
-
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	Where in DAT to write the string to.	 |
+| 	`str`	 | 	` [] ` The unpacked string to write.	 |
 
 #### Returns
 
-
-
-
 #### Remarks
-
-Copies an unpacked string in to AMX memory, as a C string. Mainly used to write function names in to the header, as they are not in pawn order. 
+Copies an unpacked string in to AMX memory, as a C string. Mainly used to write function names in to the header, as they are not in pawn order.
 
 
 #### Depends on
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-
 #### Estimated stack usage
-
 4 cells
+
+
+
+
