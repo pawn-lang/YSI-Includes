@@ -2649,7 +2649,7 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 static stock AMX_GetFirstString(E_AMX_TABLE:table)
 {
 	// Get the first item in this table and resolve the name.
-	table += cellbytes;
+	table += E_AMX_TABLE:cellbytes;
 	#emit LREF.S.pri                table
 	#emit CONST.alt                 0xFFFFFFFF
 	#emit AND
