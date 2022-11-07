@@ -138,76 +138,6 @@ Optional plugins:
  *    </p>
  *   </remarks>
  *   <section>
- *     Functions
- *   </section>
- *   <subsection>
- *     Public
- *   </subsection><ul>
- *     <symbol name="OnPlayerDisconnect">Called when a player leaves to remove them.</symbol>
- *     <symbol name="OnPlayerConnect">Called when a player connects to add them.</symbol>
- *   </ul><subsection>
- *     Stock
- *   </subsection><ul>
- *     <symbol name="Iter_ShowArray">Displays the contents of the array.</symbol>
- *     <symbol name="Iter_AddInternal">Add a value to an iterator.</symbol>
- *     <symbol name="Iter_RemoveInternal">Remove a value from an iterator.</symbol>
- *     <symbol name="Iter_RandomInternal">Get a random item from an iterator.</symbol>
- *     <symbol name="Iter_FreeInternal">Gets the first free slot in the iterator.</symbol>
- *     <symbol name="Iter_InitInternal">Initialises a multi-dimensional iterator.</symbol>
- *   </ul><subsection>
- *     Inline
- *   </subsection><ul>
- *     <symbol name="Iter_Create">Create a new iterator value set.</symbol>
- *     <symbol name="Iter_Add">Wraps Iter_AddInternal.</symbol>
- *     <symbol name="Iter_Remove">Wraps Iter_RemoveInternal.</symbol>
- *     <symbol name="Iter_Random">Wraps Iter_RandomInternal.</symbol>
- *     <symbol name="Iter_Count">Gets the number of items in an iterator.</symbol>
- *     <symbol name="Iter_Debug">Wraps around Iter_ShowArray.</symbol>
- *     <symbol name="Iter_Free">Wraps around Iter_FreeInternal.</symbol>
- *     <symbol name="Iter_Create2">Create a new iterator array value set.</symbol>
- *     <symbol name="Iter_Add2">Wraps Iter_AddInternal for arrays.</symbol>
- *     <symbol name="Iter_Remove2">Wraps Iter_RemoveInternal for arrays.</symbol>
- *     <symbol name="Iter_Random2">Wraps Iter_RandomInternal for arrays.</symbol>
- *     <symbol name="Iter_Count2">Gets the number of items in an iterator array.</symbol>
- *     <symbol name="Iter_Debug2">Wraps around Iter_ShowArray for arrays.</symbol>
- *     <symbol name="Iter_Free2">Wraps around Iter_FreeInternal for arrays.</symbol>
- *   </ul><section>
- *     Hooks
- *   </section><ul>
- *     <symbol name="Iter_OnPlayerConnect">Hook for the OnPlayerConnect callback.</symbol>
- *     <symbol name="Iter_OnPlayerDisconnect">Hook for the OnPlayerDisconnect callback.</symbol>
- *     <symbol name="Iter_OnGameModeInit">Only exists to make the code compile correctly...</symbol>
- *   </ul><section>
- *     Keywords
- *   </section><ul>
- *     <symbol name="foreach">Command to loop an iterator.</symbol>
- *     <symbol name="foreachex">Like foreach but without a new variable.</symbol>
- *     <symbol name="foreach2">Command to loop through an iterator array.</symbol>
- *     <symbol name="foreachex">Like foreach2 but without a new variable.</symbol>
- *   </ul><section>
- *     Tags
- *   </section><ul>
- *     <symbol name="Iterator">Declare an iterator.</symbol>
- *   </ul><section>
- *     Variables
- *   </section>
- *   <subsection>
- *     Static
- *   </subsection><ul>
- *     <symbol name="YSI_g_OPC">Records wether Iter_OnPlayerConnect exists for speed.</symbol>
- *     <symbol name="YSI_g_OPDC">Records wether Iter_OnPlayerDisconnect exists for speed.</symbol>
- *   </ul><section>Compile options</section><ul>
- *     <symbol name="YSI_ITTER_NO_SORT">Removed.</symbol>
- *     <symbol name="FOREACH_NO_BOTS">Remove the bot iterators for smaller code.</symbol>
- *     <symbol name="FOREACH_NO_PLAYERS">Remove all default code for player itteration.</symbol>
- *   </ul><section>
- *     Iterators
- *   </section><ul>
- *     <symbol name="Player">List of all players connected.</symbol>
- *     <symbol name="Bot">List of all bots (npcs) connected.</symbol>
- *     <symbol name="NPC">Alias of Bot.</symbol>
- *     <symbol name="Character">All players and bots.</symbol>
- *   </ul><section>
  *     Examples
  *   </section>
  *   
@@ -265,8 +195,6 @@ Optional plugins:
  *     }
  *     </code>
  *     </p>
- *   
- *   <subsection>Special Iterators</subsection>
  * </library>
  *//** */
 

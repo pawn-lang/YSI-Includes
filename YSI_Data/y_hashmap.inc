@@ -11,23 +11,6 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *   <section>
- *     Functions
- *   </section>
- *   <subsection>
- *     Stock
- *   </subsection><ul>
- *     <symbol name="HashMap_Init">Associate a hash map with an array.</symbol>
- *     <symbol name="HashMap_Add">Add a value under a given string.</symbol>
- *     <symbol name="HashMap_Get">Get a value from a string.</symbol>
- *     <symbol name="HashMap_RemoveKey">Remove a string and its value from a hash map.</symbol>
- *     <symbol name="HashMap_Set">Change the value associated with a key.</symbol>
- *   </ul><section>
- *     Definitions
- *   </section><ul>
- *     <symbol name="HASH_MAP_DATA">What should be added to enums to be hash map referenced.</symbol>
- *     <symbol name="HashMap">Declare a new hash map.</symbol>
- *   </ul>
  * </library>
  *//** *//*
 Legal:

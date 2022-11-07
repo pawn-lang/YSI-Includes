@@ -11,14 +11,6 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *  <section>
- *    Description
- *  </section>
- *    Fix pawndoc comments.
- *  <section>
- *    Version
- *  </section>
- *    0.2
  *  </library>
  *//** *//*
 Legal:

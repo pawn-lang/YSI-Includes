@@ -11,18 +11,6 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *   <section>
- *     Functions
- *   </section>
- *   <subsection>
- *     Stock
- *   </subsection><ul>
- *     <symbol name="YHash">Generate a string hash at run time.</symbol>
- *   </ul><section>
- *     Definitions
- *   </section><ul>
- *     <symbol name="_H">Generate a string hash at compile time.</symbol>
- *     <symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
  *   </ul>
  * </library>
  *//** *//*

@@ -11,11 +11,6 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *   <section>
- *     Hooks
- *   </section><ul>
- *     <symbol name="OnGameModeInit">Initialises things.</symbol>
- *   </ul>
  * </library>
  *//** *//*
 Legal:

@@ -30,38 +30,6 @@
  *     along with this program; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  *     MA 02110-1301, USA.
- *   <section>
- *     Functions
- *   </section>
- *   <subsection>
- *     Public
- *   </subsection><ul>
- *     <symbol name="Loader_Spawn">Processes a loaded spawn point.</symbol>
- *     <symbol name="Loader_Check">Processes a loaded checkpoint.</symbol>
- *     <symbol name="Loader_Obj">Processes a loaded object.</symbol>
- *   </ul><subsection>
- *     Core
- *   </subsection><ul>
- *     <symbol name="Loader_Loader">Initialises data.</symbol>
- *   </ul><subsection>
- *     Stock
- *   </subsection><ul>
- *     <symbol name="Loader_Parse">Loads a file.</symbol>
- *     <symbol name="Loader_AddHandler">Adds a custom handle for the race file.</symbol>
- *     <symbol name="Loader_GetRace">Returns the current race handle.</symbol>
- *   </ul><section>
- *     Tags
- *   </section><ul>
- *     <symbol name="e_RACE_FLAGS">Race data flag.</symbol>
- *   </ul><section>
- *     Variables
- *   </section>
- *   <subsection>
- *     Static
- *   </subsection><ul>
- *     <symbol name="YSI_g_sXMLRules">Handle to the XML parse rule set.</symbol>
- *     <symbol name="YSI_g_sCurRace">Handle to the current race being built.</symbol>
- *   </ul>
  * </library>
  *//** *//*
 Legal:

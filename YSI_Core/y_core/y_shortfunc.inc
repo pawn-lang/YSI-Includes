@@ -11,14 +11,6 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *   <section>
- *     Natives
- *   </section><ul>
- *     <symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>
- *     <symbol name="V@">Renaming of <symbolref name="getproperty" /> for size reasons.</symbol>
- *     <symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
- *     <symbol name="R@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
- *   </ul>
  * </library>
  *//** *//*
 Legal:

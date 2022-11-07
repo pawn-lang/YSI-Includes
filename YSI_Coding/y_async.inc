@@ -11,9 +11,6 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *   <section>
- *     Macros
- *   </section>
  * </library>
  *//** *//*
 Legal:

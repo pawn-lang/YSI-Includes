@@ -152,29 +152,6 @@ Optional plugins:
  *     This is now over 2000 lines of repetitive and complex macros!
  *     </p>
  *   </remarks>
- *   <section>
- *     Macros
- *   </section><ul>
- *     <symbol name="RF">Declare a function which may be remote.</symbol>
- *     <symbol name="RV">Declare a void function which may be remote.</symbol>
- *     <symbol name="RS">Declare an optional callback.</symbol>
- *     <symbol name="RFN">Declare an optional callback with no parameters.</symbol>
- *     <symbol name="RFC">Declare a slower but shorter function.</symbol>
- *     <symbol name="RFP">Declare a function with tags and give recall hints.</symbol>
- *     <symbol name="RFPC">Combination of P and C.</symbol>
- *     <symbol name="RFCP">Combination of P and C.</symbol>
- *   </ul><section>
- *     Variables
- *   </section>
- *   <subsection>
- *     Global
- *   </subsection><ul>
- *     <symbol name="@_">ID of this script.</symbol>
- *   </ul><section>Compile options</section><ul>
- *     <symbol name="YSI_NO_MASTER">Don't use the master system.</symbol>
- *     <symbol name="YSI_IS_CLIENT">Script is a client only script.</symbol>
- *     <symbol name="YSI_IS_SERVER">Script is a server only script.</symbol>
- *   </ul>
  * </library>
  *//** */
 

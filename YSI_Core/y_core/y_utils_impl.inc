@@ -111,6 +111,7 @@ Optional plugins:
 #define ALS_MRET_(%0) forward PP_MRET();public PP_MRET(%0)(0,0,YSI_EMPTY)(NT_US)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="t">The time in ms.</param>
  * <param name="iters">The number of iterations completed in this time.</param>
  * <remarks>
@@ -145,6 +146,7 @@ stock BeautifyProfilingTime(t, iters)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="name">The name of the profile.</param>
  * <param name="timings">The raw profiling results.</param>
  * <param name="iters">The number of iterations per run.</param>
@@ -264,6 +266,7 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 	CHAIN_FORWARD:ScriptInit_OnPlayerDisconnect(playerid, reason) = 1;
 
 	/*-------------------------------------------------------------------------*//**
+	 * <library>y_utils</library>
 	 * <param name="playerid">Player to get IP of.</param>
 	 * <returns>
 	 *  IP as a 32bit int.
@@ -330,6 +333,7 @@ stock DumpProfilingTime(const string:name[], const timings[], iters, size = size
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="value">The unsigned number to compare.</param>
  * <param name="upper">The upper limit.</param>
  * <returns>
@@ -341,6 +345,7 @@ FUNC_PAWNDOC(bool:UCMP(value, upper));
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="value">The IEEE754 floating point number (<c>Float:</c>) to check.</param>
  * <returns>
  *  An IEEE754 floating-point number is defined as Not-A-Number when all the exponent bits are set,
@@ -354,6 +359,7 @@ FUNC_PAWNDOC(bool:IsNaN(Float:value));
 #define IsNaN(%0) IS_NAN(%0)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="playerid">The player to check.</param>
  * <returns>
  *  Is this a valid playerid (NOT, is the player connected).
@@ -364,6 +370,7 @@ FUNC_PAWNDOC(bool:VALID_PLAYERID(playerid));
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="value">The number to compare.</param>
  * <param name="lower">The lower limit.</param>
  * <param name="upper">The upper limit.</param>
@@ -382,6 +389,7 @@ FUNC_PAWNDOC(bool:IS_IN_RANGE(value, lower, upper));
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="value">The number to compare.</param>
  * <param name="lower">The lower limit.</param>
  * <param name="upper">The upper limit.</param>
@@ -400,6 +408,7 @@ FUNC_PAWNDOC(bool:NOT_IN_RANGE(value, lower, upper));
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="numerator">The top of the division.</param>
  * <param name="denominator">The bottom of the division.</param>
  * <returns>
@@ -422,6 +431,7 @@ FUNC_PAWNDOC(ceildiv(numerator, denominator));
 #define _ALS_ceildiv
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  floordiv(numerator, denominator);
  * </summary>
@@ -448,6 +458,7 @@ FUNC_PAWNDOC(floordiv(numerator, denominator));
 #define _ALS_floordiv
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">String to check if is null.</param>
  * <remarks>
  *  Uses a new shorter and branchless method, which also works with offsets so
@@ -469,6 +480,7 @@ FUNC_PAWNDOC(bool:IsNull(const string:str[]));
 #define _ALS_isnull
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
@@ -482,6 +494,7 @@ FUNC_PAWNDOC(bool:IsOdd(value));
 #define _ALS_isodd
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
@@ -495,6 +508,7 @@ FUNC_PAWNDOC(bool:IsEven(value));
 #define _ALS_iseven
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="dest">Destination string.</param>
  * <param name="src">Source string.</param>
  * <param name="len">(Implicit) maximum length of the destination.</param>
@@ -510,6 +524,7 @@ FUNC_PAWNDOC(StrCpy(string:dest[], const string:src[], len = sizeof (dest)));
 #define _ALS_strcpy
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">String to convert.</param>
  * <param name="len">How much of the string to convert.</param>
  *//*------------------------------------------------------------------------**/
@@ -532,6 +547,7 @@ stock StrToLower(string:str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">String to convert.</param>
  * <param name="len">How much of the string to convert.</param>
  *//*------------------------------------------------------------------------**/
@@ -554,6 +570,7 @@ stock StrToUpper(string:str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <remarks>
  *   Relatively high quality 32-bit PRNG.
  * </remarks>
@@ -606,6 +623,7 @@ stock StrToUpper(string:str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <remarks>
  *   Relatively high quality 32-bit PRNG.
  * </remarks>
@@ -664,6 +682,7 @@ stock StrToUpper(string:str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <remarks>
  *   Slightly lower quality 32-bit PRNG.
  * </remarks>
@@ -710,6 +729,7 @@ stock StrToUpper(string:str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <remarks>
  *   Slightly lower quality 32-bit PRNG.
  * </remarks>
@@ -762,6 +782,7 @@ stock StrToUpper(string:str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="minOrMax">Upper bound, or lower bound with 2+ parameters or when less than naught.</param>
  * <param name="max">Upper bound.</param>
  * <param>Value(s) to not return.</param>
@@ -785,6 +806,7 @@ static stock Random(minOrMax, max, ...)
 }
  
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
  * <param name="">Values to not return.</param>
@@ -861,6 +883,7 @@ stock RandomMinMaxExceptMany(min, max, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
  * <param name="except">Value to not return.</param>
@@ -886,6 +909,7 @@ stock RandomMinMaxExcept(min, max, except)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
  * <remarks>
@@ -900,6 +924,7 @@ stock RandomMinMax(min, max)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="max">Upper bound.</param>
  * <remarks>
  *   Generate a random number between the given numbers (min &lt;= n &lt; max).
@@ -932,6 +957,7 @@ stock RandomMax(max)
 #define RandomMinMaxExcept(%0,%1,%2,%3)PP_DISCARD$ RandomMinMaxExceptMany(%0,%1,%2,%3)PP_DISCARD$
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="min">Lower bound, or upper bound when only parameter.</param>
  * <param name="max">Upper bound.</param>
  * <param name="dp">How small to make the differences</param>
@@ -975,6 +1001,7 @@ stock Float:RandomFloatMinMax(Float:min, Float:max = FLOAT_NAN, dp = 2)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="max">Upper bound.</param>
  * <remarks>
  *   Generate a random float between <c>0 &lt;= n &lt; max</c>.
@@ -993,6 +1020,7 @@ stock Float:RandomFloatMax(Float:max)
 #define RandomFloatMax(%0,%1)PP_DISCARD$ RandomFloatMinMax(%0,%1)PP_DISCARD$
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">The string to remove whitespace from the end of.</param>
  * <remarks>
  *   Updated from old versions, should be more efficient
@@ -1015,6 +1043,7 @@ stock StripNL(string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">The string to remove whitespace from the end of.</param>
  * <remarks>
  *   Updated from old versions, should be more efficient
@@ -1025,6 +1054,7 @@ FUNC_PAWNDOC(StripR(string:str[]));
 #define StripR StripNL
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">The string to remove whitespace from the start of.</param>
  *//*------------------------------------------------------------------------**/
 
@@ -1057,6 +1087,7 @@ stock StripL(string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">The string to remove whitespace from the start and end of.</param>
  *//*------------------------------------------------------------------------**/
 
@@ -1087,6 +1118,7 @@ stock Strip(string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="line">String to check.</param>
  * <param name="pos">Postion to start from.</param>
  * <remarks>
@@ -1111,6 +1143,7 @@ stock bool:EndOfLine(const string:line[], pos)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="line">String to check.</param>
  * <param name="pos">Postion to start from.</param>
  * <remarks>
@@ -1125,6 +1158,7 @@ stock bool:endofline(const string:line[], pos)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="needle">The character to find.</param>
  * <param name="haystack">The string to find it in.</param>
  * <param name="start">The offset to start from.</param>
@@ -1142,6 +1176,7 @@ stock ChrFind(needle, const string:haystack[], start = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="needle">The character to find.</param>
  * <param name="haystack">The string to find it in.</param>
  * <param name="start">The offset to start from.</param>
@@ -1157,6 +1192,7 @@ stock chrfind(needle, const string:haystack[], start = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="needle">The character to find.</param>
  * <param name="haystack">The string to find it in.</param>
  * <param name="start">The offset to start from.</param>
@@ -1176,6 +1212,7 @@ stock chrfindp(needle, const string:haystack[], start = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="ip">Dot notation IP to convert to an integer.</param>
  *//*------------------------------------------------------------------------**/
 
@@ -1213,6 +1250,7 @@ stock IPToInt(const string:ip[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="string">the string to hash.</param>
  * <returns>
  *   The bernstein hash of the input string
@@ -1265,6 +1303,7 @@ stock BernsteinHash(const string:str[] /* 12 */)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="string">the string to hash.</param>
  * <returns>
  *   The bernstein hash of the input string
@@ -1318,6 +1357,7 @@ stock bernstein(const string:str[] /* 12 */)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">the string to hash.</param>
  * <returns>
  *   the Jenkins hash of the input string
@@ -1354,6 +1394,7 @@ stock JenkinsHash(const string:str[] /* 12 */)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">String to check.</param>
  * <returns>
  *   true/false.
@@ -1389,6 +1430,7 @@ stock bool:IsHex(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">String to check.</param>
  * <returns>
  *   true/false.
@@ -1402,6 +1444,7 @@ stock bool:ishex(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">String to unpack</param>
  * <returns>
  *   unpacked string
@@ -1424,6 +1467,7 @@ stock Unpack(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">String to unpack</param>
  * <returns>
  *   unpacked string
@@ -1449,6 +1493,7 @@ stock unpack(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="idx">Index of the string in the parameters.</param>
  * <returns>
  *   string
@@ -1514,6 +1559,7 @@ stock ReturnStringArg(idx)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="fmat">String format.</param>
  * <param name="">Parameters.</param>
  * <returns>
@@ -1568,6 +1614,7 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">String to check</param>
  * <remarks>
  *   Checks if a given string is numeric.
@@ -1617,6 +1664,7 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="playerid">Player to mess up</param>
  * <remarks>
  *   Make some random effects on the player.
@@ -1678,6 +1726,7 @@ stock Utils_ChaosMod(playerid)
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="string">String to convert to a number.</param>
  * <returns>
  *   value of the passed hex string.
@@ -1745,6 +1794,7 @@ stock HexStr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="string">String to convert to a number.</param>
  * <returns>
  *   value of the passed hex string.
@@ -1761,6 +1811,7 @@ stock hexstr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
  *   bool: passed boolean.
@@ -1779,6 +1830,7 @@ stock bool:BoolStr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
  *   bool: passed boolean.
@@ -1797,6 +1849,7 @@ stock bool:boolstr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
  *   bool: passed boolean.
@@ -1898,6 +1951,7 @@ stock BinStr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
  *   bool: passed boolean.
@@ -1915,6 +1969,7 @@ stock binstr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *   Base64Encode
  * </summary>
@@ -2105,6 +2160,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *   Base64Decode
  * </summary>
@@ -2301,6 +2357,7 @@ stock Base64Decode(dest[], const string:src[], len = sizeof (dest), offset = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
  * <param name="numbytes">Number of bytes to copy.</param>
@@ -2315,6 +2372,7 @@ native RawMemCpy_(dest, src, index, numbytes, maxlength) = memcpy;
 #define RawMemCpy(%0,%1,%2) RawMemCpy_((%0),(%1),0,(%2),(cellmax>>>2))
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
  * <param name="numbytes">Number of bytes to copy.</param>
@@ -2332,6 +2390,7 @@ stock rawMemcpy(dest, src, numbytes)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="arr">Array or address to set to a value.</param>
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of cells to fill.</param>
@@ -2370,6 +2429,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="address">Array or address to set to a value.</param>
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of bytes to fill.</param>
@@ -2497,6 +2557,7 @@ stock RawMemSet(address /* 12 */, value /* 16 */, size /* 20 */)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="address">Array or address to set to a value.</param>
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of bytes to fill.</param>
@@ -2523,6 +2584,7 @@ stock rawMemset(address /* 12 */, value /* 16 */, size /* 20 */)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  ReturnPlayerName
  * </summary>
@@ -2541,6 +2603,7 @@ stock ReturnPlayerName(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  GetPlayerRPName
  * </summary>
@@ -2577,6 +2640,7 @@ stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  GetPlayerRPComponents
  * </summary>
@@ -2610,6 +2674,7 @@ stock GetPlayerRPComponents(playerid, string:names[][], components = sizeof (nam
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  IsRPName
  * </summary>
@@ -2791,6 +2856,7 @@ stock bool:IsRPName(const string:name[], bool:casing = false, bool:longNames = f
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  HasRPName
  * </summary>
@@ -2812,6 +2878,7 @@ stock bool:HasRPName(playerid, bool:casing = false, bool:longNames = false)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  ReturnPlayerRPName
  * </summary>
@@ -2830,6 +2897,7 @@ stock ReturnPlayerRPName(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  ftouch(filename);
  * </summary>
@@ -2874,6 +2942,7 @@ stock ReturnPlayerRPName(playerid)
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  InterpolateColourLinear(startColour, endColour, Float:fraction);
  * </summary>
@@ -2944,6 +3013,7 @@ stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
@@ -2968,6 +3038,7 @@ stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
@@ -2990,6 +3061,7 @@ stock InterpolateColor(startColour, endColour, value, maxvalue, minvalue = 0)
 	return InterpolateColourLinear(startColour, endColour, floatdiv(value - minvalue, maxvalue - minvalue));
 }
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
@@ -3014,6 +3086,7 @@ stock InterpolateColour(startColour, endColour, value, maxvalue, minvalue = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  InterpolateColourGamma(startColour, endColour, Float:fraction);
  * </summary>
@@ -3087,6 +3160,7 @@ stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
@@ -3123,6 +3197,7 @@ stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 #define FLOAT_CIE_CUTOFF    (0.0031308)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="r">The red colour component.</param>
  * <param name="g">The green colour component.</param>
  * <param name="b">The blue colour component.</param>
@@ -3146,6 +3221,7 @@ stock CIEMultiply(Float:r, Float:g, Float:b, &Float:x, &Float:y, &Float:z)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  SRGBToCIE(colour, &amp;Float:x, &amp;Float:y, &amp;Float:z);
  * </summary>
@@ -3183,6 +3259,7 @@ stock SRGBToCIE(colour, &Float:x, &Float:y, &Float:z)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  SRGBToCIE(colour, &amp;Float:x, &amp;Float:y, &amp;Float:z);
  * </summary>
@@ -3220,6 +3297,7 @@ stock CIEToSRGB(a, Float:x, Float:y, Float:z)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  InterpolateColourSRGB(startColour, endColour, Float:fraction);
  * </summary>
@@ -3280,6 +3358,7 @@ stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
@@ -3304,6 +3383,7 @@ stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  GetNearestColourLinear(colour, const options[], count = sizeof (options));
  * </summary>
@@ -3352,6 +3432,7 @@ stock GetNearestColourLinear(colour, const options[], count = sizeof (options))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  GetNearestColourGamma(colour, const options[], count = sizeof (options));
  * </summary>
@@ -3400,6 +3481,7 @@ stock GetNearestColourGamma(colour, const options[], count = sizeof (options))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  GetNearestColourGammaCached(colour, const options[], count = sizeof (options));
  * </summary>
@@ -3448,6 +3530,7 @@ stock GetNearestColourGammaCached(colour, const Float:options[][3], count = size
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  GetNearestColourGamma(colour, const options[], count = sizeof (options));
  * </summary>
@@ -3494,6 +3577,7 @@ stock GetNearestColourSRGB(colour, const options[], count = sizeof (options))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  GetNearestColourSRGBCached(colour, const options[], count = sizeof (options));
  * </summary>
@@ -3553,6 +3637,7 @@ stock GetNearestColourSRGBCached(colour, const Float:options[][3], count = sizeo
 #undef FLOAT_SRGB_CUTOFF
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  Get an array of random points in a circle.
  * </summary>
@@ -3589,6 +3674,7 @@ stock RandomPointsInCircleSampled(Float:centreX, Float:centreY, Float:radius, Fl
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  Get an array of random points in a circle.
  * </summary>
@@ -3620,6 +3706,7 @@ stock RandomPointsInCircleCentred(Float:centreX, Float:centreY, Float:radius, Fl
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  Get an array of random points in a circle.
  * </summary>
@@ -3652,6 +3739,7 @@ stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius
 #define RandomPointsInCircle RandomPointsInCircleDistributed
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  Get a random point in a circle.
  * </summary>
@@ -3682,6 +3770,7 @@ stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Flo
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  Get a random point in a circle.
  * </summary>
@@ -3706,6 +3795,7 @@ stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Flo
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  Get a random point in a circle.
  * </summary>
@@ -3731,6 +3821,7 @@ stock RandomPointInCircleDistributed(Float:centreX, Float:centreY, Float:radius,
 #define RandomPointInCircle RandomPointInCircleDistributed
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">The string to skip over part of.</param>
  * <param name="pos">The start of the whitespace.</param>
  * <returns>
@@ -3756,6 +3847,7 @@ stock SkipWhitespace(const string:str[], pos)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="str">The string to trim.</param>
  * <param name="start">Start of the substring.</param>
  * <param name="end">End of the substring.</param>
@@ -3799,6 +3891,7 @@ stock Trim(const string:str[], &start, &end)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="arr">The array to sort.</param>
  * <param name="low">The lowest index to sort.</param>
  * <param name="high">The highest index (inclusive) to sort.</param>
@@ -3837,6 +3930,7 @@ static stock Utils_QuickSort(arr[], low, high)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="arr">The array to sort.</param>
  * <param name="num">The size of the array.</param>
  * <remarks>
@@ -3852,6 +3946,7 @@ stock QuickSort(arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="arr">The array whose values need summing.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
@@ -3868,6 +3963,7 @@ stock Sum(const arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
@@ -3881,6 +3977,7 @@ stock Mean(const arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
@@ -3913,6 +4010,7 @@ stock Mode(arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
@@ -3933,6 +4031,7 @@ stock Median(arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
@@ -3958,6 +4057,7 @@ stock Range(const arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="arr1">First array to compare.</param>
  * <param name="arr2">Second array to compare.</param>
  * <param name="count">How many cells to compare.</param>
@@ -3981,6 +4081,7 @@ stock MemCmp(arr1[], arr2[], count)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="arr1">First array to compare.</param>
  * <param name="arr2">Second array to compare.</param>
  * <param name="count">How many cells to compare.</param>
@@ -4000,6 +4101,7 @@ stock memcmp(arr1[], arr2[], count)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="a">First string to compare.</param>
  * <param name="lenA">Length of the first string.</param>
  * <param name="b">Second string to compare.</param>
@@ -4058,6 +4160,7 @@ static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], len
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="a">First string to compare.</param>
  * <param name="lenA">Length of the first string.</param>
  * <param name="b">Second string to compare.</param>
@@ -4116,6 +4219,7 @@ static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[]
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="a">First string to compare.</param>
  * <param name="lenA">Length of the first string.</param>
  * <param name="b">Second string to compare.</param>
@@ -4174,6 +4278,7 @@ static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[]
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="a">First string to compare.</param>
  * <param name="lenA">Length of the first string.</param>
  * <param name="b">Second string to compare.</param>
@@ -4232,6 +4337,7 @@ static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="stringA">First string to compare.</param>
  * <param name="stringB">Second string to compare.</param>
  * <returns>
@@ -4300,6 +4406,7 @@ stock LevenshteinDistance(const stringA[], const stringB[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="n">The number to convert to a string with ordinal.</param>
  * <returns>
  *  Stringises a number, then adds <c>st/nd/rd/th</c>.
@@ -4329,6 +4436,7 @@ stock ValstrWithOrdinal(n)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="n">The numeric parameter position to print.</param>
  * <returns>
  *  Prints a string passed as a vararg to the calling function.
@@ -4354,6 +4462,7 @@ stock PrintArg(n)
 #define printarg PrintArg
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="name">Storage for the return value.</param>
  * <param name="ext">Extension.</param>
  * <param name="path">Directory in which to place temporary files.</param>
@@ -4443,6 +4552,7 @@ stock File:ftemporary_(string:name[], const string:ext[] = "tmp", const string:p
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="name">File to clean up.</param>
  * <param name="maxAge">Maximum temporary file age.</param>
  * <remarks>
@@ -4476,6 +4586,7 @@ stock bool:fautocleanup(const string:name[], maxAge)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="ret">Storage for the return value.</param>
  * <param name="ext">Extension.</param>
  * <param name="len">Maximum string length.</param>
@@ -4554,6 +4665,7 @@ static stock
 #undef _YSI_DEFAULT_DIR_PREFIX
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="dir">The ID of the directory.</param>
  * <returns>
  *  A directory.
@@ -4569,6 +4681,7 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <remarks>
  *  Check if all the YSI scriptfiles directories exist.  Checks for `.gitkeep`
  *  in each folder, then each folder without `YSI/` prefix, then just nothing.
@@ -4628,6 +4741,7 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="i">Handle to the file to copy.</param>
  * <param name="end">How much of the file to copy.</param>
  * <param name="dst">The name of the output file.</param>
@@ -4666,6 +4780,7 @@ stock bool:Files_CopyRange(File:i, end, const string:dst[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="i">Handle to the file to copy.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
@@ -4682,6 +4797,7 @@ stock bool:Files_DoCopy(File:i, const string:dst[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="src">The name of the input file.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
@@ -4702,6 +4818,7 @@ stock bool:Files_Copy(const string:src[], const string:dst[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="src">The name of the input file.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
@@ -4722,6 +4839,7 @@ stock bool:Files_Move(const string:src[], const string:dst[])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  TryPercentage(percentage);
  * </summary>
@@ -4743,6 +4861,7 @@ stock bool:TryPercentage(percentage)
 #define _ALS_TryPercentage
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  TryPermille(permille);
  * </summary>
@@ -4767,6 +4886,7 @@ stock bool:TryPermille(permille)
 #define _ALS_TryPermille
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  TryPPM(ppm);
  * </summary>
@@ -5177,6 +5297,7 @@ _Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  bool:IterativeTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
  * </summary>
@@ -5499,6 +5620,7 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  bool:IterativeColouredTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
  * </summary>
@@ -5654,6 +5776,7 @@ stock bool:IterativeColouredTextSplitter(const text[], width, start, &end, &next
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  BiGramSimilarity(const string1[], const string2[]);
  * </summary>
@@ -5854,6 +5977,7 @@ stock Float:BiGramSimilarity(const string:string1[], const string:string2[])
 forward y_utils_end();
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  Float:FloatAbs(Float:number);
  * </summary>
@@ -5892,6 +6016,7 @@ FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <summary>
  *  Abs(number);
  * </summary>

@@ -23,32 +23,6 @@
  *     so any modifications to bit array layouts will need to be reflected there.
  *     </p>
  *   </remarks>
- *   <section>
- *     Functions
- *   </section>
- *   <subsection>
- *     Stock
- *   </subsection><ul>
- *     <symbol name="Bit_Set">Sets a slot to the given value.</symbol>
- *     <symbol name="Bit_Get">Gets a slot state.</symbol>
- *     <symbol name="Bit_SetAll">Sets all the slots in an array to the same thing.</symbol>
- *     <symbol name="Bit_GetCount">Gets the number of 1s in a bit array.</symbol>
- *   </ul><subsection>
- *     Inline
- *   </subsection><ul>
- *     <symbol name="Bit_Bits">Gets the number of cells required for a bit array.</symbol>
- *     <symbol name="Bit_Let">Sets a slot to 1.</symbol>
- *     <symbol name="Bit_Vet">Sets a slot to 0.</symbol>
- *     <symbol name="Bit_GetBits">Gets the bit at a slot unsafely.</symbol>
- *   </ul><section>
- *     Definitions
- *   </section><ul>
- *     <symbol name="__COMPILER_BIT_SHIFT">Number of bits that can hold "cellbits"</symbol>
- *   </ul><section>
- *     Tags
- *   </section><ul>
- *     <symbol name="Bit">Bit array type.</symbol>
- *   </ul>
  * </library>
  *//** *//*
 Legal:

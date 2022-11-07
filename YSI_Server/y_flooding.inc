@@ -11,31 +11,6 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *   <section>
- *     Functions
- *   </section>
- *   <subsection>
- *     Core
- *   </subsection><ul>
- *     <symbol name="OnPlayerConnect">Called to check IPs.</symbol>
- *     <symbol name="OnYSIInit">Sets the OnPlayerConnect function flag.</symbol>
- *   </ul><subsection>
- *     API
- *   </subsection><ul>
- *     <symbol name="SetMaxConnections">Sets the max allowed connections from an IP.</symbol>
- *   </ul><section>
- *     Enums
- *   </section><ul>
- *     <symbol name="e_FLOOD_ACTION">What to do if too many connections form.</symbol>
- *   </ul><section>
- *     Variables
- *   </section>
- *   <subsection>
- *     Static
- *   </subsection><ul>
- *     <symbol name="YSI_g_sPlayerIPs">People's stored IPs for speed.</symbol>
- *     <symbol name="YSI_g_sMaxConnections">Data for the script.</symbol>
- *   </ul>
  * </library>
  *//** *//*
 Legal:

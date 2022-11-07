@@ -22,40 +22,14 @@
  *     <li>2 - Remote functions.</li>
  *     <li>3 - Stock functions.</li>
  *     <li>4 - Static functions.</li>
- *     <li>5 - Code.</li>
- *     <li>6 - Loops.</li>
- *     <li>7 - Extra loop code.</li>
+ *     <li>5 - Utility functions.</li>
+ *     <li>6 - Code.</li>
+ *     <li>7 - Loops.</li>
  *     </ul>
  *    
  *     <p>If you use <c>Debug_Print0</c> you get an optional debug print controlled by the
  *     global state <c>ysi_debug</c> - which is either on or off.</p>
  *   </remarks>
- *   <section>
- *     Functions
- *   </section>
- *   <subsection>
- *     Inline
- *   </subsection><ul>
- *     <symbol name="Debug_Code">Runs defined code if a certain level is active.</symbol>
- *     <symbol name="Debug_Print">Prints the formatted string provided at the given level.</symbol>
- *   </ul><subsection>
- *     Stock
- *   </subsection><ul>
- *     <symbol name="Debug_PrintArray">Print several items from an array for debugging purposes.</symbol>
- *     <symbol name="Debug_Enable">Turn on level 0 prints.</symbol>
- *     <symbol name="Debug_Disable">Turn off level 0 prints.</symbol>
- *     <symbol name="Debug_Level">Set the debug level when the code is compiled with
- *     <c>_DEBUG=-1</c>, which means full run-time selection.</symbol>
- *   </ul><section>
- *     Definitions
- *   </section><ul>
- *     <symbol name="P:&lt;0-6&gt;">Print a message.</symbol>
- *     <symbol name="Debug_Code1">Run debug code.</symbol>
- *     <symbol name="Debug_Error">Print an error message.</symbol>
- *     <symbol name="Debug_Warning">Print a warning message.</symbol>
- *   </ul><section>Compile options</section><ul>
- *     <symbol name="_DEBUG">Debugging level to use.</symbol>
- *   </ul>
  * </library>
  *//** *//*
 Legal:

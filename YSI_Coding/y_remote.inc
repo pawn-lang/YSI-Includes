@@ -11,15 +11,6 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *   <section>
- *     Macros
- *   </section><ul>
- *     <symbol name="remotefunc">Define a function to be called remotely (use like "stock").</symbol>
- *     <symbol name="broadcastfunc">Call the function, but in all scripts.</symbol>
- *     <symbol name="localfunc">Call the function by name, not address, in the current script.</symbol>
- *   </ul><section>Compile options</section><ul>
- *     <symbol name="YSI_NO_MASTER">Disable all knowledge of other scripts.</symbol>
- *   </ul>
  * </library>
  *//** *//*
 Legal:
