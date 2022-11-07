@@ -94,6 +94,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+/// <p/>
+
 // I debated porting this over to use ZeeX's advanced AMX system, but there's no
 // point - this is stable and works well.  Doing so would mean testing that all
 // the code that uses this file still operates corectly given how differently
@@ -112,85 +114,96 @@ Optional plugins:
 #define AMX_MEMORY_TRACE_2 0x12345678
 #define AMX_MEMORY_TRACE_3 0x87654321
 
-/// <library>y_amx</library>
-/// <summary>
-///   -1, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_1 = -1;
-
-/// <library>y_amx</library>
-/// <summary>
-///   -4, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_4 = -4;
-
-/// <library>y_amx</library>
-/// <summary>
-///   -8, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_8 = -8;
-
-/// <library>y_amx</library>
-/// <summary>
-///   -12, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_12 = -12;
-
-/// <library>y_amx</library>
-/// <summary>
-///   -16, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_16 = -16;
-
-/// <library>y_amx</library>
-/// <summary>
-///   -20, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_20 = -20;
-
-/// <library>y_amx</library>
-/// <summary>
-///   -24, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_24 = -24;
-
-/// <library>y_amx</library>
-/// <summary>
-///   -28, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_28 = -28;
-
-/// <library>y_amx</library>
-/// <summary>
-///   -32, for use in <c>#emit</c> which fails with <c>-</c>.
-/// </summary>
-const EMIT_MINUS_32 = -32;
-
 stock
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_SIZE = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_MAGIC = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_FILE_VERSION = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_AMX_VERSION = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_FLAGS = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_DEFSIZE = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	// These are not as they appear in the AMX - they are relative to the dat
 	// pointer so that they can be directly manipulated.
 	AMX_HEADER_COD = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_DAT = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_HEA = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_STP = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_CIP = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_PUBLICS = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_NATIVES = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_LIBRARIES = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_PUBVARS = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_TAGS = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_HEADER_NAMETABLE = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	//E_AMX_HEADER_OVERLAYS,
 	AMX_REAL_ADDRESS = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_BASE_ADDRESS = 0,
+	/**
+	 * <library>y_amx</library>
+	 */
 	AMX_REAL_DATA = 0;
 
+/// <p/>
+
+/**
+ * <library>y_amx</library>
+ */
 enum E_AMX_TABLE
 {
 	AMX_TABLE_PUBLICS,
@@ -199,6 +212,7 @@ enum E_AMX_TABLE
 	AMX_TABLE_PUBVARS,
 	AMX_TABLE_TAGS
 }
+static stock E_AMX_TABLE:_@E_AMX_TABLE() { return E_AMX_TABLE; }
 
 #if cellbits == 64
 	#define __32(%0) ((%0)&0xFFFFFFFF)
