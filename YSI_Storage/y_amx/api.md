@@ -30,7 +30,7 @@ Allows a script access to information about itself, such as function names. This
 
 #### Used by
 
-•* [`Callback_CallHandler_`](#Callback_CallHandler_)
+* [`Callback_CallHandler_`](#Callback_CallHandler_)
 
 
 
@@ -52,8 +52,8 @@ Allows a script access to information about itself, such as function names. This
 
 #### Used by
 
-•* [`Hooks_RegisterNPSHook`](#Hooks_RegisterNPSHook)
-•* [`_yH@`](#_yH@)
+* [`Hooks_RegisterNPSHook`](#Hooks_RegisterNPSHook)
+* [`_yH@`](#_yH@)
 
 
 
@@ -75,8 +75,8 @@ Allows a script access to information about itself, such as function names. This
 
 #### Used by
 
-•* [`operator~(I@T:)`](#operator~(I@T:))
-•* [`Callback_CallHandler_`](#Callback_CallHandler_)
+* [`operator~(I@T:)`](#operator~(I@T:))
+* [`Callback_CallHandler_`](#Callback_CallHandler_)
 
 
 
@@ -98,8 +98,8 @@ Allows a script access to information about itself, such as function names. This
 
 #### Used by
 
-•* [`Callback_CallHandler_`](#Callback_CallHandler_)
-•* [`Inline_GeneratePostamble`](#Inline_GeneratePostamble)
+* [`Callback_CallHandler_`](#Callback_CallHandler_)
+* [`Inline_GeneratePostamble`](#Inline_GeneratePostamble)
 
 
 
@@ -134,12 +134,12 @@ An array whose data is at `addr`. Converts a pointer to a pawn usable array.
 
 
 #### Used by
-•* [`Testing_Next`](#Testing_Next)
-•* [`Testing_RunAll`](#Testing_RunAll)
+* [`Testing_Next`](#Testing_Next)
+* [`Testing_RunAll`](#Testing_RunAll)
 
 #### Depends on
-•* [`AMX_Deref`](#AMX_Deref)
-•* [`__param1_offset`](#__param1_offset)
+* [`AMX_Deref`](#AMX_Deref)
+* [`__param1_offset`](#__param1_offset)
 
 #### Estimated stack usage
 
@@ -173,7 +173,7 @@ A dummy function used to get the address of.
 
 
 #### Used by
-•* [`AMX_GetGlobal`](#AMX_GetGlobal)
+* [`AMX_GetGlobal`](#AMX_GetGlobal)
 
 #### Estimated stack usage
 
@@ -207,12 +207,12 @@ Print all the names of all the public functions from the AMX header. There is no
 
 
 #### Depends on
-•* [`AMX_GetNameBinary`](#AMX_GetNameBinary)
-•* [`AMX_TABLE_PUBLICS`](#AMX_TABLE_PUBLICS)
-•* [`FUNCTION_LENGTH`](#FUNCTION_LENGTH)
-•* [`print`](#print)
-•* [`printf`](#printf)
-•* [`strunpack`](#strunpack)
+* [`AMX_GetNameBinary`](#AMX_GetNameBinary)
+* [`AMX_TABLE_PUBLICS`](#AMX_TABLE_PUBLICS)
+* [`FUNCTION_LENGTH`](#FUNCTION_LENGTH)
+* [`print`](#print)
+* [`printf`](#printf)
+* [`strunpack`](#strunpack)
 
 #### Estimated stack usage
 
@@ -252,27 +252,27 @@ Get information about one of the tables in the AMX header. These are lists of ad
 
 
 #### Used by
-•* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
-•* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
-•* [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
-•* [`AMX_GetEntryPrefixLinear`](#AMX_GetEntryPrefixLinear)
-•* [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
-•* [`AMX_GetCount`](#AMX_GetCount)
-•* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
+* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
+* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
+* [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
+* [`AMX_GetEntryPrefixLinear`](#AMX_GetEntryPrefixLinear)
+* [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
+* [`AMX_GetCount`](#AMX_GetCount)
+* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
 
 #### Depends on
-•* [`AMX_HEADER_LIBRARIES`](#AMX_HEADER_LIBRARIES)
-•* [`AMX_HEADER_NAMETABLE`](#AMX_HEADER_NAMETABLE)
-•* [`AMX_HEADER_NATIVES`](#AMX_HEADER_NATIVES)
-•* [`AMX_HEADER_PUBLICS`](#AMX_HEADER_PUBLICS)
-•* [`AMX_HEADER_PUBVARS`](#AMX_HEADER_PUBVARS)
-•* [`AMX_HEADER_TAGS`](#AMX_HEADER_TAGS)
-•* [`AMX_TABLE_LIBRARIES`](#AMX_TABLE_LIBRARIES)
-•* [`AMX_TABLE_NATIVES`](#AMX_TABLE_NATIVES)
-•* [`AMX_TABLE_PUBLICS`](#AMX_TABLE_PUBLICS)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-•* [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
-•* [`__defsize_cells`](#__defsize_cells)
+* [`AMX_HEADER_LIBRARIES`](#AMX_HEADER_LIBRARIES)
+* [`AMX_HEADER_NAMETABLE`](#AMX_HEADER_NAMETABLE)
+* [`AMX_HEADER_NATIVES`](#AMX_HEADER_NATIVES)
+* [`AMX_HEADER_PUBLICS`](#AMX_HEADER_PUBLICS)
+* [`AMX_HEADER_PUBVARS`](#AMX_HEADER_PUBVARS)
+* [`AMX_HEADER_TAGS`](#AMX_HEADER_TAGS)
+* [`AMX_TABLE_LIBRARIES`](#AMX_TABLE_LIBRARIES)
+* [`AMX_TABLE_NATIVES`](#AMX_TABLE_NATIVES)
+* [`AMX_TABLE_PUBLICS`](#AMX_TABLE_PUBLICS)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
+* [`__defsize_cells`](#__defsize_cells)
 
 #### Estimated stack usage
 
@@ -310,11 +310,11 @@ The number of entries in this table.
 
 
 #### Used by
-•* [`AMX_GetPubvarCount`](#AMX_GetPubvarCount)
-•* [`yQ_@y_amx_Libraries`](#yQ_@y_amx_Libraries)
+* [`AMX_GetPubvarCount`](#AMX_GetPubvarCount)
+* [`yQ_@y_amx_Libraries`](#yQ_@y_amx_Libraries)
 
 #### Depends on
-•* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
+* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
 
 #### Estimated stack usage
 
@@ -382,27 +382,27 @@ This scans through the given sorted table to find one matching the given name pa
 
 
 #### Used by
-•* [`AMX_GetPubvarEntry`](#AMX_GetPubvarEntry)
-•* [`AMX_GetNameBinary`](#AMX_GetNameBinary)
-•* [`AMX_GetPointerBinary`](#AMX_GetPointerBinary)
-•* [`Testing_Run`](#Testing_Run)
-•* [`Hooks_GetPreHooks`](#Hooks_GetPreHooks)
-•* [`Hooks_GetDefaultReturn`](#Hooks_GetDefaultReturn)
-•* [`y_hooks_funcidx2`](#y_hooks_funcidx2)
+* [`AMX_GetPubvarEntry`](#AMX_GetPubvarEntry)
+* [`AMX_GetNameBinary`](#AMX_GetNameBinary)
+* [`AMX_GetPointerBinary`](#AMX_GetPointerBinary)
+* [`Testing_Run`](#Testing_Run)
+* [`Hooks_GetPreHooks`](#Hooks_GetPreHooks)
+* [`Hooks_GetDefaultReturn`](#Hooks_GetDefaultReturn)
+* [`y_hooks_funcidx2`](#y_hooks_funcidx2)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
-•* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-•* [`Cell_ReverseBytes`](#Cell_ReverseBytes)
-•* [`FIXES_strcmp`](#FIXES_strcmp)
-•* [`FIXES_strfind`](#FIXES_strfind)
-•* [`FUNCTION_LENGTH`](#FUNCTION_LENGTH)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`__defsize_cells`](#__defsize_cells)
-•* [`cellbits`](#cellbits)
-•* [`cellbytes`](#cellbytes)
-•* [`cellmax`](#cellmax)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
+* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
+* [`Cell_ReverseBytes`](#Cell_ReverseBytes)
+* [`FIXES_strcmp`](#FIXES_strcmp)
+* [`FIXES_strfind`](#FIXES_strfind)
+* [`FUNCTION_LENGTH`](#FUNCTION_LENGTH)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`__defsize_cells`](#__defsize_cells)
+* [`cellbits`](#cellbits)
+* [`cellbytes`](#cellbytes)
+* [`cellmax`](#cellmax)
 
 #### Estimated stack usage
 
@@ -440,8 +440,8 @@ A pointer to this table entry.
 
 
 #### Depends on
-•* [`AMX_HEADER_NATIVES`](#AMX_HEADER_NATIVES)
-•* [`__defsize_cells`](#__defsize_cells)
+* [`AMX_HEADER_NATIVES`](#AMX_HEADER_NATIVES)
+* [`__defsize_cells`](#__defsize_cells)
 
 #### Estimated stack usage
 
@@ -479,11 +479,11 @@ A pointer to this table entry.
 
 
 #### Used by
-•* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
+* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
 
 #### Depends on
-•* [`AMX_HEADER_PUBLICS`](#AMX_HEADER_PUBLICS)
-•* [`__defsize_cells`](#__defsize_cells)
+* [`AMX_HEADER_PUBLICS`](#AMX_HEADER_PUBLICS)
+* [`__defsize_cells`](#__defsize_cells)
 
 #### Estimated stack usage
 
@@ -551,21 +551,21 @@ This scans through the given unsorted table to find one matching the given name 
 
 
 #### Used by
-•* [`AMX_GetNameLinear`](#AMX_GetNameLinear)
-•* [`AMX_GetPointerLinear`](#AMX_GetPointerLinear)
-•* [`AMX_GetTagByValue`](#AMX_GetTagByValue)
-•* [`yQ_@y_amx_Libraries`](#yQ_@y_amx_Libraries)
+* [`AMX_GetNameLinear`](#AMX_GetNameLinear)
+* [`AMX_GetPointerLinear`](#AMX_GetPointerLinear)
+* [`AMX_GetTagByValue`](#AMX_GetTagByValue)
+* [`yQ_@y_amx_Libraries`](#yQ_@y_amx_Libraries)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
-•* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-•* [`FIXES_strcmp`](#FIXES_strcmp)
-•* [`FIXES_strfind`](#FIXES_strfind)
-•* [`FUNCTION_LENGTH`](#FUNCTION_LENGTH)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`__defsize_cells`](#__defsize_cells)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
+* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
+* [`FIXES_strcmp`](#FIXES_strcmp)
+* [`FIXES_strfind`](#FIXES_strfind)
+* [`FUNCTION_LENGTH`](#FUNCTION_LENGTH)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`__defsize_cells`](#__defsize_cells)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -673,24 +673,24 @@ This scans through the given sorted table to find one whose name starts with the
 
 
 #### Used by
-•* [`AMX_GetPubvarEntryPrefix`](#AMX_GetPubvarEntryPrefix)
-•* [`AMX_GetNamePrefixBinary`](#AMX_GetNamePrefixBinary)
-•* [`AMX_GetPointerPrefixBinary`](#AMX_GetPointerPrefixBinary)
-•* [`Testing_Run`](#Testing_Run)
-•* [`Testing_Next`](#Testing_Next)
-•* [`Hooks_GetPreloadLibraries`](#Hooks_GetPreloadLibraries)
-•* [`CGen_OnCodeInit`](#CGen_OnCodeInit)
-•* [`yQ_@y_master_Space`](#yQ_@y_master_Space)
-•* [`Yield_OnCodeInit`](#Yield_OnCodeInit)
-•* [`_@yHOnYSIInit@FP`](#_@yHOnYSIInit@FP)
+* [`AMX_GetPubvarEntryPrefix`](#AMX_GetPubvarEntryPrefix)
+* [`AMX_GetNamePrefixBinary`](#AMX_GetNamePrefixBinary)
+* [`AMX_GetPointerPrefixBinary`](#AMX_GetPointerPrefixBinary)
+* [`Testing_Run`](#Testing_Run)
+* [`Testing_Next`](#Testing_Next)
+* [`Hooks_GetPreloadLibraries`](#Hooks_GetPreloadLibraries)
+* [`CGen_OnCodeInit`](#CGen_OnCodeInit)
+* [`yQ_@y_master_Space`](#yQ_@y_master_Space)
+* [`Yield_OnCodeInit`](#Yield_OnCodeInit)
+* [`_@yHOnYSIInit@FP`](#_@yHOnYSIInit@FP)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
-•* [`Cell_ReverseBytes`](#Cell_ReverseBytes)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`__defsize_cells`](#__defsize_cells)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
+* [`Cell_ReverseBytes`](#Cell_ReverseBytes)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`__defsize_cells`](#__defsize_cells)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -760,15 +760,15 @@ This scans through the given unsorted table to find one whose name starts with t
 
 
 #### Used by
-•* [`AMX_GetNamePrefixLinear`](#AMX_GetNamePrefixLinear)
-•* [`AMX_GetPointerPrefixLinear`](#AMX_GetPointerPrefixLinear)
+* [`AMX_GetNamePrefixLinear`](#AMX_GetNamePrefixLinear)
+* [`AMX_GetPointerPrefixLinear`](#AMX_GetPointerPrefixLinear)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`__defsize_cells`](#__defsize_cells)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`__defsize_cells`](#__defsize_cells)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -814,17 +814,17 @@ This scans through any table to look for names ending with the given four byte s
 
 
 #### Used by
-•* [`AMX_GetPubvarEntrySuffix`](#AMX_GetPubvarEntrySuffix)
-•* [`AMX_GetNameSuffix`](#AMX_GetNameSuffix)
-•* [`AMX_GetPointerSuffix`](#AMX_GetPointerSuffix)
+* [`AMX_GetPubvarEntrySuffix`](#AMX_GetPubvarEntrySuffix)
+* [`AMX_GetNameSuffix`](#AMX_GetNameSuffix)
+* [`AMX_GetPointerSuffix`](#AMX_GetPointerSuffix)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`__defsize_cells`](#__defsize_cells)
-•* [`cellbits`](#cellbits)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`__defsize_cells`](#__defsize_cells)
+* [`cellbits`](#cellbits)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -858,16 +858,16 @@ The address in the nametable of the first string name referenced by this table. 
 
 
 #### Used by
-•* [`AMX_GetPublicStringSpace`](#AMX_GetPublicStringSpace)
-•* [`AMX_GetNativeStringSpace`](#AMX_GetNativeStringSpace)
+* [`AMX_GetPublicStringSpace`](#AMX_GetPublicStringSpace)
+* [`AMX_GetNativeStringSpace`](#AMX_GetNativeStringSpace)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
-•* [`AMX_GetEntryFromPublicIndex`](#AMX_GetEntryFromPublicIndex)
-•* [`AMX_ReadLength`](#AMX_ReadLength)
-•* [`AMX_TABLE_PUBLICS`](#AMX_TABLE_PUBLICS)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetBaseCount`](#AMX_GetBaseCount)
+* [`AMX_GetEntryFromPublicIndex`](#AMX_GetEntryFromPublicIndex)
+* [`AMX_ReadLength`](#AMX_ReadLength)
+* [`AMX_TABLE_PUBLICS`](#AMX_TABLE_PUBLICS)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -909,15 +909,15 @@ The address in the nametable of the first string name referenced by this table. 
 
 
 #### Used by
-•* [`AMX_GetPublicStringSpace`](#AMX_GetPublicStringSpace)
-•* [`AMX_GetNativeStringSpace`](#AMX_GetNativeStringSpace)
-•* [`AMX_GetLibraryStringSpace`](#AMX_GetLibraryStringSpace)
-•* [`AMX_GetPubVarStringSpace`](#AMX_GetPubVarStringSpace)
-•* [`AMX_GetTagStringSpace`](#AMX_GetTagStringSpace)
+* [`AMX_GetPublicStringSpace`](#AMX_GetPublicStringSpace)
+* [`AMX_GetNativeStringSpace`](#AMX_GetNativeStringSpace)
+* [`AMX_GetLibraryStringSpace`](#AMX_GetLibraryStringSpace)
+* [`AMX_GetPubVarStringSpace`](#AMX_GetPubVarStringSpace)
+* [`AMX_GetTagStringSpace`](#AMX_GetTagStringSpace)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -951,14 +951,14 @@ The address of the AMX in the server.
 
 
 #### Used by
-•* [`Debug_OnCodeInit`](#Debug_OnCodeInit)
+* [`Debug_OnCodeInit`](#Debug_OnCodeInit)
 
 #### Depends on
-•* [`AMX_DoNothing`](#AMX_DoNothing)
-•* [`AMX_HEADER_COD`](#AMX_HEADER_COD)
-•* [`__cip`](#__cip)
-•* [`__dat`](#__dat)
-•* [`__m3_cells`](#__m3_cells)
+* [`AMX_DoNothing`](#AMX_DoNothing)
+* [`AMX_HEADER_COD`](#AMX_HEADER_COD)
+* [`__cip`](#__cip)
+* [`__dat`](#__dat)
+* [`__m3_cells`](#__m3_cells)
 
 #### Estimated stack usage
 
@@ -996,10 +996,10 @@ The passed address, in the server not the AMX.
 
 
 #### Depends on
-•* [`AMX_REAL_DATA`](#AMX_REAL_DATA)
-•* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
-•* [`__args_offset`](#__args_offset)
-•* [`__param0_offset`](#__param0_offset)
+* [`AMX_REAL_DATA`](#AMX_REAL_DATA)
+* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__args_offset`](#__args_offset)
+* [`__param0_offset`](#__param0_offset)
 
 #### Estimated stack usage
 
@@ -1037,12 +1037,12 @@ The length of the name of this entry.
 
 
 #### Used by
-•* [`CGen_OnCodeInit`](#CGen_OnCodeInit)
+* [`CGen_OnCodeInit`](#CGen_OnCodeInit)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_ReadLength`](#AMX_ReadLength)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_ReadLength`](#AMX_ReadLength)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -1076,12 +1076,12 @@ The number of bytes used by all library names in the nametable.
 
 
 #### Used by
-•* [`yQ_@y_master_Space`](#yQ_@y_master_Space)
+* [`yQ_@y_master_Space`](#yQ_@y_master_Space)
 
 #### Depends on
-•* [`AMX_GetFirstString`](#AMX_GetFirstString)
-•* [`AMX_TABLE_LIBRARIES`](#AMX_TABLE_LIBRARIES)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetFirstString`](#AMX_GetFirstString)
+* [`AMX_TABLE_LIBRARIES`](#AMX_TABLE_LIBRARIES)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -1149,16 +1149,16 @@ This scans through the given sorted table to find one whose name contains the gi
 
 
 #### Used by
-•* [`AMX_GetPubvarName`](#AMX_GetPubvarName)
-•* [`AMX_DumpHeader`](#AMX_DumpHeader)
-•* [`y_hooks_funcidx2`](#y_hooks_funcidx2)
+* [`AMX_GetPubvarName`](#AMX_GetPubvarName)
+* [`AMX_DumpHeader`](#AMX_DumpHeader)
+* [`y_hooks_funcidx2`](#y_hooks_funcidx2)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
-•* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
+* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -1226,11 +1226,11 @@ This scans through the given unsorted table to find one whose name contains the 
 
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
-•* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
+* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -1283,14 +1283,14 @@ This scans through the given sorted table to find the next entry matching the gi
 
 
 #### Used by
-•* [`AMX_GetPubvarNamePrefix`](#AMX_GetPubvarNamePrefix)
+* [`AMX_GetPubvarNamePrefix`](#AMX_GetPubvarNamePrefix)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
-•* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
+* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -1343,11 +1343,11 @@ This scans through the given unsorted table to find the next entry matching the 
 
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetEntryPrefixLinear`](#AMX_GetEntryPrefixLinear)
-•* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetEntryPrefixLinear`](#AMX_GetEntryPrefixLinear)
+* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -1393,14 +1393,14 @@ This scans through any table to look for names ending with the given four byte s
 
 
 #### Used by
-•* [`AMX_GetPubvarNameSuffix`](#AMX_GetPubvarNameSuffix)
+* [`AMX_GetPubvarNameSuffix`](#AMX_GetPubvarNameSuffix)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
-•* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
+* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -1438,8 +1438,8 @@ The index (i.e the position in the table) of this native function entry.
 
 
 #### Depends on
-•* [`AMX_HEADER_NATIVES`](#AMX_HEADER_NATIVES)
-•* [`__defsize_cells`](#__defsize_cells)
+* [`AMX_HEADER_NATIVES`](#AMX_HEADER_NATIVES)
+* [`__defsize_cells`](#__defsize_cells)
 
 #### Estimated stack usage
 
@@ -1473,12 +1473,12 @@ The number of bytes used by all native function names in the nametable.
 
 
 #### Used by
-•* [`yQ_@y_master_Space`](#yQ_@y_master_Space)
+* [`yQ_@y_master_Space`](#yQ_@y_master_Space)
 
 #### Depends on
-•* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
-•* [`AMX_GetFirstString`](#AMX_GetFirstString)
-•* [`AMX_TABLE_LIBRARIES`](#AMX_TABLE_LIBRARIES)
+* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
+* [`AMX_GetFirstString`](#AMX_GetFirstString)
+* [`AMX_TABLE_LIBRARIES`](#AMX_TABLE_LIBRARIES)
 
 #### Estimated stack usage
 
@@ -1532,13 +1532,13 @@ This scans through the given sorted table to find one whose name includes or exa
 
 
 #### Used by
-•* [`AMX_GetPubvarPointer`](#AMX_GetPubvarPointer)
-•* [`AMX_GetValueBinary`](#AMX_GetValueBinary)
-•* [`CTRL_FoundLCTRL`](#CTRL_FoundLCTRL)
-•* [`CTRL_FoundSCTRL`](#CTRL_FoundSCTRL)
+* [`AMX_GetPubvarPointer`](#AMX_GetPubvarPointer)
+* [`AMX_GetValueBinary`](#AMX_GetValueBinary)
+* [`CTRL_FoundLCTRL`](#CTRL_FoundLCTRL)
+* [`CTRL_FoundSCTRL`](#CTRL_FoundSCTRL)
 
 #### Depends on
-•* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
+* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
 
 #### Estimated stack usage
 
@@ -1592,10 +1592,10 @@ This scans through the given unsorted table to find one whose name includes or e
 
 
 #### Used by
-•* [`AMX_GetValueLinear`](#AMX_GetValueLinear)
+* [`AMX_GetValueLinear`](#AMX_GetValueLinear)
 
 #### Depends on
-•* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
+* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
 
 #### Estimated stack usage
 
@@ -1648,22 +1648,22 @@ This scans through the given sorted table to find the next entry matching the gi
 
 
 #### Used by
-•* [`AMX_GetPubvarPointerPrefix`](#AMX_GetPubvarPointerPrefix)
-•* [`AMX_GetValuePrefixBinary`](#AMX_GetValuePrefixBinary)
-•* [`ScriptInit_CodeInitFuncs_`](#ScriptInit_CodeInitFuncs_)
-•* [`ScriptInit_MainInitFuncs_`](#ScriptInit_MainInitFuncs_)
-•* [`ScriptInit_PreInitFuncs_`](#ScriptInit_PreInitFuncs_)
-•* [`ScriptInit_PostInitFuncs_`](#ScriptInit_PostInitFuncs_)
-•* [`ScriptInit_PreExitFuncs_`](#ScriptInit_PreExitFuncs_)
-•* [`ScriptInit_PostExitFuncs_`](#ScriptInit_PostExitFuncs_)
-•* [`Yield_OnCodeInit`](#Yield_OnCodeInit)
-•* [`Timers_OnCodeInit`](#Timers_OnCodeInit)
-•* [`_@yHOnYSIInit@FN`](#_@yHOnYSIInit@FN)
-•* [`_yGITest`](#_yGITest)
-•* [`_yGIYCMD`](#_yGIYCMD)
+* [`AMX_GetPubvarPointerPrefix`](#AMX_GetPubvarPointerPrefix)
+* [`AMX_GetValuePrefixBinary`](#AMX_GetValuePrefixBinary)
+* [`ScriptInit_CodeInitFuncs_`](#ScriptInit_CodeInitFuncs_)
+* [`ScriptInit_MainInitFuncs_`](#ScriptInit_MainInitFuncs_)
+* [`ScriptInit_PreInitFuncs_`](#ScriptInit_PreInitFuncs_)
+* [`ScriptInit_PostInitFuncs_`](#ScriptInit_PostInitFuncs_)
+* [`ScriptInit_PreExitFuncs_`](#ScriptInit_PreExitFuncs_)
+* [`ScriptInit_PostExitFuncs_`](#ScriptInit_PostExitFuncs_)
+* [`Yield_OnCodeInit`](#Yield_OnCodeInit)
+* [`Timers_OnCodeInit`](#Timers_OnCodeInit)
+* [`_@yHOnYSIInit@FN`](#_@yHOnYSIInit@FN)
+* [`_yGITest`](#_yGITest)
+* [`_yGIYCMD`](#_yGIYCMD)
 
 #### Depends on
-•* [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
+* [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
 
 #### Estimated stack usage
 
@@ -1716,10 +1716,10 @@ This scans through the given unsorted table to find the next entry matching the 
 
 
 #### Used by
-•* [`AMX_GetValuePrefixLinear`](#AMX_GetValuePrefixLinear)
+* [`AMX_GetValuePrefixLinear`](#AMX_GetValuePrefixLinear)
 
 #### Depends on
-•* [`AMX_GetEntryPrefixLinear`](#AMX_GetEntryPrefixLinear)
+* [`AMX_GetEntryPrefixLinear`](#AMX_GetEntryPrefixLinear)
 
 #### Estimated stack usage
 
@@ -1765,11 +1765,11 @@ This scans through any table to look for names ending with the given four byte s
 
 
 #### Used by
-•* [`AMX_GetPubvarPointerSuffix`](#AMX_GetPubvarPointerSuffix)
-•* [`AMX_GetValueSuffix`](#AMX_GetValueSuffix)
+* [`AMX_GetPubvarPointerSuffix`](#AMX_GetPubvarPointerSuffix)
+* [`AMX_GetValueSuffix`](#AMX_GetValueSuffix)
 
 #### Depends on
-•* [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
+* [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
 
 #### Estimated stack usage
 
@@ -1803,9 +1803,9 @@ The number of bytes used by all public variable names in the nametable.
 
 
 #### Depends on
-•* [`AMX_GetFirstString`](#AMX_GetFirstString)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
-•* [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
+* [`AMX_GetFirstString`](#AMX_GetFirstString)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
 
 #### Estimated stack usage
 
@@ -1848,8 +1848,8 @@ The value returned corresponds to the return value of `funcidx`.
 
 
 #### Depends on
-•* [`AMX_HEADER_PUBLICS`](#AMX_HEADER_PUBLICS)
-•* [`__defsize_cells`](#__defsize_cells)
+* [`AMX_HEADER_PUBLICS`](#AMX_HEADER_PUBLICS)
+* [`__defsize_cells`](#__defsize_cells)
 
 #### Estimated stack usage
 
@@ -1883,9 +1883,9 @@ The number of bytes used by all public function names in the nametable.
 
 
 #### Depends on
-•* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
-•* [`AMX_GetFirstString`](#AMX_GetFirstString)
-•* [`AMX_TABLE_PUBLICS`](#AMX_TABLE_PUBLICS)
+* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
+* [`AMX_GetFirstString`](#AMX_GetFirstString)
+* [`AMX_TABLE_PUBLICS`](#AMX_TABLE_PUBLICS)
 
 #### Estimated stack usage
 
@@ -1919,8 +1919,8 @@ The number of entries in this table.
 
 
 #### Depends on
-•* [`AMX_GetCount`](#AMX_GetCount)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetCount`](#AMX_GetCount)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -1981,8 +1981,8 @@ This scans through the public variables table to find one matching the given nam
 
 
 #### Depends on
-•* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2045,8 +2045,8 @@ This scans through the public variables table to find one whose name starts with
 
 
 #### Depends on
-•* [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2091,8 +2091,8 @@ See *AMX_GetEntrySuffix*.
 
 
 #### Depends on
-•* [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2138,8 +2138,8 @@ See *AMX_GetNameBinary*.
 
 
 #### Depends on
-•* [`AMX_GetNameBinary`](#AMX_GetNameBinary)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetNameBinary`](#AMX_GetNameBinary)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2185,8 +2185,8 @@ See `AMX_GetNamePrefixBinary`
 
 
 #### Depends on
-•* [`AMX_GetNamePrefixBinary`](#AMX_GetNamePrefixBinary)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetNamePrefixBinary`](#AMX_GetNamePrefixBinary)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2231,8 +2231,8 @@ See *AMX_GetNameSuffix*.
 
 
 #### Depends on
-•* [`AMX_GetNameSuffix`](#AMX_GetNameSuffix)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetNameSuffix`](#AMX_GetNameSuffix)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2279,8 +2279,8 @@ See `AMX_GetPointerBinary`.
 
 
 #### Depends on
-•* [`AMX_GetPointerBinary`](#AMX_GetPointerBinary)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetPointerBinary`](#AMX_GetPointerBinary)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2326,7 +2326,7 @@ See `AMX_GetPointerPrefixBinary`
 
 
 #### Depends on
-•* [`AMX_GetPointerPrefixBinary`](#AMX_GetPointerPrefixBinary)
+* [`AMX_GetPointerPrefixBinary`](#AMX_GetPointerPrefixBinary)
 
 #### Estimated stack usage
 
@@ -2371,8 +2371,8 @@ See *AMX_GetPointerSuffix*.
 
 
 #### Depends on
-•* [`AMX_GetPointerSuffix`](#AMX_GetPointerSuffix)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetPointerSuffix`](#AMX_GetPointerSuffix)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2419,8 +2419,8 @@ See `AMX_GetValueBinary`.
 
 
 #### Depends on
-•* [`AMX_GetValueBinary`](#AMX_GetValueBinary)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetValueBinary`](#AMX_GetValueBinary)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2465,8 +2465,8 @@ See `AMX_GetValuePrefixBinary`.
 
 
 #### Depends on
-•* [`AMX_GetValuePrefixBinary`](#AMX_GetValuePrefixBinary)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetValuePrefixBinary`](#AMX_GetValuePrefixBinary)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2511,8 +2511,8 @@ See *AMX_GetNameSuffix*.
 
 
 #### Depends on
-•* [`AMX_GetValueSuffix`](#AMX_GetValueSuffix)
-•* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
+* [`AMX_GetValueSuffix`](#AMX_GetValueSuffix)
+* [`AMX_TABLE_PUBVARS`](#AMX_TABLE_PUBVARS)
 
 #### Estimated stack usage
 
@@ -2550,9 +2550,9 @@ The passed address in the AMX.
 
 
 #### Depends on
-•* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
-•* [`__args_offset`](#__args_offset)
-•* [`__param0_offset`](#__param0_offset)
+* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__args_offset`](#__args_offset)
+* [`__param0_offset`](#__param0_offset)
 
 #### Estimated stack usage
 
@@ -2597,17 +2597,17 @@ Copies a C string in AMX memory out to a packed string. The pointer does not poi
 
 
 #### Used by
-•* [`Testing_Run`](#Testing_Run)
-•* [`Testing_Next`](#Testing_Next)
-•* [`Hooks_GetPreloadLibraries`](#Hooks_GetPreloadLibraries)
-•* [`Yield_OnCodeInit`](#Yield_OnCodeInit)
-•* [`_@yHOnYSIInit@FP`](#_@yHOnYSIInit@FP)
+* [`Testing_Run`](#Testing_Run)
+* [`Testing_Next`](#Testing_Next)
+* [`Hooks_GetPreloadLibraries`](#Hooks_GetPreloadLibraries)
+* [`Yield_OnCodeInit`](#Yield_OnCodeInit)
+* [`_@yHOnYSIInit@FP`](#_@yHOnYSIInit@FP)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -2647,16 +2647,16 @@ Get the original string (code) name of a tag from its ID.
 
 
 #### Used by
-•* [`Debug_PrintQ_IMPL`](#Debug_PrintQ_IMPL)
+* [`Debug_PrintQ_IMPL`](#Debug_PrintQ_IMPL)
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
-•* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-•* [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`cellbytes`](#cellbytes)
-•* [`strunpack`](#strunpack)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
+* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
+* [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`cellbytes`](#cellbytes)
+* [`strunpack`](#strunpack)
 
 #### Estimated stack usage
 
@@ -2690,10 +2690,10 @@ The number of bytes used by all tag names in the nametable.
 
 
 #### Depends on
-•* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
-•* [`AMX_GetFirstString`](#AMX_GetFirstString)
-•* [`AMX_HEADER_COD`](#AMX_HEADER_COD)
-•* [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
+* [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_GetFirstString`](#AMX_GetFirstString)
+* [`AMX_HEADER_COD`](#AMX_HEADER_COD)
+* [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
 
 #### Estimated stack usage
 
@@ -2747,10 +2747,10 @@ This scans through the given sorted table to find one whose name includes or exa
 
 
 #### Used by
-•* [`AMX_GetPubvarValue`](#AMX_GetPubvarValue)
+* [`AMX_GetPubvarValue`](#AMX_GetPubvarValue)
 
 #### Depends on
-•* [`AMX_GetPointerBinary`](#AMX_GetPointerBinary)
+* [`AMX_GetPointerBinary`](#AMX_GetPointerBinary)
 
 #### Estimated stack usage
 
@@ -2804,7 +2804,7 @@ This scans through the given unsorted table to find one whose name includes or e
 
 
 #### Depends on
-•* [`AMX_GetPointerLinear`](#AMX_GetPointerLinear)
+* [`AMX_GetPointerLinear`](#AMX_GetPointerLinear)
 
 #### Estimated stack usage
 
@@ -2857,10 +2857,10 @@ This scans through the given sorted table to find the next entry matching the gi
 
 
 #### Used by
-•* [`AMX_GetPubvarValuePrefix`](#AMX_GetPubvarValuePrefix)
+* [`AMX_GetPubvarValuePrefix`](#AMX_GetPubvarValuePrefix)
 
 #### Depends on
-•* [`AMX_GetPointerPrefixBinary`](#AMX_GetPointerPrefixBinary)
+* [`AMX_GetPointerPrefixBinary`](#AMX_GetPointerPrefixBinary)
 
 #### Estimated stack usage
 
@@ -2913,7 +2913,7 @@ This scans through the given unsorted table to find the next entry matching the 
 
 
 #### Depends on
-•* [`AMX_GetPointerPrefixLinear`](#AMX_GetPointerPrefixLinear)
+* [`AMX_GetPointerPrefixLinear`](#AMX_GetPointerPrefixLinear)
 
 #### Estimated stack usage
 
@@ -2959,10 +2959,10 @@ This scans through any table to look for names ending with the given four byte s
 
 
 #### Used by
-•* [`AMX_GetPubvarValueSuffix`](#AMX_GetPubvarValueSuffix)
+* [`AMX_GetPubvarValueSuffix`](#AMX_GetPubvarValueSuffix)
 
 #### Depends on
-•* [`AMX_GetPointerSuffix`](#AMX_GetPointerSuffix)
+* [`AMX_GetPointerSuffix`](#AMX_GetPointerSuffix)
 
 #### Estimated stack usage
 
@@ -3002,7 +3002,7 @@ Read data out of a memory location, which may be outside the bounds of DAT.
 
 
 #### Depends on
-•* [`__1_cell`](#__1_cell)
+* [`__1_cell`](#__1_cell)
 
 #### Estimated stack usage
 
@@ -3045,14 +3045,14 @@ Operates on C strings, as found in the header, not pawn packed strings, which ha
 
 
 #### Used by
-•* [`AMX_GetLengthFromEntry`](#AMX_GetLengthFromEntry)
-•* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
+* [`AMX_GetLengthFromEntry`](#AMX_GetLengthFromEntry)
+* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
 
 #### Depends on
-•* [`YSI_g_c80s`](#YSI_g_c80s)
-•* [`YSI_g_cFEs`](#YSI_g_cFEs)
-•* [`cellbits`](#cellbits)
-•* [`cellbytes`](#cellbytes)
+* [`YSI_g_c80s`](#YSI_g_c80s)
+* [`YSI_g_cFEs`](#YSI_g_cFEs)
+* [`cellbits`](#cellbits)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -3097,24 +3097,24 @@ Copies a C string in AMX memory out to a packed string. Mainly used to read func
 
 
 #### Used by
-•* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
-•* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
-•* [`AMX_GetNameBinary`](#AMX_GetNameBinary)
-•* [`AMX_GetNameLinear`](#AMX_GetNameLinear)
-•* [`AMX_GetNamePrefixBinary`](#AMX_GetNamePrefixBinary)
-•* [`AMX_GetNamePrefixLinear`](#AMX_GetNamePrefixLinear)
-•* [`AMX_GetNameSuffix`](#AMX_GetNameSuffix)
-•* [`AMX_GetStringFromEntry`](#AMX_GetStringFromEntry)
-•* [`AMX_ReadString`](#AMX_ReadString)
-•* [`AMX_GetTagByValue`](#AMX_GetTagByValue)
-•* [`yQ_@y_amx_StringRead2B`](#yQ_@y_amx_StringRead2B)
-•* [`Hooks_Collate`](#Hooks_Collate)
+* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
+* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
+* [`AMX_GetNameBinary`](#AMX_GetNameBinary)
+* [`AMX_GetNameLinear`](#AMX_GetNameLinear)
+* [`AMX_GetNamePrefixBinary`](#AMX_GetNamePrefixBinary)
+* [`AMX_GetNamePrefixLinear`](#AMX_GetNamePrefixLinear)
+* [`AMX_GetNameSuffix`](#AMX_GetNameSuffix)
+* [`AMX_GetStringFromEntry`](#AMX_GetStringFromEntry)
+* [`AMX_ReadString`](#AMX_ReadString)
+* [`AMX_GetTagByValue`](#AMX_GetTagByValue)
+* [`yQ_@y_amx_StringRead2B`](#yQ_@y_amx_StringRead2B)
+* [`Hooks_Collate`](#Hooks_Collate)
 
 #### Depends on
-•* [`YSI_g_c80s`](#YSI_g_c80s)
-•* [`YSI_g_cFEs`](#YSI_g_cFEs)
-•* [`cellbytes`](#cellbytes)
-•* [`swapchars`](#swapchars)
+* [`YSI_g_c80s`](#YSI_g_c80s)
+* [`YSI_g_cFEs`](#YSI_g_cFEs)
+* [`cellbytes`](#cellbytes)
+* [`swapchars`](#swapchars)
 
 #### Estimated stack usage
 
@@ -3159,10 +3159,10 @@ Copies a C string in AMX memory out to a packed string. Mainly used to read func
 
 
 #### Used by
-•* [`yQ_@y_amx_StringRead1B`](#yQ_@y_amx_StringRead1B)
+* [`yQ_@y_amx_StringRead1B`](#yQ_@y_amx_StringRead1B)
 
 #### Depends on
-•* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
+* [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 
 #### Estimated stack usage
 
@@ -3207,10 +3207,10 @@ Copies a C string in AMX memory out to an unpacked string. Mainly used to read f
 
 
 #### Used by
-•* [`yQ_@y_amx_StringRead3B`](#yQ_@y_amx_StringRead3B)
+* [`yQ_@y_amx_StringRead3B`](#yQ_@y_amx_StringRead3B)
 
 #### Depends on
-•* [`cellbytes`](#cellbytes)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -3251,10 +3251,10 @@ An extremely poor-mans version of codescan. Just takes a pure array of opcodes a
 
 
 #### Depends on
-•* [`AMX_HEADER_COD`](#AMX_HEADER_COD)
-•* [`AMX_HEADER_DAT`](#AMX_HEADER_DAT)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_HEADER_COD`](#AMX_HEADER_COD)
+* [`AMX_HEADER_DAT`](#AMX_HEADER_DAT)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -3295,10 +3295,10 @@ Search for the given pattern in the data segment. Return the address of the matc
 
 
 #### Depends on
-•* [`AMX_HEADER_DAT`](#AMX_HEADER_DAT)
-•* [`AMX_HEADER_HEA`](#AMX_HEADER_HEA)
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
-•* [`cellbytes`](#cellbytes)
+* [`AMX_HEADER_DAT`](#AMX_HEADER_DAT)
+* [`AMX_HEADER_HEA`](#AMX_HEADER_HEA)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`cellbytes`](#cellbytes)
 
 #### Estimated stack usage
 
@@ -3338,7 +3338,7 @@ Write data to a memory location, which may be outside the bounds of DAT.
 
 
 #### Depends on
-•* [`__1_cell`](#__1_cell)
+* [`__1_cell`](#__1_cell)
 
 #### Estimated stack usage
 
@@ -3382,7 +3382,7 @@ Copies a packed string in to AMX memory, as a C string. Mainly used to write fun
 
 
 #### Depends on
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 
 #### Estimated stack usage
 
@@ -3426,13 +3426,13 @@ Copies an unpacked string in to AMX memory, as a C string. Mainly used to write 
 
 
 #### Used by
-•* [`yQ_@y_amx_StringRead1B`](#yQ_@y_amx_StringRead1B)
-•* [`yQ_@y_amx_StringRead2B`](#yQ_@y_amx_StringRead2B)
-•* [`yQ_@y_amx_StringRead3B`](#yQ_@y_amx_StringRead3B)
-•* [`Hooks_GetPointerRewrite`](#Hooks_GetPointerRewrite)
+* [`yQ_@y_amx_StringRead1B`](#yQ_@y_amx_StringRead1B)
+* [`yQ_@y_amx_StringRead2B`](#yQ_@y_amx_StringRead2B)
+* [`yQ_@y_amx_StringRead3B`](#yQ_@y_amx_StringRead3B)
+* [`Hooks_GetPointerRewrite`](#Hooks_GetPointerRewrite)
 
 #### Depends on
-•* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 
 #### Estimated stack usage
 
