@@ -1,4 +1,5 @@
 y_amx - v1.0
+
 ==========================================
 
 (c) 2022 YSI contibutors, licensed under MPL 1.1
@@ -28,10 +29,6 @@ Allows a script access to information about itself, such as function names. This
 |  **Value**  |  `-16`  | 
 
 
-#### Used by
-
-* [`Callback_CallHandler_`](#Callback_CallHandler_)
-
 
 
 
@@ -49,11 +46,6 @@ Allows a script access to information about itself, such as function names. This
 
 |  **Value**  |  `-28`  | 
 
-
-#### Used by
-
-* [`Hooks_RegisterNPSHook`](#Hooks_RegisterNPSHook)
-* [`_yH@`](#_yH@)
 
 
 
@@ -73,11 +65,6 @@ Allows a script access to information about itself, such as function names. This
 |  **Value**  |  `-4`  | 
 
 
-#### Used by
-
-* [`operator~(I@T:)`](#operator~(I@T:))
-* [`Callback_CallHandler_`](#Callback_CallHandler_)
-
 
 
 
@@ -95,11 +82,6 @@ Allows a script access to information about itself, such as function names. This
 
 |  **Value**  |  `-8`  | 
 
-
-#### Used by
-
-* [`Callback_CallHandler_`](#Callback_CallHandler_)
-* [`Inline_GeneratePostamble`](#Inline_GeneratePostamble)
 
 
 
@@ -132,10 +114,6 @@ AMX_Deref(addr)
 
 An array whose data is at `addr`. Converts a pointer to a pawn usable array. 
 
-
-#### Used by
-* [`Testing_Next`](#Testing_Next)
-* [`Testing_RunAll`](#Testing_RunAll)
 
 #### Depends on
 * [`AMX_Deref`](#AMX_Deref)
@@ -171,9 +149,6 @@ AMX_DoNothing()
 
 A dummy function used to get the address of. 
 
-
-#### Used by
-* [`AMX_GetGlobal`](#AMX_GetGlobal)
 
 #### Estimated stack usage
 
@@ -251,15 +226,6 @@ AMX_GetBaseCount(table, &base, &count)
 Get information about one of the tables in the AMX header. These are lists of address/name pairs. The address is one cell long, and points to where in code/data/vm the corresponding symbol is located. The name is `defsize - cellbytes` long, which may not be exactly one cell (all of y_amx assumes that this value is known at compile-time, but amx_assembly more correctly reads it from the header), and points to the start of the name as a C string in the AMX header's nametable. This function just gets where in memory (relative to DAT) the table starts, and how many items there are in the table. 
 
 
-#### Used by
-* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
-* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
-* [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
-* [`AMX_GetEntryPrefixLinear`](#AMX_GetEntryPrefixLinear)
-* [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
-* [`AMX_GetCount`](#AMX_GetCount)
-* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
-
 #### Depends on
 * [`AMX_HEADER_LIBRARIES`](#AMX_HEADER_LIBRARIES)
 * [`AMX_HEADER_NAMETABLE`](#AMX_HEADER_NAMETABLE)
@@ -308,10 +274,6 @@ AMX_GetCount(table)
 
 The number of entries in this table. 
 
-
-#### Used by
-* [`AMX_GetPubvarCount`](#AMX_GetPubvarCount)
-* [`yQ_@y_amx_Libraries`](#yQ_@y_amx_Libraries)
 
 #### Depends on
 * [`AMX_GetBaseCount`](#AMX_GetBaseCount)
@@ -380,15 +342,6 @@ This scans through the given sorted table to find one matching the given name pa
 
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
 
-
-#### Used by
-* [`AMX_GetPubvarEntry`](#AMX_GetPubvarEntry)
-* [`AMX_GetNameBinary`](#AMX_GetNameBinary)
-* [`AMX_GetPointerBinary`](#AMX_GetPointerBinary)
-* [`Testing_Run`](#Testing_Run)
-* [`Hooks_GetPreHooks`](#Hooks_GetPreHooks)
-* [`Hooks_GetDefaultReturn`](#Hooks_GetDefaultReturn)
-* [`y_hooks_funcidx2`](#y_hooks_funcidx2)
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -478,9 +431,6 @@ AMX_GetEntryFromPublicIndex(index)
 A pointer to this table entry. 
 
 
-#### Used by
-* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
-
 #### Depends on
 * [`AMX_HEADER_PUBLICS`](#AMX_HEADER_PUBLICS)
 * [`__defsize_cells`](#__defsize_cells)
@@ -549,12 +499,6 @@ This scans through the given unsorted table to find one matching the given name 
 
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
 
-
-#### Used by
-* [`AMX_GetNameLinear`](#AMX_GetNameLinear)
-* [`AMX_GetPointerLinear`](#AMX_GetPointerLinear)
-* [`AMX_GetTagByValue`](#AMX_GetTagByValue)
-* [`yQ_@y_amx_Libraries`](#yQ_@y_amx_Libraries)
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -672,18 +616,6 @@ This scans through the given sorted table to find one whose name starts with the
  Prefixes are widely used in YSI as the names are sorted and so can be binary searched, the entries point to the start of the names, and once a prefix is passed there can be no more later (thanks to sorting). Thus binary prefix searches are extremely efficient. 
 
 
-#### Used by
-* [`AMX_GetPubvarEntryPrefix`](#AMX_GetPubvarEntryPrefix)
-* [`AMX_GetNamePrefixBinary`](#AMX_GetNamePrefixBinary)
-* [`AMX_GetPointerPrefixBinary`](#AMX_GetPointerPrefixBinary)
-* [`Testing_Run`](#Testing_Run)
-* [`Testing_Next`](#Testing_Next)
-* [`Hooks_GetPreloadLibraries`](#Hooks_GetPreloadLibraries)
-* [`CGen_OnCodeInit`](#CGen_OnCodeInit)
-* [`yQ_@y_master_Space`](#yQ_@y_master_Space)
-* [`Yield_OnCodeInit`](#Yield_OnCodeInit)
-* [`_@yHOnYSIInit@FP`](#_@yHOnYSIInit@FP)
-
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetBaseCount`](#AMX_GetBaseCount)
@@ -759,10 +691,6 @@ This scans through the given unsorted table to find one whose name starts with t
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
 
 
-#### Used by
-* [`AMX_GetNamePrefixLinear`](#AMX_GetNamePrefixLinear)
-* [`AMX_GetPointerPrefixLinear`](#AMX_GetPointerPrefixLinear)
-
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetBaseCount`](#AMX_GetBaseCount)
@@ -813,11 +741,6 @@ The next index (`idx`) to continue scanning from, or `0`.
 This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns the table entry. 
 
 
-#### Used by
-* [`AMX_GetPubvarEntrySuffix`](#AMX_GetPubvarEntrySuffix)
-* [`AMX_GetNameSuffix`](#AMX_GetNameSuffix)
-* [`AMX_GetPointerSuffix`](#AMX_GetPointerSuffix)
-
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetBaseCount`](#AMX_GetBaseCount)
@@ -856,10 +779,6 @@ AMX_GetFirstNativeString()
 
 The address in the nametable of the first string name referenced by this table. Same as `AMX_GetFirstString`, but specialised for natives as their pointers may be clobbered in some VM versions. 
 
-
-#### Used by
-* [`AMX_GetPublicStringSpace`](#AMX_GetPublicStringSpace)
-* [`AMX_GetNativeStringSpace`](#AMX_GetNativeStringSpace)
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -908,13 +827,6 @@ The address in the nametable of the first string name referenced by this table. 
 `AMX_GetFirstPublicString` `AMX_GetFirstLibraryString` `AMX_GetFirstPubVarString` `AMX_GetFirstTagString` 
 
 
-#### Used by
-* [`AMX_GetPublicStringSpace`](#AMX_GetPublicStringSpace)
-* [`AMX_GetNativeStringSpace`](#AMX_GetNativeStringSpace)
-* [`AMX_GetLibraryStringSpace`](#AMX_GetLibraryStringSpace)
-* [`AMX_GetPubVarStringSpace`](#AMX_GetPubVarStringSpace)
-* [`AMX_GetTagStringSpace`](#AMX_GetTagStringSpace)
-
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`cellbytes`](#cellbytes)
@@ -949,9 +861,6 @@ AMX_GetGlobal()
 
 The address of the AMX in the server. 
 
-
-#### Used by
-* [`Debug_OnCodeInit`](#Debug_OnCodeInit)
 
 #### Depends on
 * [`AMX_DoNothing`](#AMX_DoNothing)
@@ -1036,9 +945,6 @@ AMX_GetLengthFromEntry(tableEntry)
 The length of the name of this entry. 
 
 
-#### Used by
-* [`CGen_OnCodeInit`](#CGen_OnCodeInit)
-
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_ReadLength`](#AMX_ReadLength)
@@ -1074,9 +980,6 @@ AMX_GetLibraryStringSpace()
 
 The number of bytes used by all library names in the nametable. 
 
-
-#### Used by
-* [`yQ_@y_master_Space`](#yQ_@y_master_Space)
 
 #### Depends on
 * [`AMX_GetFirstString`](#AMX_GetFirstString)
@@ -1147,11 +1050,6 @@ This scans through the given sorted table to find one whose name contains the gi
 
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
 
-
-#### Used by
-* [`AMX_GetPubvarName`](#AMX_GetPubvarName)
-* [`AMX_DumpHeader`](#AMX_DumpHeader)
-* [`y_hooks_funcidx2`](#y_hooks_funcidx2)
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -1282,9 +1180,6 @@ This scans through the given sorted table to find the next entry matching the gi
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
 
 
-#### Used by
-* [`AMX_GetPubvarNamePrefix`](#AMX_GetPubvarNamePrefix)
-
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
@@ -1392,9 +1287,6 @@ The next index (`idx`) to continue scanning from, or `0`.
 This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns the full name. 
 
 
-#### Used by
-* [`AMX_GetPubvarNameSuffix`](#AMX_GetPubvarNameSuffix)
-
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
@@ -1472,9 +1364,6 @@ AMX_GetNativeStringSpace()
 The number of bytes used by all native function names in the nametable. 
 
 
-#### Used by
-* [`yQ_@y_master_Space`](#yQ_@y_master_Space)
-
 #### Depends on
 * [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
 * [`AMX_GetFirstString`](#AMX_GetFirstString)
@@ -1531,12 +1420,6 @@ This scans through the given sorted table to find one whose name includes or exa
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
 
 
-#### Used by
-* [`AMX_GetPubvarPointer`](#AMX_GetPubvarPointer)
-* [`AMX_GetValueBinary`](#AMX_GetValueBinary)
-* [`CTRL_FoundLCTRL`](#CTRL_FoundLCTRL)
-* [`CTRL_FoundSCTRL`](#CTRL_FoundSCTRL)
-
 #### Depends on
 * [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
 
@@ -1591,9 +1474,6 @@ This scans through the given unsorted table to find one whose name includes or e
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
 
 
-#### Used by
-* [`AMX_GetValueLinear`](#AMX_GetValueLinear)
-
 #### Depends on
 * [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
 
@@ -1646,21 +1526,6 @@ This scans through the given sorted table to find the next entry matching the gi
 
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
 
-
-#### Used by
-* [`AMX_GetPubvarPointerPrefix`](#AMX_GetPubvarPointerPrefix)
-* [`AMX_GetValuePrefixBinary`](#AMX_GetValuePrefixBinary)
-* [`ScriptInit_CodeInitFuncs_`](#ScriptInit_CodeInitFuncs_)
-* [`ScriptInit_MainInitFuncs_`](#ScriptInit_MainInitFuncs_)
-* [`ScriptInit_PreInitFuncs_`](#ScriptInit_PreInitFuncs_)
-* [`ScriptInit_PostInitFuncs_`](#ScriptInit_PostInitFuncs_)
-* [`ScriptInit_PreExitFuncs_`](#ScriptInit_PreExitFuncs_)
-* [`ScriptInit_PostExitFuncs_`](#ScriptInit_PostExitFuncs_)
-* [`Yield_OnCodeInit`](#Yield_OnCodeInit)
-* [`Timers_OnCodeInit`](#Timers_OnCodeInit)
-* [`_@yHOnYSIInit@FN`](#_@yHOnYSIInit@FN)
-* [`_yGITest`](#_yGITest)
-* [`_yGIYCMD`](#_yGIYCMD)
 
 #### Depends on
 * [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
@@ -1715,9 +1580,6 @@ This scans through the given unsorted table to find the next entry matching the 
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. Also note that the native name searches may not currently work correctly in all VM versions due to data clobbering. 
 
 
-#### Used by
-* [`AMX_GetValuePrefixLinear`](#AMX_GetValuePrefixLinear)
-
 #### Depends on
 * [`AMX_GetEntryPrefixLinear`](#AMX_GetEntryPrefixLinear)
 
@@ -1763,10 +1625,6 @@ The next index (`idx`) to continue scanning from, or `0`.
 
 This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns the data pointer. 
 
-
-#### Used by
-* [`AMX_GetPubvarPointerSuffix`](#AMX_GetPubvarPointerSuffix)
-* [`AMX_GetValueSuffix`](#AMX_GetValueSuffix)
 
 #### Depends on
 * [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
@@ -2596,13 +2454,6 @@ AMX_GetStringFromEntry(tableEntry, str[], size)
 Copies a C string in AMX memory out to a packed string. The pointer does not point straight to the string, but instead points to a header *entry*, i.e. part of a table with a data pointer and a name pointer. This thus abstracts the weirdness of the size of the name pointer, which may not be a whole cell. There is no unpacked equivalent. 
 
 
-#### Used by
-* [`Testing_Run`](#Testing_Run)
-* [`Testing_Next`](#Testing_Next)
-* [`Hooks_GetPreloadLibraries`](#Hooks_GetPreloadLibraries)
-* [`Yield_OnCodeInit`](#Yield_OnCodeInit)
-* [`_@yHOnYSIInit@FP`](#_@yHOnYSIInit@FP)
-
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
@@ -2645,9 +2496,6 @@ AMX_GetTagByValue(tag, name[], len)
 
 Get the original string (code) name of a tag from its ID. 
 
-
-#### Used by
-* [`Debug_PrintQ_IMPL`](#Debug_PrintQ_IMPL)
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
@@ -2745,9 +2593,6 @@ This scans through the given sorted table to find one whose name includes or exa
 
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
 
-
-#### Used by
-* [`AMX_GetPubvarValue`](#AMX_GetPubvarValue)
 
 #### Depends on
 * [`AMX_GetPointerBinary`](#AMX_GetPointerBinary)
@@ -2856,9 +2701,6 @@ This scans through the given sorted table to find the next entry matching the gi
  Note that amx_assembly now sorts the library and tag headers, so those could be binary searched, but this library cannot rely on that. 
 
 
-#### Used by
-* [`AMX_GetPubvarValuePrefix`](#AMX_GetPubvarValuePrefix)
-
 #### Depends on
 * [`AMX_GetPointerPrefixBinary`](#AMX_GetPointerPrefixBinary)
 
@@ -2958,9 +2800,6 @@ The next index (`idx`) to continue scanning from, or `0`.
 This scans through any table to look for names ending with the given four byte suffix. These suffixes are defined in the same way as the prefixes used by `AMX_GetPublicEntryPrefix` et. al, but the scanning is much harder because the full names must all be read. Unlike prefix scanning, suffix scanning is very inefficient. Returns data from the data pointer. 
 
 
-#### Used by
-* [`AMX_GetPubvarValueSuffix`](#AMX_GetPubvarValueSuffix)
-
 #### Depends on
 * [`AMX_GetPointerSuffix`](#AMX_GetPointerSuffix)
 
@@ -3044,10 +2883,6 @@ The length of the string.
 Operates on C strings, as found in the header, not pawn packed strings, which have their bytes reversed in a cell. 
 
 
-#### Used by
-* [`AMX_GetLengthFromEntry`](#AMX_GetLengthFromEntry)
-* [`AMX_GetFirstNativeString`](#AMX_GetFirstNativeString)
-
 #### Depends on
 * [`YSI_g_c80s`](#YSI_g_c80s)
 * [`YSI_g_cFEs`](#YSI_g_cFEs)
@@ -3095,20 +2930,6 @@ AMX_ReadPackedString(addr, str[], len)
 
 Copies a C string in AMX memory out to a packed string. Mainly used to read function names from the header, as they are not in pawn order. Uses a clever trick to detect `NULL` in four bytes at once. 
 
-
-#### Used by
-* [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
-* [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
-* [`AMX_GetNameBinary`](#AMX_GetNameBinary)
-* [`AMX_GetNameLinear`](#AMX_GetNameLinear)
-* [`AMX_GetNamePrefixBinary`](#AMX_GetNamePrefixBinary)
-* [`AMX_GetNamePrefixLinear`](#AMX_GetNamePrefixLinear)
-* [`AMX_GetNameSuffix`](#AMX_GetNameSuffix)
-* [`AMX_GetStringFromEntry`](#AMX_GetStringFromEntry)
-* [`AMX_ReadString`](#AMX_ReadString)
-* [`AMX_GetTagByValue`](#AMX_GetTagByValue)
-* [`yQ_@y_amx_StringRead2B`](#yQ_@y_amx_StringRead2B)
-* [`Hooks_Collate`](#Hooks_Collate)
 
 #### Depends on
 * [`YSI_g_c80s`](#YSI_g_c80s)
@@ -3158,9 +2979,6 @@ AMX_ReadString(addr, str[], len)
 Copies a C string in AMX memory out to a packed string. Mainly used to read function names from the header, as they are not in pawn order. Uses a clever trick to detect `NULL` in four bytes at once. Deprecated name. 
 
 
-#### Used by
-* [`yQ_@y_amx_StringRead1B`](#yQ_@y_amx_StringRead1B)
-
 #### Depends on
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 
@@ -3205,9 +3023,6 @@ AMX_ReadUnpackedString(addr, str[], len)
 
 Copies a C string in AMX memory out to an unpacked string. Mainly used to read function names from the header, as they are not in pawn order. 
 
-
-#### Used by
-* [`yQ_@y_amx_StringRead3B`](#yQ_@y_amx_StringRead3B)
 
 #### Depends on
 * [`cellbytes`](#cellbytes)
@@ -3425,18 +3240,10 @@ AMX_WriteUnpackedString(addr, str[])
 Copies an unpacked string in to AMX memory, as a C string. Mainly used to write function names in to the header, as they are not in pawn order. 
 
 
-#### Used by
-* [`yQ_@y_amx_StringRead1B`](#yQ_@y_amx_StringRead1B)
-* [`yQ_@y_amx_StringRead2B`](#yQ_@y_amx_StringRead2B)
-* [`yQ_@y_amx_StringRead3B`](#yQ_@y_amx_StringRead3B)
-* [`Hooks_GetPointerRewrite`](#Hooks_GetPointerRewrite)
-
 #### Depends on
 * [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 
 #### Estimated stack usage
 
 4 cells
-
-
 
