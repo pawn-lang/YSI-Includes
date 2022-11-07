@@ -523,12 +523,6 @@ stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
 	}
 }
 
-#define AMX_GetPublicEntry( AMX_GetEntryBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeEntry( AMX_GetEntryLinear(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryEntry( AMX_GetEntryLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarEntry( AMX_GetEntryBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagEntry( AMX_GetEntryLinear(AMX_TABLE_TAGS,
-
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
  * <param name="idx">When iterating, the offset to start at.</param>
@@ -561,6 +555,12 @@ stock AMX_GetPubvarEntry(idx, &buffer, const pattern[] = "", const bool:exact = 
 	return AMX_GetEntryBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
 
+#define AMX_GetPublicEntry( AMX_GetEntryBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeEntry( AMX_GetEntryLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryEntry( AMX_GetEntryLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarEntry( AMX_GetEntryBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagEntry( AMX_GetEntryLinear(AMX_TABLE_TAGS,
+
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
  * <param name="table">Which sorted table to scan through.</param>
@@ -589,6 +589,9 @@ stock AMX_GetPubvarEntry(idx, &buffer, const pattern[] = "", const bool:exact = 
  *
  *  <c>AMX_GetPublicEntry</c>
  *  <c>AMX_GetPubVarEntry</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -731,6 +734,11 @@ stock AMX_GetEntryBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
  *  <c>AMX_GetLibraryEntry</c>
  *  <c>AMX_GetTagEntry</c>
  *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.  Also note that
+ *  the native name searches may not currently work correctly in all VM versions
+ *  due to data clobbering.
+ *
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -778,12 +786,6 @@ stock AMX_GetEntryLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
 	return 0;
 }
 
-#define AMX_GetPublicEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_TAGS,
-
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
  * <param name="idx">When iterating, the offset to start at.</param>
@@ -821,6 +823,12 @@ stock AMX_GetPubvarEntryPrefix(idx, &buffer, pattern)
 	return AMX_GetEntryPrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
 
+#define AMX_GetPublicEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_TAGS,
+
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
  * <param name="table">Which sorted table to scan through.</param>
@@ -857,6 +865,14 @@ stock AMX_GetPubvarEntryPrefix(idx, &buffer, pattern)
  *
  *  <c>AMX_GetPublicEntryPrefix</c>
  *  <c>AMX_GetPubVarEntryPrefix</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.
+ *
+ *  Prefixes are widely used in YSI as the names are sorted and so can be binary
+ *  searched, the entries point to the start of the names, and once a prefix is
+ *  passed there can be no more later (thanks to sorting).  Thus binary prefix
+ *  searches are extremely efficient.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -973,6 +989,11 @@ stock AMX_GetEntryPrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
  *  <c>AMX_GetLibraryEntryPrefix</c>
  *  <c>AMX_GetTagEntryPrefix</c>
  *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.  Also note that
+ *  the native name searches may not currently work correctly in all VM versions
+ *  due to data clobbering.
+ *
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1006,17 +1027,48 @@ stock AMX_GetEntryPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return 0;
 }
 
-#define AMX_GetPublicEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_PUBVARS,
-#define AMX_GetTagEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_TAGS,
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The return value, with a pointer to a table entry.</param>
+ * <param name="pattern">A suffix to look for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  See <em>AMX_GetEntrySuffix</em>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_GetPubVarEntrySuffix`
 stock AMX_GetPubvarEntrySuffix(idx, &buffer, pattern)
 {
 	return AMX_GetEntrySuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#define AMX_GetPublicEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_PUBVARS,
+#define AMX_GetTagEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_TAGS,
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The return value, with a pointer to a table entry.</param>
+ * <param name="pattern">A suffix to look for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through any table to look for names ending with the given four
+ *  byte suffix.  These suffixes are defined in the same way as the prefixes
+ *  used by <c>AMX_GetPublicEntryPrefix</c> et. al, but the scanning is much
+ *  harder because the full names must all be read.  Unlike prefix scanning,
+ *  suffix scanning is very inefficient.  Returns the table entry.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
@@ -1026,6 +1078,10 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		count = 0,
 		addr = 0,
 		ch = 0;
+	#if cellbits == 64
+		// Suffixes are always 32-bit.
+		pattern = pattern & 0xFFFFFFFF;
+	#endif
 	AMX_GetBaseCount(table, base, count);
 	for (new pos = idx * __defsize_cells + base + cellbytes; idx < count; pos += __defsize_cells)
 	{
@@ -1066,7 +1122,7 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 			else addr -= 4;
 			break;
 		}
-		if (AMX_Read(addr) == pattern)
+		if (__32(AMX_Read(addr)) == pattern)
 		{
 			buffer = pos - cellbytes;
 			return idx;
@@ -1075,17 +1131,64 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return 0;
 }
 
-#define AMX_GetPublicName( AMX_GetNameBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeName( AMX_GetNameLinear(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryName( AMX_GetNameLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarName( AMX_GetNameBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagName( AMX_GetNameLinear(AMX_TABLE_TAGS,
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The name return value, as a packed sring.</param>
+ * <param name="pattern">A prefix to look for.</param>
+ * <param name="exact">True to match the pattern exactly, false for contains.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  See <em>AMX_GetNameBinary</em>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_GetPubVarName`
 stock AMX_GetPubvarName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
 {
 	return AMX_GetNameBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
+
+#define AMX_GetPublicName( AMX_GetNameBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeName( AMX_GetNameLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryName( AMX_GetNameLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarName( AMX_GetNameBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagName( AMX_GetNameLinear(AMX_TABLE_TAGS,
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which sorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The name return value, as a packed sring.</param>
+ * <param name="pattern">A prefix to look for.</param>
+ * <param name="exact">True to match the pattern exactly, false for contains.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given sorted table to find one whose name contains
+ *  the given pattern, or all of them when there is no pattern.  Loop over all
+ *  the defined player callbacks like so:
+ *
+ *  <code>
+ *    new idx = 0, buffer[FUNCTION_LENGTH];                             <br />
+ *    while ((idx = AMX_GetPublicName(idx, buffer, "OnPlayer", false))) <br />
+ *    {                                                                 <br />
+ *    }
+ *  </code>
+ *
+ *  You should not use this function directly, but one of the macro wrappers
+ *  defined for sorted tables:
+ *
+ *  <c>AMX_GetPublicNamePrefix</c>
+ *  <c>AMX_GetPubVarNamePrefix</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetNameBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
 {
@@ -1100,6 +1203,42 @@ stock AMX_GetNameBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const p
 	return idx;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which unsorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The name return value, as a packed sring.</param>
+ * <param name="pattern">A prefix to look for.</param>
+ * <param name="exact">True to match the pattern exactly, false for contains.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given unsorted table to find one whose name contains
+ *  the given pattern, or all of them when there is no pattern.  Loop over all
+ *  the defined player callbacks like so:
+ *
+ *  <code>
+ *    new idx = 0, buffer[FUNCTION_LENGTH];                             <br />
+ *    while ((idx = AMX_GetPublicName(idx, buffer, "OnPlayer", false))) <br />
+ *    {                                                                 <br />
+ *    }
+ *  </code>
+ *
+ *  You should not use this function directly, but one of the macro wrappers
+ *  defined for sorted tables:
+ *
+ *  <c>AMX_GetNativeNameLinear</c>
+ *  <c>AMX_GetLibraryNameLinear</c>
+ *  <c>AMX_GetTagNameLinear</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.  Also note that
+ *  the native name searches may not currently work correctly in all VM versions
+ *  due to data clobbering.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetNameLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
 {
 	Debug_Print7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
@@ -1113,17 +1252,55 @@ stock AMX_GetNameLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const p
 	return idx;
 }
 
-#define AMX_GetPublicNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_TAGS,
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which sorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The name return value, as a packed string.</param>
+ * <param name="pattern">A prefix to scan for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  See <c>AMX_GetNamePrefixBinary</c>
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_GetPubVarNamePrefix`
 stock AMX_GetPubvarNamePrefix(idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	return AMX_GetNamePrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#define AMX_GetPublicNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_TAGS,
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which sorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The name return value, as a packed string.</param>
+ * <param name="pattern">A prefix to scan for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given sorted table to find the next entry matching
+ *  the given prefix, and returns the full name of the entry.  You should not
+ *  use this function directly, but one of the macro wrappers defined for
+ *  sorted tables:
+ *
+ *  <c>AMX_GetPublicNamePrefix</c>
+ *  <c>AMX_GetPubVarNamePrefix</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetNamePrefixBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
 {
@@ -1138,6 +1315,33 @@ stock AMX_GetNamePrefixBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], p
 	return idx;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which unsorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The name return value, as a packed string.</param>
+ * <param name="pattern">A prefix to scan for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given unsorted table to find the next entry matching
+ *  the given prefix, and returns the full name of the entry.  You should not
+ *  use this function directly, but one of the macro wrappers defined for
+ *  unsorted tables:
+ *
+ *  <c>AMX_GetNativeNamePrefix</c>
+ *  <c>AMX_GetLibraryNamePrefix</c>
+ *  <c>AMX_GetTagNamePrefix</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.  Also note that
+ *  the native name searches may not currently work correctly in all VM versions
+ *  due to data clobbering.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetNamePrefixLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	Debug_Print7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
@@ -1151,17 +1355,48 @@ stock AMX_GetNamePrefixLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], p
 	return idx;
 }
 
-#define AMX_GetPublicNameSuffix( AMX_GetNameSuffix(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeNameSuffix( AMX_GetNameSuffix(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryNameSuffix( AMX_GetNameSuffix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarNameSuffix( AMX_GetNameSuffix(AMX_TABLE_PUBVARS,
-#define AMX_GetTagNameSuffix( AMX_GetNameSuffix(AMX_TABLE_TAGS,
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The name return value, as a packed sring.</param>
+ * <param name="pattern">A suffix to look for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  See <em>AMX_GetNameSuffix</em>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_GetPubVarNameSuffix`
 stock AMX_GetPubvarNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	return AMX_GetNameSuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#define AMX_GetPublicNameSuffix( AMX_GetNameSuffix(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeNameSuffix( AMX_GetNameSuffix(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryNameSuffix( AMX_GetNameSuffix(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarNameSuffix( AMX_GetNameSuffix(AMX_TABLE_PUBVARS,
+#define AMX_GetTagNameSuffix( AMX_GetNameSuffix(AMX_TABLE_TAGS,
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The name return value, as a packed sring.</param>
+ * <param name="pattern">A suffix to look for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through any table to look for names ending with the given four
+ *  byte suffix.  These suffixes are defined in the same way as the prefixes
+ *  used by <c>AMX_GetPublicEntryPrefix</c> et. al, but the scanning is much
+ *  harder because the full names must all be read.  Unlike prefix scanning,
+ *  suffix scanning is very inefficient.  Returns the full name.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
 {
@@ -1176,17 +1411,60 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 	return idx;
 }
 
-#define AMX_GetPublicPointer( AMX_GetPointerBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetNativePointer( AMX_GetPointerLinear(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryPointer( AMX_GetPointerLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarPointer( AMX_GetPointerBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagPointer( AMX_GetPointerLinear(AMX_TABLE_TAGS,
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which unsorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The pointer return value.</param>
+ * <param name="pattern">A prefix to look for.</param>
+ * <param name="exact">True to match the pattern exactly, false for contains.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  See <c>AMX_GetPointerBinary</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_GetPubVarPointer`
 stock AMX_GetPubvarPointer(idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	return AMX_GetPointerBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
+
+#define AMX_GetPublicPointer( AMX_GetPointerBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativePointer( AMX_GetPointerLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryPointer( AMX_GetPointerLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarPointer( AMX_GetPointerBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagPointer( AMX_GetPointerLinear(AMX_TABLE_TAGS,
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which sorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The pointer return value.</param>
+ * <param name="pattern">A prefix to look for.</param>
+ * <param name="exact">True to match the pattern exactly, false for contains.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given sorted table to find one whose name includes or
+ *  exactly matches the given pattern.  The return value is the pointer from in
+ *  the entry, not the entry itself, nor the data the pointer references (e.g. a
+ *  funcion).  You should not use this function directly, but one of the macro
+ *  wrappers defined for sorted tables:
+ *
+ *  <c>AMX_GetPublicPointer</c>
+ *  <c>AMX_GetPubVarPointer</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.  Also note that
+ *  the native name searches may not currently work correctly in all VM versions
+ *  due to data clobbering.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetPointerBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
@@ -1202,6 +1480,35 @@ stock AMX_GetPointerBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = ""
 	return idx;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which unsorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The pointer return value.</param>
+ * <param name="pattern">A prefix to look for.</param>
+ * <param name="exact">True to match the pattern exactly, false for contains.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given unsorted table to find one whose name includes
+ *  or exactly matches the given pattern.  The return value is the pointer from
+ *  in the entry, not the entry itself, nor the data the pointer references
+ *  (e.g. a funcion).  You should not use this function directly, but one of the
+ *  macro wrappers defined for unsorted tables:
+ *
+ *  <c>AMX_GetNativePointer</c>
+ *  <c>AMX_GetLibraryPointer</c>
+ *  <c>AMX_GetTagPointer</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.  Also note that
+ *  the native name searches may not currently work correctly in all VM versions
+ *  due to data clobbering.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetPointerLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	Debug_Print7("AMX_GetPointer called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
@@ -1216,17 +1523,55 @@ stock AMX_GetPointerLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = ""
 	return idx;
 }
 
-#define AMX_GetPublicPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetNativePointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryPointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagPointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_TAGS,
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which unsorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The pointer return value.</param>
+ * <param name="pattern">A prefix to scan for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  See <c>AMX_GetPointerPrefixBinary</c>
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_GetPubVarPointerPrefix`
 stock AMX_GetPubvarPointerPrefix(idx, &buffer, pattern)
 {
 	return AMX_GetPointerPrefixBinary(E_AMX_TABLE:table, idx, buffer, pattern);
 }
+
+#define AMX_GetPublicPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativePointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryPointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagPointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_TAGS,
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which sorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The pointer return value.</param>
+ * <param name="pattern">A prefix to scan for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given sorted table to find the next entry matching
+ *  the given prefix, and returns a pointer to the data.  You should not use
+ *  this function directly, but one of the macro wrappers defined for sorted
+ *  tables:
+ *
+ *  <c>AMX_GetPublicPointerPrefix</c>
+ *  <c>AMX_GetPubVarPointerPrefix</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetPointerPrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
@@ -1241,6 +1586,33 @@ stock AMX_GetPointerPrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
 	}
 	return idx;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which unsorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The pointer return value.</param>
+ * <param name="pattern">A prefix to scan for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given unsorted table to find the next entry matching
+ *  the given prefix, and returns a pointer to the data.  You should not use
+ *  this function directly, but one of the macro wrappers defined for unsorted
+ *  tables:
+ *
+ *  <c>AMX_GetNativePointerPrefix</c>
+ *  <c>AMX_GetLibraryPointerPrefix</c>
+ *  <c>AMX_GetTagPointerPrefix</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.  Also note that
+ *  the native name searches may not currently work correctly in all VM versions
+ *  due to data clobbering.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetPointerPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
@@ -1262,11 +1634,42 @@ stock AMX_GetPointerPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
 #define AMX_GetPubVarPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_PUBVARS,
 #define AMX_GetTagPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_TAGS,
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The data pointer return value.</param>
+ * <param name="pattern">A suffix to look for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  See <em>AMX_GetPointerSuffix</em>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `AMX_GetPubVarPointerSuffix`
 stock AMX_GetPubvarPointerSuffix(idx, &buffer, pattern)
 {
 	return AMX_GetPointerSuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The data pointer return value.</param>
+ * <param name="pattern">A suffix to look for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through any table to look for names ending with the given four
+ *  byte suffix.  These suffixes are defined in the same way as the prefixes
+ *  used by <c>AMX_GetPublicEntryPrefix</c> et. al, but the scanning is much
+ *  harder because the full names must all be read.  Unlike prefix scanning,
+ *  suffix scanning is very inefficient.  Returns the data pointer.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
@@ -1282,11 +1685,12 @@ stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return idx;
 }
 
-#define AMX_GetPublicCount( AMX_GetCount(AMX_TABLE_PUBLICS
-#define AMX_GetNativeCount( AMX_GetCount(AMX_TABLE_NATIVES
-#define AMX_GetLibraryCount( AMX_GetCount(AMX_TABLE_LIBRARIES
-#define AMX_GetPubVarCount( AMX_GetCount(AMX_TABLE_PUBVARS
-#define AMX_GetTagCount( AMX_GetCount(AMX_TABLE_TAGS
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <returns>
+ *  The number of entries in this table.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_GetPubVarCount`
 stock AMX_GetPubvarCount()
@@ -1294,14 +1698,46 @@ stock AMX_GetPubvarCount()
 	return AMX_GetCount(AMX_TABLE_PUBVARS);
 }
 
+#define AMX_GetPublicCount( AMX_GetCount(AMX_TABLE_PUBLICS
+#define AMX_GetNativeCount( AMX_GetCount(AMX_TABLE_NATIVES
+#define AMX_GetLibraryCount( AMX_GetCount(AMX_TABLE_LIBRARIES
+#define AMX_GetPubVarCount( AMX_GetCount(AMX_TABLE_PUBVARS
+#define AMX_GetTagCount( AMX_GetCount(AMX_TABLE_TAGS
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which table to get the size of.</param>
+ * <returns>
+ *  The number of entries in this table.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetCount(E_AMX_TABLE:table)
 {
 	Debug_Print7("AMX_GetCount called: %i", _:table);
-	new
-		base = 0,
-		count = 0;
-	AMX_GetBaseCount(table, base, count);
-	return count;
+	AMX_GetBaseCount(table, _:table, _:table);
+	return _:table;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which sorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The data return value.</param>
+ * <param name="pattern">A prefix to look for.</param>
+ * <param name="exact">True to match the pattern exactly, false for contains.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  See <c>AMX_GetValueBinary</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#pragma deprecated Use `AMX_GetPubVarValue`
+stock AMX_GetPubvarValue(idx, &buffer, const pattern[] = "", const bool:exact = false)
+{
+	return AMX_GetValueBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
 
 #define AMX_GetPublicValue( AMX_GetValueBinary(AMX_TABLE_PUBLICS,
@@ -1310,11 +1746,30 @@ stock AMX_GetCount(E_AMX_TABLE:table)
 #define AMX_GetPubVarValue( AMX_GetValueBinary(AMX_TABLE_PUBVARS,
 #define AMX_GetTagValue( AMX_GetValueLinear(AMX_TABLE_TAGS,
 
-#pragma deprecated Use `AMX_GetPubVarValue`
-stock AMX_GetPubvarValue(idx, &buffer, const pattern[] = "", const bool:exact = false)
-{
-	return AMX_GetValueBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
-}
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which sorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The data return value.</param>
+ * <param name="pattern">A prefix to look for.</param>
+ * <param name="exact">True to match the pattern exactly, false for contains.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given sorted table to find one whose name includes or
+ *  exactly matches the given pattern.  The return value is the data pointed to
+ *  by the entry.  You should not use this function directly, but one of the
+ *  macro wrappers defined for sorted tables:
+ *
+ *  <c>AMX_GetPublicValue</c>
+ *  <c>AMX_GetPubVarValue</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetValueBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
@@ -1330,6 +1785,34 @@ stock AMX_GetValueBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
 	return idx;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which unsorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The data return value.</param>
+ * <param name="pattern">A prefix to look for.</param>
+ * <param name="exact">True to match the pattern exactly, false for contains.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given unsorted table to find one whose name includes
+ *  or exactly matches the given pattern.  The return value is the data pointed
+ *  to by the entry.  You should not use this function directly, but one of the
+ *  macro wrappers defined for unsorted tables:
+ *
+ *  <c>AMX_GetNativeValue</c>
+ *  <c>AMX_GetLibraryValue</c>
+ *  <c>AMX_GetTagValue</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.  Also note that
+ *  the native name searches may not currently work correctly in all VM versions
+ *  due to data clobbering.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetValueLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	Debug_Print7("AMX_GetValue called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
@@ -1344,17 +1827,54 @@ stock AMX_GetValueLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
 	return idx;
 }
 
-#define AMX_GetPublicValuePrefix( AMX_GetValuePrefixBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarValuePrefix( AMX_GetValuePrefixBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_TAGS,
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The data return value.</param>
+ * <param name="pattern">A prefix to scan for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  See <c>AMX_GetValuePrefixBinary</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_GetPubVarValuePrefix`
 stock AMX_GetPubvarValuePrefix(idx, &buffer, pattern)
 {
 	return AMX_GetValuePrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#define AMX_GetPublicValuePrefix( AMX_GetValuePrefixBinary(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarValuePrefix( AMX_GetValuePrefixBinary(AMX_TABLE_PUBVARS,
+#define AMX_GetTagValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_TAGS,
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which sorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The data return value.</param>
+ * <param name="pattern">A prefix to scan for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given sorted table to find the next entry matching
+ *  the given prefix, and returns the data pointed to by that entry.  You should
+ *  not use this function directly, but one of the macro wrappers defined for
+ *  sorted tables:
+ *
+ *  <c>AMX_GetPublicValuePrefix</c>
+ *  <c>AMX_GetPubVarValuePrefix</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetValuePrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
@@ -1370,6 +1890,33 @@ stock AMX_GetValuePrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return idx;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which unsorted table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The data return value.</param>
+ * <param name="pattern">A prefix to scan for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through the given unsorted table to find the next entry matching
+ *  the given prefix, and returns the data pointed to by that entry.  You should
+ *  not use this function directly, but one of the macro wrappers defined for
+ *  unsorted tables:
+ *
+ *  <c>AMX_GetNativeValuePrefix</c>
+ *  <c>AMX_GetLibraryValuePrefix</c>
+ *  <c>AMX_GetTagValuePrefix</c>
+ *
+ *  Note that amx_assembly now sorts the library and tag headers, so those could
+ *  be binary searched, but this library cannot rely on that.  Also note that
+ *  the native name searches may not currently work correctly in all VM versions
+ *  due to data clobbering.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock AMX_GetValuePrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetValuePrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
@@ -1384,17 +1931,48 @@ stock AMX_GetValuePrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return idx;
 }
 
-#define AMX_GetPublicValueSuffix( AMX_GetValueSuffix(AMX_TABLE_PUBLICS,
-#define AMX_GetNativeValueSuffix( AMX_GetValueSuffix(AMX_TABLE_NATIVES,
-#define AMX_GetLibraryValueSuffix( AMX_GetValueSuffix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarValueSuffix( AMX_GetValueSuffix(AMX_TABLE_PUBVARS,
-#define AMX_GetTagValueSuffix( AMX_GetValueSuffix(AMX_TABLE_TAGS,
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The data return value.</param>
+ * <param name="pattern">A suffix to look for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  See <em>AMX_GetNameSuffix</em>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `AMX_GetPubVarValueSuffix`
 stock AMX_GetPubvarValueSuffix(idx, &buffer, pattern)
 {
 	return AMX_GetValueSuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#define AMX_GetPublicValueSuffix( AMX_GetValueSuffix(AMX_TABLE_PUBLICS,
+#define AMX_GetNativeValueSuffix( AMX_GetValueSuffix(AMX_TABLE_NATIVES,
+#define AMX_GetLibraryValueSuffix( AMX_GetValueSuffix(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarValueSuffix( AMX_GetValueSuffix(AMX_TABLE_PUBVARS,
+#define AMX_GetTagValueSuffix( AMX_GetValueSuffix(AMX_TABLE_TAGS,
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <param name="table">Which table to scan through.</param>
+ * <param name="idx">When iterating, the offset to start at.</param>
+ * <param name="buffer">The data return value.</param>
+ * <param name="pattern">A suffix to look for.</param>
+ * <returns>
+ *  The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
+ * </returns>
+ * <remarks>
+ *  This scans through any table to look for names ending with the given four
+ *  byte suffix.  These suffixes are defined in the same way as the prefixes
+ *  used by <c>AMX_GetPublicEntryPrefix</c> et. al, but the scanning is much
+ *  harder because the full names must all be read.  Unlike prefix scanning,
+ *  suffix scanning is very inefficient.  Returns data from the data pointer.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock AMX_GetValueSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
