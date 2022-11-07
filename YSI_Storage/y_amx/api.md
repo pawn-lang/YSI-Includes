@@ -2538,6 +2538,3 @@ Copies an unpacked string in to AMX memory, as a C string. Mainly used to write 
 #### Estimated stack usage
 4 cells
 
-
-
-
