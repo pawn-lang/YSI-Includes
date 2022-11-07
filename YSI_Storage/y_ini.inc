@@ -3,7 +3,7 @@
  *   name="y_ini"
  *   version="1.5"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary="Reads the INI and also exports a number of functions to other "classes" for easy reading of data files there."
+ *   summary="Reads the INI and also exports a number of functions to other *classes* for easy reading of data files there."
  * >
  *   <summary pawndoc="true">
  *     This library uses the enhanced <em>pawndoc.xsl</em> from

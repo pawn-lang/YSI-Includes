@@ -3,7 +3,7 @@
  *   name="y_circular"
  *   version="1.0"
  *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary="Provide circular buffers, so <c>arr[0]</c> is always the oldest."
+ *   summary="Provide circular buffers, so `arr[0]` is always the oldest."
  * >
  *   <summary pawndoc="true">
  *     This library uses the enhanced <em>pawndoc.xsl</em> from

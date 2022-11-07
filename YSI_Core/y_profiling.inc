@@ -210,7 +210,7 @@ static stock
  * <remarks>
  *  -
  *
- * native Profiling_Run(&profilings, &fails, buffer[33] = "");
+ * native Profiling_Run(&amp;profilings);
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
