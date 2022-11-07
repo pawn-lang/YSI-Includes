@@ -71,6 +71,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+/// <p/>
+
 #define @y_L%0\32; @y_L
 #define @y_S%0\32; @y_S
 #define @y_L0000%0\32; @y_L0000
@@ -87,12 +89,28 @@ Optional plugins:
 // there is no frame update yet):
 
 static stock
+	/**
+	 * <library>y_ctrl</library>
+	 */
 	YSI_g_sBaseRelocation,
+	/**
+	 * <library>y_ctrl</library>
+	 */
 	YSI_g_sLCTRLStubAddress,
+	/**
+	 * <library>y_ctrl</library>
+	 */
 	YSI_g_sSCTRLStubAddress;
 
 #define CALL@CTRL_LCTRLStub%8() CTRL_LCTRLStub%8()
 #define CALL@CTRL_SCTRLStub%8() CTRL_SCTRLStub%8()
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_ctrl</library>
+ * <remarks>
+ *  Initialise the library.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public OnCodeInit()
 {
@@ -158,6 +176,18 @@ public OnCodeInit()
 	forward CTRL_OnCodeInit();
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_ctrl</library>
+ * <remarks>
+ *  For every custom readable control register we define we need a special call
+ *  stub that can convert from passing the parameters in registers to passing
+ *  the parameters on the stack, without clobbering <c>alt</c>.  A lot of the
+ *  code is common to all of these stubs, and this function implements that
+ *  common code.  The final handler and return addresses are passed to this, and
+ *  the parameters are extracted from <c>pri</c> and <c>alt</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock CTRL_LCTRLStub()
 {
 	// The call to this function skips the `PROC` - we don't want it.
@@ -192,6 +222,18 @@ static stock CTRL_LCTRLStub()
 	#emit LOAD.S.alt       __param1_offset
 	#emit RETN
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_ctrl</library>
+ * <remarks>
+ *  For every custom writable control register we define we need a special call
+ *  stub that can convert from passing the parameters in registers to passing
+ *  the parameters on the stack, without clobbering the registers.  A lot of the
+ *  code is common to all of these stubs, and this function implements that
+ *  common code.  The final handler and return addresses are passed to this, and
+ *  the parameters are extracted from <c>pri</c> and <c>alt</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock CTRL_SCTRLStub()
 {
@@ -228,6 +270,17 @@ static stock CTRL_SCTRLStub()
 	#emit LOAD.S.pri       __param0_offset
 	#emit RETN
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_ctrl</library>
+ * <param name="addr">The address to write to.</param>
+ * <remarks>
+ *  For every custom readable control register we define we need a special call
+ *  stub that can convert from passing the parameters in registers to passing
+ *  the parameters on the stack, without clobbering <c>alt</c>.  This generates
+ *  those stubs.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock CTRL_WriteLCTRLStub(addr)
 {
@@ -275,6 +328,17 @@ static stock CTRL_WriteLCTRLStub(addr)
 	// And the code we actually want is only eight cells.
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_ctrl</library>
+ * <param name="addr">The address to write to.</param>
+ * <remarks>
+ *  For every custom writable control register we define we need a special call
+ *  stub that can convert from passing the parameters in registers to passing
+ *  the parameters on the stack, without clobbering the registers.  This
+ *  generates those stubs.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock CTRL_WriteSCTRLStub(addr)
 {
 	// Find the call target.
@@ -305,6 +369,17 @@ static stock CTRL_WriteSCTRLStub(addr)
 	@emit JUMP             YSI_g_sSCTRLStubAddress
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_ctrl</library>
+ * <param name="scanner">The codescan scanner that found a matching pattern.</param>
+ * <remarks>
+ *  This function is called for every single <c>LCTRL</c> in the compiled AMX,
+ *  after they are found by the code scanner.  It checks if the found register
+ *  load is for one of the new registers and replaces <c>LCTRL</c> with a
+ *  special <c>CALL</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
 {
 	Debug_Print6("CTRL_FoundLCTRL: Found LCTRL");
@@ -333,6 +408,17 @@ static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
 	}
 	Debug_Print5("CTRL_FoundLCTRL Name: %s, Index: %d, %d", name, ptr, AMX_GetPublicPointer(0, ptr, name, true));
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_ctrl</library>
+ * <param name="scanner">The codescan scanner that found a matching pattern.</param>
+ * <remarks>
+ *  This function is called for every single <c>SCTRL</c> in the compiled AMX,
+ *  after they are found by the code scanner.  It checks if the found register
+ *  store is for one of the new registers and replaces <c>SCTRL</c> with a
+ *  special <c>CALL</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock CTRL_FoundSCTRL(const scanner[CodeScanner])
 {

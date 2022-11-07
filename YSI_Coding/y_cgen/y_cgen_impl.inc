@@ -85,6 +85,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+/// <p/>
+
 CHAIN_HOOK(CGen)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(CGen)
@@ -98,8 +100,28 @@ CHAIN_HOOK(CGen)
 #endif
 
 static stock
+	/**
+	 * <library>y_cgen</library>
+	 */
 	YSI_g_sCodeSpace = -1,
+	/**
+	 * <library>y_cgen</library>
+	 */
 	YSI_g_sCodeEnd = -1;
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cgen</library>
+ * <returns>
+ * </returns>
+ * <remarks>
+ *  This is just a function that takes very little pawn code, but an awful lot
+ *  of p-code, to call.  The pawn is just <c>CGEN()</c>, but thanks to having a
+ *  huge number of reference parameters all with default constant values the
+ *  generated assembly is massive, with twenty-six heap allocations and pushes.
+ *  It doesn't even do anything, just reserves a huge block of code space in
+ *  which we can generate new code.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock CGEN(&a = 1, &b = 1, &c = 1, &d = 1, &e = 1, &f = 1, &g = 1, &h = 1, &i = 1, &j = 1, &k = 1, &l = 1, &m = 1, &n = 1, &o = 1, &p = 1, &q = 1, &r = 1, &s = 1, &t = 1, &u = 1, &v = 1, &w = 1, &x = 1, &y = 1, &z = 1)
 {
@@ -109,6 +131,15 @@ static stock CGEN(&a = 1, &b = 1, &c = 1, &d = 1, &e = 1, &f = 1, &g = 1, &h = 1
 }
 
 forward @_y_cgen0_y_@();
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cgen</library>
+ * <remarks>
+ *  Calls the <c>CGEN()</c> function a massive number of times, to generate a
+ *  lot of useless assembly whose space we can reuse for useful code (i.e.
+ *  <em>y_hooks</em> stubs).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public @_y_cgen0_y_@()
 {
@@ -186,16 +217,43 @@ public @_y_cgen0_y_@()
 
 forward @_y_cgen1_y_@();
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cgen</library>
+ * <remarks>
+ *  Denotes the end of the unused code block, so very much relies on the
+ *  compiler placing this function directly after <c>@_y_cgen0_y_@</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 public @_y_cgen1_y_@()
 {
 	// This function SHOULD come straight after "@_y_hooks_@_0" in both the
 	// public functions table and code segment if the compiler is true to form.
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cgen</library>
+ * <param name="func">Function name to get the address of.</param>
+ * <returns>
+ *  The address of the function.
+ * </returns>
+ * <remarks>
+ *  Why this doesn't use functions from in y_amx I don't know.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock CGen_GetAddr(const func[])
 {
 	return AMX_Read(funcidx(func) * __defsize_cells + AMX_HEADER_PUBLICS) + AMX_HEADER_COD;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cgen</library>
+ * <remarks>
+ *  Initialises the storage for unused code, and ensures that the functions
+ *  being clobbered by said code are at least left in a semi-valid state.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock CGen_SetupCodeSpace()
 {
@@ -208,6 +266,13 @@ static stock CGen_SetupCodeSpace()
 	AMX_Write(YSI_g_sCodeSpace + __2_cells, _:RelocateOpcode(OP_RETN)),
 	YSI_g_sCodeSpace += __3_cells;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cgen</library>
+ * <remarks>
+ *  Initialise the library.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public OnCodeInit()
 {
@@ -244,6 +309,15 @@ public OnCodeInit()
 
 forward CGen_OOM(ctx[AsmContext]);
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cgen</library>
+ * <param name="ctx">The <c>AsmContext</c> that ran out of space.</param>
+ * <remarks>
+ *  Called by amx_assembly when more code is written than there is space for, or
+ *  on some other errors.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 public CGen_OOM(ctx[AsmContext])
 {
 	switch (AsmGetError(ctx))
@@ -279,16 +353,43 @@ public CGen_OOM(ctx[AsmContext])
 	AsmClearError(ctx);
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cgen</library>
+ * <param name="ctx">The assembly generation context.</param>
+ * <remarks>
+ *  Initialises the passed assembly generation context with a pointer in to our
+ *  space code space region, complete with the remaining size and our error
+ *  handler.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock CGen_UseCodeSpace(ctx[AsmContext])
 {
 	AsmInitPtr(ctx, YSI_g_sCodeSpace, YSI_g_sCodeEnd - YSI_g_sCodeSpace);
 	AsmSetErrorHandlerName(ctx, "CGen_OOM");
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cgen</library>
+ * <returns>
+ *  The next address with free code space.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock CGen_GetCodeSpace()
 {
 	return YSI_g_sCodeSpace;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cgen</library>
+ * <param name="num">How much to reduce the available code space by.</param>
+ * <remarks>
+ *  When a library has finished generating its code this function can be used to
+ *  tell y_cgen how many cells it wrote, and thus move the space space pointer
+ *  on by that much.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock CGen_AddCodeSpace(num)
 {
