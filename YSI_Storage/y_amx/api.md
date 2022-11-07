@@ -2,7 +2,7 @@ y_amx - v1.0
 ==========================================
 
 (c) 2022 YSI contibutors, licensed under MPL 1.1
-------------------------------------------------
+
 
 Allows a script access to information about itself, such as function names. This can be used for a range of things, including automatic callback hooking and testing. 
 
@@ -25,6 +25,8 @@ Allows a script access to information about itself, such as function names. This
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 |  **Value**  |  `-16`  | 
 
 
@@ -43,6 +45,8 @@ Allows a script access to information about itself, such as function names. This
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 |  **Value**  |  `-28`  | 
 
 
@@ -61,6 +65,8 @@ Allows a script access to information about itself, such as function names. This
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 |  **Value**  |  `-4`  | 
 
 
@@ -79,6 +85,8 @@ Allows a script access to information about itself, such as function names. This
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 |  **Value**  |  `-8`  | 
 
 
@@ -104,9 +112,14 @@ AMX_Deref(addr)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `addr`  |  A DAT pointer.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -143,6 +156,9 @@ AMX_DoNothing()
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
+
 
 #### Remarks
 
@@ -173,6 +189,9 @@ AMX_DumpHeader()
 ```
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Remarks
@@ -213,11 +232,16 @@ AMX_GetBaseCount(table, &base, &count)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `The table in the header (publics, tags, etc).   | 
 |  `base`  |  ` & `Return for the start pointer.   | 
 |  `count`  |  ` & `Return for the count.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Remarks
@@ -264,9 +288,14 @@ AMX_GetCount(table)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which table to get the size of.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -302,6 +331,8 @@ AMX_GetEntryBinary(table, idx, &buffer, pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
@@ -309,6 +340,9 @@ AMX_GetEntryBinary(table, idx, &buffer, pattern[], exact)
 |  `exact`  |  `bool `When true find the pattern exactly, otherwise just include it.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -381,9 +415,14 @@ AMX_GetEntryFromNativeIndex(index)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `index`  |  The position in the native functions table.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -420,9 +459,14 @@ AMX_GetEntryFromPublicIndex(index)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `index`  |  The position in the public functions table.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -459,6 +503,8 @@ AMX_GetEntryLinear(table, idx, &buffer, pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
@@ -466,6 +512,9 @@ AMX_GetEntryLinear(table, idx, &buffer, pattern[], exact)
 |  `exact`  |  `bool `When true find the pattern exactly, otherwise just include it.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -535,9 +584,14 @@ AMX_GetEntryPointer(tableEntry)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `tableEntry`  |  The table entry in the AMX header to use.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -570,12 +624,17 @@ AMX_GetEntryPrefixBinary(table, idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
 |  `pattern`  |  A prefix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -648,12 +707,17 @@ AMX_GetEntryPrefixLinear(table, idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
 |  `pattern`  |  A prefix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -722,12 +786,17 @@ AMX_GetEntrySuffix(table, idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
 |  `pattern`  |  A suffix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -773,6 +842,9 @@ AMX_GetFirstNativeString()
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
+
 
 #### Returns
 
@@ -812,9 +884,14 @@ AMX_GetFirstString(table)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which header table to report on.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -855,6 +932,9 @@ AMX_GetGlobal()
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
+
 
 #### Returns
 
@@ -893,9 +973,14 @@ AMX_GetGlobalAddress(...)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `...`  |    | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -934,9 +1019,14 @@ AMX_GetLengthFromEntry(tableEntry)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `tableEntry`  |  The AMX header table entry to use.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -974,6 +1064,9 @@ AMX_GetLibraryStringSpace()
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
+
 
 #### Returns
 
@@ -1010,6 +1103,8 @@ AMX_GetNameBinary(table, idx, buffer[], pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` [32] `The name return value, as a packed sring.   | 
@@ -1017,6 +1112,9 @@ AMX_GetNameBinary(table, idx, buffer[], pattern[], exact)
 |  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1082,6 +1180,8 @@ AMX_GetNameLinear(table, idx, buffer[], pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` [32] `The name return value, as a packed sring.   | 
@@ -1089,6 +1189,9 @@ AMX_GetNameLinear(table, idx, buffer[], pattern[], exact)
 |  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1154,12 +1257,17 @@ AMX_GetNamePrefixBinary(table, idx, buffer[], pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` [32] `The name return value, as a packed string.   | 
 |  `pattern`  |  A prefix to scan for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1211,12 +1319,17 @@ AMX_GetNamePrefixLinear(table, idx, buffer[], pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` [32] `The name return value, as a packed string.   | 
 |  `pattern`  |  A prefix to scan for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1268,12 +1381,17 @@ AMX_GetNameSuffix(table, idx, buffer[], pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` [32] `The name return value, as a packed sring.   | 
 |  `pattern`  |  A suffix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1318,9 +1436,14 @@ AMX_GetNativeIndexFromEntry(tableEntry)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `tableEntry`  |  The AMX header native function entry to use.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1356,6 +1479,9 @@ AMX_GetNativeStringSpace()
 ```
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1393,6 +1519,8 @@ AMX_GetPointerBinary(table, idx, &buffer, pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The pointer return value.   | 
@@ -1400,6 +1528,9 @@ AMX_GetPointerBinary(table, idx, &buffer, pattern[], exact)
 |  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1447,6 +1578,8 @@ AMX_GetPointerLinear(table, idx, &buffer, pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The pointer return value.   | 
@@ -1454,6 +1587,9 @@ AMX_GetPointerLinear(table, idx, &buffer, pattern[], exact)
 |  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1501,12 +1637,17 @@ AMX_GetPointerPrefixBinary(table, idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The pointer return value.   | 
 |  `pattern`  |  A prefix to scan for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1554,12 +1695,17 @@ AMX_GetPointerPrefixLinear(table, idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The pointer return value.   | 
 |  `pattern`  |  A prefix to scan for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1607,12 +1753,17 @@ AMX_GetPointerSuffix(table, idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The data pointer return value.   | 
 |  `pattern`  |  A suffix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1653,6 +1804,9 @@ AMX_GetPubVarStringSpace()
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
+
 
 #### Returns
 
@@ -1689,9 +1843,14 @@ AMX_GetPublicIndexFromEntry(tableEntry)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `tableEntry`  |  The AMX header public function entry to use.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1733,6 +1892,9 @@ AMX_GetPublicStringSpace()
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
+
 
 #### Returns
 
@@ -1769,6 +1931,9 @@ AMX_GetPubvarCount()
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
+
 
 #### Returns
 
@@ -1804,12 +1969,17 @@ AMX_GetPubvarEntry(idx, &buffer, pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
 |  `pattern`  |  ` [] `An optional name to look for.   | 
 |  `exact`  |  `bool `When true find the pattern exactly, otherwise just include it.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1866,11 +2036,16 @@ AMX_GetPubvarEntryPrefix(idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
 |  `pattern`  |  A prefix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1930,11 +2105,16 @@ AMX_GetPubvarEntrySuffix(idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The return value, with a pointer to a table entry.   | 
 |  `pattern`  |  A suffix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -1976,12 +2156,17 @@ AMX_GetPubvarName(idx, buffer[], pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` [32] `The name return value, as a packed sring.   | 
 |  `pattern`  |  ` [] `A prefix to look for.   | 
 |  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2023,12 +2208,17 @@ AMX_GetPubvarNamePrefix(idx, buffer[], pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` [32] `The name return value, as a packed string.   | 
 |  `pattern`  |  A prefix to scan for.   | 
 |  `table`  |  Which sorted table to scan through.  | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2070,11 +2260,16 @@ AMX_GetPubvarNameSuffix(idx, buffer[], pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` [32] `The name return value, as a packed sring.   | 
 |  `pattern`  |  A suffix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2116,6 +2311,8 @@ AMX_GetPubvarPointer(idx, &buffer, pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The pointer return value.   | 
 |  `pattern`  |  ` [] `A prefix to look for.   | 
@@ -2123,6 +2320,9 @@ AMX_GetPubvarPointer(idx, &buffer, pattern[], exact)
 |  `table`  |  Which unsorted table to scan through.  | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2164,12 +2364,17 @@ AMX_GetPubvarPointerPrefix(idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The pointer return value.   | 
 |  `pattern`  |  A prefix to scan for.   | 
 |  `table`  |  Which unsorted table to scan through.  | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2210,11 +2415,16 @@ AMX_GetPubvarPointerSuffix(idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The data pointer return value.   | 
 |  `pattern`  |  A suffix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2256,6 +2466,8 @@ AMX_GetPubvarValue(idx, &buffer, pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The data return value.   | 
 |  `pattern`  |  ` [] `A prefix to look for.   | 
@@ -2263,6 +2475,9 @@ AMX_GetPubvarValue(idx, &buffer, pattern[], exact)
 |  `table`  |  Which sorted table to scan through.  | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2304,11 +2519,16 @@ AMX_GetPubvarValuePrefix(idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The data return value.   | 
 |  `pattern`  |  A prefix to scan for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2350,11 +2570,16 @@ AMX_GetPubvarValueSuffix(idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The data return value.   | 
 |  `pattern`  |  A suffix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2396,9 +2621,14 @@ AMX_GetRelativeAddress(...)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `...`  |    | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2436,11 +2666,16 @@ AMX_GetStringFromEntry(tableEntry, str[], size)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `tableEntry`  |  The header entry that has a name pointer.   | 
 |  `str`  |  ` [] `The destination array.   | 
 |  `size`  |  The size of the destination array.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2484,11 +2719,16 @@ AMX_GetTagByValue(tag, name[], len)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `tag`  |  The tag value to look up (e.g. from `tagof`).   | 
 |  `name`  |  ` [] `The destination for the name.   | 
 |  `len`  |  The destination size.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Remarks
@@ -2530,6 +2770,9 @@ AMX_GetTagStringSpace()
 
 
 
+|  **Property**  |  **Value**  | 
+| --- | --- | 
+
 
 #### Returns
 
@@ -2567,6 +2810,8 @@ AMX_GetValueBinary(table, idx, &buffer, pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The data return value.   | 
@@ -2574,6 +2819,9 @@ AMX_GetValueBinary(table, idx, &buffer, pattern[], exact)
 |  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2621,6 +2869,8 @@ AMX_GetValueLinear(table, idx, &buffer, pattern[], exact)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The data return value.   | 
@@ -2628,6 +2878,9 @@ AMX_GetValueLinear(table, idx, &buffer, pattern[], exact)
 |  `exact`  |  `bool `True to match the pattern exactly, false for contains.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2675,12 +2928,17 @@ AMX_GetValuePrefixBinary(table, idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which sorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The data return value.   | 
 |  `pattern`  |  A prefix to scan for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2728,12 +2986,17 @@ AMX_GetValuePrefixLinear(table, idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which unsorted table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The data return value.   | 
 |  `pattern`  |  A prefix to scan for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2781,12 +3044,17 @@ AMX_GetValueSuffix(table, idx, &buffer, pattern)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `table`  |  `E_AMX_TABLE `Which table to scan through.   | 
 |  `idx`  |  When iterating, the offset to start at.   | 
 |  `buffer`  |  ` & `The data return value.   | 
 |  `pattern`  |  A suffix to look for.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2827,11 +3095,16 @@ AMX_ReadArray(addr, dest[], len)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `addr`  |  Data source address.   | 
 |  `dest`  |  ` [] `Where to copy the data to.   | 
 |  `len`  |  Amount of data to copy.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Remarks
@@ -2867,9 +3140,14 @@ AMX_ReadLength(addr)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `addr`  |  Pointer to a C string.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2913,11 +3191,16 @@ AMX_ReadPackedString(addr, str[], len)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `addr`  |  Where in DAT to read the string from.   | 
 |  `str`  |  ` [] `The destination array.   | 
 |  `len`  |  The size of the destination array.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -2961,11 +3244,16 @@ AMX_ReadString(addr, str[], len)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `addr`  |  Where in DAT to read the string from.   | 
 |  `str`  |  ` [] `The destination array.   | 
 |  `len`  |  The size of the destination array.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -3006,11 +3294,16 @@ AMX_ReadUnpackedString(addr, str[], len)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `addr`  |  Where in DAT to read the string from.   | 
 |  `str`  |  ` [] `The destination array.   | 
 |  `len`  |  The size of the destination array.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -3051,12 +3344,17 @@ AMX_TraceCode(pattern[], &addrRet, &dataRet, size)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `pattern`  |  ` [] `The pattern to scan for in code.   | 
 |  `addrRet`  |  ` & `The return for the address.   | 
 |  `dataRet`  |  ` & `The return for the parameter.   | 
 |  `size`  |  The size of the pattern.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Remarks
@@ -3095,12 +3393,17 @@ AMX_TraceMemory(pattern[], &addrRet, &dataRet, size)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `pattern`  |  ` [] `The pattern to scan for in data.   | 
 |  `addrRet`  |  ` & `The return for the address.   | 
 |  `dataRet`  |  ` & `The return for the parameter.   | 
 |  `size`  |  The size of the pattern.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Remarks
@@ -3139,11 +3442,16 @@ AMX_WriteArray(addr, src[], len)
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `addr`  |  Where to copy the data to.   | 
 |  `src`  |  ` [] `Data source.   | 
 |  `len`  |  Amount of data to copy.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Remarks
@@ -3179,10 +3487,15 @@ AMX_WritePackedString(addr, str[])
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `addr`  |  Where in DAT to write the string to.   | 
 |  `str`  |  ` [] `The packed string to write.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -3223,10 +3536,15 @@ AMX_WriteUnpackedString(addr, str[])
 
 
 
+|  **Name**  |  **Info**  | 
+| --- | --- | 
 |  `addr`  |  Where in DAT to write the string to.   | 
 |  `str`  |  ` [] `The unpacked string to write.   | 
 
 
+
+|  **Property**  |  **Value**  | 
+| --- | --- | 
 
 
 #### Returns
@@ -3245,4 +3563,3 @@ Copies an unpacked string in to AMX memory, as a C string. Mainly used to write 
 #### Estimated stack usage
 
 4 cells
-
