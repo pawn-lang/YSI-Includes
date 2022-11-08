@@ -115,8 +115,6 @@ And(input[], inputSize)
 |	---	|	---	|
 | 	`input`	 | 	`bool [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
 
 #### Tag
 `bool:`
@@ -223,7 +221,6 @@ Calls the given function one at a time for every input element until one is foun
 * [`true`](#true)
 #### Estimated stack usage
 7 cells
-
 
 
 
@@ -373,8 +370,6 @@ FoldL1Idx(cb, input[], inputSize)
 | 	`cb`	 | 	`F@_@iii ` A function that takes three parameters.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
 
 #### Returns
 The result of applying one function to every array element in turn.
@@ -539,8 +534,6 @@ FoldR1Idx(cb, input[], inputSize)
 | 	`cb`	 | 	`F@_@iii ` A function that takes three parameters.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
 
 #### Returns
 The result of applying one function to every array element in turn.
@@ -874,8 +867,6 @@ Or(input[], inputSize)
 |	---	|	---	|
 | 	`input`	 | 	`bool [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
 
 #### Tag
 `bool:`
@@ -995,7 +986,7 @@ ScanLIdx(cb, n, input[], output[], inputSize, outputSize)
 | 	**Name**	 | 	**Info**	 |
 |	---	|	---	|
 | 	`cb`	 | 	`F@_@iii ` A function that takes three parameters.	 |
-| 	`n`	 | 		 |
+| 	`n`	 | 	The initial value of the accumulation.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`output`	 | 	` [] ` The output data array (may be the same array as an input).	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
@@ -1076,7 +1067,7 @@ Would return all of the interim steps stored in `output` as `{ 1 * 1 * 2 * 3 * 4
 
 
 ```pawn
-ScanRIdx(cb, n, input[], output[], inputSize, outputSize)
+ScanRIdx(cb, input[], n, output[], inputSize, outputSize)
 ```
 
 
@@ -1086,8 +1077,8 @@ ScanRIdx(cb, n, input[], output[], inputSize, outputSize)
 | 	**Name**	 | 	**Info**	 |
 |	---	|	---	|
 | 	`cb`	 | 	`F@_@iii ` A function that takes three parameters.	 |
-| 	`n`	 | 		 |
 | 	`input`	 | 	` [] ` The input data array.	 |
+| 	`n`	 | 	The initial value of the accumulation.	 |
 | 	`output`	 | 	` [] ` The output data array (may be the same array as an input).	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
@@ -1515,4 +1506,6 @@ But obviously much shorter and less error-prone.
 * [`min`](#min)
 #### Estimated stack usage
 8 cells
+
+
 
