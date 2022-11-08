@@ -547,8 +547,9 @@ stock ScanLIdx(Func:cb<iii>, n, const input[], output[], inputSize = sizeof (inp
 		cur = n;
 	while (++i != len)
 	{
-		output[i] = cur,
-		cur = @.cb(i, cur, input[i]);
+		n = cur,
+		cur = @.cb(i, cur, input[i]),
+		output[i] = n;
 	}
 	output[i] = cur;
 	return 1;
@@ -720,33 +721,51 @@ stock FoldL(Func:cb<ii>, n, const input[], inputSize = sizeof (input))
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
  * <param name="cb">A function that takes two parameters.</param>
+ * <param name="n">The initial value of the accumulation.</param>
  * <param name="input">The input data array.</param>
  * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
  * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
- *  
+ *  <c>false</c> if the output array has no elements.
  * </returns>
  * <remarks>
- *  
+ *  A <em>fold</em> applies a function to the current data and the previous
+ *  result of calling the function, and repeats this process across the whole
+ *  array.  A <em>scan</em> extends this process by also saving all of the
+ *  intermediate results in an output array.  For example:
+ *
+ *  <code>
+ *    new input[5] = { 1, 2, 3, 4, 5 }                    <br />
+ *    new output[6];                                      <br />
+ *    ScanL({ _0 * _1 }, 1, input, output);
+ *  </code>
+ *
+ *  Would return all of the interim steps stored in <c>output</c> as
+ *  <c>{ 1, 1 * 1, 1 * 1 * 2, 1 * 1 * 2 * 3, 1 * 1 * 2 * 3 * 4, 1 * 1 * 2 * 3 * 4, 1 * 1 * 2 * 3 * 4 * 5 }</c>.
+ *  Hence why the output array must be one cell larger than the input array.
+ *
+ *  The <c>L</c> refers to the call order, which is from the first element to
+ *  the last element.  This is especially important in scan functions -
+ *  compare the example output of <c>ScanR</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock ScanL(Func:cb<ii>, n, const input[], output[], inputSize = sizeof (input), outputSize = sizeof (output))
+stock bool:ScanL(Func:cb<ii>, n, const input[], output[], inputSize = sizeof (input), outputSize = sizeof (output))
 {
-	if (!outputSize) return 0;
+	if (!outputSize) return false;
 	new
 		len = min(inputSize, outputSize - 1),
 		i = -1,
-		cur = n;
+		cur;
 	while (++i != len)
 	{
-		output[i] = cur,
-		cur = @.cb(cur, input[i]);
+		cur = @.cb(cur, input[i]),
+		output[i] = n,
+		n = cur;
 	}
-	output[i] = cur;
-	return 1;
+	output[i] = n;
+	return true;
 }
 #define ScanL({%0}%1) LAMBDA_ii<ScanL>{%0}(%1)
 
@@ -798,21 +817,38 @@ stock FoldR(Func:cb<ii>, const input[], n, inputSize = sizeof (input))
  * <library>y_functional</library>
  * <param name="cb">A function that takes two parameters.</param>
  * <param name="input">The input data array.</param>
+ * <param name="n">The initial value of the accumulation.</param>
  * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
  * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
- *  
+ *  <c>false</c> if the output array has no elements.
  * </returns>
  * <remarks>
- *  
+ *  A <em>fold</em> applies a function to the current data and the previous
+ *  result of calling the function, and repeats this process across the whole
+ *  array.  A <em>scan</em> extends this process by also saving all of the
+ *  intermediate results in an output array.  For example:
+ *
+ *  <code>
+ *    new input[5] = { 1, 2, 3, 4, 5 }                    <br />
+ *    new output[6];                                      <br />
+ *    ScanL({ _0 * _1 }, 1, input, output);
+ *  </code>
+ *
+ *  Would return all of the interim steps stored in <c>output</c> as
+ *  <c>{ 1 * 1 * 2 * 3 * 4 * 5, 1 * 2 * 3 * 4 * 5, 1 * 3 * 4 * 5, 1 * 4 * 5, 1 * 5 }</c>.
+ *  Hence why the output array must be one cell larger than the input array.
+ *
+ *  The <c>R</c> refers to the call order, which is from the last element to the
+ *  first element.  This is especially important in scan functions - compare the
+ *  example output of <c>ScanL</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock ScanR(Func:cb<ii>, n, const input[], output[], inputSize = sizeof (input), outputSize = sizeof (output))
+stock bool:ScanR(Func:cb<ii>, const input[], n, output[], inputSize = sizeof (input), outputSize = sizeof (output))
 {
-	if (!outputSize) return 0;
+	if (!outputSize) return false;
 	new
 		len = min(inputSize, outputSize - 1),
 		cur = n;
@@ -821,7 +857,7 @@ stock ScanR(Func:cb<ii>, n, const input[], output[], inputSize = sizeof (input),
 	{
 		output[len] = cur = @.cb(input[len], cur);
 	}
-	return 1;
+	return true;
 }
 #define ScanR({%0}%1) LAMBDA_ii<ScanR>{%0}(%1)
 
