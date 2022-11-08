@@ -583,11 +583,11 @@ stock FoldLIdx(Func:cb<iii>, n, const input[], inputSize = sizeof (input))
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
  * <param name="cb">A function that takes three parameters.</param>
+ * <param name="n">The initial value of the accumulation.</param>
  * <param name="input">The input data array.</param>
  * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
  * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
  *  The number of elements processed.
  * </returns>
@@ -650,10 +650,10 @@ stock FoldRIdx(Func:cb<iii>, const input[], n, inputSize = sizeof (input))
  * <library>y_functional</library>
  * <param name="cb">A function that takes three parameters.</param>
  * <param name="input">The input data array.</param>
+ * <param name="n">The initial value of the accumulation.</param>
  * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
  * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
  *  The number of elements written
  * </returns>
@@ -665,7 +665,7 @@ stock FoldRIdx(Func:cb<iii>, const input[], n, inputSize = sizeof (input))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock ScanRIdx(Func:cb<iii>, n, const input[], output[], inputSize = sizeof (input), outputSize = sizeof (output))
+stock ScanRIdx(Func:cb<iii>, const input[], n, output[], inputSize = sizeof (input), outputSize = sizeof (output))
 {
 	if (!outputSize) return 0;
 	new
@@ -684,10 +684,7 @@ stock ScanRIdx(Func:cb<iii>, n, const input[], output[], inputSize = sizeof (inp
  * <library>y_functional</library>
  * <param name="cb">A function that takes three parameters.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
  *  The result of applying one function to every array element in turn.
  * </returns>
@@ -714,10 +711,7 @@ stock FoldL1Idx(Func:cb<iii>, const input[], inputSize = sizeof (input))
  * <library>y_functional</library>
  * <param name="cb">A function that takes three parameters.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
  *  The result of applying one function to every array element in turn.
  * </returns>
@@ -992,10 +986,7 @@ stock FoldR1(Func:cb<ii>, const input[], inputSize = sizeof (input))
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
  *  <c>true</c> if all the elements are non-zero (<c>true</c> if there are no inputs).
  * </returns>
@@ -1017,10 +1008,7 @@ stock bool:And(bool:input[], inputSize = sizeof (input))
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
  *  <c>true</c> if any the elements are non-zero (<c>false</c> if there are no inputs).
  * </returns>

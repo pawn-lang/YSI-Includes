@@ -117,7 +117,6 @@ And(input[], inputSize)
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`output`	 | 	The output data array (may be the same array as an input).	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Tag
 `bool:`
@@ -376,7 +375,6 @@ FoldL1Idx(cb, input[], inputSize)
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`output`	 | 	The output data array (may be the same array as an input).	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
 The result of applying one function to every array element in turn.
@@ -543,7 +541,6 @@ FoldR1Idx(cb, input[], inputSize)
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`output`	 | 	The output data array (may be the same array as an input).	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
 The result of applying one function to every array element in turn.
@@ -879,7 +876,6 @@ Or(input[], inputSize)
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`output`	 | 	The output data array (may be the same array as an input).	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Tag
 `bool:`
@@ -1004,7 +1000,6 @@ ScanLIdx(cb, n, input[], output[], inputSize, outputSize)
 | 	`output`	 | 	` [] ` The output data array (may be the same array as an input).	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
 The number of elements processed.
@@ -1096,7 +1091,6 @@ ScanRIdx(cb, n, input[], output[], inputSize, outputSize)
 | 	`output`	 | 	` [] ` The output data array (may be the same array as an input).	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
 The number of elements written
