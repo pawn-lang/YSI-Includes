@@ -66,39 +66,42 @@ Very special thanks to:
 	SA:MP Team past, present and future - SA:MP.
 
 Optional plugins:
-	Gamer_Z - GPS.
+	Gamer_Z - GPS.`
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+/// <p/>
+
 static stock
+	/**
+	 * <library>y_functional</library>
+	 */
 	YSI_g_sFunctionalLastEnd = cellmin,
+	/**
+	 * <library>y_functional</library>
+	 */
 	YSI_g_sFunctionalExpectedDepth = 0,
+	/**
+	 * <library>y_functional</library>
+	 */
 	YSI_g_sFunctionalStartPos = 0,
+	/**
+	 * <library>y_functional</library>
+	 */
 	YSI_g_sFunctionalEndPos = 0,
+	/**
+	 * <library>y_functional</library>
+	 */
 	YSI_g_sFunctionalAfterPos = 0;
 
-//static stock Functional_AddToStack()
-//{
-//	// Is this the first of a nested set of lambda calls?
-//	// Get the desired stack size.  This is passed as the parameter count, not as a real parameter,
-//	// to save instruction space.  So extract that.
-//	new
-//		size;
-//		
-//	#emit LOAD.S.pri       8
-//	#emit STOR.S.pri       size
-//	
-//	
-//	// Now when we return, we want to remove a lot of stuff from the stack - all the extra data that
-//	// we just backed up to the heap.  To do this, we increase the parameter count to match the size
-//	// of the data to drop, then return.
-//	#emit ZERO.pri
-//	#emit STOR.S.pri       8
-//	
-//	#emit RETN
-//	return 0;
-//}
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <remarks>
+ *  Placeholder function used to deonte the start of lambda code.  All
+ *  parameters are dummies, used for code scanning and generation space padding.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock LAM@1(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1)
 {
@@ -106,11 +109,27 @@ stock LAM@1(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1)
 }
 #define CALL@LAM@1%8() LAM@1%8(1)
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <remarks>
+ *  Placeholder function used to deonte the end of lambda code.  The parameter
+ *  is eventually used in the rewitten code to return the result.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock LAM@2(par)
 {
 	#pragma unused par
 }
 #define CALL@LAM@2%8() LAM@2%8(1)
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <param name="idx">Used by nested lambda calls.</param>
+ * <remarks>
+ *  Marks the point in code where the lambda function gets called.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock LAM@0(idx = 0)
 {
@@ -119,12 +138,28 @@ stock LAM@0(idx = 0)
 }
 #define CALL@LAM@0%8() LAM@0%8(1)
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <remarks>
+ *  The end of all the generated code; functions and calls.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock LAM@5(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1, pattern4 = 1, pattern5 = 1, pattern6 = 1)
 {
 	#pragma unused idx, pattern0, pattern1, pattern2, pattern3, pattern4, pattern5, pattern6
 	return 0;
 }
 #define CALL@LAM@5%8() LAM@5%8(1)
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <param name="scanner">The code scanner that found a match.</param>
+ * <remarks>
+ *  Called when a scanner matches a <c>LAM@1()</c> call, denoting the start of a
+ *  lambda function.  Just removes the call and stores the location.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Functional_FoundStart(const scanner[CodeScanner])
 {
@@ -142,6 +177,15 @@ static stock Functional_FoundStart(const scanner[CodeScanner])
 	return 0;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <param name="scanner">The code scanner that found a match.</param>
+ * <remarks>
+ *  Called when a scanner matches a <c>LAM@2()</c> call, denoting the end of a
+ *  lambda function.  Just removes the call and stores the location.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock Functional_FoundEnd(const scanner[CodeScanner])
 {
 	// This must always immediately follow the corresponding `LAM@1`, so if we haven't seen the
@@ -157,6 +201,15 @@ static stock Functional_FoundEnd(const scanner[CodeScanner])
 	return 0;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <param name="scanner">The code scanner that found a match.</param>
+ * <remarks>
+ *  Called when a scanner matches a <c>LAM@5()</c> call, denoting the end of
+ *  the lambda call.  Just removes the call and stores the location.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock Functional_FoundAfter(const scanner[CodeScanner])
 {
 	if (YSI_g_sFunctionalAfterPos != 0)
@@ -171,14 +224,45 @@ static stock Functional_FoundAfter(const scanner[CodeScanner])
 	return cellmin;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <param name="scanner">The code scanner that found a match.</param>
+ * <remarks>
+ *  Used when a matcher finds a lambda call with an explicit nesting level.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock Functional_FoundCall1(const scanner[CodeScanner])
 {
 	Functional_FoundCall(scanner, CodeScanGetMatchHole(scanner, 0));
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <param name="scanner">The code scanner that found a match.</param>
+ * <remarks>
+ *  Used when a matcher finds a lambda call with a ZERO op for the nesting
+ *  level.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock Functional_FoundCall2(const scanner[CodeScanner])
 {
 	Functional_FoundCall(scanner, 0);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <param name="scanner">The code scanner that found a match.</param>
+ * <param name="nestingLevel">How many lambdas deep this call is.</param>
+ * <remarks>
+ *  Once a lambda call is found this code is called to trigger a new set of
+ *  scans to analyse the lambda function itself.  It then does the code
+ *  generation based on the results.  This is to allow nested lambdas as the
+ *  calls are found first, then the second set of scans run without preventing
+ *  the call scanner from finding more results later.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 {
@@ -420,6 +504,13 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	return 1;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_functional</library>
+ * <remarks>
+ *  Initialise the system
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 public OnCodeInit()
 {
 	Debug_Print2("Functional_OnCodeInit called");
@@ -478,22 +569,22 @@ public OnCodeInit()
 	forward Functional_OnCodeInit();
 #endif
 
-/*
+#if 0
 
-- The original code is:
+// The original code is:
 
 myVar = FoldR({ _0 + _1 }, arr, 0);
 
-- The compiled code generated is:
+// The compiled code generated is:
 
-myVar = @LAM0();
+myVar = LAM@0();
 {
-	@LAM1();
+	LAM@1();
 	inline Func(_0, _1) @return _0 + _1;
-	@LAM2(FoldR("Func", arr, 0));
+	LAM@2(FoldR("Func", arr, 0));
 }
 
-- The rewritten code is:
+// The rewritten code is:
 
 goto Func:
 
@@ -510,7 +601,7 @@ goto Cont;
 
 :Cont
 
-This jumping about is done so that lambdas may be used in the middle of expressions.
+// This jumping about is done so that lambdas may be used in the middle of expressions.
 
-*/
+#endif
 
