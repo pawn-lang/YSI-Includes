@@ -324,7 +324,7 @@ stock Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
  * </summary>
  * <param name="data">The number to get the lowest 0 in.</param>
  * <returns>
- *  The lowest unset bit.
+ *  The lowest null byte.
  * </returns>
  * <remarks>
  *  Check if any of the 4 bytes are zero:
@@ -356,7 +356,7 @@ stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
  * </summary>
  * <param name="data">The number to get the lowest space in.</param>
  * <returns>
- *  The lowest unset bit.
+ *  The lowest space byte.
  * </returns>
  * <remarks>
  *  Check if any of the 4 bytes are a space:
