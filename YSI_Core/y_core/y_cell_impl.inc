@@ -72,6 +72,7 @@ Optional plugins:
 */
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_ReverseBytes(number);
  * </summary>
@@ -97,6 +98,7 @@ Optional plugins:
 native Cell_ReverseBytes(GLOBAL_TAG_TYPES:data) = swapchars;
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_CompressRight(GLOBAL_TAG_TYPES:x, m);
  * </summary>
@@ -122,6 +124,7 @@ stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
  * </summary>
@@ -151,6 +154,7 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 const y_utils_abs_shift = cellbits - 1;
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_Abs(GLOBAL_TAG_TYPES:x, m)
  * </summary>
@@ -171,11 +175,21 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 	return (tag == _:tagof (Float:)) ? (number & cellmax) : ((number >> y_utils_abs_shift | 1) * number);
 }
 
+/**
+ * <library>y_cell</library>
+ */
 #if cellbits == 32
 	const YSI_g_cFEs = -0x01010101; // 0xFEFEFEFE
-	const YSI_g_c80s = 0x80808080;
 #else
 	const YSI_g_cFEs = -0x0101010101010101; // 0xFEFEFEFEFEFEFEFE
+#endif
+
+/**
+ * <library>y_cell</library>
+ */
+#if cellbits == 32
+	const YSI_g_c80s = 0x80808080;
+#else
 	const YSI_g_c80s = 0x8080808080808080;
 #endif
 
@@ -212,6 +226,7 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_GetLowestComponent(number);
  * </summary>
@@ -254,6 +269,7 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_GetLowestEmpty(number);
  * </summary>
@@ -280,6 +296,7 @@ stock Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_HasZeroByte(number);
  * </summary>

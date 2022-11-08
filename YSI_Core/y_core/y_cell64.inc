@@ -71,10 +71,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+/// <p/>
+
 // Sadly these two arrays can't be shared because they have marginally different
 // values.  We could write this code to use the other array and do `+ 1`, but
 // that adds a WHOLE EXTRA INSTRUCTION!  OH NOES!
 static stock const
+	/**
+	 * <library>y_cell</library>
+	 */
 	YSI_g_scDeBruijn1[64] =
 		{
 			0,  1,  2, 53,  3,  7, 54, 27,  4, 38, 41,  8, 34, 55, 48, 28,
@@ -82,6 +87,9 @@ static stock const
 		   63, 52,  6, 26, 37, 40, 33, 47, 61, 45, 43, 21, 23, 58, 17, 10,
 		   51, 25, 36, 32, 60, 20, 57, 16, 50, 31, 19, 15, 30, 14, 13, 12
 		},
+	/**
+	 * <library>y_cell</library>
+	 */
 	YSI_g_scDeBruijn2[64] =
 		{
 			1,  2,  3, 54,  4,  8, 55, 28,  5, 39, 42,  9, 35, 56, 49, 29,
@@ -91,6 +99,7 @@ static stock const
 		};
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_Reverse32(number);
  * </summary>
@@ -169,6 +178,7 @@ stock Cell_Reverse32(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_ReverseBits(number);
  * </summary>
@@ -244,6 +254,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_ReverseNibbles(number);
  * </summary>
@@ -296,6 +307,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_CountBits(number);
  * </summary>
@@ -358,6 +370,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_GetLowestBit(number);
  * </summary>
@@ -405,6 +418,7 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_GetLowestBitEx(number);
  * </summary>
@@ -468,6 +482,7 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_CountBlanks(number);
  * </summary>
@@ -517,6 +532,7 @@ stock Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_GetLowestBlank(number);
  * </summary>
@@ -549,6 +565,7 @@ stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_GetLowestBlankEx(number);
  * </summary>
@@ -582,6 +599,7 @@ stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[6]);
  * </summary>
@@ -626,6 +644,7 @@ stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[6])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[6])
  * </summary>
@@ -655,6 +674,7 @@ stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[6])
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
  * <summary>
  *  Cell_PrecomputeMaskPermutation(m)
  * </summary>
