@@ -193,6 +193,15 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 	const YSI_g_c80s = 0x8080808080808080;
 #endif
 
+/**
+ * <library>y_cell</library>
+ */
+#if cellbits == 32
+	const YSI_g_c20s = ~0x20202020;
+#else
+	const YSI_g_c20s = ~0x2020202020202020;
+#endif
+
 #if __COMPILER___EMIT_U
 	#define Cell_GetLowestComponent(%0) \
 		__emit(                         \
@@ -215,6 +224,19 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 		__emit(                         \
 			LOAD.U.pri  %0             ,\
 			INVERT                     ,\
+			MOVE.alt                   ,\
+			INVERT                     ,\
+			ADD.C       YSI_g_cFEs     ,\
+			AND                        ,\
+			CONST.alt   YSI_g_c80s     ,\
+			AND                         \
+		)
+	
+	#define Cell_HasSpaceByte(%0) \
+		__emit(                         \
+			LOAD.U.pri  %0             ,\
+			CONST.alt   YSI_g_c20s     ,\
+			XOR                        ,\
 			MOVE.alt                   ,\
 			INVERT                     ,\
 			ADD.C       YSI_g_cFEs     ,\
@@ -311,6 +333,38 @@ stock Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
  *//*------------------------------------------------------------------------**/
 
 stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
+{
+	// return (data - 0x01010101) & ~data & 0x80808080;
+	#emit LOAD.S.pri           data
+	#emit CONST.alt            YSI_g_c20s
+	#emit XOR
+	#emit MOVE.alt
+	#emit INVERT
+	#emit ADD.C                YSI_g_cFEs
+	#emit AND
+	#emit CONST.alt            YSI_g_c80s
+	#emit AND
+	#emit RETN
+	
+	__pragma("naked");
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_cell</library>
+ * <summary>
+ *  Cell_HasSpaceByte(number);
+ * </summary>
+ * <param name="data">The number to get the lowest space in.</param>
+ * <returns>
+ *  The lowest unset bit.
+ * </returns>
+ * <remarks>
+ *  Check if any of the 4 bytes are a space:
+ *  https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Cell_HasSpaceByte(GLOBAL_TAG_TYPES:data)
 {
 	// return (data - 0x01010101) & ~data & 0x80808080;
 	#emit LOAD.S.pri           data
