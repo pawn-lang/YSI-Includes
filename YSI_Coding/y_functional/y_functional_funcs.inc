@@ -602,14 +602,14 @@ stock ScanLIdx(Func:cb<iii>, n, const input[], output[], inputSize = sizeof (inp
 	new
 		len = min(inputSize, outputSize - 1),
 		i = -1,
-		cur = n;
+		cur;
 	while (++i != len)
 	{
-		n = cur,
-		cur = @.cb(i, cur, input[i]),
-		output[i] = n;
+		cur = @.cb(i, n, input[i]),
+		output[i] = n,
+		n = cur;
 	}
-	output[i] = cur;
+	output[i] = n;
 	return len + 1;
 }
 #define ScanLIdx({%0}%1) LAMBDA_iii<ScanLIdx>{%0}(%1)
@@ -818,7 +818,7 @@ stock ScanL(Func:cb<ii>, n, const input[], output[], inputSize = sizeof (input),
 		cur;
 	while (++i != len)
 	{
-		cur = @.cb(cur, input[i]),
+		cur = @.cb(n, input[i]),
 		output[i] = n,
 		n = cur;
 	}
