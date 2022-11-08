@@ -78,6 +78,9 @@ Optional plugins:
  * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
  * <param name="outputSize">The size of the output array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Applies the given function to every element in the input array and saves
  *  the individual results in the output array.  This:
@@ -101,10 +104,12 @@ Optional plugins:
 
 stock Map(Func:cb<i>, const input[], output[], inputSize = sizeof (input), outputSize = sizeof (output))
 {
-	for (new len = min(inputSize, outputSize), i = 0; i != len; ++i)
+	new len = min(inputSize, outputSize);
+	for (new i = 0; i != len; ++i)
 	{
 		output[i] = @.cb(input[i]);
 	}
+	return len;
 }
 #define Map({%0}%1) LAMBDA_i<Map>{%0}(%1)
 
@@ -113,6 +118,9 @@ stock Map(Func:cb<i>, const input[], output[], inputSize = sizeof (input), outpu
  * <param name="cb">A function that takes one parameter.</param>
  * <param name="input">The input data array.</param>
  * <param name="inputSize">The size of the input array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Applies the given function to every element in the input array, but doesn't
  *  save the result.  The function should thus have a side-effect.  This:
@@ -140,6 +148,7 @@ stock Map_(Func:cb<i>, const input[], inputSize = sizeof (input))
 	{
 		@.cb(input[i]);
 	}
+	return inputSize;
 }
 #define Map_({%0}%1) LAMBDA_i<Map_>{%0}(%1)
 
@@ -150,6 +159,9 @@ stock Map_(Func:cb<i>, const input[], inputSize = sizeof (input))
  * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
  * <param name="outputSize">The size of the output array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Applies the given function to every element in the input array and their
  *  index, and saves the result.  This:
@@ -173,10 +185,12 @@ stock Map_(Func:cb<i>, const input[], inputSize = sizeof (input))
 
 stock MapIdx(Func:cb<ii>, const input[], output[], inputSize = sizeof (input), outputSize = sizeof (output))
 {
-	for (new len = min(inputSize, outputSize), i = 0; i != len; ++i)
+	new len = min(inputSize, outputSize);
+	for (new i = 0; i != len; ++i)
 	{
 		output[i] = @.cb(i, input[i]);
 	}
+	return len;
 }
 #define MapIdx({%0}%1) LAMBDA_ii<MapIdx>{%0}(%1)
 
@@ -185,6 +199,9 @@ stock MapIdx(Func:cb<ii>, const input[], output[], inputSize = sizeof (input), o
  * <param name="cb">A function that takes two parameters.</param>
  * <param name="input">The input data array.</param>
  * <param name="inputSize">The size of the input array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Applies the given function to every element in the input array and their
  *  index, but doesn't save the result.  The function should thus have a side-
@@ -213,6 +230,7 @@ stock MapIdx_(Func:cb<ii>, const input[], inputSize = sizeof (input))
 	{
 		@.cb(i, input[i]);
 	}
+	return inputSize;
 }
 #define MapIdx_({%0}%1) LAMBDA_ii<MapIdx_>{%0}(%1)
 
@@ -225,6 +243,9 @@ stock MapIdx_(Func:cb<ii>, const input[], inputSize = sizeof (input))
  * <param name="leftSize">The size of the first input array.</param>
  * <param name="rightSize">The size of the second input array.</param>
  * <param name="outputSize">The size of the output array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Combines two input arrays using a given function, and saves the result.
  *  This:
@@ -248,10 +269,12 @@ stock MapIdx_(Func:cb<ii>, const input[], inputSize = sizeof (input))
 
 stock ZipWith(Func:cb<ii>, const left[], const right[], output[], leftSize = sizeof (left), rightSize = sizeof (right), outputSize = sizeof (output))
 {
-	for (new len = min(outputSize, min(leftSize, rightSize)), i = 0; i != len; ++i)
+	new len = min(outputSize, min(leftSize, rightSize));
+	for (new i = 0; i != len; ++i)
 	{
 		output[i] = @.cb(left[i], right[i]);
 	}
+	return len;
 }
 #define ZipWith({%0}%1) LAMBDA_ii<ZipWith>{%0}(%1)
 
@@ -262,6 +285,9 @@ stock ZipWith(Func:cb<ii>, const left[], const right[], output[], leftSize = siz
  * <param name="right">The second input data array.</param>
  * <param name="leftSize">The size of the first input array.</param>
  * <param name="rightSize">The size of the second input array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Combines two input arrays using a given function, but doesn't save the
  *  result so the function should have side-effects.  This:
@@ -287,10 +313,12 @@ stock ZipWith(Func:cb<ii>, const left[], const right[], output[], leftSize = siz
 
 stock ZipWith_(Func:cb<ii>, const left[], const right[], leftSize = sizeof (left), rightSize = sizeof (right))
 {
-	for (new len = min(leftSize, rightSize), i = 0; i != len; ++i)
+	new len = min(leftSize, rightSize);
+	for (new i = 0; i != len; ++i)
 	{
 		@.cb(left[i], right[i]);
 	}
+	return len;
 }
 #define ZipWith_({%0}%1) LAMBDA_ii<ZipWith_>{%0}(%1)
 
@@ -305,6 +333,9 @@ stock ZipWith_(Func:cb<ii>, const left[], const right[], leftSize = sizeof (left
  * <param name="middleSize">The size of the second input array.</param>
  * <param name="rightSize">The size of the third input array.</param>
  * <param name="outputSize">The size of the output array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Like <c>ZipWith</c>, but has three inputs, not two.  The lambda parameters
  *  are thus <c>_0</c> for the current <c>left</c> value, <c>_1</c> for the
@@ -319,10 +350,12 @@ stock ZipWith_(Func:cb<ii>, const left[], const right[], leftSize = sizeof (left
 
 stock ZipWith3(Func:cb<iii>, const left[], const middle[], const right[], output[], leftSize = sizeof (left), middleSize = sizeof (middle), rightSize = sizeof (right), outputSize = sizeof (output))
 {
-	for (new len = min(min(middleSize, outputSize), min(leftSize, rightSize)), i = 0; i != len; ++i)
+	new len = min(min(middleSize, outputSize), min(leftSize, rightSize));
+	for (new i = 0; i != len; ++i)
 	{
 		output[i] = @.cb(left[i], middle[i], right[i]);
 	}
+	return len;
 }
 #define ZipWith3({%0}%1) LAMBDA_iii<ZipWith3>{%0}(%1)
 
@@ -335,6 +368,9 @@ stock ZipWith3(Func:cb<iii>, const left[], const middle[], const right[], output
  * <param name="leftSize">The size of the first input array.</param>
  * <param name="middleSize">The size of the second input array.</param>
  * <param name="rightSize">The size of the third input array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Like <c>ZipWith_</c>, but has three inputs, not two.  The lambda parameters
  *  are thus <c>_0</c> for the current <c>left</c> value, <c>_1</c> for the
@@ -355,10 +391,12 @@ stock ZipWith3(Func:cb<iii>, const left[], const middle[], const right[], output
 
 stock ZipWith3_(Func:cb<iii>, const left[], const middle[], const right[], leftSize = sizeof (left), middleSize = sizeof (middle), rightSize = sizeof (right))
 {
-	for (new len = min(middleSize, min(leftSize, rightSize)), i = 0; i != len; ++i)
+	new len = min(middleSize, min(leftSize, rightSize));
+	for (new i = 0; i != len; ++i)
 	{
 		@.cb(left[i], middle[i], right[i]);
 	}
+	return len;
 }
 #define ZipWith3_({%0}%1) LAMBDA_iii<ZipWith3_>{%0}(%1)
 
@@ -371,6 +409,9 @@ stock ZipWith3_(Func:cb<iii>, const left[], const middle[], const right[], leftS
  * <param name="leftSize">The size of the first input array.</param>
  * <param name="rightSize">The size of the second input array.</param>
  * <param name="outputSize">The size of the output array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Like <c>ZipWith</c>, but passes the current index as well.  The lambda
  *  parameters are thus <c>_0</c> for the current index, <c>_1</c> for the
@@ -392,10 +433,12 @@ stock ZipWith3_(Func:cb<iii>, const left[], const middle[], const right[], leftS
 
 stock ZipWithIdx(Func:cb<iii>, const left[], const right[], output[], leftSize = sizeof (left), rightSize = sizeof (right), outputSize = sizeof (output))
 {
-	for (new len = min(outputSize, min(leftSize, rightSize)), i = 0; i != len; ++i)
+	new len = min(outputSize, min(leftSize, rightSize));
+	for (new i = 0; i != len; ++i)
 	{
 		output[i] = @.cb(i, left[i], right[i]);
 	}
+	return len;
 }
 #define ZipWithIdx({%0}%1) LAMBDA_iii<ZipWithIdx>{%0}(%1)
 
@@ -406,6 +449,9 @@ stock ZipWithIdx(Func:cb<iii>, const left[], const right[], output[], leftSize =
  * <param name="right">The second input data array.</param>
  * <param name="leftSize">The size of the first input array.</param>
  * <param name="rightSize">The size of the second input array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Like <c>ZipWith_</c>, but passes the current index as well.  The lambda
  *  parameters are thus <c>_0</c> for the current index, <c>_1</c> for the
@@ -420,10 +466,12 @@ stock ZipWithIdx(Func:cb<iii>, const left[], const right[], output[], leftSize =
 
 stock ZipWithIdx_(Func:cb<iii>, const left[], const right[], leftSize = sizeof (left), rightSize = sizeof (right))
 {
-	for (new len = min(leftSize, rightSize), i = 0; i != len; ++i)
+	new len = min(leftSize, rightSize);
+	for (new i = 0; i != len; ++i)
 	{
 		@.cb(i, left[i], right[i]);
 	}
+	return len;
 }
 #define ZipWithIdx_({%0}%1) LAMBDA_iii<ZipWithIdx_>{%0}(%1)
 
@@ -438,6 +486,9 @@ stock ZipWithIdx_(Func:cb<iii>, const left[], const right[], leftSize = sizeof (
  * <param name="middleSize">The size of the second input array.</param>
  * <param name="rightSize">The size of the third input array.</param>
  * <param name="outputSize">The size of the output array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Like <c>ZipWith3</c>, but passes the current index as well.  The lambda
  *  parameters are thus <c>_0</c> for the current index, <c>_1</c> for the
@@ -455,10 +506,12 @@ stock ZipWithIdx_(Func:cb<iii>, const left[], const right[], leftSize = sizeof (
 
 stock ZipWith3Idx(Func:cb<iiii>, const left[], const middle[], const right[], output[], leftSize = sizeof (left), middleSize = sizeof (middle), rightSize = sizeof (right), outputSize = sizeof (output))
 {
-	for (new len = min(min(middleSize, outputSize), min(leftSize, rightSize)), i = 0; i != len; ++i)
+	new len = min(min(middleSize, outputSize), min(leftSize, rightSize));
+	for (new i = 0; i != len; ++i)
 	{
 		output[i] = @.cb(i, left[i], middle[i], right[i]);
 	}
+	return len;
 }
 #define ZipWith3Idx({%0}%1) LAMBDA_iiii<ZipWith3Idx>{%0}(%1)
 
@@ -471,6 +524,9 @@ stock ZipWith3Idx(Func:cb<iiii>, const left[], const middle[], const right[], ou
  * <param name="leftSize">The size of the first input array.</param>
  * <param name="middleSize">The size of the second input array.</param>
  * <param name="rightSize">The size of the third input array.</param>
+ * <returns>
+ *  The number of elements processed.
+ * </returns>
  * <remarks>
  *  Like <c>ZipWith3_</c>, but passes the current index as well.  The lambda
  *  parameters are thus <c>_0</c> for the current index, <c>_1</c> for the
@@ -486,10 +542,12 @@ stock ZipWith3Idx(Func:cb<iiii>, const left[], const middle[], const right[], ou
 
 stock ZipWith3Idx_(Func:cb<iiii>, const left[], const middle[], const right[], leftSize = sizeof (left), middleSize = sizeof (middle), rightSize = sizeof (right))
 {
-	for (new len = min(middleSize, min(leftSize, rightSize)), i = 0; i != len; ++i)
+	new len = min(middleSize, min(leftSize, rightSize));
+	for (new i = 0; i != len; ++i)
 	{
 		@.cb(i, left[i], middle[i], right[i]);
 	}
+	return len;
 }
 #define ZipWith3Idx_({%0}%1) LAMBDA_iiii<ZipWith3Idx_>{%0}(%1)
 
@@ -531,7 +589,7 @@ stock FoldLIdx(Func:cb<iii>, n, const input[], inputSize = sizeof (input))
  * <param name="outputSize">The size of the output array.</param>
  * <param name=""></param>
  * <returns>
- *  
+ *  The number of elements processed.
  * </returns>
  * <remarks>
  *  
@@ -552,7 +610,7 @@ stock ScanLIdx(Func:cb<iii>, n, const input[], output[], inputSize = sizeof (inp
 		output[i] = n;
 	}
 	output[i] = cur;
-	return 1;
+	return len + 1;
 }
 #define ScanLIdx({%0}%1) LAMBDA_iii<ScanLIdx>{%0}(%1)
 
@@ -594,7 +652,7 @@ stock FoldRIdx(Func:cb<iii>, const input[], n, inputSize = sizeof (input))
  * <param name="outputSize">The size of the output array.</param>
  * <param name=""></param>
  * <returns>
- *  
+ *  The number of elements written
  * </returns>
  * <remarks>
  *  
@@ -607,12 +665,12 @@ stock ScanRIdx(Func:cb<iii>, n, const input[], output[], inputSize = sizeof (inp
 	new
 		len = min(inputSize, outputSize - 1),
 		cur = n;
-	output[len] = cur;
+	output[(n = len)] = cur;
 	while (len--)
 	{
 		output[len] = cur = @.cb(i, input[len], cur);
 	}
-	return 1;
+	return n + 1;
 }
 #define ScanRIdx({%0}%1) LAMBDA_iii<ScanRIdx>{%0}(%1)
 
@@ -625,7 +683,7 @@ stock ScanRIdx(Func:cb<iii>, n, const input[], output[], inputSize = sizeof (inp
  * <param name="outputSize">The size of the output array.</param>
  * <param name=""></param>
  * <returns>
- *  
+ *  The result of applying one function to every array element in turn.
  * </returns>
  * <remarks>
  *  
@@ -654,7 +712,7 @@ stock FoldL1Idx(Func:cb<iii>, const input[], inputSize = sizeof (input))
  * <param name="outputSize">The size of the output array.</param>
  * <param name=""></param>
  * <returns>
- *  
+ *  The result of applying one function to every array element in turn.
  * </returns>
  * <remarks>
  *  
@@ -727,7 +785,7 @@ stock FoldL(Func:cb<ii>, n, const input[], inputSize = sizeof (input))
  * <param name="inputSize">The size of the input array.</param>
  * <param name="outputSize">The size of the output array.</param>
  * <returns>
- *  <c>false</c> if the output array has no elements.
+ *  The number of elements processed.
  * </returns>
  * <remarks>
  *  A <em>fold</em> applies a function to the current data and the previous
@@ -751,9 +809,9 @@ stock FoldL(Func:cb<ii>, n, const input[], inputSize = sizeof (input))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:ScanL(Func:cb<ii>, n, const input[], output[], inputSize = sizeof (input), outputSize = sizeof (output))
+stock ScanL(Func:cb<ii>, n, const input[], output[], inputSize = sizeof (input), outputSize = sizeof (output))
 {
-	if (!outputSize) return false;
+	if (!outputSize) return 0;
 	new
 		len = min(inputSize, outputSize - 1),
 		i = -1,
@@ -765,7 +823,7 @@ stock bool:ScanL(Func:cb<ii>, n, const input[], output[], inputSize = sizeof (in
 		n = cur;
 	}
 	output[i] = n;
-	return true;
+	return len + 1;
 }
 #define ScanL({%0}%1) LAMBDA_ii<ScanL>{%0}(%1)
 
@@ -822,7 +880,7 @@ stock FoldR(Func:cb<ii>, const input[], n, inputSize = sizeof (input))
  * <param name="inputSize">The size of the input array.</param>
  * <param name="outputSize">The size of the output array.</param>
  * <returns>
- *  <c>false</c> if the output array has no elements.
+ *  The number of elements processed.
  * </returns>
  * <remarks>
  *  A <em>fold</em> applies a function to the current data and the previous
@@ -846,18 +904,18 @@ stock FoldR(Func:cb<ii>, const input[], n, inputSize = sizeof (input))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:ScanR(Func:cb<ii>, const input[], n, output[], inputSize = sizeof (input), outputSize = sizeof (output))
+stock ScanR(Func:cb<ii>, const input[], n, output[], inputSize = sizeof (input), outputSize = sizeof (output))
 {
-	if (!outputSize) return false;
+	if (!outputSize) return 0;
 	new
 		len = min(inputSize, outputSize - 1),
 		cur = n;
-	output[len] = cur;
+	output[(n = len)] = cur;
 	while (len--)
 	{
 		output[len] = cur = @.cb(input[len], cur);
 	}
-	return true;
+	return n + 1;
 }
 #define ScanR({%0}%1) LAMBDA_ii<ScanR>{%0}(%1)
 
@@ -927,7 +985,7 @@ stock FoldR1(Func:cb<ii>, const input[], inputSize = sizeof (input))
  * <param name="outputSize">The size of the output array.</param>
  * <param name=""></param>
  * <returns>
- *  
+ *  <c>true</c> if all the elements are non-zero (<c>true</c> if there are no inputs).
  * </returns>
  * <remarks>
  *  
@@ -951,7 +1009,7 @@ stock bool:And(bool:input[], inputSize = sizeof (input))
  * <param name="outputSize">The size of the output array.</param>
  * <param name=""></param>
  * <returns>
- *  
+ *  <c>true</c> if any the elements are non-zero (<c>false</c> if there are no inputs).
  * </returns>
  * <remarks>
  *  
@@ -976,7 +1034,7 @@ stock bool:Or(bool:input[], inputSize = sizeof (input))
  * <param name="outputSize">The size of the output array.</param>
  * <param name=""></param>
  * <returns>
- *  
+ *  <c>true</c> if any the elements pass the test function (<c>true</c> if there are no inputs).
  * </returns>
  * <remarks>
  *  
@@ -1002,7 +1060,7 @@ stock bool:All(Func:cb<i>, const input[], inputSize = sizeof (input))
  * <param name="outputSize">The size of the output array.</param>
  * <param name=""></param>
  * <returns>
- *  
+ *  <c>true</c> if any the elements pass the test function (<c>false</c> if there are no inputs).
  * </returns>
  * <remarks>
  *  
@@ -1103,7 +1161,7 @@ stock Reverse(const input[], inputSize = sizeof (input))
  * <library>y_functional</library>
  * <param name=""></param>
  * <returns>
- *  
+ *  <c>true</c> if any the elements equal <c>n</c> (<c>false</c> if there are no inputs).
  * </returns>
  * <remarks>
  *  
@@ -1123,7 +1181,7 @@ stock bool:Elem(n, const input[], inputSize = sizeof (input))
  * <library>y_functional</library>
  * <param name=""></param>
  * <returns>
- *  
+ *  <c>true</c> if none of the elements equal <c>n</c> (<c>true</c> if there are no inputs).
  * </returns>
  * <remarks>
  *  
