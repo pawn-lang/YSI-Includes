@@ -92,6 +92,9 @@ Optional plugins:
 
 /// <p/>
 
+/**
+ * <library>y_als</library>
+ */
 enum ALS
 {
 	Bit:ALS_OnScriptInit,
@@ -178,6 +181,7 @@ enum ALS
 	#endif
 	Bit:ALS_OnPlayerSelectObject
 }
+static stock ALS:_@ALS() { return ALS; }
 
 #define ALS_DATA<>
 
