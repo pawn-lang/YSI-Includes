@@ -988,7 +988,8 @@ stock FoldR1(Func:cb<ii>, const input[], inputSize = sizeof (input))
  *  <c>true</c> if all the elements are non-zero (<c>true</c> if there are no inputs).
  * </returns>
  * <remarks>
- *  
+ *  An empty array cannot contain a non-zero elements, so the default return is
+ *  <c>true</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1012,7 +1013,8 @@ stock bool:And(bool:input[], inputSize = sizeof (input))
  *  <c>true</c> if any the elements are non-zero (<c>false</c> if there are no inputs).
  * </returns>
  * <remarks>
- *  
+ *  An empty array cannot contain a non-zero element, so the default return is
+ *  <c>false</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1029,15 +1031,15 @@ stock bool:Or(bool:input[], inputSize = sizeof (input))
  * <library>y_functional</library>
  * <param name="cb">A function that takes one parameter.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
  *  <c>true</c> if any the elements pass the test function (<c>true</c> if there are no inputs).
  * </returns>
  * <remarks>
- *  
+ *  Calls the given function one at a time for every input element until one is
+ *  found that fails.  The function will short-circuit, so will end as soon as a
+ *  matching index is found, thus not all elements may be processed and any
+ *  input functions with side-effects should be aware of this.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1055,15 +1057,15 @@ stock bool:All(Func:cb<i>, const input[], inputSize = sizeof (input))
  * <library>y_functional</library>
  * <param name="cb">A function that takes one parameter.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
  *  <c>true</c> if any the elements pass the test function (<c>false</c> if there are no inputs).
  * </returns>
  * <remarks>
- *  
+ *  Calls the given function one at a time for every input element until one is
+ *  found that passes.  The function will short-circuit, so will end as soon as
+ *  a matching index is found, thus not all elements may be processed and any
+ *  input functions with side-effects should be aware of this.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1081,15 +1083,16 @@ stock bool:Any(Func:cb<i>, const input[], inputSize = sizeof (input))
  * <library>y_functional</library>
  * <param name="cb">A function that takes two parameters.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
- *  
+ *  <c>true</c> if any the elements pass the test function (<c>true</c> if there are no inputs).
  * </returns>
  * <remarks>
- *  
+ *  Calls the given function one at a time for every input element until one is
+ *  found that fails.  The function will short-circuit, so will end as soon as a
+ *  matching index is found, thus not all elements may be processed and any
+ *  input functions with side-effects should be aware of this.  Passes the index
+ *  as the first parameter, and the value as the second.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1107,15 +1110,16 @@ stock bool:AllIdx(Func:cb<ii>, const input[], inputSize = sizeof (input))
  * <library>y_functional</library>
  * <param name="cb">A function that takes two parameters.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
- *  
+ *  <c>true</c> if any the elements pass the test function (<c>false</c> if there are no inputs).
  * </returns>
  * <remarks>
- *  
+ *  Calls the given function one at a time for every input element until one is
+ *  found that passes.  The function will short-circuit, so will end as soon as
+ *  a matching index is found, thus not all elements may be processed and any
+ *  input functions with side-effects should be aware of this.  Passes the index
+ *  as the first parameter, and the value as the second.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1131,40 +1135,42 @@ stock bool:AnyIdx(Func:cb<ii>, const input[], inputSize = sizeof (input))
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
- * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
- * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
+ * <param name="data">The input and output data array.</param>
+ * <param name="dataSize">The size of the input array.</param>
  * <returns>
- *  
+ *  The number of elements processed.
  * </returns>
  * <remarks>
- *  
+ *  Reverses an array, so the last element becomes the first, the first becomes
+ *  the last, and all the ones in-between swap places as well.  Modifies the
+ *  input array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Reverse(const input[], inputSize = sizeof (input))
+stock Reverse(data[], dataSize = sizeof (data))
 {
 	new
 		temp = 0;
-	for (new i = 0; j = inputSize - 1; i < j; ++i, --j)
+	for (new i = 0; j = dataSize - 1; i < j; ++i, --j)
 	{
-		temp   = input[i],
-		input[i] = input[j],
-		input[j] = temp;
+		temp   = data[i],
+		data[i] = data[j],
+		data[j] = temp;
 	}
-	return 1;
+	return dataSize;
 }
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
- * <param name=""></param>
+ * <param name="n">The value to compare elements against.</param>
+ * <param name="input">The input data array.</param>
+ * <param name="inputSize">The size of the input array.</param>
  * <returns>
  *  <c>true</c> if any the elements equal <c>n</c> (<c>false</c> if there are no inputs).
  * </returns>
  * <remarks>
- *  
+ *  An empty array cannot contain a given element, so the default return is
+ *  <c>false</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1179,12 +1185,15 @@ stock bool:Elem(n, const input[], inputSize = sizeof (input))
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
- * <param name=""></param>
+ * <param name="n">The value to compare elements against.</param>
+ * <param name="input">The input data array.</param>
+ * <param name="inputSize">The size of the input array.</param>
  * <returns>
  *  <c>true</c> if none of the elements equal <c>n</c> (<c>true</c> if there are no inputs).
  * </returns>
  * <remarks>
- *  
+ *  An empty array cannot contain a given element, so the default return is
+ *  <c>true</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
