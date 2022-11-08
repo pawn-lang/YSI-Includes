@@ -496,16 +496,17 @@ stock ZipWith3Idx_(Func:cb<iiii>, const left[], const middle[], const right[], l
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
  * <param name="cb">A function that takes three parameters.</param>
+ * <param name="n">The initial value of the accumulation.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
- *  
+ *  The result of applying one function to every array element in turn.
  * </returns>
  * <remarks>
- *  
+ *  Like <c>FoldL</c>, but passes the index as the first parameter as well.
+ *  The <c>L</c> refers to the call order, which is from the first element to
+ *  the last element.  This is important for non-commutative operations like
+ *  division.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -558,15 +559,16 @@ stock ScanLIdx(Func:cb<iii>, n, const input[], output[], inputSize = sizeof (inp
  * <library>y_functional</library>
  * <param name="cb">A function that takes three parameters.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
+ * <param name="n">The initial value of the accumulation.</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
- *  
+ *  The result of applying one function to every array element in turn.
  * </returns>
  * <remarks>
- *  
+ *  Like <c>FoldR</c>, but passes the index as the first parameter as well.
+ *  The <c>R</c> refers to the call order, which is from the last element to the
+ *  first element.  This is important for non-commutative operations like
+ *  division.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -674,16 +676,32 @@ stock FoldR1Idx(Func:cb<iii>, const input[], inputSize = sizeof (input))
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
  * <param name="cb">A function that takes two parameters.</param>
+ * <param name="n">The initial value of the accumulation.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
- *  
+ *  The result of applying one function to every array element in turn.
  * </returns>
  * <remarks>
- *  
+ *  A <em>fold</em> applies a function to the current data and the previous
+ *  result of calling the function, and repeats this process across the whole
+ *  array.  The parameters to the callback are the previous result (<c>_0</c>),
+ *  and the current data (<c>_1</c>).  The initial "previous" value is passed in
+ *  as <c>n</c>.  To add all the values in an array together use:
+ *
+ *  <code>
+ *    new sum = FoldL({ _0 + _1 }, 0, array);
+ *  </code>
+ *
+ *  To find the product use:
+ *
+ *  <code>
+ *    new product = FoldL({ _0 * _1 }, 1, array);
+ *  </code>
+ *
+ *  The <c>L</c> refers to the call order, which is from the first element to
+ *  the last element.  This is important for non-commutative operations like
+ *  division.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -736,15 +754,31 @@ stock ScanL(Func:cb<ii>, n, const input[], output[], inputSize = sizeof (input),
  * <library>y_functional</library>
  * <param name="cb">A function that takes two parameters.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
+ * <param name="n">The initial value of the accumulation.</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
- *  
+ *  The result of applying one function to every array element in turn.
  * </returns>
  * <remarks>
- *  
+ *  A <em>fold</em> applies a function to the current data and the previous
+ *  result of calling the function, and repeats this process across the whole
+ *  array.  The parameters to the callback are the current data (<c>_0</c>) and
+ *  the previous result (<c>_1</c>).  The initial "previous" value is passed in
+ *  as <c>n</c>.  To add all the values in an array together use:
+ *
+ *  <code>
+ *    new sum = FoldR({ _0 + _1 }, 0, array);
+ *  </code>
+ *
+ *  To find the product use:
+ *
+ *  <code>
+ *    new product = FoldR({ _0 * _1 }, 1, array);
+ *  </code>
+ *
+ *  The <c>R</c> refers to the call order, which is from the last element to the
+ *  first element.  This is important for non-commutative operations like
+ *  division.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

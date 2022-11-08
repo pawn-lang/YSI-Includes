@@ -1,6 +1,6 @@
 # Quick Start
 
-This library provides "lambda" functions, i.e. short functions inside expressions, plus a number of
+This library provides *lambda* functions, i.e. short functions inside expressions, plus a number of
 functions that accept these functions and use them to perform basic operations.
 
 ```pawn
