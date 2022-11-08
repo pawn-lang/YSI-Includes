@@ -1407,3 +1407,378 @@ ScanRIdx(cb, n, input[], output[], inputSize, outputSize)
 #### Estimated stack usage
 9 cells
 
+
+
+### `ZipWith`:
+
+
+#### Syntax
+
+
+```pawn
+ZipWith(cb, left[], right[], output[], leftSize, rightSize, outputSize)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`cb`	 | 	`F@_@ii ` A function that takes one parameter.	 |
+| 	`left`	 | 	` [] ` The first input data array.	 |
+| 	`right`	 | 	` [] ` The second input data array.	 |
+| 	`output`	 | 	` [] ` The output data array (may be the same array as an input).	 |
+| 	`leftSize`	 | 	The size of the first input array.	 |
+| 	`rightSize`	 | 	The size of the second input array.	 |
+| 	`outputSize`	 | 	The size of the output array.	 |
+
+#### Remarks
+Combines two input arrays using a given function, and saves the result. This:
+
+```pawn
+  ZipWith({ _0 + _1 }, left, right, output);  
+```
+
+Is equivalent to:
+```pawn
+  for (new i = 0; i != len; ++i)       
+  {                                    
+      output[i] = left[i] + right[i]; 
+  }  
+```
+
+But obviously much shorter and less error-prone.
+
+#### Depends on
+* [`INDIRECTION_DATA`](#INDIRECTION_DATA)
+* [`INDIRECTION_NAUGHT`](#INDIRECTION_NAUGHT)
+* [`INDIRECTION_TAG`](#INDIRECTION_TAG)
+* [`Indirect_Call__`](#Indirect_Call__)
+* [`min`](#min)
+#### Estimated stack usage
+8 cells
+
+
+
+### `ZipWith3`:
+
+
+#### Syntax
+
+
+```pawn
+ZipWith3(cb, left[], middle[], right[], output[], leftSize, middleSize, rightSize, outputSize)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`cb`	 | 	`F@_@iii ` A function that takes three parameters.	 |
+| 	`left`	 | 	` [] ` The first input data array.	 |
+| 	`middle`	 | 	` [] ` The second input data array.	 |
+| 	`right`	 | 	` [] ` The third input data array.	 |
+| 	`output`	 | 	` [] ` The output data array (may be the same array as an input).	 |
+| 	`leftSize`	 | 	The size of the first input array.	 |
+| 	`middleSize`	 | 	The size of the second input array.	 |
+| 	`rightSize`	 | 	The size of the third input array.	 |
+| 	`outputSize`	 | 	The size of the output array.	 |
+
+#### Remarks
+Like `ZipWith`, but has three inputs, not two. The lambda parameters are thus `_0` for the current `left` value, `_1` for the current `middle` value, and `_2` for the current `right` value:
+
+```pawn
+  ZipWith3({ VectorSize(Float:_0, Float:_1, Float:_2) }, gPointXs, gPointYs, gPointZs, gDistances);  
+```
+
+
+#### Depends on
+* [`INDIRECTION_DATA`](#INDIRECTION_DATA)
+* [`INDIRECTION_NAUGHT`](#INDIRECTION_NAUGHT)
+* [`INDIRECTION_TAG`](#INDIRECTION_TAG)
+* [`Indirect_Call__`](#Indirect_Call__)
+* [`min`](#min)
+#### Estimated stack usage
+9 cells
+
+
+
+### `ZipWith3Idx`:
+
+
+#### Syntax
+
+
+```pawn
+ZipWith3Idx(cb, left[], middle[], right[], output[], leftSize, middleSize, rightSize, outputSize)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`cb`	 | 	`F@_@iiii ` A function that takes four parameters.	 |
+| 	`left`	 | 	` [] ` The first input data array.	 |
+| 	`middle`	 | 	` [] ` The second input data array.	 |
+| 	`right`	 | 	` [] ` The third input data array.	 |
+| 	`output`	 | 	` [] ` The output data array (may be the same array as an input).	 |
+| 	`leftSize`	 | 	The size of the first input array.	 |
+| 	`middleSize`	 | 	The size of the second input array.	 |
+| 	`rightSize`	 | 	The size of the third input array.	 |
+| 	`outputSize`	 | 	The size of the output array.	 |
+
+#### Remarks
+Like `ZipWith3`, but passes the current index as well. The lambda parameters are thus `_0` for the current index, `_1` for the current `left` value, `_2` for the current `middle` value, and `_3` for the current `right` value:
+
+```pawn
+  ZipWith3Idx({ CreateVehicle(gModels[_0], Float:_1, Float:_2, Float:_3, 0.0, -1, -1, 100000) }, gPosXs,  gPosYs, gPosZs, gVehicles);  
+```
+
+This example uses the index to replicate a `ZipWith4`, which isn't implemented in the library natively.
+
+#### Depends on
+* [`INDIRECTION_DATA`](#INDIRECTION_DATA)
+* [`INDIRECTION_NAUGHT`](#INDIRECTION_NAUGHT)
+* [`INDIRECTION_TAG`](#INDIRECTION_TAG)
+* [`Indirect_Call__`](#Indirect_Call__)
+* [`min`](#min)
+#### Estimated stack usage
+10 cells
+
+
+
+### `ZipWith3Idx_`:
+
+
+#### Syntax
+
+
+```pawn
+ZipWith3Idx_(cb, left[], middle[], right[], leftSize, middleSize, rightSize)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`cb`	 | 	`F@_@iiii ` A function that takes four parameters.	 |
+| 	`left`	 | 	` [] ` The first input data array.	 |
+| 	`middle`	 | 	` [] ` The second input data array.	 |
+| 	`right`	 | 	` [] ` The third input data array.	 |
+| 	`leftSize`	 | 	The size of the first input array.	 |
+| 	`middleSize`	 | 	The size of the second input array.	 |
+| 	`rightSize`	 | 	The size of the third input array.	 |
+
+#### Remarks
+Like `ZipWith3_`, but passes the current index as well. The lambda parameters are thus `_0` for the current index, `_1` for the current `left` value, `_2` for the current `middle` value, and `_3` for the current `right` value. The expression result is not saved:
+
+```pawn
+  ZipWith3Idx_({ SetPlayerPos(_0, Float:_1, Float:_2, Float:_3) }, gPlayerXs, gPlayerYs, gPlayerZs);  
+```
+
+
+#### Depends on
+* [`INDIRECTION_DATA`](#INDIRECTION_DATA)
+* [`INDIRECTION_NAUGHT`](#INDIRECTION_NAUGHT)
+* [`INDIRECTION_TAG`](#INDIRECTION_TAG)
+* [`Indirect_Call__`](#Indirect_Call__)
+* [`min`](#min)
+#### Estimated stack usage
+10 cells
+
+
+
+### `ZipWith3_`:
+
+
+#### Syntax
+
+
+```pawn
+ZipWith3_(cb, left[], middle[], right[], leftSize, middleSize, rightSize)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`cb`	 | 	`F@_@iii ` A function that takes three parameters.	 |
+| 	`left`	 | 	` [] ` The first input data array.	 |
+| 	`middle`	 | 	` [] ` The second input data array.	 |
+| 	`right`	 | 	` [] ` The third input data array.	 |
+| 	`leftSize`	 | 	The size of the first input array.	 |
+| 	`middleSize`	 | 	The size of the second input array.	 |
+| 	`rightSize`	 | 	The size of the third input array.	 |
+
+#### Remarks
+Like `ZipWith_`, but has three inputs, not two. The lambda parameters are thus `_0` for the current `left` value, `_1` for the current `middle` value, and `_2` for the current `right` value. The expression result is not saved.
+
+```pawn
+  RemoveBins(playerid)                                                                                                    
+  {                                                                                                                       
+      ZipWith3_({ RemoveBuildingForPlayer(playerid, 1337, Float:_0, Float:_1, Float:_2, 2.0) }, gBinXs, gBinYs,  gBinZs); 
+  }  
+```
+
+This example uses `playerid`, which is a variable from the function this code is within. Labmdas can use closures, just like inlines.
+
+#### Depends on
+* [`INDIRECTION_DATA`](#INDIRECTION_DATA)
+* [`INDIRECTION_NAUGHT`](#INDIRECTION_NAUGHT)
+* [`INDIRECTION_TAG`](#INDIRECTION_TAG)
+* [`Indirect_Call__`](#Indirect_Call__)
+* [`min`](#min)
+#### Estimated stack usage
+9 cells
+
+
+
+### `ZipWithIdx`:
+
+
+#### Syntax
+
+
+```pawn
+ZipWithIdx(cb, left[], right[], output[], leftSize, rightSize, outputSize)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`cb`	 | 	`F@_@iii ` A function that takes three parameters.	 |
+| 	`left`	 | 	` [] ` The first input data array.	 |
+| 	`right`	 | 	` [] ` The second input data array.	 |
+| 	`output`	 | 	` [] ` The output data array (may be the same array as an input).	 |
+| 	`leftSize`	 | 	The size of the first input array.	 |
+| 	`rightSize`	 | 	The size of the second input array.	 |
+| 	`outputSize`	 | 	The size of the output array.	 |
+
+#### Remarks
+Like `ZipWith`, but passes the current index as well. The lambda parameters are thus `_0` for the current index, `_1` for the current `left` value, and `_2` for the current `right` value:
+
+```pawn
+  inline AddAndMul(a, b, c)                                      
+  {                                                              
+      return a + (b * c);                                        
+  }                                                              
+  
+  ZipWithIdx(using inline AddAndMul, gInput1, gInput2, gResult);  
+```
+
+These functions can also use normal `using` syntax.
+
+#### Depends on
+* [`INDIRECTION_DATA`](#INDIRECTION_DATA)
+* [`INDIRECTION_NAUGHT`](#INDIRECTION_NAUGHT)
+* [`INDIRECTION_TAG`](#INDIRECTION_TAG)
+* [`Indirect_Call__`](#Indirect_Call__)
+* [`min`](#min)
+#### Estimated stack usage
+9 cells
+
+
+
+### `ZipWithIdx_`:
+
+
+#### Syntax
+
+
+```pawn
+ZipWithIdx_(cb, left[], right[], leftSize, rightSize)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`cb`	 | 	`F@_@iii ` A function that takes three parameters.	 |
+| 	`left`	 | 	` [] ` The first input data array.	 |
+| 	`right`	 | 	` [] ` The second input data array.	 |
+| 	`leftSize`	 | 	The size of the first input array.	 |
+| 	`rightSize`	 | 	The size of the second input array.	 |
+
+#### Remarks
+Like `ZipWith_`, but passes the current index as well. The lambda parameters are thus `_0` for the current index, `_1` for the current `left` value, and `_2` for the current `right` value. The expression result is not saved:
+
+```pawn
+  ZipWithIdx_({ SetPlayerVirtualWorld(_0, _1), SetPlayerInterior(_0, _2) }, gPlayerWords, gPlayerInteriors);  
+```
+
+
+#### Depends on
+* [`INDIRECTION_DATA`](#INDIRECTION_DATA)
+* [`INDIRECTION_NAUGHT`](#INDIRECTION_NAUGHT)
+* [`INDIRECTION_TAG`](#INDIRECTION_TAG)
+* [`Indirect_Call__`](#Indirect_Call__)
+* [`min`](#min)
+#### Estimated stack usage
+9 cells
+
+
+
+### `ZipWith_`:
+
+
+#### Syntax
+
+
+```pawn
+ZipWith_(cb, left[], right[], leftSize, rightSize)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`cb`	 | 	`F@_@ii ` A function that takes two parameters.	 |
+| 	`left`	 | 	` [] ` The first input data array.	 |
+| 	`right`	 | 	` [] ` The second input data array.	 |
+| 	`leftSize`	 | 	The size of the first input array.	 |
+| 	`rightSize`	 | 	The size of the second input array.	 |
+
+#### Remarks
+Combines two input arrays using a given function, but doesn't save the result so the function should have side-effects. This:
+
+```pawn
+  new bool:result = false; 
+  ZipWith_({ result = result || (_0 > _1) }, left, right);  
+```
+
+Is equivalent to:
+```pawn
+  new bool:result = false;                     
+  for (new i = 0; i != len; ++i)               
+  {                                            
+      result = result || (left[i] > right[i]); 
+  }  
+```
+
+But obviously much shorter and less error-prone.
+
+#### Depends on
+* [`INDIRECTION_DATA`](#INDIRECTION_DATA)
+* [`INDIRECTION_NAUGHT`](#INDIRECTION_NAUGHT)
+* [`INDIRECTION_TAG`](#INDIRECTION_TAG)
+* [`Indirect_Call__`](#Indirect_Call__)
+* [`min`](#min)
+#### Estimated stack usage
+8 cells
+
