@@ -592,7 +592,10 @@ stock FoldLIdx(Func:cb<iii>, n, const input[], inputSize = sizeof (input))
  *  The number of elements processed.
  * </returns>
  * <remarks>
- *  
+ *  Like <c>ScanL</c>, but passes the index as the first parameter as well.
+ *  The <c>L</c> refers to the call order, which is from the first element to
+ *  the last element.  This is important for non-commutative operations like
+ *  division.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -655,7 +658,10 @@ stock FoldRIdx(Func:cb<iii>, const input[], n, inputSize = sizeof (input))
  *  The number of elements written
  * </returns>
  * <remarks>
- *  
+ *  Like <c>ScanR</c>, but passes the index as the first parameter as well.
+ *  The <c>R</c> refers to the call order, which is from the last element to the
+ *  first element.  This is important for non-commutative operations like
+ *  division.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -686,7 +692,8 @@ stock ScanRIdx(Func:cb<iii>, n, const input[], output[], inputSize = sizeof (inp
  *  The result of applying one function to every array element in turn.
  * </returns>
  * <remarks>
- *  
+ *  Like <c>FoldL1</c>, but also passes the current index as the first
+ *  parameter to the callback function.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -715,7 +722,8 @@ stock FoldL1Idx(Func:cb<iii>, const input[], inputSize = sizeof (input))
  *  The result of applying one function to every array element in turn.
  * </returns>
  * <remarks>
- *  
+ *  Like <c>FoldR1</c>, but also passes the current index as the first
+ *  parameter to the callback function.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -923,15 +931,17 @@ stock ScanR(Func:cb<ii>, const input[], n, output[], inputSize = sizeof (input),
  * <library>y_functional</library>
  * <param name="cb">A function that takes two parameters.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
- *  
+ *  The result of applying one function to every array element in turn.
  * </returns>
  * <remarks>
- *  
+ *  A <em>fold</em> passes two values to the callback function - the previous
+ *  result and the current element.  For the first call you still need a
+ *  "previous" value, which in functions like <c>FoldL</c> is passed as an extra
+ *  initial value parameter (<c>n</c>).  In this version the initial value is
+ *  instead the first array element, and thus the input must contain at least
+ *  one value.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -952,15 +962,17 @@ stock FoldL1(Func:cb<ii>, const input[], inputSize = sizeof (input))
  * <library>y_functional</library>
  * <param name="cb">A function that takes two parameters.</param>
  * <param name="input">The input data array.</param>
- * <param name="output">The output data array (may be the same array as an input).</param>
  * <param name="inputSize">The size of the input array.</param>
- * <param name="outputSize">The size of the output array.</param>
- * <param name=""></param>
  * <returns>
- *  
+ *  The result of applying one function to every array element in turn.
  * </returns>
  * <remarks>
- *  
+ *  A <em>fold</em> passes two values to the callback function - the previous
+ *  result and the current element.  For the first call you still need a
+ *  "previous" value, which in functions like <c>FoldR</c> is passed as an extra
+ *  initial value parameter (<c>n</c>).  In this version the initial value is
+ *  instead the last array element, and thus the input must contain at least one
+ *  value.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
