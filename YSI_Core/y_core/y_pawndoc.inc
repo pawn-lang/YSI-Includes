@@ -129,7 +129,7 @@ Optional plugins:
 
 	<remarks>
 		Hide future declarations with <c>_0</c> prefix.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -148,7 +148,7 @@ static stock _0;
 		generated documentation always.  This is the best way to hide them.  You
 		still see one variable (<c>_0</c>), but that one has a legitimate use
 		that can be documented and is fine to be seen.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -168,7 +168,7 @@ static stock _0zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 	<remarks>
 		Hide future declarations with <c>_1</c> prefix.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -187,7 +187,7 @@ static stock _1;
 		generated documentation always.  This is the best way to hide them.
 		You still see one variable (<c>_1</c>), but that one has a legitimate
 		use that can be documented and is fine to be seen.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -207,7 +207,7 @@ static stock _1zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 	<remarks>
 		Hide future declarations with <c>_2</c> prefix.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -226,7 +226,7 @@ static stock _2;
 		generated documentation always.  This is the best way to hide them.
 		You still see one variable (<c>_2</c>), but that one has a legitimate
 		use that can be documented and is fine to be seen.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -246,7 +246,7 @@ static stock _2zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 	<remarks>
 		Hide future declarations with <c>_3</c> prefix.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -265,7 +265,7 @@ static stock _3;
 		generated documentation always.  This is the best way to hide them.
 		You still see one variable (<c>_3</c>), but that one has a legitimate
 		use that can be documented and is fine to be seen.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -285,7 +285,7 @@ static stock _3zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 	<remarks>
 		Hide future declarations with <c>_4</c> prefix.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -304,7 +304,7 @@ static stock _4;
 		generated documentation always.  This is the best way to hide them.
 		You still see one variable (<c>_4</c>), but that one has a legitimate
 		use that can be documented and is fine to be seen.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -324,7 +324,7 @@ static stock _4zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 	<remarks>
 		Hide future declarations with <c>_5</c> prefix.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -343,7 +343,7 @@ static stock _5;
 		generated documentation always.  This is the best way to hide them.
 		You still see one variable (<c>_5</c>), but that one has a legitimate
 		use that can be documented and is fine to be seen.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -363,7 +363,7 @@ static stock _5zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 	<remarks>
 		Hide future declarations with <c>_6</c> prefix.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -382,7 +382,7 @@ static stock _6;
 		generated documentation always.  This is the best way to hide them.
 		You still see one variable (<c>_6</c>), but that one has a legitimate
 		use that can be documented and is fine to be seen.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -402,7 +402,7 @@ static stock _6zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 	<remarks>
 		Hide future declarations with <c>_7</c> prefix.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -421,7 +421,7 @@ static stock _7;
 		generated documentation always.  This is the best way to hide them.
 		You still see one variable (<c>_7</c>), but that one has a legitimate
 		use that can be documented and is fine to be seen.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -441,7 +441,7 @@ static stock _7zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 	<remarks>
 		Hide future declarations with <c>_8</c> prefix.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -460,7 +460,7 @@ static stock _8;
 		generated documentation always.  This is the best way to hide them.
 		You still see one variable (<c>_8</c>), but that one has a legitimate
 		use that can be documented and is fine to be seen.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -480,7 +480,7 @@ static stock _8zzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 
 	<remarks>
 		Hide future declarations with <c>_9</c> prefix.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>
@@ -494,7 +494,7 @@ static stock _9;
 		This variable only exists to hide other variables.  It starts a massive
 		comment block in the pawndoc XML output that hides all YSI internal
 		variables - that is, those that start with <c>YSI_g</c>.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>

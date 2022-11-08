@@ -85,7 +85,7 @@ Optional plugins:
 		fixes.inc function of the same name as this variable is in a different
 		scope, and so fixes.inc also needed to use a different name for its
 		hiding variable since all its variables are in the same scope.
-		<p />
+		<p/>
 		Note that the actual hiding itself is done by an XML comment started
 		earlier and ended here.
 	</remarks>

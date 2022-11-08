@@ -90,6 +90,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+/// <p/>
+
 enum ALS
 {
 	Bit:ALS_OnScriptInit,
