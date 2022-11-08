@@ -28,17 +28,18 @@ All(cb, input[], inputSize)
 | 	`cb`	 | 	`F@_@i ` A function that takes one parameter.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Tag
 `bool:`
 
 
 #### Returns
+`true` if any the elements pass the test function (`true` if there are no inputs).
+
 
 #### Remarks
+Calls the given function one at a time for every input element until one is found that fails. The function will short-circuit, so will end as soon as a matching index is found, thus not all elements may be processed and any input functions with side-effects should be aware of this.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -71,17 +72,18 @@ AllIdx(cb, input[], inputSize)
 | 	`cb`	 | 	`F@_@ii ` A function that takes two parameters.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Tag
 `bool:`
 
 
 #### Returns
+`true` if any the elements pass the test function (`true` if there are no inputs).
+
 
 #### Remarks
+Calls the given function one at a time for every input element until one is found that fails. The function will short-circuit, so will end as soon as a matching index is found, thus not all elements may be processed and any input functions with side-effects should be aware of this. Passes the index as the first parameter, and the value as the second.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -122,8 +124,12 @@ And(input[], inputSize)
 
 
 #### Returns
+`true` if all the elements are non-zero (`true` if there are no inputs).
+
 
 #### Remarks
+An empty array cannot contain a non-zero elements, so the default return is `true`.
+
 
 #### Depends on
 * [`false`](#false)
@@ -152,17 +158,18 @@ Any(cb, input[], inputSize)
 | 	`cb`	 | 	`F@_@i ` A function that takes one parameter.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Tag
 `bool:`
 
 
 #### Returns
+`true` if any the elements pass the test function (`false` if there are no inputs).
+
 
 #### Remarks
+Calls the given function one at a time for every input element until one is found that passes. The function will short-circuit, so will end as soon as a matching index is found, thus not all elements may be processed and any input functions with side-effects should be aware of this.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -195,17 +202,18 @@ AnyIdx(cb, input[], inputSize)
 | 	`cb`	 | 	`F@_@ii ` A function that takes two parameters.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Tag
 `bool:`
 
 
 #### Returns
+`true` if any the elements pass the test function (`false` if there are no inputs).
+
 
 #### Remarks
+Calls the given function one at a time for every input element until one is found that passes. The function will short-circuit, so will end as soon as a matching index is found, thus not all elements may be processed and any input functions with side-effects should be aware of this. Passes the index as the first parameter, and the value as the second.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -276,18 +284,21 @@ Elem(n, input[], inputSize)
 
 | 	**Name**	 | 	**Info**	 |
 |	---	|	---	|
-| 	`n`	 | 		 |
-| 	`input`	 | 	` [] `	 |
-| 	`inputSize`	 | 		 |
-| 	``	 | 		 |
+| 	`n`	 | 	The value to compare elements against.	 |
+| 	`input`	 | 	` [] ` The input data array.	 |
+| 	`inputSize`	 | 	The size of the input array.	 |
 
 #### Tag
 `bool:`
 
 
 #### Returns
+`true` if any the elements equal `n` (`false` if there are no inputs).
+
 
 #### Remarks
+An empty array cannot contain a given element, so the default return is `false`.
+
 
 #### Depends on
 * [`false`](#false)
@@ -314,16 +325,27 @@ FoldL(cb, n, input[], inputSize)
 | 	**Name**	 | 	**Info**	 |
 |	---	|	---	|
 | 	`cb`	 | 	`F@_@ii ` A function that takes two parameters.	 |
-| 	`n`	 | 		 |
+| 	`n`	 | 	The initial value of the accumulation.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
+The result of applying one function to every array element in turn.
+
 
 #### Remarks
+A *fold* applies a function to the current data and the previous result of calling the function, and repeats this process across the whole array. The parameters to the callback are the previous result (`_0`), and the current data (`_1`). The initial "previous" value is passed in as `n`. To add all the values in an array together use:
+
+```pawn
+  new sum = FoldL({ _0 + _1 }, 0, array);  
+```
+
+To find the product use:
+```pawn
+  new product = FoldL({ _0 * _1 }, 1, array);  
+```
+
+The `L` refers to the call order, which is from the first element to the last element. This is important for non-commutative operations like division.
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -354,13 +376,14 @@ FoldL1(cb, input[], inputSize)
 | 	`cb`	 | 	`F@_@ii ` A function that takes two parameters.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
+The result of applying one function to every array element in turn.
+
 
 #### Remarks
+A *fold* passes two values to the callback function - the previous result and the current element. For the first call you still need a "previous" value, which in functions like `FoldL` is passed as an extra initial value parameter (`n`). In this version the initial value is instead the first array element, and thus the input must contain at least one value.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -396,8 +419,12 @@ FoldL1Idx(cb, input[], inputSize)
 | 	``	 | 		 |
 
 #### Returns
+The result of applying one function to every array element in turn.
+
 
 #### Remarks
+Like `FoldL1`, but also passes the current index as the first parameter to the callback function.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -426,16 +453,17 @@ FoldLIdx(cb, n, input[], inputSize)
 | 	**Name**	 | 	**Info**	 |
 |	---	|	---	|
 | 	`cb`	 | 	`F@_@iii ` A function that takes three parameters.	 |
-| 	`n`	 | 		 |
+| 	`n`	 | 	The initial value of the accumulation.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
+The result of applying one function to every array element in turn.
+
 
 #### Remarks
+Like `FoldL`, but passes the index as the first parameter as well. The `L` refers to the call order, which is from the first element to the last element. This is important for non-commutative operations like division.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -465,15 +493,26 @@ FoldR(cb, input[], n, inputSize)
 |	---	|	---	|
 | 	`cb`	 | 	`F@_@ii ` A function that takes two parameters.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
-| 	`n`	 | 		 |
+| 	`n`	 | 	The initial value of the accumulation.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
+The result of applying one function to every array element in turn.
+
 
 #### Remarks
+A *fold* applies a function to the current data and the previous result of calling the function, and repeats this process across the whole array. The parameters to the callback are the current data (`_0`) and the previous result (`_1`). The initial "previous" value is passed in as `n`. To add all the values in an array together use:
+
+```pawn
+  new sum = FoldR({ _0 + _1 }, 0, array);  
+```
+
+To find the product use:
+```pawn
+  new product = FoldR({ _0 * _1 }, 1, array);  
+```
+
+The `R` refers to the call order, which is from the last element to the first element. This is important for non-commutative operations like division.
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -504,13 +543,14 @@ FoldR1(cb, input[], inputSize)
 | 	`cb`	 | 	`F@_@ii ` A function that takes two parameters.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
+The result of applying one function to every array element in turn.
+
 
 #### Remarks
+A *fold* passes two values to the callback function - the previous result and the current element. For the first call you still need a "previous" value, which in functions like `FoldR` is passed as an extra initial value parameter (`n`). In this version the initial value is instead the last array element, and thus the input must contain at least one value.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -546,8 +586,12 @@ FoldR1Idx(cb, input[], inputSize)
 | 	``	 | 		 |
 
 #### Returns
+The result of applying one function to every array element in turn.
+
 
 #### Remarks
+Like `FoldR1`, but also passes the current index as the first parameter to the callback function.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -577,15 +621,16 @@ FoldRIdx(cb, input[], n, inputSize)
 |	---	|	---	|
 | 	`cb`	 | 	`F@_@iii ` A function that takes three parameters.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
-| 	`n`	 | 		 |
+| 	`n`	 | 	The initial value of the accumulation.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
+The result of applying one function to every array element in turn.
+
 
 #### Remarks
+Like `FoldR`, but passes the index as the first parameter as well. The `R` refers to the call order, which is from the last element to the first element. This is important for non-commutative operations like division.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -975,6 +1020,10 @@ Map(cb, input[], output[], inputSize, outputSize)
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
 
+#### Returns
+The number of elements processed.
+
+
 #### Remarks
 Applies the given function to every element in the input array and saves the individual results in the output array. This:
 
@@ -1025,6 +1074,10 @@ MapIdx(cb, input[], output[], inputSize, outputSize)
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
 
+#### Returns
+The number of elements processed.
+
+
 #### Remarks
 Applies the given function to every element in the input array and their index, and saves the result. This:
 
@@ -1073,6 +1126,10 @@ MapIdx_(cb, input[], inputSize)
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
 
+#### Returns
+The number of elements processed.
+
+
 #### Remarks
 Applies the given function to every element in the input array and their index, but doesn't save the result. The function should thus have a side- effect. This:
 
@@ -1120,6 +1177,10 @@ Map_(cb, input[], inputSize)
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
 
+#### Returns
+The number of elements processed.
+
+
 #### Remarks
 Applies the given function to every element in the input array, but doesn't save the result. The function should thus have a side-effect. This:
 
@@ -1163,18 +1224,21 @@ NotElem(n, input[], inputSize)
 
 | 	**Name**	 | 	**Info**	 |
 |	---	|	---	|
-| 	`n`	 | 		 |
-| 	`input`	 | 	` [] `	 |
-| 	`inputSize`	 | 		 |
-| 	``	 | 		 |
+| 	`n`	 | 	The value to compare elements against.	 |
+| 	`input`	 | 	` [] ` The input data array.	 |
+| 	`inputSize`	 | 	The size of the input array.	 |
 
 #### Tag
 `bool:`
 
 
 #### Returns
+`true` if none of the elements equal `n` (`true` if there are no inputs).
+
 
 #### Remarks
+An empty array cannot contain a given element, so the default return is `true`.
+
 
 #### Depends on
 * [`false`](#false)
@@ -1211,8 +1275,12 @@ Or(input[], inputSize)
 
 
 #### Returns
+`true` if any the elements are non-zero (`false` if there are no inputs).
+
 
 #### Remarks
+An empty array cannot contain a non-zero element, so the default return is `false`.
+
 
 #### Depends on
 * [`false`](#false)
@@ -1229,7 +1297,7 @@ Or(input[], inputSize)
 
 
 ```pawn
-Reverse(input[], inputSize)
+Reverse(data[], dataSize)
 ```
 
 
@@ -1238,15 +1306,16 @@ Reverse(input[], inputSize)
 
 | 	**Name**	 | 	**Info**	 |
 |	---	|	---	|
-| 	`input`	 | 	` [] ` The input data array.	 |
-| 	`inputSize`	 | 	The size of the input array.	 |
-| 	`output`	 | 	The output data array (may be the same array as an input).	 |
-| 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
+| 	`data`	 | 	` [] ` The input and output data array.	 |
+| 	`dataSize`	 | 	The size of the input array.	 |
 
 #### Returns
+The number of elements processed.
+
 
 #### Remarks
+Reverses an array, so the last element becomes the first, the first becomes the last, and all the ones in-between swap places as well. Modifies the input array.
+
 
 #### Estimated stack usage
 3 cells
@@ -1270,16 +1339,26 @@ ScanL(cb, n, input[], output[], inputSize, outputSize)
 | 	**Name**	 | 	**Info**	 |
 |	---	|	---	|
 | 	`cb`	 | 	`F@_@ii ` A function that takes two parameters.	 |
-| 	`n`	 | 		 |
+| 	`n`	 | 	The initial value of the accumulation.	 |
 | 	`input`	 | 	` [] ` The input data array.	 |
 | 	`output`	 | 	` [] ` The output data array (may be the same array as an input).	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
+The number of elements processed.
+
 
 #### Remarks
+A *fold* applies a function to the current data and the previous result of calling the function, and repeats this process across the whole array. A *scan* extends this process by also saving all of the intermediate results in an output array. For example:
+
+```pawn
+  new input[5] = { 1, 2, 3, 4, 5 }                    
+  new output[6];                                      
+  ScanL({ _0 * _1 }, 1, input, output);  
+```
+
+Would return all of the interim steps stored in `output` as `{ 1, 1 * 1, 1 * 1 * 2, 1 * 1 * 2 * 3, 1 * 1 * 2 * 3 * 4, 1 * 1 * 2 * 3 * 4, 1 * 1 * 2 * 3 * 4 * 5 }`. Hence why the output array must be one cell larger than the input array. The `L` refers to the call order, which is from the first element to the last element. This is especially important in scan functions - compare the example output of `ScanR`.
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -1317,8 +1396,12 @@ ScanLIdx(cb, n, input[], output[], inputSize, outputSize)
 | 	``	 | 		 |
 
 #### Returns
+The number of elements processed.
+
 
 #### Remarks
+Like `ScanL`, but passes the index as the first parameter as well. The `L` refers to the call order, which is from the first element to the last element. This is important for non-commutative operations like division.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -1338,7 +1421,7 @@ ScanLIdx(cb, n, input[], output[], inputSize, outputSize)
 
 
 ```pawn
-ScanR(cb, n, input[], output[], inputSize, outputSize)
+ScanR(cb, input[], n, output[], inputSize, outputSize)
 ```
 
 
@@ -1348,16 +1431,26 @@ ScanR(cb, n, input[], output[], inputSize, outputSize)
 | 	**Name**	 | 	**Info**	 |
 |	---	|	---	|
 | 	`cb`	 | 	`F@_@ii ` A function that takes two parameters.	 |
-| 	`n`	 | 		 |
 | 	`input`	 | 	` [] ` The input data array.	 |
+| 	`n`	 | 	The initial value of the accumulation.	 |
 | 	`output`	 | 	` [] ` The output data array (may be the same array as an input).	 |
 | 	`inputSize`	 | 	The size of the input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
-| 	``	 | 		 |
 
 #### Returns
+The number of elements processed.
+
 
 #### Remarks
+A *fold* applies a function to the current data and the previous result of calling the function, and repeats this process across the whole array. A *scan* extends this process by also saving all of the intermediate results in an output array. For example:
+
+```pawn
+  new input[5] = { 1, 2, 3, 4, 5 }                    
+  new output[6];                                      
+  ScanL({ _0 * _1 }, 1, input, output);  
+```
+
+Would return all of the interim steps stored in `output` as `{ 1 * 1 * 2 * 3 * 4 * 5, 1 * 2 * 3 * 4 * 5, 1 * 3 * 4 * 5, 1 * 4 * 5, 1 * 5 }`. Hence why the output array must be one cell larger than the input array. The `R` refers to the call order, which is from the last element to the first element. This is especially important in scan functions - compare the example output of `ScanL`.
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -1395,8 +1488,12 @@ ScanRIdx(cb, n, input[], output[], inputSize, outputSize)
 | 	``	 | 		 |
 
 #### Returns
+The number of elements written
+
 
 #### Remarks
+Like `ScanR`, but passes the index as the first parameter as well. The `R` refers to the call order, which is from the last element to the first element. This is important for non-commutative operations like division.
+
 
 #### Depends on
 * [`INDIRECTION_DATA`](#INDIRECTION_DATA)
@@ -1432,6 +1529,10 @@ ZipWith(cb, left[], right[], output[], leftSize, rightSize, outputSize)
 | 	`leftSize`	 | 	The size of the first input array.	 |
 | 	`rightSize`	 | 	The size of the second input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
+
+#### Returns
+The number of elements processed.
+
 
 #### Remarks
 Combines two input arrays using a given function, and saves the result. This:
@@ -1487,6 +1588,10 @@ ZipWith3(cb, left[], middle[], right[], output[], leftSize, middleSize, rightSiz
 | 	`rightSize`	 | 	The size of the third input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
 
+#### Returns
+The number of elements processed.
+
+
 #### Remarks
 Like `ZipWith`, but has three inputs, not two. The lambda parameters are thus `_0` for the current `left` value, `_1` for the current `middle` value, and `_2` for the current `right` value:
 
@@ -1532,6 +1637,10 @@ ZipWith3Idx(cb, left[], middle[], right[], output[], leftSize, middleSize, right
 | 	`rightSize`	 | 	The size of the third input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
 
+#### Returns
+The number of elements processed.
+
+
 #### Remarks
 Like `ZipWith3`, but passes the current index as well. The lambda parameters are thus `_0` for the current index, `_1` for the current `left` value, `_2` for the current `middle` value, and `_3` for the current `right` value:
 
@@ -1576,6 +1685,10 @@ ZipWith3Idx_(cb, left[], middle[], right[], leftSize, middleSize, rightSize)
 | 	`middleSize`	 | 	The size of the second input array.	 |
 | 	`rightSize`	 | 	The size of the third input array.	 |
 
+#### Returns
+The number of elements processed.
+
+
 #### Remarks
 Like `ZipWith3_`, but passes the current index as well. The lambda parameters are thus `_0` for the current index, `_1` for the current `left` value, `_2` for the current `middle` value, and `_3` for the current `right` value. The expression result is not saved:
 
@@ -1618,6 +1731,10 @@ ZipWith3_(cb, left[], middle[], right[], leftSize, middleSize, rightSize)
 | 	`leftSize`	 | 	The size of the first input array.	 |
 | 	`middleSize`	 | 	The size of the second input array.	 |
 | 	`rightSize`	 | 	The size of the third input array.	 |
+
+#### Returns
+The number of elements processed.
+
 
 #### Remarks
 Like `ZipWith_`, but has three inputs, not two. The lambda parameters are thus `_0` for the current `left` value, `_1` for the current `middle` value, and `_2` for the current `right` value. The expression result is not saved.
@@ -1666,6 +1783,10 @@ ZipWithIdx(cb, left[], right[], output[], leftSize, rightSize, outputSize)
 | 	`rightSize`	 | 	The size of the second input array.	 |
 | 	`outputSize`	 | 	The size of the output array.	 |
 
+#### Returns
+The number of elements processed.
+
+
 #### Remarks
 Like `ZipWith`, but passes the current index as well. The lambda parameters are thus `_0` for the current index, `_1` for the current `left` value, and `_2` for the current `right` value:
 
@@ -1713,6 +1834,10 @@ ZipWithIdx_(cb, left[], right[], leftSize, rightSize)
 | 	`leftSize`	 | 	The size of the first input array.	 |
 | 	`rightSize`	 | 	The size of the second input array.	 |
 
+#### Returns
+The number of elements processed.
+
+
 #### Remarks
 Like `ZipWith_`, but passes the current index as well. The lambda parameters are thus `_0` for the current index, `_1` for the current `left` value, and `_2` for the current `right` value. The expression result is not saved:
 
@@ -1753,6 +1878,10 @@ ZipWith_(cb, left[], right[], leftSize, rightSize)
 | 	`right`	 | 	` [] ` The second input data array.	 |
 | 	`leftSize`	 | 	The size of the first input array.	 |
 | 	`rightSize`	 | 	The size of the second input array.	 |
+
+#### Returns
+The number of elements processed.
+
 
 #### Remarks
 Combines two input arrays using a given function, but doesn't save the result so the function should have side-effects. This:
