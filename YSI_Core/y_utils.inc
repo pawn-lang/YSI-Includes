@@ -1,8 +1,3 @@
-#if defined _INC_y_utils
-	#endinput
-#endif
-#define _INC_y_utils
-
 /*+
  * <library
  *   name="y_utils"
