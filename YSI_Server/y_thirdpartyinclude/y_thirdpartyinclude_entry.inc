@@ -581,7 +581,7 @@ public OnCodeInit()
 	#pragma warning pop
 #endif
 
-#include "..\..\YSI_Core\y_core\y_dumpamx"
+#include "..\..\YSI_Storage\y_dumpamx\y_dumpamx_entry"
 
 #if defined YSI_TESTS
 	#include "y_thirdpartyinclude_tests"
