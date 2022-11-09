@@ -71,6 +71,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+/// <p/>
+
 #define Master_ID() (@_)
 
 // These parts should only be defined once ever.  This code is not dependent on
@@ -436,7 +438,20 @@ enum _E_YCM
 static stock const
 	YSI_FIXES_gscSingleProperty[] = "FIXES_gscSingleProperty";
 
-#if !defined FIXES_ID
+/*-------------------------------------------------------------------------*//**
+ * <library>y_master</library>
+ * <remarks>
+ *  Copy of a fixes.inc function, for when fixes.inc doesn't exist in this
+ *  script.  y_master and fixes.inc both share the concept of a script ID, so
+ *  must work together to assign them.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#if defined FIXES_ID
+	static stock _@_FIXES_DetermineID()
+	{
+	}
+#else
 	forward _FIXES_DetermineID();
 
 	public _FIXES_DetermineID()
@@ -449,6 +464,7 @@ static stock const
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_master</library>
  * <returns>
  *  OnYSIInit
  * </returns>
@@ -513,6 +529,7 @@ forward OnMasterSystemInit(id);
 forward Master_OnCloseModules();
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_master</library>
  * <returns>
  *  OnScriptExit
  * </returns>
@@ -593,6 +610,7 @@ CHAIN_FORWARD:Master_OnScriptExit() = 0;
 forward OnMasterSystemClose(id);
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_master</library>
  * <returns>
  *  Master_OnCloseModules
  * </returns>
@@ -751,6 +769,7 @@ forward OnMasterSystemClose(id);
 	}
 
 	/*-------------------------------------------------------------------------*//**
+	 * <library>y_master</library>
 	 * <returns>
 	 *  OnRconCommand
 	 * </returns>
@@ -814,6 +833,7 @@ forward OnMasterSystemClose(id);
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_master</library>
  * <remarks>
  *  Rebuilds the collection of master data whenever a script is restarted.
  * </remarks>
@@ -853,6 +873,15 @@ public Master_Reassert()
 	#endinput
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_master</library>
+ * <param name="library">The name of the library to stop being master for.</param>
+ * <remarks>
+ *  We were in control of this library.  Stop being, and remove the library from
+ *  the internal list of libraries we are master of.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock _Master_Relinquish(const library[])
 {
 	Debug_Print4("_Master_Relinquish called: %s %d", library, YSI_g_sMasterCount);
@@ -880,19 +909,42 @@ stock _Master_Relinquish(const library[])
 	}
 }
 
+/// <p/>
+
+/**
+ * <library>y_master</library>
+ * <summary>The result of trying to become master.</summary>
+ */
 enum e_YSIM_GET_TYPE
 {
 	e_YSIM_GET_TYPE_NO_CONTEST,
 	e_YSIM_GET_TYPE_STOLE,
 	e_YSIM_GET_TYPE_NOT_GOT,
 }
+static stock e_YSIM_GET_TYPE:_@e_YSIM_GET_TYPE() { return e_YSIM_GET_TYPE; }
 
-/*-------------------------------------------------------------------------*//**
- * <param name="library">The name of the library to try become master for.</param>
- *//*------------------------------------------------------------------------**/
-
+/**
+ * <library>y_master</library>
+ * <summary>An interned commoly used format string.</summary>
+ */
 static stock const
 	YSI_g_scYSIM_VERSION[] = "YSIM_VERSION%s";
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_master</library>
+ * <param name="library">The name of the library to try become master for.</param>
+ * <param name="force">Become master even if another library already is.</param>
+ * <returns>
+ *  <c>e_YSIM_GET_TYPE_NO_CONTEST</c> - There was no master, so we now are.
+ *  <c>e_YSIM_GET_TYPE_STOLE</c> - There was another master, but we took it.
+ *  <c>e_YSIM_GET_TYPE_NOT_GOT</c> - There is another master already.
+ * </returns>
+ * <remarks>
+ *  Attempts to get control of the current master ID.  Checks to see if any
+ *  other scripts are already in control of this ID and this set of functions,
+ *  then either steals it or backs off.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 {
