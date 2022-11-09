@@ -1,8 +1,26 @@
-/*
-	
-	Now also provides OnCodeInit, which comes before OnScriptInit and should
-	mostly be used for @emit code generation and other assembly related stuff
-	(since it is called by the JIT if that exists).
+/**
+ * <library
+ *   name="y_dumpamx"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Generate a new AMX from the current state of code."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     <p>This library allows you to dump the current state of the AMX to a
+ *     file.  If this dumping is done by defining <c>YSI_YES_MODE_CACHE</c>,
+ *     then the file will be generated after <c>OnCodeInit</c> is complete, with
+ *     all YSI constructs pre-compiled and included in the resulting file.  The
+ *     new code will also start up and resume from the point after the dump was
+ *     completed.</p>
+ *   </remarks>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -75,8 +93,23 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+/// <p/>
+
 #define DUMP_AMX_BLOCK_CELLS (12)
 #define DUMP_AMX_BLOCK_BYTES (DUMP_AMX_BLOCK_CELLS * 4)
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_dumpamx</library>
+ * <param name="file">A handle to the file to write to.</param>
+ * <param name="data">A buffer for encoding data in to.</param>
+ * <param name="offset">The current position in the file.</param>
+ * <param name="compact">Should compact encoding be used.</param>
+ * <remarks>
+ *  Dump the data segment (<c>DAT</c>) to the file.  The <c>data</c> buffer is
+ *  used for temporary encoding in case the segments being written do not align
+ *  exactly to cell boundaries once compacted.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock bool:DumpAMX_WriteAMXData(File:file, data[], &offset, compact)
 {
@@ -94,6 +127,19 @@ static stock bool:DumpAMX_WriteAMXData(File:file, data[], &offset, compact)
 
 	return true;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_dumpamx</library>
+ * <param name="file">A handle to the file to write to.</param>
+ * <param name="data">A buffer for encoding data in to.</param>
+ * <param name="offset">The current position in the file.</param>
+ * <param name="compact">Should compact encoding be used.</param>
+ * <remarks>
+ *  Write the AMX header to the file.  This basically just copies the header in
+ *  its entirety, with only a small bit of customisation for natives to not also
+ *  store their pointers.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock bool:DumpAMX_WriteAMXHeader(File:file, data[], &offset, compact)
 {
@@ -155,6 +201,17 @@ static stock bool:DumpAMX_WriteAMXHeader(File:file, data[], &offset, compact)
 	return true;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_dumpamx</library>
+ * <param name="c">The cell to encode.</param>
+ * <param name="buffer">The array in which to write the encoding.</param>
+ * <remarks>
+ *  Ported directly from the compiler, this encodes cells by first converting
+ *  them to five bytes, then ignoring any leading zeros.  This results is a
+ *  slightly smaller storage size for the vast majority of data.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #define ENC_MAX 5
 static stock DumpAMX_EncodeBytes(c, buffer[ENC_MAX])
 {
@@ -163,7 +220,7 @@ static stock DumpAMX_EncodeBytes(c, buffer[ENC_MAX])
 	buffer[3] = (c >>> 7) & 0x7F,  // Store 7 bits.
 	buffer[2] = (c >>> 14) & 0x7F, // Store 7 bits.
 	buffer[1] = (c >>> 21) & 0x7F, // Store 7 bits.
-	buffer[0] = (c >>> 28);        // Store 7 bits.
+	buffer[0] = (c >>> 28);        // Store 4 bits.
 
 	new index = -1;
 
@@ -185,6 +242,19 @@ static stock DumpAMX_EncodeBytes(c, buffer[ENC_MAX])
 	return c;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_dumpamx</library>
+ * <param name="file">A handle to the file to write to.</param>
+ * <param name="data">A buffer for encoding data in to.</param>
+ * <param name="offset">The current position in the file.</param>
+ * <param name="compact">Should compact encoding be used.</param>
+ * <param name="c">The cell to write.</param>
+ * <remarks>
+ *  Take a single cell, encode it, store the encoding in the buffer, then write
+ *  the buffer to the file if it is full.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock DumpAMX_WriteEncoded(File:file, data[], &offset, compact, c)
 {
 	if (compact)
@@ -201,7 +271,8 @@ static stock DumpAMX_WriteEncoded(File:file, data[], &offset, compact, c)
 				offset = 0;
 			}
 		}
-	} else while (compact++ != 4)
+	}
+	else while (compact++ != 4)
 	{
 		data{offset ^ 0x03} = c & 0xFF;
 		if (++offset == DUMP_AMX_BLOCK_BYTES)
@@ -213,6 +284,20 @@ static stock DumpAMX_WriteEncoded(File:file, data[], &offset, compact, c)
 		c >>>= 8;
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_dumpamx</library>
+ * <param name="file">A handle to the file to write to.</param>
+ * <param name="data">A buffer for encoding data in to.</param>
+ * <param name="offset">The current position in the file.</param>
+ * <param name="compact">Should compact encoding be used.</param>
+ * <remarks>
+ *  Dump the code segment (<c>COD</c>) to the file.  Does basic code
+ *  decompilation to extract parameters and convert absolute addresses (resolved
+ *  when the AMX is loaded) back to the relative addresses stored in the AMX.
+ *  Also converts any <c>SYSREQ.D</c> opcodes back to <c>SYSREQ.C</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock bool:DumpAMX_WriteAMXCode(File:file, data[], &offset, compact)
 {
@@ -279,6 +364,22 @@ static stock bool:DumpAMX_WriteAMXCode(File:file, data[], &offset, compact)
 }
 #undef ENC_MAX
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_dumpamx</library>
+ * <param name="filename">The name of the output file.</param>
+ * <remarks>
+ *  Dump the currently running AMX to a file.  Although the AMX has surely just
+ *  been loaded <em>from</em> a file, this isn't pointless as a lot of code can
+ *  be (and is, with YSI) modified on initial load.  Thus this feature can do
+ *  the generation once, and store the result in to a new file that can be
+ *  loaded repeatedly.  Of course this is still pointless if your code changes
+ *  frequently, as the saving is quite slow and would need to be done after
+ *  every compile.  If a script is only likely to be loaded once after a
+ *  compile, with subsequent loads being for a new version, these is no
+ *  advantage to using this caching.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:DumpAMX_Write(const filename[])
 {
 	new File:file = fopen(filename, io_write);
@@ -314,6 +415,13 @@ stock bool:DumpAMX_Write(const filename[])
 	}
 	return false;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_dumpamx</library>
+ * <remarks>
+ *  Just a symbol that can be detected to prove that this library was included.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock DumpAMX_Included_() {}
 

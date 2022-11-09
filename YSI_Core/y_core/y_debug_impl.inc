@@ -1,4 +1,38 @@
-/*
+/**
+ * <library
+ *   name="y_debug"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Debugging features, optionally compile-time disabled."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     <p>Ensures debug levels are set and defines debug functions.</p>
+ *    
+ *     <p>General debug levels:</p>
+ *    
+ *     <ul>
+ *     <li>-1 - Run-time selected debug level.</li>
+ *     <li>0 - No debug information.</li>
+ *     <li>1 - Callbacks and timers.</li>
+ *     <li>2 - Remote functions.</li>
+ *     <li>3 - Stock functions.</li>
+ *     <li>4 - Static functions.</li>
+ *     <li>5 - Utility functions.</li>
+ *     <li>6 - Code.</li>
+ *     <li>7 - Loops.</li>
+ *     </ul>
+ *    
+ *     <p>If you use <c>Debug_Print0</c> you get an optional debug print controlled by the
+ *     global state <c>ysi_debug</c> - which is either on or off.</p>
+ *   </remarks>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
