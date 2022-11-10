@@ -3741,9 +3741,9 @@ iterfunc stock y_iter_yield7a(x)
 	ASSERT_EQ(idx, sizeof(answers));
 }
 
-static Iterator:y_iter_huge<100000>;
+static Iterator:y_iter_huge<65535>; // Maximum.
 
-@test(.group = "y_iterate", .slow = true) y_iter_huge()
+@test(.group = "y_iterate") y_iter_huge()
 {
 	// Go backwards.  Forwards works, but hits a serious worst-case because
 	// each addition iterates through all previous entries.

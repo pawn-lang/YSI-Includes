@@ -1559,6 +1559,35 @@ stock va_strlen(arg)
 	return 0;
 }
 
+//native StrCatAddress(dest[], source, len) = strcat;
+//
+//stock getstringarg(dest[], arg, len = sizeof (dest))
+//{
+//	dest[0] = '\0';
+//	// Resolve the destination address from an index in to the previous
+//	// function's parameter list.  There's not really any way to avoid using
+//	// assembly here, because that's not something that makes sense in code.
+//	#emit LOAD.S.pri arg
+//	// Then convert that number to bytes from cells.
+//	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
+//	// Get the previous function's frame.  Stored in variable 0 (in the current
+//	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
+//	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
+//	// checks that "arg * 4 < *(*(FRM + 0) + 8)", for the previous frame parameter
+//	// count (in C pointer speak).
+//	#emit LOAD.S.alt __frame_offset
+//	// Add the frame pointer to the argument offset in bytes.
+//	#emit ADD
+//	// Add 12 to skip over the function header.
+//	#emit ADD.C      __3_cells
+//	// Load the address stored in the specified address.
+//	#emit LOAD.I
+//	// Save the pointer.
+//	#emit STOR.S.pri arg
+//	// Now copy the string, using a pointer instead of a source array.
+//	return StrCatAddress(dest, arg, len);
+//}
+
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils</library>
  * <param name="dest">Where to write the string to.</param>
