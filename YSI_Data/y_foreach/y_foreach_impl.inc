@@ -708,6 +708,10 @@ stock Iter_FreeMulti_Internal(const array[], trueSize, start)
 stock Iter_Add_InternalC(&count, array[], size, value)
 {
 	Debug_Print3("Iter_Add called: %d, %d, %d", count, size, value);
+	if (size > 65535)
+	{
+		Debug_PrintW("Iterator size is > 65535, some features may not work.");
+	}
 	if (0 <= value < size && array[value] <= value)
 	{
 		Debug_Print5("Iter_Add: In iterator");
@@ -743,6 +747,10 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 
 stock Iter_Add_InternalD(&count, array[], start, size, value)
 {
+	if (size > 65535)
+	{
+		Debug_PrintW("Iterator size is > 65535, some features may not work.");
+	}
 	if (0 <= value < size && start >= size && array[value] <= value)
 	{
 		new
