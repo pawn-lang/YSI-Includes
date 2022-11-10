@@ -164,11 +164,11 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 		Float:pos = 710.017,
 		last = 711;
 	// Floats don't print quite exactly.
-	if (Server_IsOpenMP())
-	{
-		Y_ALS_TEST_PRINT<FakeCallback, "OnFakeCallback(709, T_E_X_T_, 710.01700, 711)">;
-	}
-	else
+	//if (Server_IsOpenMP())
+	//{
+	//	Y_ALS_TEST_PRINT<FakeCallback, "OnFakeCallback(709, T_E_X_T_, 710.01700, 711)">;
+	//}
+	//else
 	{
 		Y_ALS_TEST_PRINT<FakeCallback, "OnFakeCallback(709, T_E_X_T_, 710.01702, 711)">;
 	}
@@ -340,11 +340,11 @@ public OnFakeCallback(playerid, const text[], Float:pos, last)
 		bodypart = 2;
 	#pragma unused bodypart
 	#if defined GetPlayerLastShotVectors
-		if (Server_IsOpenMP())
-		{
-			Y_ALS_TEST_PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.19999, 50, 2)">;
-		}
-		else
+		//if (Server_IsOpenMP())
+		//{
+		//	Y_ALS_TEST_PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.19999, 50, 2)">;
+		//}
+		//else
 		{
 			Y_ALS_TEST_PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.20000, 50, 2)">;
 		}
@@ -355,11 +355,11 @@ public OnFakeCallback(playerid, const text[], Float:pos, last)
 		issuerid = 46;
 	#pragma unused issuerid
 	#if defined GetPlayerLastShotVectors
-		if (Server_IsOpenMP())
-		{
-			Y_ALS_TEST_PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.19999, 50, 2)">;
-		}
-		else
+		//if (Server_IsOpenMP())
+		//{
+		//	Y_ALS_TEST_PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.19999, 50, 2)">;
+		//}
+		//else
 		{
 			Y_ALS_TEST_PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.20000, 50, 2)">;
 		}
@@ -370,11 +370,11 @@ public OnFakeCallback(playerid, const text[], Float:pos, last)
 		Float:fX = 10.24,
 		Float:fY = 11.34,
 		Float:fZ = 12.44;
-	if (Server_IsOpenMP())
-	{
-		Y_ALS_TEST_PRINT<PlayerClickMap, "OnPlayerClickMap(42, 10.24000, 11.33999, 12.43999)">;
-	}
-	else
+	//if (Server_IsOpenMP())
+	//{
+	//	Y_ALS_TEST_PRINT<PlayerClickMap, "OnPlayerClickMap(42, 10.24000, 11.33999, 12.43999)">;
+	//}
+	//else
 	{
 		Y_ALS_TEST_PRINT<PlayerClickMap, "OnPlayerClickMap(42, 10.23999, 11.34000, 12.43999)">;
 	}
@@ -404,11 +404,11 @@ public OnFakeCallback(playerid, const text[], Float:pos, last)
 		Float:fRotX = 20.24,
 		Float:fRotY = 21.34,
 		Float:fRotZ = 22.44;
-	if (Server_IsOpenMP())
-	{
-		Y_ALS_TEST_PRINT<PlayerEditObject, "OnPlayerEditObject(42, 2234, 1234, 404, 10.24000, 11.33999, 12.43999, 20.23999, 21.33999, 22.44000)">;
-	}
-	else
+	//if (Server_IsOpenMP())
+	//{
+	//	Y_ALS_TEST_PRINT<PlayerEditObject, "OnPlayerEditObject(42, 2234, 1234, 404, 10.24000, 11.33999, 12.43999, 20.23999, 21.33999, 22.44000)">;
+	//}
+	//else
 	{
 		Y_ALS_TEST_PRINT<PlayerEditObject, "OnPlayerEditObject(42, 2234, 1234, 404, 10.23999, 11.34000, 12.43999, 20.23999, 21.34000, 22.44000)">;
 	}
@@ -425,11 +425,11 @@ public OnFakeCallback(playerid, const text[], Float:pos, last)
 			Float:fScaleY = 505.05,
 			Float:fScaleZ = 606.06;
 		// Floats give subtly different rounding results on the two systems.
-		if (Server_IsOpenMP())
-		{
-			Y_ALS_TEST_PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.01000, 202.02000, 303.02999, 20.23999, 21.33999, 22.44000, 404.04000, 505.05000, 606.05999)">;
-		}
-		else
+		//if (Server_IsOpenMP())
+		//{
+		//	Y_ALS_TEST_PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.01000, 202.02000, 303.02999, 20.23999, 21.33999, 22.44000, 404.04000, 505.05000, 606.05999)">;
+		//}
+		//else
 		{
 			Y_ALS_TEST_PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.01000, 202.02000, 303.02999, 20.23999, 21.34000, 22.44000, 404.04000, 505.04998, 606.05999)">;
 		}
