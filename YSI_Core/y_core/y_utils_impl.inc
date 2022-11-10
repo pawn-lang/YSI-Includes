@@ -1515,6 +1515,102 @@ stock unpack(const string:str[])
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils</library>
+ * <param name="arg">Index of the string in the parameters.</param>
+ * <returns>
+ *   String length.
+ * </returns>
+ * <remarks>
+ *   Gets the length of a string passed to variable arguments, using the
+ *   parameter index as in <c>getarg</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock va_strlen(arg)
+{
+	// Get the length of the string at the given position on the previous
+	// function's stack (convenience function).
+	// Get the address of the previous function's stack.  First get the index of
+	// the argument required.
+	#emit LOAD.S.pri arg
+	// Then convert that number to bytes from cells.
+	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
+	// Get the previous function's frame.  Stored in variable 0 (in the current
+	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
+	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
+	// checks that "arg * 4 < *(*(FRM + 0) + 8)", for the previous frame parameter
+	// count (in C pointer speak).
+	#emit LOAD.S.alt 0
+	// Add the frame pointer to the argument offset in bytes.
+	#emit ADD
+	// Add 12 to skip over the function header.
+	#emit ADD.C      __3_cells
+	// Load the address stored in the specified address.
+	#emit LOAD.I
+	// Push the address we just determined was the source.
+	#emit PUSH.pri
+	// Push the number of parameters passed (in bytes) to the function.
+	#emit PUSH.C     __1_cell
+	// Call the function.
+	#emit SYSREQ.C   strlen
+	// Restore the stack to its level before we called this native.
+	#emit STACK      __2_cells
+	#emit RETN
+	// Never called.
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
+ * <param name="dest">Where to write the string to.</param>
+ * <param name="arg">Index of the string in the parameters.</param>
+ * <param name="len">The length of the destination address.</param>
+ * <remarks>
+ *   Like <c>getarg</c> but for strings.  Theoretically just a loop over
+ *   <c>getarg</c>, but we can do better with <c>strcat</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock va_getstring(dest[], arg, len = sizeof (dest))
+{
+	// Get the address of the previous function's stack.  First get the index of
+	// the argument required.
+	#emit LOAD.S.pri arg
+	// Then convert that number to bytes from cells.
+	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
+	// Get the previous function's frame.  Stored in variable 0 (in the current
+	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
+	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
+	// checks that "arg * 4 < *(*(FRM + 0) + 8)", for the previous frame parameter
+	// count (in C pointer speak).
+	#emit LOAD.S.alt __frame_offset
+	// Add the frame pointer to the argument offset in bytes.
+	#emit ADD
+	// Add 12 to skip over the function header.
+	#emit ADD.C      __3_cells
+	// Load the address stored in the specified address.
+	#emit LOAD.I
+	// Push the length for "strcat".
+	#emit PUSH.S     len
+	// Push the address we just determined was the source.
+	#emit PUSH.pri
+	// Load the address of the destination.
+	#emit LOAD.S.alt dest
+	// Blank the first cell so "strcat" behaves like "StrCpy".
+	#emit ZERO.pri
+	// Store the loaded number 0 to the loaded address.
+	#emit STOR.I
+	// Push the loaded address.
+	#emit PUSH.alt
+	// Push the number of parameters passed (in bytes) to the function.
+	#emit PUSH.C     __3_cells
+	// Call the function.
+	#emit SYSREQ.C   strcat
+	// Restore the stack to its level before we called this native.
+	#emit STACK      __4_cells
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
  * <param name="idx">Index of the string in the parameters.</param>
  * <returns>
  *   string

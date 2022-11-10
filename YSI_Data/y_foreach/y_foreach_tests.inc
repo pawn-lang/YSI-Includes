@@ -4404,7 +4404,9 @@ static stock
 		{
 			printf("    %d%%", i / (YSI_G_C_STRESS_SIZE / 100));
 		}
+		ASSERT_EQ(Iter_Count(YSI_g_sStressTest), i);
 		n = Iter_RandomAdd(YSI_g_sStressTest);
+		ASSERT_EQ(Iter_Count(YSI_g_sStressTest), i + 1);
 		ASSERT(Iterator@YSI_g_sStressTest[n] >= 0);
 		//for (new j = 0; j != 2 * YSI_G_C_STRESS_SIZE + 1; ++j)
 		foreach (new j : YSI_g_sStressTest)
@@ -4457,6 +4459,7 @@ static stock
 		}
 		if (change)
 		{
+			ASSERT_EQ(Iter_Count(YSI_g_sStressTest), n);
 			foreach (new j : YSI_g_sStressTest)
 			{
 				ASSERT(Iterator@YSI_g_sStressTest[j] >= 0);
