@@ -854,7 +854,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 
 // Detect array declarations: "Iterator:X[20]<4>", "Iterator:X<10, 4>", and the
 // frankly silly "Iterator:X[20]<10, 4>".
-#define F@c:F@d:((%0,%1)+1)]={%2}F@a$,Iter_Single@%9$%7$ F@d:((%0)+(%1))]={%2}F@a$,Iter_Multi@%9$[%0]%7$
+#define F@c:F@d:(((%0,%1)&0xFFFF)+1-(%9))]={%2}F@a$,Iter_Single@%9$%7$ F@d:((%0)+((%1)&0xFFFF)-((%1)&0xFFFF0000))]={%2}F@a$,Iter_Multi@%9$[%0]%7$
 #if __COMPILER_NESTED_ELLIPSIS
 	#define F@d:%0]={%2}F@a$,Iter_%8@%9[%3$%7$ %0]={{%2},...},Iter_%8@%9[%3$%7$
 #else
@@ -1006,8 +1006,8 @@ stock const
 
 #undef Iterator
 FUNC_PAWNDOC(Iterator:Iterator(name));
-#define _no_itertag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
-#define ITERATOR__%1<%2> _no_itertag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={_no_itertag:0,_no_itertag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
+#define _no_itertag:Iterator@%1$[_:F@c:F@d:(((%3:%2)&0xFFFF)+1-(%9))]%9$ %3:Iterator@%1$[_:F@c:F@d:(((%2)&0xFFFF)+1-((%2)&0xFFFF0000))]={%3:0,%3:1,...}F@a$
+#define ITERATOR__%1<%2> _no_itertag:Iterator@%1 F@a$[_:F@c:F@d:(((%2)&0xFFFF)+1-((%2)&0xFFFF0000))]={_no_itertag:0,_no_itertag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
 
 #if YSI_KEYWORD(Iterator)
 	#define Iterator:%1<%2> ITERATOR__ %1<%2>
