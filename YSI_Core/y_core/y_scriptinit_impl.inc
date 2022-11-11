@@ -392,6 +392,12 @@ forward bool:Server_HasDetectAddr0();
 	#define Server_HasDetectAddr0() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 6, CONST.alt 1, AND)))
 #endif
 
+forward bool:Server_CrashDetectExists();
+
+#if __COMPILER___EMIT_U
+	#define Server_CrashDetectExists() (bool:(__emit(ZERO.pri, LCTRL 0xFF, NOT, NOT)))
+#endif
+
 #if __COMPILER___EMIT_U
 	#define Server_Abort(%0) (__emit(LOAD.U.pri %0, HALT 0))
 #endif
@@ -1520,6 +1526,26 @@ stock bool:Server_HasDetectAddr0()
 	#emit SHR.C.pri     6
 	#emit CONST.alt     1
 	#emit AND
+	#emit RETN
+	return false;
+}
+
+stock bool:Server_CrashDetectExists()
+{
+	// 0xFF is roughly flags, but some are mutually exclusive:
+	//
+	//   1 - Present (read only, write always 0).
+	//   2 - long_call_time checks enabled (write ignored when `server.cfg` has `long_call_time 0`).
+	//   4 - long_call_time reset to default time (write only, read always 0).
+	//   8 - long_call_time restart check from now (write only, read always 0).
+	//
+	// `!!pri` is the same number of instructions as `pri != 0`, but doesn't
+	// clobber `alt`.  This doesn't matter in this function, but might in the
+	// inline version.
+	#emit ZERO.pri
+	#emit LCTRL         0xFF
+	#emit NOT
+	#emit NOT
 	#emit RETN
 	return false;
 }

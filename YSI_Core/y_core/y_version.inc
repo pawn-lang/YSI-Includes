@@ -433,23 +433,6 @@ stock Script_GetStartString(output[], size = sizeof (output))
 	format(output, size, "%02d %s %04d - %02d:%02d:%02d", day, months[month - 1], year, hour, minute, second);
 }
 
-stock bool:Server_CrashDetectExists()
-{
-	// 0xFF is roughly flags, but some are mutually exclusive:
-	//
-	//   1 - Present (read only, write always 0).
-	//   2 - long_call_time checks enabled (write ignored when `server.cfg` has `long_call_time 0`).
-	//   4 - long_call_time reset to default time (write only, read always 0).
-	//   8 - long_call_time restart check from now (write only, read always 0).
-	//
-	#emit ZERO.pri
-	#emit LCTRL         0xFF
-	#emit NOT
-	#emit NOT
-	#emit RETN
-	return false;
-}
-
 #if _YSI_SAFE_STARTUP
 	static stock YVers_PrintHeader()
 	{
