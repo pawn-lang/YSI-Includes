@@ -300,8 +300,10 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 		#define __COMPILER_FUNC_DECL_BUG (1)
 	#endif
 	#if __PawnBuild >= 10
-		#undef __COMPILER___EMIT_U
-		#define __COMPILER___EMIT_U (1)
+		#if !__COMPILER_DOCUMENTING
+			#undef __COMPILER___EMIT_U
+			#define __COMPILER___EMIT_U (1)
+		#endif
 
 		#undef __COMPILER_ADDRESSOF
 		#define __COMPILER_ADDRESSOF (1)

@@ -395,6 +395,8 @@ forward bool:Server_HasDetectAddr0();
 forward bool:Server_CrashDetectExists();
 
 #if __COMPILER___EMIT_U
+	// Could also do `ZERO.alt, NEQ`, but that's the same number of instructions
+	// and clobbers `alt`.
 	#define Server_CrashDetectExists() (bool:(__emit(ZERO.pri, LCTRL 0xFF, NOT, NOT)))
 #endif
 
