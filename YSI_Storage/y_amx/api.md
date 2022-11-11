@@ -286,12 +286,12 @@ Note that amx_assembly now sorts the library and tag headers, so those could be 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetBaseCount`](#AMX_GetBaseCount)
+* [`AMX_Read`](#AMX_Read)
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 * [`Cell_ReverseBytes`](#Cell_ReverseBytes)
 * [`FIXES_strcmp`](#FIXES_strcmp)
 * [`FIXES_strfind`](#FIXES_strfind)
 * [`FUNCTION_LENGTH`](#FUNCTION_LENGTH)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`__defsize_cells`](#__defsize_cells)
 * [`cellbits`](#cellbits)
 * [`cellbytes`](#cellbytes)
@@ -413,11 +413,11 @@ Note that amx_assembly now sorts the library and tag headers, so those could be 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetBaseCount`](#AMX_GetBaseCount)
+* [`AMX_Read`](#AMX_Read)
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 * [`FIXES_strcmp`](#FIXES_strcmp)
 * [`FIXES_strfind`](#FIXES_strfind)
 * [`FUNCTION_LENGTH`](#FUNCTION_LENGTH)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`__defsize_cells`](#__defsize_cells)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
@@ -509,12 +509,12 @@ Prefixes are widely used in YSI as the names are sorted and so can be binary sea
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetBaseCount`](#AMX_GetBaseCount)
+* [`AMX_Read`](#AMX_Read)
 * [`Cell_ReverseBytes`](#Cell_ReverseBytes)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`__defsize_cells`](#__defsize_cells)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
-10 cells
+11 cells
 
 
 
@@ -572,7 +572,7 @@ Note that amx_assembly now sorts the library and tag headers, so those could be 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetBaseCount`](#AMX_GetBaseCount)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`AMX_Read`](#AMX_Read)
 * [`__defsize_cells`](#__defsize_cells)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
@@ -612,7 +612,7 @@ This scans through any table to look for names ending with the given four byte s
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetBaseCount`](#AMX_GetBaseCount)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`AMX_Read`](#AMX_Read)
 * [`__defsize_cells`](#__defsize_cells)
 * [`cellbits`](#cellbits)
 * [`cellbytes`](#cellbytes)
@@ -729,9 +729,9 @@ The passed address, in the server not the AMX.
 
 #### Depends on
 * [`AMX_REAL_DATA`](#AMX_REAL_DATA)
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
 * [`__args_offset`](#__args_offset)
 * [`__param0_offset`](#__param0_offset)
+* [`numargs`](#numargs)
 #### Estimated stack usage
 2 cells
 
@@ -843,8 +843,8 @@ Note that amx_assembly now sorts the library and tag headers, so those could be 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetEntryBinary`](#AMX_GetEntryBinary)
+* [`AMX_Read`](#AMX_Read)
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
 9 cells
@@ -903,8 +903,8 @@ Note that amx_assembly now sorts the library and tag headers, so those could be 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
+* [`AMX_Read`](#AMX_Read)
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
 9 cells
@@ -949,8 +949,8 @@ Note that amx_assembly now sorts the library and tag headers, so those could be 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetEntryPrefixBinary`](#AMX_GetEntryPrefixBinary)
+* [`AMX_Read`](#AMX_Read)
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
 8 cells
@@ -995,8 +995,8 @@ Note that amx_assembly now sorts the library and tag headers, so those could be 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetEntryPrefixLinear`](#AMX_GetEntryPrefixLinear)
+* [`AMX_Read`](#AMX_Read)
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
 8 cells
@@ -1035,8 +1035,8 @@ This scans through any table to look for names ending with the given four byte s
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetEntrySuffix`](#AMX_GetEntrySuffix)
+* [`AMX_Read`](#AMX_Read)
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
 8 cells
@@ -1895,9 +1895,9 @@ The passed address in the AMX.
 
 
 #### Depends on
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
 * [`__args_offset`](#__args_offset)
 * [`__param0_offset`](#__param0_offset)
+* [`numargs`](#numargs)
 #### Estimated stack usage
 2 cells
 
@@ -1931,8 +1931,8 @@ Copies a C string in AMX memory out to a packed string. The pointer does not poi
 
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
+* [`AMX_Read`](#AMX_Read)
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
 6 cells
@@ -1966,9 +1966,9 @@ Get the original string (code) name of a tag from its ID.
 #### Depends on
 * [`AMX_BASE_ADDRESS`](#AMX_BASE_ADDRESS)
 * [`AMX_GetEntryLinear`](#AMX_GetEntryLinear)
+* [`AMX_Read`](#AMX_Read)
 * [`AMX_ReadPackedString`](#AMX_ReadPackedString)
 * [`AMX_TABLE_TAGS`](#AMX_TABLE_TAGS)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
 * [`cellbytes`](#cellbytes)
 * [`strunpack`](#strunpack)
 #### Estimated stack usage
@@ -2206,6 +2206,37 @@ This scans through any table to look for names ending with the given four byte s
 
 
 
+### `AMX_Read`:
+
+
+#### Syntax
+
+
+```pawn
+AMX_Read(addr)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	Where to read the data from (relative to DAT).	 |
+
+#### Returns
+The data at this address.
+
+
+#### Remarks
+Read some data from any arbitrary location in the AMX, bypassing the DAT-only restriction.
+
+
+#### Estimated stack usage
+1 cells
+
+
+
 ### `AMX_ReadArray`:
 
 
@@ -2264,12 +2295,11 @@ Operates on C strings, as found in the header, not pawn packed strings, which ha
 
 
 #### Depends on
-* [`YSI_g_c80s`](#YSI_g_c80s)
-* [`YSI_g_cFEs`](#YSI_g_cFEs)
+* [`Cell_HasZeroByte`](#Cell_HasZeroByte)
 * [`cellbits`](#cellbits)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
-3 cells
+6 cells
 
 
 
@@ -2300,12 +2330,11 @@ Copies a C string in AMX memory out to a packed string. Mainly used to read func
 
 
 #### Depends on
-* [`YSI_g_c80s`](#YSI_g_c80s)
-* [`YSI_g_cFEs`](#YSI_g_cFEs)
+* [`Cell_HasZeroByte`](#Cell_HasZeroByte)
 * [`cellbytes`](#cellbytes)
 * [`swapchars`](#swapchars)
 #### Estimated stack usage
-5 cells
+6 cells
 
 
 
@@ -2375,6 +2404,37 @@ Copies a C string in AMX memory out to an unpacked string. Mainly used to read f
 
 
 
+### `AMX_Ref`:
+
+
+#### Syntax
+
+
+```pawn
+AMX_Ref(&addr)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	` & ` A variable that you want to get the address of.	 |
+
+#### Returns
+The address of the given parameter.
+
+
+#### Remarks
+This is the old function version in case the compiler being used doesn't have inline assembly.
+
+
+#### Estimated stack usage
+1 cells
+
+
+
 ### `AMX_TraceCode`:
 
 
@@ -2403,10 +2463,10 @@ An extremely poor-mans version of codescan. Just takes a pure array of opcodes a
 #### Depends on
 * [`AMX_HEADER_COD`](#AMX_HEADER_COD)
 * [`AMX_HEADER_DAT`](#AMX_HEADER_DAT)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`AMX_Read`](#AMX_Read)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
-3 cells
+6 cells
 
 
 
@@ -2438,10 +2498,38 @@ Search for the given pattern in the data segment. Return the address of the matc
 #### Depends on
 * [`AMX_HEADER_DAT`](#AMX_HEADER_DAT)
 * [`AMX_HEADER_HEA`](#AMX_HEADER_HEA)
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`AMX_Read`](#AMX_Read)
 * [`cellbytes`](#cellbytes)
 #### Estimated stack usage
-3 cells
+6 cells
+
+
+
+### `AMX_Write`:
+
+
+#### Syntax
+
+
+```pawn
+AMX_Write(addr, value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`addr`	 | 	Where to write the data (relative to DAT).	 |
+| 	`value`	 | 	What to write.	 |
+
+#### Remarks
+Writes some data to any arbitrary location in the AMX, bypassing the DAT-only restriction. This is the old function version in case the compiler being used doesn't have inline assembly.
+
+
+#### Estimated stack usage
+1 cells
 
 
 
@@ -2502,9 +2590,10 @@ Copies a packed string in to AMX memory, as a C string. Mainly used to write fun
 
 
 #### Depends on
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`AMX_Read`](#AMX_Read)
+* [`AMX_Write`](#AMX_Write)
 #### Estimated stack usage
-4 cells
+8 cells
 
 
 
@@ -2534,7 +2623,9 @@ Copies an unpacked string in to AMX memory, as a C string. Mainly used to write 
 
 
 #### Depends on
-* [`YSI_gAMXAddress_`](#YSI_gAMXAddress_)
+* [`AMX_Read`](#AMX_Read)
+* [`AMX_Write`](#AMX_Write)
 #### Estimated stack usage
-4 cells
+8 cells
+
 
