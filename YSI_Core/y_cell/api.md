@@ -9,6 +9,14 @@ Provides a few functions for manipulating the bits in single cells. Note that th
 ## Constants
 
 
+### `YSI_g_c20s`:
+
+
+#### Value
+`-538976289`
+
+
+
 ### `YSI_g_c80s`:
 
 
@@ -428,6 +436,149 @@ Like Cell_GetLowestBitEx, but for 0s not 1s.
 
 
 
+### `Cell_GetLowestComponent`:
+
+Cell_GetLowestComponent(number);
+
+
+
+#### Syntax
+
+
+```pawn
+Cell_GetLowestComponent(data)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`data`	 | 	` {_,Bit,Text,Group,File,Float,Text3D} ` The number to get the lowest 1 in.	 |
+
+#### Returns
+The lowest set bit.
+
+
+#### Remarks
+Similar to Cell_GetLowestBit, but returns the bit, not the position of the bit. 1) Example: 0b00000000000000000000000000000001 Returns: 0b00000000000000000000000000000001 2) Example: 0b00000000000000000000000000001000 Returns: 0b00000000000000000000000000001000 3) Example: 0b00010001100011000011100010001000 Returns: 0b00000000000000000000000000001000 4) Example: 0b00000000000000000000000000000000 Returns: 0b00000000000000000000000000000000
+
+
+#### Estimated stack usage
+1 cells
+
+
+
+### `Cell_GetLowestEmpty`:
+
+Cell_GetLowestEmpty(number);
+
+
+
+#### Syntax
+
+
+```pawn
+Cell_GetLowestEmpty(data)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`data`	 | 	` {_,Bit,Text,Group,File,Float,Text3D} ` The number to get the lowest 0 in.	 |
+
+#### Returns
+The lowest unset bit.
+
+
+#### Remarks
+Like Cell_GetLowestComponent, but for 0s not 1s.
+
+
+#### Estimated stack usage
+1 cells
+
+
+
+### `Cell_HasSpaceByte`:
+
+Cell_HasSpaceByte(number);
+
+
+
+#### Syntax
+
+
+```pawn
+Cell_HasSpaceByte(data)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`data`	 | 	` {_,Bit,Text,Group,File,Float,Text3D} ` The number to get the lowest space in.	 |
+
+#### Returns
+The lowest space byte.
+
+
+#### Remarks
+Check if any of the 4 bytes are a space: https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
+
+
+#### Depends on
+* [`YSI_g_c80s`](#YSI_g_c80s)
+* [`YSI_g_cFEs`](#YSI_g_cFEs)
+#### Estimated stack usage
+1 cells
+
+
+
+### `Cell_HasZeroByte`:
+
+Cell_HasZeroByte(number);
+
+
+
+#### Syntax
+
+
+```pawn
+Cell_HasZeroByte(data)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`data`	 | 	` {_,Bit,Text,Group,File,Float,Text3D} ` The number to get the lowest 0 in.	 |
+
+#### Returns
+The lowest null byte.
+
+
+#### Remarks
+Check if any of the 4 bytes are zero: https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
+
+
+#### Depends on
+* [`YSI_g_c20s`](#YSI_g_c20s)
+* [`YSI_g_c80s`](#YSI_g_c80s)
+* [`YSI_g_cFEs`](#YSI_g_cFEs)
+#### Estimated stack usage
+1 cells
+
+
+
 ### `Cell_PrecomputeMaskPermutation`:
 
 Cell_PrecomputeMaskPermutation(m)
@@ -565,6 +716,5 @@ All the nibbles (4-bit chunks) in the input reversed.
 * [`swapchars`](#swapchars)
 #### Estimated stack usage
 1 cells
-
 
 
