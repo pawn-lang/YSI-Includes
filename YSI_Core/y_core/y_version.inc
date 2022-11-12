@@ -110,9 +110,25 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 #endif
 
 static stock const
+	/**
+	 * <library>y_scriptdata</library>
+	 */
 	YSI_gscWindows[] = "Windows",
-	YSI_gscLinux[] = "Linux",
-	YSI_gscCrashdetect[] = "Crashdetect:";
+	/**
+	 * <library>y_scriptdata</library>
+	 */
+	YSI_gscLinux[] = "Linux";
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  The version of the JIT plugin loaded.
+ * </returns>
+ * <remarks>
+ *  There is no native way to determine this, the code just tries to estimate
+ *  based on some feature heuristics.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 // 0 - No JIT
 // 1 - Pre 2.1
@@ -138,6 +154,17 @@ stock Server_GetJITVersion()
 	return 0;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  The version of the JIT plugin loaded, if any, as a string.
+ * </returns>
+ * <remarks>
+ *  There is no native way to determine this, the code just tries to estimate
+ *  based on some feature heuristics.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Server_GetJITString(version[], vlen = sizeof (version))
 {
 	version[0] = '\0';
@@ -154,6 +181,17 @@ stock Server_GetJITString(version[], vlen = sizeof (version))
 	}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  The version of the compiler used to build this script.  
+ * </returns>
+ * <remarks>
+ *  The compiler version used isn't a feature of the server currently executing
+ *  this code, hence this function is deprecated.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `Script_GetCompilerVersion`.
 stock Server_GetCompilerVersion()
 {
@@ -166,6 +204,13 @@ stock Server_GetCompilerVersion()
 	#endif
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptdata</library>
+ * <returns>
+ *  The version of the compiler used to build this script.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock Script_GetCompilerVersion()
 {
 	#if ((__Pawn & 0x0F) >= 0x0A)
@@ -176,6 +221,13 @@ stock Script_GetCompilerVersion()
 		return 0x03023664;
 	#endif
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptdata</library>
+ * <returns>
+ *  The version of the compiler used to build this script, as a string.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock Script_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
 {
@@ -196,11 +248,29 @@ stock Script_GetCompilerString(version[], os[], vlen = sizeof (version), olen = 
 	#endif
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  The version of the compiler used to build this script, as a string.
+ * </returns>
+ * <remarks>
+ *  The compiler version used isn't a feature of the server currently executing
+ *  this code, hence this function is deprecated.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `Script_GetCompilerString`.
 stock Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
 {
 	Script_GetCompilerString(version, os, vlen, olen);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptdata</library>
+ * <returns>
+ *  The codepage used to build this script, as a string.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock Script_GetCompilerCodepage(version[], vlen = sizeof (version))
 {
@@ -215,53 +285,66 @@ stock Script_GetCompilerCodepage(version[], vlen = sizeof (version))
 	#endif
 }
 
-/*
-
-Version examples:
-
-0.3.DL R1       - 03D010
-0.3.7 R3        - 037030
-0.3.7 R2-2      - 037022
-0.3.7 R1-2      - 037012
-0.3.7           - 037000
-0.3z R4         - 030740
-0.3z R3         - 030730
-0.3z R2-1       - 030721
-0.3z R1-2       - 030712
-0.3z            - 030700
-0.3x R2 patch 1 - 030621
-0.3x R2         - 030620
-0.3x R1-2       - 030612
-0.3x            - 030600
-0.3e            - 030500
-0.3d            - 030400
-0.3c            - 030300
-0.3b            - 030200
-0.3a            - 030100
-0.2X            - 02A000
-0.2.2 R3        - 022300
-
-Rough rules:
-
-Uses (roughtly) BCD.  Special versions are denoted outside 0-9.
-
-0.1.2c R4-5
-| | ||  | |
-0 1 23  4 5
-=
-0x012345
-
-(assuming c is the third revision)
-
-0.2X becomes 02A000 because it is basically 0.2.3, but not, while higher than
-0.2.2 so can't be 020400 (for example).  Also, its a capital letter, so doesn't
-use the revision method.
-
-P.S.  Making a consistent scheme for SA:MP versions is REALLY hard.
-
-open.mp releases can use `A` as the first digit.
-
-*/
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptdata</library>
+ * <returns>
+ *  The includes used to build this script.
+ * </returns>
+ * <remarks>
+ *  Version examples:
+ *  <ul>
+ *  <li>0.3.DL R1       - 03D010</li>
+ *  <li>0.3.7 R3        - 037030</li>
+ *  <li>0.3.7 R2-2      - 037022</li>
+ *  <li>0.3.7 R1-2      - 037012</li>
+ *  <li>0.3.7           - 037000</li>
+ *  <li>0.3z R4         - 030740</li>
+ *  <li>0.3z R3         - 030730</li>
+ *  <li>0.3z R2-1       - 030721</li>
+ *  <li>0.3z R1-2       - 030712</li>
+ *  <li>0.3z            - 030700</li>
+ *  <li>0.3x R2 patch 1 - 030621</li>
+ *  <li>0.3x R2         - 030620</li>
+ *  <li>0.3x R1-2       - 030612</li>
+ *  <li>0.3x            - 030600</li>
+ *  <li>0.3e            - 030500</li>
+ *  <li>0.3d            - 030400</li>
+ *  <li>0.3c            - 030300</li>
+ *  <li>0.3b            - 030200</li>
+ *  <li>0.3a            - 030100</li>
+ *  <li>0.2X            - 02A000</li>
+ *  <li>0.2.2 R3        - 022300</li>
+ *  </ul>
+ *
+ *  Rough rules:
+ *  <p />
+ *
+ *  Uses (roughtly) BCD.  Special versions are denoted outside 0-9.
+ *  <p />
+ *
+ *  <code>
+ *  0.1.2c R4-5
+ *  | | ||  | |
+ *  0 1 23  4 5
+ *  =
+ *  0x012345
+ *  </code>
+ *  
+ *  (assuming c is the third revision)
+ *  <p />
+ *  
+ *  0.2X becomes 02A000 because it is basically 0.2.3, but not, while higher
+ *  than 0.2.2 so can't be 020400 (for example).  Also, its a capital letter,
+ *  so doesn't use the revision method.
+ *  <p />
+ *  
+ *  P.S.  Making a consistent scheme for SA:MP versions is REALLY hard.
+ *  <p />
+ *  
+ *  open.mp releases can use `A` as the first digit.
+ *  
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Script_GetIncludesVersion()
 {
@@ -335,11 +418,29 @@ stock Script_GetIncludesVersion()
 	#endif
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  The includes used to build this script.
+ * </returns>
+ * <remarks>
+ *  The includes used were taken as a proxy for the server version, but they are
+ *  not a good substitute, hence this function is deprecated.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `Script_GetIncludesVersion`.
 stock Server_GetServerVersion()
 {
 	return Script_GetIncludesVersion();
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptdata</library>
+ * <returns>
+ *  The includes used to build this script, as a string.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock Script_GetIncludesString(version[], vlen = sizeof (version))
 {
@@ -418,12 +519,29 @@ stock Script_GetIncludesString(version[], vlen = sizeof (version))
 	#endif
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  The includes used to build this script, as a string.
+ * </returns>
+ * <remarks>
+ *  The includes used were taken as a proxy for the server version, but they are
+ *  not a good substitute, hence this function is deprecated.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Script_GetIncludesString`.
 stock Server_GetServerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
 {
 	return Script_GetIncludesString(version, os, vlen, olen);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptdata</library>
+ * <returns>
+ *  The time the script started, as a string.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock Script_GetStartString(output[], size = sizeof (output))
 {

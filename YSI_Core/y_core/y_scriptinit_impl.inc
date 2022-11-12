@@ -129,7 +129,7 @@ stock
 		bool:YSI_GAMEMODE = false,
 	#endif
 		/**
-		 * <library>y_scriptinit</library>
+		 * <library>y_serverdata</library>
 		 * <remarks>
 		 *  <c>true</c> if the current script is running as a filterscript.
 		 * </remarks>
@@ -201,7 +201,7 @@ stock bool:Server_JITExists()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if the JIT plugin has completed compilation.
  * </returns>
@@ -214,7 +214,7 @@ stock bool:Server_JITComplete()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_scriptdata</library>
  * <returns>
  *  <c>true</c> if the JIT plugin has completed compilation.
  * </returns>
@@ -226,7 +226,7 @@ stock bool:Script_JITComplete()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if this script was loaded from <c>YSI_CACHE</c>.
  * </returns>
@@ -239,7 +239,7 @@ stock bool:Server_CacheLoaded()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_scriptdata</library>
  * <returns>
  *  <c>true</c> if this script was loaded from <c>YSI_CACHE</c>.
  * </returns>
@@ -251,7 +251,7 @@ stock bool:Script_CacheLoaded()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if this script was written to <c>YSI_CACHE</c>.
  * </returns>
@@ -264,7 +264,7 @@ stock bool:Server_CacheSaved()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_scriptdata</library>
  * <returns>
  *  <c>true</c> if this script was written to <c>YSI_CACHE</c>.
  * </returns>
@@ -276,7 +276,7 @@ stock bool:Script_CacheSaved()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if this script is determined to be a filterscript at runtime.
  * </returns>
@@ -295,7 +295,7 @@ stock bool:Server_IsFilterscript()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_scriptdata</library>
  * <returns>
  *  <c>true</c> if this script is determined to be a filterscript at runtime.
  * </returns>
@@ -312,7 +312,7 @@ forward bool:Script_IsFilterscript();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_scriptdata</library>
  * <returns>
  *  <c>true</c> if this script is determined to be a gamemode at runtime.
  * </returns>
@@ -331,7 +331,7 @@ stock bool:Server_IsGameMode()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_scriptdata</library>
  * <returns>
  *  <c>true</c> if this script is determined to be a gamemode at runtime.
  * </returns>
@@ -348,7 +348,7 @@ forward bool:Script_IsGameMode();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if this script is running on a Linux server currently.
  * </returns>
@@ -371,7 +371,7 @@ stock bool:Server_IsLinuxHost()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if this script is running on a Windows server currently.
  * </returns>
@@ -394,7 +394,7 @@ stock bool:Server_IsWindowsHost()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if this script is running on an open.mp server currently.
  * </returns>
@@ -411,7 +411,7 @@ forward bool:Server_IsOpenMP();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if this script is running on a SA:MP server currently.
  * </returns>
@@ -424,7 +424,7 @@ forward bool:Server_IsSAMP();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if this script was compiled with a Linux compiler.
  * </returns>
@@ -441,7 +441,7 @@ stock bool:Server_IsLinuxCompiler()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_scriptdata</library>
  * <returns>
  *  <c>true</c> if this script was compiled with a Linux compiler.
  * </returns>
@@ -456,7 +456,7 @@ forward bool:Script_IsLinuxCompiler();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if this script was compiled with a Windows compiler.
  * </returns>
@@ -473,7 +473,7 @@ stock bool:Server_IsWindowsCompiler()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_scriptdata</library>
  * <returns>
  *  <c>true</c> if this script was compiled with a Windows compiler.
  * </returns>
@@ -577,7 +577,7 @@ static stock ScriptInit_GetStartTime()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <param name="usTime">The time in microseconds.</param>
  * <remarks>
  *  Set the time that crashdetect will use when detecting slow functions.
@@ -592,7 +592,7 @@ forward Server_SetLongCallTime(usTime);
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  Disable the detection of slow functions, if crashdetect exists.
  * </remarks>
@@ -605,7 +605,7 @@ forward Server_DisableLongCall();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  Enable the detection of slow functions, if crashdetect exists.
  * </remarks>
@@ -618,7 +618,7 @@ forward Server_EnableLongCall();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  Set the slow code threshold back to the default value.
  * </remarks>
@@ -631,7 +631,7 @@ forward Server_ResetLongCallTime();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  Restart the current function's long call timer, if crashdetect exists.  So
  *  the detection of slow code will only account for execution time after this
@@ -646,7 +646,7 @@ forward Server_RestartLongCall();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if long call (slow code) detection is active.
  * </returns>
@@ -662,7 +662,7 @@ forward bool:Server_IsLongCallEnabled();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  The current setting (in microseconds) for the slow code warning threshold.
  *  Or <c>0</c> if there is none.
@@ -676,7 +676,7 @@ forward Server_GetLongCallTime();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  Disable crashdetect's ability to detect possibly unintended writes to
  *  address naught.
@@ -690,7 +690,7 @@ forward Server_DisableDetectAddr0();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  Enable crashdetect's ability to detect possibly unintended writes to address
  *  naught.
@@ -704,7 +704,7 @@ forward Server_EnableDetectAddr0();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if crashdetect will warn for writes to address naught.
  * </returns>
@@ -717,7 +717,7 @@ forward bool:Server_IsDetectAddr0Enabled();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  <c>true</c> if crashdetect is able to warn for writes to address naught.
  * </remarks>
@@ -730,7 +730,7 @@ forward bool:Server_HasDetectAddr0();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <returns>
  *  <c>true</c> if crashdetect exists.
  * </returns>
@@ -745,7 +745,7 @@ forward bool:Server_CrashDetectExists();
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <param name="reason">The halt type.</param>
  * <remarks>
  *  Halt the server, or at least the current public, instantly.
@@ -970,7 +970,7 @@ stock Server_FinishIntroMessage()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  Get the start time of the script, previously determined by
  *  <c>ScriptInit_GetStartTime</c>, as a unix timestamp.
@@ -983,7 +983,7 @@ stock Server_GetStartTime()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  Get the start time of the script, previously determined by
  *  <c>ScriptInit_GetStartTime</c>, as a set of six components for time and
@@ -1002,7 +1002,7 @@ stock Server_GetStartDateTime(&year, &month, &day, &hour, &minute, &second)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  Is a version of the crashdetect plugin loaded that we can control long call
  *  detection in via registers.  There were several releases where this just
@@ -1032,7 +1032,7 @@ stock bool:Server_HasLongCallControl()
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  Get the default long call time for crashdetect.  May not be the current
  *  setting.  Simply stores the current value, resets it, restores the current
@@ -1891,7 +1891,7 @@ public _ScriptInit_FixState() <_script_init_fix_state : false>
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_scriptinit</library>
+ * <library>y_serverdata</library>
  * <remarks>
  *  
  * </remarks>
