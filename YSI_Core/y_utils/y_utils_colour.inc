@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - colour"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -74,7 +88,7 @@ Optional plugins:
 /// <p/>
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <summary>
  *  InterpolateColourLinear(startColour, endColour, Float:fraction);
  * </summary>
@@ -145,7 +159,7 @@ stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
@@ -170,7 +184,7 @@ stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
@@ -193,7 +207,7 @@ stock InterpolateColor(startColour, endColour, value, maxvalue, minvalue = 0)
 	return InterpolateColourLinear(startColour, endColour, floatdiv(value - minvalue, maxvalue - minvalue));
 }
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
@@ -218,7 +232,7 @@ stock InterpolateColour(startColour, endColour, value, maxvalue, minvalue = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <summary>
  *  InterpolateColourGamma(startColour, endColour, Float:fraction);
  * </summary>
@@ -292,7 +306,7 @@ stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
@@ -329,7 +343,7 @@ stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 #define FLOAT_CIE_CUTOFF    (0.0031308)
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <param name="r">The red colour component.</param>
  * <param name="g">The green colour component.</param>
  * <param name="b">The blue colour component.</param>
@@ -353,7 +367,7 @@ stock CIEMultiply(Float:r, Float:g, Float:b, &Float:x, &Float:y, &Float:z)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <summary>
  *  SRGBToCIE(colour, &amp;Float:x, &amp;Float:y, &amp;Float:z);
  * </summary>
@@ -391,7 +405,7 @@ stock SRGBToCIE(colour, &Float:x, &Float:y, &Float:z)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <summary>
  *  SRGBToCIE(colour, &amp;Float:x, &amp;Float:y, &amp;Float:z);
  * </summary>
@@ -429,7 +443,7 @@ stock CIEToSRGB(a, Float:x, Float:y, Float:z)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <summary>
  *  InterpolateColourSRGB(startColour, endColour, Float:fraction);
  * </summary>
@@ -490,7 +504,7 @@ stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
@@ -515,7 +529,7 @@ stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <summary>
  *  GetNearestColourLinear(colour, const options[], count = sizeof (options));
  * </summary>
@@ -564,7 +578,7 @@ stock GetNearestColourLinear(colour, const options[], count = sizeof (options))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <summary>
  *  GetNearestColourGamma(colour, const options[], count = sizeof (options));
  * </summary>
@@ -613,7 +627,7 @@ stock GetNearestColourGamma(colour, const options[], count = sizeof (options))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <summary>
  *  GetNearestColourGammaCached(colour, const options[], count = sizeof (options));
  * </summary>
@@ -662,7 +676,7 @@ stock GetNearestColourGammaCached(colour, const Float:options[][3], count = size
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <summary>
  *  GetNearestColourGamma(colour, const options[], count = sizeof (options));
  * </summary>
@@ -709,7 +723,7 @@ stock GetNearestColourSRGB(colour, const options[], count = sizeof (options))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - colour</library>
  * <summary>
  *  GetNearestColourSRGBCached(colour, const options[], count = sizeof (options));
  * </summary>

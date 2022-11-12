@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - random"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -73,6 +87,13 @@ Optional plugins:
 
 /// <p/>
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - random</library>
+ * <remarks>
+ *   Relatively high quality 32-bit PRNG.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #if cellbits == 32
 	stock RandomMulberry32()
 #else
@@ -120,7 +141,7 @@ Optional plugins:
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <remarks>
  *   Relatively high quality 32-bit PRNG.
  * </remarks>
@@ -179,7 +200,7 @@ Optional plugins:
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <remarks>
  *   Slightly lower quality 32-bit PRNG.
  * </remarks>
@@ -226,7 +247,7 @@ Optional plugins:
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <remarks>
  *   Slightly lower quality 32-bit PRNG.
  * </remarks>
@@ -279,7 +300,7 @@ Optional plugins:
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <param name="minOrMax">Upper bound, or lower bound with 2+ parameters or when less than naught.</param>
  * <param name="max">Upper bound.</param>
  * <param>Value(s) to not return.</param>
@@ -303,7 +324,7 @@ static stock Random(minOrMax, max, ...)
 }
  
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
  * <param name="">Values to not return.</param>
@@ -380,7 +401,7 @@ stock RandomMinMaxExceptMany(min, max, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
  * <param name="except">Value to not return.</param>
@@ -406,7 +427,7 @@ stock RandomMinMaxExcept(min, max, except)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <param name="min">Lower bound.</param>
  * <param name="max">Upper bound.</param>
  * <remarks>
@@ -421,7 +442,7 @@ stock RandomMinMax(min, max)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <param name="max">Upper bound.</param>
  * <remarks>
  *   Generate a random number between the given numbers (min &lt;= n &lt; max).
@@ -454,7 +475,7 @@ stock RandomMax(max)
 #define RandomMinMaxExcept(%0,%1,%2,%3)PP_DISCARD$ RandomMinMaxExceptMany(%0,%1,%2,%3)PP_DISCARD$
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <param name="min">Lower bound, or upper bound when only parameter.</param>
  * <param name="max">Upper bound.</param>
  * <param name="dp">How small to make the differences</param>
@@ -498,7 +519,7 @@ stock Float:RandomFloatMinMax(Float:min, Float:max = FLOAT_NAN, dp = 2)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <param name="max">Upper bound.</param>
  * <remarks>
  *   Generate a random float between <c>0 &lt;= n &lt; max</c>.
@@ -517,7 +538,7 @@ stock Float:RandomFloatMax(Float:max)
 #define RandomFloatMax(%0,%1)PP_DISCARD$ RandomFloatMinMax(%0,%1)PP_DISCARD$
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <summary>
  *  Get an array of random points in a circle.
  * </summary>
@@ -554,7 +575,7 @@ stock RandomPointsInCircleSampled(Float:centreX, Float:centreY, Float:radius, Fl
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <summary>
  *  Get an array of random points in a circle.
  * </summary>
@@ -586,7 +607,7 @@ stock RandomPointsInCircleCentred(Float:centreX, Float:centreY, Float:radius, Fl
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <summary>
  *  Get an array of random points in a circle.
  * </summary>
@@ -619,7 +640,7 @@ stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius
 #define RandomPointsInCircle RandomPointsInCircleDistributed
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <summary>
  *  Get a random point in a circle.
  * </summary>
@@ -650,7 +671,7 @@ stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Flo
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <summary>
  *  Get a random point in a circle.
  * </summary>
@@ -675,7 +696,7 @@ stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Flo
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - random</library>
  * <summary>
  *  Get a random point in a circle.
  * </summary>

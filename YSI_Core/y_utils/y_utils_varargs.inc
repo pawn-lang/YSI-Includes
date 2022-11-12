@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - varargs"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -74,7 +88,7 @@ Optional plugins:
 /// <p/>
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - varargs</library>
  * <param name="arg">Index of the string in the parameters.</param>
  * <returns>
  *   String length.
@@ -120,7 +134,7 @@ stock va_strlen(arg)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - varargs</library>
  * <param name="dest">Where to write the string to.</param>
  * <param name="arg">Index of the string in the parameters.</param>
  * <param name="len">The length of the destination address.</param>
@@ -170,7 +184,7 @@ stock va_getstring(dest[], arg, len = sizeof (dest))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - varargs</library>
  * <param name="idx">Index of the string in the parameters.</param>
  * <returns>
  *   string
@@ -236,7 +250,7 @@ stock ReturnStringArg(idx)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - varargs</library>
  * <param name="fmat">String format.</param>
  * <param name="">Parameters.</param>
  * <returns>
@@ -291,7 +305,7 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - varargs</library>
  * <param name="n">The numeric parameter position to print.</param>
  * <returns>
  *  Prints a string passed as a vararg to the calling function.

@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - similarity"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -74,7 +88,7 @@ Optional plugins:
 /// <p/>
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - similarity</library>
  * <param name="a">First string to compare.</param>
  * <param name="lenA">Length of the first string.</param>
  * <param name="b">Second string to compare.</param>
@@ -133,7 +147,7 @@ static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], len
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - similarity</library>
  * <param name="a">First string to compare.</param>
  * <param name="lenA">Length of the first string.</param>
  * <param name="b">Second string to compare.</param>
@@ -192,7 +206,7 @@ static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[]
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - similarity</library>
  * <param name="a">First string to compare.</param>
  * <param name="lenA">Length of the first string.</param>
  * <param name="b">Second string to compare.</param>
@@ -251,7 +265,7 @@ static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[]
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - similarity</library>
  * <param name="a">First string to compare.</param>
  * <param name="lenA">Length of the first string.</param>
  * <param name="b">Second string to compare.</param>
@@ -310,7 +324,7 @@ static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - similarity</library>
  * <param name="stringA">First string to compare.</param>
  * <param name="stringB">Second string to compare.</param>
  * <returns>
@@ -379,7 +393,7 @@ stock LevenshteinDistance(const stringA[], const stringB[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - similarity</library>
  * <summary>
  *  BiGramSimilarity(const string1[], const string2[]);
  * </summary>

@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - textwrap"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -73,6 +87,13 @@ Optional plugins:
 
 /// <p/>
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - textwrap</library>
+ * <remarks>
+ *  Internal implementation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 _Y_CORE_STATIC stock IterativeColouredSkipSUnpacked(const string:text[], start, &colour)
 {
 	new
@@ -134,6 +155,13 @@ _Y_CORE_STATIC stock IterativeColouredSkipSUnpacked(const string:text[], start, 
 	}
 	return start;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - textwrap</library>
+ * <remarks>
+ *  Internal implementation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 _Y_CORE_STATIC stock IterativeColouredSkipWUnpacked(const string:text[], lastIndex, start, &bool:hyphen, &colour, bool:useHyphen = true)
 {
@@ -266,6 +294,13 @@ _Y_CORE_STATIC stock IterativeColouredSkipWUnpacked(const string:text[], lastInd
 		start;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - textwrap</library>
+ * <remarks>
+ *  Internal implementation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 _Y_CORE_STATIC stock IterativeColouredSkipSPacked(const string:text[], start, &colour)
 {
 	new
@@ -327,6 +362,13 @@ _Y_CORE_STATIC stock IterativeColouredSkipSPacked(const string:text[], start, &c
 	}
 	return start;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - textwrap</library>
+ * <remarks>
+ *  Internal implementation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 _Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex, start, &bool:hyphen, &colour, bool:useHyphen = true)
 {
@@ -460,7 +502,7 @@ _Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - textwrap</library>
  * <summary>
  *  bool:IterativeTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
  * </summary>
@@ -783,7 +825,7 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - textwrap</library>
  * <summary>
  *  bool:IterativeColouredTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
  * </summary>

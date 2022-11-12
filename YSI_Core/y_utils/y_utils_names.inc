@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - names"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -74,7 +88,7 @@ Optional plugins:
 /// <p/>
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - names</library>
  * <summary>
  *  ReturnPlayerName
  * </summary>
@@ -93,7 +107,7 @@ stock ReturnPlayerName(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - names</library>
  * <summary>
  *  GetPlayerRPName
  * </summary>
@@ -130,7 +144,7 @@ stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - names</library>
  * <summary>
  *  GetPlayerRPComponents
  * </summary>
@@ -164,7 +178,7 @@ stock GetPlayerRPComponents(playerid, string:names[][], components = sizeof (nam
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - names</library>
  * <summary>
  *  IsRPName
  * </summary>
@@ -346,7 +360,7 @@ stock bool:IsRPName(const string:name[], bool:casing = false, bool:longNames = f
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - names</library>
  * <summary>
  *  HasRPName
  * </summary>
@@ -368,7 +382,7 @@ stock bool:HasRPName(playerid, bool:casing = false, bool:longNames = false)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - names</library>
  * <summary>
  *  ReturnPlayerRPName
  * </summary>

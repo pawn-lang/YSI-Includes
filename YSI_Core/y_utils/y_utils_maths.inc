@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - maths"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -92,7 +106,7 @@ Optional plugins:
 #define FLOAT_EPSILON                   (Float:0x00000001) // https://en.wikipedia.org/wiki/Machine_epsilon
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
@@ -106,7 +120,7 @@ FUNC_PAWNDOC(bool:IsOdd(value));
 #define _ALS_isodd
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
@@ -120,7 +134,7 @@ FUNC_PAWNDOC(bool:IsEven(value));
 #define _ALS_iseven
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="value">The unsigned number to compare.</param>
  * <param name="upper">The upper limit.</param>
  * <returns>
@@ -132,7 +146,7 @@ FUNC_PAWNDOC(bool:UCMP(value, upper));
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="value">The IEEE754 floating point number (<c>Float:</c>) to check.</param>
  * <returns>
  *  An IEEE754 floating-point number is defined as Not-A-Number when all the exponent bits are set,
@@ -148,7 +162,7 @@ FUNC_PAWNDOC(bool:IsNaN(Float:value));
 #define IsNaN(%0) IS_NAN(%0)
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="value">The number to compare.</param>
  * <param name="lower">The lower limit.</param>
  * <param name="upper">The upper limit.</param>
@@ -167,7 +181,7 @@ FUNC_PAWNDOC(bool:IS_IN_RANGE(value, lower, upper));
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="value">The number to compare.</param>
  * <param name="lower">The lower limit.</param>
  * <param name="upper">The upper limit.</param>
@@ -186,7 +200,7 @@ FUNC_PAWNDOC(bool:NOT_IN_RANGE(value, lower, upper));
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="numerator">The top of the division.</param>
  * <param name="denominator">The bottom of the division.</param>
  * <returns>
@@ -209,7 +223,7 @@ FUNC_PAWNDOC(ceildiv(numerator, denominator));
 #define _ALS_ceildiv
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <summary>
  *  floordiv(numerator, denominator);
  * </summary>
@@ -236,7 +250,7 @@ FUNC_PAWNDOC(floordiv(numerator, denominator));
 #define _ALS_floordiv
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="arr">The array whose values need summing.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
@@ -253,7 +267,7 @@ stock Sum(const arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
@@ -267,7 +281,7 @@ stock Mean(const arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
@@ -300,7 +314,7 @@ stock Mode(arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
@@ -321,7 +335,7 @@ stock Median(arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
@@ -347,7 +361,7 @@ stock Range(const arr[], num = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <summary>
  *  TryPercentage(percentage);
  * </summary>
@@ -369,7 +383,7 @@ stock bool:TryPercentage(percentage)
 #define _ALS_TryPercentage
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <summary>
  *  TryPermille(permille);
  * </summary>
@@ -394,7 +408,7 @@ stock bool:TryPermille(permille)
 #define _ALS_TryPermille
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <summary>
  *  TryPPM(ppm);
  * </summary>
@@ -419,7 +433,7 @@ stock bool:TryPPM(ppm)
 #define _ALS_TryPPM
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <summary>
  *  Float:FloatAbs(Float:number);
  * </summary>
@@ -458,7 +472,7 @@ FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - maths</library>
  * <summary>
  *  Abs(number);
  * </summary>

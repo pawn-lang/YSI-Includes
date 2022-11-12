@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - arrays"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -74,7 +88,7 @@ Optional plugins:
 /// <p/>
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - arrays</library>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
  * <param name="numbytes">Number of bytes to copy.</param>
@@ -89,7 +103,7 @@ native RawMemCpy_(dest, src, index, numbytes, maxlength) = memcpy;
 #define RawMemCpy(%0,%1,%2) RawMemCpy_((%0),(%1),0,(%2),(cellmax>>>2))
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - arrays</library>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
  * <param name="numbytes">Number of bytes to copy.</param>
@@ -107,7 +121,7 @@ stock rawMemcpy(dest, src, numbytes)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - arrays</library>
  * <param name="arr">Array or address to set to a value.</param>
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of cells to fill.</param>
@@ -135,7 +149,7 @@ stock MemSet(arr[], value = 0, size = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - arrays</library>
  * <param name="arr">Array or address to set to a value.</param>
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of cells to fill.</param>
@@ -164,7 +178,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - arrays</library>
  * <param name="address">Array or address to set to a value.</param>
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of bytes to fill.</param>
@@ -292,7 +306,7 @@ stock RawMemSet(address /* 12 */, value /* 16 */, size /* 20 */)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - arrays</library>
  * <param name="address">Array or address to set to a value.</param>
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of bytes to fill.</param>
@@ -319,7 +333,7 @@ stock rawMemset(address /* 12 */, value /* 16 */, size /* 20 */)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - arrays</library>
  * <param name="arr1">First array to compare.</param>
  * <param name="arr2">Second array to compare.</param>
  * <param name="count">How many cells to compare.</param>
@@ -343,7 +357,7 @@ stock MemCmp(arr1[], arr2[], count)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - arrays</library>
  * <param name="arr1">First array to compare.</param>
  * <param name="arr2">Second array to compare.</param>
  * <param name="count">How many cells to compare.</param>
@@ -363,7 +377,7 @@ stock memcmp(arr1[], arr2[], count)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - arrays</library>
  * <param name="arr">The array to sort.</param>
  * <param name="low">The lowest index to sort.</param>
  * <param name="high">The highest index (inclusive) to sort.</param>
@@ -402,7 +416,7 @@ static stock Utils_QuickSort(arr[], low, high)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - arrays</library>
  * <param name="arr">The array to sort.</param>
  * <param name="num">The size of the array.</param>
  * <remarks>

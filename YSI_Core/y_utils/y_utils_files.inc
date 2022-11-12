@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - files"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -74,7 +88,7 @@ Optional plugins:
 /// <p/>
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - files</library>
  * <summary>
  *  ftouch(filename);
  * </summary>
@@ -119,7 +133,7 @@ Optional plugins:
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - files</library>
  * <param name="name">Storage for the return value.</param>
  * <param name="ext">Extension.</param>
  * <param name="path">Directory in which to place temporary files.</param>
@@ -209,7 +223,7 @@ stock File:ftemporary_(string:name[], const string:ext[] = "tmp", const string:p
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - files</library>
  * <param name="name">File to clean up.</param>
  * <param name="maxAge">Maximum temporary file age.</param>
  * <remarks>
@@ -243,7 +257,7 @@ stock bool:fautocleanup(const string:name[], maxAge)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - files</library>
  * <param name="ret">Storage for the return value.</param>
  * <param name="ext">Extension.</param>
  * <param name="len">Maximum string length.</param>
@@ -282,6 +296,13 @@ stock File:ftemporary(string:ret[] = "", const string:ext[] = "tmp", len = sizeo
 	return File:0;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - files</library>
+ * <remarks>
+ *  Call the original <c>ftemp</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #if defined _ALS_ftemp
 	stock File:ftemp_()
 	{
@@ -305,6 +326,9 @@ stock File:ftemporary(string:ret[] = "", const string:ext[] = "tmp", len = sizeo
 #endif
 
 static stock
+	/**
+	 * <library>y_utils - files</library>
+	 */
 	YSI_gsDefaultDirs[E_YSI_DIR][YSI_DIR_LENGTH] = {
 #if _DEBUG
 		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/debug/",
@@ -322,7 +346,7 @@ static stock
 #undef _YSI_DEFAULT_DIR_PREFIX
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - files</library>
  * <param name="dir">The ID of the directory.</param>
  * <returns>
  *  A directory.
@@ -338,7 +362,7 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - files</library>
  * <remarks>
  *  Check if all the YSI scriptfiles directories exist.  Checks for `.gitkeep`
  *  in each folder, then each folder without `YSI/` prefix, then just nothing.
@@ -398,7 +422,7 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - files</library>
  * <param name="i">Handle to the file to copy.</param>
  * <param name="end">How much of the file to copy.</param>
  * <param name="dst">The name of the output file.</param>
@@ -437,7 +461,7 @@ stock bool:Files_CopyRange(File:i, end, const string:dst[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - files</library>
  * <param name="i">Handle to the file to copy.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
@@ -454,7 +478,7 @@ stock bool:Files_DoCopy(File:i, const string:dst[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - files</library>
  * <param name="src">The name of the input file.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
@@ -475,7 +499,7 @@ stock bool:Files_Copy(const string:src[], const string:dst[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - files</library>
  * <param name="src">The name of the input file.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>

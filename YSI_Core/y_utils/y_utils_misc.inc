@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - misc"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -137,7 +151,7 @@ Optional plugins:
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - misc</library>
  * <param name="playerid">The player to check.</param>
  * <returns>
  *  Is this a valid playerid (NOT, is the player connected).
@@ -148,10 +162,11 @@ FUNC_PAWNDOC(bool:VALID_PLAYERID(playerid));
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
- * <param name="playerid">Player to mess up</param>
+ * <library>y_utils - misc</library>
+ * <param name="playerid">Player to mess up.</param>
  * <remarks>
- *   Make some random effects on the player.
+ *  Make some random effects on the player.  Inspired by the single player chaos
+ *  mod.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -202,10 +217,24 @@ stock Utils_ChaosMod(playerid)
 	}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - misc</library>
+ * <param name="old">Unused.</param>
+ * <param name="playerid">Player to mess up.</param>
+ * <remarks>
+ *  Timer for applying random effects.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #if _YSI_SAFE_STARTUP
 	public OnChaosTimer(oid, playerid)
 	{
 		Utils_ChaosMod(playerid);
+	}
+#else
+	static stock OnChaosTimer__(oid, playerid)
+	{
+		#pragma unused old, playerid
 	}
 #endif
 

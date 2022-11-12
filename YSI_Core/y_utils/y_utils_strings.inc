@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - strings"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -74,7 +88,7 @@ Optional plugins:
 /// <p/>
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">String to check if is null.</param>
  * <remarks>
  *  Uses a new shorter and branchless method, which also works with offsets so
@@ -96,7 +110,7 @@ FUNC_PAWNDOC(bool:IsNull(const string:str[]));
 #define _ALS_isnull
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="dest">Destination string.</param>
  * <param name="src">Source string.</param>
  * <param name="len">(Implicit) maximum length of the destination.</param>
@@ -112,7 +126,7 @@ FUNC_PAWNDOC(StrCpy(string:dest[], const string:src[], len = sizeof (dest)));
 #define _ALS_strcpy
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">String to convert.</param>
  * <param name="len">How much of the string to convert.</param>
  *//*------------------------------------------------------------------------**/
@@ -135,7 +149,7 @@ stock StrToLower(string:str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">String to convert.</param>
  * <param name="len">How much of the string to convert.</param>
  *//*------------------------------------------------------------------------**/
@@ -158,7 +172,7 @@ stock StrToUpper(string:str[], len = sizeof (str))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">The string to remove whitespace from the end of.</param>
  * <remarks>
  *   Updated from old versions, should be more efficient
@@ -181,7 +195,7 @@ stock StripNL(string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">The string to remove whitespace from the end of.</param>
  * <remarks>
  *   Updated from old versions, should be more efficient
@@ -192,7 +206,7 @@ FUNC_PAWNDOC(StripR(string:str[]));
 #define StripR StripNL
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">The string to remove whitespace from the start of.</param>
  *//*------------------------------------------------------------------------**/
 
@@ -225,7 +239,7 @@ stock StripL(string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">The string to remove whitespace from the start and end of.</param>
  *//*------------------------------------------------------------------------**/
 
@@ -256,7 +270,7 @@ stock Strip(string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="line">String to check.</param>
  * <param name="pos">Postion to start from.</param>
  * <remarks>
@@ -281,7 +295,7 @@ stock bool:EndOfLine(const string:line[], pos)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="line">String to check.</param>
  * <param name="pos">Postion to start from.</param>
  * <remarks>
@@ -296,7 +310,7 @@ stock bool:endofline(const string:line[], pos)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="needle">The character to find.</param>
  * <param name="haystack">The string to find it in.</param>
  * <param name="start">The offset to start from.</param>
@@ -314,7 +328,7 @@ stock ChrFind(needle, const string:haystack[], start = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="needle">The character to find.</param>
  * <param name="haystack">The string to find it in.</param>
  * <param name="start">The offset to start from.</param>
@@ -330,7 +344,7 @@ stock chrfind(needle, const string:haystack[], start = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="needle">The character to find.</param>
  * <param name="haystack">The string to find it in.</param>
  * <param name="start">The offset to start from.</param>
@@ -350,7 +364,7 @@ stock chrfindp(needle, const string:haystack[], start = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">String to unpack</param>
  * <returns>
  *   unpacked string
@@ -373,7 +387,7 @@ stock Unpack(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">String to unpack</param>
  * <returns>
  *   unpacked string
@@ -399,7 +413,7 @@ stock unpack(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">The string to skip over part of.</param>
  * <param name="pos">The start of the whitespace.</param>
  * <returns>
@@ -425,7 +439,7 @@ stock SkipWhitespace(const string:str[], pos)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="str">The string to trim.</param>
  * <param name="start">Start of the substring.</param>
  * <param name="end">End of the substring.</param>
@@ -469,7 +483,7 @@ stock Trim(const string:str[], &start, &end)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - strings</library>
  * <param name="n">The number to convert to a string with ordinal.</param>
  * <returns>
  *  Stringises a number, then adds <c>st/nd/rd/th</c>.

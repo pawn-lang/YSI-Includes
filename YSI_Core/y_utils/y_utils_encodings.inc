@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - encodings"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -74,7 +88,7 @@ Optional plugins:
 /// <p/>
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - encodings</library>
  * <param name="string">the string to hash.</param>
  * <returns>
  *   The bernstein hash of the input string
@@ -127,7 +141,7 @@ stock BernsteinHash(const string:str[] /* 12 */)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - encodings</library>
  * <param name="string">the string to hash.</param>
  * <returns>
  *   The bernstein hash of the input string
@@ -181,7 +195,7 @@ stock bernstein(const string:str[] /* 12 */)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - encodings</library>
  * <param name="str">the string to hash.</param>
  * <returns>
  *   the Jenkins hash of the input string
@@ -218,7 +232,7 @@ stock JenkinsHash(const string:str[] /* 12 */)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - encodings</library>
  * <summary>
  *   Base64Encode
  * </summary>
@@ -409,7 +423,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - encodings</library>
  * <summary>
  *   Base64Decode
  * </summary>

@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - ip"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -111,7 +125,7 @@ Optional plugins:
 	CHAIN_FORWARD:ScriptInit_OnPlayerDisconnect(playerid, reason) = 1;
 
 	/*-------------------------------------------------------------------------*//**
-	 * <library>y_utils</library>
+	 * <library>y_utils - ip</library>
 	 * <param name="playerid">Player to get IP of.</param>
 	 * <returns>
 	 *  IP as a 32bit int.
@@ -124,7 +138,7 @@ Optional plugins:
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - ip</library>
  * <param name="ip">Dot notation IP to convert to an integer.</param>
  * <returns>
  *  The IP.
@@ -172,7 +186,7 @@ stock IPToInt(const string:ip[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - ip</library>
  * <param name="ip">Dot notation IP to convert to an integer.</param>
  * <param name="out">Destination.</param>
  * <returns>
@@ -302,7 +316,7 @@ stock bool:DottedToIntIP(const string:ip[], &out)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - ip</library>
  * <param name="dest">Where to render the dotted notation IP.</param>
  * <param name="ip">Integer IP version.</param>
  * <param name="len">Size of the destination string.</param>
@@ -314,7 +328,7 @@ stock IntToIP(string:dest[], ip, len = sizeof (dest))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - ip</library>
  * <param name="dest">Destination string.</param>
  * <param name="ip">The IP to censor, as a 32-bit int.</param>
  * <param name="parts">How many parts of the IP to keep.</param>
@@ -356,7 +370,7 @@ stock bool:CensorIntIP(string:dest[], ip, parts = 2, len = sizeof (dest))
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - ip</library>
  * <param name="dest">Destination string.</param>
  * <param name="ip">Input IP address in dotted notation.</param>
  * <param name="parts">How many parts of the IP to keep.</param>
@@ -384,7 +398,7 @@ stock bool:CensorDottedIP(string:dest[], const string:ip[], parts = 2, len = siz
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - ip</library>
  * <param name="dest">Destination string.</param>
  * <param name="playerid">The player whose IP will be used.</param>
  * <param name="parts">How many parts of the IP to keep.</param>

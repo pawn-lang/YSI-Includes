@@ -1,4 +1,18 @@
-/*
+/**
+ * <library
+ *   name="y_utils - conversions"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -74,7 +88,7 @@ Optional plugins:
 /// <p/>
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - conversions</library>
  * <param name="str">String to check</param>
  * <remarks>
  *   Checks if a given string is numeric.
@@ -124,7 +138,7 @@ Optional plugins:
 #endif
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - conversions</library>
  * <param name="str">String to check.</param>
  * <returns>
  *   true/false.
@@ -160,7 +174,7 @@ stock bool:IsHex(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - conversions</library>
  * <param name="str">String to check.</param>
  * <returns>
  *   true/false.
@@ -174,7 +188,7 @@ stock bool:ishex(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - conversions</library>
  * <param name="string">String to convert to a number.</param>
  * <returns>
  *   value of the passed hex string.
@@ -242,7 +256,7 @@ stock HexStr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - conversions</library>
  * <param name="string">String to convert to a number.</param>
  * <returns>
  *   value of the passed hex string.
@@ -259,7 +273,7 @@ stock hexstr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - conversions</library>
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
  *   bool: passed boolean.
@@ -278,7 +292,7 @@ stock bool:BoolStr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - conversions</library>
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
  *   bool: passed boolean.
@@ -297,7 +311,7 @@ stock bool:boolstr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - conversions</library>
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
  *   bool: passed boolean.
@@ -399,7 +413,7 @@ stock BinStr(const string:str[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
+ * <library>y_utils - conversions</library>
  * <param name="string">String to try convert to a boolean.</param>
  * <returns>
  *   bool: passed boolean.
