@@ -1,4 +1,30 @@
-/*
+#if defined _INC_y_scriptinit
+	#endinput
+#endif
+
+/**
+ * <library
+ *   name="y_scriptinit"
+ *   version="1.0"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="OnScriptInit, OnCodeInit, and several utility functions for plugins and server option determination."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ *   <remarks>
+ *     This file provides <c>OnScriptInit</c> and <c>OnScriptExit</c> which are
+ *     called at the start and end of the current script, regardless of what the
+ *     type of the script is.  It also provides <c>IS_FILTERSCRIPT</c> as a
+ *     (partial) replacement for <c>FILTERSCRIPT</c> which detects what the mode is
+ *     at runtime for a more reliable system (but it is a run-time variable, not a
+ *     compile-time constant).
+ *   </remarks>
+ * </library>
+ *//** *//*
 	
 	Now also provides OnCodeInit, which comes before OnScriptInit and should
 	mostly be used for @emit code generation and other assembly related stuff
@@ -90,6 +116,8 @@ Optional plugins:
 
 */
 
+/// <p/>
+
 forward _ScriptInit_FixState();
 
 CHAIN_HOOK(ScriptInit)
@@ -100,7 +128,15 @@ stock
 	#if _YSI_SAFE_STARTUP
 		bool:YSI_GAMEMODE = false,
 	#endif
+		/**
+		 * <library>y_scriptinit</library>
+		 * <remarks>
+		 *  <c>true</c> if the current script is running as a filterscript.
+		 * </remarks>
+		 */
 		bool:YSI_FILTERSCRIPT = false;
+
+/// <p/>
 
 enum E_SCRIPTINIT_STATE (<<= 1)
 {
@@ -113,6 +149,12 @@ enum E_SCRIPTINIT_STATE (<<= 1)
 	E_SCRIPTINIT_STATE_DUMPED,
 }
 
+/**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  How the script was set up - JIT, cache, or other.
+ * </remarks>
+ */
 static
 	E_SCRIPTINIT_STATE:YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_NONE;
 
@@ -158,16 +200,37 @@ stock bool:Server_JITExists()
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING) != E_SCRIPTINIT_STATE_NONE;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if the JIT plugin has completed compilation.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 #pragma deprecated Use `Script_JITComplete`.
 stock bool:Server_JITComplete()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITED) != E_SCRIPTINIT_STATE_NONE;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if the JIT plugin has completed compilation.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:Script_JITComplete()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITED) != E_SCRIPTINIT_STATE_NONE;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script was loaded from <c>YSI_CACHE</c>.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Script_CacheLoaded`.
 stock bool:Server_CacheLoaded()
@@ -175,10 +238,24 @@ stock bool:Server_CacheLoaded()
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD) != E_SCRIPTINIT_STATE_NONE;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script was loaded from <c>YSI_CACHE</c>.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:Script_CacheLoaded()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD) != E_SCRIPTINIT_STATE_NONE;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script was written to <c>YSI_CACHE</c>.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Script_CacheSaved`.
 stock bool:Server_CacheSaved()
@@ -186,10 +263,24 @@ stock bool:Server_CacheSaved()
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_DUMPED) != E_SCRIPTINIT_STATE_NONE;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script was written to <c>YSI_CACHE</c>.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:Script_CacheSaved()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_DUMPED) != E_SCRIPTINIT_STATE_NONE;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script is determined to be a filterscript at runtime.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Script_IsFilterscript`.
 stock bool:Server_IsFilterscript()
@@ -203,6 +294,15 @@ stock bool:Server_IsFilterscript()
 #endif
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script is determined to be a filterscript at runtime.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+forward bool:Script_IsFilterscript();
+
 #if _YSI_SAFE_STARTUP
 	#define Script_IsFilterscript() (YSI_FILTERSCRIPT)
 #elseif defined FILTERSCRIPT
@@ -210,6 +310,49 @@ stock bool:Server_IsFilterscript()
 #else
 	#define Script_IsFilterscript() (FALSE)
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script is determined to be a gamemode at runtime.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+#pragma deprecated Use `Script_IsGameMode`.
+stock bool:Server_IsGameMode()
+{
+#if _YSI_SAFE_STARTUP
+	return YSI_GAMEMODE;
+#elseif defined FILTERSCRIPT
+	return false;
+#else
+	return true;
+#endif
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script is determined to be a gamemode at runtime.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+forward bool:Script_IsGameMode();
+
+#if _YSI_SAFE_STARTUP
+	#define Script_IsGameMode() (YSI_GAMEMODE)
+#elseif defined FILTERSCRIPT
+	#define Script_IsGameMode() (FALSE)
+#else
+	#define Script_IsGameMode() (TRUE)
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script is running on a Linux server currently.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Server_IsLinuxHost()
 {
@@ -227,6 +370,13 @@ stock bool:Server_IsLinuxHost()
 	return val != 120;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script is running on a Windows server currently.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:Server_IsWindowsHost()
 {
 	// Taken from fixes.inc.
@@ -243,6 +393,13 @@ stock bool:Server_IsWindowsHost()
 	return val == 120;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script is running on an open.mp server currently.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 forward bool:Server_IsOpenMP();
 
 // Spell `open.mp` correctly in the function name (because why not).
@@ -253,11 +410,25 @@ forward bool:Server_IsOpenMP();
 	#define Server_IsOpenMP() (bool:(__emit(ZERO.pri, ZERO.alt, LCTRL 9, NEQ)))
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script is running on a SA:MP server currently.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 forward bool:Server_IsSAMP();
 
 #if __COMPILER___EMIT_U
 	#define Server_IsSAMP() (bool:(__emit(ZERO.pri, LCTRL 9, EQ.C.pri 0)))
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script was compiled with a Linux compiler.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
@@ -269,11 +440,27 @@ stock bool:Server_IsLinuxCompiler()
 	#endif
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script was compiled with a Linux compiler.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+forward bool:Script_IsLinuxCompiler();
+
 #if __COMPILER_OS == __COMPILER_UNIX
 	#define Script_IsLinuxCompiler() (TRUE)
 #else
 	#define Script_IsLinuxCompiler() (FALSE)
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script was compiled with a Windows compiler.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Script_IsWindowsCompiler`.
 stock bool:Server_IsWindowsCompiler()
@@ -285,52 +472,99 @@ stock bool:Server_IsWindowsCompiler()
 	#endif
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if this script was compiled with a Windows compiler.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+forward bool:Script_IsWindowsCompiler();
+
 #if __COMPILER_OS == __COMPILER_WINDOWS
 	#define Script_IsWindowsCompiler() (TRUE)
 #else
 	#define Script_IsWindowsCompiler() (FALSE)
 #endif
 
-#pragma deprecated Use `Script_IsGameMode`.
-stock bool:Server_IsGameMode()
-{
-#if _YSI_SAFE_STARTUP
-	return YSI_GAMEMODE;
-#elseif defined FILTERSCRIPT
-	return false;
-#else
-	return true;
-#endif
-}
-
-#if _YSI_SAFE_STARTUP
-	#define Script_IsGameMode() (YSI_GAMEMODE)
-#elseif defined FILTERSCRIPT
-	#define Script_IsGameMode() (FALSE)
-#else
-	#define Script_IsGameMode() (TRUE)
-#endif
-
 static stock const
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscHeader[] = " ========================================== ",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscSpacer[] = " |                                        | ",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscInitMsgA[] = "    Dumping \"pre-init.asm\", this",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscInitMsgB[] = "    Dumping \"post-init.asm\", this",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscInitMsgC[] = "   may take a little bit of time.",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscInitMsgD[] = "            Please wait...",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscDone[] =     "                Done!",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscFailed[] =   "               Failed!",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscPreInitFile[] = "pre-init",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscPostInitFile[] = "post-init";
 
 static stock
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gsStartTime,
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gsStartHMS,
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gsStartDMY,
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	bool:YSI_gsObnoxiousHeader = true,
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	bool:YSI_gsFirstHeader = true,
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	bool:YSI_gsNewPart = true,
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gsPurgeTimer = 0;
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Store the earliest time of this script starting that we can.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock ScriptInit_GetStartTime()
 {
@@ -342,25 +576,84 @@ static stock ScriptInit_GetStartTime()
 	YSI_gsStartDMY = (y << 16) | (m << 8) | d;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <param name="usTime">The time in microseconds.</param>
+ * <remarks>
+ *  Set the time that crashdetect will use when detecting slow functions.
+ *  Anything executing for longer than this time will trigger a warning.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_SetLongCallTime(usTime);
+
 #if __COMPILER___EMIT_U
 	#define Server_SetLongCallTime(%0) (__emit(LOAD.U.pri %0, SCTRL 0xFE))
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Disable the detection of slow functions, if crashdetect exists.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_DisableLongCall();
 
 #if __COMPILER___EMIT_U
 	#define Server_DisableLongCall() (__emit(CONST.pri 32, SCTRL 0xFF))
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Enable the detection of slow functions, if crashdetect exists.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_EnableLongCall();
+
 #if __COMPILER___EMIT_U
 	#define Server_EnableLongCall() (__emit(CONST.pri 34, SCTRL 0xFF))
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Set the slow code threshold back to the default value.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_ResetLongCallTime();
 
 #if __COMPILER___EMIT_U
 	#define Server_ResetLongCallTime() (__emit(CONST.pri 36, SCTRL 0xFF))
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Restart the current function's long call timer, if crashdetect exists.  So
+ *  the detection of slow code will only account for execution time after this
+ *  point.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_RestartLongCall();
+
 #if __COMPILER___EMIT_U
 	#define Server_RestartLongCall() (__emit(CONST.pri 40, SCTRL 0xFF))
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if long call (slow code) detection is active.
+ * </returns>
+ * <remarks>
+ *  Check if the crashdetect plugin exists, and long call detection is enabled.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 forward bool:Server_IsLongCallEnabled();
 
@@ -368,17 +661,54 @@ forward bool:Server_IsLongCallEnabled();
 	#define Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 1, CONST.alt 1, AND)))
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  The current setting (in microseconds) for the slow code warning threshold.
+ *  Or <c>0</c> if there is none.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_GetLongCallTime();
+
 #if __COMPILER___EMIT_U
 	#define Server_GetLongCallTime() (__emit(ZERO.pri, LCTRL 0xFE))
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Disable crashdetect's ability to detect possibly unintended writes to
+ *  address naught.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_DisableDetectAddr0();
 
 #if __COMPILER___EMIT_U
 	#define Server_DisableDetectAddr0() (__emit(CONST.pri 64, SCTRL 0xFF))
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Enable crashdetect's ability to detect possibly unintended writes to address
+ *  naught.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_EnableDetectAddr0();
+
 #if __COMPILER___EMIT_U
 	#define Server_EnableDetectAddr0() (__emit(CONST.pri 192, SCTRL 0xFF))
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if crashdetect will warn for writes to address naught.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 forward bool:Server_IsDetectAddr0Enabled();
 
@@ -386,11 +716,25 @@ forward bool:Server_IsDetectAddr0Enabled();
 	#define Server_IsDetectAddr0Enabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 7, CONST.alt 1, AND)))
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  <c>true</c> if crashdetect is able to warn for writes to address naught.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 forward bool:Server_HasDetectAddr0();
 
 #if __COMPILER___EMIT_U
 	#define Server_HasDetectAddr0() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 6, CONST.alt 1, AND)))
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <returns>
+ *  <c>true</c> if crashdetect exists.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 forward bool:Server_CrashDetectExists();
 
@@ -400,12 +744,40 @@ forward bool:Server_CrashDetectExists();
 	#define Server_CrashDetectExists() (bool:(__emit(ZERO.pri, LCTRL 0xFF, NOT, NOT)))
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <param name="reason">The halt type.</param>
+ * <remarks>
+ *  Halt the server, or at least the current public, instantly.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_Abort(reason);
+
 #if __COMPILER___EMIT_U
 	#define Server_Abort(%0) (__emit(LOAD.U.pri %0, HALT 0))
 #endif
 
 native YSI_VAPrintF(const fmt[], addr) = printf;
 forward bool:fautocleanup(const name[], maxAge);
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <param name="filename">Name of the file to write the dump to.</param>
+ * <param name="message">Message to show in the console.</param>
+ * <remarks>
+ *  Write a disassembled version of the current state of the script to a file.
+ *  This is by far the most powerful debugging technique I've ever had while
+ *  developing YSI.  It is generally called twice - once before
+ *  <c>OnCodeInit</c> is run, and once after.  That callback does all of the
+ *  assembly-level transformations used to implement many of the advanced YSI
+ *  features.  Thus the two resulting dump files can be used to examine and
+ *  compare the results of every code rewrite done, and see where things have
+ *  gone wrong.  Plus, if anyone has a complex bug I can ask for those two files
+ *  and get a very complete view of what their script is trying to do, without
+ *  needing any of their source.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock ScriptInit_Dump(const filename[], const message[])
 {
@@ -427,6 +799,14 @@ static stock ScriptInit_Dump(const filename[], const message[])
 		Server_FinishIntroPart();
 	#endif
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Print the awesome header that everyone loves in the console.  You're
+ *  welcomes everyone!
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Server_PrintYSIHeader()
 {
@@ -457,6 +837,15 @@ static stock Server_PrintYSIHeader()
 	YSI_Print__("         |                                                            |");
 	YSI_Print__("         ==============================================================");
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Every parameter to this function is a string, and they are all shown in
+ *  order in the console, in a nice box.  If this is the first call it also
+ *  shows the amazing beautiful YSI header first.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Server_PrintIntroMessage(...)
 {
@@ -496,6 +885,18 @@ stock Server_PrintIntroMessage(...)
 		YSI_Print__(YSI_gscSpacer);
 		YSI_Print__(YSI_gscHeader);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Every parameter to this function is a string, and they are all shown in
+ *  order in the console, in a nice box.  Unlike <c>Server_PrintIntroMessage</c>
+ *  this doesn't close the box, nor does it start a new one if one is already
+ *  being written in to.  Thus this one can append messages within a nice box in
+ *  the console.  If this is the first call it also shows the loved and adored
+ *  YSI header first.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Server_PrintIntroPart(...)
 {
@@ -537,6 +938,15 @@ stock Server_PrintIntroPart(...)
 		}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  If a box was previously partially written in to with
+ *  <c>Server_PrintIntroPart</c> this closes the box off at the bottom.  It
+ *  basically just prints a line in the console.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Server_FinishIntroPart()
 {
 	// Footer.
@@ -545,16 +955,41 @@ stock Server_FinishIntroPart()
 	YSI_gsNewPart = true;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  This is called after all the intro messages have been completed to add
+ *  padding.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Server_FinishIntroMessage()
 {
 	YSI_Print__(YSI_SPACE),
 	YSI_gsFirstHeader = true;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Get the start time of the script, previously determined by
+ *  <c>ScriptInit_GetStartTime</c>, as a unix timestamp.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Server_GetStartTime()
 {
 	return YSI_gsStartTime;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Get the start time of the script, previously determined by
+ *  <c>ScriptInit_GetStartTime</c>, as a set of six components for time and
+ *  date.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Server_GetStartDateTime(&year, &month, &day, &hour, &minute, &second)
 {
@@ -565,6 +1000,15 @@ stock Server_GetStartDateTime(&year, &month, &day, &hour, &minute, &second)
 	month = YSI_gsStartDMY >>> 8 & 0xFF,
 	day = YSI_gsStartDMY & 0xFF;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Is a version of the crashdetect plugin loaded that we can control long call
+ *  detection in via registers.  There were several releases where this just
+ *  didn't work properly.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Server_HasLongCallControl()
 {
@@ -586,6 +1030,15 @@ stock bool:Server_HasLongCallControl()
 	}
 	return false;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Get the default long call time for crashdetect.  May not be the current
+ *  setting.  Simply stores the current value, resets it, restores the current
+ *  and returns the old version.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 // `GetCrashDetectDefaultLongCallTime` is too long.
 stock Server_GetLongCallDefault()
@@ -622,6 +1075,19 @@ stock Server_GetLongCallDefault()
 #if !defined _ALS_OnCachedInit
 	forward OnCachedInit();
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <param name="jit">We are calling the callback from the JIT plugin.</param>
+ * <param name="fs">We are calling the callback in a filterscript.</param>
+ * <remarks>
+ *  This is seemingly a lot of code just to call a callback, but it does more
+ *  than that.  Really this is <c>OnScriptInit</c> for this file - it calls
+ *  other callbacks, dumps debug information, profiles the startup, and caches
+ *  compilation results.  These steps are all done regardless of which callback
+ *  gets triggered first, hence why the code is abstracted.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 {
@@ -1052,15 +1518,17 @@ enum exit_order
 	}
 #endif
 
-/*-------------------------------------------------------------------------*//**
- * <returns>
- *  Check which temporary files need deleting.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
 forward ScriptInit_PurgeTemporaries();
 
 forward File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = sizeof (name));
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  Delete temporary files that have reached their maximum age.  Related to
+ *  <c>ftemporary</c>, which only stores files for a limited period.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public ScriptInit_PurgeTemporaries()
 {
@@ -1422,6 +1890,13 @@ public _ScriptInit_FixState() <_script_init_fix_state : false>
 	#endinput
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *  
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:Server_IsOpenMP()
 {
 	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
@@ -1552,9 +2027,9 @@ stock bool:Server_CrashDetectExists()
 	return false;
 }
 
-stock void:Server_Abort(n)
+stock void:Server_Abort(reason)
 {
-	#emit LOAD.S.pri    n
+	#emit LOAD.S.pri    reason
 	#emit HALT          0
 }
 

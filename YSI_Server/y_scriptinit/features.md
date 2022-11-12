@@ -131,6 +131,57 @@ Tags are also checked:
 FINAL__ Float:gMaxPlayers = GetMaxPlayers(); // Tag mismatch warning.
 ```
 
+## `final`
+
+Keyword-like macro for `FINAL__`.
+
+```pawn
+#include <a_samp>
+#include <YSI_Server\y_scriptinit>
+
+final gMaxPlayers = GetMaxPlayers();
+
+main()
+{
+	// Set correctly.
+	printf("%d", gMaxPlayers);
+
+	// Compile-time error
+	gMaxPlayers = 44;
+}
+```
+
+## `YSI_KEYWORD_final`
+
+When defined enables the `final` keyword:
+
+```pawn
+#define YSI_COMPATIBILITY_MODE
+#define YSI_KEYWORD_final
+
+#include <a_samp>
+#include <YSI_Server\y_scriptinit>
+
+final gMaxPlayers = GetMaxPlayers();
+```
+
+See [YSI_COMPATIBILITY_MODE](../../YSI_COMPATIBILITY_MODE.md) for more information.
+
+## `YSI_NO_KEYWORD_final`
+
+When defined disables the `final` keyword:
+
+```pawn
+#define YSI_NO_KEYWORD_final
+
+#include <a_samp>
+#include <YSI_Server\y_scriptinit>
+
+final gMaxPlayers = GetMaxPlayers(); // Error.
+```
+
+See [YSI_COMPATIBILITY_MODE](../../YSI_COMPATIBILITY_MODE.md) for more information.
+
 ## `OnScriptExit`
 
 Called when this script ends, regardless of the type.
