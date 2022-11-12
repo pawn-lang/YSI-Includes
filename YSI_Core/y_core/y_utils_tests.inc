@@ -1454,3 +1454,20 @@ static stock
 	}
 }
 
+@test(.group = "y_utils") y_utils_CensorIP()
+{
+	new dest[32];
+	ASSERT(CensorIP(dest, "192.168.0.1", 0));
+	ASSERT(!CensorIP(dest, "192.168.01", 0));
+	CensorIP(dest, "192.168.0.1", 0);
+	ASSERT_SAME(dest, "*.*.*.*");
+	CensorIP(dest, "192.168.0.1", 1);
+	ASSERT_SAME(dest, "192.*.*.*");
+	CensorIP(dest, "192.168.0.1", 2);
+	ASSERT_SAME(dest, "192.168.*.*");
+	CensorIP(dest, "192.168.0.1", 3);
+	ASSERT_SAME(dest, "192.168.0.*");
+	CensorIP(dest, "192.168.0.1", 4);
+	ASSERT_SAME(dest, "192.168.0.1");
+}
+
