@@ -1470,6 +1470,10 @@ static stock
 	ASSERT_SAME(dest, "192.168.0.*");
 	ASSERT(CensorDottedIP(dest, "192.168.0.1", 4));
 	ASSERT_SAME(dest, "192.168.0.1");
+	ASSERT(CensorDottedIP(dest, "192.168.0.1.", 4));
+	ASSERT_SAME(dest, "192.168.0.1");
+	ASSERT(CensorDottedIP(dest, !"127.0.0.1 is the localhost"));
+	ASSERT_SAME(dest, "127.0.*.*");
 }
 
 @test(.group = "y_utils") y_utils_CensorIntIP()

@@ -1425,60 +1425,6 @@ stock IntToIP(string:dest[], ip, len = sizeof (dest))
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils</library>
  * <param name="dest">Destination string.</param>
- * <param name="ip">Input IP address in dotted notation.</param>
- * <param name="parts">How many parts of the IP to keep.</param>
- * <param name="len">Maximum length of the destination.</param>
- * <returns>
- *  <c>true</c> if the censoring worked, <c>false</c> if the input wasn't a
- *  valid IP, or <c>parts</c> was invalid.
- * </returns>
- * <remarks>
- *  Replaces some parts of an IP with stars (<c>*</c>) to hide the full thing.
- *  There are four components in a dotted IP, so the number of stars returned is
- *  <c>4 - parts</c>.  For example <c>CensorIP(dest, "192.168.0.1", 3);</c> will
- *  return <c>"192.168.0.*"</c>.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock bool:CensorDottedIP(string:dest[], const string:ip[], parts = 2, len = sizeof (dest))
-{
-	// Get the positions of all the dots.
-	new
-		a = strfind(ip, ".", false) + 1,
-		b = strfind(ip, ".", false, a) + 1,
-		c = strfind(ip, ".", false, b) + 1;
-	// Check that there are three.
-	if (a == 0 || b == 0 || c == 0)
-	{
-		return false;
-	}
-	// Now check how many of the components are wanted in the output.
-	switch (parts)
-	{
-	case 0:
-		// *.*.*.*
-		strcpy(dest, "*.*.*.*", len);
-	case 1:
-		// 192.*.*.*
-		format(dest, len, "%.*s*.*.*", a, ip);
-	case 2:
-		// 192.168.*.*
-		format(dest, len, "%.*s*.*", b, ip);
-	case 3:
-		// 192.168.0.*
-		format(dest, len, "%.*s*", c, ip);
-	case 4:
-		// 192.168.0.1
-		strcpy(dest, ip, len);
-	default:
-		return false;
-	}
-	return true;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_utils</library>
- * <param name="dest">Destination string.</param>
  * <param name="ip">The IP to censor, as a 32-bit int.</param>
  * <param name="parts">How many parts of the IP to keep.</param>
  * <param name="len">Maximum length of the destination.</param>
@@ -1516,6 +1462,34 @@ stock bool:CensorIntIP(string:dest[], ip, parts = 2, len = sizeof (dest))
 		return false;
 	}
 	return true;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
+ * <param name="dest">Destination string.</param>
+ * <param name="ip">Input IP address in dotted notation.</param>
+ * <param name="parts">How many parts of the IP to keep.</param>
+ * <param name="len">Maximum length of the destination.</param>
+ * <returns>
+ *  <c>true</c> if the censoring worked, <c>false</c> if the input wasn't a
+ *  valid IP, or <c>parts</c> was invalid.
+ * </returns>
+ * <remarks>
+ *  Replaces some parts of an IP with stars (<c>*</c>) to hide the full thing.
+ *  There are four components in a dotted IP, so the number of stars returned is
+ *  <c>4 - parts</c>.  For example <c>CensorIP(dest, "192.168.0.1", 3);</c> will
+ *  return <c>"192.168.0.*"</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:CensorDottedIP(string:dest[], const string:ip[], parts = 2, len = sizeof (dest))
+{
+	new out;
+	if (!DottedToIntIP(ip, out))
+	{
+		return false;
+	}
+	return CensorIntIP(dest, out, parts, len);
 }
 
 /*-------------------------------------------------------------------------*//**
