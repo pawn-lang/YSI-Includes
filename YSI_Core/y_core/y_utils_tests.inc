@@ -1454,20 +1454,38 @@ static stock
 	}
 }
 
-@test(.group = "y_utils") y_utils_CensorIP()
+@test(.group = "y_utils") y_utils_CensorDottedIP()
 {
 	new dest[32];
-	ASSERT(CensorIP(dest, "192.168.0.1", 0));
-	ASSERT(!CensorIP(dest, "192.168.01", 0));
-	CensorIP(dest, "192.168.0.1", 0);
+	ASSERT(!CensorDottedIP(dest, "192.168.01", 0));
+	ASSERT(!CensorDottedIP(dest, "192.168.0.1", -1));
+	ASSERT(!CensorDottedIP(dest, "192.168.0.1", 5));
+	ASSERT(CensorDottedIP(dest, "192.168.0.1", 0));
 	ASSERT_SAME(dest, "*.*.*.*");
-	CensorIP(dest, "192.168.0.1", 1);
+	ASSERT(CensorDottedIP(dest, "192.168.0.1", 1));
 	ASSERT_SAME(dest, "192.*.*.*");
-	CensorIP(dest, "192.168.0.1", 2);
+	ASSERT(CensorDottedIP(dest, "192.168.0.1", 2));
 	ASSERT_SAME(dest, "192.168.*.*");
-	CensorIP(dest, "192.168.0.1", 3);
+	ASSERT(CensorDottedIP(dest, "192.168.0.1", 3));
 	ASSERT_SAME(dest, "192.168.0.*");
-	CensorIP(dest, "192.168.0.1", 4);
+	ASSERT(CensorDottedIP(dest, "192.168.0.1", 4));
+	ASSERT_SAME(dest, "192.168.0.1");
+}
+
+@test(.group = "y_utils") y_utils_CensorIntIP()
+{
+	new dest[32];
+	ASSERT(!CensorIntIP(dest, 0xC0A80001, -1));
+	ASSERT(!CensorIntIP(dest, 0xC0A80001, 5));
+	ASSERT(CensorIntIP(dest, 0xC0A80001, 0));
+	ASSERT_SAME(dest, "*.*.*.*");
+	ASSERT(CensorIntIP(dest, 0xC0A80001, 1));
+	ASSERT_SAME(dest, "192.*.*.*");
+	ASSERT(CensorIntIP(dest, 0xC0A80001, 2));
+	ASSERT_SAME(dest, "192.168.*.*");
+	ASSERT(CensorIntIP(dest, 0xC0A80001, 3));
+	ASSERT_SAME(dest, "192.168.0.*");
+	ASSERT(CensorIntIP(dest, 0xC0A80001, 4));
 	ASSERT_SAME(dest, "192.168.0.1");
 }
 
