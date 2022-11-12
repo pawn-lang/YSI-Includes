@@ -1235,6 +1235,16 @@ stock chrfindp(needle, const string:haystack[], start = 0)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils</library>
  * <param name="ip">Dot notation IP to convert to an integer.</param>
+ * <returns>
+ *  The IP.
+ * </returns>
+ * <remarks>
+ *  Converts an IP from a string, such as <c>192.168.0.1</c>, converted to a
+ *  32-bit integer, such as <c>0xC0A80001</c>.  Does far fewer checks on the
+ *  input than the newer <c>DottedToIntIP</c>, but this function isn't
+ *  deprecated for use in situations where the input format is know, such as
+ *  directly after a call to <c>GetPlayerIp</c>.
+ * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock IPToInt(const string:ip[])
@@ -1268,6 +1278,136 @@ stock IPToInt(const string:ip[])
 		while (pos < 15 && ip[pos++] != '.') {}
 		return ipv + strval(ip[pos]);
 	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils</library>
+ * <param name="ip">Dot notation IP to convert to an integer.</param>
+ * <param name="out">Destination.</param>
+ * <returns>
+ *  <c>true</c> if the conversion worked, <c>false</c> if the input didn't start
+ *  with a valid IP.
+ * </returns>
+ * <remarks>
+ *  Converts an IP from a string, such as <c>192.168.0.1</c>, converted to a
+ *  32-bit integer, such as <c>0xC0A80001</c>.  Does far more checks on the
+ *  input than the older <c>IPToInt</c>, but that function isn't deprecated for
+ *  use in situations where the input format is know, such as directly after a
+ *  call to <c>GetPlayerIp</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:DottedToIntIP(const string:ip[], &out)
+{
+	if (YSI_IsLocalVarPackedString__(ip))
+	{
+		new
+			part = 0,
+			idx = 0,
+			component = -1,
+			ch;
+		for ( ; ; )
+		{
+			switch ((ch = ip{idx++}))
+			{
+			case '.':
+			{
+				// No value in the last section.
+				if (component == -1)
+				{
+					break;
+				}
+				// Save the segment.
+				out = (out << 8) | component;
+				// Trailing `.`, just allow it.
+				if (++part == 4)
+				{
+					return true;
+				}
+				component = -1;
+			}
+			case '0'..'9':
+			{
+				if (component == -1)
+				{
+					component = ch - '0';
+				}
+				else if ((component = (component * 10) + (ch - '0')) > 255)
+				{
+					// The current IP part got too large.
+					break;
+				}
+			}
+			default:
+			{
+				// No value in the last section.
+				if (part == 3 && component != -1)
+				{
+					// Save the segment.  We only allow trailing rubbish after
+					// the last component.
+					out = (out << 8) | component;
+					return true;
+				}
+				break;
+			}
+			}
+		}
+	}
+	else
+	{
+		new
+			part = 0,
+			idx = 0,
+			component = -1,
+			ch;
+		for ( ; ; )
+		{
+			switch ((ch = ip[idx++]))
+			{
+			case '.':
+			{
+				// No value in the last section.
+				if (component == -1)
+				{
+					break;
+				}
+				// Save the segment.
+				out = (out << 8) | component;
+				// Trailing `.`, just allow it.
+				if (++part == 4)
+				{
+					return true;
+				}
+				component = -1;
+			}
+			case '0'..'9':
+			{
+				if (component == -1)
+				{
+					component = ch - '0';
+				}
+				else if ((component = (component * 10) + (ch - '0')) > 255)
+				{
+					// The current IP part got too large.
+					break;
+				}
+			}
+			default:
+			{
+				// No value in the last section.
+				if (part == 3 && component != -1)
+				{
+					// Save the segment.  We only allow trailing rubbish after
+					// the last component.
+					out = (out << 8) | component;
+					return true;
+				}
+				break;
+			}
+			}
+		}
+	}
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**

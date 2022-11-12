@@ -1489,3 +1489,32 @@ static stock
 	ASSERT_SAME(dest, "192.168.0.1");
 }
 
+@test(.group = "y_utils") y_utils_DottedToIntIP()
+{
+	new out;
+	ASSERT(DottedToIntIP("192.168.0.1", out));
+	ASSERT_EQ(out, 0xC0A80001);
+	ASSERT(DottedToIntIP("127.0.0.1.", out));
+	ASSERT_EQ(out, 0x7F000001);
+	ASSERT(DottedToIntIP("255.255.255.255 ", out));
+	ASSERT_EQ(out, 0xFFFFFFFF);
+	ASSERT(!DottedToIntIP("255.256.255.255", out));
+	ASSERT(!DottedToIntIP("255.255.255.2551", out));
+	ASSERT(!DottedToIntIP("255.255.", out));
+	ASSERT(!DottedToIntIP("255.255.255.", out));
+	ASSERT(!DottedToIntIP("255.255..255", out));
+	ASSERT(!DottedToIntIP("192 168 0 1", out));
+	ASSERT(DottedToIntIP(!"192.168.0.1", out));
+	ASSERT_EQ(out, 0xC0A80001);
+	ASSERT(DottedToIntIP(!"127.0.0.1.", out));
+	ASSERT_EQ(out, 0x7F000001);
+	ASSERT(DottedToIntIP(!"255.255.255.255 ", out));
+	ASSERT_EQ(out, 0xFFFFFFFF);
+	ASSERT(!DottedToIntIP(!"255.256.255.255", out));
+	ASSERT(!DottedToIntIP(!"255.255.255.2551", out));
+	ASSERT(!DottedToIntIP(!"255.255.", out));
+	ASSERT(!DottedToIntIP(!"255.255.255.", out));
+	ASSERT(!DottedToIntIP(!"255.255..255", out));
+	ASSERT(!DottedToIntIP(!"192 168 0 1", out));
+}
+
