@@ -133,6 +133,35 @@ Optional plugins:
 		ITERATOR__ Vehicle<MAX_VEHICLES>;
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="cur">The current iterator step.</param>
+ * <param name="min">The start value.</param>
+ * <param name="max">The end value.</param>
+ * <param name="step">How many values to increase by each time.</param>
+ * <remarks>
+ *  Pretty much used to replicate a normal loop with <c>foreach</c>.  This:
+ * 
+ *  <code>
+ *      for (new i = 10; i != 100; i += 2) <br />
+ *      {                                  <br />
+ *      }
+ *  </code>
+ * 
+ *  Becomes:
+ * 
+ *  <code>
+ *      foreach (new i : Range(10, 100, 2)) <br />
+ *      {                                   <br />
+ *      }
+ *  </code>
+ * 
+ *  The increment value is optional, and defaults to <c>1</c>.  If you want a
+ *  <c>step</c> of <c>1</c> and a <c>min</c> of <c>0</c>, consider using
+ *  <c>N(max)</c> instead, which is specifically optimised for that scenario.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 iterfunc stock Range[cellmin](cur, min, max, step = 1)
 {
 	if (cur == cellmin) cur = min;
@@ -140,22 +169,58 @@ iterfunc stock Range[cellmin](cur, min, max, step = 1)
 	return (min <= cur < max || max < cur <= min) ? cur : cellmin;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="cur">The current iterator step.</param>
+ * <param name="n">The target number.</param>
+ * <remarks>
+ *  Loop until the given target is reached.
+ *    
+ *  <code>  
+ *    foreach (new i : N(6))  <br />
+ *    {                       <br /><indent />
+ *        // 0, 1, 2, 3, 4, 5 <br />
+ *    }
+ *  </code>  
+ *    
+ *  This is equivalent to:
+ * 
+ *  <code>
+ *      for (new i = 0; i != 6; ++i) <br />
+ *      {                            <br />
+ *      }
+ *  </code>
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 iterfunc stock N(cur, n)
 {
 	if (++cur == n) return -1;
 	return cur;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="iterstate">Internal state of the iterator.</param>
+ * <param name="cur">The current iterator step.</param>
+ * <param name="base">The number to get the powers of.</param>
+ * <remarks>
+ *  Returns all the powers of the given number that can be stored in a PAWN
+ *  cell.
+ *    
+ *  <code>  
+ *    foreach (new i : Powers(3))       <br />
+ *    {                                 <br /><indent />
+ *        // 3^0, 3^1, 3^2, 3^3, etc... <br />
+ *    }
+ *  </code>  
+ *    
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 iterfunc stock Powers(&iterstate, cur, base)
 {
-	// Returns all the powers of the given number that can be stored in a PAWN
-	// cell.
-	//   
-	//   foreach (new i : Powers(3))
-	//   {
-	//       // 3^0, 3^1, 3^2, 3^3, etc...
-	//   }
-	//   
 	if (cur)
 	{
 		return
@@ -167,23 +232,34 @@ iterfunc stock Powers(&iterstate, cur, base)
 
 #define iterstart@Powers iterstate(0, 0)
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="iterstate">Internal state of the iterator.</param>
+ * <param name="cur">The current iterator step.</param>
+ * <remarks>
+ *  Returns every number in the Fibonacci sequence that can be stored in a
+ *  PAWN cell.
+ *    
+ *  <code>  
+ *    foreach (new i : Fib())         <br />
+ *    {                               <br /><indent />
+ *        // 0, 1, 1, 2, 3, 5, etc... <br />
+ *    }
+ *  </code>  
+ *    
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 iterfunc stock Fib(&iterstate, cur)
 {
-	// Returns every number in the Fibaonacci sequence that can be stored in a
-	// PAWN cell.
-	//   
-	//   foreach (new i : Fib())
-	//   {
-	//   }
-	//   
 	switch (cur)
 	{
 		case -1:
 			return 0;
 	#if cellbits == 32
 		case 1836311903:
-			// End point (statically calculated largest Fibaonacci number that can
-			// be stored in a signed 32-bit integer).
+			// End point (statically calculated largest Fibonacci number that
+			// can be stored in a signed 32-bit integer).
 			return -1;
 	#elseif cellbits == 64
 		case 7540113804746346429:
@@ -198,36 +274,44 @@ iterfunc stock Fib(&iterstate, cur)
 
 #define iterstart@Fib iterstate(-1, 1)
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="iterstate">Internal state of the iterator.</param>
+ * <param name="cur">The current iterator step.</param>
+ * <param name="count">How many random numbers to generate.</param>
+ * <param name="min">Lowest possible number (inclusive).</param>
+ * <param name="max">Highest possible number (exclusive).</param>
+ * <remarks>
+ *  Return a given count of random numbers:
+ *    
+ *  <code>
+ *    foreach (new i : Random(5)) <br />
+ *    {                           <br /><indent />
+ *        // 5 random numbers.    <br />
+ *    }
+ *  </code>
+ *    
+ *  <code>
+ *    foreach (new i : Random(12, 10))                              <br />
+ *    {                                                             <br /><indent />
+ *        // 12 random numbers between 0 and 10 (0 to 9 inclusive). <br />
+ *    }
+ *  </code>
+ *    
+ *  <code>
+ *    foreach (new i : Random(100, -10, 10))                             <br />
+ *    {                                                                  <br /><indent />
+ *        // 100 random numbers between -10 and 10 (-10 to 9 inclusive). <br />
+ *    }
+ *  </code>
+ *    
+ *  If only <c>min</c> is given, not <c>max</c>, it is used as the max instead
+ *  and the minimum is <c>0</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 iterfunc stock Random(&iterstate, cur, count, min = cellmax, max = 0)
 {
-	// Return a given count of random numbers:
-	//   
-	//   foreach (new i : Random(5))
-	//   {
-	//       // 5 random numbers.
-	//   }
-	//   
-	//   foreach (new i : Random(12, 10))
-	//   {
-	//       // 12 random numbers between 0 and 10 (0 to 9 inclusive).
-	//   }
-	//   
-	//   foreach (new i : Random(100, -10, 10))
-	//   {
-	//       // 100 random numbers between -10 and 10 (-10 to 9 inclusive).
-	//   }
-	//   
-	// Note that this function has internal state, so you cannot call this in a
-	// nested manner.  This will probably fail:
-	//   
-	//   foreach (new i : Random(10, 70))
-	//   {
-	//       foreach (new j : Random(10, 80))
-	//       {
-	//           // Will NOT get 100 randoms 0 to 80, plus 10 randoms 0 to 70.
-	//       }
-	//   }
-	//   
 	if (cur == cellmin)
 	{
 		iterstate = 0;
@@ -248,15 +332,26 @@ iterfunc stock Random(&iterstate, cur, count, min = cellmax, max = 0)
 
 #define iterstart@Random iterstate(cellmin, 0)
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="cur">The current iterator step.</param>
+ * <param name="arr">Teh array to search through.</param>
+ * <param name="size">The size of the array.</param>
+ * <remarks>
+ *  Loop over all the indexes of this array that are zero.
+ *    
+ *  <code>
+ *    new array[] = { ... };        <br />
+ *    foreach (new i : Null(array)) <br />
+ *    {                             <br />
+ *    }
+ *  </code>
+ *    
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 iterfunc stock Null(cur, const arr[], size = sizeof (arr))
 {
-	// Loop over all the indexes of this array that are zero.
-	//   
-	//   new array[] = { ... };
-	//   foreach (new i : Null(array))
-	//   {
-	//   }
-	//   
 	while (++cur < size)
 	{
 		if (!arr[cur])
@@ -267,15 +362,26 @@ iterfunc stock Null(cur, const arr[], size = sizeof (arr))
 	return -1;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="cur">The current iterator step.</param>
+ * <param name="arr">Teh array to search through.</param>
+ * <param name="size">The size of the array.</param>
+ * <remarks>
+ *  Loop over all the indexes of this array that are not zero.
+ *    
+ *  <code>
+ *    new array[] = { ... };           <br />
+ *    foreach (new i : NonNull(array)) <br />
+ *    {                                <br />
+ *    }
+ *  </code>
+ *    
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 iterfunc stock NonNull(cur, const arr[], size = sizeof (arr))
 {
-	// Loop over all the indexes of this array that are not zero.
-	//   
-	//   new array[] = { ... };
-	//   foreach (new i : NonNull(array))
-	//   {
-	//   }
-	//   
 	while (++cur < size)
 	{
 		if (arr[cur])
@@ -286,17 +392,48 @@ iterfunc stock NonNull(cur, const arr[], size = sizeof (arr))
 	return -1;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="cur">The current iterator step.</param>
+ * <param name="val">The number to search the array for.</param>
+ * <param name="arr">Teh array to search through.</param>
+ * <param name="size">The size of the array.</param>
+ * <remarks>
+ *  Loop over all the indexes of this array until one equals the given value.
+ *    
+ *  <code>
+ *    new array[] = { ... };            <br />
+ *    foreach (new i : Until(5, array)) <br />
+ *    {                                 <br />
+ *    }
+ *  </code>
+ *    
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 iterfunc stock Until(cur, val, const arr[], size = sizeof (arr))
 {
-	// Loop over all the indexes of this array until one equals the given value:
-	//   
-	//   new array[] = { ... };
-	//   foreach (new i : Until(5, array))
-	//   {
-	//   }
-	//   
 	return (++cur >= size || arr[cur] == val) ? -1 : cur;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="cur">The current iterator step.</param>
+ * <param name="val">The number to search the array for.</param>
+ * <param name="arr">Teh array to search through.</param>
+ * <param name="size">The size of the array.</param>
+ * <remarks>
+ *  Loop over all the indexes of this array which contain the given value.
+ *    
+ *  <code>
+ *    new array[] = { ... };             <br />
+ *    foreach (new i : Filter(5, array)) <br />
+ *    {                                  <br />
+ *    }
+ *  </code>
+ *    
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 iterfunc stock Filter(cur, val, const arr[], size = sizeof (arr))
 {
@@ -310,6 +447,18 @@ iterfunc stock Filter(cur, val, const arr[], size = sizeof (arr))
 	return -1;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="array">The internal iterator data.</param>
+ * <param name="size">The internal iterator size.</param>
+ * <param name="value">The current iterator step.</param>
+ * <remarks>
+ *  Loop over all values NOT in any iterator.  Similar to repeatedly calling
+ *  <c>Iter_Free</c>, though that will return the same value twice if called
+ *  twice in a row.  Instead, this function will loop through the missing ones.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #define Iter_Func@None(%0,%1) _ITER<Iter_None_Internal>(%1,%0)
 #define Iterator@None iterstart(-1)
 #define Iter_None_InternalA(%0,%1,%9) Iter_None_Internal(%1,F@s(%1)-1,%9)
@@ -317,9 +466,6 @@ iterfunc stock Filter(cur, val, const arr[], size = sizeof (arr))
 
 stock Iter_None_Internal(const array[], size, value)
 {
-	// Loop over all values NOT in any iterator.  Similar to repeatedly calling
-	// "Iter_Free", though that will return the same value twice if called twice
-	// in a row.  Instead, this function will loop through the missing ones.
 	while (++value < size)
 	{
 		if (array[value] <= value)
@@ -330,6 +476,19 @@ stock Iter_None_Internal(const array[], size, value)
 	return -1;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="array">The internal iterator data.</param>
+ * <param name="size">The internal iterator size.</param>
+ * <param name="value">The current iterator step.</param>
+ * <remarks>
+ *  Loop over all values in any iterator.  This is different to looping over the
+ *  iterator normally for multi-dimensional iterators, since it will return all
+ *  values in ANY iterator in their numerical order.  For single dimensional
+ *  iterators it is exactly the same, just a little slower.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 #define Iter_Func@All(%0,%1) _ITER<Iter_All_Internal>(%1,%0)
 #define Iterator@All iterstart(-1)
 #define Iter_All_InternalA(%0,%1,%9) Iter_All_Internal(%1,F@s(%1)-1,%9)
@@ -337,10 +496,6 @@ stock Iter_None_Internal(const array[], size, value)
 
 stock Iter_All_Internal(const array[], size, value)
 {
-	// Loop over all values in any iterator.  This is different to looping over
-	// the iterator normally for multi-dimensional iterators, since it will
-	// return all values in ANY iterator in their numerical order.  For single-
-	// dimensional iterators it is exactly the same, just a little slower.
 	while (++value < size)
 	{
 		if (array[value] > value)
@@ -365,6 +520,7 @@ stock Iter_All_Internal(const array[], size, value)
 */
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <remarks>
  *  Sets up all existing iterators.  Does nothing for "XXLocal" ones, since they
  *  are by definition empty when a script starts.
@@ -501,21 +657,22 @@ stock Iter_All_Internal(const array[], size, value)
 
 */
 
-/*-------------------------------------------------------------------------*//**
- * <param name="playerid">Player who joined.</param>
- * <remarks>
- *  Adds a player to the loop data.  Now sorts the list too.  Note that I found
- *  the most bizzare bug ever (I *think* it may be a compiler but, but it
- *  requires further investigation), basically it seems that multiple variables
- *  were being treated as the same variable (namely @YSII_EgotS and
- *  @YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
- *  same).  Adding print statements which reference these variables seem to fix
- *  the problem, and I've tried to make sure that the values will never actually
- *  get printed.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
 #if _FOREACH_CHARACTERS
+	/*-------------------------------------------------------------------------*//**
+	 * <library>y_iterate</library>
+	 * <param name="playerid">Player who joined.</param>
+	 * <remarks>
+	 *  Adds a player to the loop data.  Now sorts the list too.  Note that I found
+	 *  the most bizzare bug ever (I *think* it may be a compiler but, but it
+	 *  requires further investigation), basically it seems that multiple variables
+	 *  were being treated as the same variable (namely @YSII_EgotS and
+	 *  @YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
+	 *  same).  Adding print statements which reference these variables seem to fix
+	 *  the problem, and I've tried to make sure that the values will never actually
+	 *  get printed.
+	 * </remarks>
+	 *//*------------------------------------------------------------------------**/
+
 	public OnPlayerConnect(playerid)
 	{
 		Debug_Print1("Iter_OnPlayerConnect called: %d, %d", playerid, IsPlayerNPC(playerid));
@@ -544,7 +701,7 @@ stock Iter_All_Internal(const array[], size, value)
 	CHAIN_FORWARD:Iter_OnPlayerConnect(playerid) = 1;
 	
 	/*---------------------------------------------------------------------*//**
-	 *
+	 * <library>y_iterate</library>
 	 * <param name="playerid">Player who left.</param>
 	 * <remarks>
 	 *  Removes a player from the loop data.  No longer uses "hook" to ENSURE
@@ -580,16 +737,16 @@ stock Iter_All_Internal(const array[], size, value)
 	#define OnPlayerDisconnect(%0) CHAIN_PUBLIC:Iter_OnPlayerDisconnect(%0)
 	CHAIN_FORWARD:Iter_OnPlayerDisconnect(playerid, reason) = 1;
 	
-	/*---------------------------------------------------------------------*//**
-	 *
-	 * <param name="playerid">Player who left.</param>
-	 * <remarks>
-	 *  Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a
-	 *  "foreach" loop doesn't crash the server due to an OOB error.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-	
 	#if _FOREACH_STREAMED
+		/*---------------------------------------------------------------------*//**
+		 * <library>y_iterate</library>
+		 * <param name="playerid">Player who entered streaming range.</param>
+		 * <param name="forplayerid">The viewing player.</param>
+		 * <remarks>
+		 *  Update the internal list of which players <c>forplayerid</c> can see.
+		 * </remarks>
+		 *//*--------------------------------------------------------------------**/
+		
 		public OnPlayerStreamIn(playerid, forplayerid)
 		{
 			Debug_Print1("Iter_OnPlayerStreamIn called: %d, %d", playerid, forplayerid);
@@ -617,6 +774,15 @@ stock Iter_All_Internal(const array[], size, value)
 		#define OnPlayerStreamIn(%0) CHAIN_PUBLIC:Iter_OnPlayerStreamIn(%0)
 		CHAIN_FORWARD:Iter_OnPlayerStreamIn(playerid, forplayerid) = 1;
 
+		/*---------------------------------------------------------------------*//**
+		 * <library>y_iterate</library>
+		 * <param name="playerid">Player who left streaming range.</param>
+		 * <param name="forplayerid">The viewing player.</param>
+		 * <remarks>
+		 *  Update the internal list of which players <c>forplayerid</c> can see.
+		 * </remarks>
+		 *//*--------------------------------------------------------------------**/
+		
 		public OnPlayerStreamOut(playerid, forplayerid)
 		{
 			Debug_Print1("Iter_OnPlayerStreamOut called: %d, %d", playerid, forplayerid);
@@ -648,8 +814,17 @@ stock Iter_All_Internal(const array[], size, value)
 #endif
 
 static stock const
+	/**
+	 * <library>y_iterate</library>
+	 */
 	YSI_gsIter_VehicleDo[] = "Iter_VehicleDo",
+	/**
+	 * <library>y_iterate</library>
+	 */
 	YSI_gsIter_ActorDo[] = "Iter_ActorDo",
+	/**
+	 * <library>y_iterate</library>
+	 */
 	YSI_gsii[] = "ii";
 
 /*

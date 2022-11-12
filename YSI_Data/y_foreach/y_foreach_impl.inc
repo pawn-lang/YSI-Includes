@@ -85,6 +85,7 @@ Optional plugins:
 */
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
@@ -180,6 +181,7 @@ Iter_Random_Impl_loop:
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
@@ -231,6 +233,7 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
@@ -270,6 +273,7 @@ stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="counts">Number of items in each iterator part.</param>
  * <param name="array">iterator data.</param>
  * <param name="size">Size of the iterator.</param>
@@ -318,6 +322,7 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
@@ -357,6 +362,7 @@ stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
@@ -399,6 +405,7 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
@@ -438,6 +445,7 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
@@ -534,6 +542,7 @@ Iter_RandomFree_Internal_loop:
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="counts">Number of items in each iterator part.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
@@ -580,6 +589,7 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="size">Array start index.</param>
@@ -641,6 +651,7 @@ stock Iter_Alloc_InternalD(&count, array[], start, size, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="array">iterator data.</param>
  * <param name="size">Size of the iterator.</param>
  * <remarks>
@@ -674,6 +685,7 @@ stock Iter_Free_Internal(const array[], size)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="array">multi-iterator data.</param>
  * <param name="trueSize">Size of the multi-iterator.</param>
  * <param name="start">End [?, since start points are backwards] of the multi-iterator.</param>
@@ -693,6 +705,7 @@ stock Iter_FreeMulti_Internal(const array[], trueSize, start)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="size">Array start index.</param>
@@ -762,6 +775,7 @@ stock Iter_Add_InternalD(&count, array[], start, size, value)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Array start index.</param>
@@ -794,6 +808,7 @@ stock Iter_Index_Internal(count, const array[], start, size, index, bool:wrap = 
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="size">Number of iterator elements.</param>
@@ -863,6 +878,7 @@ stock Iter_Remove_InternalD(&count, array[], start, size, value)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">Iterator data.</param>
  * <param name="size">Number of iterator elements.</param>
@@ -931,6 +947,7 @@ stock Iter_SafeRemove_2(&count, array[], start, size, value, &last)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="array">iterator data.</param>
  * <param name="value">Item to check.</param>
  * <param name="size">Size of the iterator.</param>
@@ -947,6 +964,7 @@ stock Iter_Contains_InternalC(const array[], size, value)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="counts">Number of items in each iterator part.</param>
  * <param name="slots">Number of multi-iterator values.</param>
  * <remarks>
@@ -964,6 +982,7 @@ stock Iter_Count_InternalC(const counts[], slots = sizeof (counts))
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="array">iterator data.</param>
  * <param name="value">Item to check.</param>
  * <param name="size">Size of the iterator.</param>
@@ -992,6 +1011,7 @@ stock Iter_Contains_InternalD(count, const array[], size, start, value)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="array">multi-iterator data.</param>
  * <param name="trueSize">Size of the multi-iterator per index.</param>
  * <param name="size">Size of the multi-iterator.</param>
@@ -1018,6 +1038,7 @@ stock Iter_GetMulti_Internal(const array[], trueSize, size, value)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="array">iterator data.</param>
  * <param name="size">Size of information.</param>
  * <param name="entries">Size of the count data.</param>
@@ -1064,6 +1085,7 @@ stock Iter_Clear_InternalC(array[], size, entries, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="array">iterator data.</param>
  * <param name="size">Size of base array.</param>
  * <param name="entries">Size of the count data.</param>
@@ -1094,6 +1116,7 @@ stock Iter_Clear_InternalD(array[], size, entries, elems, counts[], start)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="array">Iterator array to initialise.</param>
  * <param name="first">First iterator slot.</param>
  * <param name="s0">Size of first dimension.</param>
@@ -1124,6 +1147,7 @@ stock
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="array">iterator data.</param>
  * <param name="elems">Number of elements in the iterator.</param>
  * <param name="size">Size of the iterator.</param>
@@ -1152,6 +1176,7 @@ stock
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="array">iterator data.</param>
  * <param name="size">Size of the iterator.</param>
  * <param name="slot">The current slot.</param>
