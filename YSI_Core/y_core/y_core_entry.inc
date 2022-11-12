@@ -341,7 +341,36 @@ public Y_Less_says_ta_for_using_YSI()
 	#endif
 #endif
 
-#include "y_utils_impl"
+/**
+ * <library
+ *   name="y_utils"
+ *   version="0.1.3"
+ *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
+ *   summary="Misc functions used throughout."
+ * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
+ *//** */
+
+#include "../y_utils/y_utils_misc"
+#include "../y_utils/y_utils_maths"
+#include "../y_utils/y_utils_varargs"
+#include "../y_utils/y_utils_arrays"
+#include "../y_utils/y_utils_colour"
+#include "../y_utils/y_utils_conversions"
+#include "../y_utils/y_utils_encodings"
+#include "../y_utils/y_utils_strings"
+#include "../y_utils/y_utils_files"
+#include "../y_utils/y_utils_ip"
+#include "../y_utils/y_utils_names"
+#include "../y_utils/y_utils_random"
+#include "../y_utils/y_utils_similarity"
+#include "../y_utils/y_utils_textwrap"
 
 // Part of "y_scriptinit", but requires "y_amx".
 ScriptInit_CodeInitFuncs_()

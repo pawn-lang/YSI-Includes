@@ -16,7 +16,7 @@ TEST_COMPILE__ y_utils()
 	#assert !VALID_PLAYERID(Y_UTILS_INVALID)
 	#assert UCMP(4, 100)
 	#assert !UCMP(-4, 100)
-	BeautifyProfilingTime(0, 0);
+	//BeautifyProfilingTime(0, 0);
 	#assert ceildiv(12, 3) == 4
 	#assert ceildiv(11, 3) == 4
 	#assert ceildiv(10, 3) == 4

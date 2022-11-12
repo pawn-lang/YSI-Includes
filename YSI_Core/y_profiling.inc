@@ -199,6 +199,132 @@ CHAIN_HOOK(Profiling)
 #define Y_PROFILING_PROFILE _C<@y_P>
 #define Y_PROFILING_CLOSE _C<@P_y>
 
+#define __TY|||%0||| (1000000)
+#define __TX:__TY|||%0,%1||| (%1)
+#define __TF=fopen(%0,%2"%3",%4) __TF=fopen(%0".csv",%4)
+
+#if !defined TIMING_ITERATIONS
+	#define TIMING_ITERATIONS (10)
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_profiling</library>
+ * <param name="t">The time in ms.</param>
+ * <param name="iters">The number of iterations completed in this time.</param>
+ * <remarks>
+ *  Formats and returns a string representing the time taken for one iteration,
+ *  given the time required for many iterations.  This attempts to format the
+ *  number using a reasonable fraction of a second.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock BeautifyProfilingTime(t, iters)
+{
+	// Number of times run.  Accounts for the string and optional count.
+	new
+		ret[20];
+	if      (iters >  1000000000)
+		format(ret, sizeof (ret), "%.2fps", float(t) / (float(iters) / 1000000000.0));
+	else if (iters == 1000000000)
+		format(ret, sizeof (ret), "%d.00ps", t);
+	else if (iters >  1000000)
+		format(ret, sizeof (ret), "%.2fns", float(t) / (float(iters) / 1000000.0));
+	else if (iters == 1000000)
+		format(ret, sizeof (ret), "%d.00ns", t);
+	else if (iters >  1000)
+		format(ret, sizeof (ret), "%.2fus", float(t) / (float(iters) / 1000.0));
+	else if (iters == 1000)
+		format(ret, sizeof (ret), "%d.00us", t);
+	else if (iters >  1)
+		format(ret, sizeof (ret), "%.2fms", float(t) / float(iters));
+	else
+		format(ret, sizeof (ret), "%d.00ms", t);
+	return ret;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_profiling</library>
+ * <param name="name">The name of the profile.</param>
+ * <param name="timings">The raw profiling results.</param>
+ * <param name="iters">The number of iterations per run.</param>
+ * <param name="size">The number of repeats.</param>
+ * <remarks>
+ *  "WTF" here stands for "Write To File".  The output looks like:
+ *  
+ *  <code>
+ *      timestamp,runs,repeats,results (ms)
+ *      1546082820,10,1000000,122,121,121,120,121,121,121,119,119,121
+ *      1546082822,10,1000000,123,124,123,123,121,121,121,120,122,122
+ *  </code>
+ *  
+ *  The timestamp is the unix timestamp at which the line was WRITTEN, not the
+ *      time at which the profilings started or ended.
+ *  
+ *  "runs" is the number of times the whole profile was repeated.
+ *  
+ *  "repeats" is the number of times the code was run for each repeat.
+ *  
+ *  "results" are the total times for each repeat, in milliseconds.  The time
+ *      for an individual piece of code is <c>result[n] / repeats</c>.  This is
+ *      equivalent to:
+ *  
+ *  <code>
+ *      for (new i = 0; i != runs; ++i)
+ *      {
+ *          start = GetTickCount();
+ *          for (new i = 0; i != repeats; ++i)
+ *          {
+ *              USER_CODE_HERE();
+ *          }
+ *          end = GetTickCount();
+ *          WriteToFile(end - start);
+ *      }
+ *  </code>
+ *  
+ *  The repeats help to time very short pieces of code.  The runs help to
+ *  average.  The console reports average results (mean, mode, median, range).
+ *  Thus the even more accurate result for a single iteration would be:
+ *  <c>sum(results) / (runs * repeats)</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+// "Write To File", not another "WTF" meaning...
+stock DumpProfilingTime(const string:name[], const timings[], iters, size = sizeof (timings))
+{
+	new File:fhnd = File:0;
+	if (fexist(name))
+	{
+		// File already exists.  Append.
+		fhnd = fopen(name, io_append);
+	}
+	else if ((fhnd = fopen(name, io_write)))
+	{
+		// File doesn't exist.  Create it and write the headers.
+		fwrite(fhnd, "timestamp,runs,repeats,results (ms)\n");
+	}
+	if (!fhnd)
+	{
+		Debug_Warning("Could not write to profiling results file \"%s\".", name);
+		return;
+	}
+	va_fprintf(fhnd, "%d,%d,%d", gettime(), size, iters);
+	for (new i = 0; i != size; ++i)
+	{
+		va_fprintf(fhnd, ",%d", timings[i]);
+	}
+	fwrite(fhnd, "\n");
+	fclose(fhnd);
+}
+
+#if !defined PROFILINGS_FILE
+	#define DumpProfilingTime(%0),
+#endif
+
+#define RUN_TIMING(%0) \
+	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TE=_:__TX:__TY|||%0|||,__TS=__PA(%0);__TC;__PB(%0,__TA,__TE)) \
+	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS) \
+	for(new __TI=0;__TI!=__TE;++__TI)
+
 static stock
 	bool:YSI_g_sInProfile = false;
 
