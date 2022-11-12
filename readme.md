@@ -97,6 +97,8 @@ Libraries for controlling the server.
 * [y_lock](YSI_Server/y_lock.md)
 * [y_punycode](YSI_Server/y_punycode.md)
 * [y_scriptinit](YSI_Server/y_scriptinit.md)
+* [y_scriptdata](YSI_Server/y_scriptdata.md)
+* [y_serverdata](YSI_Server/y_serverdata.md)
 * [y_stringise](YSI_Server/y_stringise.md) (AKA y_stringize)
 * [y_td](YSI_Server/y_td.md)
 * [y_thirdpartyinclude](YSI_Server/y_thirdpartyinclude.md)
