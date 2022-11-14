@@ -871,7 +871,7 @@ const __UCharMax = ucharmax;
 // And the other way
 const __cellbytes = cellbytes;
 const __cellbits = cellbits;
-const __cell_bytes = cellbytes;
+//const __cell_bytes = cellbytes;
 const __cell_bits = cellbits;
 const __char_bits = charbits;
 const __char_max = charmax;

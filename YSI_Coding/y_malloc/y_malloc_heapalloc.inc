@@ -167,7 +167,7 @@ Malloc_Finalise() <>
 	#emit CONST.alt    YSI_gMallocMemory
 	#emit LOAD.pri     AMX_HEADER_HEA
 	#emit SUB
-	#emit SHR.C.pri    __COMPILER_CELL_SHIFT // Divide by 4 to get cells.
+	#emit SHR.C.pri    __cell_shift // Divide by 4 to get cells.
 	#emit STOR.pri     __YSI_g_sHeapStart
 	#emit INC.pri
 	#emit STOR.pri     __YSI_g_sUnusedStart

@@ -916,7 +916,7 @@ stock Server_PrintIntroMessage(...)
 		// Header.
 		YSI_Print__(YSI_gscSpacer);
 		// Body.
-		for (new i = 3 * cellbytes, j = (numargs() << __COMPILER_CELL_SHIFT) + (3 * cellbytes), a = 0; i != j; i += cellbytes)
+		for (new i = 3 * cellbytes, j = (numargs() << __cell_shift) + (3 * cellbytes), a = 0; i != j; i += cellbytes)
 		{
 			#emit LCTRL          __frm
 			#emit LOAD.S.alt     i
@@ -971,7 +971,7 @@ stock Server_PrintIntroPart(...)
 			YSI_Print__(YSI_gscSpacer);
 		}
 		// Body.
-		for (new i = 3 * cellbytes, j = 3 * cellbytes + (numargs() << __COMPILER_CELL_SHIFT), a = 0; i != j; i += cellbytes)
+		for (new i = 3 * cellbytes, j = 3 * cellbytes + (numargs() << __cell_shift), a = 0; i != j; i += cellbytes)
 		{
 			#emit LCTRL          __frm
 			#emit LOAD.S.alt     i

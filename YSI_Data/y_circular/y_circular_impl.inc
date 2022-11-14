@@ -106,7 +106,7 @@ stock Circular_GetCount_(s1, s2, ...)
 	{
 		// Full.  Return the size (adjusted to cells).
 		#emit LOAD.S.pri   s1
-		#emit SHR.C.pri    __COMPILER_CELL_SHIFT
+		#emit SHR.C.pri    __cell_shift
 		#emit RETN
 	}
 	{}
@@ -114,7 +114,7 @@ stock Circular_GetCount_(s1, s2, ...)
 	#emit LOAD.S.alt   s1
 	#emit LOAD.S.pri   s2
 	#emit ADD
-	#emit SHR.C.pri    __COMPILER_CELL_SHIFT
+	#emit SHR.C.pri    __cell_shift
 	#emit RETN
 	return 0; //__COMPILER_NAKED
 }
@@ -162,7 +162,7 @@ stock Circular_Push_(s1, s2, ...)
 		#emit ADD
 		#emit LOAD.S.alt   s2
 		#emit PUSH.alt
-		#emit SHL.C.alt    __COMPILER_CELL_SHIFT
+		#emit SHL.C.alt    __cell_shift
 		#emit PUSH.alt
 		#emit PUSH.C       0
 		#emit PUSH.S       __param3_offset
@@ -210,7 +210,7 @@ stock Circular_Push_(s1, s2, ...)
 		#emit POP.pri
 		// Return the final slot.
 		#emit MOVE.pri
-		#emit SHR.C.pri    __COMPILER_CELL_SHIFT
+		#emit SHR.C.pri    __cell_shift
 		#emit DEC.pri
 		#emit RETN
 	}
@@ -231,7 +231,7 @@ stock Circular_Push_(s1, s2, ...)
 		// `pri` is now the full address of the destination.  Copy it.
 		#emit LOAD.S.alt   s2
 		#emit PUSH.alt
-		#emit SHL.C.alt    __COMPILER_CELL_SHIFT
+		#emit SHL.C.alt    __cell_shift
 		#emit PUSH.alt
 		#emit PUSH.C       0
 		#emit PUSH.S       __param3_offset
@@ -257,7 +257,7 @@ stock Circular_Push_(s1, s2, ...)
 			#emit POP.pri
 			// Return the final slot ID.
 			#emit MOVE.pri
-			#emit SHR.C.pri    __COMPILER_CELL_SHIFT
+			#emit SHR.C.pri    __cell_shift
 			#emit RETN
 		}
 		else
@@ -273,7 +273,7 @@ stock Circular_Push_(s1, s2, ...)
 			#emit POP.pri
 			#emit LOAD.S.pri   s1
 			#emit ADD
-			#emit SHR.C.pri    __COMPILER_CELL_SHIFT
+			#emit SHR.C.pri    __cell_shift
 			#emit DEC.pri
 			#emit RETN
 		}
@@ -338,7 +338,7 @@ stock Circular_Rotate_(s1, s2, ...)
 		// Return the final slot.
 		#emit POP.pri
 		#emit MOVE.pri
-		#emit SHR.C.pri    __COMPILER_CELL_SHIFT
+		#emit SHR.C.pri    __cell_shift
 		#emit DEC.pri
 		#emit RETN
 	}
@@ -362,7 +362,7 @@ stock Circular_Rotate_(s1, s2, ...)
 			#emit POP.pri
 			// Return the final slot ID.
 			#emit MOVE.pri
-			#emit SHR.C.pri    __COMPILER_CELL_SHIFT
+			#emit SHR.C.pri    __cell_shift
 			#emit RETN
 		}
 		else
@@ -378,7 +378,7 @@ stock Circular_Rotate_(s1, s2, ...)
 			#emit POP.pri
 			#emit LOAD.S.pri   s1
 			#emit ADD
-			#emit SHR.C.pri    __COMPILER_CELL_SHIFT
+			#emit SHR.C.pri    __cell_shift
 			#emit DEC.pri
 			#emit RETN
 		}

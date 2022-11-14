@@ -436,7 +436,7 @@ stock bool:Files_CopyRange(File:i, end, const string:dst[])
 	// Must start at the start...
 	new
 		File:o = fopen(dst, io_write),
-		count = min(YSI_UNSAFE_HUGE_LENGTH, end >>> __COMPILER_CELL_SHIFT);
+		count = min(YSI_UNSAFE_HUGE_LENGTH, end >>> __cell_shift);
 	if (!o)
 	{
 		return false;

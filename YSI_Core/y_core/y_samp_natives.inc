@@ -137,7 +137,7 @@ native YSI_NumArgs() = numargs;
 	#endif
 	// `numargs` implementation in fewer instructions than just calling the
 	// native, let alone adding in what the native does.
-	#define numargs() __emit(LOAD.S.pri __args_offset, SHR.C.pri __COMPILER_CELL_SHIFT)
+	#define numargs() __emit(LOAD.S.pri __args_offset, SHR.C.pri __cell_shift)
 #elseif !defined _ALS_numargs
 	native BAD_numargs() = numargs;
 #endif

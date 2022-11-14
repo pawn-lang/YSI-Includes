@@ -107,7 +107,7 @@ stock va_strlen(arg)
 	// the argument required.
 	#emit LOAD.S.pri arg
 	// Then convert that number to bytes from cells.
-	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri  __cell_shift
 	// Get the previous function's frame.  Stored in variable 0 (in the current
 	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
 	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
@@ -150,7 +150,7 @@ stock va_getstring(dest[], arg, len = sizeof (dest))
 	// the argument required.
 	#emit LOAD.S.pri arg
 	// Then convert that number to bytes from cells.
-	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri  __cell_shift
 	// Get the previous function's frame.  Stored in variable 0 (in the current
 	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
 	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
@@ -315,7 +315,7 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
 stock PrintArg(n)
 {
 	#emit LOAD.S.pri   n
-	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri    __cell_shift
 	#emit ADD.C        __3_cells
 	#emit LOAD.S.alt   __frame_offset
 	#emit ADD

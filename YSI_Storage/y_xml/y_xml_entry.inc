@@ -249,7 +249,7 @@ stock XML_Parse(XML:rule, const filename[])
 						// use this as a handy break point for long lines.
 						++pos;
 						lineOffset = sizeof (line) - 1 - pos;
-						memcpy(line, line[pos], 0, lineOffset << __COMPILER_CELL_SHIFT);
+						memcpy(line, line[pos], 0, lineOffset << __cell_shift);
 						break;
 					}
 					++pos;

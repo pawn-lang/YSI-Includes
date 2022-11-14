@@ -1465,7 +1465,7 @@ Format_Render_start:
 									{
 										#emit LCTRL        __frm
 										#emit LOAD.S.alt   curArg
-										#emit SHL.C.alt    __COMPILER_CELL_SHIFT
+										#emit SHL.C.alt    __cell_shift
 										#emit ADD
 										#emit LOAD.I
 										#emit PUSH.pri

@@ -114,7 +114,7 @@ static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], len
 	#emit STOR.S.alt   matrix
 	#emit LOAD.S.pri   lenB
 	#emit INC.pri
-	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri    __cell_shift
 	#emit ADD
 	#emit SCTRL        __hea
 	// "a" is the shorter string in this call.
@@ -173,7 +173,7 @@ static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[]
 	#emit STOR.S.alt   matrix
 	#emit LOAD.S.pri   lenB
 	#emit INC.pri
-	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri    __cell_shift
 	#emit ADD
 	#emit SCTRL        __hea
 	// "a" is the shorter string in this call.
@@ -232,7 +232,7 @@ static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[]
 	#emit STOR.S.alt   matrix
 	#emit LOAD.S.pri   lenB
 	#emit INC.pri
-	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri    __cell_shift
 	#emit ADD
 	#emit SCTRL        __hea
 	// "a" is the shorter string in this call.
@@ -291,7 +291,7 @@ static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[
 	#emit STOR.S.alt   matrix
 	#emit LOAD.S.pri   lenB
 	#emit INC.pri
-	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri    __cell_shift
 	#emit ADD
 	#emit SCTRL        __hea
 	// "a" is the shorter string in this call.

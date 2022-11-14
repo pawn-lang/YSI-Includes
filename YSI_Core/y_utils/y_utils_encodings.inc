@@ -253,7 +253,7 @@ stock Base64Encode(string:dest[], const src[], num = sizeof (src), len = sizeof 
 		sEncoding[65 char] = __COMPILER_PACK"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98",
 		//tmp,
 		ret = 0;
-	num = num << __COMPILER_CELL_SHIFT;
+	num = num << __cell_shift;
 	if (len <= ceildiv(num, 3))
 	{
 		// How many complete chunks can we fit in?
@@ -448,8 +448,8 @@ stock Base64Decode(dest[], const string:src[], len = sizeof (dest), offset = 0)
 	// Work out the final length.  Subtract some for incomplete bytes and
 	// insufficient destination data.
 	num = strlen(src),
-	len = len << __COMPILER_CELL_SHIFT,
-	blocks = num >>> __COMPILER_CELL_SHIFT;
+	len = len << __cell_shift,
+	blocks = num >>> __cell_shift;
 	if (src{num - 1}  == '=')
 	{
 		--blocks;

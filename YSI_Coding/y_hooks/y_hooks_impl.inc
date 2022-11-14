@@ -1872,7 +1872,7 @@ Hooks_NumArgs_load:
 	#emit LREF.S.alt          0
 	#emit JZER                Hooks_NumArgs_load
 	#emit POP.pri
-	#emit SHR.C.pri           __COMPILER_CELL_SHIFT
+	#emit SHR.C.pri           __cell_shift
 	#emit RETN
 	// Ideal code, that can't be used due to having a forward jump.
 /*	#emit LOAD.S.pri          0
@@ -1880,13 +1880,13 @@ Hooks_NumArgs_load:
 	#emit LOAD.I
 	#emit ZERO.alt
 	#emit JSLESS              Hooks_NumArgs_negative
-	#emit SHR.C.pri           __COMPILER_CELL_SHIFT
+	#emit SHR.C.pri           __cell_shift
 	#emit RETN
 Hooks_NumArgs_negative:
 	#emit LREF.S.pri          0
 	#emit ADD.C               __2_cells
 	#emit LOAD.I
-	#emit SHR.C.pri           __COMPILER_CELL_SHIFT
+	#emit SHR.C.pri           __cell_shift
 	#emit RETN*/
 	__pragma("naked");
 }

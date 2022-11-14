@@ -407,7 +407,7 @@ stock bool:_Jagged_Move(array[][], size1, size2, ...)
 stock _Jagged_Empty(array[][], size1, size2)
 {
 	// The size of the main storage area, including the header.
-	size2 = (size1 * size2 + size1) << __COMPILER_CELL_SHIFT;
+	size2 = (size1 * size2 + size1) << __cell_shift;
 	while (--size1)
 	{
 		#emit LOAD.S.pri array
@@ -596,7 +596,7 @@ stock _Jagged_PrintHeader(array[][], size1, size2)
 		#emit LOAD.S.pri                slot
 		#emit LOAD.S.alt                size1
 		#emit SUB.alt
-		#emit SHL.C.pri                 __COMPILER_CELL_SHIFT
+		#emit SHL.C.pri                 __cell_shift
 		// Adjust the output to absolute.
 		#emit POP.alt
 		#emit SUB.alt

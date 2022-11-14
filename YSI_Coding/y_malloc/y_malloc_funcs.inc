@@ -491,7 +491,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 	new
 		len = 0;
 	#emit LOAD.S.pri arg
-	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri  __cell_shift
 	#emit LOAD.S.alt 0
 	#emit ADD
 	#emit ADD.C      __3_cells
@@ -604,7 +604,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 		len = 0;
 	#emit LOAD.S.pri arg
 	#emit ADD.C      1
-	#emit SHL.C.pri  __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri  __cell_shift
 	#emit LOAD.S.alt 0
 	#emit ADD
 	#emit ADD.C      __3_cells
@@ -620,12 +620,12 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 		// address in "arg" the first time).
 		#emit LOAD.S.pri len
 		#emit PUSH.pri
-		#emit SHL.C.pri  __COMPILER_CELL_SHIFT
+		#emit SHL.C.pri  __cell_shift
 		#emit PUSH.pri
 		#emit PUSH.C     0
 		// Source.
 		#emit LOAD.S.pri arg
-		#emit SHL.C.pri  __COMPILER_CELL_SHIFT
+		#emit SHL.C.pri  __cell_shift
 		#emit LOAD.S.alt 0
 		#emit ADD
 		#emit ADD.C      __3_cells
@@ -969,7 +969,7 @@ stock Alloc:Malloc_Reconcile(ResolvedAlloc:addr)
 	#emit CONST.alt     YSI_gMallocMemory
 	#emit LOAD.S.pri    addr
 	#emit SUB
-	#emit SHR.C.pri     __COMPILER_CELL_SHIFT
+	#emit SHR.C.pri     __cell_shift
 	#emit RETN
 	return Alloc:0;
 }

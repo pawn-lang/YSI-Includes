@@ -880,7 +880,7 @@ native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, 
 static stock bool:Debug_IsStringLike(addr, len = 256)
 {
 	new i = 0;
-	len = len << __COMPILER_CELL_SHIFT;
+	len = len << __cell_shift;
 	for (i = 0; i != len; i += cellbytes)
 	{
 		new ch = AMX_Read(addr + i);

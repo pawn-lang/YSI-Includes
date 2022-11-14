@@ -112,7 +112,7 @@ static stock Iter_Random_Impl(count, const array[], start, num)
 		first = 0,
 		last = 0;
 	#emit LOAD.S.pri   num
-	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri    __cell_shift
 	#emit ADDR.alt     __param4_offset
 	#emit STOR.S.alt   first
 	#emit ADD
@@ -212,7 +212,7 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 	#emit ADDR.pri             __param3_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -226,7 +226,7 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit SCTRL                __stk
 	return s;
@@ -252,7 +252,7 @@ stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 	#emit ADDR.pri             __param3_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -266,7 +266,7 @@ stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit SCTRL                __stk
 	return Iter_Add_InternalC(count, array, start, s);
@@ -301,7 +301,7 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 	#emit ADDR.pri             __param6_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -315,7 +315,7 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit SCTRL                __stk
 	return Iter_Add_InternalD(counts[slot], array, start, size, s);
@@ -341,7 +341,7 @@ stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
 	#emit ADDR.pri             __param3_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -355,7 +355,7 @@ stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit SCTRL                __stk
 	return Iter_Remove_InternalC(count, array, start, s);
@@ -382,7 +382,7 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 	#emit ADDR.pri             __param4_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -396,7 +396,7 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit SCTRL                __stk
 	// This is subtly different to the "C" version - it operates on multi
@@ -424,7 +424,7 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 	#emit ADDR.pri             __param3_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -438,7 +438,7 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit SCTRL                __stk
 	return s;
@@ -461,7 +461,7 @@ static stock Iter_RandomFree_Impl(count, const array[], start, num)
 		first = 0,
 		last = 0;
 	#emit LOAD.S.pri   num
-	#emit SHL.C.pri    __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri    __cell_shift
 	#emit ADDR.alt     __param4_offset
 	#emit STOR.S.alt   first
 	#emit ADD
@@ -568,7 +568,7 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
 	#emit ADDR.pri             __param4_offset
 	#emit STOR.S.pri           s
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit STOR.S.pri           e
 	while (s != e)
@@ -582,7 +582,7 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
-	#emit SHL.C.alt            __COMPILER_CELL_SHIFT
+	#emit SHL.C.alt            __cell_shift
 	#emit ADD
 	#emit SCTRL                __stk
 	return s;

@@ -245,7 +245,7 @@ stock HashMap_AddUnused(HashMap:m<>, value)
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(HashMap_ByteLen(str[]));
-#define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (__COMPILER_CELL_SHIFT * _:!ispacked((%0))))
+#define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (__cell_shift * _:!ispacked((%0))))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="ignorecase"></param>

@@ -341,7 +341,7 @@ static stock YVA2_CodeGenDeepCleanup(ctx[AsmContext], depth, returningString)
 	if (returningString)
 		@emit POP.pri
 	// Remove all the temporary storage locations.
-	@emit STACK        (depth << __COMPILER_CELL_SHIFT)
+	@emit STACK        (depth << __cell_shift)
 }
 
 //static stock YVA2_CodeGenPushVariable(ctx[AsmContext], stack)
@@ -422,7 +422,7 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 			new
 				dest = YSI_g_sContexts[pos][AsmContext_buffer];
 			// First, rewrite the `___` call-site to call `YVA2_DoPush` instead.
-			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], paramCount, YSI_g_sSkips[pos], -YSI_g_sStacks[0] - (pos << __COMPILER_CELL_SHIFT)), // YSI_g_sStacks[0]!!!
+			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], paramCount, YSI_g_sSkips[pos], -YSI_g_sStacks[0] - (pos << __cell_shift)), // YSI_g_sStacks[0]!!!
 			// Shift the code up.
 			YVA2_CodeGenShiftCode(
 				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
@@ -431,7 +431,7 @@ static stock YVA2_FoundCall(const m[CodeScanner])
 			// Adjust the assembly context.  `codeLength` is the length of the
 			// code from `YVA2_CodeGenPushSite`.
 			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - codeLength + returningString) - len,
-			dest = -YSI_g_sStacks[0] - (pos << __COMPILER_CELL_SHIFT);
+			dest = -YSI_g_sStacks[0] - (pos << __cell_shift);
 			if (len == __3_cells)
 			{
 				// `-O2`, convert `SYSREQ.N` to `SYSREQ.C`.

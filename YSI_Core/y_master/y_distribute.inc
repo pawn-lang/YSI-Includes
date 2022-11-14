@@ -229,7 +229,7 @@ stock Distribute_To(const from[], ss, GLOBAL_TAG_TYPES:...)
 	ss = min(ss, size);
 	#emit PUSH.S      size
 	#emit LOAD.S.pri  ss
-	#emit SHL.C.pri   __COMPILER_CELL_SHIFT
+	#emit SHL.C.pri   __cell_shift
 	#emit PUSH.pri
 	#emit PUSH.C      0
 	#emit PUSH.S      from
