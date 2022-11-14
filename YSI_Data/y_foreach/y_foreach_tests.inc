@@ -4092,8 +4092,7 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 @test(.group = "y_iterate") y_iterate_ConfirmRemoval()
 {
 	new
-		Iterator:iter<20>,
-		n;
+		Iterator:iter<20>;
 	Iter_Add(iter, 2);
 	Iter_Add(iter, 3);
 	Iter_Add(iter, 4);
