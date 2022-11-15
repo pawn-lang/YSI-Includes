@@ -105,12 +105,32 @@ Optional plugins:
 #endif
 
 new
+	/**
+	 * <library>y_core</library>
+	 * <remarks>
+	 *  A temporary string variable, mainly for interim results.
+	 * </remarks>
+	 */
 	Q@[YSI_MAX_STRING];
 
-// J@ is a "nul" target - send things there if they need ignoring or if a
-// parameter needs using.  I@ is too now.
 stock
+	/**
+	 * <library>y_core</library>
+	 * <remarks>
+	 *  A "nul" target - send things there if they need ignoring or if a
+	 *  parameter needs ignoring.  Not guaranteed to keep its value for any
+	 *  length of time.  If you set it, don't expect it to remain the same!
+	 * </remarks>
+	 */
 	I@ = 0,
+	/**
+	 * <library>y_core</library>
+	 * <remarks>
+	 *  A "nul" target - send things there if they need ignoring or if a
+	 *  parameter needs ignoring.  Not guaranteed to keep its value for any
+	 *  length of time.  If you set it, don't expect it to remain the same!
+	 * </remarks>
+	 */
 	J@ = 0;
 
 #if !defined MAX_LANGUAGES
@@ -118,28 +138,98 @@ stock
 #endif
 
 stock
+	/**
+	 * <library>y_core</library>
+	 * <remarks>
+	 *  A massive string.  That's it.  Just for internal formatting when the
+	 *  length isn't known in advance and we need to just go massively OTT to
+	 *  ensure that all user code works.  It is split in to individual arrays
+	 *  for using per-language, but the whole lot can be used as an even bigger
+	 *  concatenated string with <c>YSI_UNSAFE_HUGE_STRING</c>, of length
+	 *  <c>YSI_UNSAFE_HUGE_LENGTH</c>.
+	 * </remarks>
+	 */
 	YSI_gUnsafeHugeString[MAX_LANGUAGES][2048];
 
 #define YSI_UNSAFE_HUGE_STRING (YSI_gUnsafeHugeString[0])
 #define YSI_UNSAFE_HUGE_LENGTH (MAX_LANGUAGES * sizeof (YSI_gUnsafeHugeString[]))
 
-// Used by y_master and y_remote.  Re-evaluate after rewrites.
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *  Used by y_master and y_remote.  Re-evaluate after rewrites.  Just an alias
+ *  for <c>setproperty</c>, but with a shorter name (for macro length limits)
+ *  and better defaults.
+ * </remarks>
+ */
 native U@(id = 0, const name[] = "", value = cellmin, const string[] = "") = setproperty;
+
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *  Used by y_master and y_remote.  Re-evaluate after rewrites.  Just an alias
+ *  for <c>getproperty</c>, but with a shorter name (for macro length limits)
+ *  and better defaults.
+ * </remarks>
+ */
 native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] = "") = getproperty;
 
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *  An alias for <c>CallLocalFunction</c>, but with a shorter name (for macro
+ *  length limits) and better tag support.
+ * </remarks>
+ */
 #if defined OPENMP
 	native R@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_Call;
+#else
+	native R@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallLocalFunction;
+#endif
+
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *  An alias for <c>CallRemoteFunction</c>, but with a shorter name (for macro
+ *  length limits) and better tag support.
+ * </remarks>
+ */
+#if defined OPENMP
 	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_CallAll;
+#else
+	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
+#endif
+
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *  An alias for <c>SetTimerEx</c>, but with a shorter name (for macro length
+ *  limits) and better tag support.
+ * </remarks>
+ */
+#if defined OPENMP
 	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
 #else
-	// Define this command with basically every strong tag in existence to avoid
-	// tag mismatch warnings with remote functions with strong tag parameters.
-	native R@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallLocalFunction;
-	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
 	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
 #endif
 
-#if !__COMPILER_MODIFIED
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *  The old compiler has a bug when using <c>SYSREQ.C</c> - the natives aren't
+ *  marked as used, so won't be included in the output if they aren't used
+ *  normally elsewhere.  This function, on the old compiler, calls the natives
+ *  defined in this file to ensure that they go in to the native function table.
+ *  However, they are called with nonsense parameters so this function must
+ *  itself never be called.  That would normally mean that this is itself
+ *  elided from the AMX, hence it is <c>public</c>.
+ * </remarks>
+ */
+#if __COMPILER_MODIFIED
+	static stock @_y_shortvar_y_@()
+	{
+	}
+#else
 	forward @_y_shortvar_y_@();
 
 	public @_y_shortvar_y_@()
@@ -154,22 +244,57 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 #endif
 #define D0NT_USE(%9);}%9(){} }
 
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *  <c>true</c>, but usable in tests without a constant expression warning.
+ * </remarks>
+ */
 #if !defined TRUE
 stock const
 	bool:TRUE = true;
 #endif
 
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *  <c>false</c>, but usable in tests without a constant expression warning.
+ * </remarks>
+ */
 #if !defined FALSE
 stock const
 	bool:FALSE = false;
 #endif
 
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *  The null string with <c>\1</c> as the first character.  This isn't a true
+ *  null string, that is the string of length 0, but this string is often used
+ *  instead due to a bug with passing empty strings to and from the VM.  Every
+ *  <c>IsNull</c> check ever has been designed to detect this version.
+ * </remarks>
+ */
 #if !defined NULL
 stock const
 	NULL[2] = "\1";
 #endif
 
 stock const
+	/**
+	 * <library>y_core</library>
+	 * <remarks>
+	 *  A single space in a string, for string interning.  Just a micro-
+	 *  optimisation to use this instead of <c>" "</c> throughout YSI.
+	 * </remarks>
+	 */
 	YSI_SPACE[] = " ",
+	/**
+	 * <library>y_core</library>
+	 * <remarks>
+	 *  An empty string, for string interning.  Just a micro-optimisation to use
+	 *  this instead of <c>""</c> throughout YSI.
+	 * </remarks>
+	 */
 	YSI_EMPTY[] = "";
 
