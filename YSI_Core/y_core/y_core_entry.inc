@@ -311,6 +311,11 @@ public Y_Less_says_ta_for_using_YSI()
 {
 }
 
+/*-------------------------------------------------------------------------*//*+
+ * <remarks>
+ *   No pawndoc comments for this function, it only exists in internal tests.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 #if defined YSI_TESTS && __COMPILER_FUNC_DECL_BUG
 	#if (__COMPILER_FIRST_PASS && !defined IsNumeric) || defined YSI_IsNumericTest__
 		// Test a compiler crash doesn't.

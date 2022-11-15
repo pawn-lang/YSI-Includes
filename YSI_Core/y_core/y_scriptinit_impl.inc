@@ -1125,11 +1125,11 @@ stock Server_GetLongCallDefault()
  * <param name="jit">We are calling the callback from the JIT plugin.</param>
  * <param name="fs">We are calling the callback in a filterscript.</param>
  * <remarks>
- *  This is seemingly a lot of code just to call a callback, but it does more
- *  than that.  Really this is <c>OnScriptInit</c> for this file - it calls
- *  other callbacks, dumps debug information, profiles the startup, and caches
- *  compilation results.  These steps are all done regardless of which callback
- *  gets triggered first, hence why the code is abstracted.
+ *   This is seemingly a lot of code just to call a callback, but it does more
+ *   than that.  Really this is <c>OnScriptInit</c> for this file - it calls
+ *   other callbacks, dumps debug information, profiles the startup, and caches
+ *   compilation results.  These steps are all done regardless of which callback
+ *   gets triggered first, hence why the code is abstracted.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

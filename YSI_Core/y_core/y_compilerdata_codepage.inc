@@ -30,17 +30,34 @@
 // compile if you're using one of these, but at least it can be detected.
 
 // Use an unpacked raw string, to maybe get translations.
-static stock const __COMPILER_CODEPAGE_TEST_6[] = \__COMPILER_UNPACK"AÒ";
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   A string that is only two cells long is a DBCS character set is used, or is
+ *   more otherwise.  We then use <c>sizeof</c> to determine which.  Note that
+ *   one of those two cells is the null terminator, so the two characters
+ *   compile to a single character.
+ * </remarks>
+ */
+static stock const __COMPILER_CODEPAGE_TEST_0[] = \__COMPILER_UNPACK"AÒ";
 
-#if sizeof (__COMPILER_CODEPAGE_TEST_6) == 2
-	const __COMPILER_CODEPAGE_TEST_7 = 'AÒ';
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   If the script is determined to be using DBCS, we next need to know WHICH
+ *   DBCS codepage.  Which unicode character is the given byte sequence
+ *   converted to?
+ * </remarks>
+ */
+#if sizeof (__COMPILER_CODEPAGE_TEST_0) == 2
+	const __COMPILER_CODEPAGE_TEST_1 = 'AÒ';
 
-	#if __COMPILER_CODEPAGE_TEST_7 == 7842
+	#if __COMPILER_CODEPAGE_TEST_1 == 7842
 		#define __COMPILER_CODEPAGE (1258)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_7 == 1057
+	#if __COMPILER_CODEPAGE_TEST_1 == 1057
 		// SO MANY codepages match this.
 		//#define __COMPILER_CODEPAGE (1254)
 		//#endinput
@@ -49,6 +66,8 @@ static stock const __COMPILER_CODEPAGE_TEST_6[] = \__COMPILER_UNPACK"AÒ";
 	// Unknown.
 	#define __COMPILER_CODEPAGE (-1)
 	#endinput
+#else
+	const __COMPILER_CODEPAGE_TEST_1 = 0;
 #endif
 
 /*
@@ -66,111 +85,141 @@ static stock const __COMPILER_CODEPAGE_TEST_6[] = \__COMPILER_UNPACK"AÒ";
 
 */
 
-const __COMPILER_CODEPAGE_TEST_1 = 'ÿ'; // '\255'
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   If the script is determined not to be using DBCS, we still need to
+ *   determine the single byte codepage in use.  The best character to use for
+ *   this is <c>'\255'</c>, which is a different unicode character in a large
+ *   number of codepages.  If the resulting value is unique to one codepage, we
+ *   know it is that codepage.  If it isn't then further differentiation is
+ *   required.
+ * </remarks>
+ */
+const __COMPILER_CODEPAGE_TEST_2 = 'ÿ'; // '\255'
 
-#if __COMPILER_CODEPAGE_TEST_1 == 1103
+#if __COMPILER_CODEPAGE_TEST_2 == 1103
 	#define __COMPILER_CODEPAGE (1251)
 	#endinput
 #endif
 
-#if __COMPILER_CODEPAGE_TEST_1 == 1746
+#if __COMPILER_CODEPAGE_TEST_2 == 1746
 	#define __COMPILER_CODEPAGE (1256)
 	#endinput
 #endif
 
-#if __COMPILER_CODEPAGE_TEST_1 == 63638
+#if __COMPILER_CODEPAGE_TEST_2 == 63638
 	#define __COMPILER_CODEPAGE (1255)
 	#endinput
 #endif
 
-#if __COMPILER_CODEPAGE_TEST_1 == 63688
+#if __COMPILER_CODEPAGE_TEST_2 == 63688
 	#define __COMPILER_CODEPAGE (874)
 	#endinput
 #endif
 
-#if __COMPILER_CODEPAGE_TEST_1 == 63739
+#if __COMPILER_CODEPAGE_TEST_2 == 63739
 	#define __COMPILER_CODEPAGE (1253)
 	#endinput
 #endif
 
-#if __COMPILER_CODEPAGE_TEST_1 == 63736
+#if __COMPILER_CODEPAGE_TEST_2 == 63736
 	#define __COMPILER_CODEPAGE (950)
 	#endinput
 #endif
 
-#if __COMPILER_CODEPAGE_TEST_1 == 63735
+#if __COMPILER_CODEPAGE_TEST_2 == 63735
 	#define __COMPILER_CODEPAGE (949)
 	#endinput
 #endif
 
-#if __COMPILER_CODEPAGE_TEST_1 == 63733
+#if __COMPILER_CODEPAGE_TEST_2 == 63733
 	#define __COMPILER_CODEPAGE (936)
 	#endinput
 #endif
 
-#if __COMPILER_CODEPAGE_TEST_1 == 63731
+#if __COMPILER_CODEPAGE_TEST_2 == 63731
 	#define __COMPILER_CODEPAGE (932)
 	#endinput
 #endif
 
-#if __COMPILER_CODEPAGE_TEST_1 == 160
-	const __COMPILER_CODEPAGE_TEST_2 = '˜'; // '\152'
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   This differentiates between codepages who all translate <c>'\255'</c> to
+ *   unicode character <c>'\u160'</c> (of which there are a surprising amount).
+ * </remarks>
+ */
+#if __COMPILER_CODEPAGE_TEST_2 == 160
+	const __COMPILER_CODEPAGE_TEST_3 = '˜'; // '\152'
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 9488
+	#if __COMPILER_CODEPAGE_TEST_3 == 9488
 		#define __COMPILER_CODEPAGE (708)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 1569
+	#if __COMPILER_CODEPAGE_TEST_3 == 1569
 		#define __COMPILER_CODEPAGE (720)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 945
+	#if __COMPILER_CODEPAGE_TEST_3 == 945
 		#define __COMPILER_CODEPAGE (737)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 1118
+	#if __COMPILER_CODEPAGE_TEST_3 == 1118
 		#define __COMPILER_CODEPAGE (855)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 204
+	#if __COMPILER_CODEPAGE_TEST_3 == 204
 		#define __COMPILER_CODEPAGE (860)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 253
+	#if __COMPILER_CODEPAGE_TEST_3 == 253
 		#define __COMPILER_CODEPAGE (861)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 1512
+	#if __COMPILER_CODEPAGE_TEST_3 == 1512
 		#define __COMPILER_CODEPAGE (862)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 164
+	#if __COMPILER_CODEPAGE_TEST_3 == 164
 		#define __COMPILER_CODEPAGE (863)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 187
+	#if __COMPILER_CODEPAGE_TEST_3 == 187
 		#define __COMPILER_CODEPAGE (864)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 1064
+	#if __COMPILER_CODEPAGE_TEST_3 == 1064
 		#define __COMPILER_CODEPAGE (866)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 911
+	#if __COMPILER_CODEPAGE_TEST_3 == 911
 		#define __COMPILER_CODEPAGE (869)
 		#endinput
 	#endif
+#else
+	const __COMPILER_CODEPAGE_TEST_3 = 0;
+#endif
 
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   This differentiates between codepages who all translate <c>'\255'</c> to
+ *   unicode character <c>'\u160'</c> (of which there are a surprising amount),
+ *   but which didn't match any of the previous tests.
+ * </remarks>
+ */
+#if __COMPILER_CODEPAGE_TEST_2 == 160
 	const __COMPILER_CODEPAGE_TEST_4 = 'Ð'; // '\208'
 
 	#if __COMPILER_CODEPAGE_TEST_4 == 261
@@ -192,7 +241,19 @@ const __COMPILER_CODEPAGE_TEST_1 = 'ÿ'; // '\255'
 		#define __COMPILER_CODEPAGE (865)
 		#endinput
 	#endif
+#else
+	const __COMPILER_CODEPAGE_TEST_4 = 0;
+#endif
 
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   This differentiates between codepages who all translate <c>'\255'</c> to
+ *   unicode character <c>'\u160'</c> (of which there are a surprising amount),
+ *   but which didn't match any of the previous tests.
+ * </remarks>
+ */
+#if __COMPILER_CODEPAGE_TEST_2 == 160
 	const __COMPILER_CODEPAGE_TEST_5 = 'Ï'; // '\207'
 
 	#if __COMPILER_CODEPAGE_TEST_5 == 8364
@@ -204,25 +265,40 @@ const __COMPILER_CODEPAGE_TEST_1 = 'ÿ'; // '\255'
 		#define __COMPILER_CODEPAGE (855)
 		#endinput
 	#endif
+#else
+	const __COMPILER_CODEPAGE_TEST_5 = 0;
+#endif
 
+#if __COMPILER_CODEPAGE_TEST_2 == 160
 	// Unknown.
 	#define __COMPILER_CODEPAGE (-1)
 	#endinput
 #endif
 
-#if __COMPILER_CODEPAGE_TEST_1 == 729
-	const __COMPILER_CODEPAGE_TEST_2 = 'þ'; // '\254'
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   This differentiates between codepages who all translate <c>'\255'</c> to
+ *   unicode character <c>'\u729'</c>.
+ * </remarks>
+ */
+#if __COMPILER_CODEPAGE_TEST_2 == 729
+	const __COMPILER_CODEPAGE_TEST_6 = 'þ'; // '\254'
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 355
+	#if __COMPILER_CODEPAGE_TEST_6 == 355
 		#define __COMPILER_CODEPAGE (1250)
 		#endinput
 	#endif
 
-	#if __COMPILER_CODEPAGE_TEST_2 == 382
+	#if __COMPILER_CODEPAGE_TEST_6 == 382
 		#define __COMPILER_CODEPAGE (1257)
 		#endinput
 	#endif
+#else
+	const __COMPILER_CODEPAGE_TEST_6 = 0;
+#endif
 
+#if __COMPILER_CODEPAGE_TEST_2 == 729
 	// Unknown.
 	#define __COMPILER_CODEPAGE (-1)
 	#endinput
@@ -230,22 +306,50 @@ const __COMPILER_CODEPAGE_TEST_1 = 'ÿ'; // '\255'
 
 // Byte `\xFF;` (`\255`) is not translated.  Try some others.
 
-const __COMPILER_CODEPAGE_TEST_3 = '€'; // '\128'
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   This differentiates between codepages that don't translate <c>'\255'</c> to
+ *   anything (i.e. it remains the same).
+ * </remarks>
+ */
+const __COMPILER_CODEPAGE_TEST_7 = '€'; // '\128'
 
-#if __COMPILER_CODEPAGE_TEST_3 == 8364
-	const __COMPILER_CODEPAGE_TEST_4 = 'Ž'; // '\142'
-	const __COMPILER_CODEPAGE_TEST_5 = 'Ð'; // '\208'
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Check <c>'\128' == '\u8364' && '\142' == '\u381'</c>.
+ * </remarks>
+ */
+#if __COMPILER_CODEPAGE_TEST_7 == 8364
+	const __COMPILER_CODEPAGE_TEST_8 = 'Ž'; // '\142'
 
-	#if __COMPILER_CODEPAGE_TEST_4 == 381
+	#if __COMPILER_CODEPAGE_TEST_8 == 381
 		#define __COMPILER_CODEPAGE (1252)
 		#endinput
 	#endif
+#else
+	const __COMPILER_CODEPAGE_TEST_8 = 0;
+#endif
 
-	#if __COMPILER_CODEPAGE_TEST_5 == 286
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Check <c>'\128' == '\u8364' && '\208' == '\u286'</c>.
+ * </remarks>
+ */
+#if __COMPILER_CODEPAGE_TEST_7 == 8364
+	const __COMPILER_CODEPAGE_TEST_9 = 'Ð'; // '\208'
+
+	#if __COMPILER_CODEPAGE_TEST_9 == 286
 		#define __COMPILER_CODEPAGE (1254)
 		#endinput
 	#endif
+#else
+	const __COMPILER_CODEPAGE_TEST_9 = 0;
+#endif
 
+#if __COMPILER_CODEPAGE_TEST_7 == 8364
 	// Unknown.
 	#define __COMPILER_CODEPAGE (-1)
 	#endinput
