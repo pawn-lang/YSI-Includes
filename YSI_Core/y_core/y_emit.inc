@@ -324,6 +324,7 @@ const __minus1 = -1;
 #elseif cellbits == 16
 	const __cell_shift = 1;
 #else
+	const __cell_shift = -1;
 	#error Invalid cellbits
 #endif
 
