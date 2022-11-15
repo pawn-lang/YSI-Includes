@@ -260,6 +260,13 @@ static
 	forward OnGameModeExit();
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  <c>true</c> if the JIT plugin exists.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:Server_JITExists()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING) != E_SCRIPTINIT_STATE_NONE;

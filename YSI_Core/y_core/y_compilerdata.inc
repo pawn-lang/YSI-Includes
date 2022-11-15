@@ -81,7 +81,13 @@ Optional plugins:
 #pragma tabsize 4
 #define tabsize%00%0\10;%0 _DUMMY_do_not_use_tabsize_0
 
-// For consistency.
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   The debug level, but with a more consistent name for compiler-defined
+ *   constants.
+ * </remarks>
+ */
 const __debug = debug;
 
 // Enable `P:D(func())` for forcing function-like macros in to documentation.
@@ -123,8 +129,16 @@ const __debug = debug;
 	#error YSI assumes `charbits` is 8.
 #endif
 
-// Should be an inbuilt constant!
-#if !defined cellbytes
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   The number of bytes in a cell.  There is the number of bits as a constant
+ *   built-in, but no the number of bytes.
+ * </remarks>
+ */
+#if defined cellbytes
+	static stock YSI_cellbytes__ = 0;
+#else
 	const cellbytes = cellbits / charbits;
 #endif
 
@@ -172,26 +186,59 @@ const __debug = debug;
 #define __COMPILER_SECOND_PASS __COMPILER_2ND_PASS
 #define __COMPILER_THIRD_PASS __COMPILER_3RD_PASS
 
-/*-------------------------------------------------------------------------*//*+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_compilerdata</library>
  * <remarks>
- *  Exist purely to be detected before they are used.  If that check succeedes,
- *  the compiler is on its second or third pass and already has a list of all
- *  functions.
+ *   Exist purely to be detected before they are used.  If that check succeedes,
+ *   the compiler is on its second or third pass and already has a list of all
+ *   functions.
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
 #if __COMPILER_FIRST_PASS
 	static stock __CompilerFirstPass() {}
+#else
+	static stock __CompilerFirstPass__() {}
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Exist purely to be detected before they are used.  If that check succeedes,
+ *   the compiler is on its second or third pass and already has a list of all
+ *   functions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if __COMPILER_SECOND_PASS
 	static stock __CompilerSecondPass() {}
+#else
+	static stock __CompilerSecondPass__() {}
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Exist purely to be detected before they are used.  If that check succeedes,
+ *   the compiler is on its second or third pass and already has a list of all
+ *   functions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if __COMPILER_THIRD_PASS
 	static stock __CompilerThirdPass() {}
+#else
+	static stock __CompilerThirdPass__() {}
 #endif
 
-// Determine if strings are packed by default or not.
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Determines if strings are packed by default or not.  Simply a string with a
+ *   single character in, whose size is tested straight after.  If packing is
+ *   on, then the string will only be one cell big.  If it isn't, two.
+ * </remarks>
+ */
 static stock const __COMPILER_PACKED_TEST[] = " ";
 
 #if sizeof (__COMPILER_PACKED_TEST) == 1
