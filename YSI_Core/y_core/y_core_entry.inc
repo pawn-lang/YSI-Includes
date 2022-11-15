@@ -299,6 +299,12 @@ stock const YSIM_VERMAX[] = "X";
 #include "y_shortfunc"
 #include "..\..\YSI_Players\y_android\y_android_entry"
 
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *   Thank you for using YSI!
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 forward Y_Less_says_ta_for_using_YSI();
 
 public Y_Less_says_ta_for_using_YSI()
@@ -356,7 +362,13 @@ public Y_Less_says_ta_for_using_YSI()
 #include "../y_utils/y_utils_similarity"
 #include "../y_utils/y_utils_textwrap"
 
-// Part of "y_scriptinit", but requires "y_amx".
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   Calls all the <c>@init(init_code)</c> functions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 ScriptInit_CodeInitFuncs_()
 {
 	new
@@ -373,6 +385,13 @@ ScriptInit_CodeInitFuncs_()
 		#emit SCTRL      __cip
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   Calls all the <c>@init(init_main)</c> functions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 ScriptInit_MainInitFuncs_()
 {
@@ -391,6 +410,13 @@ ScriptInit_MainInitFuncs_()
 	}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   Calls all the <c>@init(init_script)</c> functions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 ScriptInit_PreInitFuncs_()
 {
 	new
@@ -407,6 +433,13 @@ ScriptInit_PreInitFuncs_()
 		#emit SCTRL      __cip
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   Calls all the <c>@init(init_mode)</c> functions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 ScriptInit_PostInitFuncs_()
 {
@@ -425,6 +458,13 @@ ScriptInit_PostInitFuncs_()
 	}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   Calls all the <c>@exit(exit_mode)</c> functions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 ScriptInit_PreExitFuncs_()
 {
 	new
@@ -441,6 +481,13 @@ ScriptInit_PreExitFuncs_()
 		#emit SCTRL      __cip
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   Calls all the <c>@exit(exit_script)</c> functions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 ScriptInit_PostExitFuncs_()
 {
@@ -463,6 +510,41 @@ ScriptInit_PostExitFuncs_()
 	#pragma warning push
 	#pragma warning disable 238
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_code</library>
+ * <param name="var">The variable to modify.</param>
+ * <param name="val">The new value.</param>
+ * <returns>
+ *   The old value of the variable.
+ * </returns>
+ * <remarks>
+ *   Bypasses the compiler to modify a <c>const</c>.  This should obviously not
+ *   be done without extreme care.  The general rule is only use this if the
+ *   change is promptly undone, so the changes are not externally visible from a
+ *   function.  For example when adding a null terminator to a constant string
+ *   to display it, then restoring it before ending:
+ *
+ *   <code>
+ *     PrintSome(const string[], n)                 <br />
+ *     {                                            <br /><indent />
+ *         new ch = _YSI_ConstMod(string[n], '\0'); <br /><indent />
+ *         print(string);                           <br /><indent />
+ *         _YSI_ConstMod(string[n], ch);            <br />
+ *     }
+ *   </code>
+ *
+ *   That will add a null terminator, use the shorter string, then (most
+ *   importantly) restore the old value of the string before the function ends.
+ *   From the perspective of anyone calling this example function the string is
+ *   the same after the call as it was before the call, hence the guarantees
+ *   offered by <c>const</c> are maintained, even if there's some internal
+ *   trickery going on.
+ *   <p />
+ *   It is also used to set <c>final</c> values, which aren't restored to their
+ *   old value, they are set once and never changed again.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock _YSI_ConstMod(const &var, const val)
 {
@@ -499,15 +581,18 @@ stock _YSI_ConstMod(const &var, const val)
 	#include "..\..\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude_entry"
 #endif
 
-//
-// I tried so many ways to fully break `SCM` for all cases:
-//
-//     `#define` to give a redefinition warning.
-//     Using a function to stop `#undef`.
-//     Mixing compiler passes to make it both function and macro together.
-//
-// Couldn't get it to work in all cases.  There's always a way around it.
-//
+/*-------------------------------------------------------------------------*//**
+ * <library>y_code</library>
+ * <remarks>
+ *   I tried so many ways to fully break `SCM` for all cases:
+ *   <ul>
+ *     <li><c>#define</c> to give a redefinition warning.</li>
+ *     <li>Using a function to stop <c>#undef</c>.</li>
+ *     <li>Mixing compiler passes to make it both function and macro together.</li>
+ *   </ul>
+ *   Couldn't get it to work in all cases.  There's always a way around it.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 #pragma deprecated It's just unreadable rubbish.
 stock DONT_USE_SCM(a, b, const c[])
 {
