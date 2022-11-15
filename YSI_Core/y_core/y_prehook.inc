@@ -98,6 +98,14 @@ Optional plugins:
 
 #define CHAIN_NEXT(%0) @CO_%0
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_prehook</library>
+ * <remarks>
+ *   Define all the states used by ALS prehooks.  Several of them only exist to
+ *   ensure that <c>&lt;&gt;</c> works.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock _PreHook_IncludeStates() <_ALS : _ALS_x0, _ALS : _ALS_x1, _ALS : _ALS_x2, _ALS : _ALS_x3>
 {
 }

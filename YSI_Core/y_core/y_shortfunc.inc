@@ -128,17 +128,38 @@ Optional plugins:
 // 
 
 static stock
+	/**
+	 * <library>y_shortfunc</library>
+	 */
 	YSI_g_sPropVarArg[3] = __COMPILER_UNPACK YSIM_VARARG,
+	/**
+	 * <library>y_shortfunc</library>
+	 */
 	YSI_g_sCallData = 0;
 
 static stock const
+	/**
+	 * <library>y_shortfunc</library>
+	 */
 	YSI_g_sPropCaller[] = YSIM_CALLER,
+	/**
+	 * <library>y_shortfunc</library>
+	 */
 	YSI_g_sPropReturn[] = YSIM_RETURN,
+	/**
+	 * <library>y_shortfunc</library>
+	 */
 	YSI_g_sPropEmpty[] = "",
+	/**
+	 * <library>y_shortfunc</library>
+	 */
 	YSI_g_sYSIM_STRING = YSIM_STRING,
+	/**
+	 * <library>y_shortfunc</library>
+	 */
 	YSI_g_sYSI_MAX_STRING = YSI_MAX_STRING;
 
-/**
+/*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <returns>
  *  A number, the result of a named function call.
@@ -150,7 +171,8 @@ static stock const
  *  properties (<c>"V" + idx</c> in group 8).  Can also call in the current
  *  script instead of a remote script.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	Debug_Print5("K@ called: %s, %s", function, fmat);
@@ -306,7 +328,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	return Q@;
 }
 
-/**
+/*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <returns>
  *  A string, the result of a named function call.
@@ -319,7 +341,8 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
  *  script instead of a remote script.  Also uses properties to enable returning
  *  remote strings.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	Debug_Print5("D@ called: %s, %s", function, fmat);
@@ -425,13 +448,14 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 #define @@%0\32; @@
 #define _@%0\32; _@
 
-/**
+/*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
  *  A precursor to <c>D@</c> and <c>E@</c> that does some stack and heap
  *  manipulation before they are called.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 stock F@(calltype = 1, master = -1, heapptr = 0)
 {
 	Debug_Print5("F@ called: %d, %d, %d", calltype, master, heapptr);
@@ -454,7 +478,7 @@ stock F@(calltype = 1, master = -1, heapptr = 0)
 	return 0;
 }
 
-/**
+/*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
  *  Used in remote function wrappers to put reference parameter retusn in to the
@@ -462,7 +486,8 @@ stock F@(calltype = 1, master = -1, heapptr = 0)
  *  Also put the true return number in to a property, because remote call order
  *  can't be relied on.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 stock L@(GLOBAL_TAG_TYPES:ret, GLOBAL_TAG_TYPES:...)
 {
 	Debug_Print5("L@ called: %d", ret);
@@ -477,7 +502,7 @@ stock L@(GLOBAL_TAG_TYPES:ret, GLOBAL_TAG_TYPES:...)
 	return 1;
 }
 
-/**
+/*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
  *  Used in remote function wrappers to put reference parameter retusn in to the
@@ -485,7 +510,8 @@ stock L@(GLOBAL_TAG_TYPES:ret, GLOBAL_TAG_TYPES:...)
  *  Also put the true return string in to a property, because remote call order
  *  can't be relied on, and can't return strings even if it could.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 {
 	Debug_Print5("T@ called: %s", ret);
@@ -500,13 +526,14 @@ stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 	return 1;
 }
 
-/**
+/*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
  *  Put the true remote call return number in to a property, because remote call
  *  order can't be relied on.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 stock X@(GLOBAL_TAG_TYPES:n)
 {
 	// THIS MUST REMAIN FOREVER!  Detected by fixes.inc.
@@ -514,14 +541,15 @@ stock X@(GLOBAL_TAG_TYPES:n)
 	setproperty(8, YSI_g_sPropReturn, n);
 }
 
-/**
+/*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
  *  Just a dead-end for spare parameters.  Implementation of
  *  <c>__pragma("unused", x);</c>, which disables the warning for a unused
  *  variable, by using it!
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 stock H@(GLOBAL_TAG_TYPES:...)
 {
 	return 0;
@@ -538,14 +566,15 @@ stock H@(GLOBAL_TAG_TYPES:...)
 // Correctly stringise "On" callbacks without ALS interferring.
 #define B@:#On%0) "On"#%0)
 
-/**
+/*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
  *  Just a dead-end for spare parameters.  Implementation of
  *  <c>__pragma("unused", x);</c>, which disables the warning for a unused
  *  variable, by using it!  Returns a string, in case that's useful in macros.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 stock G@(GLOBAL_TAG_TYPES:...)
 {
 	// Just a dead-end for spare parameters which returns a string.

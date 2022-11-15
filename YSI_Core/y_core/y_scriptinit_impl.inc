@@ -168,19 +168,38 @@ CHAIN_HOOK(ScriptInit)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(ScriptInit)
 
+/**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *  <c>true</c> if the current script is running as a gamemode.
+ * </remarks>
+ */
+#if _YSI_SAFE_STARTUP
+	stock
+		bool:YSI_GAMEMODE = false;
+#else
+	static stock
+		bool:YSI_GAMEMODE__ = false;
+#endif
+
+/**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *  <c>true</c> if the current script is running as a filterscript.
+ * </remarks>
+ */
 stock
-	#if _YSI_SAFE_STARTUP
-		bool:YSI_GAMEMODE = false,
-	#endif
-		/**
-		 * <library>y_serverdata</library>
-		 * <remarks>
-		 *  <c>true</c> if the current script is running as a filterscript.
-		 * </remarks>
-		 */
-		bool:YSI_FILTERSCRIPT = false;
+	bool:YSI_FILTERSCRIPT = false;
 
 /// <p/>
+
+/**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   Where in initialisation the script currently is.  Handles multiple ways of
+ *   starting the script, including cache loads and JIT.
+ * </remarks>
+ */
 
 enum E_SCRIPTINIT_STATE (<<= 1)
 {
@@ -192,6 +211,8 @@ enum E_SCRIPTINIT_STATE (<<= 1)
 	E_SCRIPTINIT_STATE_RELOAD,
 	E_SCRIPTINIT_STATE_DUMPED,
 }
+
+static stock E_SCRIPTINIT_STATE:_@E_SCRIPTINIT_STATE() { return E_SCRIPTINIT_STATE; }
 
 /**
  * <library>y_scriptinit</library>
@@ -1307,6 +1328,15 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 	forward OnJITCompile();
 #endif
 
+/**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   Called when the JIT plugin starts.  Used to determine that the plugin
+ *   exists (and remember that fact for later), and to compile YSI (and other)
+ *   code before JIT compilation.  Thus calls <c>OnCodeInit</c>.
+ * </remarks>
+ */
+
 public OnJITCompile()
 {
 	state _ALS : _ALS_go;
@@ -1403,6 +1433,15 @@ public OnJITCompile()
 #define @init(%2)%0(%1) u@(u[_:Iy_@:y_I@%2:u@$@yI_%0(%1);@yI_%0(%1)
 #define @exit(%2)%0(%1) u@(u[_:Iy_@:yI_@%2:u@$@Iy_%0(%1);@Iy_%0(%1)
 
+/// <p/>
+
+/**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   When to call an <c>@init()</c> function.
+ * </remarks>
+ */
+
 enum init_order
 {
 	init_code,   // OnCodeInit
@@ -1411,11 +1450,24 @@ enum init_order
 	init_main    // main
 }
 
+static stock init_order:_@init_order() { return init_order; }
+
+/// <p/>
+
+/**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   When to call an <c>@exit()</c> function.
+ * </remarks>
+ */
+
 enum exit_order
 {
 	exit_mode,   // OnGameModeExit/OnFilterScriptExit
 	exit_script  // OnScriptExit
 }
+
+static stock exit_order:_@exit_order() { return exit_order; }
 
 // Strip all spaces within the parameters first.
 #define Iy_@:%0\32;%1$ Iy_@:%0%1$
@@ -1493,8 +1545,12 @@ enum exit_order
 //#endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
  * <transition keep="true" target="_script_init_fix_state : true"/>
  * <transition keep="true" target="_ALS : _ALS_go"/>
+ * <remarks>
+ *   Call <c>OnScriptInit</c> in filterscripts.
+ * </remarks>
  *//*------------------------------------------------------------------------**/
 
 #if _YSI_SAFE_STARTUP || defined FILTERSCRIPT
@@ -1559,6 +1615,10 @@ enum exit_order
 				CallLocalFunction("OnScriptInit@C", YSI_EMPTY);
 			}
 			return 1;
+	}
+#else
+	static stock ScriptInit_OnFilterScriptInit__()
+	{
 	}
 #endif
 
@@ -1642,8 +1702,12 @@ ScriptInit_Purge_retry:
 }
 
 /*-------------------------------------------------------------------------*//**
- * <transition keep="true" target="_script_init_fix_state : false"/>
+ * <library>y_scriptinit</library>
+ * <transition keep="true" target="_script_init_fix_state : true"/>
  * <transition keep="true" target="_ALS : _ALS_go"/>
+ * <remarks>
+ *   Call <c>OnScriptInit</c> in gamemodes.
+ * </remarks>
  *//*------------------------------------------------------------------------**/
 
 #if _YSI_SAFE_STARTUP || !defined FILTERSCRIPT
@@ -1732,6 +1796,10 @@ ScriptInit_Purge_retry:
 			}
 			return 1;
 	}
+#else
+	static stock ScriptInit_OnGameModeInit__()
+	{
+	}
 #endif
 
 /*
@@ -1746,6 +1814,15 @@ ScriptInit_Purge_retry:
     88888888888 8P'     `Y8 88   "Y888  
 
 */
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <transition keep="true" target="_script_init_fix_state : true"/>
+ * <transition keep="true" target="_ALS : _ALS_go"/>
+ * <remarks>
+ *   Call <c>OnScriptExit</c> in filterscripts.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if _YSI_SAFE_STARTUP || defined FILTERSCRIPT
 	public OnFilterScriptExit()
@@ -1762,7 +1839,20 @@ ScriptInit_Purge_retry:
 		}
 		return 1;
 	}
+#else
+	static stock ScriptInit_OnFilterScriptExit__()
+	{
+	}
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <transition keep="true" target="_script_init_fix_state : true"/>
+ * <transition keep="true" target="_ALS : _ALS_go"/>
+ * <remarks>
+ *   Call <c>OnScriptExit</c> in gamemodes.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if _YSI_SAFE_STARTUP || !defined FILTERSCRIPT
 	public OnGameModeExit()
@@ -1778,6 +1868,10 @@ ScriptInit_Purge_retry:
 			ScriptInit_OnYSIExit();
 		}
 		return 1;
+	}
+#else
+	static stock ScriptInit_OnGameModeExit__()
+	{
 	}
 #endif
 
@@ -1913,15 +2007,23 @@ CHAIN_FORWARD:ScriptInit_OnYSIExit() = 1;
 
 */
 
-// I'm not quite sure what causes it, but there seems to be a bug in the
-// compiler somewhere which messes up the "ysi_debug" automaton and the
-// "YSI_FILTERSCRIPT" variable :(.
-//
-// I eventually figured this one out:
-//
-//     https://github.com/pawn-lang/compiler/issues/666
-//
-// So this fix is probably no longer needed.
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <transition keep="true" target="_script_init_fix_state : true"/>
+ * <transition keep="true" target="_ALS : _ALS_go"/>
+ * <remarks>
+ *   I'm not quite sure what causes it, but there seems to be a bug in the
+ *   compiler somewhere which messes up the <c>ysi_debug</c> automaton and the
+ *   <c>YSI_FILTERSCRIPT</c> variable :(.
+ *   <p />
+ *   I eventually figured this one out:
+ *   <p />
+ *       https://github.com/pawn-lang/compiler/issues/666
+ *   <p />
+ *   So this fix is probably no longer needed.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 public _ScriptInit_FixState() <_script_init_fix_state : true>
 {
 }
@@ -1936,9 +2038,9 @@ public _ScriptInit_FixState() <_script_init_fix_state : false>
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
- * <remarks>
- *  
- * </remarks>
+ * <returns>
+ *  <c>true</c> if this script is running on an open.mp server currently.
+ * </returns>
  *//*------------------------------------------------------------------------**/
 
 stock bool:Server_IsOpenMP()
@@ -1954,6 +2056,13 @@ stock bool:Server_IsOpenMP()
 	return false;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  <c>true</c> if this script is running on a SA:MP server currently.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:Server_IsSAMP()
 {
 	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
@@ -1966,11 +2075,27 @@ stock bool:Server_IsSAMP()
 	return false;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <param name="usTime">The time in microseconds.</param>
+ * <remarks>
+ *  Set the time that crashdetect will use when detecting slow functions.
+ *  Anything executing for longer than this time will trigger a warning.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Server_SetLongCallTime(usTime)
 {
 	#emit LOAD.S.pri    usTime
 	#emit SCTRL         0xFE
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *  Disable the detection of slow functions, if crashdetect exists.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Server_DisableLongCall()
 {
@@ -1978,11 +2103,25 @@ stock Server_DisableLongCall()
 	#emit SCTRL         0xFF
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *  Enable the detection of slow functions, if crashdetect exists.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Server_EnableLongCall()
 {
 	#emit CONST.pri     34
 	#emit SCTRL         0xFF
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *  Set the slow code threshold back to the default value.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Server_ResetLongCallTime()
 {
@@ -1990,11 +2129,30 @@ stock Server_ResetLongCallTime()
 	#emit SCTRL         0xFF
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *  Restart the current function's long call timer, if crashdetect exists.  So
+ *  the detection of slow code will only account for execution time after this
+ *  point.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Server_RestartLongCall()
 {
 	#emit CONST.pri     40
 	#emit SCTRL         0xFF
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  <c>true</c> if long call (slow code) detection is active.
+ * </returns>
+ * <remarks>
+ *  Check if the crashdetect plugin exists, and long call detection is enabled.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Server_IsLongCallEnabled()
 {
@@ -2007,6 +2165,14 @@ stock bool:Server_IsLongCallEnabled()
 	return false;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  The current setting (in microseconds) for the slow code warning threshold.
+ *  Or <c>0</c> if there is none.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock Server_GetLongCallTime()
 {
 	#emit ZERO.pri
@@ -2015,17 +2181,40 @@ stock Server_GetLongCallTime()
 	return 0;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *  Disable crashdetect's ability to detect possibly unintended writes to
+ *  address naught.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Server_DisableDetectAddr0()
 {
 	#emit CONST.pri     64
 	#emit SCTRL         0xFF
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *  Enable crashdetect's ability to detect possibly unintended writes to address
+ *  naught.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Server_EnableDetectAddr0()
 {
 	#emit CONST.pri     192
 	#emit SCTRL         0xFF
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  <c>true</c> if crashdetect will warn for writes to address naught.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Server_IsDetectAddr0Enabled()
 {
@@ -2039,6 +2228,13 @@ stock bool:Server_IsDetectAddr0Enabled()
 	return false;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *  <c>true</c> if crashdetect is able to warn for writes to address naught.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:Server_HasDetectAddr0()
 {
 	// Is the check possible?
@@ -2050,6 +2246,13 @@ stock bool:Server_HasDetectAddr0()
 	#emit RETN
 	return false;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *  <c>true</c> if crashdetect exists.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Server_CrashDetectExists()
 {
@@ -2070,6 +2273,14 @@ stock bool:Server_CrashDetectExists()
 	#emit RETN
 	return false;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <param name="reason">The halt type.</param>
+ * <remarks>
+ *  Halt the server, or at least the current public, instantly.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock void:Server_Abort(reason)
 {

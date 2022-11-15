@@ -250,6 +250,13 @@ Optional plugins:
 
 #define PP_MRET(%0)(%1)(%3) PP_MRET(){%0(%1);}DO%3E_%0(){}
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_scriptinit</library>
+ * <remarks>
+ *   Call <c>@init(init_main)</c> functions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 main()
 {
 	ScriptInit_MainInitFuncs_();

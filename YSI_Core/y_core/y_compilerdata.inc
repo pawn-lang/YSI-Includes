@@ -332,6 +332,19 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 	#define __COMPILER_OFFICIAL (1)
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   This is a variable with the value <c>1</c>, and there is a macro of the
+ *   same name with the value <c>0</c>.  The macro also looks for a semi-colon
+ *   to match; however, if semi-colons are optional an end of line will also
+ *   match a semi-colon in a macro.  We then use this name in a test that does
+ *   NOT end with a semi-colon.  If <c>-;-</c> is active the macro will take
+ *   precedence and produce <c>0</c>.  If <c>-;+</c> is active the macro will
+ *   not match, and so the variable will be used instead.  Thus in this way we
+ *   can detect the flag.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 const __COMPILER_DETERMINE_SEMICOLON = 1;
 #define __COMPILER_DETERMINE_SEMICOLON%0; 0%0
 
@@ -376,12 +389,35 @@ const __COMPILER_DETERMINE_SEMICOLON = 1;
 #define Debug_PrintD_OPEN (
 #define Debug_PrintD_CLOSE )
 
+/// <p/>
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   One version of the compiler changed the definition of <c>sizeof</c> on enum
+ *   elements to return their apparent "array" size, not their true size of
+ *   <c>1</c>.  The change was to match people's misunderstanding of the syntax,
+ *   rather than the correct interpretation of what enums are.  This is an enum
+ *   with a multi-cell increment within it used to detect which enum sizeof
+ *   method is in use.
+ * </remarks>
+ */
+
 enum __E_COMPILER_ENUM
 {
 	__E_COMPILER_ENUM_ENTRY[3],
 	__E_COMPILER_ENUM_AFTER
 }
 
+static stock __E_COMPILER_ENUM:_@__E_COMPILER_ENUM() { return __E_COMPILER_ENUM; }
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Declares a variable with the enum sizeof determination enum, so that the
+ *   size of one of its elements can be taken later.
+ * </remarks>
+ */
 static stock const
 	__YSI_gsCompilerEnum[__E_COMPILER_ENUM];
 
@@ -417,6 +453,16 @@ static stock const
 	#endif
 #endif
 
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   The <c>default()</c> feature allows declaring a variable with the initial
+ *   value determined by the tag of the variable.  This is done by assigning to
+ *   the variable from another variable (this variable) with a special internal
+ *   tag, and using assignment operator overloads to look up the correct
+ *   initial value for the target tag.
+ * </remarks>
+ */
 const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
 #if YSI_KEYWORD(default)
@@ -430,410 +476,40 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #define DEFAULT__ __COMPILER_DEFAULT
 
 #if !__COMPILER_PRAGMA
-	#define __pragma("%0"%1) __pragma_%0(%1)
-
-	// The only two `__pragma`s we can fake.
-	#define __pragma_naked(); {return 0;} //__COMPILER_DEFAULT
-	#define __pragma_unused(,%0) H@(%0)
-
-	// Unimplemented errors.
-	forward __pragma_option();
-	#define __pragma_option(,%0) __pragma_option(%0)
-
-	forward __pragma_align();
-	#define __pragma_align(,%0) __pragma_align(%0)
-
-	forward __pragma_amxlimit(limit);
-	#define __pragma_amxlimit(,%0) __pragma_amxlimit(%0)
-
-	forward __pragma_amxram(ram);
-	#define __pragma_amxram(,%0) __pragma_amxram(%0)
-
-	forward __pragma_codepage(const string:codepage[]);
-	#define __pragma_codepage(,%0) __pragma_codepage(#%0)
-
-	forward __pragma_compress(bool:compress);
-	#define __pragma_compress(,%0) __pragma_compress(!!%0)
-
-	forward __pragma_ctrlchar(character);
-	#define __pragma_ctrlchar(,%0) __pragma_ctrlchar(%0)
-
-	// The best warning I can give.
-	#define __pragma_deprecated(,%0); {new deprecated_%0=__deprecated(#%0);}
-
-	#pragma deprecated The parameter is deprecated.
-	stock __deprecated(const symbol[])
-	{
-		return 0;
-	}
-	#define deprecated_%0\32;%1= deprecated_%1=
-
-	forward __pragma_dynamic(ram);
-	#define __pragma_dynamic(,%0) __pragma_dynamic(%0)
-
-	forward __pragma_library(const string:library[]);
-	#define __pragma_library(,%0) __pragma_library(#%0)
-
-	forward __pragma_overlay(size);
-	#define __pragma_overlay(,%0) __pragma_overlay(%0)
-
-	forward __pragma_pack(bool:pack);
-	#define __pragma_pack(,%0) __pragma_pack(!!%0)
-
-	forward __pragma_rational(const string:tagname[], bits = -1);
-	#define __pragma_rational(,%0) __pragma_rational(_:__pragma_rational_:#%0)
-	#define __pragma_rational_:#%0(%1)) #%0,%1)
-
-	forward __pragma_semicolon(bool:use);
-	#define __pragma_semicolon(,%0) __pragma_semicolon(!!%0)
-
-	forward __pragma_tabsize(tabsize);
-	#define __pragma_tabsize(,%0) __pragma_tabsize(4)
-
-	// New compiler pragmas.
-	enum __PRAGMA_WARNING
-	{
-		__PRAGMA_WARNING_enable,
-		__PRAGMA_WARNING_disable,
-		__PRAGMA_WARNING_push,
-		__PRAGMA_WARNING_pop,
-	}
-
-	forward __pragma_warning(__PRAGMA_WARNING:type, warning = -1);
-	#define __pragma_warning(,%0) __pragma_warning(__PRAGMA_WARNING__%0)
-	#define __PRAGMA_WARNING__%0\32; __PRAGMA_WARNING__
-
-	// Ensure that only two of these are followed by arguments.
-	#define __PRAGMA_WARNING__disable __PRAGMA_WARNING_disable,
-	#define __PRAGMA_WARNING__enable __PRAGMA_WARNING_enable,
-	#define __PRAGMA_WARNING__push __PRAGMA_WARNING_push
-	#define __PRAGMA_WARNING__pop __PRAGMA_WARNING_pop
-	#define __PRAGMA_WARNING_disable,%0, __PRAGMA_WARNING_disable,
-	#define __PRAGMA_WARNING_enable,%0, __PRAGMA_WARNING_enable,
-
-	forward __pragma_compat(bool:compatibility);
-	#define __pragma_compat(,%0) __pragma_compat(!!%0)
+	#include "y_compilerdata___pragma"
 #endif
 
 // Blank function that does nothing except returns.
 #define __COMPILER_UNUSED(%0) __pragma("unused", %0)
 #define __COMPILER_NAKED() __pragma("naked")
 
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   The current optimisation level, spelt correctly.
+ * </remarks>
+ */
 #if defined __optimization
 	const __optimisation = __optimization;
+#else
+	static stock __optimization__ = 0;
 #endif
 
 #if __COMPILER_MODIFIED
-	#if defined YSI_TESTS
-		#pragma option -E-
-
-		#define Y_COMPILERDATA_WARNING 0
-		#include "y_compilerdata_warning"
-	#endif
-
-	#define __COMPILER_NESTED_ELLIPSIS (1)
-	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
-	#define __COMPILER_STRING_RETURN(%0) return (__compiler_one_string_parameter:(%0))
-	#define __COMPILER_BUGGED_STRING_RETURN (0)
-	#define __COMPILER_BUGGED_SYSREQ (0)
-	#define __COMPILER_WARNING_SUPPRESSION (1)
-	#define __COMPILER___EMIT (1)
-
-	stock YSI_gAMXAddress_;
-	
-	#if __COMPILER___EMIT_U
-		#define AMX_Read(%0) (_:(__emit(load.u.pri %0, stor.pri YSI_gAMXAddress_, lref.pri YSI_gAMXAddress_)))
-		#define AMX_Write(%0,%1) __emit(push.u %1, load.u.alt %0, stor.alt YSI_gAMXAddress_, pop.pri, sref.pri YSI_gAMXAddress_)
-		#define AMX_Ref(%0) (_:(__emit(addr.u.pri %0)))
-	#endif
-	
-	// Error with:
-	//
-	//   const Float:X[] = Float:"hello";
-	//
-	#define __COMPILER_CONST_TAGGED (0)
-	
-	// This MAY need to have the same code as the old compiler - generating variables that define
-	// the tags.  This is because `param = tagof (Float:)` doesn't seem to work.  I.e. you can't
-	// have a default argument of a tagof of a constant tag.
-	#define __COMPILER_TAG_DATA(%0,%1) stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
-	
-	// Disable the recursion warning in the Russian compiler (and the unknown
-	// pragma warning in other compilers temporarily).
-	#pragma warning push
-	#pragma warning disable 207
-	#pragma disablerecursion
-	#pragma warning pop
-	#pragma warning disable 238
-	
-	// Check for accepted symbol names that are too long, since some (forked)
-	// compiler versions increase the limit but a lot of YSI code is hard-coded
-	// to 32 (31 + NULL).
-	#pragma warning push
-	#pragma warning disable 200
-	
-	#if !defined __COMPILER_sNAMEMAX
-		// Define a symbol of 32 characters.
-		#define __COMPILER_SYMBOL_NAME_CHECK_1F
-		// Then check if the same symbol extended to 32 characters exists.  If
-		// it does, it is because the 32 character version was truncated to 31
-		// characters (for which we temporarily disabled the warning), so the
-		// 31 character version was found instead.  This means we know that the
-		// limit (`sNAMEMAX`) is 31 characters.
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_1F@
-			#define __COMPILER_sNAMEMAX (31)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_2F_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_2F_________padding@
-			#define __COMPILER_sNAMEMAX (47)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_3F_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_3F_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (63)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_4F_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_4F_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (79)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_5F_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_5F_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (95)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_6F_________padding_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_6F_________padding_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (111)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_7F_________padding_________padding_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_7F_________padding_________padding_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (127)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_8F_________padding_________padding_________padding_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_8F_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (143)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_9F_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_9F_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (159)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_AF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_AF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (175)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_BF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_BF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (191)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_CF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_CF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (207)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_DF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_DF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (223)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_EF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_EF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (239)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_FF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_FF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
-			#define __COMPILER_sNAMEMAX (255)
-		#endif
-	#endif
-	#if !defined __COMPILER_sNAMEMAX
-		#define Y_COMPILERDATA_WARNING 1
-		#include "y_compilerdata_warning"
-		#define __COMPILER_sNAMEMAX (31)
-	#endif
-	
-	#pragma warning pop
-	
-	#if __PawnBuild >= 10 && !defined __optimisation
-		// Requires __addressof.
-		forward __CompilerAddress1();
-		forward __CompilerAddress2(a, b);
-
-		public __CompilerAddress1()
-		{
-			__CompilerAddress2(1, 2);
-			// Function size in cells for various (-O, -d) combinations:
-			// 0, 0 = 13
-			// 0, 1 = 14
-			// 0, 2 = 15
-			// 1, 0 = 11
-			// 1, 1 = 12
-			// 1, 2 = 13
-			// 2, 0 = 10
-			// 2, 1 = 11
-			// 2, 2 = 12
-		}
-
-		public __CompilerAddress2(a, b)
-		{
-		}
-
-		const __CompilerAddress = __addressof(__CompilerAddress2) - __addressof(__CompilerAddress1);
-
-		#if __debug == 0
-			#if __CompilerAddress == 13 * cellbytes
-				const __optimisation = 0;
-			#elseif __CompilerAddress == 11 * cellbytes
-				const __optimisation = 1;
-			#elseif __CompilerAddress == 10 * cellbytes
-				const __optimisation = 2;
-			#else
-				#error Unknown optimisation level.
-			#endif
-		#elseif __debug == 1
-			#if __CompilerAddress == 14 * cellbytes
-				const __optimisation = 0;
-			#elseif __CompilerAddress == 12 * cellbytes
-				const __optimisation = 1;
-			#elseif __CompilerAddress == 11 * cellbytes
-				const __optimisation = 2;
-			#else
-				#error Unknown optimisation level.
-			#endif
-		#elseif __debug == 2
-			#if __CompilerAddress == 15 * cellbytes
-				const __optimisation = 0;
-			#elseif __CompilerAddress == 13 * cellbytes
-				const __optimisation = 1;
-			#elseif __CompilerAddress == 12 * cellbytes
-				const __optimisation = 2;
-			#else
-				#error Unknown optimisation level.
-			#endif
-		#else
-			// Optimisations are disabled with `-d3`.
-			const __optimisation = 0;
-		#endif
-	#endif
-	
-	// Disable the warning for `const &var`.
-	#define __COMPILER_CONST_REF (1)
+	#include "y_compilerdata_new"
 #else
-	#define __COMPILER_NESTED_ELLIPSIS (0)
-	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
-	#define __COMPILER_STRING_RETURN(%0) return (__CompilerStringReturn(%0), __compiler_one_string_parameter:(%0))
-	#define __CompilerStringReturn("%0"%1);return%8(%8:(%3)) return $
-	#define __COMPILER_BUGGED_STRING_RETURN (1)
-	#define __COMPILER_BUGGED_SYSREQ (1)
-	#define __COMPILER_WARNING_SUPPRESSION (0)
-	#define __COMPILER_CONST_REF (0)
-	#define __COMPILER_sNAMEMAX (31)
-	#define __COMPILER_CONST_TAGGED (0)
-	#define __COMPILER___EMIT (0)
-
-	// It is sufficient simply for a variable to exist anywhere with the tag.
-	#define __COMPILER_TAG_DATA(%0,%1) stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
-
-	// Fix `tagof (Float:)` and `tagof (Float:x)` on the old compiler, without
-	// breaking any default arguments in (I think) any case.  This was very
-	// tricky, as adding any tags to `arg = tagof (param)` breaks the compiler's
-	// semantics and always returns the same tag.  So we have to detect
-	// `tagof (Tag:)` without detecting `tagof (var), Tag:a`, which the old code
-	// broke on.  This is normally easy, but we also have to do it without
-	// adding any tags before `tagof` in the base case.  So we always match `:`,
-	// then revert if there's a bracket between the `tagof` and the `:`.
-	#if !defined TAGOF
-		#define __TAGOF__%0\32; __TAGOF__
-		#define tagof(%0:%1) __NO_TAGOF:__IS_TAGOF:tagof PP_LEFT_BRACKET<>%0:$%1)
-		#define __NO_TAGOF:__IS_TAGOF:tagof%9<>%0)%2:$%1) tagof%9<>%0)%2:%1)
-		#define __IS_TAGOF:tagof%9<>%0:$%1) tagof%9<>__TAGOF__%0)
-
-		stock bool:operator==(_:a, __NO_TAGOF:b)
-		{
-			return a == _:b;
-		}
-
-		stock bool:operator!=(_:a, __NO_TAGOF:b)
-		{
-			return a != _:b;
-		}
-
-		stock _:operator=(__NO_TAGOF:a)
-		{
-			return _:a;
-		}
-
-		stock __NO_TAGOF:operator=(_:a)
-		{
-			return __NO_TAGOF:a;
-		}
-	#endif
-
-	#include "y_funcinc"
-	
-	/*---------------------------------------------------------------------*//*+
-	 * <param name="str">String to return.</param>
-	 * <param name="size">Size of the string.</param>
-	 * <param name="dummy">Ignored parameter for raw string given sizes.</param>
-	 * <returns>
-	 *  string
-	 * </returns>
-	 * <remarks>
-	 *  The old compiler has a very annoying bug where returning a string from a
-	 *  function that takes variable parameters will not work correctly.  This
-	 *  is because string returns are done with a secret extra parameter but it
-	 *  is not correctly selected when the count is unknown or variable.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-	
-	stock __CompilerStringReturn(const str[], size = sizeof (str), dummy = 0)
-	{
-		#pragma unused dummy
-		#emit PUSH.S       size           // Push the first parameter.
-		#emit PUSH.S       str            // Push the second parameter.
-		#emit LOAD.S.alt   __frame_offset // Load the previous frame pointer.
-		#emit MOVE.pri                    // Copy the pointer.
-		#emit ADD.C        __args_offset  // Get the pointer to the parameter count.
-		#emit LOAD.I                      // Load the parameter count.
-		#emit ADD.C        __3_cells      // Adjust for the function header size.
-		#emit ADD                         // Get the pointer to after the parameters.
-		#emit LOAD.I                      // Load the pointer in the (secret) parameter.
-		#emit PUSH.pri                    // Push the destination.
-		#emit MOVE.alt                    // Make a copy of the pointer.
-		#emit ZERO.pri                    // `pri = 0`.
-		#emit STOR.I                      // Set the first cell of the target to NULL.
-		#emit PUSH.C       __3_cells      // Push the parameters for `StrCpy`.
-		#emit SYSREQ.C     strcat         // Call `strcat`.
-		#emit LOAD.S.pri   __frame_offset // Reload the previous frame pointer.
-		#emit SCTRL        __stk          // Wipe out the stack.
-		#emit SCTRL        __frm          // Wipe out the frame (go to parent context).
-		#emit RETN                        // Return (now within the parent context).
-		return 0;
-	}
+	#include "y_compilerdata_old"
 #endif
-#if !defined __optimisation
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   The current optimisation level, but we don't know it.
+ * </remarks>
+ */
+#if defined __optimisation
+	static stock __optimisation__ = -1;
+#else
 	// Unknown optimisation level.
 	const __optimisation = -1;
 #endif
@@ -861,50 +537,190 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #define __Time __time
 #define __Compat __compat
 #define __Emit __emit
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>cellbytes</c>.
+ * </remarks>
+ */
 const __CellBytes = cellbytes;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>cellbits</c>.
+ * </remarks>
+ */
 const __CellBits = cellbits;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>cellbits</c>.
+ * </remarks>
+ */
 const __CellBits = cellbits;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>charbits</c>.
+ * </remarks>
+ */
 const __CharBits = charbits;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>charmax</c>.
+ * </remarks>
+ */
 const __CharMax = charmax;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>ucharmax</c>.
+ * </remarks>
+ */
 const __UCharMax = ucharmax;
 
-// And the other way
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>cellbytes</c>.
+ * </remarks>
+ */
 const __cellbytes = cellbytes;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>cellbits</c>.
+ * </remarks>
+ */
 const __cellbits = cellbits;
-//const __cell_bytes = cellbytes;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>cellbits</c>.
+ * </remarks>
+ */
 const __cell_bits = cellbits;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>charbits</c>.
+ * </remarks>
+ */
 const __char_bits = charbits;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>charmax</c>.
+ * </remarks>
+ */
 const __char_max = charmax;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>ucharmax</c>.
+ * </remarks>
+ */
 const __uchar_max = ucharmax;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (compiler internal) spelling of <c>__Pawn</c>.
+ * </remarks>
+ */
 const __pawn = __Pawn;
 
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (YSI internal) spelling of <c>cellbytes</c>.
+ * </remarks>
+ */
 const __COMPILER_CELL_BYTES = cellbytes;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (YSI internal) spelling of <c>cellbits</c>.
+ * </remarks>
+ */
 const __COMPILER_CELL_BITS  = cellbits;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   Alternate (YSI internal) spelling of <c>charbits</c>.
+ * </remarks>
+ */
 const __COMPILER_CHAR_BITS  = charbits;
 
-// How much to adjust a cell count by to get a byte count.
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   How much to shift a cell count by to get a byte count.
+ * </remarks>
+ */
 #if cellbits == 8
 	const __COMPILER_CELL_SHIFT = 0;
-	const __COMPILER_BIT_SHIFT = 3;
-	const __COMPILER_BIT_MASK = 7;
 	#error YSI assumes `cellbits` is 32 or 64.
 #elseif cellbits == 16
 	const __COMPILER_CELL_SHIFT = 1;
-	const __COMPILER_BIT_SHIFT = 4;
-	const __COMPILER_BIT_MASK = 15;
 	#error YSI assumes `cellbits` is 32 or 64.
 #elseif cellbits == 32
 	const __COMPILER_CELL_SHIFT = 2;
-	const __COMPILER_BIT_SHIFT = 5;
-	const __COMPILER_BIT_MASK = 31;
 #elseif cellbits == 64
 	const __COMPILER_CELL_SHIFT = 3;
-	const __COMPILER_BIT_SHIFT = 6;
-	const __COMPILER_BIT_MASK = 63;
 #else
 	#error Unknown `cellbits` size.
 #endif
 
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   How much to shift a cell count by to get a bit count.
+ * </remarks>
+ */
+#if cellbits == 8
+	const __COMPILER_BIT_SHIFT = 3;
+	#error YSI assumes `cellbits` is 32 or 64.
+#elseif cellbits == 16
+	const __COMPILER_BIT_SHIFT = 4;
+	#error YSI assumes `cellbits` is 32 or 64.
+#elseif cellbits == 32
+	const __COMPILER_BIT_SHIFT = 5;
+#elseif cellbits == 64
+	const __COMPILER_BIT_SHIFT = 6;
+#else
+	#error Unknown `cellbits` size.
+#endif
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   A mask to return numbers modulo <c>cellbits</c>.
+ * </remarks>
+ */
+const __COMPILER_BIT_MASK = cellbits - 1;
+
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   The maximum array required to store a symbol name.  i.e.
+ *   <c>__snamemax + 1</c>.
+ * </remarks>
+ */
 const FUNCTION_LENGTH = __COMPILER_sNAMEMAX + 1;
 
 // Core tags.

@@ -85,15 +85,27 @@ Optional plugins:
 #endif
 
 static stock const
+	/**
+	 * <library>y_rconfix</library>
+	 */
 	YSI_gscOnClientCheckResponse[] = "FIXES_OnClientCheckResponse",
+	/**
+	 * <library>y_rconfix</library>
+	 */
 	YSI_gscRconFixFS[] = "callbackfix.amx";
 
-// This code is always needed, even if fixes.inc exists, because y_master can
-// repeatedly load and unload it to use as a buffer filterscript.  Basically,
-// because this FS is always loaded it ensures that 16 other filterscripts can't
-// all be loaded at once.  So if 15 are loaded and we need an extra space to
-// reload one while preserving data we can unload this one, use the spare space,
-// then load this one back up again.
+/*-------------------------------------------------------------------------*//**
+ * <library>y_rconfix</library>
+ * <remarks>
+ *   This code is always needed, even if fixes.inc exists, because y_master can
+ *   repeatedly load and unload it to use as a buffer filterscript.  Basically,
+ *   because this FS is always loaded it ensures that 16 other filterscripts
+ *   can't all be loaded at once.  So if 15 are loaded and we need an extra
+ *   space to reload one while preserving data we can unload this one, use the
+ *   spare space, then load this one back up again.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 y_rconfix_Load()
 {
 	if (Server_IsSAMP())
@@ -177,6 +189,13 @@ y_rconfix_Load()
 	}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_rconfix</library>
+ * <remarks>
+ *   Unload the callback fix filterscript.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock y_rconfix_Unload()
 {
 	if (Server_IsSAMP())
@@ -185,39 +204,67 @@ stock y_rconfix_Unload()
 	}
 }
 
-#if defined YSI_FIX_CALLBACKS
-	forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
-
-	public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
-	{
-		// Enable, then disable, the call in to the real version (if it exists).
-		state OnClientCheckResponse : OnClientCheckResponse_GM;
-		new
-			ret = FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
-		state OnClientCheckResponse : OnClientCheckResponse_FS;
-		return ret;
-	}
-
-	forward FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
-	public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata) <OnClientCheckResponse : OnClientCheckResponse_FS>
-	{
-		return 0;
-	}
-
-	public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata) <>
-	{
-		return 0;
-	}
-
-	static stock _FIXES_OnClientCheckResponse() <OnClientCheckResponse : OnClientCheckResponse_GM, OnClientCheckResponse : OnClientCheckResponse_FS>
-	{
-		// Define states only.
-	}
-
-	#if defined _ALS_OnClientCheckResponse
-		#error _ALS_OnClientCheckResponse defined
-	#endif
-	#define _ALS_OnClientCheckResponse
-	#define OnClientCheckResponse(%0) FIXES_OnClientCheckResponse(%0) <OnClientCheckResponse : OnClientCheckResponse_GM>
+#if !defined YSI_FIX_CALLBACKS
+	#endinput
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_rconfix</library>
+ * <remarks>
+ *   Call the hooked version of <c>OnClientCheckResponse</c>, regardless of how
+ *   this version is called.  So either natively or using the fix here.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+
+public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
+{
+	// Enable, then disable, the call in to the real version (if it exists).
+	state OnClientCheckResponse : OnClientCheckResponse_GM;
+	new
+		ret = FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+	state OnClientCheckResponse : OnClientCheckResponse_FS;
+	return ret;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_rconfix</library>
+ * <remarks>
+ *   Call the hooked version of <c>OnClientCheckResponse</c>, regardless of how
+ *   this version is called.  So either natively or using the fix here.  But
+ *   use states to only call the fix version in the gamemode, not in
+ *   filterscripts, since it works there already.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata);
+
+public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata) <OnClientCheckResponse : OnClientCheckResponse_FS>
+{
+	return 0;
+}
+
+public FIXES_OnClientCheckResponse(playerid, actionid, memaddr, retndata) <>
+{
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_rconfix</library>
+ * <remarks>
+ *   Define the states for calling the fix callbacks, or not.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock _FIXES_OnClientCheckResponse() <OnClientCheckResponse : OnClientCheckResponse_GM, OnClientCheckResponse : OnClientCheckResponse_FS>
+{
+	// Define states only.
+}
+
+#if defined _ALS_OnClientCheckResponse
+	#error _ALS_OnClientCheckResponse defined
+#endif
+#define _ALS_OnClientCheckResponse
+#define OnClientCheckResponse(%0) FIXES_OnClientCheckResponse(%0) <OnClientCheckResponse : OnClientCheckResponse_GM>
 

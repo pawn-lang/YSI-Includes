@@ -154,94 +154,70 @@ stock
 #define YSI_UNSAFE_HUGE_STRING (YSI_gUnsafeHugeString[0])
 #define YSI_UNSAFE_HUGE_LENGTH (MAX_LANGUAGES * sizeof (YSI_gUnsafeHugeString[]))
 
-/**
- * <library>y_shortvar</library>
+/*-------------------------------------------------------------------------*//**
+ * <library>y_shortfunc</library>
  * <remarks>
  *  Used by y_master and y_remote.  Re-evaluate after rewrites.  Just an alias
  *  for <c>setproperty</c>, but with a shorter name (for macro length limits)
  *  and better defaults.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 native U@(id = 0, const name[] = "", value = cellmin, const string[] = "") = setproperty;
 
-/**
- * <library>y_shortvar</library>
+/*-------------------------------------------------------------------------*//**
+ * <library>y_shortfunc</library>
  * <remarks>
  *  Used by y_master and y_remote.  Re-evaluate after rewrites.  Just an alias
  *  for <c>getproperty</c>, but with a shorter name (for macro length limits)
  *  and better defaults.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] = "") = getproperty;
 
-/**
- * <library>y_shortvar</library>
+/*-------------------------------------------------------------------------*//**
+ * <library>y_shortfunc</library>
  * <remarks>
  *  An alias for <c>CallLocalFunction</c>, but with a shorter name (for macro
  *  length limits) and better tag support.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 #if defined OPENMP
 	native R@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_Call;
 #else
 	native R@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallLocalFunction;
 #endif
 
-/**
- * <library>y_shortvar</library>
+/*-------------------------------------------------------------------------*//**
+ * <library>y_shortfunc</library>
  * <remarks>
  *  An alias for <c>CallRemoteFunction</c>, but with a shorter name (for macro
  *  length limits) and better tag support.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 #if defined OPENMP
 	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_CallAll;
 #else
 	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
 #endif
 
-/**
- * <library>y_shortvar</library>
+/*-------------------------------------------------------------------------*//**
+ * <library>y_shortfunc</library>
  * <remarks>
  *  An alias for <c>SetTimerEx</c>, but with a shorter name (for macro length
  *  limits) and better tag support.
  * </remarks>
- */
+ *//*------------------------------------------------------------------------**/
+
 #if defined OPENMP
 	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
 #else
 	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
 #endif
 
-/**
- * <library>y_shortvar</library>
- * <remarks>
- *  The old compiler has a bug when using <c>SYSREQ.C</c> - the natives aren't
- *  marked as used, so won't be included in the output if they aren't used
- *  normally elsewhere.  This function, on the old compiler, calls the natives
- *  defined in this file to ensure that they go in to the native function table.
- *  However, they are called with nonsense parameters so this function must
- *  itself never be called.  That would normally mean that this is itself
- *  elided from the AMX, hence it is <c>public</c>.
- * </remarks>
- */
-#if __COMPILER_MODIFIED
-	static stock _y_shortvar_y_()
-	{
-	}
-#else
-	forward @_y_shortvar_y_@();
-
-	public @_y_shortvar_y_@()
-	{
-		new tmp[2];
-		// This function calls any functions used in assembly code in YSI to ensure
-		// that they are included in the native function table.
-		R@(tmp, tmp);
-		W@(tmp, tmp);
-		O@(tmp, 0, false);
-	}
-#endif
 #define D0NT_USE(%9);}%9(){} }
 
 /**
@@ -250,9 +226,12 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
  *  <c>true</c>, but usable in tests without a constant expression warning.
  * </remarks>
  */
-#if !defined TRUE
-stock const
-	bool:TRUE = true;
+#if defined TRUE
+	static stock
+		bool:TRUE__ = true;
+#else
+	stock const
+		bool:TRUE = true;
 #endif
 
 /**
@@ -261,9 +240,12 @@ stock const
  *  <c>false</c>, but usable in tests without a constant expression warning.
  * </remarks>
  */
-#if !defined FALSE
-stock const
-	bool:FALSE = false;
+#if defined FALSE
+	static stock
+		bool:FALSE__ = false;
+#else
+	stock const
+		bool:FALSE = false;
 #endif
 
 /**
@@ -275,9 +257,12 @@ stock const
  *  <c>IsNull</c> check ever has been designed to detect this version.
  * </remarks>
  */
-#if !defined NULL
-stock const
-	NULL[2] = "\1";
+#if defined NULL
+	static stock
+		NULL__[2] = "\1";
+#else
+	stock const
+		NULL[2] = "\1";
 #endif
 
 stock const
@@ -297,4 +282,33 @@ stock const
 	 * </remarks>
 	 */
 	YSI_EMPTY[] = "";
+
+#if __COMPILER_MODIFIED
+	#endinput
+#endif
+
+forward @_y_shortvar_y_@();
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_shortfunc</library>
+ * <remarks>
+ *  The old compiler has a bug when using <c>SYSREQ.C</c> - the natives aren't
+ *  marked as used, so won't be included in the output if they aren't used
+ *  normally elsewhere.  This function, on the old compiler, calls the natives
+ *  defined in this file to ensure that they go in to the native function table.
+ *  However, they are called with nonsense parameters so this function must
+ *  itself never be called.  That would normally mean that this is itself
+ *  elided from the AMX, hence it is <c>public</c>.
+ * </remarks>
+ */
+
+public @_y_shortvar_y_@()
+{
+	new tmp[2];
+	// This function calls any functions used in assembly code in YSI to ensure
+	// that they are included in the native function table.
+	R@(tmp, tmp);
+	W@(tmp, tmp);
+	O@(tmp, 0, false);
+}
 

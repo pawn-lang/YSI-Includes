@@ -160,6 +160,16 @@ Optional plugins:
 	#define YSI_FIX_CALLBACKS
 #endif
 
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *   This variable denotes that someone has signed the contract promising not to
+ *   complain when things go wrong in YSI if they disable all the checks.  You
+ *   need to know what you're doing in pawn in order to use YSI in this way, and
+ *   thus also to sign the contract.  To date no-one has ever figured out how to
+ *   do this, despite the fact that it is written right here in the code.
+ * </remarks>
+ */
 #if defined ENABLE_YSI_UNSAFE_STARTUP && defined @_I_KNOW_WHAT_IM_DOING_AND_KNOW && defined @_THAT_USING && defined @___ENABLE_YSI_UNSAFE_STARTUP__ && defined @_MAY_RESULT_IN_STARTUP_CRASHES && defined @_AND_OTHER_BROKEN_CODE && defined @_HEREBY_PROMISE_I_WONT_RELEASE && defined @_ANY_CODE_WITH_IT_ENABLED && defined @_THAT_ALL_RESULTING_ERRORS_AND && defined @_CRASHES_ARE_SOLEY_MY_OWN && defined @_RESPONSIBILITY_NOT_Y_Less && defined @_SIGNED
 	#if 1 @_THAT_USING: != 1
 		#error ENABLE_YSI_UNSAFE_STARTUP contract incomplete.  Please complete it!
@@ -182,10 +192,19 @@ Optional plugins:
 		#error ENABLE_YSI_UNSAFE_STARTUP contract unsigned.  Please sign it!
 	#endif
 #elseif defined ENABLE_YSI_UNSAFE_STARTUP || defined @_I_KNOW_WHAT_IM_DOING_AND_KNOW || defined @_THAT_USING || defined @___ENABLE_YSI_UNSAFE_STARTUP__ || defined @_MAY_RESULT_IN_STARTUP_CRASHES || defined @_AND_OTHER_BROKEN_CODE || defined @_HEREBY_PROMISE_I_WONT_RELEASE || defined @_ANY_CODE_WITH_IT_ENABLED || defined @_THAT_ALL_RESULTING_ERRORS_AND || defined @_CRASHES_ARE_SOLEY_MY_OWN || defined @_RESPONSIBILITY_NOT_Y_Less || defined @_SIGNED
+	static stock
+		YSI_gcUnsafeStartupContract__ = 0;
+
 	#error ENABLE_YSI_UNSAFE_STARTUP contract incomplete.  Please complete it!
 #elseif defined _YSI_UNSAFE_STARTUP
+	static stock
+		YSI_gcUnsafeStartupContract__ = 0;
+
 	#error _YSI_UNSAFE_STARTUP defined.
 #else
+	static stock
+		YSI_gcUnsafeStartupContract__ = 0;
+
 	#define _YSI_SAFE_STARTUP 1
 #endif
 
@@ -200,6 +219,9 @@ Optional plugins:
 #endif
 
 stock const
+	/**
+	 * <library>y_core</library>
+	 */
 	YSI_TEMP_FILE_NAME[] = ".tempfiles";
 
 #define YSI_DIR_LENGTH (12)
@@ -207,6 +229,12 @@ stock const
 #if !defined _DEBUG
 	#define _DEBUG 0
 #endif
+
+/// <p/>
+
+/**
+ * <library>y_core</library>
+ */
 
 enum E_YSI_DIR
 {
@@ -222,14 +250,25 @@ enum E_YSI_DIR
 	E_YSI_DIR_FIXES,
 	E_YSI_DIR_TEMP
 }
+static stock E_YSI_DIR:_@E_YSI_DIR() { return E_YSI_DIR; }
 
 forward bool:DumpAMX_Write(const filename[]);
 forward GetYSIScriptfilesDir(E_YSI_DIR:dir);
 forward bool:DisasmWrite(const filename[]);
 
-// Public variable.  `-1` initially in case there is no master system.  So we respond to everything.
 #define Master_ID() (@_)
-#if !defined FIXES_ID
+
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *   The ID of this script.  <c>-1</c> initially in case there is no master
+ *   system.  So we respond to everything.
+ * </remarks>
+ */
+#if defined FIXES_ID
+	static stock
+		y_core_MasterID = 0;
+#else
 	public
 		@_ = -1;
 #endif
@@ -252,7 +291,21 @@ forward bool:DisasmWrite(const filename[]);
 
 // A few nicely named short strings used for properties.
 #define YSIM_MASTER #M
+
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *   The property name used for some short code.
+ * </remarks>
+ */
 stock const YSIM_VERRET[] = "W";
+
+/**
+ * <library>y_core</library>
+ * <remarks>
+ *   The property name used for some short code.
+ * </remarks>
+ */
 stock const YSIM_VERMAX[] = "X";
 #define YSIM_RETURN #R
 #define YSIM_CALLER #C
@@ -598,6 +651,7 @@ stock _YSI_ConstMod(const &var, const val)
  *   Couldn't get it to work in all cases.  There's always a way around it.
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
 #pragma deprecated It's just unreadable rubbish.
 stock DONT_USE_SCM(a, b, const c[])
 {
