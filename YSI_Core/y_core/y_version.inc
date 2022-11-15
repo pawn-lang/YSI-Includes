@@ -109,6 +109,8 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 	#define _YSI_NO_VERSION_CHECK
 #endif
 
+forward YVers_Callback(index, code, data[]);
+
 static stock const
 	/**
 	 * <library>y_scriptdata</library>
@@ -551,222 +553,94 @@ stock Script_GetStartString(output[], size = sizeof (output))
 	format(output, size, "%02d %s %04d - %02d:%02d:%02d", day, months[month - 1], year, hour, minute, second);
 }
 
-#if _YSI_SAFE_STARTUP
-	static stock YVers_PrintHeader()
-	{
-		new
-			version[38], os[10];
-		GetConsoleVarAsString("version", version, sizeof (version));
-		if (version[0])
-		{
-			format(version, sizeof (version), "Server:      %s (%s)", version, Server_IsWindowsHost() ? YSI_gscWindows : YSI_gscLinux);
-		}
-		else
-		{
-			// TODO: Determine the exact SA:MP server version.
-			format(version, sizeof (version), "Server:      SA:MP (%s)", Server_IsWindowsHost() ? YSI_gscWindows : YSI_gscLinux);
-		}
-		Server_PrintIntroPart(version),
-		Script_GetStartString(version),
-		format(version, sizeof (version), "Started:     %s", version),
-		Server_PrintIntroPart(version),
-		Server_PrintIntroPart(""),
-		Script_GetCompilerString(version, os),
-		format(version, sizeof (version), "Compiler:    %s (%s)", version, os),
-		Server_PrintIntroPart(version),
-		Script_GetIncludesString(version),
-		format(version, sizeof (version), "Includes:    %s", version),
-		Server_PrintIntroPart(version),
-		Script_GetCompilerCodepage(version),
-		format(version, sizeof (version), "Codepage:    %s", version),
-		Server_PrintIntroPart(version);
-		#if ((__Pawn & 0x0F) >= 0x0A)
-			format(version, sizeof (version), "Built:       %s - %s", __date, __time),
-			Server_PrintIntroPart(version);
-		#endif
-		Server_PrintIntroPart(""),
-		Server_PrintIntroPart("YSI:         v" YSI_VERSION);
-		#if defined YSI_NO_MASTER
-			Server_PrintIntroPart("Master:      <none>");
-		#else
-			format(version, sizeof (version), "Master:      %d", @_),
-			Server_PrintIntroPart(version);
-		#endif
-		Server_PrintIntroPart(""),
-		Server_GetJITString(version),
-		format(version, sizeof (version), "JIT:         %s", version),
-		Server_PrintIntroPart(version);
-		if (!Server_CrashDetectExists())
-		{
-			Server_PrintIntroPart("Crashdetect: <none>");
-		}
-		else if (!Server_HasLongCallControl() && Server_IsLinuxHost())
-		{
-			Server_PrintIntroPart(
-				"Crashdetect: <warning>",
-				YSI_EMPTY,
-				"  Crashdetect has been found, but no",
-				"     long-call controls have been",
-				"  detected.  Get the unofficial fixed",
-				"            release from:",
-				YSI_EMPTY,
-				"          github.com/Y-Less/          ",
-				"       samp-plugin-crashdetect/",
-				YSI_EMPTY
-			);
-		}
-		else
-		{
-			Server_PrintIntroPart("Crashdetect: <found>");
-		}
-		Server_FinishIntroPart();
-	}
-	
-	#if !defined HTTP
-		stock YVers_StartCheck()
-		{
-			#if defined YSI_LOCK_MODE
-				new
-					x = 10;
-				YSI_gLockData[0] = 'a' + 1,
-				YSI_gLockData[YSI_gLockData[0] - 0x60] = x * 11,
-				YSI_gLockData[x / 3] = x * 10,
-				YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
-			#endif
-				YVers_PrintHeader();
-			#if _YSI_SAFE_STARTUP
-				Server_PrintIntroMessage(
-					"Unable to check the latest YSI version",
-					"- please watch the forums and github:",
-					YSI_EMPTY,
-					"         https://git.io/5.x"
-				);
-			#endif
-			return 1;
-		}
-		
-		#endinput
-	#endif
-	
-	forward YVers_Callback(index, code, data[]);
+/*-------------------------------------------------------------------------*//**
+ * <library>y_version</library>
+ * <remarks>
+ *  Print information about the script and server to the console.  Plugins,
+ *  version, compiler, etc.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
-	/*---------------------------------------------------------------------*//**
-	 * <returns>
-	 *  OnYSIInit
-	 * </returns>
-	 * <remarks>
-	 *      Constructor.  Checks to see if there is a new version available.
-	 *      This code can not use ANY of the rest of YSI as it needs to be
-	 *      included by everything first.
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-	
-	stock YVers_StartCheck()
+static stock YVers_PrintHeader()
+{
+	new
+		version[38], os[10];
+	GetConsoleVarAsString("version", version, sizeof (version));
+	if (version[0])
 	{
-		#if defined YSI_LOCK_MODE
-			YSI_gLockData[0] += 1;
-			for (new i = 0; i != 2; ++i)
-			{
-				YSI_gLockData[0] = YSI_gLockData[0] * 9 + 2;
-			}
-			YSI_gLockData[0] -= 1,
-			YSI_gLockData[3] = YSI_gLockData[0],
-			YSI_gLockData[0] -= 1,
-			YSI_gLockData[2] = YSI_gLockData[0] + 11,
-			YSI_gLockData[0] -= 1,
-			YSI_gLockData[1] = YSI_gLockData[0] + 7;
-		#endif
-		YVers_PrintHeader();
-		//YSI_Print__(" |                                      | ");
-		//YSI_Print__(" |  Checking the latest YSI version..   | ");
-		//YSI_Print__(YSI_gscSpacer);
-		//YSI_Print__(YSI_gscHeader);
-		// Call my server to check the current public YSI version.  v is the
-		// current version and c is the version of data response which this code
-		// can parse.  Note that the response data SHOULD be backward compatible
-		// , but may not always be - hence the accept parameter.  This will
-		// never send any data except the current version for targeted replies
-		// (e.g. to ignore minor updates which aren't critical).  It MAY in the
-		// future send what libraries are in use so that it only tells you to
-		// upgrade if the libraries you are using have changed, but that will
-		// take more work and I'm not going to do that for now (I'm not entirely
-		// sure exactly how to do it (though I have an idea - note to self:
-		// chain callbacks from repeated inclusions of this file in the same way
-		// as ALS then call them BEFORE sending the HTTP)).  Note that due to
-		// the way the internet works the server will know the IP of the server
-		// which sent the request, but the ENTIRE current contents of the remote
-		// page are (note: I won't update this comment every time the version
-		// updates, but that's the gist of it):
-		//  
-		//  1
-		//  1.01.0000
-		//  
-		// This remote script has now been updated to include changelog
-		// information and keeps a record of what IPs are connecting.
-		//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, YSI_EMPTY, "YVers_Callback");
-		return 1;
+		format(version, sizeof (version), "Server:      %s (%s)", version, Server_IsWindowsHost() ? YSI_gscWindows : YSI_gscLinux);
 	}
-	
-	/*---------------------------------------------------------------------*//**
-	 *
-	 * <param name="	index">Not used.</param>
-	 * <param name="	code">Response code from the server.</param>
-	 * <param name="	data[]">HTTP data sent from the server.</param>
-	 * <remarks>
-	 *  This is called when my server responds to the HTTP request sent above
-	 *  (or when it doesn't).  This prints information on the current and any
-	 *  future versions of YSI.  Note that it only does a strcmp to determine if
-	 *  the version is newer - people can't have versions newer than the latest,
-	 *  onlyolder or equal (unless they play with the version numbers, but then
-	 *  that's their own fault).
-	 * </remarks>
-	 *//*--------------------------------------------------------------------**/
-	
-	public YVers_Callback(index, code, data[])
+	else
 	{
-		if (code == 200)
-		{
-			// Got the remote page.
-			// The first line is the version data version.  This should be
-			// forward compatible, so new data is always added to the end of the
-			// file. Skip the first line - contains the response version.
-			new
-				pos = strfind(data, "\n") + 1;
-			if (strcmp(data[pos], YSI_VERSION, false, 9))
-			{
-				//data[pos + 9] = '\0';
-				new msg[40];
-				format(msg, sizeof (msg), "A new version (v%s) of YSI is", data[pos]),
-				Server_PrintIntroPart(msg, "available from:", YSI_EMPTY, "    www.y-less.com/YSI/YSI_1.0.zip");
-				if (data[0] == '2')
-				{
-					Server_PrintIntroPart(YSI_EMPTY, "Changelog:", YSI_EMPTY);
-					// Print the changelog.
-					new
-						last = pos + 13;
-					for ( ; ; )
-					{
-						pos = strfind(data[last], "\n", false);
-						if (pos == -1)
-						{
-							// To break out in the middle of a loop.
-							break;
-						}
-						pos += last,
-						data[pos - 1] = '\0',
-						Server_PrintIntroPart(data[last]),
-						last = pos + 1;
-					}
-				}
-				//YSI_Print__(YSI_gscSpacer),
-				//YSI_Print__(YSI_gscHeader),
-				//YSI_Print__(YSI_gscMiniGap);
-				Server_FinishIntroPart(),
-				Server_FinishIntroMessage();
-			}
-		}
+		// TODO: Determine the exact SA:MP server version.
+		format(version, sizeof (version), "Server:      SA:MP (%s)", Server_IsWindowsHost() ? YSI_gscWindows : YSI_gscLinux);
 	}
-#else
+	Server_PrintIntroPart(version),
+	Script_GetStartString(version),
+	format(version, sizeof (version), "Started:     %s", version),
+	Server_PrintIntroPart(version),
+	Server_PrintIntroPart(""),
+	Script_GetCompilerString(version, os),
+	format(version, sizeof (version), "Compiler:    %s (%s)", version, os),
+	Server_PrintIntroPart(version),
+	Script_GetIncludesString(version),
+	format(version, sizeof (version), "Includes:    %s", version),
+	Server_PrintIntroPart(version),
+	Script_GetCompilerCodepage(version),
+	format(version, sizeof (version), "Codepage:    %s", version),
+	Server_PrintIntroPart(version);
+	#if ((__Pawn & 0x0F) >= 0x0A)
+		format(version, sizeof (version), "Built:       %s - %s", __date, __time),
+		Server_PrintIntroPart(version);
+	#endif
+	Server_PrintIntroPart(""),
+	Server_PrintIntroPart("YSI:         v" YSI_VERSION);
+	#if defined YSI_NO_MASTER
+		Server_PrintIntroPart("Master:      <none>");
+	#else
+		format(version, sizeof (version), "Master:      %d", @_),
+		Server_PrintIntroPart(version);
+	#endif
+	Server_PrintIntroPart(""),
+	Server_GetJITString(version),
+	format(version, sizeof (version), "JIT:         %s", version),
+	Server_PrintIntroPart(version);
+	if (!Server_CrashDetectExists())
+	{
+		Server_PrintIntroPart("Crashdetect: <none>");
+	}
+	else if (!Server_HasLongCallControl() && Server_IsLinuxHost())
+	{
+		Server_PrintIntroPart(
+			"Crashdetect: <warning>",
+			YSI_EMPTY,
+			"  Crashdetect has been found, but no",
+			"     long-call controls have been",
+			"  detected.  Get the unofficial fixed",
+			"            release from:",
+			YSI_EMPTY,
+			"          github.com/Y-Less/          ",
+			"       samp-plugin-crashdetect/",
+			YSI_EMPTY
+		);
+	}
+	else
+	{
+		Server_PrintIntroPart("Crashdetect: <found>");
+	}
+	Server_FinishIntroPart();
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_version</library>
+ * <remarks>
+ *  Constructor.  Checks to see if there is a new version available.  This code
+ *  can not use ANY of the rest of YSI as it needs to be included by everything
+ *  first.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#if !_YSI_SAFE_STARTUP
 	stock YVers_StartCheck()
 	{
 		#if defined YSI_LOCK_MODE
@@ -778,5 +652,138 @@ stock Script_GetStartString(output[], size = sizeof (output))
 		#endif
 		return 1;
 	}
+	#endinput
 #endif
+
+#if !defined HTTP
+	stock YVers_StartCheck()
+	{
+		#if defined YSI_LOCK_MODE
+			new
+				x = 10;
+			YSI_gLockData[0] = 'a' + 1,
+			YSI_gLockData[YSI_gLockData[0] - 0x60] = x * 11,
+			YSI_gLockData[x / 3] = x * 10,
+			YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
+		#endif
+			YVers_PrintHeader();
+		#if _YSI_SAFE_STARTUP
+			Server_PrintIntroMessage(
+				"Unable to check the latest YSI version",
+				"- please watch the forums and github:",
+				YSI_EMPTY,
+				"         https://git.io/5.x"
+			);
+		#endif
+		return 1;
+	}
+	
+	#endinput
+#endif
+
+stock YVers_StartCheck()
+{
+	#if defined YSI_LOCK_MODE
+		YSI_gLockData[0] += 1;
+		for (new i = 0; i != 2; ++i)
+		{
+			YSI_gLockData[0] = YSI_gLockData[0] * 9 + 2;
+		}
+		YSI_gLockData[0] -= 1,
+		YSI_gLockData[3] = YSI_gLockData[0],
+		YSI_gLockData[0] -= 1,
+		YSI_gLockData[2] = YSI_gLockData[0] + 11,
+		YSI_gLockData[0] -= 1,
+		YSI_gLockData[1] = YSI_gLockData[0] + 7;
+	#endif
+	YVers_PrintHeader();
+	//YSI_Print__(" |                                      | ");
+	//YSI_Print__(" |  Checking the latest YSI version..   | ");
+	//YSI_Print__(YSI_gscSpacer);
+	//YSI_Print__(YSI_gscHeader);
+	// Call my server to check the current public YSI version.  v is the
+	// current version and c is the version of data response which this code
+	// can parse.  Note that the response data SHOULD be backward compatible
+	// , but may not always be - hence the accept parameter.  This will
+	// never send any data except the current version for targeted replies
+	// (e.g. to ignore minor updates which aren't critical).  It MAY in the
+	// future send what libraries are in use so that it only tells you to
+	// upgrade if the libraries you are using have changed, but that will
+	// take more work and I'm not going to do that for now (I'm not entirely
+	// sure exactly how to do it (though I have an idea - note to self:
+	// chain callbacks from repeated inclusions of this file in the same way
+	// as ALS then call them BEFORE sending the HTTP)).  Note that due to
+	// the way the internet works the server will know the IP of the server
+	// which sent the request, but the ENTIRE current contents of the remote
+	// page are (note: I won't update this comment every time the version
+	// updates, but that's the gist of it):
+	//  
+	//  1
+	//  1.01.0000
+	//  
+	// This remote script has now been updated to include changelog
+	// information and keeps a record of what IPs are connecting.
+	//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, YSI_EMPTY, "YVers_Callback");
+	return 1;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_version</library>
+ * <param name="	index">Not used.</param>
+ * <param name="	code">Response code from the server.</param>
+ * <param name="	data[]">HTTP data sent from the server.</param>
+ * <remarks>
+ *  This is called when my server responds to the HTTP request sent above  (or
+ *  when it doesn't).  This prints information on the current and any future
+ *  versions of YSI.  Note that it only does a strcmp to determine if the
+ *  version is newer - people can't have versions newer than the latest, only
+ *  older or equal (unless they play with the version numbers, but then that's
+ *  their own fault).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+public YVers_Callback(index, code, data[])
+{
+	if (code == 200)
+	{
+		// Got the remote page.
+		// The first line is the version data version.  This should be
+		// forward compatible, so new data is always added to the end of the
+		// file. Skip the first line - contains the response version.
+		new
+			pos = strfind(data, "\n") + 1;
+		if (strcmp(data[pos], YSI_VERSION, false, 9))
+		{
+			//data[pos + 9] = '\0';
+			new msg[40];
+			format(msg, sizeof (msg), "A new version (v%s) of YSI is", data[pos]),
+			Server_PrintIntroPart(msg, "available from:", YSI_EMPTY, "    www.y-less.com/YSI/YSI_1.0.zip");
+			if (data[0] == '2')
+			{
+				Server_PrintIntroPart(YSI_EMPTY, "Changelog:", YSI_EMPTY);
+				// Print the changelog.
+				new
+					last = pos + 13;
+				for ( ; ; )
+				{
+					pos = strfind(data[last], "\n", false);
+					if (pos == -1)
+					{
+						// To break out in the middle of a loop.
+						break;
+					}
+					pos += last,
+					data[pos - 1] = '\0',
+					Server_PrintIntroPart(data[last]),
+					last = pos + 1;
+				}
+			}
+			//YSI_Print__(YSI_gscSpacer),
+			//YSI_Print__(YSI_gscHeader),
+			//YSI_Print__(YSI_gscMiniGap);
+			Server_FinishIntroPart(),
+			Server_FinishIntroMessage();
+		}
+	}
+}
 
