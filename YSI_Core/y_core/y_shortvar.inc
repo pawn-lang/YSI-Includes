@@ -226,7 +226,7 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
  * </remarks>
  */
 #if __COMPILER_MODIFIED
-	static stock @_y_shortvar_y_@()
+	static stock _y_shortvar_y_()
 	{
 	}
 #else
