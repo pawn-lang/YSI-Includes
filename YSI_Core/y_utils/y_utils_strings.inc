@@ -101,7 +101,7 @@ Optional plugins:
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(bool:IsNull(const string:str[]));
-#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==YSI_PackedStringMax__)
+#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0'||(%0[0])==ucharmax+1)
 
 #if defined isnull
 	#undef isnull

@@ -95,6 +95,18 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+/**
+ * <library>y_funcinc</library>
+ * <remarks>
+ *  The old compiler has a bug when using <c>SYSREQ.C</c> - the natives aren't
+ *  marked as used, so won't be included in the output if they aren't used
+ *  normally elsewhere.  This function, on the old compiler, calls the natives
+ *  defined in this file to ensure that they go in to the native function table.
+ *  However, they are called with nonsense parameters so this function must
+ *  itself never be called.  That would normally mean that this is itself
+ *  elided from the AMX, hence it is <c>public</c>.
+ * </remarks>
+ */
 forward @_y_funcinc_y_@();
 
 public @_y_funcinc_y_@()
