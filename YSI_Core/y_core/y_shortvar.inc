@@ -106,7 +106,7 @@ Optional plugins:
 
 new
 	/**
-	 * <library>y_core</library>
+	 * <library>y_shortvar</library>
 	 * <remarks>
 	 *  A temporary string variable, mainly for interim results.
 	 * </remarks>
@@ -115,7 +115,7 @@ new
 
 stock
 	/**
-	 * <library>y_core</library>
+	 * <library>y_shortvar</library>
 	 * <remarks>
 	 *  A "nul" target - send things there if they need ignoring or if a
 	 *  parameter needs ignoring.  Not guaranteed to keep its value for any
@@ -124,7 +124,7 @@ stock
 	 */
 	I@ = 0,
 	/**
-	 * <library>y_core</library>
+	 * <library>y_shortvar</library>
 	 * <remarks>
 	 *  A "nul" target - send things there if they need ignoring or if a
 	 *  parameter needs ignoring.  Not guaranteed to keep its value for any
@@ -139,7 +139,7 @@ stock
 
 stock
 	/**
-	 * <library>y_core</library>
+	 * <library>y_shortvar</library>
 	 * <remarks>
 	 *  A massive string.  That's it.  Just for internal formatting when the
 	 *  length isn't known in advance and we need to just go massively OTT to
@@ -155,7 +155,7 @@ stock
 #define YSI_UNSAFE_HUGE_LENGTH (MAX_LANGUAGES * sizeof (YSI_gUnsafeHugeString[]))
 
 /**
- * <library>y_core</library>
+ * <library>y_shortvar</library>
  * <remarks>
  *  Used by y_master and y_remote.  Re-evaluate after rewrites.  Just an alias
  *  for <c>setproperty</c>, but with a shorter name (for macro length limits)
@@ -165,7 +165,7 @@ stock
 native U@(id = 0, const name[] = "", value = cellmin, const string[] = "") = setproperty;
 
 /**
- * <library>y_core</library>
+ * <library>y_shortvar</library>
  * <remarks>
  *  Used by y_master and y_remote.  Re-evaluate after rewrites.  Just an alias
  *  for <c>getproperty</c>, but with a shorter name (for macro length limits)
@@ -175,7 +175,7 @@ native U@(id = 0, const name[] = "", value = cellmin, const string[] = "") = set
 native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] = "") = getproperty;
 
 /**
- * <library>y_core</library>
+ * <library>y_shortvar</library>
  * <remarks>
  *  An alias for <c>CallLocalFunction</c>, but with a shorter name (for macro
  *  length limits) and better tag support.
@@ -188,7 +188,7 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 #endif
 
 /**
- * <library>y_core</library>
+ * <library>y_shortvar</library>
  * <remarks>
  *  An alias for <c>CallRemoteFunction</c>, but with a shorter name (for macro
  *  length limits) and better tag support.
@@ -201,7 +201,7 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 #endif
 
 /**
- * <library>y_core</library>
+ * <library>y_shortvar</library>
  * <remarks>
  *  An alias for <c>SetTimerEx</c>, but with a shorter name (for macro length
  *  limits) and better tag support.
@@ -214,7 +214,7 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 #endif
 
 /**
- * <library>y_core</library>
+ * <library>y_shortvar</library>
  * <remarks>
  *  The old compiler has a bug when using <c>SYSREQ.C</c> - the natives aren't
  *  marked as used, so won't be included in the output if they aren't used
@@ -245,7 +245,7 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 #define D0NT_USE(%9);}%9(){} }
 
 /**
- * <library>y_core</library>
+ * <library>y_shortvar</library>
  * <remarks>
  *  <c>true</c>, but usable in tests without a constant expression warning.
  * </remarks>
@@ -256,7 +256,7 @@ stock const
 #endif
 
 /**
- * <library>y_core</library>
+ * <library>y_shortvar</library>
  * <remarks>
  *  <c>false</c>, but usable in tests without a constant expression warning.
  * </remarks>
@@ -267,7 +267,7 @@ stock const
 #endif
 
 /**
- * <library>y_core</library>
+ * <library>y_shortvar</library>
  * <remarks>
  *  The null string with <c>\1</c> as the first character.  This isn't a true
  *  null string, that is the string of length 0, but this string is often used
@@ -282,7 +282,7 @@ stock const
 
 stock const
 	/**
-	 * <library>y_core</library>
+	 * <library>y_shortvar</library>
 	 * <remarks>
 	 *  A single space in a string, for string interning.  Just a micro-
 	 *  optimisation to use this instead of <c>" "</c> throughout YSI.
@@ -290,7 +290,7 @@ stock const
 	 */
 	YSI_SPACE[] = " ",
 	/**
-	 * <library>y_core</library>
+	 * <library>y_shortvar</library>
 	 * <remarks>
 	 *  An empty string, for string interning.  Just a micro-optimisation to use
 	 *  this instead of <c>""</c> throughout YSI.

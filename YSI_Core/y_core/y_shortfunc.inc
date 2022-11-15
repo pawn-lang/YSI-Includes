@@ -139,7 +139,7 @@ static stock const
 	YSI_g_sYSI_MAX_STRING = YSI_MAX_STRING;
 
 /**
- * <library>y_core</library>
+ * <library>y_shortfunc</library>
  * <returns>
  *  A number, the result of a named function call.
  * </returns>
@@ -307,7 +307,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 }
 
 /**
- * <library>y_core</library>
+ * <library>y_shortfunc</library>
  * <returns>
  *  A string, the result of a named function call.
  * </returns>
@@ -426,7 +426,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 #define _@%0\32; _@
 
 /**
- * <library>y_core</library>
+ * <library>y_shortfunc</library>
  * <remarks>
  *  A precursor to <c>D@</c> and <c>E@</c> that does some stack and heap
  *  manipulation before they are called.
@@ -455,7 +455,7 @@ stock F@(calltype = 1, master = -1, heapptr = 0)
 }
 
 /**
- * <library>y_core</library>
+ * <library>y_shortfunc</library>
  * <remarks>
  *  Used in remote function wrappers to put reference parameter retusn in to the
  *  specially named properties (<c>"V" + idx</c> in group 8) for their return.
@@ -478,7 +478,7 @@ stock L@(GLOBAL_TAG_TYPES:ret, GLOBAL_TAG_TYPES:...)
 }
 
 /**
- * <library>y_core</library>
+ * <library>y_shortfunc</library>
  * <remarks>
  *  Used in remote function wrappers to put reference parameter retusn in to the
  *  specially named properties (<c>"V" + idx</c> in group 8) for their return.
@@ -501,7 +501,7 @@ stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 }
 
 /**
- * <library>y_core</library>
+ * <library>y_shortfunc</library>
  * <remarks>
  *  Put the true remote call return number in to a property, because remote call
  *  order can't be relied on.
@@ -515,7 +515,7 @@ stock X@(GLOBAL_TAG_TYPES:n)
 }
 
 /**
- * <library>y_core</library>
+ * <library>y_shortfunc</library>
  * <remarks>
  *  Just a dead-end for spare parameters.  Implementation of
  *  <c>__pragma("unused", x);</c>, which disables the warning for a unused
@@ -539,7 +539,7 @@ stock H@(GLOBAL_TAG_TYPES:...)
 #define B@:#On%0) "On"#%0)
 
 /**
- * <library>y_core</library>
+ * <library>y_shortfunc</library>
  * <remarks>
  *  Just a dead-end for spare parameters.  Implementation of
  *  <c>__pragma("unused", x);</c>, which disables the warning for a unused
