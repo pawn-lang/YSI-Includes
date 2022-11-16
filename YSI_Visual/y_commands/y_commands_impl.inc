@@ -86,6 +86,25 @@ Optional plugins:
 
 */
 
+enum e_COMMAND_FLAGS
+{
+	#if defined Y_COMMANDS_USE_CHARS
+		e_COMMAND_FLAG_PREFIX = 0xFF,
+	#endif
+	// Inherit user permissions.
+	e_COMMAND_FLAG_INHERIT = 0x01000000,
+	// Can't be listed.
+	e_COMMAND_FLAG_HIDDEN = 0x02000000,
+	// Can't be used by default.
+	e_COMMAND_FLAG_DISABLED = 0x04000000,
+	// Is a primary.
+	e_COMMAND_FLAG_PRI = 0x08000000,
+	// Is an alternative.
+	e_COMMAND_FLAG_ALT = 0x10000000,
+	// Primary can't be used explicitly.
+	e_COMMAND_FLAG_INDIRECT = 0x20000000
+}
+
 enum E_COMMAND
 {
 	// HASH_MAP_DATA<MAX_COMMAND_LENGTH char>,
@@ -99,9 +118,7 @@ enum E_COMMAND
 	
 	// Who can use this command?
 	PlayerArray:E_COMMAND_USERS<MAX_PLAYERS>,
-	#if defined Y_COMMANDS_USE_CHARS
-		E_COMMAND_PREFIX,
-	#endif
+	e_COMMAND_FLAGS:E_COMMAND_FLAGS,
 	// Function pointer.
 	E_COMMAND_POINTER
 }
@@ -121,19 +138,19 @@ enum e_COMMAND_ERRORS
 	COMMAND_SILENT        = 11, // Just end.  Don't call the command or print anything.
 }
 
-enum e_COMMAND_FLAGS:(<<= 1)
+enum e_SYSTEM_SETTINGS:(<<= 1)
 {
-	e_COMMAND_FLAGS_ZERO_RET = 1,  // The command returned 0.
-	e_COMMAND_FLAGS_OK,            // Called corectly.
-	e_COMMAND_FLAGS_NOT_FOUND,     // Command doesn't exist.
-	e_COMMAND_FLAGS_DENIED,        // Can't use the command.
-	e_COMMAND_FLAGS_HIDDEN,
-	_e_COMMAND_FLAGS_unused,
-	e_COMMAND_FLAGS_NO_PLAYER,     // Used by a player who shouldn't exist.
-	e_COMMAND_FLAGS_DISABLED,      // All commands are disabled for this player.
-	e_COMMAND_FLAGS_BAD_PREFIX,
-	e_COMMAND_FLAGS_INVALID_INPUT, // Didn't type "/something".
-	e_COMMAND_FLAGS_SILENT,        // Do nothing.
+	e_SYSTEM_SETTINGS_ZERO_RET = 1,  // The command returned 0.
+	e_SYSTEM_SETTINGS_OK,            // Called corectly.
+	e_SYSTEM_SETTINGS_NOT_FOUND,     // Command doesn't exist.
+	e_SYSTEM_SETTINGS_DENIED,        // Can't use the command.
+	e_SYSTEM_SETTINGS_HIDDEN,
+	_e_SYSTEM_SETTINGS_unused,
+	e_SYSTEM_SETTINGS_NO_PLAYER,     // Used by a player who shouldn't exist.
+	e_SYSTEM_SETTINGS_DISABLED,      // All commands are disabled for this player.
+	e_SYSTEM_SETTINGS_BAD_PREFIX,
+	e_SYSTEM_SETTINGS_INVALID_INPUT, // Didn't type "/something".
+	e_SYSTEM_SETTINGS_SILENT,        // Do nothing.
 	// Save counts for callbacks.
 	e_COMM_FLAG_OPCP     = 0x00FF0000,
 	e_COMM_FLAG_OPCP_ADD = 0x00010000,
@@ -145,7 +162,7 @@ enum e_COMMAND_FLAGS:(<<= 1)
 MASTER_DATA<MAX_COMMANDS>
 
 // Information for returning error messages.
-static stock __declspec(dist_tagged) e_COMMAND_FLAGS:YSI_g_sCommandFlags;
+static stock __declspec(dist_tagged) e_SYSTEM_SETTINGS:YSI_g_sSystemSettings;
 static stock __declspec(distributed) YSI_g_sErrorMessages[e_COMMAND_ERRORS][144];
 // Who has had ALL their commands disabled?
 static stock __declspec(dist_special) PlayerArray:YSI_g_sDisabledPlayers<MAX_PLAYERS>;
@@ -274,7 +291,7 @@ FUNC_PAWNDOC(_Command_GetReal(&ptr,&idx,name[]));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#define Command_ErrorRet(%2) (YSI_g_sCommandFlags&e_COMMAND_FLAGS:(1<<_:(%2)))
+#define Command_ErrorRet(%2) (YSI_g_sSystemSettings&e_SYSTEM_SETTINGS:(1<<_:(%2)))
 #if defined COMMAND_USE_ERRORS
 	
 	#define Command_ErrorMsg(%2) YSI_g_sErrorMessages[%2]
@@ -288,7 +305,7 @@ FUNC_PAWNDOC(_Command_GetReal(&ptr,&idx,name[]));
 	#define Command_Error(%0,%2) Command_ErrorRet(%2)
 #endif
 
-#define Command_OnReceived(%2,%0,%1) ((sErr=(YSI_g_sCommandFlags&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(_:COMMAND_%2))):(COMMAND_%2)),Command_Error(%0,sErr))
+#define Command_OnReceived(%2,%0,%1) ((sErr=(YSI_g_sSystemSettings&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(_:COMMAND_%2))):(COMMAND_%2)),Command_Error(%0,sErr))
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
@@ -342,7 +359,7 @@ FUNC_PAWNDOC(bool:_Command_IsActive(command));
  *//*------------------------------------------------------------------------**/
 
 FUNC_PAWNDOC(_Command_GetPrefix(c));
-#define _Command_GetPrefix(%0) (YSI_g_sCommands[(%0)][E_COMMAND_PREFIX])
+#define _Command_GetPrefix(%0) (_:(YSI_g_sCommands[(%0)][E_COMMAND_FLAGS]&e_COMMAND_FLAG_PREFIX))
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
@@ -391,14 +408,15 @@ GLOBAL__ Command_GetID(const string:function[])
  * <library>y_commands</library>
  * <param name="oidx">The function this is an alternate to.</param>
  * <param name="cmd">The new name.</param>
+ * <param name="inherit">Does the new command use the parent's permissions?</param>
  * <returns>
  *   The command's ID.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Command_AddAlt(oidx, const string:cmd[]);
+FOREIGN__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit);
 
-GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
+GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 {
 	static
 		sCmd[64],
@@ -424,9 +442,9 @@ GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
 			Debug_Error("Could not add alt command to array.");
 			return COMMAND_NOT_FOUND;
 		}
-		#if defined Y_COMMANDS_USE_CHARS
-			YSI_g_sCommands[id][E_COMMAND_PREFIX] = '/',
-		#endif
+		// This sets the prefix even when that feature is disabled, because
+		// there's literally no overhead in doing so.
+		YSI_g_sCommands[id][E_COMMAND_FLAGS] = e_COMMAND_FLAG_PRI | (e_COMMAND_FLAGS:'/'),
 		// Save the new highest ID for loops later.
 		YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1),
 		// Save the command's pointer.
@@ -434,16 +452,42 @@ GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
 		// Add this command to the hash map (does the name too).
 		HashMap_Add(YSI_g_sCommandMap, sCmd, id),
 		// Add all players, or defer to y_groups.
-		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
-		NO_GROUPS<Command>(id)
+		if (inherit)
 		{
-			PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
+			YSI_g_sCommands[id][E_COMMAND_FLAGS] |= e_COMMAND_FLAG_INHERIT;
+		}
+		else
+		{
+			PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
+			NO_GROUPS<Command>(id)
+			{
+				PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
+			}
+			
 		}
 		// Copy the master script information.  Note that this won't be kept up
 		// to date with new scripts unfortunately.
 		MASTER_COPY<id, oidx>
 	}
 	return id;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <param name="oidx">The function this is an alternate to.</param>
+ * <param name="cmd">The new name.</param>
+ * <param name="inherit">Does the new command use the parent's permissions?</param>
+ * <remarks>
+ *   Add an alternate command for an existing command.
+ *
+ * native Command_AddAltNamed(function[], altname[]);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Command_AddAlt(oidx, const string:cmd[], bool:inherit = false)
+{
+	return Command_AddAlt__(function, altname, inherit);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -574,7 +618,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 			sRet = getproperty(8, YSIM_RETURN);
 		}
 	#endif
-	if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP)
+	if (YSI_g_sSystemSettings & e_COMM_FLAG_OPCP)
 		sRet = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sRet);
 	Debug_Print5("Command_ReProces: Return = %d %d %d", p, sRet, Command_Error(p, e_COMMAND_ERRORS:sRet));
 	return Command_Error(p, e_COMMAND_ERRORS:sRet);
@@ -592,6 +636,76 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
     88          `"Ybbd8"' 88         88      88      88 88 `"YbbdP"' `"YbbdP"' 88  `"YbbdP"'  88       88 `"YbbdP"'  
 
 */
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <param name="c">The ID of the command to disable.</param>
+ * <param name="e">Should it be disabled?.</param>
+ * <remarks>
+ *   Enable or disable the command.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FOREIGN__ void:Command_SetDisabled(c, bool:e);
+
+GLOBAL__ void:Command_SetDisabled(c, bool:e)
+{
+	if (_Command_IsValid(c))
+	{
+		if (e)
+			YSI_g_sCommands[c][E_COMMAND_FLAGS] |= e_COMMAND_FLAG_DISABLED;
+		else
+			YSI_g_sCommands[c][E_COMMAND_FLAGS] &= ~e_COMMAND_FLAG_DISABLED;
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <param name="c">The ID of the command to look up.</param>
+ * <returns>Is the command disabled?</returns>
+ *//*------------------------------------------------------------------------**/
+
+FOREIGN__ bool:Command_GetDisabled(c);
+
+GLOBAL__ bool:Command_GetDisabled(c)
+{
+	return _Command_IsValid(c) && YSI_g_sCommands[c][E_COMMAND_FLAGS] & e_COMMAND_FLAG_DISABLED;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <param name="c">The ID of the command to hide.</param>
+ * <param name="e">Should it be hidden?.</param>
+ * <remarks>
+ *   Hide or unhide the command.  Meaning it can be used, but not listed.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FOREIGN__ void:Command_SetHidden(c, bool:e);
+
+GLOBAL__ void:Command_SetHidden(c, bool:e)
+{
+	if (_Command_IsValid(c))
+	{
+		if (e)
+			YSI_g_sCommands[c][E_COMMAND_FLAGS] |= e_COMMAND_FLAG_HIDDEN;
+		else
+			YSI_g_sCommands[c][E_COMMAND_FLAGS] &= ~e_COMMAND_FLAG_HIDDEN;
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <param name="c">The ID of the command to look up.</param>
+ * <returns>Is the command hidden?</returns>
+ *//*------------------------------------------------------------------------**/
+
+FOREIGN__ bool:Command_GetHidden(c);
+
+GLOBAL__ bool:Command_GetHidden(c)
+{
+	return _Command_IsValid(c) && YSI_g_sCommands[c][E_COMMAND_FLAGS] & e_COMMAND_FLAG_HIDDEN;
+}
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
@@ -786,9 +900,9 @@ FOREIGN__ void:Command_SetDeniedReturn(bool:set);
 GLOBAL__ void:Command_SetDeniedReturn(bool:set)
 {
 	if (set)
-		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_DENIED;
+		YSI_g_sSystemSettings |= e_SYSTEM_SETTINGS_DENIED;
 	else
-		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_DENIED;
+		YSI_g_sSystemSettings &= ~e_SYSTEM_SETTINGS_DENIED;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -799,7 +913,7 @@ FOREIGN__ bool:Command_GetDeniedReturn();
 
 GLOBAL__ bool:Command_GetDeniedReturn()
 {
-	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_DENIED);
+	return bool:(YSI_g_sSystemSettings & e_SYSTEM_SETTINGS_DENIED);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -811,9 +925,9 @@ FOREIGN__ void:Command_SetIllegalReturn(bool:set);
 GLOBAL__ void:Command_SetIllegalReturn(bool:set)
 {
 	if (set)
-		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_INVALID_INPUT;
+		YSI_g_sSystemSettings |= e_SYSTEM_SETTINGS_INVALID_INPUT;
 	else
-		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_INVALID_INPUT;
+		YSI_g_sSystemSettings &= ~e_SYSTEM_SETTINGS_INVALID_INPUT;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -824,7 +938,7 @@ FOREIGN__ bool:Command_GetIllegalReturn();
 
 GLOBAL__ bool:Command_GetIllegalReturn()
 {
-	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_INVALID_INPUT);
+	return bool:(YSI_g_sSystemSettings & e_SYSTEM_SETTINGS_INVALID_INPUT);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -836,9 +950,9 @@ FOREIGN__ void:Command_SetUnknownReturn(bool:set);
 GLOBAL__ void:Command_SetUnknownReturn(bool:set)
 {
 	if (set)
-		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_NOT_FOUND;
+		YSI_g_sSystemSettings |= e_SYSTEM_SETTINGS_NOT_FOUND;
 	else
-		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_NOT_FOUND;
+		YSI_g_sSystemSettings &= ~e_SYSTEM_SETTINGS_NOT_FOUND;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -849,7 +963,7 @@ FOREIGN__ bool:Command_GetUnknownReturn();
 
 GLOBAL__ bool:Command_GetUnknownReturn()
 {
-	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_NOT_FOUND);
+	return bool:(YSI_g_sSystemSettings & e_SYSTEM_SETTINGS_NOT_FOUND);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -861,9 +975,9 @@ FOREIGN__ void:Command_SetDisconnectReturn(bool:set);
 GLOBAL__ void:Command_SetDisconnectReturn(bool:set)
 {
 	if (set)
-		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_NO_PLAYER;
+		YSI_g_sSystemSettings |= e_SYSTEM_SETTINGS_NO_PLAYER;
 	else
-		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_NO_PLAYER;
+		YSI_g_sSystemSettings &= ~e_SYSTEM_SETTINGS_NO_PLAYER;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -874,7 +988,7 @@ FOREIGN__ bool:Command_GetDisconnectReturn();
 
 GLOBAL__ bool:Command_GetDisconnectReturn()
 {
-	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_NO_PLAYER);
+	return bool:(YSI_g_sSystemSettings & e_SYSTEM_SETTINGS_NO_PLAYER);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -886,9 +1000,9 @@ FOREIGN__ void:Command_SetSilentReturn(bool:set);
 GLOBAL__ void:Command_SetSilentReturn(bool:set)
 {
 	if (set)
-		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_SILENT;
+		YSI_g_sSystemSettings |= e_SYSTEM_SETTINGS_SILENT;
 	else
-		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_SILENT;
+		YSI_g_sSystemSettings &= ~e_SYSTEM_SETTINGS_SILENT;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -899,7 +1013,7 @@ FOREIGN__ bool:Command_GetSilentReturn();
 
 GLOBAL__ bool:Command_GetSilentReturn()
 {
-	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_SILENT);
+	return bool:(YSI_g_sSystemSettings & e_SYSTEM_SETTINGS_SILENT);
 }
 
 /*
@@ -919,6 +1033,7 @@ GLOBAL__ bool:Command_GetSilentReturn()
  * <library>y_commands</library>
  * <param name="function">The function this is an alternate to.</param>
  * <param name="altname">The new name.</param>
+ * <param name="inherit">Does the new command use the parent's permissions?</param>
  * <remarks>
  *   Add an alternate command for an existing command.
  *
@@ -927,11 +1042,29 @@ GLOBAL__ bool:Command_GetSilentReturn()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Command_AddAltNamed(const string:function[], const string:altname[]);
+FOREIGN__ Command_AddAltNamed__(const string:function[], const string:altname[], bool:inherit);
 
-GLOBAL__ Command_AddAltNamed(const string:function[], const string:altname[])
+GLOBAL__ Command_AddAltNamed__(const string:function[], const string:altname[], bool:inherit)
 {
 	return Command_AddAlt(Command_Find(function), altname);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <param name="function">The function this is an alternate to.</param>
+ * <param name="altname">The new name.</param>
+ * <param name="inherit">Does the new command use the parent's permissions?</param>
+ * <remarks>
+ *   Add an alternate command for an existing command.
+ *
+ * native Command_AddAltNamed(function[], altname[]);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Command_AddAltNamed(const string:function[], const string:altname[], bool:inherit = false)
+{
+	return Command_AddAltNamed__(function, altname, inherit);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1361,10 +1494,10 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
 			{
 				// Set this command's prefix, and add the prefix to the list.
 				new
-					tmp = YSI_g_sCommands[c][E_COMMAND_PREFIX];
+					tmp = _Command_GetPrefix(c);
 				return
 					Bit_Let(YSI_g_sPrefixes, prefix),
-					YSI_g_sCommands[c][E_COMMAND_PREFIX] = prefix,
+					YSI_g_sCommands[c][E_COMMAND_FLAGS] = (YSI_g_sCommands[c][E_COMMAND_FLAGS] & ~e_COMMAND_FLAG_PREFIX) | (e_COMMAND_FLAGS:prefix),
 					Command_FlushPrefixes(tmp),
 					true;
 			}
@@ -1479,7 +1612,7 @@ MASTER_REHOOK__ OnPlayerCommandText(playerid, cmdtext[])
 HOOK__ OnYSIInit()
 {
 	Debug_Print1("Command_OnYSIInit called");
-	YSI_g_sCommandFlags = e_COMMAND_FLAGS_OK | e_COMMAND_FLAGS_SILENT;
+	YSI_g_sSystemSettings = e_SYSTEM_SETTINGS_OK | e_SYSTEM_SETTINGS_SILENT;
 	#if YSIM_NOT_CLIENT
 		#if defined Y_COMMANDS_USE_CHARS
 			Bit_SetAll(YSI_g_sPrefixes, false),
@@ -1531,7 +1664,7 @@ HANDOFF()
 {
 	Debug_Print1("Commands_OnScriptExit <_YCM:p> called");
 	// Copy settings.
-	DISTRIBUTE(YSI_g_sCommandFlags);
+	DISTRIBUTE(YSI_g_sSystemSettings);
 	DISTRIBUTE(YSI_g_sErrorMessages);
 	DISTRIBUTE(YSI_g_sDisabledPlayers);
 	// This accounts for master IDs.
@@ -1658,7 +1791,7 @@ FOREIGN__ void:Command_IncOPCR();
 GLOBAL__ void:Command_IncOPCR()
 {
 	Debug_Print2("Command_IncOPCR called");
-	YSI_g_sCommandFlags += e_COMM_FLAG_OPCR_ADD;
+	YSI_g_sSystemSettings += e_COMM_FLAG_OPCR_ADD;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1675,7 +1808,7 @@ FOREIGN__ void:Command_DecOPCR();
 GLOBAL__ void:Command_DecOPCR()
 {
 	Debug_Print2("Command_DecOPCR called");
-	YSI_g_sCommandFlags -= e_COMM_FLAG_OPCR_ADD;
+	YSI_g_sSystemSettings -= e_COMM_FLAG_OPCR_ADD;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1692,7 +1825,7 @@ FOREIGN__ void:Command_IncOPCP();
 GLOBAL__ void:Command_IncOPCP()
 {
 	Debug_Print2("Command_IncOPCP called");
-	YSI_g_sCommandFlags += e_COMM_FLAG_OPCP_ADD;
+	YSI_g_sSystemSettings += e_COMM_FLAG_OPCP_ADD;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1709,7 +1842,7 @@ FOREIGN__ void:Command_DecOPCP();
 GLOBAL__ void:Command_DecOPCP()
 {
 	Debug_Print2("Command_DecOPCP called");
-	YSI_g_sCommandFlags -= e_COMM_FLAG_OPCP_ADD;
+	YSI_g_sSystemSettings -= e_COMM_FLAG_OPCP_ADD;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1760,9 +1893,9 @@ GLOBAL__ Command_Add(string:cmd[], ptr)
 			Debug_Error("Could not add command to array.");
 			return COMMAND_NOT_FOUND;
 		}
-		#if defined Y_COMMANDS_USE_CHARS
-			YSI_g_sCommands[id][E_COMMAND_PREFIX] = '/',
-		#endif
+		// This sets the prefix even when that feature is disabled, because
+		// there's literally no overhead in doing so.
+		YSI_g_sCommands[id][E_COMMAND_FLAGS] = e_COMMAND_FLAG_PRI | (e_COMMAND_FLAGS:'/'),
 		YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1),
 		// Save the command's pointer.
 		YSI_g_sCommands[id][E_COMMAND_POINTER] = ptr,
@@ -1851,13 +1984,13 @@ native Command_Strcat_(dest[], src, len) = strcat;
  *   No combination of this works:
  *   
  *   <code>
- *     _Command_Decorator(alts[][] = {})
+ *     Command_Decorator__(alts[][] = {})
  *   </code>
  *   
  *   Hence we need to use:
  *   
  *   <code>
- *     _Command_Decorator(.alts = ref(alts));
+ *     Command_Decorator__(.alts = ref(alts));
  *   </code>
  *   
  *   I.e. use a pointer to an array.  Not nice, but meh.  We must ensure that
@@ -1871,7 +2004,7 @@ native Command_Strcat_(dest[], src, len) = strcat;
  *   
  *   <code>
  *     const alts = { "h", "help", "ajuda" };                                   <br />
- *     _Command_Decorator(.altcount = sizeof (alts), .altpointer = ref(alts));
+ *     Command_Decorator__(.altcount = sizeof (alts), .altpointer = ref(alts));
  *   </code>
  *   
  *   For now this is the only parameter that needs special handling.  Example:
@@ -1885,7 +2018,11 @@ native Command_Strcat_(dest[], src, len) = strcat;
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Command_Decorator(const string:func__[], const string:name[] = "", altcnt__ = 0, altptr__ = 0, prefix = '/', Group:group = Group:0, bool:disabled = false, bool: hidden = false)
+#if defined Y_COMMANDS_USE_CHARS
+	Command_Decorator__(const string:func__[], const string:name[] = "", altcnt__ = 0, altptr__ = 0, prefix = '/', Group:group = Group:0, bool:disabled = false, bool: hidden = false)
+#else
+	Command_Decorator__(const string:func__[], const string:name[] = "", altcnt__ = 0, altptr__ = 0, Group:group = Group:0, bool:disabled = false, bool: hidden = false)
+#endif
 {
 	new cmd = Command_GetID(func__);
 	new str[FUNCTION_LENGTH];
@@ -1901,6 +2038,8 @@ _Command_Decorator(const string:func__[], const string:name[] = "", altcnt__ = 0
 		Command_AddAlt(cmd, name);
 		// Remove all players.
 		// TODO: Set the group default.
+		Command_SetDisabled(cmd, true),
+		Command_SetHidden(cmd, true);
 	}
 	while (altcnt__--)
 	{
@@ -1908,8 +2047,10 @@ _Command_Decorator(const string:func__[], const string:name[] = "", altcnt__ = 0
 		// Get an offset in to the 2D array.
 		str[0] = '\0',
 		Command_Strcat_(str, altptr__ + AMX_Read(altptr__), FUNCTION_LENGTH),
-		altptr__ += cellbytes,
-		Command_AddAlt(cmd, str);
+		altptr__ += cellbytes;
+		new aid = Command_AddAlt(cmd, str),
+		Command_SetDisabled(aid, disabled),
+		Command_SetHidden(aid, hidden);
 	}
 	if (group)
 	{
@@ -1918,20 +2059,22 @@ _Command_Decorator(const string:func__[], const string:name[] = "", altcnt__ = 0
 	if (disabled)
 	{
 		// Disable this command initially.
+		Command_SetDisabled(cmd, true);
 	}
 	if (hidden)
 	{
 		// TODO:  We don't actually currently have a way to mark a command as
 		// hidden.  Things like `foreach (new c : Command(playerid))` will loop
 		// through all the commands the player can use, regardless of anything.
+		Command_SetHidden(cmd, true);
 	}
 }
 
 // Un-inline the alt commands array.
-#define _Command_Decorator(%0{%1}%2) const altnames__[][]={%1};_Command_Decorator(%0$%2)
+#define Command_Decorator__(%0{%1}%2) const altnames__[][]={%1};Command_Decorator__(%0$%2)
 #define alts=$ altptr__=ref(altnames__),.altcnt__=sizeof (altnames__)
 #define func__=#%1,) func__=#%1)
 
-#define @cmd(%0)%1(%2) POSTINIT__ %1(){_Command_Decorator(.func__=#%1,%0);}YSIM_COMMAND %1(%2)
+#define @cmd(%0)%1(%2) POSTINIT__ %1(){Command_Decorator__(.func__=#%1,%0);}YSIM_COMMAND %1(%2)
 #define @command @cmd
 
