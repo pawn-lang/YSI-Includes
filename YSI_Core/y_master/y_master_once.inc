@@ -175,8 +175,8 @@ Optional plugins:
 #define YSIM_SERVER_PTSK%0[%3](%1) ptask%0[%3](%1)
 #define YSIM_SERVER_FUNC%0(%1)<%9> forward%0(%1);public%0(%1)
 #define YSIM_SERVER_GRUP%0(%1)     _GROUP_MAKE_NAME<HOOK__%0...>(%1)
-#define YSIM_SERVER_YCMD%0(%1)     _YCMD_4:@yC_%0(a,b[],c);_YCMD_4:@yC_%0(a,b[],c)U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
-#define YSIM_SERVER_ZERO%0(%1)     _YCMD_4:@yC_%0(a,b[],c,i);_YCMD_4:@yC_%0(a,b[],c,i)i==@_&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+#define YSIM_SERVER_YCMD%0(%1)     _YCMD_4:_F<@yC_>%0(a,b[],c);_YCMD_4:_F<@yC_>%0(a,b[],c)U@(8,YSIM_RETURN,_F<@_yC>%0(a,b,c));_F<@_yC>%0(%1);_F<@_yC>%0(%1)
+#define YSIM_SERVER_ZERO%0(%1)     _YCMD_4:_F<@yC_>%0(a,b[],c,i);_YCMD_4:_F<@yC_>%0(a,b[],c,i)i==@_&&U@(8,YSIM_RETURN,_F<@_yC>%0(a,b,c));_F<@_yC>%0(%1);_F<@_yC>%0(%1)
 
 #define YSIM_CLIENT_FOREIGN%0(%1)  %0(%1);YSIM_PARSER(YSIM_UF)%0(%1)
 // Hide the local implementations.
@@ -198,8 +198,8 @@ Optional plugins:
 #define YSIM_CLOUD_PTSK%0[%3](%1)  ptask%0[%3](%1)<>{}public%0(%1)<_YCM:y>
 #define YSIM_CLOUD_FUNC%0(%1)<%9>  %0(%1);public%0(%1)<>{}public%0(%1)<%9>
 #define YSIM_CLOUD_GRUP%0(%1)      _GROUP_MAKE_NAME<HOOK__%0...>(%1)<>{}_GROUP_MAKE_NAME<REHOOK__%0...>(%1)<_YCM:y>
-#define YSIM_CLOUD_YCMD%0(%1)      _YCMD_4:@yC_%0(a,b[],c);_YCMD_4:@yC_%0(a,b[],c)<>{}_YCMD_4:@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
-#define YSIM_CLOUD_ZERO%0(%1)      _YCMD_4:@yC_%0(a,b[],c,i);_YCMD_4:@yC_%0(a,b[],c,i)i==@_&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+#define YSIM_CLOUD_YCMD%0(%1)      _YCMD_4:_F<@yC_>%0(a,b[],c);_YCMD_4:_F<@yC_>%0(a,b[],c)<>{}_YCMD_4:_F<@yC_>%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,_F<@_yC>%0(a,b,c));_F<@_yC>%0(%1);_F<@_yC>%0(%1)
+#define YSIM_CLOUD_ZERO%0(%1)      _YCMD_4:_F<@yC_>%0(a,b[],c,i);_YCMD_4:_F<@yC_>%0(a,b[],c,i)i==@_&&U@(8,YSIM_RETURN,_F<@_yC>%0(a,b,c));_F<@_yC>%0(%1);_F<@_yC>%0(%1)
 
 // A stub foreign is the same as a client foreign - define it as existing, but
 // not here.
@@ -226,8 +226,8 @@ Optional plugins:
 #define YSIM_NONE_PTSK%0[%3](%1)   ptask%0[%3](%1)
 #define YSIM_NONE_FUNC%0(%1)<%9>   forward%0(%1);public%0(%1)
 #define YSIM_NONE_GRUP%0(%1)       _GROUP_MAKE_NAME<HOOK__%0...>(%1)
-#define YSIM_NONE_YCMD%0(%1)       _YCMD_5:@yC_%0(%1);_YCMD_5:@yC_%0(%1)
-#define YSIM_NONE_ZERO%0(%1)       _YCMD_5:@yC_%0(%1);_YCMD_5:@yC_%0(%1)
+#define YSIM_NONE_YCMD%0(%1)       _YCMD_5:_F<@yC_>%0(%1);_YCMD_5:_F<@yC_>%0(%1)
+#define YSIM_NONE_ZERO%0(%1)       _YCMD_5:_F<@yC_>%0(%1);_YCMD_5:_F<@yC_>%0(%1)
 
 // Now the compilation parts.
 #define YSIM_NUM(%0,%1,%2)%8$%4#%5(%7)(%0)(%9)            %8$%4#%5i(%7,%2)(%0,_:%2)(%9,%1%2)

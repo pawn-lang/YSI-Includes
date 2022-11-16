@@ -1661,6 +1661,15 @@ GLOBAL__ void:Command_IncOPCR()
 	YSI_g_sCommandFlags += e_COMM_FLAG_OPCR_ADD;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <remarks>
+ *  This function, and the three other related ones, increment and decrement the
+ *  number of callbacks known to exist on the server.  If they are 0, there's no
+ *  point trying to call them on errors etc.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 FOREIGN__ void:Command_DecOPCR();
 
 GLOBAL__ void:Command_DecOPCR()
@@ -1669,6 +1678,15 @@ GLOBAL__ void:Command_DecOPCR()
 	YSI_g_sCommandFlags -= e_COMM_FLAG_OPCR_ADD;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <remarks>
+ *  This function, and the three other related ones, increment and decrement the
+ *  number of callbacks known to exist on the server.  If they are 0, there's no
+ *  point trying to call them on errors etc.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 FOREIGN__ void:Command_IncOPCP();
 
 GLOBAL__ void:Command_IncOPCP()
@@ -1676,6 +1694,15 @@ GLOBAL__ void:Command_IncOPCP()
 	Debug_Print2("Command_IncOPCP called");
 	YSI_g_sCommandFlags += e_COMM_FLAG_OPCP_ADD;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <remarks>
+ *  This function, and the three other related ones, increment and decrement the
+ *  number of callbacks known to exist on the server.  If they are 0, there's no
+ *  point trying to call them on errors etc.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 FOREIGN__ void:Command_DecOPCP();
 
@@ -1706,7 +1733,6 @@ static stock Command_GetEmptySlot()
  * <library>y_commands</library>
  * <param name="cmd">The command name to add.</param>
  * <param name="ptr">The command's pointer.</param>
- * <param name="id">Where to store the command (default -1 = find).</param>
  * <returns>
  *  The command's ID.
  * </returns>
@@ -1761,8 +1787,8 @@ GLOBAL__ Command_Add(string:cmd[], ptr)
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
- * <param name="f">Command to get the real name of.</param>
- * <param name="p">Player to get the name for.</param>
+ * <param name="func">Command to get the real name of.</param>
+ * <param name="playerid">Player to get the name for.</param>
  * <returns>
  *  The name of a command for a single player.
  * </returns>
