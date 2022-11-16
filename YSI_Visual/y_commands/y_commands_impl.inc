@@ -1925,7 +1925,6 @@ _Command_Decorator(const string:func__[], const string:name[] = "", altcnt__ = 0
 #define alts=$ altptr__=ref(altnames__),.altcnt__=sizeof (altnames__)
 #define func__=#%1,) func__=#%1)
 
-// TODO: y_master integration.
-#define @cmd(%0)%1(%2) POSTINIT__ %1(){_Command_Decorator(.func__=#%1,%0);}_F<@C_y>%1(a,b[],c);_F<@C_y>%1(a,b[],c)U@(8,YSIM_RETURN,_F<@_yC>%1(a,b,c));_F<@_yC>%1(%2);_F<@_yC>%1(%2)
+#define @cmd(%0)%1(%2) POSTINIT__ %1(){_Command_Decorator(.func__=#%1,%0);}YSIM_COMMAND %1(%2)
 #define @command @cmd
 
