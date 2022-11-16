@@ -91,7 +91,7 @@ Optional plugins:
  * <param name="last">The number of elements in the sorted array.</param>
  * <param name="value">The value to find.</param>
  * <returns>
- *  Does the array contain this value?
+ *   Does the array contain this value?
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -125,7 +125,7 @@ stock bool:_Sorted_Contains(arr[], last, value)
  * <param name="last">The number of elements in the sorted array.</param>
  * <param name="value">The value to find.</param>
  * <returns>
- *  The index at which the new value should be inserted.
+ *   The index at which the new value should be inserted.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -159,7 +159,7 @@ stock _Sorted_FindInsert(arr[], last, value)
  * <param name="last">The number of elements in the sorted array.</param>
  * <param name="value">The value to find.</param>
  * <returns>
- *  The index of the value, or <c>-1</c> if it doesn't exist.
+ *   The index of the value, or <c>-1</c> if it doesn't exist.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -194,7 +194,7 @@ stock _Sorted_Find(arr[], last, value)
  * <param name="value">The value to add.</param>
  * <param name="max">The total size of the array.</param>
  * <remarks>
- *  Adds a value to the sorted array.
+ *   Adds a value to the sorted array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -234,7 +234,7 @@ stock bool:_Sorted_Add(arr[], &size, value, max = sizeof (arr))
  * <param name="size">The number of elements in the sorted array.</param>
  * <param name="value">The value to add.</param>
  * <remarks>
- *  Removes a value from the sorted array.
+ *   Removes a value from the sorted array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

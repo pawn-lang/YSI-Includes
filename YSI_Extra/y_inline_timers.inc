@@ -149,32 +149,32 @@ public @y_inlineTimerStart(Func:func<>, time, due)
  * <param name="time">Delay between subsequent calls.</param>
  * <param name="count">How many times to call it.</param>
  * <remarks>
- *  There are several ways to use this function:
+ *   There are several ways to use this function:
  *  
- *  <c>SetCallbackTimer(func, 100);</c>
- *  Calls the function once every 100ms.
+ *   <c>SetCallbackTimer(func, 100);</c>
+ *   Calls the function once every 100ms.
  *  
- *  <c>SetCallbackTimer(func, 100, 0);</c>
- *  Same as above (count is <c>0</c>, which means repeat forever).
+ *   <c>SetCallbackTimer(func, 100, 0);</c>
+ *   Same as above (count is <c>0</c>, which means repeat forever).
  *  
- *  <c>SetCallbackTimer(func, 100, 5);</c>
- *  Calls the function once every 100ms, but only 5 times.
+ *   <c>SetCallbackTimer(func, 100, 5);</c>
+ *   Calls the function once every 100ms, but only 5 times.
  *  
- *  <c>SetCallbackTimer(func, 100, 200, 0);</c>
- *  Calls the function once every 200ms, but the first call is after just 100ms.
+ *   <c>SetCallbackTimer(func, 100, 200, 0);</c>
+ *   Calls the function once every 200ms, but the first call is after just 100ms.
  *  
- *  <c>SetCallbackTimer(func, 100, 200, 42);</c>
- *  Calls the function 42 times, first after 100ms, then every 200ms.
+ *   <c>SetCallbackTimer(func, 100, 200, 42);</c>
+ *   Calls the function 42 times, first after 100ms, then every 200ms.
  *  
- *  When only one parameter is given its <c>time</c>.
+ *   When only one parameter is given its <c>time</c>.
  *  
- *  When two parameters are given they're <c>time</c> and <c>count</c>.
+ *   When two parameters are given they're <c>time</c> and <c>count</c>.
  *  
- *  When all three parameters are given they're <c>initial</c>, <c>time</c>,
- *  and <c>count</c>.
+ *   When all three parameters are given they're <c>initial</c>, <c>time</c>,
+ *   and <c>count</c>.
  *  
- *  Count is NOT like <c>repeat</c> in <c>SetTimer</c>.  <c>0</c> means repeat
- *  forever, anything not <c>0</c> means call it exactly that many times.
+ *   Count is NOT like <c>repeat</c> in <c>SetTimer</c>.  <c>0</c> means repeat
+ *   forever, anything not <c>0</c> means call it exactly that many times.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -216,8 +216,8 @@ stock SetCallbackTimer(Func:func<>, initialOrTime, timeOrCount = 0, count = -1)
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Timer to kill.</param>
  * <remarks>
- *  Kill a timer created by <c>SetCallbackTimer</c>.  Normal <c>KillTimer</c>
- *  won't work for them.
+ *   Kill a timer created by <c>SetCallbackTimer</c>.  Normal <c>KillTimer</c>
+ *   won't work for them.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

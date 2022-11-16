@@ -16,15 +16,17 @@
  *   </summary>
  *   <remarks>
  *     <p>
- *     Provides functions for bit manipulation and bit arrays greater than 32bits.
- *     The arrays are usually bigger than required due to cell boundaries but this
- *     shouldn't cause a major problem (bit tests on the 101st bit of a 100 bit
- *     array won't return 0 for out of bounds, but the 129th will).
+ *     Provides functions for bit manipulation and bit arrays greater than
+ *     32-bits.  The arrays are usually bigger than required due to cell
+ *     boundaries but this shouldn't cause a major problem (bit tests on the
+ *     101st bit of a 100 bit array won't return 0 for out of bounds, but the
+ *     129th will).
  *     </p>
  *     
  *     <p>
- *     Note that y_commands has a few optimisations which bypass the code in here
- *     so any modifications to bit array layouts will need to be reflected there.
+ *     Note that y_commands has a few optimisations which bypass the code in
+ *     here so any modifications to bit array layouts will need to be reflected
+ *     there.
  *     </p>
  *   </remarks>
  * </library>

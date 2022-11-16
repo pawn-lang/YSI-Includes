@@ -96,20 +96,20 @@ const __debug = debug;
 //  /**  
 //   * <param name="playerid">An example named macro parameter (<c>%0</c>).</param>
 //   * <remarks>
-//   *  This is a function-like macro.  By default, compiling with <c>-r</c> does
-//   *  not put macros in the XML, which is a shame if we are using a macro to
-//   *  fake a function, because then a function will be apparently missing
-//   *  from the documentation.  Instead, we make a function, THEN make the
-//   *  macro.  But, importantly, we only make the function on the first pass,
-//   *  not the second pass (documentation is apparently generated in the first
-//   *  pass).
+//   *   This is a function-like macro.  By default, compiling with <c>-r</c> does
+//   *   not put macros in the XML, which is a shame if we are using a macro to
+//   *   fake a function, because then a function will be apparently missing
+//   *   from the documentation.  Instead, we make a function, THEN make the
+//   *   macro.  But, importantly, we only make the function on the first pass,
+//   *   not the second pass (documentation is apparently generated in the first
+//   *   pass).
 //   * </remarks>
 //   * <example>
 //   *
-//   *  for (new i = 0; MyFunc(i); ++i)
-//   *  {
+//   *   for (new i = 0; MyFunc(i); ++i)
+//   *   {
 //   *     printf("%d", i);
-//   *  }
+//   *   }
 //   *
 //   * </example>
 //   */

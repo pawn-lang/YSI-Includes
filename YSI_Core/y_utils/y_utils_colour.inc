@@ -90,21 +90,21 @@ Optional plugins:
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <summary>
- *  InterpolateColourLinear(startColour, endColour, Float:fraction);
+ *   InterpolateColourLinear(startColour, endColour, Float:fraction);
  * </summary>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
  * <remarks>
- *  This function takes a value (fraction) which is a distance between the two
- *  endpoints as a fraction.  This fraction is applied to the two colours given
- *  to find a third colour at some point between those two colours.
+ *   This function takes a value (fraction) which is a distance between the two
+ *   endpoints as a fraction.  This fraction is applied to the two colours given
+ *   to find a third colour at some point between those two colours.
  *
- *  This function performs linear interpolation between the colours, which isn't
- *  usually the best way wrt human vision, but is fast.
+ *   This function performs linear interpolation between the colours, which isn't
+ *   usually the best way wrt human vision, but is fast.
  *
- *  The fraction is optional, and uses the second colour's alpha for blending
- *  if not given.
+ *   The fraction is optional, and uses the second colour's alpha for blending
+ *   if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -164,15 +164,15 @@ stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
  * <remarks>
- *  This function takes a value (fraction) which is a distance between the two
- *  endpoints as a fraction.  This fraction is applied to the two colours given
- *  to find a third colour at some point between those two colours.
+ *   This function takes a value (fraction) which is a distance between the two
+ *   endpoints as a fraction.  This fraction is applied to the two colours given
+ *   to find a third colour at some point between those two colours.
  *
- *  This function performs linear interpolation between the colours, which isn't
- *  usually the best way wrt human vision, but is fast.
+ *   This function performs linear interpolation between the colours, which isn't
+ *   usually the best way wrt human vision, but is fast.
  *
- *  The fraction is optional, and uses the second colour's alpha for blending
- *  if not given.
+ *   The fraction is optional, and uses the second colour's alpha for blending
+ *   if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -189,15 +189,15 @@ stock InterpolateColorLinear(startColour, endColour, Float:fraction)
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
  * <remarks>
- *  This function takes a value (fraction) which is a distance between the two
- *  endpoints as a fraction.  This fraction is applied to the two colours given
- *  to find a third colour at some point between those two colours.
+ *   This function takes a value (fraction) which is a distance between the two
+ *   endpoints as a fraction.  This fraction is applied to the two colours given
+ *   to find a third colour at some point between those two colours.
  *
- *  This function performs linear interpolation between the colours, which isn't
- *  usually the best way wrt human vision, but is fast.
+ *   This function performs linear interpolation between the colours, which isn't
+ *   usually the best way wrt human vision, but is fast.
  *
- *  The fraction is optional, and uses the second colour's alpha for blending
- *  if not given.
+ *   The fraction is optional, and uses the second colour's alpha for blending
+ *   if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -212,15 +212,15 @@ stock InterpolateColor(startColour, endColour, value, maxvalue, minvalue = 0)
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
  * <remarks>
- *  This function takes a value (fraction) which is a distance between the two
- *  endpoints as a fraction.  This fraction is applied to the two colours given
- *  to find a third colour at some point between those two colours.
+ *   This function takes a value (fraction) which is a distance between the two
+ *   endpoints as a fraction.  This fraction is applied to the two colours given
+ *   to find a third colour at some point between those two colours.
  *
- *  This function performs linear interpolation between the colours, which isn't
- *  usually the best way wrt human vision, but is fast.
+ *   This function performs linear interpolation between the colours, which isn't
+ *   usually the best way wrt human vision, but is fast.
  *
- *  The fraction is optional, and uses the second colour's alpha for blending
- *  if not given.
+ *   The fraction is optional, and uses the second colour's alpha for blending
+ *   if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -234,21 +234,21 @@ stock InterpolateColour(startColour, endColour, value, maxvalue, minvalue = 0)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <summary>
- *  InterpolateColourGamma(startColour, endColour, Float:fraction);
+ *   InterpolateColourGamma(startColour, endColour, Float:fraction);
  * </summary>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
  * <remarks>
- *  This function takes a value (fraction) which is a distance between the two
- *  endpoints as a fraction.  This fraction is applied to the two colours given
- *  to find a third colour at some point between those two colours.
+ *   This function takes a value (fraction) which is a distance between the two
+ *   endpoints as a fraction.  This fraction is applied to the two colours given
+ *   to find a third colour at some point between those two colours.
  *
- *  This function performs gamma interpolation between the colours, which is a
- *  good balance between complexity and perception.
+ *   This function performs gamma interpolation between the colours, which is a
+ *   good balance between complexity and perception.
  *
- *  The fraction is optional, and uses the second colour's alpha for blending
- *  if not given.
+ *   The fraction is optional, and uses the second colour's alpha for blending
+ *   if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -311,15 +311,15 @@ stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
  * <remarks>
- *  This function takes a value (fraction) which is a distance between the two
- *  endpoints as a fraction.  This fraction is applied to the two colours given
- *  to find a third colour at some point between those two colours.
+ *   This function takes a value (fraction) which is a distance between the two
+ *   endpoints as a fraction.  This fraction is applied to the two colours given
+ *   to find a third colour at some point between those two colours.
  *
- *  This function performs gamma interpolation between the colours, which is a
- *  good balance between complexity and perception.
+ *   This function performs gamma interpolation between the colours, which is a
+ *   good balance between complexity and perception.
  *
- *  The fraction is optional, and uses the second colour's alpha for blending
- *  if not given.
+ *   The fraction is optional, and uses the second colour's alpha for blending
+ *   if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -351,7 +351,7 @@ stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
  * <param name="y">The y return value.</param>
  * <param name="z">The z return value.</param>
  * <remarks>
- *  Performs one step of the sRGB to CIE colour space conversion process.  See:
+ *   Performs one step of the sRGB to CIE colour space conversion process.  See:
  *
  *      https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ)
  *
@@ -369,14 +369,14 @@ stock CIEMultiply(Float:r, Float:g, Float:b, &Float:x, &Float:y, &Float:z)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <summary>
- *  SRGBToCIE(colour, &amp;Float:x, &amp;Float:y, &amp;Float:z);
+ *   SRGBToCIE(colour, &amp;Float:x, &amp;Float:y, &amp;Float:z);
  * </summary>
  * <param name="colour">The sRGB colour to convert.</param>
  * <param name="x">The x return value.</param>
  * <param name="y">The y return value.</param>
  * <param name="z">The z return value.</param>
  * <remarks>
- *  Converts a colour from sRGB colour space to CIE XYZ colour space.  See:
+ *   Converts a colour from sRGB colour space to CIE XYZ colour space.  See:
  *
  *      https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ)
  *
@@ -407,14 +407,14 @@ stock SRGBToCIE(colour, &Float:x, &Float:y, &Float:z)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <summary>
- *  SRGBToCIE(colour, &amp;Float:x, &amp;Float:y, &amp;Float:z);
+ *   SRGBToCIE(colour, &amp;Float:x, &amp;Float:y, &amp;Float:z);
  * </summary>
  * <param name="a">The alpha to add on.</param>
  * <param name="x">The x return value.</param>
  * <param name="y">The y return value.</param>
  * <param name="z">The z return value.</param>
  * <remarks>
- *  Converts a colour from CIE XYZ colour space to sRGB colour space.  See:
+ *   Converts a colour from CIE XYZ colour space to sRGB colour space.  See:
  *
  *      https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB)
  *
@@ -426,9 +426,9 @@ stock CIEToSRGB(a, Float:x, Float:y, Float:z)
 	// See: https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB)
 	new
 		// To linear.
-		Float:fr = x *  3.2406 + y * -1.5372 + z * -0.4986,
-		Float:fg = x * -0.9689 + y *  1.8758 + z *  0.0415,
-		Float:fb = x *  0.0557 + y * -0.2040 + z *  1.0570,
+		Float:fr = x *   3.2406 + y * -1.5372 + z * -0.4986,
+		Float:fg = x * -0.9689 + y *   1.8758 + z *   0.0415,
+		Float:fb = x *   0.0557 + y * -0.2040 + z *   1.0570,
 		// To RGB.
 		ir = fr <= FLOAT_CIE_CUTOFF
 			? floatround(FLOAT_CIE_TRANSFORM_LOW * fr)
@@ -445,21 +445,21 @@ stock CIEToSRGB(a, Float:x, Float:y, Float:z)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <summary>
- *  InterpolateColourSRGB(startColour, endColour, Float:fraction);
+ *   InterpolateColourSRGB(startColour, endColour, Float:fraction);
  * </summary>
  * <param name="startColour">One of the two colours.</param>
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
  * <remarks>
- *  This function takes a value (fraction) which is a distance between the two
- *  endpoints as a fraction.  This fraction is applied to the two colours given
- *  to find a third colour at some point between those two colours.
+ *   This function takes a value (fraction) which is a distance between the two
+ *   endpoints as a fraction.  This fraction is applied to the two colours given
+ *   to find a third colour at some point between those two colours.
  *
- *  This function performs full sRGB colour space interpolation, which is more
- *  exact even than gamma interpolation, but also a lot slower.
+ *   This function performs full sRGB colour space interpolation, which is more
+ *   exact even than gamma interpolation, but also a lot slower.
  *
- *  The fraction is optional, and uses the second colour's alpha for blending
- *  if not given.
+ *   The fraction is optional, and uses the second colour's alpha for blending
+ *   if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -509,15 +509,15 @@ stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
  * <param name="endColour">The other of the two colours.</param>
  * <param name="fraction">How far to interpolate between the colours.</param>
  * <remarks>
- *  This function takes a value (fraction) which is a distance between the two
- *  endpoints as a fraction.  This fraction is applied to the two colours given
- *  to find a third colour at some point between those two colours.
+ *   This function takes a value (fraction) which is a distance between the two
+ *   endpoints as a fraction.  This fraction is applied to the two colours given
+ *   to find a third colour at some point between those two colours.
  *
- *  This function performs full sRGB colour space interpolation, which is more
- *  exact even than gamma interpolation, but also a lot slower.
+ *   This function performs full sRGB colour space interpolation, which is more
+ *   exact even than gamma interpolation, but also a lot slower.
  *
- *  The fraction is optional, and uses the second colour's alpha for blending
- *  if not given.
+ *   The fraction is optional, and uses the second colour's alpha for blending
+ *   if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -531,17 +531,17 @@ stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <summary>
- *  GetNearestColourLinear(colour, const options[], count = sizeof (options));
+ *   GetNearestColourLinear(colour, const options[], count = sizeof (options));
  * </summary>
  * <param name="colour">The RGB(A) colour to restrict.</param>
  * <param name="options">The list of valid RGB(A) colour options.</param>
  * <param name="count">The size of the options array.</param>
  * <returns>
- *  The INDEX of the nearst colour.  Or <c>-1</c> for errors.
+ *   The INDEX of the nearst colour.  Or <c>-1</c> for errors.
  * </returns>
  * <remarks>
- *  Find the closest colour to the given colour from the array.  Uses RGB colour
- *  space for the distance function, which is not very accurate.
+ *   Find the closest colour to the given colour from the array.  Uses RGB colour
+ *   space for the distance function, which is not very accurate.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -580,17 +580,17 @@ stock GetNearestColourLinear(colour, const options[], count = sizeof (options))
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <summary>
- *  GetNearestColourGamma(colour, const options[], count = sizeof (options));
+ *   GetNearestColourGamma(colour, const options[], count = sizeof (options));
  * </summary>
  * <param name="colour">The RGB(A) colour to restrict.</param>
  * <param name="options">The list of valid RGB(A) colour options.</param>
  * <param name="count">The size of the options array.</param>
  * <returns>
- *  The INDEX of the nearst colour.  Or <c>-1</c> for errors.
+ *   The INDEX of the nearst colour.  Or <c>-1</c> for errors.
  * </returns>
  * <remarks>
- *  Find the closest colour to the given colour from the array.  Uses gamma
- *  colour space for slightly more accuracy.
+ *   Find the closest colour to the given colour from the array.  Uses gamma
+ *   colour space for slightly more accuracy.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -629,17 +629,17 @@ stock GetNearestColourGamma(colour, const options[], count = sizeof (options))
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <summary>
- *  GetNearestColourGammaCached(colour, const options[], count = sizeof (options));
+ *   GetNearestColourGammaCached(colour, const options[], count = sizeof (options));
  * </summary>
  * <param name="colour">The RGB(A) colour to restrict.</param>
  * <param name="options">The list of valid gamma colour options.</param>
  * <param name="count">The size of the options array.</param>
  * <returns>
- *  The INDEX of the nearst colour.  Or <c>-1</c> for errors.
+ *   The INDEX of the nearst colour.  Or <c>-1</c> for errors.
  * </returns>
  * <remarks>
- *  Find the closest colour to the given colour from the array.  Uses gamma
- *  colour space for slightly more accuracy.  Options are in gamma format.
+ *   Find the closest colour to the given colour from the array.  Uses gamma
+ *   colour space for slightly more accuracy.  Options are in gamma format.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -678,17 +678,17 @@ stock GetNearestColourGammaCached(colour, const Float:options[][3], count = size
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <summary>
- *  GetNearestColourGamma(colour, const options[], count = sizeof (options));
+ *   GetNearestColourGamma(colour, const options[], count = sizeof (options));
  * </summary>
  * <param name="colour">The RGB(A) colour to restrict.</param>
  * <param name="options">The list of valid RGB(A) colour options.</param>
  * <param name="count">The size of the options array.</param>
  * <returns>
- *  The INDEX of the nearst colour.  Or <c>-1</c> for errors.
+ *   The INDEX of the nearst colour.  Or <c>-1</c> for errors.
  * </returns>
  * <remarks>
- *  Find the closest colour to the given colour from the array.  Uses SRGB
- *  colour space for the most accuracy.
+ *   Find the closest colour to the given colour from the array.  Uses SRGB
+ *   colour space for the most accuracy.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -725,17 +725,17 @@ stock GetNearestColourSRGB(colour, const options[], count = sizeof (options))
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <summary>
- *  GetNearestColourSRGBCached(colour, const options[], count = sizeof (options));
+ *   GetNearestColourSRGBCached(colour, const options[], count = sizeof (options));
  * </summary>
  * <param name="colour">The RGB(A) colour to restrict.</param>
  * <param name="options">The list of valid SRGB colour options.</param>
  * <param name="count">The size of the options array.</param>
  * <returns>
- *  The INDEX of the nearst colour.  Or <c>-1</c> for errors.
+ *   The INDEX of the nearst colour.  Or <c>-1</c> for errors.
  * </returns>
  * <remarks>
- *  Find the closest colour to the given colour from the array.  Uses SRGB
- *  colour space for the most accuracy.  Options are in SRGB format.
+ *   Find the closest colour to the given colour from the array.  Uses SRGB
+ *   colour space for the most accuracy.  Options are in SRGB format.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

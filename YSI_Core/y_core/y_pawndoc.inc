@@ -16,7 +16,7 @@
  *     This XSL has features such as library and markdown support, and will not
  *     render this message when used.
  *   </summary>
- *  </library>
+ *   </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

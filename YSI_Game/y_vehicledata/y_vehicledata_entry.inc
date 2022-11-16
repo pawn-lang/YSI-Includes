@@ -1048,10 +1048,10 @@ stock
 /*-------------------------------------------------------------------------*//**
  * <param name="vehicleid">The vehicleid to get speed.</param>
  * <returns>
- *  Current vehicle speed.
+ *   Current vehicle speed.
  * </returns>
  * <remarks>
- *  This function have returns in KM/H.
+ *   This function have returns in KM/H.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

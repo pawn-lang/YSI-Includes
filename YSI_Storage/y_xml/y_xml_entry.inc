@@ -148,10 +148,10 @@ FUNC_PAWNDOC(bool:XML_IsChar(ch));
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
- *  XML
+ *   XML
  * </returns>
  * <remarks>
- *  Creates a new set of rules for parsing XML files.
+ *   Creates a new set of rules for parsing XML files.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -183,7 +183,7 @@ stock XML_Destroy(XML:rule)
  * <param name="rule">Set of XML rules to parse against.</param>
  * <param name="filename">XML file to parse.</param>
  * <remarks>
- *  Now supports self-closing tags and XML comments.
+ *   Now supports self-closing tags and XML comments.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -368,8 +368,8 @@ stock XML_Parse(XML:rule, const filename[])
  * <param name="text">Data.</param>
  * <param name="depth">Current XML tree depth.</param>
  * <remarks>
- *  Pushes an identifier and it's value (either explicitaly stated or returned
- *  from another function) to the stack with basic parent info.
+ *   Pushes an identifier and it's value (either explicitaly stated or returned
+ *   from another function) to the stack with basic parent info.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -395,8 +395,8 @@ stock XML_Push(const name[], const text[], depth)
  * <param name="line">Data to extract from.</param>
  * <param name="pos">Start/end point of the text.</param>
  * <remarks>
- *  Gets the data from inside ""s in an identifier.  Now supports
- *  \ for escape characters.
+ *   Gets the data from inside ""s in an identifier.  Now supports
+ *   \ for escape characters.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -469,7 +469,7 @@ stock XML_GetParameter(const line[], &pos)
  * <param name="line">Line to get data from.</param>
  * <param name="pos">Start and end position of the data.</param>
  * <remarks>
- *  Gets the text between tags.
+ *   Gets the text between tags.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -494,7 +494,7 @@ stock XML_GetValue(const line[], &pos)
  * <param name="line">Line to get data from.</param>
  * <param name="pos">Start and end position of text.</param>
  * <remarks>
- *  Gets the identifier of a piece of data.
+ *   Gets the identifier of a piece of data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -564,10 +564,10 @@ stock XML_ParseTag(XML:rule, const name[], tagCount)
  * <param name="key">Variable to return identifier in.</param>
  * <param name="value">Variable to return value in.</param>
  * <returns>
- *  Data found.
+ *   Data found.
  * </returns>
  * <remarks>
- *  Pops items off the stack for use in custom functions.
+ *   Pops items off the stack for use in custom functions.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -601,11 +601,11 @@ stock XML_GetKeyValue(key[], value[])
  * <param name="key">Name of the parameter to get.</param>
  * <param name="value">Variable to return value in.</param>
  * <returns>
- *  Data found.
+ *   Data found.
  * </returns>
  * <remarks>
- *  Does no poping, just searches for a value with the right name at the right
- *  depth so children can use the data if they HAVE to.
+ *   Does no poping, just searches for a value with the right name at the right
+ *   depth so children can use the data if they HAVE to.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -712,9 +712,9 @@ stock XMLEntry:XML_AddParameter(XMLEntry:parent, const tag[], const value[] = ""
  * <param name="tag">Type of data being added.</param>
  * <param name="name">The optional name parameter for identifying tags.</param>
  * <remarks>
- *  Starts the creation of a new tag to be written to a file, the structure
- *  has to be manually created then written.  There is no buffering of multiple
- *  tags before writing as a single tag can have quite a bit of data.
+ *   Starts the creation of a new tag to be written to a file, the structure
+ *   has to be manually created then written.  There is no buffering of multiple
+ *   tags before writing as a single tag can have quite a bit of data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -744,7 +744,7 @@ stock XMLEntry:XML_AddItem(const tag[], const name[] = "", XMLEntry:parent = XML
  * <param name="bIncludeXML">Write the default &lt;XML&gt; tags or not?</param>
  * <param name="bFavourShort">Write the shortest tags possible.</param>
  * <remarks>
- *  Writea the data for a tag to a file.
+ *   Writea the data for a tag to a file.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -829,7 +829,7 @@ stock XML_WriteItem(const filename[], XMLEntry:item, bool:bIncludeXML = true, bo
  * <param name="fHnd">File to write to.</param>
  * <param name="depth">Current indentation.</param>
  * <remarks>
- *  Recursive function to write a tag and it's children to a file.
+ *   Recursive function to write a tag and it's children to a file.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -869,9 +869,9 @@ static stock XML_WriteItemData(item, File:fHnd, depth)
  * <param name="fHnd">File to write to.</param>
  * <param name="depth">Current indentation.</param>
  * <remarks>
- *  Recursive function to write a tag and it's children to a file.  Writes tags
- *  in the shortest manner possible.  This does make it slower however (not much
- *  though given the use of linked lists).
+ *   Recursive function to write a tag and it's children to a file.  Writes tags
+ *   in the shortest manner possible.  This does make it slower however (not much
+ *   though given the use of linked lists).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -943,7 +943,7 @@ static stock XML_WriteItemDataShort(item, File:fHnd, depth)
  * <param name="tag">Type of tag to remove.</param>
  * <param name="name">Name of the tag to remove.</param>
  * <remarks>
- *  Does a replace on data in a file with no new data.
+ *   Does a replace on data in a file with no new data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -959,7 +959,7 @@ stock XML_RemoveItem(const file[], const tag[], const name[])
  * <param name="name">Name of data to replace.</param>
  * <param name="replacement">Handle to the replacement data.</param>
  * <remarks>
- *  Replaces a tag's data with new data, basically changes a tag's value.
+ *   Replaces a tag's data with new data, basically changes a tag's value.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

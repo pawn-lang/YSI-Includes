@@ -202,9 +202,9 @@ FUNC_PAWNDOC(INI_Bin(const name[],&variable));
  * <param name="variable">Variable to fill with string value.</param>
  * <param name="len">Optional string length.</param>
  * <remarks>
- *  The old version of "INI_String" didn't like not having a length.  It gave a
- *  very odd error message too.  This has now been corrected by making the
- *  length parameter optional.
+ *   The old version of "INI_String" didn't like not having a length.  It gave a
+ *   very odd error message too.  This has now been corrected by making the
+ *   length parameter optional.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -302,10 +302,10 @@ static stock INI_WriteTag(File:file, const tag[], format[])
  * <param name="fileOrTag">The first parameter.</param>
  * <param name="tagOrFile">The second parameter.</param>
  * <returns>
- *  Was the function found?
+ *   Was the function found?
  * </returns>
  * <remarks>
- *  Gets a callback given a partial function name and a tag name.
+ *   Gets a callback given a partial function name and a tag name.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -424,14 +424,14 @@ static stock Alloc:INI_GetKey(Alloc:cur, const key[], &Alloc:prev)
  * <param name="name">Data name to write.</param>
  * <param name="data">Data to write.</param>
  * <returns>
- *  The slot written to, or -1 on failure.
+ *   The slot written to, or -1 on failure.
  * </returns>
  * <remarks>
- *  First checks the name doesn't already exist under the current tag header
- *  and if it does overwrites the current value.  If not checks there's room
- *  in the buffer to write to and purges the buffer if not.  Finally saves the
- *  data in the buffer for writing when required and adds the data to the
- *  relevant list for tag inclusion.
+ *   First checks the name doesn't already exist under the current tag header
+ *   and if it does overwrites the current value.  If not checks there's room
+ *   in the buffer to write to and purges the buffer if not.  Finally saves the
+ *   data in the buffer for writing when required and adds the data to the
+ *   relevant list for tag inclusion.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -557,14 +557,14 @@ _Y_INI_STATIC stock bool:INI_AddToBuffer(INI:file, const key[], const value[], s
  * ones?</param>
  * <param name="filter">Text to use to search for which tags to load.</param>
  * <remarks>
- *  bFileFirst sets the order and inclusion of the possible remoteFormat
- *  parameters.  If true the format will add the filename first then the 
- *  current tag, if false the order will be reversed.  This can also be used
- *  to exclude one or the other from the function name by setting the required
- *  parameter to be entered first and then only having one %s in the format
- *  sting.  The default order is tag first for languages compatibility.
+ *   bFileFirst sets the order and inclusion of the possible remoteFormat
+ *   parameters.  If true the format will add the filename first then the 
+ *   current tag, if false the order will be reversed.  This can also be used
+ *   to exclude one or the other from the function name by setting the required
+ *   parameter to be entered first and then only having one %s in the format
+ *   sting.  The default order is tag first for languages compatibility.
  *
- *  This function is now EXTENSIVELY documented here:
+ *   This function is now EXTENSIVELY documented here:
  *
  *      <a href="http://forum.sa-mp.com/showthread.php?t=485611" />
  *
@@ -729,11 +729,11 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
  * <param name="extra">Additional data to send.</param>
  * <param name="bLocal">Call local functions instead of gloabal ones.</param>
  * <returns>
- *  INI_ParseFile
+ *   INI_ParseFile
  * </returns>
  * <remarks>
- *  Wrapper for INI_ParseFile to use standard API features so people can
- *  worry even less.  Designed for use with INI_Parse.
+ *   Wrapper for INI_ParseFile to use standard API features so people can
+ *   worry even less.  Designed for use with INI_Parse.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -836,9 +836,9 @@ stock bool:INI_Load(const filename[], bool:bExtra = false, extra = 0, bool:bLoca
  * <param name="file">INI file handle to write to.</param>
  * <param name="tag">Name of the new file subsection for subsequent data to write to.</param>
  * <remarks>
- *  Sets a new [tag] section header.  Subsequent data is written under this
- *  header.  Uses lists for constant tag switching and checks the tag doesn't
- *  already exist.
+ *   Sets a new [tag] section header.  Subsequent data is written under this
+ *   header.  Uses lists for constant tag switching and checks the tag doesn't
+ *   already exist.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -879,10 +879,10 @@ static stock bool:INI_SetTag_(INI:file, const tag[])
 /*-------------------------------------------------------------------------*//**
  * <param name="filename">INI file to open.</param>
  * <returns>
- *  INI - handle to the file or INI_NO_FILE.
+ *   INI - handle to the file or INI_NO_FILE.
  * </returns>
  * <remarks>
- *  Doesn't actually open the file, just starts a new buffer if possible.
+ *   Doesn't actually open the file, just starts a new buffer if possible.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -913,7 +913,7 @@ stock INI:INI_Open(const filename[])
 /*-------------------------------------------------------------------------*//**
  * <param name="file">Handle to the ini to close.</param>
  * <remarks>
- *  Writes any outstanding buffer data to the file and ends the stream.
+ *   Writes any outstanding buffer data to the file and ends the stream.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -949,7 +949,7 @@ stock bool:INI_SetTag(INI:file, const tag[])
  * <param name="file">INI file handle to write to.</param>
  * <param name="tag">Name of the whole section to delete.</param>
  * <remarks>
- *  Removes a [tag] section from a file.
+ *   Removes a [tag] section from a file.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -968,7 +968,7 @@ stock bool:INI_DeleteTag(INI:file, const tag[])
  * <param name="file">File to write to.</param>
  * <param name="name">Item to remove.</param>
  * <remarks>
- *  Wrapper for INI_AddToBuffer for removing data.
+ *   Wrapper for INI_AddToBuffer for removing data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1003,11 +1003,11 @@ stock bool:INI_RemoveEntry(INI:file, const name[])
  * <param name="p2e">End of part 2.</param>
  * <param name="cont">Is this a line continuation?</param>
  * <returns>
- *  e_INI_LINE_TYPE
+ *   e_INI_LINE_TYPE
  * </returns>
  * <remarks>
- *  This function's signature is so long that I put it on a separate line.  This
- *  takes a line and determines what it is and where the parts are.
+ *   This function's signature is so long that I put it on a separate line.  This
+ *   takes a line and determines what it is and where the parts are.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1312,7 +1312,7 @@ state_in_continuation:
  * <param name="name">Data name.</param>
  * <param name="data">Data.</param>
  * <remarks>
- *  Wrapper for INI_AddToBuffer for strings.
+ *   Wrapper for INI_AddToBuffer for strings.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1332,8 +1332,8 @@ stock bool:INI_WriteString(INI:file, const name[], const data[])
  * <param name="name">Data name.</param>
  * <param name="data">Integer data.</param>
  * <remarks>
- *  Wrapper for INI_AddToBuffer for integers.  Fixed for very large numbers
- *  based on code by Slice from "fixes.inc" for "valstr".
+ *   Wrapper for INI_AddToBuffer for integers.  Fixed for very large numbers
+ *   based on code by Slice from "fixes.inc" for "valstr".
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1359,7 +1359,7 @@ stock bool:INI_WriteInt(INI:file, const name[], data)
  * <param name="name">Data name.</param>
  * <param name="data">Hex data.</param>
  * <remarks>
- *  Wrapper for INI_AddToBuffer for integers to be written as hex values.
+ *   Wrapper for INI_AddToBuffer for integers to be written as hex values.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1376,7 +1376,7 @@ stock bool:INI_WriteHex(INI:file, const name[], data)
  * <param name="name">Data name.</param>
  * <param name="data">Binary data.</param>
  * <remarks>
- *  Wrapper for INI_AddToBuffer for integers to be written as binary values.
+ *   Wrapper for INI_AddToBuffer for integers to be written as binary values.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1393,7 +1393,7 @@ stock bool:INI_WriteBin(INI:file, const name[], data)
  * <param name="name">Data name.</param>
  * <param name="data">Boolean data.</param>
  * <remarks>
- *  Wrapper for INI_AddToBuffer for booleans.
+ *   Wrapper for INI_AddToBuffer for booleans.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1409,7 +1409,7 @@ stock bool:INI_WriteBool(INI:file, const name[], bool:data)
  * <param name="data">Float data.</param>
  * <param name="accuracy">number of decimal places to write.</param>
  * <remarks>
- *  Wrapper for INI_AddToBuffer for floats.
+ *   Wrapper for INI_AddToBuffer for floats.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1440,7 +1440,7 @@ stock bool:INI_WriteFloat(INI:file, const name[], Float:data, accuracy = 6)
  * <param name="data">Float data.</param>
  * <param name="accuracy">number of decimal places to write.</param>
  * <remarks>
- *  Wrapper for INI_AddToBuffer for floats.
+ *   Wrapper for INI_AddToBuffer for floats.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1580,8 +1580,8 @@ INI_ReadFile_cont:
  * <param name="key">The key of the data loaded.</param>
  * <param name="value">The data loaded.</param>
  * <remarks>
- *  Reading: Calls the correct type of callback based on earlier settings.
- *  Writing: Writes out the line with the new or old data.
+ *   Reading: Calls the correct type of callback based on earlier settings.
+ *   Writing: Writes out the line with the new or old data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1680,8 +1680,8 @@ static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_writing_fa
 /*-------------------------------------------------------------------------*//**
  * <param name="comment">The comment from the file.</param>
  * <remarks>
- *  Reading: Does nothing.
- *  Writing: Writes the comment to the file.
+ *   Reading: Does nothing.
+ *   Writing: Writes the comment to the file.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1706,8 +1706,8 @@ static stock INI_HandleComment(const comment[]) <>
 /*-------------------------------------------------------------------------*//**
  * <param name="tag">The tag from the file.</param>
  * <remarks>
- *  Reading: Does nothing.
- *  Writing: Dumps the remainder of the previous tag and switches to the new
+ *   Reading: Does nothing.
+ *   Writing: Dumps the remainder of the previous tag and switches to the new
  *    one.  If there's nothing to dump, moves to the fast dump mode.
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -1876,7 +1876,7 @@ static stock bool:INI_FindCallback(const cb[]) <>
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Clean up once all the file has been read.
+ *   Clean up once all the file has been read.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1954,7 +1954,7 @@ static stock INI_HandleEnd() <>
  * <param name="file">INI file to write to disk now.</param>
  * <param name="restoreTag">After writing, reset the current tag?</param>
  * <remarks>
- *  Dumps all the current data to disk.
+ *   Dumps all the current data to disk.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

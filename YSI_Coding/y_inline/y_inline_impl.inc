@@ -1082,10 +1082,10 @@ stock I@K(n)
  * <param name="func">Public function to get.</param>
  * <param name="spec">The structure of the function's parameters.</param>
  * <returns>
- *  A pointer to the function.
+ *   A pointer to the function.
  * </returns>
  * <remarks>
- *  Accepts the following parameter specifiers:
+ *   Accepts the following parameter specifiers:
  *
  *      i - Integer (also x/c/d/h)
  *      f - Float (also g)
@@ -1120,10 +1120,10 @@ stock Function:GetRemoteFunction(const func[], const spec[])
  * <param name="func">Public function to get.</param>
  * <param name="spec">The structure of the function's parameters.</param>
  * <returns>
- *  A pointer to the function.
+ *   A pointer to the function.
  * </returns>
  * <remarks>
- *  Accepts the following parameter specifiers:
+ *   Accepts the following parameter specifiers:
  *
  *      i - Integer (also x/c/d/h)
  *      f - Float (also g)
@@ -1164,7 +1164,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
  * <param name="func">Function pointer to call.</param>
  * <param name="">The function's parameters.</param>
  * <remarks>
- *  Call the function in the given pointer with the given parameters.
+ *   Call the function in the given pointer with the given parameters.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1180,8 +1180,8 @@ stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
  * <param name="ignorecase">Do a case-insensitive search.</param>
  * <param name="length">Length of string to compare over.</param>
  * <remarks>
- *  Just <c>strcmp</c>, but pretending the first parameter is a value not an
- *  array so that we can trick the compiler in to accepting a pointer.
+ *   Just <c>strcmp</c>, but pretending the first parameter is a value not an
+ *   array so that we can trick the compiler in to accepting a pointer.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1190,7 +1190,8 @@ native Inline_Strcmp(const string1, const string2[], bool:ignorecase=false, leng
 /*-------------------------------------------------------------------------*//**
  * <param name="frm">Frame to get the parameters from.</param>
  * <remarks>
- *  Deals with y_hooks parameter count mangling.  Stolen from <c>Hooks_NumArgs</c>.
+ *   Deals with y_hooks parameter count mangling.  Stolen from
+ *   <c>Hooks_NumArgs</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1214,8 +1215,8 @@ Inline_NumArgs_load:
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Inline to find by name.</param>
  * <remarks>
- *  Traverses up the stack to find an in-scope inline with the same name AND
- *  SIGNATURE.
+ *   Traverses up the stack to find an in-scope inline with the same name AND
+ *   SIGNATURE.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1270,8 +1271,8 @@ static stock Callback_InlineByName(const name[], tag)
  * <param name="remote">Is this function called on one or all scripts?</param>
  * <param name="tag">The tag of the return value for type reasons.</param>
  * <remarks>
- *  Replacement for <c>Callback_Get</c>.  Just returns a pointer, and no longer
- *  relies on strict control of where is called from.
+ *   Replacement for <c>Callback_Get</c>.  Just returns a pointer, and no longer
+ *   relies on strict control of where is called from.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1310,9 +1311,9 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Info on the function to be called.</param>
  * <remarks>
- *  Takes an inline function handler and parameters, and either calls the
- *  public function while passing through the parameters, or just jumps to the
- *  carefully crafted inline function code.
+ *   Takes an inline function handler and parameters, and either calls the
+ *   public function while passing through the parameters, or just jumps to the
+ *   carefully crafted inline function code.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1327,14 +1328,14 @@ stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
  * <param name="params">Array of data pointers.</param>
  * <param name="num">Size of the array.</param>
  * <remarks>
- *  This is very similar to Callback_Call, but takes an array of ADDRESSES
- *  instead of normal parameters.  This is designed to help support some
- *  experimental OO code I was working on...
+ *   This is very similar to Callback_Call, but takes an array of ADDRESSES
+ *   instead of normal parameters.  This is designed to help support some
+ *   experimental OO code I was working on...
  *
- *  If the target is a public function, the parameters are resolved and passed
- *  normally.  If the target is an inline function we are optimised for the
- *  common case, so move the data on to the stack (currently done value-by-value
- *  not all at once) and call "Callback_Call".
+ *   If the target is a public function, the parameters are resolved and passed
+ *   normally.  If the target is an inline function we are optimised for the
+ *   common case, so move the data on to the stack (currently done
+ *   value-by-value not all at once) and call "Callback_Call".
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1354,14 +1355,14 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Looks up the callback by name.  If the name has the correct data embedded
- *  within it that's great and we use that directly.  Otherwise this function
- *  loops backwards over the callbacks currently in scope (mostly) to the start
- *  of the parent function.  If a match is still not found this looks for a
- *  public function of the same name.  If that isn't found either it gives up.
+ *   Looks up the callback by name.  If the name has the correct data embedded
+ *   within it that's great and we use that directly.  Otherwise this function
+ *   loops backwards over the callbacks currently in scope (mostly) to the start
+ *   of the parent function.  If a match is still not found this looks for a
+ *   public function of the same name.  If that isn't found either it gives up.
  *
- *  The new "remote" parameter returns instantly with a remote public function
- *  stub, and no stored data.
+ *   The new "remote" parameter returns instantly with a remote public function
+ *   stub, and no stored data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1445,7 +1446,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 /*-------------------------------------------------------------------------*//**
  * <param name="input">Callback to release.</param>
  * <remarks>
- *  Releases all the data associated with a given callback (closure storage).
+ *   Releases all the data associated with a given callback (closure storage).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1465,11 +1466,11 @@ static stock Callback_Claim_(func[E_INLINE_CALL])
 /*-------------------------------------------------------------------------*//**
  * <param name="">The parameters passed to this function via <see>@</see>.</param>
  * <remarks>
- *  When you call an inline function using <c>@.name</c>, the underlying
- *  <c>Indirect_Call</c> function jumps to a handler.  This is that handler.
- *  The code here copies the function closure then jumps to the start of the
- *  inline code.  Once that is completed, the inline jumps back to midway
- *  through this function to store the closure back again (if required).
+ *   When you call an inline function using <c>@.name</c>, the underlying
+ *   <c>Indirect_Call</c> function jumps to a handler.  This is that handler.
+ *   The code here copies the function closure then jumps to the start of the
+ *   inline code.  Once that is completed, the inline jumps back to midway
+ *   through this function to store the closure back again (if required).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1538,11 +1539,11 @@ static Callback_CallHandler_(...)
 /*-------------------------------------------------------------------------*//**
  * <param name="">The parameters passed to this function via <see>@</see>.</param>
  * <remarks>
- *  When you call a remote function using <c>@.name</c>, the underlying
- *  <c>Indirect_Call</c> function jumps to a handler.  This is that handler.
- *  The code here simply wraps <c>CallRemoteFunction</c>, passing the specifier
- *  and function name stored in <c>INDIRECTION_DATA</c>, which is  assumed to be
- *  a pointer to <c>enum E_PUBLIC_CALL</c>.
+ *   When you call a remote function using <c>@.name</c>, the underlying
+ *   <c>Indirect_Call</c> function jumps to a handler.  This is that handler.
+ *   The code here simply wraps <c>CallRemoteFunction</c>, passing the specifier
+ *   and function name stored in <c>INDIRECTION_DATA</c>, which is  assumed to
+ *   be a pointer to <c>enum E_PUBLIC_CALL</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1587,10 +1588,10 @@ static stock Callback_RemoteHandler_(...)
 /*-------------------------------------------------------------------------*//**
  * <param name="">The parameters passed to this function via <see>@</see>.</param>
  * <remarks>
- *  When you call a local function using <c>@.name</c>, the underlying
- *  <c>Indirect_Call</c> function jumps to a handler.  This is that handler.
- *  The code here simply wraps <c>CallLocalFunction</c>, passing the specifier
- *  and function name stored in <c>INDIRECTION_DATA</c>.
+ *   When you call a local function using <c>@.name</c>, the underlying
+ *   <c>Indirect_Call</c> function jumps to a handler.  This is that handler.
+ *   The code here simply wraps <c>CallLocalFunction</c>, passing the specifier
+ *   and function name stored in <c>INDIRECTION_DATA</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1637,15 +1638,15 @@ static stock Callback_LocalHandler_(...)
  * <param name="parameters">Information on the fake parameter types.</param>
  * <param name="count">How many parameters there are.</param>
  * <remarks>
- *  Generates the code which copies the parameters from <c>Callback_Call</c> in
- *  to the local stack.  All those parameters are passed by reference, since the
- *  function is a varargs function.  Since an inline function's "input"
- *  parameters are just regular variables on the stack, they all need resolving,
- *  which is what this code does.  Regular variables are dereferenced, and
- *  arryas and strings are fully copied over.
+ *   Generates the code which copies the parameters from <c>Callback_Call</c> in
+ *   to the local stack.  All those parameters are passed by reference, since
+ *   the function is a varargs function.  Since an inline function's "input"
+ *   parameters are just regular variables on the stack, they all need
+ *   resolving, which is what this code does.  Regular variables are
+ *   dereferenced, and arryas and strings are fully copied over.
  *
- *  Technically this doesn't ACTUALLY do the copy, but generates the code for
- *  the copy.
+ *   Technically this doesn't ACTUALLY do the copy, but generates the code for
+ *   the copy.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1692,12 +1693,12 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], const parameters[], coun
  * <param name="parameters">Information on the fake parameter types.</param>
  * <param name="count">How many parameters there are.</param>
  * <remarks>
- *  When the inline function ends, any parameters that were defined as being
- *  passed by reference are copied back.  This is because true locals are never
- *  by reference, so we fake it.  There is one bug with this method - aliased
- *  variables won't work correctly:
+ *   When the inline function ends, any parameters that were defined as being
+ *   passed by reference are copied back.  This is because true locals are never
+ *   by reference, so we fake it.  There is one bug with this method - aliased
+ *   variables won't work correctly:
  *
- *  <c>
+ *   <c>
  *      inline Func(&amp;a, &amp;b)
  *      {
  *  	    ++a; 
@@ -1706,19 +1707,19 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], const parameters[], coun
  *      
  *      new a = 10;
  *      Callback_Call(using inline Func, a, a);
- *  </c>
+ *   </c>
  *
- *  That will print <c>10</c> while the same code with a normal function will
- *  print <c>11</c> thanks to <c>a</c> and <c>b</c> being aliased.  Maybe I
- *  should add a <c>restrict</c> keyword, but even then I don't know how to
- *  solve unrestricted variables (at best I can warn for them).  And this is not
- *  a totally unheard of situation.  I have at least seen this for getting only
- *  a player's height:
+ *   That will print <c>10</c> while the same code with a normal function will
+ *   print <c>11</c> thanks to <c>a</c> and <c>b</c> being aliased.  Maybe I
+ *   should add a <c>restrict</c> keyword, but even then I don't know how to
+ *   solve unrestricted variables (at best I can warn for them).  And this is
+ *   not a totally unheard of situation.  I have at least seen this for getting
+ *   only a player's height:
  *
- *  <c>
+ *   <c>
  *      new z;
  *      GetPlayerPos(playerid, z, z, z);
- *  </c>
+ *   </c>
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -2059,14 +2060,14 @@ stock Inline_UP_(const func[], const spec[] = "")
 /*-------------------------------------------------------------------------*//**
  * <param name="">Info on the restoration function.</param>
  * <remarks>
- *  Makes variables referenced, instead of valued.  When used after
- *  "Callback_Call" the values of any variables in the enclosing function that
- *  were modified in the inline function will be propgated so that their new
- *  values are seen by the original parent function (rather than that function
- *  still seeing the original values prior to the inline function modifying
- *  them).  Note that this does no checks at all at the minute - if you call an
- *  inline function whose parent is not currently on the stack, this will
- *  probably fail catastrophically!
+ *   Makes variables referenced, instead of valued.  When used after
+ *   "Callback_Call" the values of any variables in the enclosing function that
+ *   were modified in the inline function will be propgated so that their new
+ *   values are seen by the original parent function (rather than that function
+ *   still seeing the original values prior to the inline function modifying
+ *   them).  Note that this does no checks at all at the minute - if you call an
+ *   inline function whose parent is not currently on the stack, this will
+ *   probably fail catastrophically!
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

@@ -138,7 +138,7 @@ FUNC_PAWNDOC(bool:IsEven(value));
  * <param name="value">The unsigned number to compare.</param>
  * <param name="upper">The upper limit.</param>
  * <returns>
- *  An unsigned comparison between the two values.
+ *   An unsigned comparison between the two values.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -149,10 +149,10 @@ FUNC_PAWNDOC(bool:UCMP(value, upper));
  * <library>y_utils - maths</library>
  * <param name="value">The IEEE754 floating point number (<c>Float:</c>) to check.</param>
  * <returns>
- *  An IEEE754 floating-point number is defined as Not-A-Number when all the exponent bits are set,
- *  and the mantissa is non-zero.  The sign bit is ignored, so we first remove that and test the
- *  result is <c>&gt; 0x7F800000</c>.  Because any signed number bigger than that must have all the
- *  MSBs set, plus at least one more.
+ *   An IEEE754 floating-point number is defined as Not-A-Number when all the exponent bits are set,
+ *   and the mantissa is non-zero.  The sign bit is ignored, so we first remove that and test the
+ *   result is <c>&gt; 0x7F800000</c>.  Because any signed number bigger than that must have all the
+ *   MSBs set, plus at least one more.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -167,10 +167,10 @@ FUNC_PAWNDOC(bool:IsNaN(Float:value));
  * <param name="lower">The lower limit.</param>
  * <param name="upper">The upper limit.</param>
  * <returns>
- *  Is the value in the given range.
+ *   Is the value in the given range.
  * </returns>
  * <remarks>
- *  Equivalent to:
+ *   Equivalent to:
  *
  * <code>		(%1) &lt;= (%0) &lt; (%2)</code>
  *
@@ -186,10 +186,10 @@ FUNC_PAWNDOC(bool:IS_IN_RANGE(value, lower, upper));
  * <param name="lower">The lower limit.</param>
  * <param name="upper">The upper limit.</param>
  * <returns>
- *  Is the value outside the given range.
+ *   Is the value outside the given range.
  * </returns>
  * <remarks>
- *  Equivalent to:
+ *   Equivalent to:
  *
  * <code>		(%1) &lt;= (%0) &lt; (%2)</code>
  *
@@ -204,10 +204,10 @@ FUNC_PAWNDOC(bool:NOT_IN_RANGE(value, lower, upper));
  * <param name="numerator">The top of the division.</param>
  * <param name="denominator">The bottom of the division.</param>
  * <returns>
- *  (numerator / denominator) rounded up.
+ *   (numerator / denominator) rounded up.
  * </returns>
  * <remarks>
- *  Normal integer division ALWAYS rounds down - this always rounds up.
+ *   Normal integer division ALWAYS rounds down - this always rounds up.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -225,16 +225,16 @@ FUNC_PAWNDOC(ceildiv(numerator, denominator));
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - maths</library>
  * <summary>
- *  floordiv(numerator, denominator);
+ *   floordiv(numerator, denominator);
  * </summary>
  * <param name="numerator">The top of the division.</param>
  * <param name="denominator">The bottom of the division.</param>
  * <returns>
- *  (numerator / denominator) rounded down.
+ *   (numerator / denominator) rounded down.
  * </returns>
  * <remarks>
- *  Normal integer division ALWAYS rounds down - this also always rounds down,
- *  making it a little pointless, but also more explicit in function.
+ *   Normal integer division ALWAYS rounds down - this also always rounds down,
+ *   making it a little pointless, but also more explicit in function.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -254,7 +254,7 @@ FUNC_PAWNDOC(floordiv(numerator, denominator));
  * <param name="arr">The array whose values need summing.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
- *  All the values in the array added together.
+ *   All the values in the array added together.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -271,7 +271,7 @@ stock Sum(const arr[], num = sizeof (arr))
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
- *  The mathematical mean value of the array.
+ *   The mathematical mean value of the array.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -285,10 +285,10 @@ stock Mean(const arr[], num = sizeof (arr))
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
- *  The mathematical modal value of the array.
+ *   The mathematical modal value of the array.
  * </returns>
  * <remarks>
- *  Must sort the array first.
+ *   Must sort the array first.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -318,10 +318,10 @@ stock Mode(arr[], num = sizeof (arr))
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
- *  The mathematical median value of the array.
+ *   The mathematical median value of the array.
  * </returns>
  * <remarks>
- *  Must sort the array first.
+ *   Must sort the array first.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -339,7 +339,7 @@ stock Median(arr[], num = sizeof (arr))
  * <param name="arr">The array whose values need averaging.</param>
  * <param name="num">The size of the array.</param>
  * <returns>
- *  The mathematical range of the values of the array.
+ *   The mathematical range of the values of the array.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -363,14 +363,14 @@ stock Range(const arr[], num = sizeof (arr))
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - maths</library>
  * <summary>
- *  TryPercentage(percentage);
+ *   TryPercentage(percentage);
  * </summary>
  * <param name="percentage">The likelihood of returning <c>true</c>.</param>
  * <returns>
- *  <c>true</c>, <c>percentage%</c> of the time; or <c>false</c>
+ *   <c>true</c>, <c>percentage%</c> of the time; or <c>false</c>
  * </returns>
  * <remarks>
- *  Basically a percentage random number generator.
+ *   Basically a percentage random number generator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -385,17 +385,17 @@ stock bool:TryPercentage(percentage)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - maths</library>
  * <summary>
- *  TryPermille(permille);
+ *   TryPermille(permille);
  * </summary>
  * <param name="permille">The likelihood of returning <c>true</c>.</param>
  * <returns>
- *  <c>true</c>, <c>permille%o</c> of the time; or <c>false</c>
+ *   <c>true</c>, <c>permille%o</c> of the time; or <c>false</c>
  * </returns>
  * <remarks>
- *  Basically a permille random number generator (that's out of 1000).  Could be
- *  used to replicate something with a <c>42.1%</c> chance of happening via:
- *  <br />
- *  <c>TryPermille(421)</c>
+ *   Basically a permille random number generator (that's out of 1000).  Could be
+ *   used to replicate something with a <c>42.1%</c> chance of happening via:
+ *   <br />
+ *   <c>TryPermille(421)</c>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -410,17 +410,17 @@ stock bool:TryPermille(permille)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - maths</library>
  * <summary>
- *  TryPPM(ppm);
+ *   TryPPM(ppm);
  * </summary>
  * <param name="ppm">The likelihood of returning <c>true</c>.</param>
  * <returns>
- *  <c>true</c>, <c>ppm%oooo</c> of the time; or <c>false</c>
+ *   <c>true</c>, <c>ppm%oooo</c> of the time; or <c>false</c>
  * </returns>
  * <remarks>
- *  Basically a ppm random number generator (that's out of 1000000).  Could be
- *  used to replicate something with a <c>1.0001%</c> chance of happening via:
- *  <br />
- *  <c>TryPPM(10001)</c>
+ *   Basically a ppm random number generator (that's out of 1000000).  Could be
+ *   used to replicate something with a <c>1.0001%</c> chance of happening via:
+ *   <br />
+ *   <c>TryPPM(10001)</c>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -435,14 +435,14 @@ stock bool:TryPPM(ppm)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - maths</library>
  * <summary>
- *  Float:FloatAbs(Float:number);
+ *   Float:FloatAbs(Float:number);
  * </summary>
  * <param name="number">The number to get the absolute value of.</param>
  * <returns>
- *  The absolute value of a number.
+ *   The absolute value of a number.
  * </returns>
  * <remarks>
- *  Get the absolute value of a number.  Easy in IEEE754, just remove the MSB.
+ *   Get the absolute value of a number.  Easy in IEEE754, just remove the MSB.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -474,14 +474,14 @@ FUNC_PAWNDOC(Float:FloatAbs(Float:value));
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - maths</library>
  * <summary>
- *  Abs(number);
+ *   Abs(number);
  * </summary>
  * <param name="number">The number to get the absolute value of.</param>
  * <returns>
- *  The absolute value of a number.
+ *   The absolute value of a number.
  * </returns>
  * <remarks>
- *  Get the absolute value of a number.
+ *   Get the absolute value of a number.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

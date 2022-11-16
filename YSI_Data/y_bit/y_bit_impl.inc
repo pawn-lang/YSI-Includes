@@ -78,7 +78,7 @@ Optional plugins:
 /*-------------------------------------------------------------------------*//**
  * <param name="size">Number of bits required.</param>
  * <returns>
- *  Number of cells required for the bit array.
+ *   Number of cells required for the bit array.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -89,7 +89,7 @@ FUNC_PAWNDOC(Bit_Bits(size));
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to get the slot for.</param>
  * <returns>
- *  The true array slot for this value.
+ *   The true array slot for this value.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -99,7 +99,7 @@ FUNC_PAWNDOC(Bit_Slot(value));
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to get the mask for</param>
  * <returns>
- *  The bit in the array slot to use.
+ *   The bit in the array slot to use.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -110,10 +110,10 @@ FUNC_PAWNDOC(Bit_Mask(value));
  * <param name="array">Array of bits.</param>
  * <param name="slot">Bit slot.</param>
  * <returns>
- *  State of the provided slot, 0 on fail.
+ *   State of the provided slot, 0 on fail.
  * </returns>
  * <remarks>
- *  Unsafe but faster for when you're sure you're within range.
+ *   Unsafe but faster for when you're sure you're within range.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -125,10 +125,10 @@ FUNC_PAWNDOC(bool:Bit_GetBit(BitArray:array<>,slot));
  * <param name="slot">Bit slot.</param>
  * <param name="size">Size of array.</param>
  * <returns>
- *  State of the provided slot, 0 on fail.
+ *   State of the provided slot, 0 on fail.
  * </returns>
  * <remarks>
- *  -
+ *   -
  *
  * native Bit_Get(BitArray:array&lt;&gt;, slot);
  *
@@ -142,7 +142,7 @@ FUNC_PAWNDOC(bool:Bit_Get(BitArray:array<>,slot));
  * <param name="array">Array of bits.</param>
  * <param name="slot">Bit slot.</param>
  * <remarks>
- *  Sets the slot to 1.
+ *   Sets the slot to 1.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -153,7 +153,7 @@ FUNC_PAWNDOC(Bit_Let(BitArray:array<>,slot));
  * <param name="array">Array of bits.</param>
  * <param name="slot">Bit slot.</param>
  * <remarks>
- *  Sets the slot to 0.
+ *   Sets the slot to 0.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -164,7 +164,7 @@ FUNC_PAWNDOC(Bit_Vet(BitArray:array<>,slot));
  * <param name="array">Array of bits.</param>
  * <param name="slot">Bit slot.</param>
  * <remarks>
- *  Swaps the bit value.
+ *   Swaps the bit value.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -191,7 +191,7 @@ stock Bit_Set(BitArray:array<>, slot, bool:set)//, size = sizeof (array))
  * <param name="set">State to set the slot to.</param>
  * <param name="size">Size of array.</param>
  * <remarks>
- *  Exactly the same as "Bit_Set", but as a macro not a function.
+ *   Exactly the same as "Bit_Set", but as a macro not a function.
  *
  * native Bit_FastSet(BitArray:array&lt;&gt;, slot, bool:set, size = sizeof (array));
  *
@@ -216,11 +216,11 @@ stock Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array))
  * <param name="array">Array to count.</param>
  * <param name="size">Size of array.</param>
  * <returns>
- *  Number of 1s in the array.
+ *   Number of 1s in the array.
  * </returns>
  * <remarks>
- *  Code from:
- *  <a href="http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel" />
+ *   Code from:
+ *   <a href="http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel" />
  *
  * native Bit_Count(BitArray:array&lt;&gt;, size = sizeof (array));
  *

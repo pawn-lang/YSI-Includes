@@ -171,8 +171,8 @@ FUNC_PAWNDOC(Class_Skin(classid));
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Creates three real player classes so you can scroll correctly with the
- *  direction being detected.
+ *   Creates three real player classes so you can scroll correctly with the
+ *   direction being detected.
  * </remarks>
  * <transition keep="true" target="_YCM : u"/>
  * <transition keep="true" target="_YCM : y"/>
@@ -256,8 +256,8 @@ static stock Class_FindNew(playerid, playerclass, dir)
  * <param name="playerid">Player who is changing class.</param>
  * <param name="playerclass">The internal class they are switching to.</param>
  * <remarks>
- *  Does the visual faking through "SetPlayerSkin", and also calls
- *  "SetSpawnInfo" to avoid any lag from "SetPlayerPos" under "OnPlayerSpawn".
+ *   Does the visual faking through "SetPlayerSkin", and also calls
+ *   "SetSpawnInfo" to avoid any lag from "SetPlayerPos" under "OnPlayerSpawn".
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -275,10 +275,10 @@ GLOBAL__ void:Class_Goto(playerid, playerclass)
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who selected a spawn.</param>
  * <remarks>
- *  Has inbuilt protection for a bug where selections aren't correctly
- *  debounced so you can press shift twice at once which can mess up some
- *  scripts (e.g. the example team selection script).  Calls
- *  OnPlayerRequestSpawnEx with an additional class parameter.
+ *   Has inbuilt protection for a bug where selections aren't correctly
+ *   debounced so you can press shift twice at once which can mess up some
+ *   scripts (e.g. the example team selection script).  Calls
+ *   OnPlayerRequestSpawnEx with an additional class parameter.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -342,7 +342,7 @@ CHAIN_FORWARD:Class_OnPlayerRequestSpawn(playerid) = 1;
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who spawned.</param>
  * <remarks>
- *  Sets a player's position based on skin.
+ *   Sets a player's position based on skin.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -391,7 +391,7 @@ MASTER_REHOOK__ OnPlayerSpawn(playerid)
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who joined the server.</param>
  * <remarks>
- *  Reset all the data on this player's current classes.
+ *   Reset all the data on this player's current classes.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -420,7 +420,7 @@ MASTER_REHOOK__ OnPlayerConnect(playerid)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Converts the variable arguments to an array.
+ *   Converts the variable arguments to an array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -437,11 +437,11 @@ MASTER_REHOOK__ OnPlayerConnect(playerid)
  * <param name="a">A spawn location.</param>
  * <param name="">Spawn weapons and ammo (weapon then ammo)</param>
  * <remarks>
- *  Pretty much AddPlayerClass but allows greater control over the classes.
- *  Now has infinate (MAX_CLASS_SPAWN_WEAPONS) spawn weapons.  This is one of
- *  the few API functions which is not entirely remote.  This is because it has
- *  variable parameters which is need to collect in to a single array to pass to
- *  the remote function.
+ *   Pretty much AddPlayerClass but allows greater control over the classes.
+ *   Now has infinate (MAX_CLASS_SPAWN_WEAPONS) spawn weapons.  This is one of
+ *   the few API functions which is not entirely remote.  This is because it has
+ *   variable parameters which is need to collect in to a single array to pass to
+ *   the remote function.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -468,8 +468,8 @@ stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, ...)
  * <param name="a">A spawn location.</param>
  * <param name="">Spawn weapons and ammo (weapon then ammo)</param>
  * <remarks>
- *  Pretty much AddPlayerClass but allows greater control over the classes.
- *  Now has infinate (MAX_CLASS_SPAWN_WEAPONS) spawn weapons.
+ *   Pretty much AddPlayerClass but allows greater control over the classes.
+ *   Now has infinate (MAX_CLASS_SPAWN_WEAPONS) spawn weapons.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -495,7 +495,7 @@ stock Class_AddEx(Group:forgroup, Group:setgroup, skin, Float:x, Float:y, Float:
  * <param name="a">A spawn location.</param>
  * <param name="">Weapon data.</param>
  * <remarks>
- *  Adds a class only people in the specified group can use.
+ *   Adds a class only people in the specified group can use.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -521,7 +521,7 @@ stock Class_AddForGroup(Group:group, skin, Float:x, Float:y, Float:z, Float:a, .
  * <param name="a">A spawn location.</param>
  * <param name="">Spawn weapons.</param>
  * <remarks>
- *  Adds a class which puts you in the specified group when selected.
+ *   Adds a class which puts you in the specified group when selected.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -549,9 +549,9 @@ stock Class_AddWithGroupSet(Group:group, skin, Float:x, Float:y, Float:z, Float:
  * <param name="forgroup">Group that can use the class.</param>
  * <param name="asgroup">Group to assign people to with this class.</param>
  * <remarks>
- *  Does the hard work.  This took a long time to get working correctly with the
- *  new master system, infact getting just this one function to compile took a
- *  major re-working of the macros to reduce the length of intermediate stages.
+ *   Does the hard work.  This took a long time to get working correctly with the
+ *   new master system, infact getting just this one function to compile took a
+ *   major re-working of the macros to reduce the length of intermediate stages.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -586,7 +586,7 @@ GLOBAL__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,const w[],c,Group:f,Gr
  * <param name="classid">The class to test.</param>
  * <param name="group">The group to test setting of.</param>
  * <returns>
- *  Does this class add players to the given group on spawn?
+ *   Does this class add players to the given group on spawn?
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -631,7 +631,7 @@ GLOBAL__ Class_Enable(classid, bool:toggle)
 /*-------------------------------------------------------------------------*//**
  * <param name="classid">Class to delete.</param>
  * <remarks>
- *  Completely removes a class from the system.
+ *   Completely removes a class from the system.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -696,8 +696,8 @@ GLOBAL__ Class_Get(playerid)
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player whose current class view may need to change.</param>
  * <remarks>
- *  If you change a player's groups while they are in class selection, call this
- *  function to potentially update the currently displayed class.
+ *   If you change a player's groups while they are in class selection, call this
+ *   function to potentially update the currently displayed class.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -730,16 +730,16 @@ stock Class_Reprocess(playerid)
  * <param name="playerid">Player who requested a class.</param>
  * <param name="class">Class they requested.</param>
  * <remarks>
- *  The input is one of the three real classes used to detect selected
- *  direction of alteration.  Scans for a class the player is allowed to use
- *  and hot swaps it out.  Uses SetPlayerSkin AND SetSpawnInfo to combat bugs
- *  with calling this from OnPlayerRequestSpawn (e.g. the example team script).
- *  Calls OnPlayerRequestClassEx with the current internal class not the real
- *  one.
+ *   The input is one of the three real classes used to detect selected
+ *   direction of alteration.  Scans for a class the player is allowed to use
+ *   and hot swaps it out.  Uses SetPlayerSkin AND SetSpawnInfo to combat bugs
+ *   with calling this from OnPlayerRequestSpawn (e.g. the example team script).
+ *   Calls OnPlayerRequestClassEx with the current internal class not the real
+ *   one.
  *
- *  Last thing in the file to be simpler to call directly.  If we ever have a
- *  more complex ALS hook on this callback the main body of this code will have
- *  to be moved in to its own function.  As indeed it now does!
+ *   Last thing in the file to be simpler to call directly.  If we ever have a
+ *   more complex ALS hook on this callback the main body of this code will have
+ *   to be moved in to its own function.  As indeed it now does!
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

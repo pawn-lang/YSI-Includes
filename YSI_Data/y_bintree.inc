@@ -16,8 +16,8 @@
  *   </summary>
  *   <remarks>
  *     Provides functions to generate balanced binary search trees for efficient
- *     searching of large arrays by value.  Left branch is less than, right branch
- *     is greater than or equal to for multiple matching values.
+ *     searching of large arrays by value.  Left branch is less than, right
+ *     branch is greater than or equal to for multiple matching values.
  *   </remarks>
  * </library>
  *//** *//*

@@ -184,10 +184,10 @@ enum e_COMPRESS_FORMAT_DATA:(+= 0x10000000)
  * <param name="input">String to read from.</param>
  * <param name="idx">Current read index.</param>
  * <returns>
- *  e_GAME_TEXT_KEYS - Enum representation of keys.
+ *   e_GAME_TEXT_KEYS - Enum representation of keys.
  * </returns>
  * <remarks>
- *  Reads a GameText key identifier and compresses it essentially.
+ *   Reads a GameText key identifier and compresses it essentially.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -370,17 +370,17 @@ stock e_GAME_TEXT_KEYS:Format_GetKeys(const input[], &idx)
  * <param name="len">The length of the output array.</param>
  * <param name="pt">Special mode for parsing player text has "()" but no "%" or keys.</param>
  * <returns>
- *  The length of the string.
+ *   The length of the string.
  * </returns>
  * <remarks>
- *  Takes a string input and converts it to a standardised representation, i.e.
- *  uses byte-codes instead of human readable codes to represent formats and
- *  colours.  This makes it faster to format in to any other representation,
- *  instead of having to convert between all possible combinations, we just have
- *  this to convert basically all formats at once (it can handle hybrids of all
- *  the different representations) to a single fast read format and then have
- *  fairly simple to write methods to convert that single format to any other
- *  format (see y_formatout.inc).
+ *   Takes a string input and converts it to a standardised representation, i.e.
+ *   uses byte-codes instead of human readable codes to represent formats and
+ *   colours.  This makes it faster to format in to any other representation,
+ *   instead of having to convert between all possible combinations, we just have
+ *   this to convert basically all formats at once (it can handle hybrids of all
+ *   the different representations) to a single fast read format and then have
+ *   fairly simple to write methods to convert that single format to any other
+ *   format (see y_formatout.inc).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1044,11 +1044,11 @@ Format_Standardise_no_switch:
  * <param name="input">String to read from.</param>
  * <param name="iIn">Index to read from.</param>
  * <returns>
- *  Single cell representation of the current specifier.
+ *   Single cell representation of the current specifier.
  * </returns>
  * <remarks>
- *  Reads a series of characters from the input string and interprets them as a
- *  format specifier (e.g. "%d").  Also returns the new current string index.
+ *   Reads a series of characters from the input string and interprets them as a
+ *   format specifier (e.g. "%d").  Also returns the new current string index.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1167,10 +1167,10 @@ static stock Format_GetSpecifier(input[], &iIn)
  * <param name="str">Input.</param>
  * <param name="idx">Read index.</param>
  * <returns>
- *  Colour.
+ *   Colour.
  * </returns>
  * <remarks>
- *  Reads a GameText colour format and converts it to single-cell RGB.
+ *   Reads a GameText colour format and converts it to single-cell RGB.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

@@ -98,8 +98,9 @@ static stock
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
  * <remarks>
- *  Placeholder function used to deonte the start of lambda code.  All
- *  parameters are dummies, used for code scanning and generation space padding.
+ *   Placeholder function used to deonte the start of lambda code.  All
+ *   parameters are dummies, used for code scanning and generation space
+ *   padding.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -112,8 +113,8 @@ stock LAM@1(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1)
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
  * <remarks>
- *  Placeholder function used to deonte the end of lambda code.  The parameter
- *  is eventually used in the rewitten code to return the result.
+ *   Placeholder function used to deonte the end of lambda code.  The parameter
+ *   is eventually used in the rewitten code to return the result.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -127,7 +128,7 @@ stock LAM@2(par)
  * <library>y_functional</library>
  * <param name="idx">Used by nested lambda calls.</param>
  * <remarks>
- *  Marks the point in code where the lambda function gets called.
+ *   Marks the point in code where the lambda function gets called.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -141,7 +142,7 @@ stock LAM@0(idx = 0)
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
  * <remarks>
- *  The end of all the generated code; functions and calls.
+ *   The end of all the generated code; functions and calls.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -156,8 +157,8 @@ stock LAM@5(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1, pat
  * <library>y_functional</library>
  * <param name="scanner">The code scanner that found a match.</param>
  * <remarks>
- *  Called when a scanner matches a <c>LAM@1()</c> call, denoting the start of a
- *  lambda function.  Just removes the call and stores the location.
+ *   Called when a scanner matches a <c>LAM@1()</c> call, denoting the start of
+ *   a lambda function.  Just removes the call and stores the location.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -181,8 +182,8 @@ static stock Functional_FoundStart(const scanner[CodeScanner])
  * <library>y_functional</library>
  * <param name="scanner">The code scanner that found a match.</param>
  * <remarks>
- *  Called when a scanner matches a <c>LAM@2()</c> call, denoting the end of a
- *  lambda function.  Just removes the call and stores the location.
+ *   Called when a scanner matches a <c>LAM@2()</c> call, denoting the end of a
+ *   lambda function.  Just removes the call and stores the location.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -205,8 +206,8 @@ static stock Functional_FoundEnd(const scanner[CodeScanner])
  * <library>y_functional</library>
  * <param name="scanner">The code scanner that found a match.</param>
  * <remarks>
- *  Called when a scanner matches a <c>LAM@5()</c> call, denoting the end of
- *  the lambda call.  Just removes the call and stores the location.
+ *   Called when a scanner matches a <c>LAM@5()</c> call, denoting the end of
+ *   the lambda call.  Just removes the call and stores the location.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -228,7 +229,7 @@ static stock Functional_FoundAfter(const scanner[CodeScanner])
  * <library>y_functional</library>
  * <param name="scanner">The code scanner that found a match.</param>
  * <remarks>
- *  Used when a matcher finds a lambda call with an explicit nesting level.
+ *   Used when a matcher finds a lambda call with an explicit nesting level.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -241,8 +242,8 @@ static stock Functional_FoundCall1(const scanner[CodeScanner])
  * <library>y_functional</library>
  * <param name="scanner">The code scanner that found a match.</param>
  * <remarks>
- *  Used when a matcher finds a lambda call with a ZERO op for the nesting
- *  level.
+ *   Used when a matcher finds a lambda call with a ZERO op for the nesting
+ *   level.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -256,11 +257,11 @@ static stock Functional_FoundCall2(const scanner[CodeScanner])
  * <param name="scanner">The code scanner that found a match.</param>
  * <param name="nestingLevel">How many lambdas deep this call is.</param>
  * <remarks>
- *  Once a lambda call is found this code is called to trigger a new set of
- *  scans to analyse the lambda function itself.  It then does the code
- *  generation based on the results.  This is to allow nested lambdas as the
- *  calls are found first, then the second set of scans run without preventing
- *  the call scanner from finding more results later.
+ *   Once a lambda call is found this code is called to trigger a new set of
+ *   scans to analyse the lambda function itself.  It then does the code
+ *   generation based on the results.  This is to allow nested lambdas as the
+ *   calls are found first, then the second set of scans run without preventing
+ *   the call scanner from finding more results later.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -507,7 +508,7 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 /*-------------------------------------------------------------------------*//**
  * <library>y_functional</library>
  * <remarks>
- *  Initialise the system
+ *   Initialise the system
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

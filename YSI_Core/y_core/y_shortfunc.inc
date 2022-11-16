@@ -162,14 +162,14 @@ static stock const
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <returns>
- *  A number, the result of a named function call.
+ *   A number, the result of a named function call.
  * </returns>
  * <remarks>
- *  <c>CallRemoteFunction</c> wrapper that handles references and string
- *  returns.  Once the call is complete it loops through the specifier string to
- *  look for any <c>v</c>s and gets their return values from specially named
- *  properties (<c>"V" + idx</c> in group 8).  Can also call in the current
- *  script instead of a remote script.
+ *   <c>CallRemoteFunction</c> wrapper that handles references and string
+ *   returns.  Once the call is complete it loops through the specifier string to
+ *   look for any <c>v</c>s and gets their return values from specially named
+ *   properties (<c>"V" + idx</c> in group 8).  Can also call in the current
+ *   script instead of a remote script.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -331,15 +331,15 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <returns>
- *  A string, the result of a named function call.
+ *   A string, the result of a named function call.
  * </returns>
  * <remarks>
- *  <c>CallRemoteFunction</c> wrapper that handles references and string
- *  returns.  Once the call is complete it loops through the specifier string to
- *  look for any <c>v</c>s and gets their return values from specially named
- *  properties (<c>"V" + idx</c> in group 8).  Can also call in the current
- *  script instead of a remote script.  Also uses properties to enable returning
- *  remote strings.
+ *   <c>CallRemoteFunction</c> wrapper that handles references and string
+ *   returns.  Once the call is complete it loops through the specifier string to
+ *   look for any <c>v</c>s and gets their return values from specially named
+ *   properties (<c>"V" + idx</c> in group 8).  Can also call in the current
+ *   script instead of a remote script.  Also uses properties to enable returning
+ *   remote strings.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -451,8 +451,8 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  A precursor to <c>D@</c> and <c>E@</c> that does some stack and heap
- *  manipulation before they are called.
+ *   A precursor to <c>D@</c> and <c>E@</c> that does some stack and heap
+ *   manipulation before they are called.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -481,10 +481,10 @@ stock F@(calltype = 1, master = -1, heapptr = 0)
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  Used in remote function wrappers to put reference parameter retusn in to the
- *  specially named properties (<c>"V" + idx</c> in group 8) for their return.
- *  Also put the true return number in to a property, because remote call order
- *  can't be relied on.
+ *   Used in remote function wrappers to put reference parameter retusn in to the
+ *   specially named properties (<c>"V" + idx</c> in group 8) for their return.
+ *   Also put the true return number in to a property, because remote call order
+ *   can't be relied on.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -505,10 +505,10 @@ stock L@(GLOBAL_TAG_TYPES:ret, GLOBAL_TAG_TYPES:...)
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  Used in remote function wrappers to put reference parameter retusn in to the
- *  specially named properties (<c>"V" + idx</c> in group 8) for their return.
- *  Also put the true return string in to a property, because remote call order
- *  can't be relied on, and can't return strings even if it could.
+ *   Used in remote function wrappers to put reference parameter retusn in to the
+ *   specially named properties (<c>"V" + idx</c> in group 8) for their return.
+ *   Also put the true return string in to a property, because remote call order
+ *   can't be relied on, and can't return strings even if it could.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -529,8 +529,8 @@ stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  Put the true remote call return number in to a property, because remote call
- *  order can't be relied on.
+ *   Put the true remote call return number in to a property, because remote call
+ *   order can't be relied on.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -544,9 +544,9 @@ stock X@(GLOBAL_TAG_TYPES:n)
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  Just a dead-end for spare parameters.  Implementation of
- *  <c>__pragma("unused", x);</c>, which disables the warning for a unused
- *  variable, by using it!
+ *   Just a dead-end for spare parameters.  Implementation of
+ *   <c>__pragma("unused", x);</c>, which disables the warning for a unused
+ *   variable, by using it!
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -569,9 +569,9 @@ stock H@(GLOBAL_TAG_TYPES:...)
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  Just a dead-end for spare parameters.  Implementation of
- *  <c>__pragma("unused", x);</c>, which disables the warning for a unused
- *  variable, by using it!  Returns a string, in case that's useful in macros.
+ *   Just a dead-end for spare parameters.  Implementation of
+ *   <c>__pragma("unused", x);</c>, which disables the warning for a unused
+ *   variable, by using it!  Returns a string, in case that's useful in macros.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

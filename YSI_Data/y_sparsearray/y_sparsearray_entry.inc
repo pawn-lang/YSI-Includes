@@ -114,7 +114,7 @@ Optional plugins:
  * <param name="index">The index in the array.</param>
  * <param name="dest">Where to write the value.</param>
  * <returns>
- *  Was the value found?
+ *   Was the value found?
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -135,7 +135,7 @@ stock bool:Sparse_TryGet(const name[], index, &dest)
  * <param name="index">The index in the array.</param>
  * <param name="def">The default value when the slot isn't found.</param>
  * <returns>
- *  The value at this index (or <c>cellmin</c>).
+ *   The value at this index (or <c>cellmin</c>).
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -152,7 +152,7 @@ stock Sparse_Get(const name[], index, def = cellmin)
  * <param name="name">The sparse array.</param>
  * <param name="index">The index in the array.</param>
  * <returns>
- *  Does this index exist?
+ *   Does this index exist?
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -167,7 +167,7 @@ stock bool:Sparse_Contains(const name[], index)
  * <param name="name">The sparse array.</param>
  * <param name="index">The index in the array.</param>
  * <remarks>
- *  Remove the value from the array.
+ *   Remove the value from the array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -183,7 +183,7 @@ stock Sparse_UnSet(const name[], index)
  * <param name="index">The index in the array.</param>
  * <param name="value">The data to write.</param>
  * <remarks>
- *  Add the value to the array.
+ *   Add the value to the array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -200,10 +200,10 @@ stock Sparse_Set(const name[], index, value)
  * <param name="oldValue">The destination variable.</param>
  * <param name="newValue">The new value.</param>
  * <returns>
- *  Did the value exist?
+ *   Did the value exist?
  * </returns>
  * <remarks>
- *  Get the value and replace it in the array.
+ *   Get the value and replace it in the array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -229,10 +229,10 @@ stock bool:_Sparse_ExchangeNew(const name[], index, &oldValue, newValue)
  * <param name="index">The index in the array.</param>
  * <param name="oldValue">The destination variable.</param>
  * <returns>
- *  Did the value exist?
+ *   Did the value exist?
  * </returns>
  * <remarks>
- *  Get the value and remove it from the array.
+ *   Get the value and remove it from the array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

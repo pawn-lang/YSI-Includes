@@ -81,11 +81,11 @@ forward Alloc:Malloc_Allocate(size, const bool:clear = false);
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Finds all "BOUNDS 0" OpCodes in the AMX and rewrites them to "NOP NOP".  The
- *  byte pattern for this code is "OP_BOUNDS 0", which (AFAIK) can not appear
- *  anywhere else in the COD segment.  You can have "OP_BOUNDS" as a parameter
- *  to something, but it would then be followed by an OpCode of "0", which is
- *  never valid (OP_NONE).
+ *   Finds all "BOUNDS 0" OpCodes in the AMX and rewrites them to "NOP NOP".
+ *   The byte pattern for this code is "OP_BOUNDS 0", which (AFAIK) can not
+ *   appear anywhere else in the COD segment.  You can have "OP_BOUNDS" as a
+ *   parameter to something, but it would then be followed by an OpCode of "0",
+ *   which is never valid (OP_NONE).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

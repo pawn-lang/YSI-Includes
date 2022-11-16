@@ -91,9 +91,9 @@ Optional plugins:
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  These should pretty much always exist, but are defined in "a_samp" in SA:MP,
- *  when they should really be "core" functions.  They are defined in "console"
- *  in open.mp, and here in YSI so that they are always available.
+ *   These should pretty much always exist, but are defined in "a_samp" in SA:MP,
+ *   when they should really be "core" functions.  They are defined in "console"
+ *   in open.mp, and here in YSI so that they are always available.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -102,9 +102,9 @@ native YSI_Print__(const string[]) = print;
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  These should pretty much always exist, but are defined in "a_samp" in SA:MP,
- *  when they should really be "core" functions.  They are defined in "console"
- *  in open.mp, and here in YSI so that they are always available.
+ *   These should pretty much always exist, but are defined in "a_samp" in SA:MP,
+ *   when they should really be "core" functions.  They are defined in "console"
+ *   in open.mp, and here in YSI so that they are always available.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -113,7 +113,7 @@ native YSI_PrintF__(const format[], GLOBAL_TAG_TYPES:...) = printf;
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Const-correct <c>SetTimer</c>.
+ *   Const-correct <c>SetTimer</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -122,7 +122,7 @@ native YSI_SetTimer__(const funcname[], interval, bool:repeating) = SetTimer;
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Const-correct <c>SetTimerEx</c>.
+ *   Const-correct <c>SetTimerEx</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -131,7 +131,7 @@ native YSI_SetTimerEx__(const funcname[], interval, bool:repeating, const format
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Const-correct <c>HTTP</c>.
+ *   Const-correct <c>HTTP</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -143,7 +143,7 @@ native YSI_HTTP__(index, HTTP_METHOD:method, const url[], const data[], const ca
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Const-correct <c>format</c>.
+ *   Const-correct <c>format</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -152,7 +152,7 @@ native YSI_Format__(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYP
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Const-correct <c>SendRconCommand</c>.
+ *   Const-correct <c>SendRconCommand</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -161,7 +161,7 @@ native YSI_SendRconCommand__(const str[]) = SendRconCommand;
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Const-correct <c>SendClientCheck</c>.
+ *   Const-correct <c>SendClientCheck</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -170,8 +170,8 @@ native YSI_SendClientCheck__(playerid, type, memoryAddress, memoryOffset, byteCo
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Const-correct <c>SHA256_PassHash</c>.  Also tries to discourage its usage
- *  without actually deprecating it.
+ *   Const-correct <c>SHA256_PassHash</c>.  Also tries to discourage its usage
+ *   without actually deprecating it.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -180,7 +180,7 @@ native YSI_SHA256Hash_BAD_DONT_USE__(const password[], const salt[], output[], s
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Case-correct <c>random</c>.
+ *   Case-correct <c>random</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -189,7 +189,7 @@ native YSI_Random__(max) = random;
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Case-correct <c>memcpy</c>.
+ *   Case-correct <c>memcpy</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -198,7 +198,7 @@ native _YSI_ConstCpy__(const dst[], const src[], index, numbytes, maxlength) = m
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Case-correct <c>strunpack</c>.
+ *   Case-correct <c>strunpack</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -209,7 +209,7 @@ native YSI_StrUnpack__(dest[], const source[], maxlength = sizeof (dest)) = stru
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Case-correct <c>fgetchar</c>, with macros to hide the superfluous parameter.
+ *   Case-correct <c>fgetchar</c>, with macros to hide the superfluous parameter.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -223,7 +223,7 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Const- and tag-correct <c>ShowPlayerDialog</c>.
+ *   Const- and tag-correct <c>ShowPlayerDialog</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -240,7 +240,7 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Original version of <c>numargs</c>.
+ *   Original version of <c>numargs</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -249,7 +249,7 @@ native YSI_NumArgs() = numargs;
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *  Inlined version of <c>numargs</c>.
+ *   Inlined version of <c>numargs</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -291,16 +291,16 @@ forward bool:YSI_IsLocalVarPackedString__(const string:str[]);
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <summary>
- *  YSI_IsLocalVarPackedString__(str[]);
+ *   YSI_IsLocalVarPackedString__(str[]);
  * </summary>
  * <param name="str">The string to test the packing of.</param>
  * <remarks>
- *  There is a bug in the SA:MP implementation of <c>ispacked</c>, it doesn't
- *  work with high unicode values.  This is fixed in open.mp, and the same fix
- *  is used here (just change the comparison to unsigned).  The inline assembly
- *  version above is actually faster than the native for locals.  This code only
- *  works on local variables because <c>LREF.U</c> doesn't work for array names,
- *  only individual cells, hence the weird function name.
+ *   There is a bug in the SA:MP implementation of <c>ispacked</c>, it doesn't
+ *   work with high unicode values.  This is fixed in open.mp, and the same fix
+ *   is used here (just change the comparison to unsigned).  The inline assembly
+ *   version above is actually faster than the native for locals.  This code only
+ *   works on local variables because <c>LREF.U</c> doesn't work for array names,
+ *   only individual cells, hence the weird function name.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

@@ -254,7 +254,7 @@ stock ReturnStringArg(idx)
  * <param name="fmat">String format.</param>
  * <param name="">Parameters.</param>
  * <returns>
- *  Formatted string.
+ *   Formatted string.
  * </returns>
  * <remarks>
  *   Just wraps <c>format</c> and returns a string instead.  Has extra code to
@@ -308,7 +308,7 @@ stock va_return(const string:fmat[], GLOBAL_TAG_TYPES:...)
  * <library>y_utils - varargs</library>
  * <param name="n">The numeric parameter position to print.</param>
  * <returns>
- *  Prints a string passed as a vararg to the calling function.
+ *   Prints a string passed as a vararg to the calling function.
  * </returns>
  *//*------------------------------------------------------------------------**/
 

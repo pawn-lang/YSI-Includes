@@ -73,18 +73,18 @@ Optional plugins:
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>value + percent</c>
+ *   <c>value + percent</c>
  * </summary>
  * <param name="value">The number to adjust.</param>
  * <param name="percent">The percentage amount to adjust it by.</param>
  * <returns>
- *  The number increased by the given percentage amount.
+ *   The number increased by the given percentage amount.
  * </returns>
  * <remarks>
- *  <code>
+ *   <code>
  *      const Percent:TWENTY_PERCENT = Percent:20;                              <br />
  *      new value = 5 + TWENTY_PERCENT; // = 5 * 1.2 = 6
- *  </code>
+ *   </code>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 stock operator+(value, Percent:percent)
@@ -94,12 +94,12 @@ stock operator+(value, Percent:percent)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>percent + value</c>
+ *   <c>percent + value</c>
  * </summary>
  * <param name="percent">The percentage amount to adjust.</param>
  * <param name="value">The number to adjust it by.</param>
  * <returns>
- *  Normal addition, applied to percentages.
+ *   Normal addition, applied to percentages.
  * </returns>
  *//*------------------------------------------------------------------------**/
 stock Percent:operator+(Percent:percent, value)
@@ -109,12 +109,12 @@ stock Percent:operator+(Percent:percent, value)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>value + percent</c>
+ *   <c>value + percent</c>
  * </summary>
  * <param name="value">The percentage to adjust.</param>
  * <param name="percent">The percentage amount to adjust it by.</param>
  * <returns>
- *  The percentage added by the given percentage amount.
+ *   The percentage added by the given percentage amount.
  * </returns>
  *//*------------------------------------------------------------------------**/
 stock Percent:operator+(Percent:value, Percent:percent)
@@ -124,18 +124,18 @@ stock Percent:operator+(Percent:value, Percent:percent)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>value * percent</c>
+ *   <c>value * percent</c>
  * </summary>
  * <param name="value">The number to adjust.</param>
  * <param name="percent">The percentage amount to adjust it by.</param>
  * <returns>
- *  The number multiplied by the given percentage amount.
+ *   The number multiplied by the given percentage amount.
  * </returns>
  * <remarks>
- *  <code>
+ *   <code>
  *      const Percent:TWENTY_PERCENT = Percent:20;                              <br />
  *      new value = 5 * TWENTY_PERCENT; // = 5 * 0.2 = 1
- *  </code>
+ *   </code>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 stock operator*(value, Percent:percent)
@@ -145,12 +145,12 @@ stock operator*(value, Percent:percent)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>percent * value</c>
+ *   <c>percent * value</c>
  * </summary>
  * <param name="percent">The percentage amount to adjust.</param>
  * <param name="value">The number to adjust it by.</param>
  * <returns>
- *  Normal multiplication, applied to percentages.
+ *   Normal multiplication, applied to percentages.
  * </returns>
  *//*------------------------------------------------------------------------**/
 stock Percent:operator*(Percent:percent, value)
@@ -160,18 +160,18 @@ stock Percent:operator*(Percent:percent, value)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>value * percent</c>
+ *   <c>value * percent</c>
  * </summary>
  * <param name="value">The percentage to adjust.</param>
  * <param name="percent">The percentage amount to adjust it by.</param>
  * <returns>
- *  The percentage multiplied by the given percentage amount.
+ *   The percentage multiplied by the given percentage amount.
  * </returns>
  * <remarks>
- *  <code>
+ *   <code>
  *      const Percent:TWENTY_PERCENT = Percent:20;                              <br />
  *      new value = Percent:5 * TWENTY_PERCENT; // = 5 * 0.2 = Percent:1
- *  </code>
+ *   </code>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 stock Percent:operator*(Percent:value, Percent:percent)
@@ -181,18 +181,18 @@ stock Percent:operator*(Percent:value, Percent:percent)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>value - percent</c>
+ *   <c>value - percent</c>
  * </summary>
  * <param name="value">The number to adjust.</param>
  * <param name="percent">The percentage amount to adjust it by.</param>
  * <returns>
- *  The number decreased by the given percentage amount.
+ *   The number decreased by the given percentage amount.
  * </returns>
  * <remarks>
- *  <code>
+ *   <code>
  *      const Percent:TWENTY_PERCENT = Percent:20;                              <br />
  *      new value = 5 - TWENTY_PERCENT; // = 5 * 0.8 = 4
- *  </code>
+ *   </code>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 stock operator-(value, Percent:percent)
@@ -202,12 +202,12 @@ stock operator-(value, Percent:percent)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>percent - value</c>
+ *   <c>percent - value</c>
  * </summary>
  * <param name="percent">The percentage amount to adjust.</param>
  * <param name="value">The number to adjust it by.</param>
  * <returns>
- *  Normal subtraction, applied to percentages.
+ *   Normal subtraction, applied to percentages.
  * </returns>
  *//*------------------------------------------------------------------------**/
 stock Percent:operator-(Percent:percent, value)
@@ -217,12 +217,12 @@ stock Percent:operator-(Percent:percent, value)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>value - percent</c>
+ *   <c>value - percent</c>
  * </summary>
  * <param name="value">The percentage to adjust.</param>
  * <param name="percent">The percentage amount to adjust it by.</param>
  * <returns>
- *  The percentage subtracted from the given percentage amount.
+ *   The percentage subtracted from the given percentage amount.
  * </returns>
  *//*------------------------------------------------------------------------**/
 stock Percent:operator-(Percent:value, Percent:percent)
@@ -232,43 +232,43 @@ stock Percent:operator-(Percent:value, Percent:percent)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>value / percent</c>
+ *   <c>value / percent</c>
  * </summary>
  * <param name="value">The number to adjust.</param>
  * <param name="percent">The percentage amount to adjust it by.</param>
  * <returns>
- *  Nothing.  Unimplemented
+ *   Nothing.  Unimplemented
  * </returns>
  * <remarks>
- *  Dividing a number by a percentage value doesn't make sense.
+ *   Dividing a number by a percentage value doesn't make sense.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 forward operator/(value, Percent:percent);
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>value % percent</c>
+ *   <c>value % percent</c>
  * </summary>
  * <param name="value">The number to adjust.</param>
  * <param name="percent">The percentage amount to adjust it by.</param>
  * <returns>
- *  Nothing.  Unimplemented
+ *   Nothing.  Unimplemented
  * </returns>
  * <remarks>
- *  Taking a number modulo a percentage value doesn't make sense.  Shame we
- *  can't reuse the symbol as a percentage somehow.
+ *   Taking a number modulo a percentage value doesn't make sense.  Shame we
+ *   can't reuse the symbol as a percentage somehow.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 forward operator%(value, Percent:percent);
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>percent / value</c>
+ *   <c>percent / value</c>
  * </summary>
  * <param name="percent">The percentage amount to adjust.</param>
  * <param name="value">The number to adjust it by.</param>
  * <returns>
- *  Normal division, applied to percentages.
+ *   Normal division, applied to percentages.
  * </returns>
  *//*------------------------------------------------------------------------**/
 stock Percent:operator/(Percent:percent, value)
@@ -278,12 +278,12 @@ stock Percent:operator/(Percent:percent, value)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  <c>percent % value</c>
+ *   <c>percent % value</c>
  * </summary>
  * <param name="percent">The percentage amount to adjust.</param>
  * <param name="value">The number to adjust it by.</param>
  * <returns>
- *  Normal modulus, applied to percentages.
+ *   Normal modulus, applied to percentages.
  * </returns>
  *//*------------------------------------------------------------------------**/
 stock Percent:operator%(Percent:percent, value)

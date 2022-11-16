@@ -121,9 +121,9 @@ static stock Jagged_MovePtr(array[][], maxSize, slot, shift)
  * <param name="slot">The slot to resize.</param>
  * <param name="newSize">The new size of the slot.</param>
  * <remarks>
- *  Resize an array slot, maintining all of its data.  The "slot" variable is
- *  usually used to hold the NEXT slot - we barely need the number of the
- *  current slot once we have its address.
+ *   Resize an array slot, maintining all of its data.  The "slot" variable is
+ *   usually used to hold the NEXT slot - we barely need the number of the
+ *   current slot once we have its address.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -194,7 +194,7 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 // * <param name="slot">The slot to relocate.</param>
 // * <param name="newSlot">The new location of the slot.</param>
 // * <remarks>
-// *  Make a slot point to the data of an EARLIER slot.
+// *   Make a slot point to the data of an EARLIER slot.
 // * </remarks>
 // *//*------------------------------------------------------------------------**/
 //
@@ -263,7 +263,7 @@ stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
  * <param name="size2">The ORIGINAL size of every slot.</param>
  * <param name="">Multiple {slot, size} tuples.</param>
  * <remarks>
- *  Resize multiple array slots, maintining all of their data.
+ *   Resize multiple array slots, maintining all of their data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -291,7 +291,7 @@ stock bool:_Jagged_Resize(array[][], size1, size2, ...)
  * <param name="size2">The ORIGINAL size of every slot.</param>
  * <param name="">New sizes for every slot.</param>
  * <remarks>
- *  Resize multilpe array slots, maintining all of their data.
+ *   Resize multilpe array slots, maintining all of their data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -318,10 +318,10 @@ stock bool:_Jagged_ResizeAll(array[][], size1, size2, ...)
  * <param name="slot">The slot to resize.</param>
  * <param name="newSize">The new size of the slot.</param>
  * <remarks>
- *  The "slot" variable is usually used to hold the NEXT slot - we barely need
- *  the number of the current slot once we have its address.  "Resize" copies
- *  data to keep as much of the original data as possible.  This just moves the
- *  boundaries.
+ *   The "slot" variable is usually used to hold the NEXT slot - we barely need
+ *   the number of the current slot once we have its address.  "Resize" copies
+ *   data to keep as much of the original data as possible.  This just moves the
+ *   boundaries.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -371,8 +371,8 @@ stock bool:Jagged_MoveOne(array[][], size1, size2, slot, newSize)
  * <param name="size2">The ORIGINAL size of every slot.</param>
  * <param name="">Multiple {slot, size} tuples.</param>
  * <remarks>
- *  "Resize" copies data to keep as much of the original data as possible.  This
- *  just moves the boundaries.
+ *   "Resize" copies data to keep as much of the original data as possible.  This
+ *   just moves the boundaries.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -474,8 +474,8 @@ stock Jagged_UnsafeResizeOne(array[][], slot, newSize)
  * <param name="size2">The ORIGINAL size of every slot.</param>
  * <param name="">New sizes for every slot.</param>
  * <remarks>
- *  "Resize" copies data to keep as much of the original data as possible.  This
- *  just moves the boundaries.
+ *   "Resize" copies data to keep as much of the original data as possible.  This
+ *   just moves the boundaries.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -501,10 +501,10 @@ stock bool:_Jagged_MoveAll(array[][], size1, size2, ...)
  * <param name="size2">The ORIGINAL size of every slot.</param>
  * <param name="slot">The slot to get the size of.</param>
  * <returns>
- *  The current size of this slot.  This is NOT a compile-time operation.
+ *   The current size of this slot.  This is NOT a compile-time operation.
  * </returns>
  * <remarks>
- *  Returns the data in BYTES NOT CELLS.
+ *   Returns the data in BYTES NOT CELLS.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -536,7 +536,7 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
  * <param name="array">The array we want to get the address of a slot in.</param>
  * <param name="slot">The slot to get the address of.</param>
  * <returns>
- *  The absolute address of this slot.
+ *   The absolute address of this slot.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -562,7 +562,7 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
  * <param name="size1">The number of slots in the array.</param>
  * <param name="size2">The ORIGINAL size of every slot.</param>
  * <returns>
- *  The absolute address of the end of this array.
+ *   The absolute address of the end of this array.
  * </returns>
  *//*------------------------------------------------------------------------**/
 

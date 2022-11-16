@@ -74,7 +74,7 @@ Optional plugins:
 /*-------------------------------------------------------------------------*//**
  * <param name="slot">Allocation unit to get the size of.</param>
  * <returns>
- *  The size.
+ *   The size.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -85,7 +85,7 @@ FUNC_PAWNDOC(Malloc_GetSlotSize(Alloc:slot));
 /*-------------------------------------------------------------------------*//**
  * <param name="slot">Allocation unit to get the size of.</param>
  * <returns>
- *  The size.
+ *   The size.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -107,10 +107,11 @@ FUNC_PAWNDOC(Malloc_GetSlotSize(Alloc:slot));
  * <param name="string">The string to store.</param>
  * <param name="pack">Whether or not the string will be packed.</param>
  * <returns>
- *  0 on fail or a data handle on sucess.
+ *   0 on fail or a data handle on sucess.
  * </returns>
  * <remarks>
- *  Allocates a new piece of memory with enough space to store the given string.
+ *   Allocates a new piece of memory with enough space to store the given
+ *   string.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -141,10 +142,10 @@ FUNC_PAWNDOC(Malloc_SetSlotSize(slot,size));
  * <param name="slot">The allocation unit to get data from.</param>
  * <param name="index">The location in the unit to get.</param>
  * <returns>
- *  The data
+ *   The data
  * </returns>
  * <remarks>
- *  Basically like <symbolref name="Malloc_Get" /> but used internally.
+ *   Basically like <symbolref name="Malloc_Get" /> but used internally.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -166,10 +167,10 @@ FUNC_PAWNDOC(Malloc_SetData(Alloc:slot,index,value));
  * <param name="slot">The allocation unit to get data from.</param>
  * <param name="index">The location in the unit to get.</param>
  * <returns>
- *  The data
+ *   The data
  * </returns>
  * <remarks>
- *  Shorthand for <symbolref name="Malloc_Get" />.
+ *   Shorthand for <symbolref name="Malloc_Get" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -182,10 +183,10 @@ FUNC_PAWNDOC(mget(Alloc:slot, index));
  * <param name="slot">The allocation unit to get float data from.</param>
  * <param name="index">The location in the unit to get.</param>
  * <returns>
- *  The data
+ *   The data
  * </returns>
  * <remarks>
- *  Shorthand for <symbolref name="Malloc_GetFloat" />.
+ *   Shorthand for <symbolref name="Malloc_GetFloat" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 FUNC_PAWNDOC(mgetf(Alloc:slot, index));
@@ -198,7 +199,7 @@ FUNC_PAWNDOC(mgetf(Alloc:slot, index));
  * <param name="index">Where in the unit to set.</param>
  * <param name="value">The value to save.</param>
  * <remarks>
- *  Shorthand for <symbolref name="Malloc_Set" />.
+ *   Shorthand for <symbolref name="Malloc_Set" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -212,7 +213,7 @@ FUNC_PAWNDOC(mset(Alloc:slot, index, value));
  * <param name="index">Where in the unit to set.</param>
  * <param name="value">The float value to save.</param>
  * <remarks>
- *  Shorthand for <symbolref name="Malloc_SetFloat" />.
+ *   Shorthand for <symbolref name="Malloc_SetFloat" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -228,11 +229,11 @@ FUNC_PAWNDOC(msetf(Alloc:slot, index, value));
  * <param name="index">Index in the unit.</param>
  * <param name="pack">Return the string packed?</param>
  * <returns>
- *  The data
+ *   The data
  * </returns>
  * <remarks>
- *  Displays errors in secure mode.  Gets a string.
- *  Shorthand for <symbolref name="Malloc_GetS" />.
+ *   Displays errors in secure mode.  Gets a string.
+ *   Shorthand for <symbolref name="Malloc_GetS" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -247,11 +248,11 @@ FUNC_PAWNDOC(mgets(target[], length, Alloc:array, const index, const bool:pack =
  * <param name="array">Data unit to put information in.</param>
  * <param name="index">Index in the unit.</param>
  * <returns>
- *  The data
+ *   The data
  * </returns>
  * <remarks>
- *  Displays errors in secure mode.  Gets an array.
- *  Shorthand for <symbolref name="Malloc_GetA" />.
+ *   Displays errors in secure mode.  Gets an array.
+ *   Shorthand for <symbolref name="Malloc_GetA" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -266,8 +267,8 @@ FUNC_PAWNDOC(mgeta(target[], length, Alloc:array, index));
  * <param name="str">String to insert</param>
  * <param name="pack">Should the string be packed in?</param>
  * <remarks>
- *  Displays errors in secure mode.  Inserts a string.
- *  Shorthand for <symbolref name="Malloc_SetS" />.
+ *   Displays errors in secure mode.  Inserts a string.
+ *   Shorthand for <symbolref name="Malloc_SetS" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -282,8 +283,8 @@ FUNC_PAWNDOC(msets(Alloc:array, const index, const str[], const bool:pack = fals
  * <param name="str">Array to insert.</param>
  * <param name="len">Length of the array.</param>
  * <remarks>
- *  Displays errors in secure mode.  Inserts an array.
- *  Shorthand for <symbolref name="Malloc_SetA" />.
+ *   Displays errors in secure mode.  Inserts an array.
+ *   Shorthand for <symbolref name="Malloc_SetA" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -295,7 +296,7 @@ FUNC_PAWNDOC(mseta(Alloc:array, index, const str[], len));
 /*-------------------------------------------------------------------------*//**
  * <param name="slot">The unit to get the one after of.</param>
  * <remarks>
- *  Gets the next free block of memory after the current one.
+ *   Gets the next free block of memory after the current one.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -307,10 +308,10 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
  * <param name="array">Data unit to get information from.</param>
  * <param name="index">Index in the unit.</param>
  * <returns>
- *  Data.
+ *   Data.
  * </returns>
  * <remarks>
- *  Displays errors in secure mode.
+ *   Displays errors in secure mode.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -338,7 +339,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
  * <param name="index">Index in the unit.</param>
  * <param name="value">Value to insert</param>
  * <remarks>
- *  Displays errors in secure mode.
+ *   Displays errors in secure mode.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -366,7 +367,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
  * <param name="index">Index in the unit.</param>
  * <param name="value">Float value to insert</param>
  * <remarks>
- *  Displays errors in secure mode.
+ *   Displays errors in secure mode.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -390,7 +391,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
  * <param name="index">Index in the unit.</param>
  * <param name="value">Float value to insert</param>
  * <remarks>
- *  Displays errors in secure mode.
+ *   Displays errors in secure mode.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -417,7 +418,7 @@ FUNC_PAWNDOC(Malloc_NextSlot(slot));
  * <param name="index">Index in the unit.</param>
  * <param name="pack">Return the string packed?</param>
  * <remarks>
- *  Displays errors in secure mode.  Gets a string.
+ *   Displays errors in secure mode.  Gets a string.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -444,7 +445,7 @@ stock Malloc_GetS(target[], length = sizeof (target), Alloc:array, const index, 
  * <param name="str">String to insert</param>
  * <param name="pack">Should the string be packed in?</param>
  * <remarks>
- *  Displays errors in secure mode.  Inserts a string.
+ *   Displays errors in secure mode.  Inserts a string.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -481,7 +482,7 @@ stock Malloc_SetS(Alloc:array, const index, const str[], const bool:pack = false
  * <param name="index">Index in the unit.</param>
  * <param name="arg">Offset in the stack of the string to store.</param>
  * <remarks>
- *  Inserts a string by stack offset for use in vararg functions.
+ *   Inserts a string by stack offset for use in vararg functions.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -542,7 +543,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
  * <param name="array">Data unit to put information in.</param>
  * <param name="index">Index in the unit.</param>
  * <remarks>
- *  Displays errors in secure mode.  Gets an array.
+ *   Displays errors in secure mode.  Gets an array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -569,7 +570,7 @@ stock Malloc_GetA(dest[], length, Alloc:array, index)
  * <param name="source">Array to insert.</param>
  * <param name="length">Length of the array.</param>
  * <remarks>
- *  Displays errors in secure mode.  Inserts an array.
+ *   Displays errors in secure mode.  Inserts an array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -593,7 +594,7 @@ stock Malloc_SetA(Alloc:array, index, const source[], length)
  * <param name="index">Index in the unit.</param>
  * <param name="arg">Offset in the stack of the array to store.</param>
  * <remarks>
- *  Inserts an array by stack offset for use in vararg functions.
+ *   Inserts an array by stack offset for use in vararg functions.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -652,10 +653,10 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 /*-------------------------------------------------------------------------*//**
  * <param name="size">Size of memory to allocate.</param>
  * <returns>
- *  0 on fail or a data handle on sucess.
+ *   0 on fail or a data handle on sucess.
  * </returns>
  * <remarks>
- *  Displays errors in secure mode.
+ *   Displays errors in secure mode.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -679,10 +680,10 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 /*-------------------------------------------------------------------------*//**
  * <param name="size">Size of memory to allocate.</param>
  * <returns>
- *  0 on fail or a data handle on sucess.
+ *   0 on fail or a data handle on sucess.
  * </returns>
  * <remarks>
- *  Displays errors in secure mode.  Blanks allocated mmeory.
+ *   Displays errors in secure mode.  Blanks allocated mmeory.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -708,7 +709,7 @@ stock Alloc:calloc(size)
 /*-------------------------------------------------------------------------*//**
  * <param name="slot">Slot of memory to free up.</param>
  * <remarks>
- *  Displays errors in secure mode.
+ *   Displays errors in secure mode.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -736,7 +737,7 @@ stock Alloc:calloc(size)
  * <param name="size">New size of the memory.</param>
  * <param name="clear">Should we erase the memory first?</param>
  * <remarks>
- *  Displays errors in secure mode.
+ *   Displays errors in secure mode.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -763,18 +764,18 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
  * <param name="size">Ammount of memory to allocate IN CELLS.</param>
  * <param name="cleat">Blank the memory?</param>
  * <returns>
- *  Memory identifier.
+ *   Memory identifier.
  * </returns>
  * <remarks>
- *  The size check should never fail, if there's only 1 cell
- *  extra somewhere just sneak it onto the end of an array,
- *  if the user does proper bounds checking it shouldn't
- *  matter.
+ *   The size check should never fail, if there's only 1 cell
+ *   extra somewhere just sneak it onto the end of an array,
+ *   if the user does proper bounds checking it shouldn't
+ *   matter.
  *
- *  Implementation code for <symbolref name="malloc" />.
+ *   Implementation code for <symbolref name="malloc" />.
  *
- *  This code will find an area in memory with sufficient
- *  space to store the given data and 
+ *   This code will find an area in memory with sufficient
+ *   space to store the given data and 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -864,7 +865,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 /*-------------------------------------------------------------------------*//**
  * <param name="slot">Memory allocation unit to release</param>
  * <remarks>
- *  Implementation code for <symbolref name="free" />.
+ *   Implementation code for <symbolref name="free" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

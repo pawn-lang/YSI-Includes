@@ -128,7 +128,7 @@ Optional plugins:
 	 * <library>y_utils - ip</library>
 	 * <param name="playerid">Player to get IP of.</param>
 	 * <returns>
-	 *  IP as a 32bit int.
+	 *   IP as a 32bit int.
 	 * </returns>
 	 *//*------------------------------------------------------------------------**/
 
@@ -141,14 +141,14 @@ Optional plugins:
  * <library>y_utils - ip</library>
  * <param name="ip">Dot notation IP to convert to an integer.</param>
  * <returns>
- *  The IP.
+ *   The IP.
  * </returns>
  * <remarks>
- *  Converts an IP from a string, such as <c>192.168.0.1</c>, converted to a
- *  32-bit integer, such as <c>0xC0A80001</c>.  Does far fewer checks on the
- *  input than the newer <c>DottedToIntIP</c>, but this function isn't
- *  deprecated for use in situations where the input format is know, such as
- *  directly after a call to <c>GetPlayerIp</c>.
+ *   Converts an IP from a string, such as <c>192.168.0.1</c>, converted to a
+ *   32-bit integer, such as <c>0xC0A80001</c>.  Does far fewer checks on the
+ *   input than the newer <c>DottedToIntIP</c>, but this function isn't
+ *   deprecated for use in situations where the input format is know, such as
+ *   directly after a call to <c>GetPlayerIp</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -190,15 +190,15 @@ stock IPToInt(const string:ip[])
  * <param name="ip">Dot notation IP to convert to an integer.</param>
  * <param name="out">Destination.</param>
  * <returns>
- *  <c>true</c> if the conversion worked, <c>false</c> if the input didn't start
- *  with a valid IP.
+ *   <c>true</c> if the conversion worked, <c>false</c> if the input didn't start
+ *   with a valid IP.
  * </returns>
  * <remarks>
- *  Converts an IP from a string, such as <c>192.168.0.1</c>, converted to a
- *  32-bit integer, such as <c>0xC0A80001</c>.  Does far more checks on the
- *  input than the older <c>IPToInt</c>, but that function isn't deprecated for
- *  use in situations where the input format is know, such as directly after a
- *  call to <c>GetPlayerIp</c>.
+ *   Converts an IP from a string, such as <c>192.168.0.1</c>, converted to a
+ *   32-bit integer, such as <c>0xC0A80001</c>.  Does far more checks on the
+ *   input than the older <c>IPToInt</c>, but that function isn't deprecated for
+ *   use in situations where the input format is know, such as directly after a
+ *   call to <c>GetPlayerIp</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -334,13 +334,13 @@ stock IntToIP(string:dest[], ip, len = sizeof (dest))
  * <param name="parts">How many parts of the IP to keep.</param>
  * <param name="len">Maximum length of the destination.</param>
  * <returns>
- *  <c>false</c> if <c>parts</c> was invalid, otherwise <c>true</c>.
+ *   <c>false</c> if <c>parts</c> was invalid, otherwise <c>true</c>.
  * </returns>
  * <remarks>
- *  Replaces some parts of an IP with stars (<c>*</c>) to hide the full thing.
- *  There are four components in a dotted IP, so the number of stars returned is
- *  <c>4 - parts</c>.  For example <c>CensorIntIP(dest, 0xC0A80001, 3);</c> may
- *  return <c>"192.168.0.*"</c>.
+ *   Replaces some parts of an IP with stars (<c>*</c>) to hide the full thing.
+ *   There are four components in a dotted IP, so the number of stars returned is
+ *   <c>4 - parts</c>.  For example <c>CensorIntIP(dest, 0xC0A80001, 3);</c> may
+ *   return <c>"192.168.0.*"</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -376,14 +376,14 @@ stock bool:CensorIntIP(string:dest[], ip, parts = 2, len = sizeof (dest))
  * <param name="parts">How many parts of the IP to keep.</param>
  * <param name="len">Maximum length of the destination.</param>
  * <returns>
- *  <c>true</c> if the censoring worked, <c>false</c> if the input wasn't a
- *  valid IP, or <c>parts</c> was invalid.
+ *   <c>true</c> if the censoring worked, <c>false</c> if the input wasn't a
+ *   valid IP, or <c>parts</c> was invalid.
  * </returns>
  * <remarks>
- *  Replaces some parts of an IP with stars (<c>*</c>) to hide the full thing.
- *  There are four components in a dotted IP, so the number of stars returned is
- *  <c>4 - parts</c>.  For example <c>CensorIP(dest, "192.168.0.1", 3);</c> will
- *  return <c>"192.168.0.*"</c>.
+ *   Replaces some parts of an IP with stars (<c>*</c>) to hide the full thing.
+ *   There are four components in a dotted IP, so the number of stars returned is
+ *   <c>4 - parts</c>.  For example <c>CensorIP(dest, "192.168.0.1", 3);</c> will
+ *   return <c>"192.168.0.*"</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -404,14 +404,14 @@ stock bool:CensorDottedIP(string:dest[], const string:ip[], parts = 2, len = siz
  * <param name="parts">How many parts of the IP to keep.</param>
  * <param name="len">Maximum length of the destination.</param>
  * <returns>
- *  <c>true</c> if the censoring worked, <c>false</c> if the input wasn't a
- *  valid IP.
+ *   <c>true</c> if the censoring worked, <c>false</c> if the input wasn't a
+ *   valid IP.
  * </returns>
  * <remarks>
- *  Replaces some parts of an IP with stars (<c>*</c>) to hide the full thing.
- *  There are four components in a dotted IP, so the number of stars returned is
- *  <c>4 - parts</c>.  For example <c>CensorPlayerIP(dest, playerid, 3);</c> may
- *  return <c>"192.168.0.*"</c>.
+ *   Replaces some parts of an IP with stars (<c>*</c>) to hide the full thing.
+ *   There are four components in a dotted IP, so the number of stars returned is
+ *   <c>4 - parts</c>.  For example <c>CensorPlayerIP(dest, playerid, 3);</c> may
+ *   return <c>"192.168.0.*"</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

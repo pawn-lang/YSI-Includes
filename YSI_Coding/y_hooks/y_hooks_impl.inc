@@ -156,8 +156,8 @@ static stock
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Function name to modify.</param>
  * <remarks>
- *  Expands all name parts like "CP" and "Obj" to their full versions (in this
- *  example "Checkpoint" and "Object").
+ *   Expands all name parts like "CP" and "Obj" to their full versions (in this
+ *   example "Checkpoint" and "Object").
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -243,8 +243,8 @@ stock Hooks_MakeLongName(name[Y_HOOKS_MAX_NAME])
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Function name to modify.</param>
  * <remarks>
- *  Compresses function names when required to fit within FUNCTION_LENGTH characters
- *  according to well defined rules (see "YSI_g_sReplacements").
+ *   Compresses function names when required to fit within FUNCTION_LENGTH
+ *   characters according to well defined rules (see "YSI_g_sReplacements").
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -300,14 +300,14 @@ stock Hooks_MakeShortName(name[Y_HOOKS_MAX_NAME])
  * <param name="precount">Number of found preload libraries.</param>
  * <param name="size">Maximum number of libraries to store.</param>
  * <remarks>
- *  Some includes, like "fixes.inc" and anti-cheats MUST come before all other
- *  includes in order for everything to function correctly (at least fixes.inc
- *  must).  This function looks for these definitions:
+ *   Some includes, like "fixes.inc" and anti-cheats MUST come before all other
+ *   includes in order for everything to function correctly (at least fixes.inc
+ *   must).  This function looks for these definitions:
  *
  *      PRE_HOOK(FIXES)
  *
- *  Which tell y_hooks that any "FIXES_" prefixed callbacks are part of one of
- *  these chains.
+ *   Which tell y_hooks that any "FIXES_" prefixed callbacks are part of one of
+ *   these chains.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -377,8 +377,8 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
  * <param name="hooks">Destination in which to store the headers.</param>
  * <param name="count">Number of headers found.</param>
  * <remarks>
- *  Finds all the AMX file headers for functions with a similar name to the
- *  given callback that should be called before (or near) the given callback.
+ *   Finds all the AMX file headers for functions with a similar name to the
+ *   given callback that should be called before (or near) the given callback.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -489,13 +489,13 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, &
 /*-------------------------------------------------------------------------*//**
  * <param name="stub">Starting address of the function.</param>
  * <returns>
- *  The address at which the actual code in this function starts.
+ *   The address at which the actual code in this function starts.
  * </returns>
  * <remarks>
- *  This handles three cases.  Regular functions end instantly as found.
- *  Functions that start with a switch (even before "PROC") are assumed to be
- *  state-based functions, and we find the most likely state to be used (i.e. we
- *  remove all future state changes).
+ *   This handles three cases.  Regular functions end instantly as found.
+ *   Functions that start with a switch (even before "PROC") are assumed to be
+ *   state-based functions, and we find the most likely state to be used (i.e.
+ *   we remove all future state changes).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -591,10 +591,10 @@ _Y_HOOKS_STATIC stock Hooks_ExtractName(tmpName[Y_HOOKS_MAX_NAME], const name[],
  * <param name="order">Where in the list to call this hook.</param>
  * <param name="fallback">Is this an old style <c>hook</c> callback?</param>
  * <returns>
- *  Should this function be added to the current list of hooks?
+ *   Should this function be added to the current list of hooks?
  * </returns>
  * <remarks>
- *  Called from inside the <c>@yH_</c> functions, to register themselves.
+ *   Called from inside the <c>@yH_</c> functions, to register themselves.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -649,17 +649,17 @@ stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallba
  * <param name="idx">Current position in the AMX header.</param>
  * <param name="namelen">Min bound of space used by all these names.</param>
  * <returns>
- *  The number of hooks found.
+ *   The number of hooks found.
  * </returns>
  * <remarks>
- *  The name of the function currently being processed is derived from the first
- *  found hook.  This means we already know of one hook, but to simplify the
- *  code we get that one again here.  Above we only know the name not the
- *  address.  Hence the "- 1" in "i = idx - 1" (to go back one function name).
+ *   The name of the function currently being processed is derived from the
+ *   first found hook.  This means we already know of one hook, but to simplify
+ *   the code we get that one again here.  Above we only know the name not the
+ *   address.  Hence the "- 1" in "i = idx - 1" (to go back one function name).
  *
- *  Our "namelen" variable already contains the full length of the first found
- *  hook - this is the length of "name", plus N extra characters.  The following
- *  are all valid, and may occur when orders are played with:
+ *   Our "namelen" variable already contains the full length of the first found
+ *   hook - this is the length of "name", plus N extra characters.  The
+ *   following are all valid, and may occur when orders are played with:
  *
  *      @yH_OnX@
  *      @yH_OnX@1
@@ -668,24 +668,24 @@ stock _@Hy(address, const name[], const callback[] = "", order = cellmin, fallba
  *      @yH_OnX@ZZZ
  *      @yH_OnX@999@024
  *
- *  If we want to get the EXACT space taken up by all these hook names we would
- *  need to get the string of the name in this function then measure it.  There
- *  is really no point in doing this - if we have a second we will always have
- *  enough space for our new names.  Instead, we assume that they are all just
+ *   If we want to get the EXACT space taken up by all these hook names we would
+ *   need to get the string of the name in this function then measure it.  There
+ *   is really no point in doing this - if we have a second we will always have
+ *   enough space for our new names.  Instead, we assume that they are all just
  *
  *      @yH_OnX@
  *
- *  And add on that minimum length accordingly (plus 1 for the NULL character).
+ *   And add on that minimum length accordingly (plus 1 for the NULL character).
  *
- *  This length is used if the original callback doesn't exist but hooks do.  In
- *  that case we need to add the callback to the AMX header, and there is a tiny
- *  chance that the original name will be longer than one hook's name.  In that
- *  case, having two or more hooks will (AFAIK) always ensure that we have
- *  enough space to write the longer name.
+ *   This length is used if the original callback doesn't exist but hooks do.
+ *   In that case we need to add the callback to the AMX header, and there is a
+ *   tiny chance that the original name will be longer than one hook's name.  In
+ *   that case, having two or more hooks will (AFAIK) always ensure that we have
+ *   enough space to write the longer name.
  *
- *  If there is only one hook, no original function, and the name of the hook is
- *  shorter than the name of the original function then we have an issue and
- *  will have to do something else instead.
+ *   If there is only one hook, no original function, and the name of the hook
+ *   is shorter than the name of the original function then we have an issue and
+ *   will have to do something else instead.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -875,8 +875,8 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(write, bool:hasprehooks)
 /*-------------------------------------------------------------------------*//**
  * <param name="tableEntry">The public function slot to destroy.</param>
  * <remarks>
- *  Basically, once we know a function has been included, wipe it from the AMX
- *  header.
+ *   Basically, once we know a function has been included, wipe it from the AMX
+ *   header.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -902,7 +902,7 @@ _Y_HOOKS_STATIC stock Hooks_InvalidatePointer(tableEntry)
 /*-------------------------------------------------------------------------*//**
  * <param name="name">The function to get the default return of.</param>
  * <returns>
- *  The default return for a callback, normally 1.
+ *   The default return for a callback, normally 1.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -953,10 +953,10 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
  * <param name="ret">The default return.</param>
  * <param name="skipable">Can future hooks be ignored on -1?</param>
  * <returns>
- *  The number of bytes written to memory.
+ *   The number of bytes written to memory.
  * </returns>
  * <remarks>
- *  Generate some new code, very nicely :D.
+ *   Generate some new code, very nicely :D.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1130,9 +1130,9 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const ret = 1, const skipable = true)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Goes through the whole of the public functions table and moves those
- *  without valid pointers to the start, then moves the start address up to
- *  after them.
+ *   Goes through the whole of the public functions table and moves those
+ *   without valid pointers to the start, then moves the start address up to
+ *   after them.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1216,7 +1216,7 @@ _Y_HOOKS_STATIC Hooks_CompressPublics()
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Call the main hook run code, then advance the ALS chain.
+ *   Call the main hook run code, then advance the ALS chain.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1240,9 +1240,10 @@ stock _Hooks_AddReplacement(const longName[], const shortName[])
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Once all the replacement strings have been found, sort them by the length of
- *  the short versions of the strings.  This is so that the longest (and special
- *  case, e.g. "DynamicCP"-> "DynamicCP") replacements are always done first.
+ *   Once all the replacement strings have been found, sort them by the length
+ *   of the short versions of the strings.  This is so that the longest (and
+ *   special case, e.g. "DynamicCP"-> "DynamicCP") replacements are always done
+ *   first.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1293,7 +1294,7 @@ static stock Hooks_MallocState() <>
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Call the main hook run code, then advance the ALS chain.
+ *   Call the main hook run code, then advance the ALS chain.
  * </remarks>
  * <transition keep="true" target="_ALS : _ALS_go"/>
  *//*------------------------------------------------------------------------**/

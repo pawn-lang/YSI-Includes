@@ -540,7 +540,7 @@ stock Float:RandomFloatMax(Float:max)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - random</library>
  * <summary>
- *  Get an array of random points in a circle.
+ *   Get an array of random points in a circle.
  * </summary>
  * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
  * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
@@ -550,8 +550,8 @@ stock Float:RandomFloatMax(Float:max)
  * <param name="sx">The size of the x return array (must match <c>sy</c>.</param>
  * <param name="sy">The size of the y return array (must match <c>sx</c>.</param>
  * <remarks>
- *  Most basic method.  Generate points in a square and test them.  Simple but
- *  unbounded.  Good distribution.
+ *   Most basic method.  Generate points in a square and test them.  Simple but
+ *   unbounded.  Good distribution.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -577,7 +577,7 @@ stock RandomPointsInCircleSampled(Float:centreX, Float:centreY, Float:radius, Fl
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - random</library>
  * <summary>
- *  Get an array of random points in a circle.
+ *   Get an array of random points in a circle.
  * </summary>
  * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
  * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
@@ -587,9 +587,9 @@ stock RandomPointsInCircleSampled(Float:centreX, Float:centreY, Float:radius, Fl
  * <param name="sx">The size of the x return array (must match <c>sy</c>.</param>
  * <param name="sy">The size of the y return array (must match <c>sx</c>.</param>
  * <remarks>
- *  Medium method.  Generate an angle and distance.  Fixed loop bounds, but
- *  worst distribution (although actually the best distribution if you want more
- *  near the centre, as in an explosion).
+ *   Medium method.  Generate an angle and distance.  Fixed loop bounds, but
+ *   worst distribution (although actually the best distribution if you want more
+ *   near the centre, as in an explosion).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -609,7 +609,7 @@ stock RandomPointsInCircleCentred(Float:centreX, Float:centreY, Float:radius, Fl
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - random</library>
  * <summary>
- *  Get an array of random points in a circle.
+ *   Get an array of random points in a circle.
  * </summary>
  * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
  * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
@@ -619,8 +619,8 @@ stock RandomPointsInCircleCentred(Float:centreX, Float:centreY, Float:radius, Fl
  * <param name="sx">The size of the x return array (must match <c>sy</c>.</param>
  * <param name="sy">The size of the y return array (must match <c>sx</c>.</param>
  * <remarks>
- *  Best method.  Generate an angle and distance, but adjusted for a perfect
- *  distribution of points throughout the circle.  Fixed loop bounds.
+ *   Best method.  Generate an angle and distance, but adjusted for a perfect
+ *   distribution of points throughout the circle.  Fixed loop bounds.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -642,7 +642,7 @@ stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - random</library>
  * <summary>
- *  Get a random point in a circle.
+ *   Get a random point in a circle.
  * </summary>
  * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
  * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
@@ -650,8 +650,8 @@ stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius
  * <param name="outX">The return for the random x co-ordinate.</param>
  * <param name="outY">The return for the random y co-ordinate.</param>
  * <remarks>
- *  Most basic method.  Generate points in a square and test them.  Simple but
- *  unbounded.  Good distribution.
+ *   Most basic method.  Generate points in a square and test them.  Simple but
+ *   unbounded.  Good distribution.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -673,7 +673,7 @@ stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Flo
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - random</library>
  * <summary>
- *  Get a random point in a circle.
+ *   Get a random point in a circle.
  * </summary>
  * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
  * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
@@ -681,9 +681,9 @@ stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Flo
  * <param name="outX">The return for the random x co-ordinate.</param>
  * <param name="outY">The return for the random y co-ordinate.</param>
  * <remarks>
- *  Medium method.  Generate an angle and distance.  Fixed loop bounds, but
- *  worst distribution (although actually the best distribution if you want more
- *  near the centre, as in an explosion).
+ *   Medium method.  Generate an angle and distance.  Fixed loop bounds, but
+ *   worst distribution (although actually the best distribution if you want more
+ *   near the centre, as in an explosion).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -698,7 +698,7 @@ stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Flo
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - random</library>
  * <summary>
- *  Get a random point in a circle.
+ *   Get a random point in a circle.
  * </summary>
  * <param name="centreX">The x co-ordinate of the centre of the circle.</param>
  * <param name="centreY">The y co-ordinate of the centre of the circle.</param>
@@ -706,8 +706,8 @@ stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Flo
  * <param name="outX">The return for the random x co-ordinate.</param>
  * <param name="outY">The return for the random y co-ordinate.</param>
  * <remarks>
- *  Best method.  Generate an angle and distance, but adjusted for a perfect
- *  distribution of points throughout the circle.  Fixed loop bounds.
+ *   Best method.  Generate an angle and distance, but adjusted for a perfect
+ *   distribution of points throughout the circle.  Fixed loop bounds.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

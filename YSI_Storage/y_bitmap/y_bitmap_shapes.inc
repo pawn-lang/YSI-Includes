@@ -82,10 +82,10 @@ Optional plugins:
  * <param name="linePattern[] = \"SOLID\"">How to draw the inside.</param>
  * <param name="fillPattern[] = \"SOLID\"">How to draw the border.</param>
  * <remarks>
- *  This function draws a rectangle between two given co-ordinates.  It can also
- *  draw a border around the rectangle OUTSIDE the specified area of the
- *  rectangle.  If you want the border within the area specified you need to use
- *  a smaller area.
+ *   This function draws a rectangle between two given co-ordinates.  It can also
+ *   draw a border around the rectangle OUTSIDE the specified area of the
+ *   rectangle.  If you want the border within the area specified you need to use
+ *   a smaller area.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -197,11 +197,11 @@ static stock _Bitmap_RectangleRecopy(n, BitArray:pattern<PATTERN_MASK_X>)
  * <param name="linePattern[] = \"SOLID\"">How to draw the inside.</param>
  * <param name="fillPattern[] = \"SOLID\"">How to draw the border.</param>
  * <remarks>
- *  This function draws a circle centered on the given co-ordinates with the
- *  given FLOAT radius, not an integer size because of diagonals. It can also
- *  draw a border around the circle OUTSIDE the specified area of the circle.
- *  If you want the border within the area specified you need to use a smaller
- *  area.
+ *   This function draws a circle centered on the given co-ordinates with the
+ *   given FLOAT radius, not an integer size because of diagonals. It can also
+ *   draw a border around the circle OUTSIDE the specified area of the circle.
+ *   If you want the border within the area specified you need to use a smaller
+ *   area.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -220,10 +220,10 @@ stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillCo
  * <param name="colour">The colour of the ring.</param>
  * <param name="pattern[] = \"SOLID\"">How to draw the inside.</param>
  * <remarks>
- *  This function draws a ring centered on the given co-ordinates with the
- *  given FLOAT radius, not an integer size because of diagonals.  This does not
- *  draw a border as it is used for borders, and a border on a ring is ambiguous
- *  - do you have it on the inside or not?  Better to let the user decide.
+ *   This function draws a ring centered on the given co-ordinates with the
+ *   given FLOAT radius, not an integer size because of diagonals.  This does not
+ *   draw a border as it is used for borders, and a border on a ring is ambiguous
+ *   - do you have it on the inside or not?  Better to let the user decide.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

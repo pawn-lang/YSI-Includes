@@ -1,9 +1,9 @@
 /*  SA:MP Functions
  *
- *  ZONES Functions By ~Cueball~
- *  ZONES Functions Aided By Betamaster (locations), Mabako (locations), Simon (finetuning)
+ *   ZONES Functions By ~Cueball~
+ *   ZONES Functions Aided By Betamaster (locations), Mabako (locations), Simon (finetuning)
  *
- *  (c) Copyright 2005-2008, SA:MP Team
+ *   (c) Copyright 2005-2008, SA:MP Team
  *
  */
 /*

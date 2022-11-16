@@ -91,12 +91,12 @@ Optional plugins:
  * <library>y_utils - strings</library>
  * <param name="str">String to check if is null.</param>
  * <remarks>
- *  Uses a new shorter and branchless method, which also works with offsets so
- *  this is valid:
+ *   Uses a new shorter and branchless method, which also works with offsets so
+ *   this is valid:
  *
- *  <code>
+ *   <code>
  *    new str[32]; IsNull(str[5]);
- *  </code>
+ *   </code>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -417,10 +417,10 @@ stock unpack(const string:str[])
  * <param name="str">The string to skip over part of.</param>
  * <param name="pos">The start of the whitespace.</param>
  * <returns>
- *  The end of the whitespace.
+ *   The end of the whitespace.
  * </returns>
  * <remarks>
- *  Doesn't skip over NULL terminators.
+ *   Doesn't skip over NULL terminators.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -444,9 +444,9 @@ stock SkipWhitespace(const string:str[], pos)
  * <param name="start">Start of the substring.</param>
  * <param name="end">End of the substring.</param>
  * <remarks>
- *  Modifies "start" and "end" to be tight on text in "str".  <c>Strip</c>
- *  removes the characters from the end, so needs a modifiable string, this just
- *  tells you where the ends are.
+ *   Modifies "start" and "end" to be tight on text in "str".  <c>Strip</c>
+ *   removes the characters from the end, so needs a modifiable string, this just
+ *   tells you where the ends are.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -486,7 +486,7 @@ stock Trim(const string:str[], &start, &end)
  * <library>y_utils - strings</library>
  * <param name="n">The number to convert to a string with ordinal.</param>
  * <returns>
- *  Stringises a number, then adds <c>st/nd/rd/th</c>.
+ *   Stringises a number, then adds <c>st/nd/rd/th</c>.
  * </returns>
  *//*------------------------------------------------------------------------**/
 

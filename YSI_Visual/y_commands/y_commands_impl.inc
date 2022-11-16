@@ -224,7 +224,7 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
  * <library>y_commands</library>
  * <param name="idx">Command to test.</param>
  * <remarks>
- *  Tests if the given slot is empty.
+ *   Tests if the given slot is empty.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -235,7 +235,7 @@ FUNC_PAWNDOC(bool:_Command_IsEmptySlot(idx));
  * <library>y_commands</library>
  * <param name="idx">Command to test.</param>
  * <remarks>
- *  Tests if the given slot is an alternate command.
+ *   Tests if the given slot is an alternate command.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -248,8 +248,8 @@ FUNC_PAWNDOC(bool:_Command_IsAlt(idx));
  * <param name="idx">Index of the parent command data.</param>
  * <param name="name">Destination for the parent function name.</param>
  * <remarks>
- *  Finds the original version of an alt command.  Updated to not contain long
- *  chains (along with "Command_AddAlt").
+ *   Finds the original version of an alt command.  Updated to not contain long
+ *   chains (along with "Command_AddAlt").
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -266,11 +266,11 @@ FUNC_PAWNDOC(_Command_GetReal(&ptr,&idx,name[]));
  * <param name="playerid">Player who typed the command.</param>
  * <param name="cmdtext">What they typed.</param>
  * <remarks>
- *  Call OnPlayerCommandReceived once the system knows how the player can use
- *  this command (if they can).  The order of the parameters is such that the
- *  error comes first.  This is because it is compile-time concatenated to make
- *  the error enum value, and putting that parameter first means that we don't
- *  need to ommit the space after any comma.
+ *   Call OnPlayerCommandReceived once the system knows how the player can use
+ *   this command (if they can).  The order of the parameters is such that the
+ *   error comes first.  This is because it is compile-time concatenated to make
+ *   the error enum value, and putting that parameter first means that we don't
+ *   need to ommit the space after any comma.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -294,10 +294,10 @@ FUNC_PAWNDOC(_Command_GetReal(&ptr,&idx,name[]));
  * <library>y_commands</library>
  * <param name="command">Command to get for.</param>
  * <returns>
- *  Is this command ID active?
+ *   Is this command ID active?
  * </returns>
  * <remarks>
- *  Doesn't do any bounds checks - use "_Command_IsValid" for that.
+ *   Doesn't do any bounds checks - use "_Command_IsValid" for that.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -308,10 +308,10 @@ FUNC_PAWNDOC(bool:_Command_IsActive(command));
  * <library>y_commands</library>
  * <param name="command">Command to get for.</param>
  * <returns>
- *  Is this command ID valid?
+ *   Is this command ID valid?
  * </returns>
  * <remarks>
- *  Internal direct-access check.
+ *   Internal direct-access check.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -322,8 +322,8 @@ FUNC_PAWNDOC(bool:_Command_IsActive(command));
  * <library>y_commands</library>
  * <param name="idx">Command to test.</param>
  * <remarks>
- *  Checks to see if a character is a possible prefix character.  May use an
- *  unsigned comparison.
+ *   Checks to see if a character is a possible prefix character.  May use an
+ *   unsigned comparison.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -337,7 +337,7 @@ FUNC_PAWNDOC(bool:_Command_IsActive(command));
  * <library>y_commands</library>
  * <param name="c">Command to get.</param>
  * <returns>
- *  The prefix for this command.
+ *   The prefix for this command.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -369,10 +369,10 @@ FUNC_PAWNDOC(Command_Name(f));
  * <library>y_commands</library>
  * <param name="function">Function name to find.</param>
  * <returns>
- *  The ID of the passed function.
+ *   The ID of the passed function.
  * </returns>
  * <remarks>
- *  -
+ *   -
  *
  * native Command_GetID(function[])
  *
@@ -392,7 +392,7 @@ GLOBAL__ Command_GetID(const string:function[])
  * <param name="oidx">The function this is an alternate to.</param>
  * <param name="cmd">The new name.</param>
  * <returns>
- *  The command's ID.
+ *   The command's ID.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -451,20 +451,20 @@ GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
  * <param name="p">(playerid) - Player who entered the command.</param>
  * <param name="c">(cmdtext) - Text entered.</param>
  * <param name="h">
- *  1 - Called from the help commmand or OnPlayerCommandText.
- *  2 - Bypass permissions checks.
+ *   1 - Called from the help commmand or OnPlayerCommandText.
+ *   2 - Bypass permissions checks.
  * </param>
  * <returns>
- *  true - success or hidden fail.
- *  false - fail.
+ *   true - success or hidden fail.
+ *   false - fail.
  * </returns>
  * <remarks>
- *  Does all the command and error handling.  The macro version takes four
- *  parameters:
+ *   Does all the command and error handling.  The macro version takes four
+ *   parameters:
  *
- *  <code>Command_ReProcess(playerid,cmdtext,help,force);</code>
+ *   <code>Command_ReProcess(playerid,cmdtext,help,force);</code>
  *
- *  <c>help</c> and <c>force</c> are combined together in to a bitmap.
+ *   <c>help</c> and <c>force</c> are combined together in to a bitmap.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -617,7 +617,7 @@ GLOBAL__ void:Command_SetPlayerDisabled(playerid, bool:set)
  * <library>y_commands</library>
  * <param name="playerid">Player to get.</param>
  * <returns>
- *  Can this player use any commands?
+ *   Can this player use any commands?
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -633,7 +633,7 @@ GLOBAL__ bool:Command_GetPlayerDisabled(playerid)
  * <param name="command">Command to get for.</param>
  * <param name="playerid">Player to get.</param>
  * <returns>
- *  Can this player use this command?
+ *   Can this player use this command?
  * </returns>
  * <remarks>
  *
@@ -655,7 +655,7 @@ GLOBAL__ bool:Command_GetPlayer(cmd, pid)
  * <param name="funcname">Command to get for.</param>
  * <param name="playerid">Player to get.</param>
  * <remarks>
- *  Like Command_GetPlayer but for a function name.
+ *   Like Command_GetPlayer but for a function name.
  *
  * native bool:Command_GetPlayerNamed(funcname[], playerid);
  *
@@ -695,7 +695,7 @@ GLOBAL__ void:Command_SetPlayer(c, p, bool:s)
  * <param name="playerid">Player to set.</param>
  * <param name="set">Wether or not this player can use this command.</param>
  * <remarks>
- *  Like Command_SetPlayer but for a function name.
+ *   Like Command_SetPlayer but for a function name.
  *
  * native bool:Command_SetPlayerNamed(funcname[], playerid, bool:set);
  *
@@ -714,7 +714,7 @@ GLOBAL__ void:Command_SetPlayerNamed(const string:f[],p,bool:s)
  * <library>y_commands</library>
  * <param name="cmd">The command name to find.</param>
  * <returns>
- *  The array slot of this command, or -1.
+ *   The array slot of this command, or -1.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -735,8 +735,8 @@ GLOBAL__ Command_Find(const string:cmd[])
  * <library>y_commands</library>
  * <param name="command">Command to "touch".</param>
  * <remarks>
- *  Used within "GROUP_ADD" to quickly assign a load of commands to just one
- *  group.
+ *   Used within "GROUP_ADD" to quickly assign a load of commands to just one
+ *   group.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -759,8 +759,8 @@ GLOBAL__ void:Command_TouchNamed(const string:command[])
  * <library>y_commands</library>
  * <param name="command">Command to "touch".</param>
  * <remarks>
- *  Used within "GROUP_ADD" to quickly assign a load of commands to just one
- *  group.
+ *   Used within "GROUP_ADD" to quickly assign a load of commands to just one
+ *   group.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -920,7 +920,7 @@ GLOBAL__ bool:Command_GetSilentReturn()
  * <param name="function">The function this is an alternate to.</param>
  * <param name="altname">The new name.</param>
  * <remarks>
- *  Add an alternate command for an existing command.
+ *   Add an alternate command for an existing command.
  *
  * native Command_AddAltNamed(function[], altname[]);
  *
@@ -980,7 +980,7 @@ GLOBAL__ void:Command_RemoveNamed(const string:func[])
  * <library>y_commands</library>
  * <param name="command">Command to get for.</param>
  * <returns>
- *  Is this command ID valid?
+ *   Is this command ID valid?
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -994,7 +994,7 @@ GLOBAL__ bool:Command_IsValid(cmd)
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <returns>
- *  The command currently being processed, or "COMMAND_NOT_FOUND".
+ *   The command currently being processed, or "COMMAND_NOT_FOUND".
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -1009,7 +1009,7 @@ GLOBAL__ Command_GetCurrent()
  * <library>y_commands</library>
  * <param name="playerid">Player to count for.</param>
  * <remarks>
- *  Gets the number of comamnds this player can use.
+ *   Gets the number of comamnds this player can use.
  *
  * native Command_GetPlayerCommandCount(playerid);
  *
@@ -1075,11 +1075,11 @@ GLOBAL__ string:Command_GetName(f)
  * <param name="f">Command to get the real name of.</param>
  * <param name="p">Player to get the name for.</param>
  * <returns>
- *  The name of a command for a single player.
+ *   The name of a command for a single player.
  * </returns>
  * <remarks>
- *  Abstracted because there's a crash when chain returning a string from a
- *  foreign function (see "Command_GetDisplayNamed").
+ *   Abstracted because there's a crash when chain returning a string from a
+ *   foreign function (see "Command_GetDisplayNamed").
  *
  * native Command_GetDisplay(funcid, playerid);
  *
@@ -1100,12 +1100,12 @@ GLOBAL__ string:Command_GetDisplay(funcid, playerid)
  * <param name="f">Command to get the real name of.</param>
  * <param name="p">Player to get the name for.</param>
  * <returns>
- *  The name of a named function for one player.
+ *   The name of a named function for one player.
  * </returns>
  * <remarks>
- *  Remote function call for Command_GetDisplayNameNamed - avoids needing to
- *  expose users to the master system's odd way of returning strings.  This is
- *  the only part I've not yet fixed up to be nice and hidden.
+ *   Remote function call for Command_GetDisplayNameNamed - avoids needing to
+ *   expose users to the master system's odd way of returning strings.  This is
+ *   the only part I've not yet fixed up to be nice and hidden.
  *
  * native string:Command_GetDisplayNamed(string:funcid[], playerid);
  *
@@ -1126,10 +1126,10 @@ GLOBAL__ string:Command_GetDisplayNamed(const string:func[], playerid)
  * <param name="index">Index of the next command for this player.</param>
  * <param name="playerid">Player to get the name for.</param>
  * <returns>
- *  The name of a command for a single player.
+ *   The name of a command for a single player.
  * </returns>
  * <remarks>
- *  -
+ *   -
  *
  * native Command_GetNext(index, playerid);
  *
@@ -1185,13 +1185,13 @@ GLOBAL__ string:Command_GetNext(index, playerid)
  * <library>y_commands</library>
  * <param name="start">Last value.</param>
  * <returns>
- *  The next command.
+ *   The next command.
  * </returns>
  * <remarks>
- *  Internal implementation of the "Command()" iterator for "foreach".  Returns
- *  all the commands that exist.  Normally iterator functions take two
- *  parameters, but this needs only one.  Really quite simple, but probably
- *  faster this way as it has access to internal information.
+ *   Internal implementation of the "Command()" iterator for "foreach".  Returns
+ *   all the commands that exist.  Normally iterator functions take two
+ *   parameters, but this needs only one.  Really quite simple, but probably
+ *   faster this way as it has access to internal information.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1213,14 +1213,14 @@ GLOBAL__ Iter_Func@Command(start)
  * <param name="pid">Player to check for.</param>
  * <param name="start">Last value.</param>
  * <returns>
- *  The next command.
+ *   The next command.
  * </returns>
  * <remarks>
- *  Internal implementation of the "PlayerCommand()" iterator for "foreach".
- *  Returns all the commands this player can use.
+ *   Internal implementation of the "PlayerCommand()" iterator for "foreach".
+ *   Returns all the commands this player can use.
  *
- *  This is similar to "Command_GetNext", but returns an ID not a string - I
- *  actually think this way is slightly better.
+ *   This is similar to "Command_GetNext", but returns an ID not a string - I
+ *   actually think this way is slightly better.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1257,7 +1257,7 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
  * <library>y_commands</library>
  * <param name="c">Command to get.</param>
  * <returns>
- *  The prefix for this command ('/' by default).
+ *   The prefix for this command ('/' by default).
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -1283,11 +1283,11 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
  * <library>y_commands</library>
  * <param name="prefix">Possible prefix character.</param>
  * <returns>
- *  Is this a valid character for a prefix?
+ *   Is this a valid character for a prefix?
  * </returns>
  * <remarks>
- *  This is the ONLY place the list of valid prefixes is defined!  They are
- *  symbols, not an alphanumerics, and under 128.
+ *   This is the ONLY place the list of valid prefixes is defined!  They are
+ *   symbols, not an alphanumerics, and under 128.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1306,7 +1306,7 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
  * <library>y_commands</library>
  * <param name="prefix">Possible prefix character.</param>
  * <returns>
- *  Is this a prefix used for any command?
+ *   Is this a prefix used for any command?
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -1323,8 +1323,8 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
  * <library>y_commands</library>
  * <param name="prefix">Prefix to maybe remove.</param>
  * <remarks>
- *  If one command uses a prefix, then STOPS using said prefix, the global list
- *  of valid prefixes will need to be updated.
+ *   If one command uses a prefix, then STOPS using said prefix, the global list
+ *   of valid prefixes will need to be updated.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1346,7 +1346,7 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
  * <param name="c">Command to set.</param>
  * <param name="prefix">First character of the command.</param>
  * <remarks>
- *  Change what command to type "/x" vs "#x" for example.
+ *   Change what command to type "/x" vs "#x" for example.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1378,7 +1378,7 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
  * <param name="c">Named command to set.</param>
  * <param name="prefix">First character of the command.</param>
  * <remarks>
- *  Change what command to type "/x" vs "#x" for example.
+ *   Change what command to type "/x" vs "#x" for example.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1409,11 +1409,11 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
  * <param name="playerid">Player who typed something.</param>
  * <param name="text">What they typed.</param>
  * <returns>
- *  0 - Could not process the command.
- *  1 - Called the command.
+ *   0 - Could not process the command.
+ *   1 - Called the command.
  * </returns>
  * <remarks>
- *  Used to implement alternate command prefixes.
+ *   Used to implement alternate command prefixes.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1440,18 +1440,18 @@ MASTER_REHOOK__ OnPlayerText(playerid, text[])
  * <param name="playerid">Player who typed a command.</param>
  * <param name="cmdtext">What they typed.</param>
  * <returns>
- *  0 - Could not process the command.
- *  1 - Called the command.
+ *   0 - Could not process the command.
+ *   1 - Called the command.
  * </returns>
  * <remarks>
- *  The core of the command processor.  Now vsatly simplified.
+ *   The core of the command processor.  Now vsatly simplified.
  *
- *  This function first finds the command in our hash map.  If it exists, it
- *  checks if the player can use it.  If they can, it checks if it is only in
- *  the current script.  If it is it calls it directly, if it isn't it calls it
- *  using "CallRemoteFunction", which takes in to account master states in
- *  multiple scripts and the special master 23, which calls it in only one
- *  other script.
+ *   This function first finds the command in our hash map.  If it exists, it
+ *   checks if the player can use it.  If they can, it checks if it is only in
+ *   the current script.  If it is it calls it directly, if it isn't it calls it
+ *   using "CallRemoteFunction", which takes in to account master states in
+ *   multiple scripts and the special master 23, which calls it in only one
+ *   other script.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1472,7 +1472,7 @@ MASTER_REHOOK__ OnPlayerCommandText(playerid, cmdtext[])
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
- *  Add all local commands in to the system.
+ *   Add all local commands in to the system.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1523,7 +1523,7 @@ HOOK__ OnYSIInit()
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
- *  Passes additional commands data to the new master.
+ *   Passes additional commands data to the new master.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1543,7 +1543,7 @@ HANDOFF()
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
- *  When a script ends, update the status of any new callback hooks.
+ *   When a script ends, update the status of any new callback hooks.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1615,7 +1615,7 @@ HOOK__ OnScriptExit()
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
- *  Rebuilds the hashmap of command pointers after a master script hands off.
+ *   Rebuilds the hashmap of command pointers after a master script hands off.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1647,9 +1647,9 @@ GLOBAL__ void:_Command_Rebuild()
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
- *  This function, and the three other related ones, increment and decrement the
- *  number of callbacks known to exist on the server.  If they are 0, there's no
- *  point trying to call them on errors etc.
+ *   This function, and the three other related ones, increment and decrement the
+ *   number of callbacks known to exist on the server.  If they are 0, there's no
+ *   point trying to call them on errors etc.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1664,9 +1664,9 @@ GLOBAL__ void:Command_IncOPCR()
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
- *  This function, and the three other related ones, increment and decrement the
- *  number of callbacks known to exist on the server.  If they are 0, there's no
- *  point trying to call them on errors etc.
+ *   This function, and the three other related ones, increment and decrement the
+ *   number of callbacks known to exist on the server.  If they are 0, there's no
+ *   point trying to call them on errors etc.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1681,9 +1681,9 @@ GLOBAL__ void:Command_DecOPCR()
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
- *  This function, and the three other related ones, increment and decrement the
- *  number of callbacks known to exist on the server.  If they are 0, there's no
- *  point trying to call them on errors etc.
+ *   This function, and the three other related ones, increment and decrement the
+ *   number of callbacks known to exist on the server.  If they are 0, there's no
+ *   point trying to call them on errors etc.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1698,9 +1698,9 @@ GLOBAL__ void:Command_IncOPCP()
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
- *  This function, and the three other related ones, increment and decrement the
- *  number of callbacks known to exist on the server.  If they are 0, there's no
- *  point trying to call them on errors etc.
+ *   This function, and the three other related ones, increment and decrement the
+ *   number of callbacks known to exist on the server.  If they are 0, there's no
+ *   point trying to call them on errors etc.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1715,7 +1715,7 @@ GLOBAL__ void:Command_DecOPCP()
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <returns>
- *  The first available slot in "YSI_g_sCommands".
+ *   The first available slot in "YSI_g_sCommands".
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -1734,11 +1734,11 @@ static stock Command_GetEmptySlot()
  * <param name="cmd">The command name to add.</param>
  * <param name="ptr">The command's pointer.</param>
  * <returns>
- *  The command's ID.
+ *   The command's ID.
  * </returns>
  * <remarks>
- *  This was an external API function, but there is no reason for it to be as it
- *  is called for all found commands at mode start.
+ *   This was an external API function, but there is no reason for it to be as it
+ *   is called for all found commands at mode start.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1790,7 +1790,7 @@ GLOBAL__ Command_Add(string:cmd[], ptr)
  * <param name="func">Command to get the real name of.</param>
  * <param name="playerid">Player to get the name for.</param>
  * <returns>
- *  The name of a command for a single player.
+ *   The name of a command for a single player.
  * </returns>
  *//*------------------------------------------------------------------------**/
 

@@ -183,18 +183,18 @@ stock memset(arr[], val = 0, size = sizeof (arr))
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of bytes to fill.</param>
  * <remarks>
- *  Based on code by Slice:
+ *   Based on code by Slice:
  *
- *  <a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781" />
+ *   <a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781" />
  *
- *  Modified to use binary flags instead of a loop.
+ *   Modified to use binary flags instead of a loop.
  *
- *  "MemSet" takes an array, the size of the array, and a value to fill it with
- *  and sets the whole array to that value.
+ *   "MemSet" takes an array, the size of the array, and a value to fill it with
+ *   and sets the whole array to that value.
  *
- *  "RawMemSet" is similar, but takes an AMX data segment address instead and
- *  the size is in bytes, not cells.  However, the size must still be a multiple
- *  of 4.
+ *   "RawMemSet" is similar, but takes an AMX data segment address instead and
+ *   the size is in bytes, not cells.  However, the size must still be a multiple
+ *   of 4.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -311,18 +311,18 @@ stock RawMemSet(address /* 12 */, value /* 16 */, size /* 20 */)
  * <param name="value">What to set the cells to.</param>
  * <param name="size">Number of bytes to fill.</param>
  * <remarks>
- *  Based on code by Slice:
+ *   Based on code by Slice:
  *
- *  <a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781" />
+ *   <a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781" />
  *
- *  Modified to use binary flags instead of a loop.
+ *   Modified to use binary flags instead of a loop.
  *
- *  "MemSet" takes an array, the size of the array, and a value to fill it with
- *  and sets the whole array to that value.
+ *   "MemSet" takes an array, the size of the array, and a value to fill it with
+ *   and sets the whole array to that value.
  *
- *  "RawMemSet" is similar, but takes an AMX data segment address instead and
- *  the size is in bytes, not cells.  However, the size must still be a multiple
- *  of 4.
+ *   "RawMemSet" is similar, but takes an AMX data segment address instead and
+ *   the size is in bytes, not cells.  However, the size must still be a multiple
+ *   of 4.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -338,11 +338,11 @@ stock rawMemset(address /* 12 */, value /* 16 */, size /* 20 */)
  * <param name="arr2">Second array to compare.</param>
  * <param name="count">How many cells to compare.</param>
  * <returns>
- *  The difference (0 if the same).
+ *   The difference (0 if the same).
  * </returns>
  * <remarks>
- *  Returns the first found difference between two arrays.  If they are the same
- *  the return value is <c>0</c>, otherwise it is <c>arr1[i] - arr2[i]</c>.
+ *   Returns the first found difference between two arrays.  If they are the same
+ *   the return value is <c>0</c>, otherwise it is <c>arr1[i] - arr2[i]</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -362,11 +362,11 @@ stock MemCmp(arr1[], arr2[], count)
  * <param name="arr2">Second array to compare.</param>
  * <param name="count">How many cells to compare.</param>
  * <returns>
- *  The difference (0 if the same).
+ *   The difference (0 if the same).
  * </returns>
  * <remarks>
- *  Returns the first found difference between two arrays.  If they are the same
- *  the return value is <c>0</c>, otherwise it is <c>arr1[i] - arr2[i]</c>.
+ *   Returns the first found difference between two arrays.  If they are the same
+ *   the return value is <c>0</c>, otherwise it is <c>arr1[i] - arr2[i]</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -382,7 +382,7 @@ stock memcmp(arr1[], arr2[], count)
  * <param name="low">The lowest index to sort.</param>
  * <param name="high">The highest index (inclusive) to sort.</param>
  * <remarks>
- *  Internal recursive call for quicksorting.
+ *   Internal recursive call for quicksorting.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -420,8 +420,8 @@ static stock Utils_QuickSort(arr[], low, high)
  * <param name="arr">The array to sort.</param>
  * <param name="num">The size of the array.</param>
  * <remarks>
- *  Sorts the array in place.  Uses quick sort because it is relatively simple
- *  and pretty "quick".
+ *   Sorts the array in place.  Uses quick sort because it is relatively simple
+ *   and pretty "quick".
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

@@ -85,15 +85,15 @@ loadtext core[ysi_players], core[ysi_extras], core[ysi_dialog];
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Extra_DoLogin
- *  Commands: /login
+ *   Extra_DoLogin
+ *   Commands: /login
  * </summary>
  * <param name="playerid">Player trying to log in.</param>
  * <param name="pw">The password they entered.</param>
  * <remarks>
- *  Called when a player attempts to log in.  If "pw" is empty (NULL) this
- *  prompts the user for a password with a dialog.  If it isn't empty then it
- *  takes that as the password.
+ *   Called when a player attempts to log in.  If "pw" is empty (NULL) this
+ *   prompts the user for a password with a dialog.  If it isn't empty then it
+ *   takes that as the password.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -143,18 +143,18 @@ YCMD:login(playerid, params[], help)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Extra_DoRegister
- *  Command: /register
+ *   Extra_DoRegister
+ *   Command: /register
  * </summary>
  * <param name="playerid">Player trying to log in.</param>
  * <param name="pw">The password they entered.</param>
  * <remarks>
- *  Called when a player attempts to register.  If "pw" is empty (NULL) this
- *  prompts the user for a password with a dialog.  If it isn't empty then it
- *  takes that as the password and asks for confirmation.
+ *   Called when a player attempts to register.  If "pw" is empty (NULL) this
+ *   prompts the user for a password with a dialog.  If it isn't empty then it
+ *   takes that as the password and asks for confirmation.
  *
- *  Currently this only checks the length of the password for strength, it
- *  doesn't check other properties such as number/case/symbol mixes.
+ *   Currently this only checks the length of the password for strength, it
+ *   doesn't check other properties such as number/case/symbol mixes.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

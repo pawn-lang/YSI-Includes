@@ -90,11 +90,11 @@ Optional plugins:
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - names</library>
  * <summary>
- *  ReturnPlayerName
+ *   ReturnPlayerName
  * </summary>
  * <param name="playerid">Player whose name you want to get.</param>
  * <remarks>
- *  Get a player's name.
+ *   Get a player's name.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -109,11 +109,11 @@ stock ReturnPlayerName(playerid)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - names</library>
  * <summary>
- *  GetPlayerRPName
+ *   GetPlayerRPName
  * </summary>
  * <param name="playerid">Player whose name you want to get.</param>
  * <remarks>
- *  Get a player's name, with <c>_</c> replaced by <c> </c>.
+ *   Get a player's name, with <c>_</c> replaced by <c> </c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -146,14 +146,14 @@ stock bool:GetPlayerRPName(playerid, string:name[], len = sizeof (name))
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - names</library>
  * <summary>
- *  GetPlayerRPComponents
+ *   GetPlayerRPComponents
  * </summary>
  * <param name="playerid">Player whose name you want to get.</param>
  * <remarks>
- *  Get a player's name, split in to parts by <c>_</c>.
+ *   Get a player's name, split in to parts by <c>_</c>.
  * </remarks>
  * <returns>
- *  The number of parts extracted from the name.
+ *   The number of parts extracted from the name.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -180,14 +180,14 @@ stock GetPlayerRPComponents(playerid, string:names[][], components = sizeof (nam
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - names</library>
  * <summary>
- *  IsRPName
+ *   IsRPName
  * </summary>
  * <param name="name">The name to test.</param>
  * <param name="casing">Check for string casing?  I.e. allow <c>James</c> but
- *  not <c>james</c>.</param>
+ *   not <c>james</c>.</param>
  * <param name="longNames">Allow more than two name parts?</param>
  * <remarks>
- *  Is this name in the form <c>First_Last</c>?
+ *   Is this name in the form <c>First_Last</c>?
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -362,14 +362,14 @@ stock bool:IsRPName(const string:name[], bool:casing = false, bool:longNames = f
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - names</library>
  * <summary>
- *  HasRPName
+ *   HasRPName
  * </summary>
  * <param name="playerid">Player whose name you want to test.</param>
  * <param name="casing">Check for string casing?  I.e. allow <c>James</c> but
- *  not <c>james</c>.</param>
+ *   not <c>james</c>.</param>
  * <param name="longNames">Allow more than two name parts?</param>
  * <remarks>
- *  Is this player's name in the form <c>First_Last</c>?
+ *   Is this player's name in the form <c>First_Last</c>?
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -384,11 +384,11 @@ stock bool:HasRPName(playerid, bool:casing = false, bool:longNames = false)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - names</library>
  * <summary>
- *  ReturnPlayerRPName
+ *   ReturnPlayerRPName
  * </summary>
  * <param name="playerid">Player whose name you want to get.</param>
  * <remarks>
- *  Get a player's name, with <c>_</c> replaced by <c> </c>.
+ *   Get a player's name, with <c>_</c> replaced by <c> </c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

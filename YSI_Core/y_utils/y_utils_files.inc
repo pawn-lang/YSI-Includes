@@ -90,17 +90,17 @@ Optional plugins:
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - files</library>
  * <summary>
- *  ftouch(filename);
+ *   ftouch(filename);
  * </summary>
  * <param name="filename">The file to "touch".</param>
  * <returns>
- *  0 - File already exists.
- *  1 - File was created.
- *  -1 - File was not created.
+ *   0 - File already exists.
+ *   1 - File was created.
+ *   -1 - File was not created.
  * </returns>
  * <remarks>
- *  This "touches" a file in the Unix sense of creating it but not opening or
- *  editing it in any way.
+ *   This "touches" a file in the Unix sense of creating it but not opening or
+ *   editing it in any way.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -139,7 +139,7 @@ Optional plugins:
  * <param name="path">Directory in which to place temporary files.</param>
  * <param name="len">Maximum string length.</param>
  * <remarks>
- *  Internal detail for <c>ftemporary</c>.  Should not be called directly.
+ *   Internal detail for <c>ftemporary</c>.  Should not be called directly.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -227,7 +227,7 @@ stock File:ftemporary_(string:name[], const string:ext[] = "tmp", const string:p
  * <param name="name">File to clean up.</param>
  * <param name="maxAge">Maximum temporary file age.</param>
  * <remarks>
- *  Add a file to the temporary cleanup list.
+ *   Add a file to the temporary cleanup list.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -263,8 +263,8 @@ stock bool:fautocleanup(const string:name[], maxAge)
  * <param name="len">Maximum string length.</param>
  * <param name="maxAge">Maximum temporary file age.</param>
  * <remarks>
- *  Generate a random temporary filename and open it.  Also redefines
- *  <c>ftemp</c> to call this function instead if called with extra parameters.
+ *   Generate a random temporary filename and open it.  Also redefines
+ *   <c>ftemp</c> to call this function instead if called with extra parameters.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -299,7 +299,7 @@ stock File:ftemporary(string:ret[] = "", const string:ext[] = "tmp", len = sizeo
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - files</library>
  * <remarks>
- *  Call the original <c>ftemp</c>.
+ *   Call the original <c>ftemp</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -349,10 +349,10 @@ static stock
  * <library>y_utils - files</library>
  * <param name="dir">The ID of the directory.</param>
  * <returns>
- *  A directory.
+ *   A directory.
  * </returns>
  * <remarks>
- *  Get a YSI scriptfiles directory, or a fallback.
+ *   Get a YSI scriptfiles directory, or a fallback.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -364,8 +364,8 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - files</library>
  * <remarks>
- *  Check if all the YSI scriptfiles directories exist.  Checks for `.gitkeep`
- *  in each folder, then each folder without `YSI/` prefix, then just nothing.
+ *   Check if all the YSI scriptfiles directories exist.  Checks for `.gitkeep`
+ *   in each folder, then each folder without `YSI/` prefix, then just nothing.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -427,7 +427,7 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
  * <param name="end">How much of the file to copy.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
- *  Copy part of a file from the current read pointer, for <c>end</c> bytes.
+ *   Copy part of a file from the current read pointer, for <c>end</c> bytes.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -465,8 +465,8 @@ stock bool:Files_CopyRange(File:i, end, const string:dst[])
  * <param name="i">Handle to the file to copy.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
- *  Fast file copy routine.  Surprisingly widely used in YSI, in places where
- *  temp files were used and <c>fseek</c>ed to the start.  Closes the file.
+ *   Fast file copy routine.  Surprisingly widely used in YSI, in places where
+ *   temp files were used and <c>fseek</c>ed to the start.  Closes the file.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -482,7 +482,7 @@ stock bool:Files_DoCopy(File:i, const string:dst[])
  * <param name="src">The name of the input file.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
- *  Copies a file from <c>src</c> to <c>dst</c>.
+ *   Copies a file from <c>src</c> to <c>dst</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -503,7 +503,7 @@ stock bool:Files_Copy(const string:src[], const string:dst[])
  * <param name="src">The name of the input file.</param>
  * <param name="dst">The name of the output file.</param>
  * <remarks>
- *  Moves a file from <c>src</c> to <c>dst</c>.
+ *   Moves a file from <c>src</c> to <c>dst</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

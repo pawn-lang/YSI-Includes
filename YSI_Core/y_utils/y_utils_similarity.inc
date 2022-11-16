@@ -95,13 +95,13 @@ Optional plugins:
  * <param name="lenB">Length of the second string.</param>
  * <param name="matrix">Storage for the calculations.</param>
  * <returns>
- *  The levenshtein difference (0 if the same).
+ *   The levenshtein difference (0 if the same).
  * </returns>
  * <remarks>
- *  This function is the internal implementation of a Levenshtein distance when
- *  neither string is packed.  The <c>matrix</c> parameter is rewritten at the
- *  start of the function to a larger block of memory, but is still passed in so
- *  that the rest of the generated code is correct in terms of lookups.
+ *   This function is the internal implementation of a Levenshtein distance when
+ *   neither string is packed.  The <c>matrix</c> parameter is rewritten at the
+ *   start of the function to a larger block of memory, but is still passed in so
+ *   that the rest of the generated code is correct in terms of lookups.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -154,13 +154,13 @@ static stock DoLevenshteinDistance(const string:a[], lenA, const string:b[], len
  * <param name="lenB">Length of the second string.</param>
  * <param name="matrix">Storage for the calculations.</param>
  * <returns>
- *  The levenshtein difference (0 if the same).
+ *   The levenshtein difference (0 if the same).
  * </returns>
  * <remarks>
- *  This function is the internal implementation of a Levenshtein distance when
- *  the shorter string is packed.  The <c>matrix</c> parameter is rewritten at
- *  the start of the function to a larger block of memory, but is still passed
- *  in so that the rest of the generated code is correct in terms of lookups.
+ *   This function is the internal implementation of a Levenshtein distance when
+ *   the shorter string is packed.  The <c>matrix</c> parameter is rewritten at
+ *   the start of the function to a larger block of memory, but is still passed
+ *   in so that the rest of the generated code is correct in terms of lookups.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -213,13 +213,13 @@ static stock DoLevenshteinDistancePackA(const string:a[], lenA, const string:b[]
  * <param name="lenB">Length of the second string.</param>
  * <param name="matrix">Storage for the calculations.</param>
  * <returns>
- *  The levenshtein difference (0 if the same).
+ *   The levenshtein difference (0 if the same).
  * </returns>
  * <remarks>
- *  This function is the internal implementation of a Levenshtein distance when
- *  th elongest stringis  packed.  The <c>matrix</c> parameter is rewritten at
- *  the start of the function to a larger block of memory, but is still passed
- *  in so that the rest of the generated code is correct in terms of lookups.
+ *   This function is the internal implementation of a Levenshtein distance when
+ *   th elongest stringis  packed.  The <c>matrix</c> parameter is rewritten at
+ *   the start of the function to a larger block of memory, but is still passed
+ *   in so that the rest of the generated code is correct in terms of lookups.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -272,13 +272,13 @@ static stock DoLevenshteinDistancePackB(const string:a[], lenA, const string:b[]
  * <param name="lenB">Length of the second string.</param>
  * <param name="matrix">Storage for the calculations.</param>
  * <returns>
- *  The levenshtein difference (0 if the same).
+ *   The levenshtein difference (0 if the same).
  * </returns>
  * <remarks>
- *  This function is the internal implementation of a Levenshtein distance when
- *  both strings are packed.  The <c>matrix</c> parameter is rewritten at the
- *  start of the function to a larger block of memory, but is still passed in so
- *  that the rest of the generated code is correct in terms of lookups.
+ *   This function is the internal implementation of a Levenshtein distance when
+ *   both strings are packed.  The <c>matrix</c> parameter is rewritten at the
+ *   start of the function to a larger block of memory, but is still passed in so
+ *   that the rest of the generated code is correct in terms of lookups.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -328,16 +328,16 @@ static stock DoLevenshteinDistancePackAB(const string:a[], lenA, const string:b[
  * <param name="stringA">First string to compare.</param>
  * <param name="stringB">Second string to compare.</param>
  * <returns>
- *  The levenshtein difference (0 if the same).
+ *   The levenshtein difference (0 if the same).
  * </returns>
  * <remarks>
- *  The levenshtein difference is a measure of the difference between two
- *  strings, given as the number of operations required to change one string in
- *  to the other one.  A lower number means that the strings are more similar,
- *  with <c>0</c> meaning that they are identical.
+ *   The levenshtein difference is a measure of the difference between two
+ *   strings, given as the number of operations required to change one string in
+ *   to the other one.  A lower number means that the strings are more similar,
+ *   with <c>0</c> meaning that they are identical.
  *
- *  Either string can be packed, and this function now has no upper limit on the
- *  size of strings that can be compared, as long as they can fit in the heap.
+ *   Either string can be packed, and this function now has no upper limit on the
+ *   size of strings that can be compared, as long as they can fit in the heap.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -395,32 +395,32 @@ stock LevenshteinDistance(const stringA[], const stringB[])
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - similarity</library>
  * <summary>
- *  BiGramSimilarity(const string1[], const string2[]);
+ *   BiGramSimilarity(const string1[], const string2[]);
  * </summary>
  * <param name="string1">The first string to compare.</param>
  * <param name="string1">The second string to compare.</param>
  * <returns>
- *  The normalised similarity between the strings (<c>0.0 - 1.0</c>).
+ *   The normalised similarity between the strings (<c>0.0 - 1.0</c>).
  * </returns>
  * <remarks>
- *  Compares the pairs of letters and numbers in each string with each other to
- *  find a measure of how much of one ordered string is in the other.  Useful
- *  for seeing if two strings are similar to humans.  This is nothing like the
- *  more common <em>Levenshtein Distance</em>, which pretty much compares
- *  strings at an ASCII character level, so two very different strings can be
- *  apparently more similar than two others.
+ *   Compares the pairs of letters and numbers in each string with each other to
+ *   find a measure of how much of one ordered string is in the other.  Useful
+ *   for seeing if two strings are similar to humans.  This is nothing like the
+ *   more common <em>Levenshtein Distance</em>, which pretty much compares
+ *   strings at an ASCII character level, so two very different strings can be
+ *   apparently more similar than two others.
  *
- *  A good example of this, which was the motivation for writing this function,
- *  was in <em>sscanf</em>.  When checking to see what vehicle a player wrote,
- *  the input <c>NRG</c> would return <c>TUG</c> as the closest match.  Why?
- *  Because they're both three letters and share the last <c>G</c>, so
- *  mechanically they are only two transformations apart; whereas <c>NRG-400</c>
- *  needs four transforms to get to from the input.  So this code looks at how
- *  much of each string is in the other string.  Very little of <c>TUG</c> is in
- *  <c>NRG</c> and vice-versa, while all of <c>NRG</c> is in <c>NRG-400</c> and
- *  a lot of the reverse is true.
+ *   A good example of this, which was the motivation for writing this function,
+ *   was in <em>sscanf</em>.  When checking to see what vehicle a player wrote,
+ *   the input <c>NRG</c> would return <c>TUG</c> as the closest match.  Why?
+ *   Because they're both three letters and share the last <c>G</c>, so
+ *   mechanically they are only two transformations apart; whereas <c>NRG-400</c>
+ *   needs four transforms to get to from the input.  So this code looks at how
+ *   much of each string is in the other string.  Very little of <c>TUG</c> is in
+ *   <c>NRG</c> and vice-versa, while all of <c>NRG</c> is in <c>NRG-400</c> and
+ *   a lot of the reverse is true.
  *
- *  This entirely ignores case, spaces, and punctuation in the comparisons.
+ *   This entirely ignores case, spaces, and punctuation in the comparisons.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

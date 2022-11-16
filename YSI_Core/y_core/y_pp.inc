@@ -95,7 +95,7 @@ Optional plugins:
  * <param name="%0">What to repeat.</param>
  * <param name="%1">What to insert between repetitions.</param>
  * <remarks>
- *  Does something in the pre-processor multiple times.
+ *   Does something in the pre-processor multiple times.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

@@ -114,7 +114,7 @@ static stock const
  * <param name="wlen">The length of the destination.</param>
  * <param name="delimiter">What character is between the parts.</param>
  * <remarks>
- *  Takes a punycode string and converts it to unicode.
+ *   Takes a punycode string and converts it to unicode.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -190,7 +190,7 @@ stock Puny_DecodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (ds
  * <param name="wlen">The length of the destination.</param>
  * <param name="delimiter">What character to place between the parts.</param>
  * <remarks>
- *  Takes a unicode string and converts it to punycode.
+ *   Takes a unicode string and converts it to punycode.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -265,11 +265,11 @@ stock Puny_Encode(string:dst[], const string:src[], wlen = sizeof (dst), const d
  * <param name="wlen">The length of the destination.</param>
  * <param name="delimiter">What character to place between the parts.</param>
  * <returns>
- *  The length of string read.
+ *   The length of string read.
  * </returns>
  * <remarks>
- *  Takes a unicode string and converts it to punycode, while at the same time
- *  generating a Bernstein hash of the string.  CASE INSENSITIVE.
+ *   Takes a unicode string and converts it to punycode, while at the same time
+ *   generating a Bernstein hash of the string.  CASE INSENSITIVE.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -365,7 +365,7 @@ stock Puny_EncodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (ds
 /*-------------------------------------------------------------------------*//**
  * <param name="num">The single number to encode.</param>
  * <remarks>
- *  Convert a single digit to base 36.
+ *   Convert a single digit to base 36.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -379,8 +379,8 @@ FUNC_PAWNDOC(_Puny_Basic(num));
  * <param name="wlen">Size of the array.</param>
  * <param name="hash">Hashed string.</param>
  * <remarks>
- *  This is part of how the punycode algorithm encodes numbers as very clever
- *  strings, but honestly I don't fully understand it!
+ *   This is part of how the punycode algorithm encodes numbers as very clever
+ *   strings, but honestly I don't fully understand it!
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -418,8 +418,8 @@ static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
  * <param name="dst">Array to write to.</param>
  * <param name="wlen">Size of the array.</param>
  * <remarks>
- *  This is part of how the punycode algorithm encodes numbers as very clever
- *  strings, but honestly I don't fully understand it!
+ *   This is part of how the punycode algorithm encodes numbers as very clever
+ *   strings, but honestly I don't fully understand it!
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -451,8 +451,8 @@ static stock Puny_EncodeVar(bias, delta, dst[], wlen)
  * <param name="length">Written string size.</param>
  * <param name="firstTime">Have special characters already been written?</param>
  * <remarks>
- *  This is part of how the punycode algorithm encodes numbers as very clever
- *  strings, but honestly I don't fully understand it!
+ *   This is part of how the punycode algorithm encodes numbers as very clever
+ *   strings, but honestly I don't fully understand it!
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -479,7 +479,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
  * <param name="data">The GET/POST data.</param>
  * <param name="callback">Which function to return the data to.</param>
  * <remarks>
- *  Hooks the "HTTP" function.
+ *   Hooks the "HTTP" function.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

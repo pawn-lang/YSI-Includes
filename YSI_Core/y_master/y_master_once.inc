@@ -441,9 +441,9 @@ static stock const
 /*-------------------------------------------------------------------------*//**
  * <library>y_master</library>
  * <remarks>
- *  Copy of a fixes.inc function, for when fixes.inc doesn't exist in this
- *  script.  y_master and fixes.inc both share the concept of a script ID, so
- *  must work together to assign them.
+ *   Copy of a fixes.inc function, for when fixes.inc doesn't exist in this
+ *   script.  y_master and fixes.inc both share the concept of a script ID, so
+ *   must work together to assign them.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -466,11 +466,11 @@ static stock const
 /*-------------------------------------------------------------------------*//**
  * <library>y_master</library>
  * <returns>
- *  OnYSIInit
+ *   OnYSIInit
  * </returns>
  * <remarks>
- *  Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
- *  the master system is disabled - doing otherwise is just too complicated.
+ *   Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
+ *   the master system is disabled - doing otherwise is just too complicated.
  * </remarks>
  * <transition keep="true" target="_ALS : _ALS_go" />
  *//*------------------------------------------------------------------------**/
@@ -531,10 +531,10 @@ forward Master_OnCloseModules();
 /*-------------------------------------------------------------------------*//**
  * <library>y_master</library>
  * <returns>
- *  OnScriptExit
+ *   OnScriptExit
  * </returns>
  * <remarks>
- *  Destructor.
+ *   Destructor.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -612,10 +612,10 @@ forward OnMasterSystemClose(id);
 /*-------------------------------------------------------------------------*//**
  * <library>y_master</library>
  * <returns>
- *  Master_OnCloseModules
+ *   Master_OnCloseModules
  * </returns>
  * <remarks>
- *  Destructor.
+ *   Destructor.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -771,10 +771,10 @@ forward OnMasterSystemClose(id);
 	/*-------------------------------------------------------------------------*//**
 	 * <library>y_master</library>
 	 * <returns>
-	 *  OnRconCommand
+	 *   OnRconCommand
 	 * </returns>
 	 * <remarks>
-	 *  Destructor.
+	 *   Destructor.
 	 * </remarks>
 	 *//*------------------------------------------------------------------------**/
 
@@ -835,7 +835,7 @@ forward OnMasterSystemClose(id);
 /*-------------------------------------------------------------------------*//**
  * <library>y_master</library>
  * <remarks>
- *  Rebuilds the collection of master data whenever a script is restarted.
+ *   Rebuilds the collection of master data whenever a script is restarted.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -877,8 +877,8 @@ public Master_Reassert()
  * <library>y_master</library>
  * <param name="library">The name of the library to stop being master for.</param>
  * <remarks>
- *  We were in control of this library.  Stop being, and remove the library from
- *  the internal list of libraries we are master of.
+ *   We were in control of this library.  Stop being, and remove the library from
+ *   the internal list of libraries we are master of.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -935,14 +935,14 @@ static stock const
  * <param name="library">The name of the library to try become master for.</param>
  * <param name="force">Become master even if another library already is.</param>
  * <returns>
- *  <c>e_YSIM_GET_TYPE_NO_CONTEST</c> - There was no master, so we now are.
- *  <c>e_YSIM_GET_TYPE_STOLE</c> - There was another master, but we took it.
- *  <c>e_YSIM_GET_TYPE_NOT_GOT</c> - There is another master already.
+ *   <c>e_YSIM_GET_TYPE_NO_CONTEST</c> - There was no master, so we now are.
+ *   <c>e_YSIM_GET_TYPE_STOLE</c> - There was another master, but we took it.
+ *   <c>e_YSIM_GET_TYPE_NOT_GOT</c> - There is another master already.
  * </returns>
  * <remarks>
- *  Attempts to get control of the current master ID.  Checks to see if any
- *  other scripts are already in control of this ID and this set of functions,
- *  then either steals it or backs off.
+ *   Attempts to get control of the current master ID.  Checks to see if any
+ *   other scripts are already in control of this ID and this set of functions,
+ *   then either steals it or backs off.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

@@ -140,25 +140,25 @@ Optional plugins:
  * <param name="max">The end value.</param>
  * <param name="step">How many values to increase by each time.</param>
  * <remarks>
- *  Pretty much used to replicate a normal loop with <c>foreach</c>.  This:
+ *   Pretty much used to replicate a normal loop with <c>foreach</c>.  This:
  * 
- *  <code>
+ *   <code>
  *      for (new i = 10; i != 100; i += 2) <br />
  *      {                                  <br />
  *      }
- *  </code>
+ *   </code>
  * 
- *  Becomes:
+ *   Becomes:
  * 
- *  <code>
+ *   <code>
  *      foreach (new i : Range(10, 100, 2)) <br />
  *      {                                   <br />
  *      }
- *  </code>
+ *   </code>
  * 
- *  The increment value is optional, and defaults to <c>1</c>.  If you want a
- *  <c>step</c> of <c>1</c> and a <c>min</c> of <c>0</c>, consider using
- *  <c>N(max)</c> instead, which is specifically optimised for that scenario.
+ *   The increment value is optional, and defaults to <c>1</c>.  If you want a
+ *   <c>step</c> of <c>1</c> and a <c>min</c> of <c>0</c>, consider using
+ *   <c>N(max)</c> instead, which is specifically optimised for that scenario.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -174,22 +174,22 @@ iterfunc stock Range[cellmin](cur, min, max, step = 1)
  * <param name="cur">The current iterator step.</param>
  * <param name="n">The target number.</param>
  * <remarks>
- *  Loop until the given target is reached.
+ *   Loop until the given target is reached.
  *    
- *  <code>  
+ *   <code>  
  *    foreach (new i : N(6))  <br />
  *    {                       <br /><indent />
  *        // 0, 1, 2, 3, 4, 5 <br />
  *    }
- *  </code>  
+ *   </code>  
  *    
- *  This is equivalent to:
+ *   This is equivalent to:
  * 
- *  <code>
+ *   <code>
  *      for (new i = 0; i != 6; ++i) <br />
  *      {                            <br />
  *      }
- *  </code>
+ *   </code>
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -206,15 +206,15 @@ iterfunc stock N(cur, n)
  * <param name="cur">The current iterator step.</param>
  * <param name="base">The number to get the powers of.</param>
  * <remarks>
- *  Returns all the powers of the given number that can be stored in a PAWN
- *  cell.
+ *   Returns all the powers of the given number that can be stored in a PAWN
+ *   cell.
  *    
- *  <code>  
+ *   <code>  
  *    foreach (new i : Powers(3))       <br />
  *    {                                 <br /><indent />
  *        // 3^0, 3^1, 3^2, 3^3, etc... <br />
  *    }
- *  </code>  
+ *   </code>  
  *    
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -237,15 +237,15 @@ iterfunc stock Powers(&iterstate, cur, base)
  * <param name="iterstate">Internal state of the iterator.</param>
  * <param name="cur">The current iterator step.</param>
  * <remarks>
- *  Returns every number in the Fibonacci sequence that can be stored in a
- *  PAWN cell.
+ *   Returns every number in the Fibonacci sequence that can be stored in a
+ *   PAWN cell.
  *    
- *  <code>  
+ *   <code>  
  *    foreach (new i : Fib())         <br />
  *    {                               <br /><indent />
  *        // 0, 1, 1, 2, 3, 5, etc... <br />
  *    }
- *  </code>  
+ *   </code>  
  *    
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -282,31 +282,31 @@ iterfunc stock Fib(&iterstate, cur)
  * <param name="min">Lowest possible number (inclusive).</param>
  * <param name="max">Highest possible number (exclusive).</param>
  * <remarks>
- *  Return a given count of random numbers:
+ *   Return a given count of random numbers:
  *    
- *  <code>
+ *   <code>
  *    foreach (new i : Random(5)) <br />
  *    {                           <br /><indent />
  *        // 5 random numbers.    <br />
  *    }
- *  </code>
+ *   </code>
  *    
- *  <code>
+ *   <code>
  *    foreach (new i : Random(12, 10))                              <br />
  *    {                                                             <br /><indent />
  *        // 12 random numbers between 0 and 10 (0 to 9 inclusive). <br />
  *    }
- *  </code>
+ *   </code>
  *    
- *  <code>
+ *   <code>
  *    foreach (new i : Random(100, -10, 10))                             <br />
  *    {                                                                  <br /><indent />
  *        // 100 random numbers between -10 and 10 (-10 to 9 inclusive). <br />
  *    }
- *  </code>
+ *   </code>
  *    
- *  If only <c>min</c> is given, not <c>max</c>, it is used as the max instead
- *  and the minimum is <c>0</c>.
+ *   If only <c>min</c> is given, not <c>max</c>, it is used as the max instead
+ *   and the minimum is <c>0</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -338,14 +338,14 @@ iterfunc stock Random(&iterstate, cur, count, min = cellmax, max = 0)
  * <param name="arr">Teh array to search through.</param>
  * <param name="size">The size of the array.</param>
  * <remarks>
- *  Loop over all the indexes of this array that are zero.
+ *   Loop over all the indexes of this array that are zero.
  *    
- *  <code>
+ *   <code>
  *    new array[] = { ... };        <br />
  *    foreach (new i : Null(array)) <br />
  *    {                             <br />
  *    }
- *  </code>
+ *   </code>
  *    
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -368,14 +368,14 @@ iterfunc stock Null(cur, const arr[], size = sizeof (arr))
  * <param name="arr">Teh array to search through.</param>
  * <param name="size">The size of the array.</param>
  * <remarks>
- *  Loop over all the indexes of this array that are not zero.
+ *   Loop over all the indexes of this array that are not zero.
  *    
- *  <code>
+ *   <code>
  *    new array[] = { ... };           <br />
  *    foreach (new i : NonNull(array)) <br />
  *    {                                <br />
  *    }
- *  </code>
+ *   </code>
  *    
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -399,14 +399,14 @@ iterfunc stock NonNull(cur, const arr[], size = sizeof (arr))
  * <param name="arr">Teh array to search through.</param>
  * <param name="size">The size of the array.</param>
  * <remarks>
- *  Loop over all the indexes of this array until one equals the given value.
+ *   Loop over all the indexes of this array until one equals the given value.
  *    
- *  <code>
+ *   <code>
  *    new array[] = { ... };            <br />
  *    foreach (new i : Until(5, array)) <br />
  *    {                                 <br />
  *    }
- *  </code>
+ *   </code>
  *    
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -423,14 +423,14 @@ iterfunc stock Until(cur, val, const arr[], size = sizeof (arr))
  * <param name="arr">Teh array to search through.</param>
  * <param name="size">The size of the array.</param>
  * <remarks>
- *  Loop over all the indexes of this array which contain the given value.
+ *   Loop over all the indexes of this array which contain the given value.
  *    
- *  <code>
+ *   <code>
  *    new array[] = { ... };             <br />
  *    foreach (new i : Filter(5, array)) <br />
  *    {                                  <br />
  *    }
- *  </code>
+ *   </code>
  *    
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -453,9 +453,9 @@ iterfunc stock Filter(cur, val, const arr[], size = sizeof (arr))
  * <param name="size">The internal iterator size.</param>
  * <param name="value">The current iterator step.</param>
  * <remarks>
- *  Loop over all values NOT in any iterator.  Similar to repeatedly calling
- *  <c>Iter_Free</c>, though that will return the same value twice if called
- *  twice in a row.  Instead, this function will loop through the missing ones.
+ *   Loop over all values NOT in any iterator.  Similar to repeatedly calling
+ *   <c>Iter_Free</c>, though that will return the same value twice if called
+ *   twice in a row.  Instead, this function will loop through the missing ones.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -482,10 +482,10 @@ stock Iter_None_Internal(const array[], size, value)
  * <param name="size">The internal iterator size.</param>
  * <param name="value">The current iterator step.</param>
  * <remarks>
- *  Loop over all values in any iterator.  This is different to looping over the
- *  iterator normally for multi-dimensional iterators, since it will return all
- *  values in ANY iterator in their numerical order.  For single dimensional
- *  iterators it is exactly the same, just a little slower.
+ *   Loop over all values in any iterator.  This is different to looping over the
+ *   iterator normally for multi-dimensional iterators, since it will return all
+ *   values in ANY iterator in their numerical order.  For single dimensional
+ *   iterators it is exactly the same, just a little slower.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -522,8 +522,8 @@ stock Iter_All_Internal(const array[], size, value)
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
  * <remarks>
- *  Sets up all existing iterators.  Does nothing for "XXLocal" ones, since they
- *  are by definition empty when a script starts.
+ *   Sets up all existing iterators.  Does nothing for "XXLocal" ones, since they
+ *   are by definition empty when a script starts.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -662,14 +662,14 @@ stock Iter_All_Internal(const array[], size, value)
 	 * <library>y_iterate</library>
 	 * <param name="playerid">Player who joined.</param>
 	 * <remarks>
-	 *  Adds a player to the loop data.  Now sorts the list too.  Note that I found
-	 *  the most bizzare bug ever (I *think* it may be a compiler but, but it
-	 *  requires further investigation), basically it seems that multiple variables
-	 *  were being treated as the same variable (namely @YSII_EgotS and
-	 *  @YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
-	 *  same).  Adding print statements which reference these variables seem to fix
-	 *  the problem, and I've tried to make sure that the values will never actually
-	 *  get printed.
+	 *   Adds a player to the loop data.  Now sorts the list too.  Note that I found
+	 *   the most bizzare bug ever (I *think* it may be a compiler but, but it
+	 *   requires further investigation), basically it seems that multiple variables
+	 *   were being treated as the same variable (namely @YSII_EgotS and
+	 *   @YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
+	 *   same).  Adding print statements which reference these variables seem to fix
+	 *   the problem, and I've tried to make sure that the values will never actually
+	 *   get printed.
 	 * </remarks>
 	 *//*------------------------------------------------------------------------**/
 
@@ -704,10 +704,10 @@ stock Iter_All_Internal(const array[], size, value)
 	 * <library>y_iterate</library>
 	 * <param name="playerid">Player who left.</param>
 	 * <remarks>
-	 *  Removes a player from the loop data.  No longer uses "hook" to ENSURE
-	 *  that this is always last.  Previously I think that the order of
-	 *  evaluation in y_hooks meant that this got called before the user
-	 *  "OnPlayerDisconnect".
+	 *   Removes a player from the loop data.  No longer uses "hook" to ENSURE
+	 *   that this is always last.  Previously I think that the order of
+	 *   evaluation in y_hooks meant that this got called before the user
+	 *   "OnPlayerDisconnect".
 	 * </remarks>
 	 *//*--------------------------------------------------------------------**/
 	
@@ -743,7 +743,7 @@ stock Iter_All_Internal(const array[], size, value)
 		 * <param name="playerid">Player who entered streaming range.</param>
 		 * <param name="forplayerid">The viewing player.</param>
 		 * <remarks>
-		 *  Update the internal list of which players <c>forplayerid</c> can see.
+		 *   Update the internal list of which players <c>forplayerid</c> can see.
 		 * </remarks>
 		 *//*--------------------------------------------------------------------**/
 		
@@ -779,7 +779,7 @@ stock Iter_All_Internal(const array[], size, value)
 		 * <param name="playerid">Player who left streaming range.</param>
 		 * <param name="forplayerid">The viewing player.</param>
 		 * <remarks>
-		 *  Update the internal list of which players <c>forplayerid</c> can see.
+		 *   Update the internal list of which players <c>forplayerid</c> can see.
 		 * </remarks>
 		 *//*--------------------------------------------------------------------**/
 		

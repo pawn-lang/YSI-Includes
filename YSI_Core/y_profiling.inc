@@ -212,9 +212,9 @@ CHAIN_HOOK(Profiling)
  * <param name="t">The time in ms.</param>
  * <param name="iters">The number of iterations completed in this time.</param>
  * <remarks>
- *  Formats and returns a string representing the time taken for one iteration,
- *  given the time required for many iterations.  This attempts to format the
- *  number using a reasonable fraction of a second.
+ *   Formats and returns a string representing the time taken for one iteration,
+ *   given the time required for many iterations.  This attempts to format the
+ *   number using a reasonable fraction of a second.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -249,26 +249,26 @@ static stock BeautifyProfilingTime(t, iters)
  * <param name="iters">The number of iterations per run.</param>
  * <param name="size">The number of repeats.</param>
  * <remarks>
- *  "WTF" here stands for "Write To File".  The output looks like:
+ *   "WTF" here stands for "Write To File".  The output looks like:
  *  
- *  <code>
+ *   <code>
  *      timestamp,runs,repeats,results (ms)
  *      1546082820,10,1000000,122,121,121,120,121,121,121,119,119,121
  *      1546082822,10,1000000,123,124,123,123,121,121,121,120,122,122
- *  </code>
+ *   </code>
  *  
- *  The timestamp is the unix timestamp at which the line was WRITTEN, not the
+ *   The timestamp is the unix timestamp at which the line was WRITTEN, not the
  *      time at which the profilings started or ended.
  *  
- *  "runs" is the number of times the whole profile was repeated.
+ *   "runs" is the number of times the whole profile was repeated.
  *  
- *  "repeats" is the number of times the code was run for each repeat.
+ *   "repeats" is the number of times the code was run for each repeat.
  *  
- *  "results" are the total times for each repeat, in milliseconds.  The time
+ *   "results" are the total times for each repeat, in milliseconds.  The time
  *      for an individual piece of code is <c>result[n] / repeats</c>.  This is
  *      equivalent to:
  *  
- *  <code>
+ *   <code>
  *      for (new i = 0; i != runs; ++i)
  *      {
  *          start = GetTickCount();
@@ -279,12 +279,12 @@ static stock BeautifyProfilingTime(t, iters)
  *          end = GetTickCount();
  *          WriteToFile(end - start);
  *      }
- *  </code>
+ *   </code>
  *  
- *  The repeats help to time very short pieces of code.  The runs help to
- *  average.  The console reports average results (mean, mode, median, range).
- *  Thus the even more accurate result for a single iteration would be:
- *  <c>sum(results) / (runs * repeats)</c>.
+ *   The repeats help to time very short pieces of code.  The runs help to
+ *   average.  The console reports average results (mean, mode, median, range).
+ *   Thus the even more accurate result for a single iteration would be:
+ *   <c>sum(results) / (runs * repeats)</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -331,10 +331,10 @@ static stock
 /*-------------------------------------------------------------------------*//**
  * <param name="profilings">Number of profilings run.</param>
  * <returns>
- *  Wether all profilings were sucessful or not.
+ *   Wether all profilings were sucessful or not.
  * </returns>
  * <remarks>
- *  -
+ *   -
  *
  * native Profiling_Run(&amp;profilings);
  *

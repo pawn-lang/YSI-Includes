@@ -91,18 +91,18 @@ Optional plugins:
  * <param name="start">Size of the iterator.</param>
  * <param name="num">Number of extra parameters hidden on the stack.</param>
  * <remarks>
- *  Returns a random value from an iterator.
+ *   Returns a random value from an iterator.
  *  
- *  If additional parameters are given they are excluded from consideration.
- *  This allows you to chain calls to get multiple random values so follows:
+ *   If additional parameters are given they are excluded from consideration.
+ *   This allows you to chain calls to get multiple random values so follows:
  *  
  *      new president     = Iter_Random(Player);
  *      new vicePresident = Iter_Random(Player, president);
  *      new primeMinister = Iter_Random(Player, president, vicePresident);
  *      new minister      = Iter_Random(Player, president, vicePresident, primeMinister);
  *  
- *  None of those values can be the same, and this saves horrible random-
- *  dependent loops.
+ *   None of those values can be the same, and this saves horrible random-
+ *   dependent loops.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -187,18 +187,18 @@ Iter_Random_Impl_loop:
  * <param name="start">Size of the iterator.</param>
  * <param name="">Excluded elements.</param>
  * <remarks>
- *  Returns a random value from an iterator.
+ *   Returns a random value from an iterator.
  *  
- *  If additional parameters are given they are excluded from consideration.
- *  This allows you to chain calls to get multiple random values so follows:
+ *   If additional parameters are given they are excluded from consideration.
+ *   This allows you to chain calls to get multiple random values so follows:
  *  
  *      new president     = Iter_Random(Player);
  *      new vicePresident = Iter_Random(Player, president);
  *      new primeMinister = Iter_Random(Player, president, vicePresident);
  *      new minister      = Iter_Random(Player, president, vicePresident, primeMinister);
  *  
- *  None of those values can be the same, and this saves horrible random-
- *  dependent loops.
+ *   None of those values can be the same, and this saves horrible random-
+ *   dependent loops.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -238,7 +238,7 @@ stock Iter_Random_Internal(count, const array[], start, ...)
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
  * <remarks>
- *  Adds a random value to an iterator.
+ *   Adds a random value to an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -281,7 +281,7 @@ stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
  * <param name="start"></param>
  * <param name="slot">Multi-iterator slot to add to.</param>
  * <remarks>
- *  Adds a random value to an iterator.
+ *   Adds a random value to an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -327,7 +327,7 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
  * <remarks>
- *  Removes a random value from an iterator.
+ *   Removes a random value from an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -368,7 +368,7 @@ stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
  * <param name="start">Size of the iterator.</param>
  * <param name="slots">Number of multi-iterator values.</param>
  * <remarks>
- *  Removes a random value from an iterator.
+ *   Removes a random value from an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -410,7 +410,7 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
  * <remarks>
- *  Returns a random unused value from an iterator.
+ *   Returns a random unused value from an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -450,7 +450,7 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
  * <remarks>
- *  Returns a random unused value from an iterator.
+ *   Returns a random unused value from an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -548,7 +548,7 @@ Iter_RandomFree_Internal_loop:
  * <param name="start">Size of the iterator.</param>
  * <param name="slots">Number of multi-iterator values.</param>
  * <remarks>
- *  Returns a random unused value from an iterator.
+ *   Returns a random unused value from an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -594,8 +594,8 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
  * <param name="array">iterator data.</param>
  * <param name="size">Array start index.</param>
  * <remarks>
- *  Finds the first free slot in the iterator and add it.  Excepting requested
- *  values.
+ *   Finds the first free slot in the iterator and add it.  Excepting requested
+ *   values.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -655,7 +655,7 @@ stock Iter_Alloc_InternalD(&count, array[], start, size, ...)
  * <param name="array">iterator data.</param>
  * <param name="size">Size of the iterator.</param>
  * <remarks>
- *  Finds the first free slot in the iterator.
+ *   Finds the first free slot in the iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -690,7 +690,7 @@ stock Iter_Free_Internal(const array[], size)
  * <param name="trueSize">Size of the multi-iterator.</param>
  * <param name="start">End [?, since start points are backwards] of the multi-iterator.</param>
  * <remarks>
- *  Finds the first free multi index in the multi-iterator.
+ *   Finds the first free multi index in the multi-iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -711,10 +711,10 @@ stock Iter_FreeMulti_Internal(const array[], trueSize, start)
  * <param name="size">Array start index.</param>
  * <param name="value">Item to add.</param>
  * <remarks>
- *  Adds a value to a given iterator set.  Now detects when you try and add the
- *  last item multiple times, as well as all the other items.  Now simplified
- *  even further with the new internal representation.  The modulo code is for
- *  iterator reversal.
+ *   Adds a value to a given iterator set.  Now detects when you try and add the
+ *   last item multiple times, as well as all the other items.  Now simplified
+ *   even further with the new internal representation.  The modulo code is for
+ *   iterator reversal.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -783,9 +783,9 @@ stock Iter_Add_InternalD(&count, array[], start, size, value)
  * <param name="index">Index to find Nth value.</param>
  * <param name="wrap">Keep going around until a value is found?</param>
  * <remarks>
- *  Allows you to find the Nth value in the iterator.  DO NOT call this in a
- *  loop to get all values - that totally defeats the purpose of "foreach", just
- *  use a normal "foreach" loop with an index counter for that case.
+ *   Allows you to find the Nth value in the iterator.  DO NOT call this in a
+ *   loop to get all values - that totally defeats the purpose of "foreach", just
+ *   use a normal "foreach" loop with an index counter for that case.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -814,7 +814,7 @@ stock Iter_Index_Internal(count, const array[], start, size, index, bool:wrap = 
  * <param name="size">Number of iterator elements.</param>
  * <param name="value">Item to remove.</param>
  * <remarks>
- *  Removes a value from an iterator.
+ *   Removes a value from an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -885,7 +885,7 @@ stock Iter_Remove_InternalD(&count, array[], start, size, value)
  * <param name="value">Item to remove.</param>
  * <param name="last">Pointer in which to store the last pointer.</param>
  * <remarks>
- *  Removes a value from an iterator safely.
+ *   Removes a value from an iterator safely.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -952,7 +952,7 @@ stock Iter_SafeRemove_2(&count, array[], start, size, value, &last)
  * <param name="value">Item to check.</param>
  * <param name="size">Size of the iterator.</param>
  * <remarks>
- *  Checks if this item is in the iterator.
+ *   Checks if this item is in the iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -968,7 +968,7 @@ stock Iter_Contains_InternalC(const array[], size, value)
  * <param name="counts">Number of items in each iterator part.</param>
  * <param name="slots">Number of multi-iterator values.</param>
  * <remarks>
- *  Return the total number of elements in all slots together.
+ *   Return the total number of elements in all slots together.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -987,7 +987,7 @@ stock Iter_Count_InternalC(const counts[], slots = sizeof (counts))
  * <param name="value">Item to check.</param>
  * <param name="size">Size of the iterator.</param>
  * <remarks>
- *  Checks if this item is in the iterator.
+ *   Checks if this item is in the iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1017,11 +1017,11 @@ stock Iter_Contains_InternalD(count, const array[], size, start, value)
  * <param name="size">Size of the multi-iterator.</param>
  * <param name="value">Item to check.</param>
  * <returns>
- *  INVALID_ITERATOR_SLOT on failure.
- *  Index of the multi-iterator the value is contained.
+ *   INVALID_ITERATOR_SLOT on failure.
+ *   Index of the multi-iterator the value is contained.
  * </returns>
  * <remarks>
- *  Checks if this item is in the multi-iterator at all, and if it is returns which index it is in.
+ *   Checks if this item is in the multi-iterator at all, and if it is returns which index it is in.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1044,7 +1044,7 @@ stock Iter_GetMulti_Internal(const array[], trueSize, size, value)
  * <param name="entries">Size of the count data.</param>
  * <param name="">Optional single multi-iterator to clear.</param>
  * <remarks>
- *  Resets an iterator.
+ *   Resets an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1093,7 +1093,7 @@ stock Iter_Clear_InternalC(array[], size, entries, ...)
  * <param name="elems">Number of iterator elements.</param>
  * <param name="start">Optional single multi-iterator to clear.</param>
  * <remarks>
- *  Resets an iterator.
+ *   Resets an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1123,8 +1123,8 @@ stock Iter_Clear_InternalD(array[], size, entries, elems, counts[], start)
  * <param name="s1">Size of second dimension.</param>
  * <param name="entries">Number of start points.</param>
  * <remarks>
- *  Multi-dimensional arrays can't be initialised at compile time, so need to be
- *  done at run time, which is slightly annoying.
+ *   Multi-dimensional arrays can't be initialised at compile time, so need to be
+ *   done at run time, which is slightly annoying.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1153,7 +1153,7 @@ stock
  * <param name="size">Size of the iterator.</param>
  * <param name="slot">The current slot.</param>
  * <remarks>
- *  Gets the element in an iterator that points to the current element.
+ *   Gets the element in an iterator that points to the current element.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1181,7 +1181,7 @@ stock
  * <param name="size">Size of the iterator.</param>
  * <param name="slot">The current slot.</param>
  * <remarks>
- *  Gets the element in an iterator that points to the current element.
+ *   Gets the element in an iterator that points to the current element.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

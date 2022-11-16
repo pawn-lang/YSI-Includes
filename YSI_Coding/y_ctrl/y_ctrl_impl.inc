@@ -108,7 +108,7 @@ static stock
 /*-------------------------------------------------------------------------*//**
  * <library>y_ctrl</library>
  * <remarks>
- *  Initialise the library.
+ *   Initialise the library.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -179,12 +179,12 @@ public OnCodeInit()
 /*-------------------------------------------------------------------------*//**
  * <library>y_ctrl</library>
  * <remarks>
- *  For every custom readable control register we define we need a special call
- *  stub that can convert from passing the parameters in registers to passing
- *  the parameters on the stack, without clobbering <c>alt</c>.  A lot of the
- *  code is common to all of these stubs, and this function implements that
- *  common code.  The final handler and return addresses are passed to this, and
- *  the parameters are extracted from <c>pri</c> and <c>alt</c>.
+ *   For every custom readable control register we define we need a special
+ *   call stub that can convert from passing the parameters in registers to
+ *   passing the parameters on the stack, without clobbering <c>alt</c>.  A lot
+ *   of the code is common to all of these stubs, and this function implements
+ *   that common code.  The final handler and return addresses are passed to
+ *   this, and the parameters are extracted from <c>pri</c> and <c>alt</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -226,12 +226,13 @@ static stock CTRL_LCTRLStub()
 /*-------------------------------------------------------------------------*//**
  * <library>y_ctrl</library>
  * <remarks>
- *  For every custom writable control register we define we need a special call
- *  stub that can convert from passing the parameters in registers to passing
- *  the parameters on the stack, without clobbering the registers.  A lot of the
- *  code is common to all of these stubs, and this function implements that
- *  common code.  The final handler and return addresses are passed to this, and
- *  the parameters are extracted from <c>pri</c> and <c>alt</c>.
+ *   For every custom writable control register we define we need a special
+ *   call stub that can convert from passing the parameters in registers to
+ *   passing the parameters on the stack, without clobbering the registers.  A
+ *   lot of the code is common to all of these stubs, and this function
+ *   implements that common code.  The final handler and return addresses are
+ *   passed to this, and the parameters are extracted from <c>pri</c> and
+ *   <c>alt</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -275,10 +276,10 @@ static stock CTRL_SCTRLStub()
  * <library>y_ctrl</library>
  * <param name="addr">The address to write to.</param>
  * <remarks>
- *  For every custom readable control register we define we need a special call
- *  stub that can convert from passing the parameters in registers to passing
- *  the parameters on the stack, without clobbering <c>alt</c>.  This generates
- *  those stubs.
+ *   For every custom readable control register we define we need a special
+ *   call stub that can convert from passing the parameters in registers to
+ *   passing the parameters on the stack, without clobbering <c>alt</c>.  This
+ *   generates those stubs.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -332,10 +333,10 @@ static stock CTRL_WriteLCTRLStub(addr)
  * <library>y_ctrl</library>
  * <param name="addr">The address to write to.</param>
  * <remarks>
- *  For every custom writable control register we define we need a special call
- *  stub that can convert from passing the parameters in registers to passing
- *  the parameters on the stack, without clobbering the registers.  This
- *  generates those stubs.
+ *   For every custom writable control register we define we need a special
+ *   call stub that can convert from passing the parameters in registers to
+ *   passing the parameters on the stack, without clobbering the registers.
+ *   This generates those stubs.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -373,10 +374,10 @@ static stock CTRL_WriteSCTRLStub(addr)
  * <library>y_ctrl</library>
  * <param name="scanner">The codescan scanner that found a matching pattern.</param>
  * <remarks>
- *  This function is called for every single <c>LCTRL</c> in the compiled AMX,
- *  after they are found by the code scanner.  It checks if the found register
- *  load is for one of the new registers and replaces <c>LCTRL</c> with a
- *  special <c>CALL</c>.
+ *   This function is called for every single <c>LCTRL</c> in the compiled AMX,
+ *   after they are found by the code scanner.  It checks if the found register
+ *   load is for one of the new registers and replaces <c>LCTRL</c> with a
+ *   special <c>CALL</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -413,10 +414,10 @@ static stock CTRL_FoundLCTRL(const scanner[CodeScanner])
  * <library>y_ctrl</library>
  * <param name="scanner">The codescan scanner that found a matching pattern.</param>
  * <remarks>
- *  This function is called for every single <c>SCTRL</c> in the compiled AMX,
- *  after they are found by the code scanner.  It checks if the found register
- *  store is for one of the new registers and replaces <c>SCTRL</c> with a
- *  special <c>CALL</c>.
+ *   This function is called for every single <c>SCTRL</c> in the compiled AMX,
+ *   after they are found by the code scanner.  It checks if the found register
+ *   store is for one of the new registers and replaces <c>SCTRL</c> with a
+ *   special <c>CALL</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

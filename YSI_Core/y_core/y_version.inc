@@ -124,11 +124,11 @@ static stock const
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
  * <returns>
- *  The version of the JIT plugin loaded.
+ *   The version of the JIT plugin loaded.
  * </returns>
  * <remarks>
- *  There is no native way to determine this, the code just tries to estimate
- *  based on some feature heuristics.
+ *   There is no native way to determine this, the code just tries to estimate
+ *   based on some feature heuristics.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -159,11 +159,11 @@ stock Server_GetJITVersion()
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
  * <returns>
- *  The version of the JIT plugin loaded, if any, as a string.
+ *   The version of the JIT plugin loaded, if any, as a string.
  * </returns>
  * <remarks>
- *  There is no native way to determine this, the code just tries to estimate
- *  based on some feature heuristics.
+ *   There is no native way to determine this, the code just tries to estimate
+ *   based on some feature heuristics.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -186,11 +186,11 @@ stock Server_GetJITString(version[], vlen = sizeof (version))
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
  * <returns>
- *  The version of the compiler used to build this script.  
+ *   The version of the compiler used to build this script.  
  * </returns>
  * <remarks>
- *  The compiler version used isn't a feature of the server currently executing
- *  this code, hence this function is deprecated.
+ *   The compiler version used isn't a feature of the server currently executing
+ *   this code, hence this function is deprecated.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -209,7 +209,7 @@ stock Server_GetCompilerVersion()
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
  * <returns>
- *  The version of the compiler used to build this script.
+ *   The version of the compiler used to build this script.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -227,7 +227,7 @@ stock Script_GetCompilerVersion()
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
  * <returns>
- *  The version of the compiler used to build this script, as a string.
+ *   The version of the compiler used to build this script, as a string.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -253,11 +253,11 @@ stock Script_GetCompilerString(version[], os[], vlen = sizeof (version), olen = 
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
  * <returns>
- *  The version of the compiler used to build this script, as a string.
+ *   The version of the compiler used to build this script, as a string.
  * </returns>
  * <remarks>
- *  The compiler version used isn't a feature of the server currently executing
- *  this code, hence this function is deprecated.
+ *   The compiler version used isn't a feature of the server currently executing
+ *   this code, hence this function is deprecated.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -270,7 +270,7 @@ stock Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
  * <returns>
- *  The codepage used to build this script, as a string.
+ *   The codepage used to build this script, as a string.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -290,60 +290,60 @@ stock Script_GetCompilerCodepage(version[], vlen = sizeof (version))
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
  * <returns>
- *  The includes used to build this script.
+ *   The includes used to build this script.
  * </returns>
  * <remarks>
- *  Version examples:
- *  <ul>
- *  <li>0.3.DL R1       - 03D010</li>
- *  <li>0.3.7 R3        - 037030</li>
- *  <li>0.3.7 R2-2      - 037022</li>
- *  <li>0.3.7 R1-2      - 037012</li>
- *  <li>0.3.7           - 037000</li>
- *  <li>0.3z R4         - 030740</li>
- *  <li>0.3z R3         - 030730</li>
- *  <li>0.3z R2-1       - 030721</li>
- *  <li>0.3z R1-2       - 030712</li>
- *  <li>0.3z            - 030700</li>
- *  <li>0.3x R2 patch 1 - 030621</li>
- *  <li>0.3x R2         - 030620</li>
- *  <li>0.3x R1-2       - 030612</li>
- *  <li>0.3x            - 030600</li>
- *  <li>0.3e            - 030500</li>
- *  <li>0.3d            - 030400</li>
- *  <li>0.3c            - 030300</li>
- *  <li>0.3b            - 030200</li>
- *  <li>0.3a            - 030100</li>
- *  <li>0.2X            - 02A000</li>
- *  <li>0.2.2 R3        - 022300</li>
- *  </ul>
+ *   Version examples:
+ *   <ul>
+ *   <li>0.3.DL R1       - 03D010</li>
+ *   <li>0.3.7 R3        - 037030</li>
+ *   <li>0.3.7 R2-2      - 037022</li>
+ *   <li>0.3.7 R1-2      - 037012</li>
+ *   <li>0.3.7           - 037000</li>
+ *   <li>0.3z R4         - 030740</li>
+ *   <li>0.3z R3         - 030730</li>
+ *   <li>0.3z R2-1       - 030721</li>
+ *   <li>0.3z R1-2       - 030712</li>
+ *   <li>0.3z            - 030700</li>
+ *   <li>0.3x R2 patch 1 - 030621</li>
+ *   <li>0.3x R2         - 030620</li>
+ *   <li>0.3x R1-2       - 030612</li>
+ *   <li>0.3x            - 030600</li>
+ *   <li>0.3e            - 030500</li>
+ *   <li>0.3d            - 030400</li>
+ *   <li>0.3c            - 030300</li>
+ *   <li>0.3b            - 030200</li>
+ *   <li>0.3a            - 030100</li>
+ *   <li>0.2X            - 02A000</li>
+ *   <li>0.2.2 R3        - 022300</li>
+ *   </ul>
  *
- *  Rough rules:
- *  <p />
+ *   Rough rules:
+ *   <p />
  *
- *  Uses (roughtly) BCD.  Special versions are denoted outside 0-9.
- *  <p />
+ *   Uses (roughtly) BCD.  Special versions are denoted outside 0-9.
+ *   <p />
  *
- *  <code>
- *  0.1.2c R4-5
- *  | | ||  | |
- *  0 1 23  4 5
- *  =
- *  0x012345
- *  </code>
+ *   <code>
+ *   0.1.2c R4-5
+ *   | | ||  | |
+ *   0 1 23  4 5
+ *   =
+ *   0x012345
+ *   </code>
  *  
- *  (assuming c is the third revision)
- *  <p />
+ *   (assuming c is the third revision)
+ *   <p />
  *  
- *  0.2X becomes 02A000 because it is basically 0.2.3, but not, while higher
- *  than 0.2.2 so can't be 020400 (for example).  Also, its a capital letter,
- *  so doesn't use the revision method.
- *  <p />
+ *   0.2X becomes 02A000 because it is basically 0.2.3, but not, while higher
+ *   than 0.2.2 so can't be 020400 (for example).  Also, its a capital letter,
+ *   so doesn't use the revision method.
+ *   <p />
  *  
- *  P.S.  Making a consistent scheme for SA:MP versions is REALLY hard.
- *  <p />
+ *   P.S.  Making a consistent scheme for SA:MP versions is REALLY hard.
+ *   <p />
  *  
- *  open.mp releases can use `A` as the first digit.
+ *   open.mp releases can use `A` as the first digit.
  *  
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -423,11 +423,11 @@ stock Script_GetIncludesVersion()
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
  * <returns>
- *  The includes used to build this script.
+ *   The includes used to build this script.
  * </returns>
  * <remarks>
- *  The includes used were taken as a proxy for the server version, but they are
- *  not a good substitute, hence this function is deprecated.
+ *   The includes used were taken as a proxy for the server version, but they are
+ *   not a good substitute, hence this function is deprecated.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -440,7 +440,7 @@ stock Server_GetServerVersion()
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
  * <returns>
- *  The includes used to build this script, as a string.
+ *   The includes used to build this script, as a string.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -524,11 +524,11 @@ stock Script_GetIncludesString(version[], vlen = sizeof (version))
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
  * <returns>
- *  The includes used to build this script, as a string.
+ *   The includes used to build this script, as a string.
  * </returns>
  * <remarks>
- *  The includes used were taken as a proxy for the server version, but they are
- *  not a good substitute, hence this function is deprecated.
+ *   The includes used were taken as a proxy for the server version, but they are
+ *   not a good substitute, hence this function is deprecated.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -541,7 +541,7 @@ stock Server_GetServerString(version[], os[], vlen = sizeof (version), olen = si
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
  * <returns>
- *  The time the script started, as a string.
+ *   The time the script started, as a string.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -556,8 +556,8 @@ stock Script_GetStartString(output[], size = sizeof (output))
 /*-------------------------------------------------------------------------*//**
  * <library>y_version</library>
  * <remarks>
- *  Print information about the script and server to the console.  Plugins,
- *  version, compiler, etc.
+ *   Print information about the script and server to the console.  Plugins,
+ *   version, compiler, etc.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -634,9 +634,9 @@ static stock YVers_PrintHeader()
 /*-------------------------------------------------------------------------*//**
  * <library>y_version</library>
  * <remarks>
- *  Constructor.  Checks to see if there is a new version available.  This code
- *  can not use ANY of the rest of YSI as it needs to be included by everything
- *  first.
+ *   Constructor.  Checks to see if there is a new version available.  This code
+ *   can not use ANY of the rest of YSI as it needs to be included by everything
+ *   first.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -733,12 +733,12 @@ stock YVers_StartCheck()
  * <param name="	code">Response code from the server.</param>
  * <param name="	data[]">HTTP data sent from the server.</param>
  * <remarks>
- *  This is called when my server responds to the HTTP request sent above  (or
- *  when it doesn't).  This prints information on the current and any future
- *  versions of YSI.  Note that it only does a strcmp to determine if the
- *  version is newer - people can't have versions newer than the latest, only
- *  older or equal (unless they play with the version numbers, but then that's
- *  their own fault).
+ *   This is called when my server responds to the HTTP request sent above  (or
+ *   when it doesn't).  This prints information on the current and any future
+ *   versions of YSI.  Note that it only does a strcmp to determine if the
+ *   version is newer - people can't have versions newer than the latest, only
+ *   older or equal (unless they play with the version numbers, but then that's
+ *   their own fault).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

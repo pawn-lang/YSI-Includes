@@ -28,8 +28,9 @@
  *     <li>7 - Loops.</li>
  *     </ul>
  *    
- *     <p>If you use <c>Debug_Print0</c> you get an optional debug print controlled by the
- *     global state <c>ysi_debug</c> - which is either on or off.</p>
+ *     <p>If you use <c>Debug_Print0</c> you get an optional debug print
+ *     controlled by the global state <c>ysi_debug</c> - which is either on or
+ *     off.</p>
  *   </remarks>
  * </library>
  *//** *//*
@@ -127,22 +128,22 @@ stock YSI_gDebugLevel = 0;
  * <library>y_debug</library>
  * <param name="code">Code to run.</param>
  * <remarks>
- *  Code is not a variable, it's a code chunk and may be written as so:
+ *   Code is not a variable, it's a code chunk and may be written as so:
  *
- *  <code>
+ *   <code>
  * Debug_Code1{if (bla == 2) { bla++; YSI_PrintF__("%d", bla); }}
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * C:1{if (bla == 2) { bla++; YSI_PrintF__("%d", bla); }}
- *  </code>
+ *   </code>
  *
- *  The code must all be on one line to avoid errors.
- *  This isn't really a function as the first parameter is part of the name.
+ *   The code must all be on one line to avoid errors.
+ *   This isn't really a function as the first parameter is part of the name.
  *
- *  Only compiles the code when <c>_DEBUG %gt;= 1</c>.
+ *   Only compiles the code when <c>_DEBUG %gt;= 1</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -153,22 +154,22 @@ FUNC_PAWNDOC(Debug_Code1(code));
  * <library>y_debug</library>
  * <param name="code">Code to run.</param>
  * <remarks>
- *  Code is not a variable, it's a code chunk and may be written as so:
+ *   Code is not a variable, it's a code chunk and may be written as so:
  *
- *  <code>
+ *   <code>
  * Debug_Code2(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * C:2(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  The code must all be on one line to avoid errors.
- *  This isn't really a function as the first parameter is part of the name.
+ *   The code must all be on one line to avoid errors.
+ *   This isn't really a function as the first parameter is part of the name.
  *
- *  Only compiles the code when <c>_DEBUG %gt;= 2</c>.
+ *   Only compiles the code when <c>_DEBUG %gt;= 2</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -179,22 +180,22 @@ FUNC_PAWNDOC(Debug_Code2(code));
  * <library>y_debug</library>
  * <param name="code">Code to run.</param>
  * <remarks>
- *  Code is not a variable, it's a code chunk and may be written as so:
+ *   Code is not a variable, it's a code chunk and may be written as so:
  *
- *  <code>
+ *   <code>
  * Debug_Code3(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * C:3(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  The code must all be on one line to avoid errors.
- *  This isn't really a function as the first parameter is part of the name.
+ *   The code must all be on one line to avoid errors.
+ *   This isn't really a function as the first parameter is part of the name.
  *
- *  Only compiles the code when <c>_DEBUG %gt;= 3</c>.
+ *   Only compiles the code when <c>_DEBUG %gt;= 3</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -205,22 +206,22 @@ FUNC_PAWNDOC(Debug_Code3(code));
  * <library>y_debug</library>
  * <param name="code">Code to run.</param>
  * <remarks>
- *  Code is not a variable, it's a code chunk and may be written as so:
+ *   Code is not a variable, it's a code chunk and may be written as so:
  *
- *  <code>
+ *   <code>
  * Debug_Code4(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * C:4(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  The code must all be on one line to avoid errors.
- *  This isn't really a function as the first parameter is part of the name.
+ *   The code must all be on one line to avoid errors.
+ *   This isn't really a function as the first parameter is part of the name.
  *
- *  Only compiles the code when <c>_DEBUG %gt;= 4</c>.
+ *   Only compiles the code when <c>_DEBUG %gt;= 4</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -231,22 +232,22 @@ FUNC_PAWNDOC(Debug_Code4(code));
  * <library>y_debug</library>
  * <param name="code">Code to run.</param>
  * <remarks>
- *  Code is not a variable, it's a code chunk and may be written as so:
+ *   Code is not a variable, it's a code chunk and may be written as so:
  *
- *  <code>
+ *   <code>
  * Debug_Code5(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * C:5(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  The code must all be on one line to avoid errors.
- *  This isn't really a function as the first parameter is part of the name.
+ *   The code must all be on one line to avoid errors.
+ *   This isn't really a function as the first parameter is part of the name.
  *
- *  Only compiles the code when <c>_DEBUG %gt;= 5</c>.
+ *   Only compiles the code when <c>_DEBUG %gt;= 5</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -257,22 +258,22 @@ FUNC_PAWNDOC(Debug_Code5(code));
  * <library>y_debug</library>
  * <param name="code">Code to run.</param>
  * <remarks>
- *  Code is not a variable, it's a code chunk and may be written as so:
+ *   Code is not a variable, it's a code chunk and may be written as so:
  *
- *  <code>
+ *   <code>
  * Debug_Code6(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * C:6(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  The code must all be on one line to avoid errors.
- *  This isn't really a function as the first parameter is part of the name.
+ *   The code must all be on one line to avoid errors.
+ *   This isn't really a function as the first parameter is part of the name.
  *
- *  Only compiles the code when <c>_DEBUG %gt;= 6</c>.
+ *   Only compiles the code when <c>_DEBUG %gt;= 6</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -283,22 +284,22 @@ FUNC_PAWNDOC(Debug_Code6(code));
  * <library>y_debug</library>
  * <param name="code">Code to run.</param>
  * <remarks>
- *  Code is not a variable, it's a code chunk and may be written as so:
+ *   Code is not a variable, it's a code chunk and may be written as so:
  *
- *  <code>
+ *   <code>
  * Debug_Code7(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * C:7(if (bla == 2) { bla++; YSI_PrintF__("%d", bla); });
- *  </code>
+ *   </code>
  *
- *  The code must all be on one line to avoid errors.
- *  This isn't really a function as the first parameter is part of the name.
+ *   The code must all be on one line to avoid errors.
+ *   This isn't really a function as the first parameter is part of the name.
  *
- *  Only compiles the code when <c>_DEBUG %gt;= 7</c>.
+ *   Only compiles the code when <c>_DEBUG %gt;= 7</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -367,19 +368,19 @@ FUNC_PAWNDOC(Debug_Code7(code));
  * <library>y_debug</library>
  * <param name="str">The format specifier string.</param>
  * <remarks>
- *  This isn't really a function as the first parameter is part of the name:
+ *   This isn't really a function as the first parameter is part of the name:
  *
- *  <code>
+ *   <code>
  * Debug_Print1("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * Debug_Print1("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Only prints the data when <c>_DEBUG %gt;= 1</c>.
+ *   Only prints the data when <c>_DEBUG %gt;= 1</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -390,19 +391,19 @@ FUNC_PAWNDOC(Debug_Print1(const str[], GLOBAL_TAG_TYPES:...));
  * <library>y_debug</library>
  * <param name="str">The format specifier string.</param>
  * <remarks>
- *  This isn't really a function as the first parameter is part of the name:
+ *   This isn't really a function as the first parameter is part of the name:
  *
- *  <code>
+ *   <code>
  * Debug_Print2("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * Debug_Print2("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Only prints the data when <c>_DEBUG %gt;= 2</c>.
+ *   Only prints the data when <c>_DEBUG %gt;= 2</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -413,19 +414,19 @@ FUNC_PAWNDOC(Debug_Print2(const str[], GLOBAL_TAG_TYPES:...));
  * <library>y_debug</library>
  * <param name="str">The format specifier string.</param>
  * <remarks>
- *  This isn't really a function as the first parameter is part of the name:
+ *   This isn't really a function as the first parameter is part of the name:
  *
- *  <code>
+ *   <code>
  * Debug_Print3("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * Debug_Print3("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Only prints the data when <c>_DEBUG %gt;= 3</c>.
+ *   Only prints the data when <c>_DEBUG %gt;= 3</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -436,19 +437,19 @@ FUNC_PAWNDOC(Debug_Print3(const str[], GLOBAL_TAG_TYPES:...));
  * <library>y_debug</library>
  * <param name="str">The format specifier string.</param>
  * <remarks>
- *  This isn't really a function as the first parameter is part of the name:
+ *   This isn't really a function as the first parameter is part of the name:
  *
- *  <code>
+ *   <code>
  * Debug_Print4("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * Debug_Print4("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Only prints the data when <c>_DEBUG %gt;= 4</c>.
+ *   Only prints the data when <c>_DEBUG %gt;= 4</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -459,19 +460,19 @@ FUNC_PAWNDOC(Debug_Print4(const str[], GLOBAL_TAG_TYPES:...));
  * <library>y_debug</library>
  * <param name="str">The format specifier string.</param>
  * <remarks>
- *  This isn't really a function as the first parameter is part of the name:
+ *   This isn't really a function as the first parameter is part of the name:
  *
- *  <code>
+ *   <code>
  * Debug_Print5("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * Debug_Print5("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Only prints the data when <c>_DEBUG %gt;= 5</c>.
+ *   Only prints the data when <c>_DEBUG %gt;= 5</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -482,19 +483,19 @@ FUNC_PAWNDOC(Debug_Print5(const str[], GLOBAL_TAG_TYPES:...));
  * <library>y_debug</library>
  * <param name="str">The format specifier string.</param>
  * <remarks>
- *  This isn't really a function as the first parameter is part of the name:
+ *   This isn't really a function as the first parameter is part of the name:
  *
- *  <code>
+ *   <code>
  * Debug_Print6("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * Debug_Print6("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Only prints the data when <c>_DEBUG %gt;= 6</c>.
+ *   Only prints the data when <c>_DEBUG %gt;= 6</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -505,19 +506,19 @@ FUNC_PAWNDOC(Debug_Print6(const str[], GLOBAL_TAG_TYPES:...));
  * <library>y_debug</library>
  * <param name="str">The format specifier string.</param>
  * <remarks>
- *  This isn't really a function as the first parameter is part of the name:
+ *   This isn't really a function as the first parameter is part of the name:
  *
- *  <code>
+ *   <code>
  * Debug_Print7("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * Debug_Print7("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Only prints the data when <c>_DEBUG %gt;= 7</c>.
+ *   Only prints the data when <c>_DEBUG %gt;= 7</c>.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -585,7 +586,7 @@ FUNC_PAWNDOC(Debug_Print7(const str[], GLOBAL_TAG_TYPES:...));
 /**
  * <library>y_debug</library>
  * <remarks>
- *  Stop the server running.
+ *   Stop the server running.
  * </remarks>
  */
 
@@ -598,22 +599,22 @@ stock Debug_Kill_()
  * <library>y_debug</library>
  * <param name="str">The format specifier string.</param>
  * <remarks>
- *  This isn't really a function as the first parameter is part of the name:
+ *   This isn't really a function as the first parameter is part of the name:
  *
- *  <code>
+ *   <code>
  * Debug_Print0("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * Debug_Print0("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  <c>_DEBUG</c> level 0 prints are ALWAYS compiled, but are runtime switched
- *  using the automata <c>ysi_debug</c>.  When then state is <c>ysi_debug :
- *  on</c>, the prints are executed.  When then state is <c>ysi_debug : off</c>,
- *  they aren't.
+ *   <c>_DEBUG</c> level 0 prints are ALWAYS compiled, but are runtime switched
+ *   using the automata <c>ysi_debug</c>.  When then state is <c>ysi_debug :
+ *   on</c>, the prints are executed.  When then state is
+ *   <c>ysi_debug : off</c>, they aren't.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -636,22 +637,22 @@ stock Debug_Print0(const str[], GLOBAL_TAG_TYPES:...) <ysi_debug : on>
  * <library>y_debug</library>
  * <param name="str">The format specifier string.</param>
  * <remarks>
- *  This isn't really a function as the first parameter is part of the name:
+ *   This isn't really a function as the first parameter is part of the name:
  *
- *  <code>
+ *   <code>
  * Debug_Print0("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  Or:
+ *   Or:
  *
- *  <code>
+ *   <code>
  * Debug_Print0("variables: %d, %d", i, j);
- *  </code>
+ *   </code>
  *
- *  <c>_DEBUG</c> level 0 prints are ALWAYS compiled, but are runtime switched
- *  using the automata <c>ysi_debug</c>.  When then state is <c>ysi_debug :
- *  on</c>, the prints are executed.  When then state is <c>ysi_debug : off</c>,
- *  they aren't.
+ *   <c>_DEBUG</c> level 0 prints are ALWAYS compiled, but are runtime switched
+ *   using the automata <c>ysi_debug</c>.  When then state is <c>ysi_debug :
+ *   on</c>, the prints are executed.  When then state is
+ *   <c>ysi_debug : off</c>, they aren't.
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -665,14 +666,13 @@ stock Debug_Print0(const str[], GLOBAL_TAG_TYPES:...) <>
 /*-------------------------------------------------------------------------*//**
  * <library>y_debug</library>
  * <remarks>
- *  Does some strange mangling of <c>YSI_FILTERSCRIPT</c> because at one point I
- *  found a compiler bug where the first automata in the script could conflict
- *  with the first variable in the script.  I don't know what triggered it, and
- *  it has never shown up since I messed about with this file to try mangle some
- *  things.  Never the less, if it ever happens again this code might detect it.
- *
- *  Actually, that's less likely now, since that variable is now very unlikely
- *  to be the first in the script ever.
+ *   Does some strange mangling of <c>YSI_FILTERSCRIPT</c> because at one point
+ *   I found a compiler bug where the first automata in the script could
+ *   conflict with the first variable in the script.  I don't know what
+ *   triggered it, and it has never shown up since I messed about with this file
+ *   to try mangle some things.  Never the less, if it ever happens again this
+ *   code might detect it.  Actually, that's less likely now, since that
+ *   variable is now very unlikely to be the first in the script ever.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -703,14 +703,13 @@ stock Debug_PrintArray(arr[], size = sizeof (arr))
 /*-------------------------------------------------------------------------*//**
  * <library>y_debug</library>
  * <remarks>
- *  Does some strange mangling of <c>YSI_FILTERSCRIPT</c> because at one point I
- *  found a compiler bug where the first automata in the script could conflict
- *  with the first variable in the script.  I don't know what triggered it, and
- *  it has never shown up since I messed about with this file to try mangle some
- *  things.  Never the less, if it ever happens again this code might detect it.
- *
- *  Actually, that's less likely now, since that variable is now very unlikely
- *  to be the first in the script ever.
+ *   Does some strange mangling of <c>YSI_FILTERSCRIPT</c> because at one point
+ *   I found a compiler bug where the first automata in the script could
+ *   conflict with the first variable in the script.  I don't know what
+ *   triggered it, and it has never shown up since I messed about with this file
+ *   to try mangle some things.  Never the less, if it ever happens again this
+ *   code might detect it.  Actually, that's less likely now, since that
+ *   variable is now very unlikely to be the first in the script ever.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -748,7 +747,7 @@ public OnCodeInit()
  * <library>y_debug</library>
  * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
  * <remarks>
- *  Mostly exists to define the full range of <c>ysi_debug</c> states.
+ *   Mostly exists to define the full range of <c>ysi_debug</c> states.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -760,7 +759,7 @@ static stock Debug_SetState() <ysi_debug : off>
  * <library>y_debug</library>
  * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
  * <remarks>
- *  Mostly exists to define the full range of <c>ysi_debug</c> states.
+ *   Mostly exists to define the full range of <c>ysi_debug</c> states.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -773,7 +772,7 @@ static stock Debug_SetState() <>
  * <library>y_debug</library>
  * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
  * <remarks>
- *  Get the current debug state.
+ *   Get the current debug state.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -786,7 +785,7 @@ stock bool:Debug_GetState() <ysi_debug : off>
  * <library>y_debug</library>
  * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
  * <remarks>
- *  Get the current debug state.
+ *   Get the current debug state.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -798,7 +797,7 @@ stock bool:Debug_GetState() <>
 /*-------------------------------------------------------------------------*//**
  * <library>y_debug</library>
  * <remarks>
- *  Turn on level 0 prints.
+ *   Turn on level 0 prints.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -811,7 +810,7 @@ stock bool:Debug_Enable() <ysi_debug : off>
 /*-------------------------------------------------------------------------*//**
  * <library>y_debug</library>
  * <remarks>
- *  Turn on level 0 prints.
+ *   Turn on level 0 prints.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -823,7 +822,7 @@ stock bool:Debug_Enable() <>
 /*-------------------------------------------------------------------------*//**
  * <library>y_debug</library>
  * <remarks>
- *  Turn off level 0 prints.
+ *   Turn off level 0 prints.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -835,7 +834,7 @@ stock bool:Debug_Disable() <ysi_debug : off>
 /*-------------------------------------------------------------------------*//**
  * <library>y_debug</library>
  * <remarks>
- *  Turn off level 0 prints.
+ *   Turn off level 0 prints.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -849,9 +848,9 @@ stock bool:Debug_Disable() <>
  * <library>y_debug</library>
  * <param name="level">The new debug level to enable prints on.</param>
  * <remarks>
- *  Set the debug level when the code is compiled with <c>_DEBUG=-1</c>, which
- *  means full run-time selection.  Returns the level, or sets it when a
- *  parameter is given.
+ *   Set the debug level when the code is compiled with <c>_DEBUG=-1</c>, which
+ *   means full run-time selection.  Returns the level, or sets it when a
+ *   parameter is given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -872,7 +871,7 @@ native Debug_PrintQ_PRINT(const str[], const expr[], &Debug_PrintQ_SIZEOF:size, 
  * <param name="addr">A pointer to a thing that might be a string.</param>
  * <param name="len">The maximum length of the supposed string.</param>
  * <returns>
- *  Prints a string passed as a vararg to the calling function.
+ *   Prints a string passed as a vararg to the calling function.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -905,9 +904,9 @@ forward File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), max
 /*-------------------------------------------------------------------------*//**
  * <library>y_debug</library>
  * <remarks>
- *  Try and print a wide range of variables, with their source expression.
+ *   Try and print a wide range of variables, with their source expression.
  *
- *  Examples:
+ *   Examples:
  *
  *      new arr[] = {33, 33, 33};
  *      new Float:farr[] = {11.0, 11.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0};
@@ -922,9 +921,9 @@ forward File:ftemporary(ret[] = "", const ext[] = "tmp", len = sizeof (ret), max
  *      Debug_Q(farr, 7);
  *      Debug_Q(mctarr);
  *
- *  If an array length cannot be determined you can pass it as a second arg.
+ *   If an array length cannot be determined you can pass it as a second arg.
  *
- *  All tags are supported, the output from the above is:
+ *   All tags are supported, the output from the above is:
  *      
  *      [Q] C:\Users\Alex\Documents\SA-MP\gamemodes\IsMaybeAString.pwn:16
  *      

@@ -90,7 +90,7 @@ Optional plugins:
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - textwrap</library>
  * <remarks>
- *  Internal implementation.
+ *   Internal implementation.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -159,7 +159,7 @@ _Y_CORE_STATIC stock IterativeColouredSkipSUnpacked(const string:text[], start, 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - textwrap</library>
  * <remarks>
- *  Internal implementation.
+ *   Internal implementation.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -297,7 +297,7 @@ _Y_CORE_STATIC stock IterativeColouredSkipWUnpacked(const string:text[], lastInd
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - textwrap</library>
  * <remarks>
- *  Internal implementation.
+ *   Internal implementation.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -366,7 +366,7 @@ _Y_CORE_STATIC stock IterativeColouredSkipSPacked(const string:text[], start, &c
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - textwrap</library>
  * <remarks>
- *  Internal implementation.
+ *   Internal implementation.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -504,7 +504,7 @@ _Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - textwrap</library>
  * <summary>
- *  bool:IterativeTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
+ *   bool:IterativeTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
  * </summary>
  * <param name="text">The input string to split up.</param>
  * <param name="start">Where in the string to start the next line.</param>
@@ -514,11 +514,11 @@ _Y_CORE_STATIC stock IterativeColouredSkipWPacked(const string:text[], lastIndex
  * <param name="hyphen">Should a hyphen be inserted in to the output?</param>
  * <param name="useHyphen">May a hyphen be included?</param>
  * <returns>
- *  Does the function need to be called again to show another line?
+ *   Does the function need to be called again to show another line?
  * </returns>
  * <remarks>
- *  Split some text in to multiple lines.  With sensible breaks at spaces or
- *  mid-word if they're long enough.
+ *   Split some text in to multiple lines.  With sensible breaks at spaces or
+ *   mid-word if they're long enough.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -827,7 +827,7 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - textwrap</library>
  * <summary>
- *  bool:IterativeColouredTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
+ *   bool:IterativeColouredTextSplitter(const text[], width, start, &amp;end, &amp;next, &amp;bool:hyphen)
  * </summary>
  * <param name="text">The input string to split up.</param>
  * <param name="start">Where in the string to start the next line.</param>
@@ -838,11 +838,11 @@ stock bool:IterativeTextSplitter(const text[], width, start, &end, &next, &bool:
  * <param name="colour">The colour for the start of the next line.</param>
  * <param name="useHyphen">May a hyphen be included?</param>
  * <returns>
- *  Does the function need to be called again to show another line?
+ *   Does the function need to be called again to show another line?
  * </returns>
  * <remarks>
- *  Split some text in to multiple lines.  With sensible breaks at spaces or
- *  mid-word if they're long enough.  Unlike <c>IterativeTextSplitter</c> it
+ *   Split some text in to multiple lines.  With sensible breaks at spaces or
+ *   mid-word if they're long enough.  Unlike <c>IterativeTextSplitter</c> it
  * will never split in the middle of <c>{RRGGBB}</c> colour sequences, and can
  * ignore them for many checks.
  * </remarks>

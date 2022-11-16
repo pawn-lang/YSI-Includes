@@ -154,7 +154,7 @@ Optional plugins:
  * <library>y_utils - misc</library>
  * <param name="playerid">The player to check.</param>
  * <returns>
- *  Is this a valid playerid (NOT, is the player connected).
+ *   Is this a valid playerid (NOT, is the player connected).
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -165,8 +165,8 @@ FUNC_PAWNDOC(bool:VALID_PLAYERID(playerid));
  * <library>y_utils - misc</library>
  * <param name="playerid">Player to mess up.</param>
  * <remarks>
- *  Make some random effects on the player.  Inspired by the single player chaos
- *  mod.
+ *   Make some random effects on the player.  Inspired by the single player chaos
+ *   mod.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -222,7 +222,7 @@ stock Utils_ChaosMod(playerid)
  * <param name="old">Unused.</param>
  * <param name="playerid">Player to mess up.</param>
  * <remarks>
- *  Timer for applying random effects.
+ *   Timer for applying random effects.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

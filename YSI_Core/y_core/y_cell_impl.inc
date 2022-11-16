@@ -88,24 +88,24 @@ Optional plugins:
 /*-------------------------------------------------------------------------*//**
  * <library>y_cell</library>
  * <summary>
- *  Cell_ReverseBytes(number);
+ *   Cell_ReverseBytes(number);
  * </summary>
  * <param name="data">The number to manipulate.</param>
  * <returns>
- *  All the bytes in the input reversed.
+ *   All the bytes in the input reversed.
  * </returns>
  * <remarks>
- *  1)
- *  Example: 0x12345678
- *  Becomes: 0x78563412
+ *   1)
+ *   Example: 0x12345678
+ *   Becomes: 0x78563412
  *
- *  2)
- *  Example: 0x01020304
- *  Becomes: 0x04030201
+ *   2)
+ *   Example: 0x01020304
+ *   Becomes: 0x04030201
  *
- *  3)
- *  Example: 0xFF00FF00
- *  Becomes: 0x00FF00FF
+ *   3)
+ *   Example: 0xFF00FF00
+ *   Becomes: 0x00FF00FF
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -114,15 +114,15 @@ native Cell_ReverseBytes(GLOBAL_TAG_TYPES:data) = swapchars;
 /*-------------------------------------------------------------------------*//**
  * <library>y_cell</library>
  * <summary>
- *  Cell_CompressRight(GLOBAL_TAG_TYPES:x, m);
+ *   Cell_CompressRight(GLOBAL_TAG_TYPES:x, m);
  * </summary>
  * <param name="x">The number to compress.</param>
  * <param name="m">The mask for which bits to compress.</param>
  * <returns>
- *  Selected bits from "x", shifted to be LSBs.
+ *   Selected bits from "x", shifted to be LSBs.
  * </returns>
  * <remarks>
- *  Doesn't require precomputation.
+ *   Doesn't require precomputation.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -140,15 +140,15 @@ stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
 /*-------------------------------------------------------------------------*//**
  * <library>y_cell</library>
  * <summary>
- *  Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
+ *   Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
  * </summary>
  * <param name="x">The number to expand.</param>
  * <param name="m">The mask for which bits to expand to.</param>
  * <returns>
- *  LSBs from "x", shifted to selected bit positions.
+ *   LSBs from "x", shifted to selected bit positions.
  * </returns>
  * <remarks>
- *  Doesn't require precomputation.
+ *   Doesn't require precomputation.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -170,16 +170,16 @@ const y_utils_abs_shift = cellbits - 1;
 /*-------------------------------------------------------------------------*//**
  * <library>y_cell</library>
  * <summary>
- *  Cell_Abs(GLOBAL_TAG_TYPES:x, m)
+ *   Cell_Abs(GLOBAL_TAG_TYPES:x, m)
  * </summary>
  * <param name="number">The number to get the absolute value of.</param>
  * <param name="tag">The tag of the number, in case its <c>Float</c>.</param>
  * <returns>
- *  The absolute value of a number.
+ *   The absolute value of a number.
  * </returns>
  * <remarks>
- *  Get the absolute value of a number.  Floats just remove MSB.  For ints,
- *  multiply the whole number by the MSB shifted OR 1 (1 or -1).
+ *   Get the absolute value of a number.  Floats just remove MSB.  For ints,
+ *   multiply the whole number by the MSB shifted OR 1 (1 or -1).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -264,31 +264,31 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 /*-------------------------------------------------------------------------*//**
  * <library>y_cell</library>
  * <summary>
- *  Cell_GetLowestComponent(number);
+ *   Cell_GetLowestComponent(number);
  * </summary>
  * <param name="data">The number to get the lowest 1 in.</param>
  * <returns>
- *  The lowest set bit.
+ *   The lowest set bit.
  * </returns>
  * <remarks>
- *  Similar to Cell_GetLowestBit, but returns the bit, not the position of the
- *  bit.
+ *   Similar to Cell_GetLowestBit, but returns the bit, not the position of the
+ *   bit.
  *
- *  1)
- *  Example: 0b00000000000000000000000000000001
- *  Returns: 0b00000000000000000000000000000001
+ *   1)
+ *   Example: 0b00000000000000000000000000000001
+ *   Returns: 0b00000000000000000000000000000001
  *
- *  2)
- *  Example: 0b00000000000000000000000000001000
- *  Returns: 0b00000000000000000000000000001000
+ *   2)
+ *   Example: 0b00000000000000000000000000001000
+ *   Returns: 0b00000000000000000000000000001000
  *
- *  3)
- *  Example: 0b00010001100011000011100010001000
- *  Returns: 0b00000000000000000000000000001000
+ *   3)
+ *   Example: 0b00010001100011000011100010001000
+ *   Returns: 0b00000000000000000000000000001000
  *
- *  4)
- *  Example: 0b00000000000000000000000000000000
- *  Returns: 0b00000000000000000000000000000000
+ *   4)
+ *   Example: 0b00000000000000000000000000000000
+ *   Returns: 0b00000000000000000000000000000000
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -307,14 +307,14 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 /*-------------------------------------------------------------------------*//**
  * <library>y_cell</library>
  * <summary>
- *  Cell_GetLowestEmpty(number);
+ *   Cell_GetLowestEmpty(number);
  * </summary>
  * <param name="data">The number to get the lowest 0 in.</param>
  * <returns>
- *  The lowest unset bit.
+ *   The lowest unset bit.
  * </returns>
  * <remarks>
- *  Like Cell_GetLowestComponent, but for 0s not 1s.
+ *   Like Cell_GetLowestComponent, but for 0s not 1s.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -334,15 +334,15 @@ stock Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
 /*-------------------------------------------------------------------------*//**
  * <library>y_cell</library>
  * <summary>
- *  Cell_HasZeroByte(number);
+ *   Cell_HasZeroByte(number);
  * </summary>
  * <param name="data">The number to get the lowest 0 in.</param>
  * <returns>
- *  The lowest null byte.
+ *   The lowest null byte.
  * </returns>
  * <remarks>
- *  Check if any of the 4 bytes are zero:
- *  https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
+ *   Check if any of the 4 bytes are zero:
+ *   https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -366,15 +366,15 @@ stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
 /*-------------------------------------------------------------------------*//**
  * <library>y_cell</library>
  * <summary>
- *  Cell_HasSpaceByte(number);
+ *   Cell_HasSpaceByte(number);
  * </summary>
  * <param name="data">The number to get the lowest space in.</param>
  * <returns>
- *  The lowest space byte.
+ *   The lowest space byte.
  * </returns>
  * <remarks>
- *  Check if any of the 4 bytes are a space:
- *  https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
+ *   Check if any of the 4 bytes are a space:
+ *   https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
  * </remarks>
  *//*------------------------------------------------------------------------**/
 

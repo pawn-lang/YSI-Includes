@@ -106,49 +106,49 @@ Optional plugins:
  * <library>y_iterate</library>
  * <param name="params">The iterator function's parameters.</param>
  * <remarks>
- *  Used to declare a special iterator function.  Examples:
+ *   Used to declare a special iterator function.  Examples:
  *
- *  <code>
+ *   <code>
  * iterfunc stock OnlyZero(cur)                                                    <br />
  * {                                                                               <br /><indent />
- *  if (cur == -1)                                                              <br /><indent /><indent />
+ *   if (cur == -1)                                                              <br /><indent /><indent />
  *      return 0;                                                               <br /><indent />
- *  return -1;                                                                  <br />
+ *   return -1;                                                                  <br />
  * }                                                                               <br />
- *  </code>
+ *   </code>
  *
- *  <code>
+ *   <code>
  * iterfunc stock AlsoOnlyZero[cellmin](cur)                                       <br />
  * {                                                                               <br /><indent />
- *  if (cur == cellmin)                                                         <br /><indent /><indent />
+ *   if (cur == cellmin)                                                         <br /><indent /><indent />
  *      return 0;                                                               <br /><indent />
- *  return cellmin;                                                             <br />
+ *   return cellmin;                                                             <br />
  * }                                                                               <br />
- *  </code>
+ *   </code>
  *
- *  <code>
+ *   <code>
  * iterfunc stock OneToTen[cellmin](cur)                                           <br />
  * {                                                                               <br /><indent />
- *  if (cur == cellmin)                                                         <br /><indent /><indent />
+ *   if (cur == cellmin)                                                         <br /><indent /><indent />
  *      return 1;                                                               <br /><indent />
- *  if (cur == 10)                                                              <br /><indent /><indent />
+ *   if (cur == 10)                                                              <br /><indent /><indent />
  *      return cellmin;                                                         <br /><indent />
- *  return cur + 1;                                                             <br />
+ *   return cur + 1;                                                             <br />
  * }                                                                               <br />
- *  </code>
+ *   </code>
  *
- *  <code>
+ *   <code>
  * iterfunc stock OneToN(cur, n)                                                   <br />
  * {                                                                               <br /><indent />
- *  if (n &lt; 1)                                                               <br /><indent /><indent />
+ *   if (n &lt; 1)                                                               <br /><indent /><indent />
  *      return -1;                                                              <br /><indent />
- *  if (cur == -1)                                                              <br /><indent /><indent />
+ *   if (cur == -1)                                                              <br /><indent /><indent />
  *      return 1;                                                               <br /><indent />
- *  if (cur == n)                                                               <br /><indent /><indent />
+ *   if (cur == n)                                                               <br /><indent /><indent />
  *      return -1;                                                              <br /><indent />
- *  return cur + 1;                                                             <br />
+ *   return cur + 1;                                                             <br />
  * }                                                                               <br />
- *  </code>
+ *   </code>
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -160,7 +160,7 @@ FUNC_PAWNDOC(iterfunc(params));
  * <library>y_iterate</library>
  * <param name="iter">Iterator to run backwards.</param>
  * <remarks>
- *  Run an iterator backwards.
+ *   Run an iterator backwards.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -184,12 +184,12 @@ FUNC_PAWNDOC(Iterator@Reverse(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator array to initialise.</param>
  * <remarks>
- *  Wrapper for Iter_Init_Internal.  When <c>__COMPILER_NESTED_ELLIPSIS</c> is
- *  set, this isn't needed because multi-dimensional iterators can be
- *  initialised with the new <c>{{0, 1, ...), ...}</c> feature.  In that case
- *  <c>I@ = 0</c> is called as a <c>void</c> function that does nothing but ends
- *  in a semi-colon (<c>I@</c> is used a lot in YSI as a <c>do nothing</c>
- *  enabler).
+ *   Wrapper for Iter_Init_Internal.  When <c>__COMPILER_NESTED_ELLIPSIS</c> is
+ *   set, this isn't needed because multi-dimensional iterators can be
+ *   initialised with the new <c>{{0, 1, ...), ...}</c> feature.  In that case
+ *   <c>I@ = 0</c> is called as a <c>void</c> function that does nothing but ends
+ *   in a semi-colon (<c>I@</c> is used a lot in YSI as a <c>do nothing</c>
+ *   enabler).
  *
  * <code>native Iter_Init(IteratorArray:Name[]&lt;&gt;);</code>
  *
@@ -207,7 +207,7 @@ FUNC_PAWNDOC(Iter_Init(Iterator:iter[]<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator array to initialise.</param>
  * <remarks>
- *  Wrapper for Iter_Init_Internal.  ALWAYS resets the array.
+ *   Wrapper for Iter_Init_Internal.  ALWAYS resets the array.
  *
  * <code>native Iter_InitAndClear(IteratorArray:Name[]&lt;&gt;);</code>
  *
@@ -226,7 +226,7 @@ FUNC_PAWNDOC(Iter_InitAndClear(Iterator:iter[]<>));
  * <param name="iter">Name of the iterator to add the data to.</param>
  * <param name="value">Value to add to the iterator.</param>
  * <remarks>
- *  Wrapper for Iter_AddInternal.
+ *   Wrapper for Iter_AddInternal.
  *
  * native Iter_Add(Iterator:Name&lt;&gt;, value);
  *
@@ -243,7 +243,7 @@ FUNC_PAWNDOC(Iter_Add(Iterator:iter<>, value));
  * <param name="iter">Name of the iterator to remove data from.</param>
  * <param name="value">Data to remove.</param>
  * <remarks>
- *  Wrapper for Iter_RemoveInternal.
+ *   Wrapper for Iter_RemoveInternal.
  *
  * native Iter_Remove(Iterator:Name&lt;&gt;, value);
  *
@@ -259,8 +259,8 @@ FUNC_PAWNDOC(Iter_Remove(Iterator:iter<>, value));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the first free slot in.</param>
  * <remarks>
- *  Wrapper for Iter_Free_Internal.  Returns a slot NOT in the current
- *  iterator.
+ *   Wrapper for Iter_Free_Internal.  Returns a slot NOT in the current
+ *   iterator.
  *
  * native Iter_Free(Iterator:Name&lt;&gt;);
  *
@@ -276,8 +276,8 @@ FUNC_PAWNDOC(Iter_Free(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the multi-iterator to get the first free slot in.</param>
  * <remarks>
- *  Wrapper for Iter_FreeMulti_Internal.  Returns a slot NOT in the current
- *  multi-iterator.
+ *   Wrapper for Iter_FreeMulti_Internal.  Returns a slot NOT in the current
+ *   multi-iterator.
  *
  * native Iter_FreeMulti(Iterator:Name&lt;&gt;);
  *
@@ -294,7 +294,7 @@ FUNC_PAWNDOC(Iter_FreeMulti(Iterator:iter<,>, ));
  * <param name="iter">Name of the iterator to check membership of.</param>
  * <param name="value">Value to check.</param>
  * <remarks>
- *  Checks if the given value is in the given iterator.
+ *   Checks if the given value is in the given iterator.
  *
  * native Iter_Contains(Iterator:Name&lt;&gt;, value);
  *
@@ -312,10 +312,10 @@ FUNC_PAWNDOC(bool:Iter_Contains(Iterator:iter<>, value));
  * <param name="iter">Name of the iterator to check membership of.</param>
  * <param name="value">Value to check.</param>
  * <returns>
- *  Index in which the value is contained in the multi-iterator.
+ *   Index in which the value is contained in the multi-iterator.
  * </returns>
  * <remarks>
- *  Checks if the given value is in the given iterator, and if it is return which index it is contained.
+ *   Checks if the given value is in the given iterator, and if it is return which index it is contained.
  *
  * native Iter_GetMulti(Iterator:Name&lt;&gt;, value);
  *
@@ -333,9 +333,9 @@ FUNC_PAWNDOC(Iter_GetMulti(Iterator:iter<,>, value));
  * <param name="value">Data to remove.</param>
  * <param name="next">Container for the pointer to the next element.</param>
  * <remarks>
- *  Wrapper for Iter_SafeRemoveInternal.  Common use:
+ *   Wrapper for Iter_SafeRemoveInternal.  Common use:
  *
- *  Iter_SafeRemove(iter, i, i);
+ *   Iter_SafeRemove(iter, i, i);
  *
  * native Iter_SafeRemove(Iterator:Name&lt;&gt;, value, &amp;next);
  *
@@ -351,7 +351,7 @@ FUNC_PAWNDOC(Iter_SafeRemove(Iterator:iter<>, value, &next));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to add a random slot to.</param>
  * <remarks>
- *  Wrapper for Iter_RandomAddInternal.
+ *   Wrapper for Iter_RandomAddInternal.
  *
  * native Iter_RandomAdd(Iterator:Name&lt;&gt;);
  *
@@ -369,7 +369,7 @@ FUNC_PAWNDOC(Iter_RandomAdd(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to remove a random slot from.</param>
  * <remarks>
- *  Wrapper for Iter_RandomRemoveInternal.
+ *   Wrapper for Iter_RandomRemoveInternal.
  *
  * native Iter_RandomRemove(Iterator:Name&lt;&gt;);
  *
@@ -387,7 +387,7 @@ FUNC_PAWNDOC(Iter_RandomRemove(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get a random unused slot for.</param>
  * <remarks>
- *  Wrapper for Iter_RandomFree_Internal.
+ *   Wrapper for Iter_RandomFree_Internal.
  *
  * native Iter_RandomFree(Iterator:Name&lt;&gt;);
  *
@@ -405,7 +405,7 @@ FUNC_PAWNDOC(Iter_RandomFree(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get a random slot from.</param>
  * <remarks>
- *  Wrapper for Iter_RandomInternal.
+ *   Wrapper for Iter_RandomInternal.
  *
  * native Iter_Random(Iterator:Name&lt;&gt;);
  *
@@ -422,7 +422,7 @@ FUNC_PAWNDOC(Iter_Random(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get a random slot from.</param>
  * <remarks>
- *  Returns the number of items in this iterator.
+ *   Returns the number of items in this iterator.
  *
  * native Iter_Count(Iterator:Name&lt;&gt;);
  *
@@ -439,14 +439,14 @@ FUNC_PAWNDOC(Iter_Count(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to empty.</param>
  * <remarks>
- *  Wrapper for Iter_Clear_Internal.
+ *   Wrapper for Iter_Clear_Internal.
  *
- *  Although it doesn't fit my normal strict spacing, the end of "B" is correct,
- *  namely: "_:F@s(%0),%2)".  This uses the "_:%0,)" macro to consume
- *  a trailing comma when nothing is given in "%2", so I can't have a leading
- *  space sadly.
+ *   Although it doesn't fit my normal strict spacing, the end of "B" is correct,
+ *   namely: "_:F@s(%0),%2)".  This uses the "_:%0,)" macro to consume
+ *   a trailing comma when nothing is given in "%2", so I can't have a leading
+ *   space sadly.
  *
- *  "- 2" in place of the normal "- 1" is CORRECT!
+ *   "- 2" in place of the normal "- 1" is CORRECT!
  *
  * native Iter_Clear(IteratorArray:Name[]&lt;&gt;);
  *
@@ -463,10 +463,10 @@ FUNC_PAWNDOC(Iter_Clear(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to test the emptiness of.</param>
  * <remarks>
- *  For multi-iterators <c>Iter_IsEmpty(a&lt;&gt;)</c> and <c>Iter_IsEmpty(a&lt;5&gt;)</c>
- *  are different.  The first returns <c>true</c> when all values are unused
- *  by any slot.  The second returns <c>true</c> when that slot alone has no
- *  values, even if every single value is used by other slots.
+ *   For multi-iterators <c>Iter_IsEmpty(a&lt;&gt;)</c> and <c>Iter_IsEmpty(a&lt;5&gt;)</c>
+ *   are different.  The first returns <c>true</c> when all values are unused
+ *   by any slot.  The second returns <c>true</c> when that slot alone has no
+ *   values, even if every single value is used by other slots.
  *
  * native Iter_IsEmpty(Iterator:Name&lt;&gt;);
  *
@@ -482,10 +482,10 @@ FUNC_PAWNDOC(Iter_IsEmpty(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to test the non-emptiness of.</param>
  * <remarks>
- *  For multi-iterators <c>Iter_NonEmpty(a&lt;&gt;)</c> and <c>Iter_NonEmpty(a&lt;5&gt;)</c>
- *  are different.  The first returns <c>true</c> when any value is used, in
- *  any slot.  The second returns <c>true</c> when that slot alone has any
- *  values.
+ *   For multi-iterators <c>Iter_NonEmpty(a&lt;&gt;)</c> and <c>Iter_NonEmpty(a&lt;5&gt;)</c>
+ *   are different.  The first returns <c>true</c> when any value is used, in
+ *   any slot.  The second returns <c>true</c> when that slot alone has any
+ *   values.
  *
  * native Iter_NonEmpty(Iterator:Name&lt;&gt;);
  *
@@ -501,10 +501,10 @@ FUNC_PAWNDOC(Iter_NonEmpty(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to test the fullness of.</param>
  * <remarks>
- *  For multi-iterators <c>Iter_IsFull(a&lt;&gt;)</c> and <c>Iter_IsFull(a&lt;5&gt;)</c>
- *  are different.  The first returns <c>true</c> when all values are used, in
- *  any slot.  The second returns <c>true</c> when that slot alone has all
- *  values.
+ *   For multi-iterators <c>Iter_IsFull(a&lt;&gt;)</c> and <c>Iter_IsFull(a&lt;5&gt;)</c>
+ *   are different.  The first returns <c>true</c> when all values are used, in
+ *   any slot.  The second returns <c>true</c> when that slot alone has all
+ *   values.
  *
  * native Iter_IsFull(Iterator:Name&lt;&gt;);
  *
@@ -520,10 +520,10 @@ FUNC_PAWNDOC(Iter_IsFull(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to test the non-fullness of.</param>
  * <remarks>
- *  For multi-iterators <c>Iter_NonFull(a&lt;&gt;)</c> and <c>Iter_NonFull(a&lt;5&gt;)</c>
- *  are different.  The first returns <c>true</c> when not all values are used
- *  anywhere.  The second returns <c>true</c> when that slot alone is missing
- *  some values, even if those values are in other slots.
+ *   For multi-iterators <c>Iter_NonFull(a&lt;&gt;)</c> and <c>Iter_NonFull(a&lt;5&gt;)</c>
+ *   are different.  The first returns <c>true</c> when not all values are used
+ *   anywhere.  The second returns <c>true</c> when that slot alone is missing
+ *   some values, even if those values are in other slots.
  *
  * native Iter_NonFull(Iterator:Name&lt;&gt;);
  *
@@ -539,8 +539,8 @@ FUNC_PAWNDOC(Iter_NonFull(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the first free slot in.</param>
  * <remarks>
- *  Finds an empty slot in an iterator, adds that slot to the iterator, and
- *  returns the now added slot.
+ *   Finds an empty slot in an iterator, adds that slot to the iterator, and
+ *   returns the now added slot.
  *
  * native Iter_Alloc(Iterator:Name&lt;&gt;);
  *
@@ -569,9 +569,9 @@ FUNC_PAWNDOC(Iter_Alloc(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to empty.</param>
  * <remarks>
- *  Uses a static array copy to blank the iterator instead of a loop.
+ *   Uses a static array copy to blank the iterator instead of a loop.
  *
- *  BROKEN!
+ *   BROKEN!
  *
  * native Iter_FastClear(IteratorArray:Name[]&lt;&gt;);
  *
@@ -587,7 +587,7 @@ FUNC_PAWNDOC(Iter_FastClear(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the start of.</param>
  * <remarks>
- *  Gets a point BEFORE the start of the iterator (the theoretical beginning).
+ *   Gets a point BEFORE the start of the iterator (the theoretical beginning).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -600,7 +600,7 @@ FUNC_PAWNDOC(Iter_Begin(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the end of.</param>
  * <remarks>
- *  Gets a point AFTER the end of the iterator (think "MAX_PLAYERS").
+ *   Gets a point AFTER the end of the iterator (think "MAX_PLAYERS").
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -613,7 +613,7 @@ FUNC_PAWNDOC(Iter_End(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the first valid element in.</param>
  * <remarks>
- *  Gets the first element in an iterator.
+ *   Gets the first element in an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -626,8 +626,8 @@ FUNC_PAWNDOC(Iter_First(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to</param>
  * <remarks>
- *  Gets the last element in an iterator.  Works by getting the previous item
- *  from the one BEFORE the first element (i.e. the one before the sentinel).
+ *   Gets the last element in an iterator.  Works by getting the previous item
+ *   from the one BEFORE the first element (i.e. the one before the sentinel).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -641,7 +641,7 @@ FUNC_PAWNDOC(Iter_Last(Iterator:iter<>));
  * <param name="iter">Name of the iterator to get the next element in.</param>
  * <param name="cur">The current element.</param>
  * <remarks>
- *  Gets the element in an iterator after the current one.
+ *   Gets the element in an iterator after the current one.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -655,7 +655,7 @@ FUNC_PAWNDOC(Iter_Next(Iterator:iter<>, cur));
  * <param name="iter">Name of the iterator to get the previous element in.</param>
  * <param name="cur">The current element.</param>
  * <remarks>
- *  Gets the element in an iterator before the current one.  Slow.
+ *   Gets the element in an iterator before the current one.  Slow.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -668,7 +668,7 @@ FUNC_PAWNDOC(Iter_Prev(Iterator:iter<>, cur));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the true array of.</param>
  * <remarks>
- *  Accesses the internal array of an iterator.
+ *   Accesses the internal array of an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -679,7 +679,7 @@ FUNC_PAWNDOC(Iter_TrueArray(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the true count of.</param>
  * <remarks>
- *  Accesses the internal count of an iterator.
+ *   Accesses the internal count of an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -690,7 +690,7 @@ FUNC_PAWNDOC(Iter_TrueCount(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Multi iterator to get the true count of.</param>
  * <remarks>
- *  Accesses the internal count of a multi-iterator.
+ *   Accesses the internal count of a multi-iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -701,7 +701,7 @@ FUNC_PAWNDOC(Iter_TrueMulti(Iterator:iter<,>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the true size of.</param>
  * <remarks>
- *  Accesses the internal size of an iterator.
+ *   Accesses the internal size of an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -714,7 +714,7 @@ FUNC_PAWNDOC(Iter_TrueSize(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the true starts of.</param>
  * <remarks>
- *  Accesses the number of starts in a multi-iterator.
+ *   Accesses the number of starts in a multi-iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -727,7 +727,7 @@ FUNC_PAWNDOC(Iter_Starts(Iterator:iter<>));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the size of.</param>
  * <remarks>
- *  Accesses the size of an iterator.
+ *   Accesses the size of an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -742,9 +742,9 @@ FUNC_PAWNDOC(Iter_Size(Iterator:iter<>));
  * <param name="index">Index.</param>
  * <param name="wrap">Keep going around until a value is found?</param>
  * <remarks>
- *  Wrapper for Iter_Index_Internal.  Returns the Nth value in the iterator
- *  (requires looping due to the way iterators are stored and optimised for
- *  loops not direct access).
+ *   Wrapper for Iter_Index_Internal.  Returns the Nth value in the iterator
+ *   (requires looping due to the way iterators are stored and optimised for
+ *   loops not direct access).
  *
  * native Iter_Index(Iterator:Name&lt;&gt;);
  *
@@ -774,9 +774,9 @@ FUNC_PAWNDOC(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
  * <param name="iter">Name of the iterator to deal with safely.</param>
  * <param name="index">Index.</param>
  * <remarks>
- *  Call functions that modify an iterator safely from inside a loop:
+ *   Call functions that modify an iterator safely from inside a loop:
  *
- *  <code>
+ *   <code>
  *      DestroyVehicle(vehicleid)
  *      {
  *          Iter_Remove(Vehicle, vehicleid);
@@ -789,7 +789,7 @@ FUNC_PAWNDOC(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
  *              DestroyVehicle(vehicleid);
  *          }
  *      }
- *  </code>
+ *   </code>
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -993,7 +993,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define Iter_State@%0\32;%1) Iter_State@%0%1)
 
 /*-------------------------------------------------------------------------*//**
- *  The workings of these macros are very extensively documented at:
+ *   The workings of these macros are very extensively documented at:
  *
  *      <a href="http://forum.sa-mp.com/showpost.php?p=2823668" />
 	
@@ -1028,16 +1028,16 @@ stock const
 	/**
 	 * <library>y_iterate</library>
 	 * <remarks>
-	 *  This variable is re-declared when you do <c>foreach (Player, i)</c> or
-	 *  similar so that a warning is generated.  The warning will read:
+	 *   This variable is re-declared when you do <c>foreach (Player, i)</c> or
+	 *   similar so that a warning is generated.  The warning will read:
 	 *    
-	 *  <code>
+	 *   <code>
 	 *    local variable "using_deprecated_foreach_syntax" shadows a variable at a preceding level
-	 *  </code>
+	 *   </code>
 	 *    
-	 *  This is the best I could do to warn about the old syntax.  That code
-	 *  should now be <c>foreach (new i : Player)</c>.  It may become an error
-	 *  later.
+	 *   This is the best I could do to warn about the old syntax.  That code
+	 *   should now be <c>foreach (new i : Player)</c>.  It may become an error
+	 *   later.
 	 * </remarks>
 	 */
 	bool:using_deprecated_foreach_syntax = false,
@@ -1053,7 +1053,7 @@ stock const
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
  * <remarks>
- *  Creates a new iterator start/array pair.
+ *   Creates a new iterator start/array pair.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1073,7 +1073,7 @@ FUNC_PAWNDOC(Iterator:Iterator(name));
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
  * <remarks>
- *  An iterator with an associated array of information.
+ *   An iterator with an associated array of information.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1085,9 +1085,9 @@ FUNC_PAWNDOC(Iterator:Iterator(name));
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
  * <remarks>
- *  Suppress warnings when <c>_:</c> is used (correctly) instead of
- *  <c>_no_itertag:</c>.  This function is never called, it only exists to
- *  check tags in <c>Iter_Add</c> et. al, while guarded by <c>FALSE ?</c>.
+ *   Suppress warnings when <c>_:</c> is used (correctly) instead of
+ *   <c>_no_itertag:</c>.  This function is never called, it only exists to
+ *   check tags in <c>Iter_Add</c> et. al, while guarded by <c>FALSE ?</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 stock operator*(_no_itertag:a, b)

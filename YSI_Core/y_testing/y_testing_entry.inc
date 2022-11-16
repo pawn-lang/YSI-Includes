@@ -408,7 +408,7 @@ static stock const
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Name of the current function.</param>
  * <remarks>
- *  Gets a reference to the 
+ *   Gets a reference to the 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -498,7 +498,7 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
  * <param name="str">What to ask.</param>
  * <param name="va_args">Additional data.</param>
  * <remarks>
- *  Calls a dialog to ask the player if the given test actually passed.
+ *   Calls a dialog to ask the player if the given test actually passed.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -625,7 +625,7 @@ stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Name of the current function.</param>
  * <remarks>
- *  Gets a reference to the 
+ *   Gets a reference to the 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -651,10 +651,10 @@ stock bool:_Testing_End()
  * <param name="fails">Number of tests which failed.</param>
  * <param name="buffer">The name of the first test which failed.</param>
  * <returns>
- *  Wether all tests were sucessful or not.
+ *   Wether all tests were sucessful or not.
  * </returns>
  * <remarks>
- *  -
+ *   -
  *
  * native Testing_Run(&amp;tests, &amp;fails, buffer[33] = "");
  *
@@ -793,10 +793,10 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
  * <param name="fails">Number of tests which failed.</param>
  * <param name="buffer">The name of the first test which failed.</param>
  * <returns>
- *  Wether all tests were sucessful or not.
+ *   Wether all tests were sucessful or not.
  * </returns>
  * <remarks>
- *  -
+ *   -
  *
  * native bool:Testing_Player(playerid, &amp;idx, &amp;tests, &amp;fails, lastfail[33] = "", bool:p = false);
  *

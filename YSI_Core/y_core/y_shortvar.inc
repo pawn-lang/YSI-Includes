@@ -108,7 +108,7 @@ new
 	/**
 	 * <library>y_shortvar</library>
 	 * <remarks>
-	 *  A temporary string variable, mainly for interim results.
+	 *   A temporary string variable, mainly for interim results.
 	 * </remarks>
 	 */
 	Q@[YSI_MAX_STRING];
@@ -117,18 +117,18 @@ stock
 	/**
 	 * <library>y_shortvar</library>
 	 * <remarks>
-	 *  A "nul" target - send things there if they need ignoring or if a
-	 *  parameter needs ignoring.  Not guaranteed to keep its value for any
-	 *  length of time.  If you set it, don't expect it to remain the same!
+	 *   A "nul" target - send things there if they need ignoring or if a
+	 *   parameter needs ignoring.  Not guaranteed to keep its value for any
+	 *   length of time.  If you set it, don't expect it to remain the same!
 	 * </remarks>
 	 */
 	I@ = 0,
 	/**
 	 * <library>y_shortvar</library>
 	 * <remarks>
-	 *  A "nul" target - send things there if they need ignoring or if a
-	 *  parameter needs ignoring.  Not guaranteed to keep its value for any
-	 *  length of time.  If you set it, don't expect it to remain the same!
+	 *   A "nul" target - send things there if they need ignoring or if a
+	 *   parameter needs ignoring.  Not guaranteed to keep its value for any
+	 *   length of time.  If you set it, don't expect it to remain the same!
 	 * </remarks>
 	 */
 	J@ = 0;
@@ -141,12 +141,12 @@ stock
 	/**
 	 * <library>y_shortvar</library>
 	 * <remarks>
-	 *  A massive string.  That's it.  Just for internal formatting when the
-	 *  length isn't known in advance and we need to just go massively OTT to
-	 *  ensure that all user code works.  It is split in to individual arrays
-	 *  for using per-language, but the whole lot can be used as an even bigger
-	 *  concatenated string with <c>YSI_UNSAFE_HUGE_STRING</c>, of length
-	 *  <c>YSI_UNSAFE_HUGE_LENGTH</c>.
+	 *   A massive string.  That's it.  Just for internal formatting when the
+	 *   length isn't known in advance and we need to just go massively OTT to
+	 *   ensure that all user code works.  It is split in to individual arrays
+	 *   for using per-language, but the whole lot can be used as an even bigger
+	 *   concatenated string with <c>YSI_UNSAFE_HUGE_STRING</c>, of length
+	 *   <c>YSI_UNSAFE_HUGE_LENGTH</c>.
 	 * </remarks>
 	 */
 	YSI_gUnsafeHugeString[MAX_LANGUAGES][2048];
@@ -157,9 +157,9 @@ stock
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  Used by y_master and y_remote.  Re-evaluate after rewrites.  Just an alias
- *  for <c>setproperty</c>, but with a shorter name (for macro length limits)
- *  and better defaults.
+ *   Used by y_master and y_remote.  Re-evaluate after rewrites.  Just an alias
+ *   for <c>setproperty</c>, but with a shorter name (for macro length limits)
+ *   and better defaults.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -168,9 +168,9 @@ native U@(id = 0, const name[] = "", value = cellmin, const string[] = "") = set
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  Used by y_master and y_remote.  Re-evaluate after rewrites.  Just an alias
- *  for <c>getproperty</c>, but with a shorter name (for macro length limits)
- *  and better defaults.
+ *   Used by y_master and y_remote.  Re-evaluate after rewrites.  Just an alias
+ *   for <c>getproperty</c>, but with a shorter name (for macro length limits)
+ *   and better defaults.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -179,8 +179,8 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  An alias for <c>CallLocalFunction</c>, but with a shorter name (for macro
- *  length limits) and better tag support.
+ *   An alias for <c>CallLocalFunction</c>, but with a shorter name (for macro
+ *   length limits) and better tag support.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -193,8 +193,8 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  An alias for <c>CallRemoteFunction</c>, but with a shorter name (for macro
- *  length limits) and better tag support.
+ *   An alias for <c>CallRemoteFunction</c>, but with a shorter name (for macro
+ *   length limits) and better tag support.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -207,8 +207,8 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  An alias for <c>SetTimerEx</c>, but with a shorter name (for macro length
- *  limits) and better tag support.
+ *   An alias for <c>SetTimerEx</c>, but with a shorter name (for macro length
+ *   limits) and better tag support.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -223,7 +223,7 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 /**
  * <library>y_shortvar</library>
  * <remarks>
- *  <c>true</c>, but usable in tests without a constant expression warning.
+ *   <c>true</c>, but usable in tests without a constant expression warning.
  * </remarks>
  */
 #if defined TRUE
@@ -237,7 +237,7 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 /**
  * <library>y_shortvar</library>
  * <remarks>
- *  <c>false</c>, but usable in tests without a constant expression warning.
+ *   <c>false</c>, but usable in tests without a constant expression warning.
  * </remarks>
  */
 #if defined FALSE
@@ -251,10 +251,10 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 /**
  * <library>y_shortvar</library>
  * <remarks>
- *  The null string with <c>\1</c> as the first character.  This isn't a true
- *  null string, that is the string of length 0, but this string is often used
- *  instead due to a bug with passing empty strings to and from the VM.  Every
- *  <c>IsNull</c> check ever has been designed to detect this version.
+ *   The null string with <c>\1</c> as the first character.  This isn't a true
+ *   null string, that is the string of length 0, but this string is often used
+ *   instead due to a bug with passing empty strings to and from the VM.  Every
+ *   <c>IsNull</c> check ever has been designed to detect this version.
  * </remarks>
  */
 #if defined NULL
@@ -269,16 +269,16 @@ stock const
 	/**
 	 * <library>y_shortvar</library>
 	 * <remarks>
-	 *  A single space in a string, for string interning.  Just a micro-
-	 *  optimisation to use this instead of <c>" "</c> throughout YSI.
+	 *   A single space in a string, for string interning.  Just a micro-
+	 *   optimisation to use this instead of <c>" "</c> throughout YSI.
 	 * </remarks>
 	 */
 	YSI_SPACE[] = " ",
 	/**
 	 * <library>y_shortvar</library>
 	 * <remarks>
-	 *  An empty string, for string interning.  Just a micro-optimisation to use
-	 *  this instead of <c>""</c> throughout YSI.
+	 *   An empty string, for string interning.  Just a micro-optimisation to use
+	 *   this instead of <c>""</c> throughout YSI.
 	 * </remarks>
 	 */
 	YSI_EMPTY[] = "";
@@ -292,13 +292,13 @@ forward @_y_shortvar_y_@();
 /*-------------------------------------------------------------------------*//**
  * <library>y_shortfunc</library>
  * <remarks>
- *  The old compiler has a bug when using <c>SYSREQ.C</c> - the natives aren't
- *  marked as used, so won't be included in the output if they aren't used
- *  normally elsewhere.  This function, on the old compiler, calls the natives
- *  defined in this file to ensure that they go in to the native function table.
- *  However, they are called with nonsense parameters so this function must
- *  itself never be called.  That would normally mean that this is itself
- *  elided from the AMX, hence it is <c>public</c>.
+ *   The old compiler has a bug when using <c>SYSREQ.C</c> - the natives aren't
+ *   marked as used, so won't be included in the output if they aren't used
+ *   normally elsewhere.  This function, on the old compiler, calls the natives
+ *   defined in this file to ensure that they go in to the native function table.
+ *   However, they are called with nonsense parameters so this function must
+ *   itself never be called.  That would normally mean that this is itself
+ *   elided from the AMX, hence it is <c>public</c>.
  * </remarks>
  */
 
