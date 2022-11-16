@@ -186,13 +186,20 @@ static stock const
 #define COMMAND CMD
 
 // Alt commands:
-#define _YCMD_4:@yC_%0(%9);%9(%9)%9;%9(%9);%9(%1)=%2; POSTINIT__%0(){Command_AddAltNamed(#%2,#%0);}
-#define _YCMD_5:@yC_%0(%9);%9(%9)=%2; POSTINIT__%0(){Command_AddAltNamed(#%2,#%0);}
+#define _YCMD_4:_F<@yC_>%0(%9);%9(%9)%9;%9(%9);%9(%1)=%2; POSTINIT__%0(){Command_AddAltNamed(#%2,#%0);}
+#define _YCMD_5:_F<@yC_>%0(%9);%9(%9)=%2; POSTINIT__%0(){Command_AddAltNamed(#%2,#%0);}
 
 #define @_yC%0\32; @_yC
 #define @y_C%0\32; @y_C
 #define @yC_%0\32; @yC_
 #define _@yC%0\32; _@yC
+#define @C_y%0\32; @C_y
+
+#define @_yC0000%0\32; @_yC0000
+#define @y_C0000%0\32; @y_C0000
+#define @yC_0000%0\32; @yC_0000
+#define _@yC0000%0\32; _@yC0000
+#define @C_y0000%0\32; @C_y0000
 
 // Forwards for optional command callbacks.
 forward e_COMMAND_ERRORS:OnPlayerCommandReceived(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
@@ -1836,7 +1843,7 @@ static stock _Command_GetDisplay(funcid, playerid)
  *   
  *   <code>
  *     const alts = { "h", "help", "ajuda" };                                   <br />
- *     _Command_Decorator(.altcount = sizeof (alts), .alts = ref(alts));
+ *     _Command_Decorator(.altcount = sizeof (alts), .altpointer = ref(alts));
  *   </code>
  *   
  *   For now this is the only parameter that needs special handling.  Example:
@@ -1850,12 +1857,49 @@ static stock _Command_GetDisplay(funcid, playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Command_Decorator(const string:func__[], const string:name[] = "", altcount = 0, &alts = 0, prefix = '/', Group:group = Group:0, bool:disabled = false, bool: hidden = false)
+_Command_Decorator(const string:func__[], const string:name[] = "", altcnt__ = 0, &altptr__ = 0, prefix = '/', Group:group = Group:0, bool:disabled = false, bool: hidden = false)
 {
 	// `alta` is a pointer to a pointer.  Dereference it once, so the pointer is
 	// a pointer straight to the real data.  This is just to utilise the
 	// compiler and real pawn as much as possible.
 	#emit LREF.S.pri alts
 	#emit STOR.S.pri alts
+	if (IsNull(name))
+	{
+		// Use `func__` for everything.
+	}
+	else
+	{
+		// `func__` remains the canonical internal name, but isn't what the
+		// user types.  This is simply implemented as another alternate name
+		// with the original name completely disabled for all players.
+	}
+	while (altcnt__--)
+	{
+		// Add alternate versions of this command.
+	}
+	if (group)
+	{
+		// There's a group given, as the only users of this command.
+	}
+	if (disabled)
+	{
+		// Disable this command initially.
+	}
+	if (hidden)
+	{
+		// TODO:  We don't actually currently have a way to mark a command as
+		// hidden.  Things like `foreach (new c : Command(playerid))` will loop
+		// through all the commands the player can use, regardless of anything.
+	}
 }
+
+// Un-inline the alt commands array.
+#define _Command_Decorator(%0{%1}%2) const altnames__[][]={%1};_Command_Decorator(%0$%2)
+#define alts=$ altptr__=ref(altnames__),.altcnt__=sizeof (altnames__)
+#define func__=#%1,) func__=#%1)
+
+// TODO: y_master integration.
+#define @cmd(%0)%1(%2) POSTINIT__ %1(){_Command_Decorator(.func__=#%1,%0);}_F<@C_y>%1(a,b[],c);_F<@C_y>%1(a,b[],c)U@(8,YSIM_RETURN,_F<@_yC>%1(a,b,c));_F<@_yC>%1(%2);_F<@_yC>%1(%2)
+#define @command @cmd
 
