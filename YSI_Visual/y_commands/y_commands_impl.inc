@@ -1831,6 +1831,8 @@ static stock _Command_GetDisplay(funcid, playerid)
 	return 0;
 }
 
+native Command_Strcat_(dest[], src, len) = strcat;
+
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <param name="func__">The name of the implementing function.  Also the command if <c>name</c> isn't given.</param>
@@ -1883,13 +1885,10 @@ static stock _Command_GetDisplay(funcid, playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Command_Decorator(const string:func__[], const string:name[] = "", altcnt__ = 0, &altptr__ = 0, prefix = '/', Group:group = Group:0, bool:disabled = false, bool: hidden = false)
+_Command_Decorator(const string:func__[], const string:name[] = "", altcnt__ = 0, altptr__ = 0, prefix = '/', Group:group = Group:0, bool:disabled = false, bool: hidden = false)
 {
-	// `alta` is a pointer to a pointer.  Dereference it once, so the pointer is
-	// a pointer straight to the real data.  This is just to utilise the
-	// compiler and real pawn as much as possible.
-	#emit LREF.S.pri alts
-	#emit STOR.S.pri alts
+	new cmd = Command_GetID(func__);
+	new str[FUNCTION_LENGTH];
 	if (IsNull(name))
 	{
 		// Use `func__` for everything.
@@ -1899,10 +1898,18 @@ _Command_Decorator(const string:func__[], const string:name[] = "", altcnt__ = 0
 		// `func__` remains the canonical internal name, but isn't what the
 		// user types.  This is simply implemented as another alternate name
 		// with the original name completely disabled for all players.
+		Command_AddAlt(cmd, name);
+		// Remove all players.
+		// TODO: Set the group default.
 	}
 	while (altcnt__--)
 	{
 		// Add alternate versions of this command.
+		// Get an offset in to the 2D array.
+		str[0] = '\0',
+		Command_Strcat_(str, altptr__ + AMX_Read(altptr__), FUNCTION_LENGTH),
+		altptr__ += cellbytes,
+		Command_AddAlt(cmd, str);
 	}
 	if (group)
 	{
