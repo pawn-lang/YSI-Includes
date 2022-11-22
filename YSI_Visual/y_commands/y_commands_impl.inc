@@ -88,9 +88,8 @@ Optional plugins:
 
 enum e_COMMAND_FLAGS
 {
-	#if defined Y_COMMANDS_USE_CHARS
-		e_COMMAND_FLAG_PREFIX = 0xFF,
-	#endif
+	e_COMMAND_FLAG_PREFIX = 0xFF,
+	e_COMMAND_FLAG_BITS = 0xFF000000,
 	// Inherit user permissions.
 	e_COMMAND_FLAG_INHERIT = 0x01000000,
 	// Can't be listed.
@@ -235,7 +234,7 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 
 */
 
-#define _Command_GetPlayer(%0,%1) (PA_Get(YSI_g_sCommands[(%0)][E_COMMAND_USERS], (%1)))
+//#define _Command_GetPlayer(%0,%1) (PA_Get(YSI_g_sCommands[(%0)][E_COMMAND_USERS], (%1)))
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
@@ -258,24 +257,6 @@ FUNC_PAWNDOC(bool:_Command_IsEmptySlot(idx));
 
 FUNC_PAWNDOC(bool:_Command_IsAlt(idx));
 #define _Command_IsAlt(%0) (YSI_g_sCommands[(%0)][E_COMMAND_POINTER] & cellmin)
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_commands</library>
- * <param name="ptr">AMX function pointer.</param>
- * <param name="idx">Index of the parent command data.</param>
- * <param name="name">Destination for the parent function name.</param>
- * <remarks>
- *   Finds the original version of an alt command.  Updated to not contain long
- *   chains (along with "Command_AddAlt").
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-FUNC_PAWNDOC(_Command_GetReal(&ptr,&idx,name[]));
-#define _Command_GetReal(%0,%1,%2)                              \
-	if((%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER])&cellmin)   \
-			%1=(%0)&~cellmin,									\
-			%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER],		\
-			strunpack(%2,YSI_g_sCommands[(%1)][E_COMMAND_NAME])
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
@@ -305,7 +286,7 @@ FUNC_PAWNDOC(_Command_GetReal(&ptr,&idx,name[]));
 	#define Command_Error(%0,%2) Command_ErrorRet(%2)
 #endif
 
-#define Command_OnReceived(%2,%0,%1) ((sErr=(YSI_g_sSystemSettings&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(_:COMMAND_%2))):(COMMAND_%2)),Command_Error(%0,sErr))
+#define Command_OnReceived(%2,%0,%1) ((sErr=(YSI_g_sSystemSettings&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),_:(%2))):(%2)),Command_Error(%0,sErr))
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
@@ -410,7 +391,48 @@ GLOBAL__ Command_GetID(const string:function[])
  * <param name="cmd">The new name.</param>
  * <param name="inherit">Does the new command use the parent's permissions?</param>
  * <returns>
- *   The command's ID.
+ *   The command's ID.  You can't do this:
+ *   
+ *   <code>
+ *     Command_Add("help");
+ *     Command_AddAlt("help", "h");
+ *     Command_AddAlt("h", "ajuda");
+ *   </code>
+ *   
+ *   The chaining won't work, only the top-level command will be used as a point
+ *   of reference.  This code will run as if it were:
+ *   
+ *   <code>
+ *     Command_Add("help");
+ *     Command_AddAlt("help", "h");
+ *     Command_AddAlt("help", "ajuda");
+ *   </code>
+ *   
+ *   Previously this was done silently behind the scenes because it didn't
+ *   matter - the externally observable effects were always the same.  However,
+ *   it does matter now with permission inheritance, because these two things
+ *   are different:
+ *   
+ *   <code>
+ *     Command_Add("help");
+ *     Command_AddAlt("help", "h");
+ *     Command_AddAlt("h", "ajuda", true);
+ *   </code>
+ *   
+ *   Vs:
+ *   
+ *   <code>
+ *     Command_Add("help");
+ *     Command_AddAlt("help", "h");
+ *     Command_AddAlt("help", "ajuda", true);
+ *   </code>
+ *   
+ *   In the first version you'd expect <c>/ajuda</c> to inherit the permissions
+ *   of <c>/h</c>, which may be different to the permissions of <c>/help</c>.
+ *   However, in the second (accurate) version <c>/ajuda</c> will inherit from
+ *   <c>/help</c>, which may still be different to <c>/h</c>, thus not what you
+ *   want.  Allowing the chaining of permissions is very simple code-wise, but
+ *   until I see a demand for it, it isn't implemented.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
@@ -422,13 +444,20 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 		sCmd[64],
 		sHash = 0;
 
-	if (!_Command_IsValid(oidx)) return COMMAND_NOT_FOUND;
+	if (!_Command_IsValid(oidx))
+	{
+		return COMMAND_NOT_FOUND;
+	}
 	// Check the pointer is valid.
 	new
 		id = YSI_g_sCommands[oidx][E_COMMAND_POINTER];
 	// The command we are pointing to is already an alternate for a third
 	// command - point this new command at the parent.
-	if (id & cellmin) oidx = id & ~cellmin;
+	if (id & cellmin)
+	{
+		Debug_Warning("Command_AddAlt: Using grandparent for alternate `/%s`", cmd);
+		oidx = id & ~cellmin;
+	}
 
 	Puny_EncodeHash(sCmd, cmd, sHash, .delimiter = '@');
 
@@ -444,7 +473,7 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 		}
 		// This sets the prefix even when that feature is disabled, because
 		// there's literally no overhead in doing so.
-		YSI_g_sCommands[id][E_COMMAND_FLAGS] = e_COMMAND_FLAG_PRI | (e_COMMAND_FLAGS:'/'),
+		YSI_g_sCommands[id][E_COMMAND_FLAGS] = e_COMMAND_FLAG_ALT | (e_COMMAND_FLAGS:'/'),
 		// Save the new highest ID for loops later.
 		YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1),
 		// Save the command's pointer.
@@ -478,10 +507,49 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
  * <param name="cmd">The new name.</param>
  * <param name="inherit">Does the new command use the parent's permissions?</param>
  * <remarks>
- *   Add an alternate command for an existing command.
- *
- * native Command_AddAlt(cmdID, altname[]);
- *
+ *   Add an alternate command for an existing command.  Switched to a wrapper
+ *   so we can add a third optional parameter.  You can't do this:
+ *   
+ *   <code>
+ *     Command_Add("help");
+ *     Command_AddAlt("help", "h");
+ *     Command_AddAlt("h", "ajuda");
+ *   </code>
+ *   
+ *   The chaining won't work, only the top-level command will be used as a point
+ *   of reference.  This code will run as if it were:
+ *   
+ *   <code>
+ *     Command_Add("help");
+ *     Command_AddAlt("help", "h");
+ *     Command_AddAlt("help", "ajuda");
+ *   </code>
+ *   
+ *   Previously this was done silently behind the scenes because it didn't
+ *   matter - the externally observable effects were always the same.  However,
+ *   it does matter now with permission inheritance, because these two things
+ *   are different:
+ *   
+ *   <code>
+ *     Command_Add("help");
+ *     Command_AddAlt("help", "h");
+ *     Command_AddAlt("h", "ajuda", true);
+ *   </code>
+ *   
+ *   Vs:
+ *   
+ *   <code>
+ *     Command_Add("help");
+ *     Command_AddAlt("help", "h");
+ *     Command_AddAlt("help", "ajuda", true);
+ *   </code>
+ *   
+ *   In the first version you'd expect <c>/ajuda</c> to inherit the permissions
+ *   of <c>/h</c>, which may be different to the permissions of <c>/help</c>.
+ *   However, in the second (accurate) version <c>/ajuda</c> will inherit from
+ *   <c>/help</c>, which may still be different to <c>/h</c>, thus not what you
+ *   want.  Allowing the chaining of permissions is very simple code-wise, but
+ *   until I see a demand for it, it isn't implemented.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -530,22 +598,28 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	if ((sRet = _:_Command_IsPrefix(c[0]))) // Relies on "true = 1" later on!
 	{
 		if (!c[1])
-			return Command_OnReceived(INVALID_INPUT, p, c);
+		{
+			return Command_OnReceived(COMMAND_INVALID_INPUT, p, c);
+		}
 	}
 	else
 	{
 		if (IsNull(c))
-			return Command_OnReceived(INVALID_INPUT, p, NULL);
+		{
+			return Command_OnReceived(COMMAND_INVALID_INPUT, p, NULL);
+		}
 	}
 	// Check for a valid player.
 	#if !defined Y_COMMANDS_NO_IPC
 		if (!IsPlayerConnected(p))
-			return Command_OnReceived(NO_PLAYER, p, c);
+		{
+			return Command_OnReceived(COMMAND_NO_PLAYER, p, c);
+		}
 	#endif
 	Debug_Print1("Commands_OnPlayerCommandText called: %d %s", p, c);
 	if (PA_Get(YSI_g_sDisabledPlayers, p))
 	{
-		sRet = Command_OnReceived(DISABLED, p, c);
+		sRet = Command_OnReceived(COMMAND_DISABLED, p, c);
 		if (sErr != COMMAND_OK)
 			return sRet;
 	}
@@ -556,23 +630,57 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
 	Debug_Print5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, YSI_g_sCurrentID);
 	if (YSI_g_sCurrentID == COMMAND_NOT_FOUND)
-		return Command_OnReceived(UNDEFINED, p, c);
+	{
+		return Command_OnReceived(COMMAND_UNDEFINED, p, c);
+	}
 	#if defined Y_COMMANDS_USE_CHARS
 		// Have a prefix, but not the right one.  Calling this function directly
 		// always works for all possible command prefixes.
 		if (sRet && _Command_GetPrefix(YSI_g_sCurrentID) != c[0])
-			return Command_OnReceived(BAD_PREFIX, p, c);
+		{
+			return Command_OnReceived(COMMAND_BAD_PREFIX, p, c);
+		}
 	#endif
-	Debug_Print5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
+	//Debug_Print5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
 	// Can the player use this command?  `Command_OnReceived` sets "sErr".
-	if ((h&2) || _Command_GetPlayer(YSI_g_sCurrentID, p))
-		sRet = Command_OnReceived(OK, p, c);
-	else
-		sRet = Command_OnReceived(DENIED, p, c);
+	sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER];
+	if (h & 2)
+	{
+		sRet = _:COMMAND_OK;
+	}
+	else switch (YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INDIRECT | e_COMMAND_FLAG_ALT))
+	{
+	case e_COMMAND_FLAG_INDIRECT, e_COMMAND_FLAG_DISABLED, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INDIRECT:
+		// Disabled primary commands.
+		sRet = _:COMMAND_DENIED;
+	case e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
+		// Disabled alternate commands.  We still get the primary as the call
+		// to `Command_OnReceived` may result in it being called.
+		sRet = _:COMMAND_DENIED,
+		YSI_g_sCurrentID = sHash & ~cellmin,
+		sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER],
+		strunpack(sCmd[4], YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NAME]);
+	case e_COMMAND_FLAG_ALT:
+		// Alternate command with its own permissions.
+		sRet = _:(PA_Get(YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_USERS], p) ? COMMAND_OK : COMMAND_DENIED),
+		YSI_g_sCurrentID = sHash & ~cellmin,
+		sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER],
+		strunpack(sCmd[4], YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NAME]);
+	case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
+		// Alternate command with inherited permissions.
+		YSI_g_sCurrentID = sHash & ~cellmin,
+		sRet = _:(PA_Get(YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_USERS], p) ? COMMAND_OK : COMMAND_DENIED),
+		sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER],
+		strunpack(sCmd[4], YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NAME]);
+	default:
+		// No flags.
+		sRet = _:(PA_Get(YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_USERS], p) ? COMMAND_OK : COMMAND_DENIED);
+	}
+	sRet = Command_OnReceived(e_COMMAND_ERRORS:sRet, p, c);
 	if (sErr != COMMAND_OK)
+	{
 		return sRet;
-	// Find the true version of the command (alts etc).
-	_Command_GetReal(sHash, YSI_g_sCurrentID, sCmd[4]);
+	}
 	Debug_Print5("Commands_OnPlayerCommandText: Read %d", YSI_g_sCurrentID);
 	Debug_Print5("Commands_OnPlayerCommandText: Master %d %d", Master_ID(), _:MASTER_GET<YSI_g_sCurrentID>);
 	#if YSIM_HAS_MASTER
@@ -750,9 +858,9 @@ GLOBAL__ bool:Command_GetPlayerDisabled(playerid)
  *   Can this player use this command?
  * </returns>
  * <remarks>
- *
- * native bool:Command_GetPlayer(command, playerid);
- *
+ *   Returns <c>true</c> if a player can use a command, but the command is
+ *   hidden.  Meanwhile, the inbuilt loops will not return the command.  This
+ *   gives a way to truly see the underlying information.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -760,7 +868,27 @@ FOREIGN__ bool:Command_GetPlayer(cmd, pid);
 
 GLOBAL__ bool:Command_GetPlayer(cmd, pid)
 {
-	if (_Command_IsValid(cmd) && VALID_PLAYERID(pid)) return _Command_GetPlayer(cmd, pid);
+	if (_Command_IsValid(cmd) && VALID_PLAYERID(pid))
+	{
+		switch (YSI_g_sCommands[cmd][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+		{
+		case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT:
+		{
+			// Primary command that isn't indirect, hidden, or disabled.
+			// Alternate command that isn't inherited, hidden, or disabled.
+			return PA_Get(YSI_g_sCommands[cmd][E_COMMAND_USERS], pid);
+		}
+		case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
+		{
+			// Alternate command that is inherited.  Use the parent.
+			return PA_Get(YSI_g_sCommands[YSI_g_sCommands[cmd][E_COMMAND_POINTER] & ~cellmin][E_COMMAND_USERS], pid);
+		}
+		default:
+		{
+			return false;
+		}
+		}
+	}
 	return false;
 }
 
@@ -800,7 +928,10 @@ FOREIGN__ void:Command_SetPlayer(c, p, bool:s);
 GLOBAL__ void:Command_SetPlayer(c, p, bool:s)
 {
 	Debug_Print2("Command_SetPlayer called: %i, %i, %i", c, p, s);
-	if (_Command_IsValid(c) && VALID_PLAYERID(p)) PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
+	if (_Command_IsValid(c) && VALID_PLAYERID(p))
+	{
+		PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1046,7 +1177,7 @@ FOREIGN__ Command_AddAltNamed__(const string:function[], const string:altname[],
 
 GLOBAL__ Command_AddAltNamed__(const string:function[], const string:altname[], bool:inherit)
 {
-	return Command_AddAlt(Command_Find(function), altname);
+	return Command_AddAlt__(Command_Find(function), altname, inherit);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1146,7 +1277,8 @@ GLOBAL__ Command_GetCurrent()
  *
  * native Command_GetPlayerCommandCount(playerid);
  *
- * Has an internal name and an external name, because macros.
+ *   Has an internal name and an external name, because macros.  Ignores hidden
+ *   commands, because they're hidden!
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1161,9 +1293,32 @@ GLOBAL__ YCMD_GetPlayerCommandCount(playerid)
 		count = 0;
 	for (new i = 0; i != YSI_g_sHighestID; ++i)
 	{
-		if (_Command_IsActive(i) && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
+		if (_Command_IsActive(i))
 		{
-			++count;
+			switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+			{
+			case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT:
+			{
+				// Primary command that isn't indirect, hidden, or disabled.
+				// Alternate command that isn't inherited, hidden, or disabled.
+				if (YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
+				{
+					++count;
+				}
+			}
+			case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
+			{
+				// Alternate command that is inherited.  Use the parent.
+				if (YSI_g_sCommands[YSI_g_sCommands[i][E_COMMAND_POINTER] & ~cellmin][E_COMMAND_USERS][slot] & mask)
+				{
+					++count;
+				}
+			}
+			default:
+			{
+				// Any other combination is skipped.
+			}
+			}
 		}
 	}
 	return count;
@@ -1283,8 +1438,33 @@ GLOBAL__ string:Command_GetNext(index, playerid)
 			Bit:mask = PA_Mask(playerid);
 		for (new i = 0; i != YSI_g_sHighestID; ++i)
 		{
-			if (_Command_IsActive(i) && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
+			if (_Command_IsActive(i))
 			{
+				switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+				{
+				case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT:
+				{
+					// Primary command that isn't indirect, hidden, or disabled.
+					// Alternate command that isn't inherited, hidden, or disabled.
+					if (!(YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask))
+					{
+						continue;
+					}
+				}
+				case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
+				{
+					// Alternate command that is inherited.  Use the parent.
+					if (!(YSI_g_sCommands[YSI_g_sCommands[i][E_COMMAND_POINTER] & ~cellmin][E_COMMAND_USERS][slot] & mask))
+					{
+						continue;
+					}
+				}
+				default:
+				{
+					// Any other combination is skipped.
+					continue;
+				}
+				}
 				// Skip already displayed ones.
 				if (index)
 				{
@@ -1366,7 +1546,34 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
 		Bit:mask = PA_Mask(pid);
 	for (new i = start + 1; i < YSI_g_sHighestID; ++i)
 	{
-		if (_Command_IsActive(i) && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask) return i;
+		if (_Command_IsActive(i))
+		{
+			switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+			{
+			case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT:
+			{
+				// Primary command that isn't indirect, hidden, or disabled.
+				// Alternate command that isn't inherited, hidden, or disabled.
+				if (YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
+				{
+					return i;
+				}
+			}
+			case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
+			{
+				// Alternate command that is inherited.  Use the parent.
+				if (YSI_g_sCommands[YSI_g_sCommands[i][E_COMMAND_POINTER] & ~cellmin][E_COMMAND_USERS][slot] & mask)
+				{
+					return i;
+				}
+			}
+			default:
+			{
+				// Any other combination is skipped.
+				continue;
+			}
+			}
+		}
 	}
 	return COMMAND_NOT_FOUND;
 }
@@ -1935,29 +2142,90 @@ static stock _Command_GetDisplay(funcid, playerid)
 		new
 			slot = PA_Slot(playerid),
 			Bit:mask = PA_Mask(playerid);
+_Command_GetDisplay_retry:
 		// Check if they can use the original version.
-		if (YSI_g_sCommands[funcid][E_COMMAND_USERS][slot] & mask)
+		switch (YSI_g_sCommands[funcid][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
 		{
-			return strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
+		case e_COMMAND_FLAG_ALT:
+		{
+			// Allowed alternate.
+			if (YSI_g_sCommands[funcid][E_COMMAND_USERS][slot] & mask)
+			{
+				return strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
+			}
+			funcid = YSI_g_sCommands[funcid][E_COMMAND_POINTER] & ~cellmin;
+			goto _Command_GetDisplay_retry;
 		}
-		// BAD REUSE OF THE "playerid" VARIABLE.
-		if ((playerid = YSI_g_sCommands[funcid][E_COMMAND_POINTER]) & cellmin)
+		case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
 		{
-			// The given function is an alternate version of a real function -
-			// test the parent function first.
 			// BAD REUSE OF THE "playerid" VARIABLE.
-			if (YSI_g_sCommands[(funcid = playerid & ~cellmin)][E_COMMAND_USERS][slot] & mask)
+			if (YSI_g_sCommands[(playerid = YSI_g_sCommands[funcid][E_COMMAND_POINTER] & ~cellmin)][E_COMMAND_USERS][slot] & mask)
+			{
+				return strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
+			}
+			funcid = playerid;
+			goto _Command_GetDisplay_retry;
+		}
+		case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_HIDDEN                                                   ,
+		     e_COMMAND_FLAG_ALT                         | e_COMMAND_FLAG_DISABLED                         ,
+		     e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED                         ,
+		     e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_HIDDEN                           | e_COMMAND_FLAG_INHERIT,
+		     e_COMMAND_FLAG_ALT                         | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INHERIT,
+		     e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INHERIT:
+		{
+			// All the variations of disabled alternates.
+			funcid = YSI_g_sCommands[funcid][E_COMMAND_POINTER] & ~cellmin;
+			goto _Command_GetDisplay_retry;
+		}
+		case e_COMMAND_FLAG_PRI:
+		{
+			// Allowed primary.
+			if (YSI_g_sCommands[funcid][E_COMMAND_USERS][slot] & mask)
 			{
 				return strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
 			}
 		}
+		//case e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN                                                    ,
+		//     e_COMMAND_FLAG_PRI                         | e_COMMAND_FLAG_DISABLED                          ,
+		//     e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED                          ,
+		//     e_COMMAND_FLAG_PRI                                                   | e_COMMAND_FLAG_INDIRECT,
+		//     e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN                           | e_COMMAND_FLAG_INDIRECT,
+		//     e_COMMAND_FLAG_PRI                         | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INDIRECT,
+		//     e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INDIRECT:
+		default:
+		{
+			// All the variations of disabled primaries.
+		}
+		}
 		// Now we have a root command, check all alternates to this one.
-		funcid |= cellmin;
+		playerid = funcid | cellmin;
 		for (new i = 0; i != YSI_g_sHighestID; ++i)
 		{
-			if (_Command_IsActive(i) && YSI_g_sCommands[i][E_COMMAND_POINTER] == funcid && (YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask))
+			if (_Command_IsActive(i) && YSI_g_sCommands[i][E_COMMAND_POINTER] == playerid)
 			{
-				return strunpack(YSI_g_sReturnBuffer, Command_Name(i));
+				switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+				{
+				case e_COMMAND_FLAG_ALT:
+				{
+					// Allowed alternate.
+					if (YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
+					{
+						return strunpack(YSI_g_sReturnBuffer, Command_Name(i));
+					}
+				}
+				case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
+				{
+					// BAD REUSE OF THE "playerid" VARIABLE.
+					if (YSI_g_sCommands[funcid][E_COMMAND_USERS][slot] & mask)
+					{
+						return strunpack(YSI_g_sReturnBuffer, Command_Name(i));
+					}
+				}
+				default:
+				{
+					// Do nothing, try the next alternative.
+				}
+				}
 			}
 		}
 	}
@@ -2048,7 +2316,7 @@ native Command_Strcat_(dest[], src, len) = strcat;
 		str[0] = '\0',
 		Command_Strcat_(str, altptr__ + AMX_Read(altptr__), FUNCTION_LENGTH),
 		altptr__ += cellbytes;
-		new aid = Command_AddAlt(cmd, str),
+		new aid = Command_AddAlt(cmd, str);
 		Command_SetDisabled(aid, disabled),
 		Command_SetHidden(aid, hidden);
 	}
@@ -2071,7 +2339,7 @@ native Command_Strcat_(dest[], src, len) = strcat;
 }
 
 // Un-inline the alt commands array.
-#define Command_Decorator__(%0{%1}%2) const altnames__[][]={%1};Command_Decorator__(%0$%2)
+#define Command_Decorator__(%0{%1}%2) static const altnames__[][]={%1};Command_Decorator__(%0$%2)
 #define alts=$ altptr__=ref(altnames__),.altcnt__=sizeof (altnames__)
 #define func__=#%1,) func__=#%1)
 

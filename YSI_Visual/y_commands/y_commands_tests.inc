@@ -638,3 +638,139 @@ YCMD:y_commands_t111111(playerid, params[], help)
 	}
 #endif
 
+@cmd() ycmdtest1(playerid, params[], help)
+{
+	SendClientMessage(playerid, 0xFF0000AA, "/ycmdtest1 called");
+	return 1;
+}
+
+YCMD:ycmdtest2(playerid, params[], help) = ycmdtest1;
+
+@cmd(.alts = { "ycmdtest4" }) ycmdtest3(playerid, params[], help)
+{
+	SendClientMessage(playerid, 0xFF0000AA, "/ycmdtest3 called");
+	return 1;
+}
+
+@cmd(.name = "усмдтест") ycmdtest7(playerid, params[], help)
+{
+	SendClientMessage(playerid, 0xFF0000AA, "/ycmdtest3 called");
+	return 1;
+}
+
+@cmd(.disabled = true) ycmdtest8(playerid, params[], help)
+{
+	SendClientMessage(playerid, 0xFF0000AA, "/ycmdtest3 called");
+	return 1;
+}
+
+@testinit() y_commands_perm0(playerid)
+{
+	Command_AddAltNamed("ycmdtest3", "ycmdtest5", true);
+	Command_AddAltNamed("ycmdtest3", "ycmdtest6", false);
+}
+
+@test(.group = "y_commands") y_commands_perm0(playerid)
+{
+}
+
+@testinit() y_commands_perm1(playerid)
+{
+	Command_SetPlayer(YCMD:ycmdtest1, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest2, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest3, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest4, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest5, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest6, playerid, false);
+}
+
+@test(.group = "y_commands") y_commands_perm1(playerid)
+{
+	ASK("Can you use /ycmdtest1?");
+}
+
+@testinit() y_commands_perm2(playerid)
+{
+	Command_SetPlayer(YCMD:ycmdtest1, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest2, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest3, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest4, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest5, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest6, playerid, false);
+}
+
+@test(.group = "y_commands") y_commands_perm2(playerid)
+{
+	ASK("Can you not use /ycmdtest2?");
+}
+
+@testinit() y_commands_perm3(playerid)
+{
+	Command_SetPlayer(YCMD:ycmdtest1, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest2, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest3, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest4, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest5, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest6, playerid, false);
+}
+
+@test(.group = "y_commands") y_commands_perm3(playerid)
+{
+	ASK("Can you use /ycmdtest3?");
+}
+
+@testinit() y_commands_perm4(playerid)
+{
+	Command_SetPlayer(YCMD:ycmdtest1, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest2, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest3, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest4, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest5, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest6, playerid, false);
+}
+
+@test(.group = "y_commands") y_commands_perm4(playerid)
+{
+	ASK("Can you not use /ycmdtest4?");
+}
+
+@testinit() y_commands_perm5(playerid)
+{
+	Command_SetPlayer(YCMD:ycmdtest1, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest2, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest3, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest4, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest5, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest6, playerid, false);
+}
+
+@test(.group = "y_commands") y_commands_perm5(playerid)
+{
+	ASK("Can you use /ycmdtest5?");
+}
+
+@testinit() y_commands_perm6(playerid)
+{
+	Command_SetPlayer(YCMD:ycmdtest1, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest2, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest3, playerid, true);
+	Command_SetPlayer(YCMD:ycmdtest4, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest5, playerid, false);
+	Command_SetPlayer(YCMD:ycmdtest6, playerid, false);
+}
+
+@test(.group = "y_commands") y_commands_perm6(playerid)
+{
+	ASK("Can you not use /ycmdtest6?");
+}
+
+@test(.group = "y_commands") y_commands_perm7(playerid)
+{
+	ASK("Can you not use /ycmdtest7?");
+}
+
+@test(.group = "y_commands") y_commands_perm8(playerid)
+{
+	ASK("Can you not use /усмдтест?");
+}
+
