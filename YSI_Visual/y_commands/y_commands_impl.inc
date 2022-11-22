@@ -2297,7 +2297,7 @@ native Command_Strcat_(dest[], src, len) = strcat;
 		// `func__` remains the canonical internal name, but isn't what the
 		// user types.  This is simply implemented as another alternate name
 		// with the original name completely disabled for all players.
-		Command_AddAlt(cmd, name);
+		Command_AddAlt(cmd, name, true);
 		// Remove all players.
 		// TODO: Set the group default.
 		Command_SetDisabled(cmd, true),
