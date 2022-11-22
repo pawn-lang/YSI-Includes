@@ -450,7 +450,7 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 		// Save the command's pointer.
 		YSI_g_sCommands[id][E_COMMAND_POINTER] = cellmin | oidx,
 		// Add this command to the hash map (does the name too).
-		HashMap_Add(YSI_g_sCommandMap, sCmd, id),
+		HashMap_Add(YSI_g_sCommandMap, sCmd, id);
 		// Add all players, or defer to y_groups.
 		if (inherit)
 		{
@@ -480,14 +480,14 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
  * <remarks>
  *   Add an alternate command for an existing command.
  *
- * native Command_AddAltNamed(function[], altname[]);
+ * native Command_AddAlt(cmdID, altname[]);
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock Command_AddAlt(oidx, const string:cmd[], bool:inherit = false)
 {
-	return Command_AddAlt__(function, altname, inherit);
+	return Command_AddAlt__(oidx, cmd, inherit);
 }
 
 /*-------------------------------------------------------------------------*//**
