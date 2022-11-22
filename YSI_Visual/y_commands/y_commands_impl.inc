@@ -100,8 +100,6 @@ enum e_COMMAND_FLAGS
 	e_COMMAND_FLAG_PRI = 0x08000000,
 	// Is an alternative.
 	e_COMMAND_FLAG_ALT = 0x10000000,
-	// Primary can't be used explicitly.
-	e_COMMAND_FLAG_INDIRECT = 0x20000000
 }
 
 enum E_COMMAND
@@ -648,9 +646,9 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	{
 		sRet = _:COMMAND_OK;
 	}
-	else switch (YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INDIRECT | e_COMMAND_FLAG_ALT))
+	else switch (YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT))
 	{
-	case e_COMMAND_FLAG_INDIRECT, e_COMMAND_FLAG_DISABLED, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INDIRECT:
+	case e_COMMAND_FLAG_DISABLED:
 		// Disabled primary commands.
 		sRet = _:COMMAND_DENIED;
 	case e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
@@ -2187,11 +2185,7 @@ _Command_GetDisplay_retry:
 		}
 		//case e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN                                                    ,
 		//     e_COMMAND_FLAG_PRI                         | e_COMMAND_FLAG_DISABLED                          ,
-		//     e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED                          ,
-		//     e_COMMAND_FLAG_PRI                                                   | e_COMMAND_FLAG_INDIRECT,
-		//     e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN                           | e_COMMAND_FLAG_INDIRECT,
-		//     e_COMMAND_FLAG_PRI                         | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INDIRECT,
-		//     e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INDIRECT:
+		//     e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED                          :
 		default:
 		{
 			// All the variations of disabled primaries.
