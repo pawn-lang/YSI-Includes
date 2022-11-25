@@ -335,3 +335,14 @@ We can now put the macro together:
 
 There's one more tiny trick in the final macro - the `_:`.  It seems pointless since the string already has the `_:` tag, but it is another macro in YSI that can detect and remove trailing `,`s.  The annotation options are passed in `(_:#%0,%2)` but if none are given, e.g. `@task()` then `%2` will be empty and the call will be `@task__(#OneSecond,);`, which is invalid code.  The `_:` detects this case and deals with it.
 
+Because `@task__` has three named parameters the annotation does too:
+
+```pawn
+@task(.interval = 1000, .copies = 5, .repeat = false) FiveTimes()
+{
+	printf("This is printed five times");
+}
+```
+
+Some annotations in YSI use a slightly more complex method for achieving this effect.  I'd like to pretend that some of this is because they're secretly doing more advanced things behind the scenes, but a lot of it is just because I hadn't come up with the helper/`@init()` method yet.
+
