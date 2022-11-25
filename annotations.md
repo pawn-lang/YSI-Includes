@@ -267,3 +267,71 @@ Call a function when the mode ends.  This is similar to `@hook() OnScriptExit()`
 }
 ```
 
+## Writing Your Own
+
+As an example of writing an annotation we will demonstrate a basic `@task()` equivalent, that is automatcially called at the given interval.  All annotations are actually macros and there is no single way to write one, this is just a simple first step.  The final use will look something like:
+
+```pawn
+@task(.interval = 1000) OneSecond()
+{
+	static seconds = 0;
+	++seconds;
+	printf("%d seconds", seconds);
+}
+```
+
+We start with the macro, which almost always has the same pattern.  Bear in mind that `%0` in the code below is the function name, but will probably start with a space.  By convention `%1` is all the parameters to the main function and `%2` is all the annotation configuration:
+
+```pawn
+#define @task(%2)%0(%1)
+```
+
+To make a timer we need two things - a timer function and a way to call the timer function.  The former is just a public function, the latter is some code that must be run when the mode starts.  There are many ways to get code to run at mode start, but the simplest is actually another annotation - `@init()`.  So we write a function with an `@init()` annotation to start the timer, and a second function with a normal `public` declaration as the code itself.  Note that because of the way `@init()` works we can actually give these two functions the same name, but that isn't always the case.  In short, we want the code above to become:
+
+```
+forward OneSecond();
+
+@init() OneSecond()
+{
+	SetTimer(#OneSecond, 1000, true);
+}
+
+public OneSecond()
+{
+	// Code goes here.
+}
+```
+
+To use the `.interval` syntax with this structure we can create a helper function that takes all the same parameters as we want to make available to users of the annotation, with all the correct names, and do everything in there instead:
+
+```
+@task__(const func__[], interval = 1000, bool:repeat = true, copies = 1)
+{
+	while (copies--)
+	{
+		SetTimer(func__, interval, repeat);
+	}
+}
+
+@init() OneSecond()
+{
+	@task__(#OneSecond, .interval = 1000);
+}
+```
+
+Again as a semi convention I'm using `__` suffixes for internal details that end-users shouldn't touch, but which must sadly be visible to them by virtue of how the code is called from anywhere.
+
+We can now put the macro together:
+
+```pawn
+#define @task(%2)%0(%1) \
+	forward %0(%1);                     \
+	@init() %0()                        \
+	{                                   \
+		@task__(_:#%0,%2);              \
+	}                                   \
+	public %0(%1)
+```
+
+There's one more tiny trick in the final macro - the `_:`.  It seems pointless since the string already has the `_:` tag, but it is another macro in YSI that can detect and remove trailing `,`s.  The annotation options are passed in `(_:#%0,%2)` but if none are given, e.g. `@task()` then `%2` will be empty and the call will be `@task__(#OneSecond,);`, which is invalid code.  The `_:` detects this case and deals with it.
+
