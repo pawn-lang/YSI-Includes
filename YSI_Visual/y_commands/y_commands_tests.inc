@@ -678,6 +678,7 @@ YCMD:ycmdtest2(playerid, params[], help) = ycmdtest1;
 
 @test(.group = "y_commands") y_commands_perm0(playerid)
 {
+	#pragma unused playerid
 }
 
 @testinit() y_commands_perm1(playerid)
