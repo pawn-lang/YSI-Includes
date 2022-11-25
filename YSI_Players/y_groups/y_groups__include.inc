@@ -21,6 +21,20 @@
 	#define _GROUP_MAKE_NAME        Y_COMMANDS_GROUP_NAME
 	#define _GROUP_MAKE_TAG         Y_COMMANDS_GROUP_TAG
 	#include "y_groups__funcs"
+
+	static stock y_groups_y_commands() <y_groups : y_groups_exists>
+	{
+	}
+
+	static stock y_groups_y_commands() <y_groups : y_groups_none>
+	{
+	}
+
+	stock Command_DecoratorGroup__(cmd, Group:g) <y_groups : y_groups_exists>
+	{
+		Group_ExclusiveCommand(g, cmd);
+	}
+
 	#undef Y_COMMANDS_GROUP_LIMIT
 	#undef Y_COMMANDS_GROUP_NAME
 	#undef Y_COMMANDS_GROUP_TAG

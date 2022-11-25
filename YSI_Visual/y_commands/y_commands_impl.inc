@@ -2226,6 +2226,24 @@ _Command_GetDisplay_retry:
 	return 0;
 }
 
+static stock y_commands_y_groups() <y_groups : y_groups_exists>
+{
+}
+
+static stock y_commands_y_groups() <y_groups : y_groups_none>
+{
+}
+
+stock Command_DecoratorGroup__(cmd, Group:g) <y_groups : y_groups_none>
+{
+	#pragma unused cmd, g
+}
+
+stock Command_DecoratorGroup__(cmd, Group:g) <>
+{
+	#pragma unused cmd, g
+}
+
 native Command_Strcat_(dest[], src, len) = strcat;
 
 /*-------------------------------------------------------------------------*//**
@@ -2286,6 +2304,7 @@ native Command_Strcat_(dest[], src, len) = strcat;
 	Command_Decorator__(const string:func__[], const string:name[] = "", altcnt__ = 0, altptr__ = 0, Group:group = Group:0, bool:disabled = false, bool: hidden = false)
 #endif
 {
+	state y_groups : y_groups_exists;
 	new cmd = Command_GetID(func__);
 	new str[FUNCTION_LENGTH];
 	if (IsNull(name))
@@ -2313,10 +2332,15 @@ native Command_Strcat_(dest[], src, len) = strcat;
 		new aid = Command_AddAlt(cmd, str);
 		Command_SetDisabled(aid, disabled),
 		Command_SetHidden(aid, hidden);
+		if (group)
+		{
+			Command_DecoratorGroup__(aid, group);
+		}
 	}
 	if (group)
 	{
 		// There's a group given, as the only users of this command.
+		Command_DecoratorGroup__(cmd, group);
 	}
 	if (disabled)
 	{
