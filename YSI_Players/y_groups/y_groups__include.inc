@@ -32,7 +32,7 @@
 
 	stock Command_DecoratorGroup__(cmd, Group:g) <y_groups : y_groups_exists>
 	{
-		Group_ExclusiveCommand(g, cmd);
+		Group_ExclusiveYCMD(g, cmd);
 	}
 
 	#undef Y_COMMANDS_GROUP_LIMIT
