@@ -564,11 +564,6 @@ ScriptInit_PostExitFuncs_()
 	}
 }
 
-#if __COMPILER_CONST_REF
-	#pragma warning push
-	#pragma warning disable 238
-#endif
-
 /*-------------------------------------------------------------------------*//**
  * <library>y_code</library>
  * <param name="var">The variable to modify.</param>
@@ -604,6 +599,11 @@ ScriptInit_PostExitFuncs_()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_CONST_REF
+	#pragma warning push
+	#pragma warning disable 238
+#endif
+
 stock _YSI_ConstMod(const &var, const val)
 {
 	#pragma unused var, val
@@ -611,7 +611,7 @@ stock _YSI_ConstMod(const &var, const val)
 	#emit LOAD.S.alt val
 	#emit SREF.S.alt var
 	#emit RETN
-	return 0;
+	__pragma("naked");
 }
 
 #if __COMPILER_CONST_REF

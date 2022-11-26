@@ -124,7 +124,6 @@ stock YSI_gAMXAddress_;
 #pragma warning disable 207
 #pragma disablerecursion
 #pragma warning pop
-#pragma warning disable 238
 
 // Check for accepted symbol names that are too long, since some (forked)
 // compiler versions increase the limit but a lot of YSI code is hard-coded
