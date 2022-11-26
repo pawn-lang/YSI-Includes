@@ -328,12 +328,16 @@ We can now put the macro together:
 	forward %0(%1);                     \
 	@init() %0()                        \
 	{                                   \
-		@task__(_:#%0,%2);              \
+		@task__(_:__nameof(%0),%2); \
 	}                                   \
 	public %0(%1)
 ```
 
-There's one more tiny trick in the final macro - the `_:`.  It seems pointless since the string already has the `_:` tag, but it is another macro in YSI that can detect and remove trailing `,`s.  The annotation options are passed in `(_:#%0,%2)` but if none are given, e.g. `@task()` then `%2` will be empty and the call will be `@task__(#OneSecond,);`, which is invalid code.  The `_:` detects this case and deals with it.
+There's two more tiny tricks in the final macro:
+
+* The `_:` seems pointless since the string already has the `_:` tag, but it is another macro in YSI that can detect and remove trailing `,`s.  The annotation options are passed in `(_:#%0,%2)` but if none are given, e.g. `@task()` then `%2` will be empty and the call will be `@task__(#OneSecond,);`, which is invalid code.  The `_:` detects this case and deals with it.
+
+* Using `__nameof(%0)` instead of `#%0`.  In this specific case there's no advantage since everything is generated so we can't get the name wrong, but it is a useful introduction to a new compiler feature (back-ported by YSI and invented by Pawn Plus).  `__nameof` will only convert the parameter to a string if the symbol exists, otherwise it will give an error.  This can be useful in code like `SetTimer`, to ensure that the function really exists and you didn't make a typo: `SetTimer("MyTomer", 1000, false);` - compiles but doesn't work; `SetTimer(#MyTomer, 1000, false);` - same problem; `SetTimer(__nameof(MyTomer), 1000, false);` - compile-time error.
 
 Because `@task__` has three named parameters the annotation does too:
 
