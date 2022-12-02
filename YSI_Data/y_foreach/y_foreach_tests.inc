@@ -3741,15 +3741,58 @@ iterfunc stock y_iter_yield7a(x)
 	ASSERT_EQ(idx, sizeof(answers));
 }
 
-static Iterator:y_iter_huge<65535>; // Maximum.
+static Iterator:y_iter_huge1<65535>; // Maximum.
 
-@test(.group = "y_iterate") y_iter_huge()
+@test(.group = "y_iterate") y_iter_huge1()
 {
 	for (new i = 0; i != 50100; ++i)
 	{
-		Iter_Add(y_iter_huge, i);
+		Iter_Add(y_iter_huge1, i);
 	}
-	ASSERT_EQ(Iter_Count(y_iter_huge), 50100);
+	ASSERT_EQ(Iter_Count(y_iter_huge1), 50100);
+}
+
+static Iterator:y_iter_huge2<65535>; // Maximum.
+
+@test(.group = "y_iterate") y_iter_huge2()
+{
+	for (new i = 0; i != 50100; ++i)
+	{
+		Iter_RandomAdd(y_iter_huge2);
+	}
+	ASSERT_EQ(Iter_Count(y_iter_huge2), 50100);
+	new c = 0;
+	foreach (new i : y_iter_huge2)
+	{
+		++c;
+	}
+	ASSERT_EQ(c, 50100);
+}
+
+@test(.group = "y_iterate") y_iter_AddHeuristics()
+{
+	// Test all the ways of adding values.
+	new
+		Iterator:iter<20>;
+	Iter_Add(iter, 2);  // Version 0
+	Iter_Add(iter, 18); // Version 1
+	Iter_Add(iter, 16); // Version 3
+	Iter_Add(iter, 3);  // Version 4
+	Iter_Add(iter, 7);  // Version 4
+	// 18 - 2 + 1 = 17
+	// 25 * 3 / 2 = 37.5
+	Iter_Add(iter, 8);  // Version 2
+	Iter_Add(iter, 9);  // Version 2
+	Iter_Add(iter, 10); // Version 2
+	ASSERT_EQ(Iter_Count(iter), 8);
+	ASSERT(Iter_Contains(iter, 2));
+	ASSERT(Iter_Contains(iter, 18));
+	ASSERT(Iter_Contains(iter, 16));
+	ASSERT(Iter_Contains(iter, 3));
+	ASSERT(Iter_Contains(iter, 7));
+	ASSERT(Iter_Contains(iter, 8));
+	ASSERT(Iter_Contains(iter, 9));
+	ASSERT(Iter_Contains(iter, 10));
 }
 
 @test(.group = "y_iterate") y_iter_RandomFreeExclude()

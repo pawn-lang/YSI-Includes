@@ -726,8 +726,7 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		Debug_Print5("Iter_Add: In iterator");
 		new
 			next = array[size],
-			last = array[size - 1],
-			split;
+			last = array[size - 1];
 		// We use many heuristics to try and find where in the list to insert
 		// this new value as fast as possible.
 		//
@@ -739,6 +738,7 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		//
 		if (next > value)
 		{
+			//printf("Version 0");
 			last = size;
 		}
 		//
@@ -749,21 +749,73 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		//
 		else if (value > (last = (last == size) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1)))
 		{
+			//printf("Version 1");
 			next = size;
 		}
+		// Version 2 is currently commented out - I got the density backwards.
+		////
+		//// Version 2:
+		////
+		////   If the array is densely filled then just looping linearly from the
+		////   value until we hit something in the array will be faster than
+		////   iterating through the list.  For that we need the average number of
+		////   steps required, which is `count * 5/6 / 2`, the 5/6 coming from the
+		////   forwards/backwards split.  So if `(last - first) / count / 2` is
+		////   smaller than that number then the density is sufficient to justify
+		////   a linear scan.  For the scan lower bound we don't use `5/6` because
+		////   we can go forwards at any point in the array.
+		////
+		////   Simplify:
+		////
+		////     d = last - next + 1
+		////     c = count
+		////   
+		////     d / c / 2 < c * 5/6 / 2
+		////     d / c     < c * 5/6
+		////     d         < c^2 * 5/6
+		////
+		////   Note: The code now uses `3/4` not `5/6` because it is slightly
+		////   faster to compute, and the `prev` code is inlined so also slightly
+		////   faster than the originally profiled version.
+		////
+		//else if ((last - next + 1) < (count * count * 3) >> 2)
+		//{
+		//	//printf("Version 2");
+		//	next = value + 1;
+		//	while (array[next] <= next)
+		//	{
+		//		++next;
+		//	}
+		//	last = array[next - 1],
+		//	last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
+		//}
 		//
-		// TODO: Version 2, 3, 4, 5.
+		// Version 3:
 		//
-		//   These are based on the following observations:
+		//   Iterating forwards is about five times faster than iterating
+		//   backwards, but if the new value is near the end of the array (i.e.
+		//   in the last sixth) it is still faster to go forwards than
+		//   backwards.  Note we reduced these ratios to `3/4`.
 		//
-		//   1. Iterating forwards is about five times faster than iterating
-		//      backwards, but if the new value is near the end of the array
-		//      (i.e. in the last sixth) it is still faster to go forwards than
-		//      backwards.
+		else if ((last - value) * 3 < value - next)
+		{
+			//printf("Version 3");
+			while (last > value)
+			{
+				Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
+				next = last,
+				last = array[next - 1],
+				last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
+			}
+		}
 		//
+		// Version 4:
+		//
+		//   Base case.  Loop through the list forwards.
 		//
 		else
 		{
+			//printf("Version 4");
 			last = size;
 			while (next < value)
 			{
