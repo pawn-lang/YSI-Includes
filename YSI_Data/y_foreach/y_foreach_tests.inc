@@ -3745,14 +3745,7 @@ static Iterator:y_iter_huge<65535>; // Maximum.
 
 @test(.group = "y_iterate") y_iter_huge()
 {
-	// Go backwards.  Forwards works, but hits a serious worst-case because
-	// each addition iterates through all previous entries.
-	for (new i = 50000; i-- > 0; )
-	{
-		Iter_Add(y_iter_huge, i);
-	}
-	// Check forwards anyway, just with a few fewer items added.
-	for (new i = 50000; i < 50100; ++i)
+	for (new i = 0; i != 50100; ++i)
 	{
 		Iter_Add(y_iter_huge, i);
 	}

@@ -725,14 +725,60 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 	{
 		Debug_Print5("Iter_Add: In iterator");
 		new
-			last = size++,
-			next = array[last];
-		while (next < value)
+			next = array[size],
+			last = Iter_Prev_InternalD(array, size + 1, size);
+		// We use many heuristics to try and find where in the list to insert
+		// this new value as fast as possible.
+		//
+		// Version 0:
+		//
+		//   This is the first value added.
+		//
+		if (next == size)
 		{
-			Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
-			last = next,
-			next = array[last];
+			last = size;
 		}
+		// Version 1:
+		//
+		//   It is being inserted at the end.  By far the most common case when
+		//   initialising some list of items.
+		//
+		else if (value > last)
+		{
+			next = size;
+		}
+		// TODO: Version 2, 3, 4, 5.
+		//
+		//   These are based on the following observations:
+		//
+		//   1. Iterating forwards is about five times faster than iterating
+		//      backwards, but if the new value is near the end of the array
+		//      (i.e. in the last sixth) it is still faster to go forwards than
+		//      backwards.
+		//
+		//   2. If the array is densely filled then just looping linearly from
+		//      the value until we hit something in the array will be faster
+		//      than iterating through the list.  For that we need the average
+		//      number of steps required, which is `count * 5/6 / 2`, the 5/6
+		//      coming from the forwards/backwards split.  So if
+		//      `(last - first) / count / 2` is smaller than that number then
+		//      the density is sufficient to justify a linear scan.  For the
+		//      scan lower bound we don't use `5/6` because we can go forwards
+		//      at any point in the array.
+		//
+		else
+		{
+			last = size;
+			while (next < value)
+			{
+				Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
+				last = next,
+				next = array[last];
+			}
+		}
+		// Increase `size` so we modulo over the whole array, not just the
+		// valid values subset.
+		++size;
 		Debug_Print5("Iter_Add: Removing %d, %d, %d, %d, %d, %d", last, value, size, next, next - 1, (value - 1) % size);
 		if ((last + 1) % size != value)
 		{
