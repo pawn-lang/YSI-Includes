@@ -3756,12 +3756,17 @@ static Iterator:y_iter_huge2<65535>; // Maximum.
 
 @test(.group = "y_iterate") y_iter_huge2()
 {
+	printf("Adding:");
 	for (new i = 0; i != 50100; ++i)
 	{
+		//printf(" - iteration %d", i);
+		ASSERT_EQ(Iter_Count(y_iter_huge2), i);
 		Iter_RandomAdd(y_iter_huge2);
+		ASSERT_EQ(Iter_Count(y_iter_huge2), i + 1);
 	}
 	ASSERT_EQ(Iter_Count(y_iter_huge2), 50100);
 	new c = 0;
+	printf("Looping:");
 	foreach (new i : y_iter_huge2)
 	{
 		++c;

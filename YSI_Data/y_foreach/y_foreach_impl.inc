@@ -245,9 +245,14 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 {
 	new
-		n = numargs() - 3,
-		s,
-		e;
+		n = numargs() - 3;
+	if (n == 0)
+	{
+		return Iter_Add_InternalC(count, array, start, Iter_RandomFree_Single(count, array, start));
+	}
+	new
+		e,
+		s;
 	// Get the range of the dynamic parameters.
 	#emit ADDR.pri             __param3_offset
 	#emit STOR.S.pri           s
@@ -262,7 +267,8 @@ stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 		#emit PUSH.pri
 		s += cellbytes;
 	}
-	s = Iter_RandomFree_Impl(count, array, start, n);
+	s = Iter_RandomFree_Multi(count, array, start, n);
+	printf("Found random %d, %d, %d, %d", count, start, n, s);
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
@@ -294,9 +300,14 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 	while (slots--)
 		count += counts[slots];
 	new
-		n = numargs() - 6,
-		s,
-		e;
+		n = numargs() - 6;
+	if (n == 0)
+	{
+		return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_Single(count, array, start));
+	}
+	new
+		e,
+		s;
 	// Get the range of the dynamic parameters.
 	#emit ADDR.pri             __param6_offset
 	#emit STOR.S.pri           s
@@ -311,7 +322,7 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 		#emit PUSH.pri
 		s += cellbytes;
 	}
-	s = Iter_RandomFree_Impl(count, array, size, n);
+	s = Iter_RandomFree_Multi(count, array, size, n);
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
@@ -417,9 +428,14 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 {
 	new
-		n = numargs() - 3,
-		s,
-		e;
+		n = numargs() - 3;
+	if (n == 0)
+	{
+		return Iter_RandomFree_Single(count, array, start);
+	}
+	new
+		e,
+		s;
 	// Get the range of the dynamic parameters.
 	#emit ADDR.pri             __param3_offset
 	#emit STOR.S.pri           s
@@ -434,7 +450,7 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 		#emit PUSH.pri
 		s += cellbytes;
 	}
-	s = Iter_RandomFree_Impl(count, array, start, n);
+	s = Iter_RandomFree_Multi(count, array, start, n);
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
@@ -450,11 +466,12 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
  * <remarks>
- *   Returns a random unused value from an iterator.
+ *   Returns a random unused value from an iterator.  Takes a load of hidden
+ *   extra parameters on the stack, which are values to not return.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Iter_RandomFree_Impl(count, const array[], start, num)
+static stock Iter_RandomFree_Multi(count, const array[], start, num)
 {
 	count = start - count;
 	new
@@ -466,34 +483,30 @@ static stock Iter_RandomFree_Impl(count, const array[], start, num)
 	#emit STOR.S.alt   first
 	#emit ADD
 	#emit STOR.S.pri   last
-	// Short-circuit the common-case where there are no exclusions.
-	if (num)
+	// Count how many unique values there are.
+	for (new value = 0, ptr = first; ptr != last; ptr += cellbytes)
 	{
-		// Count how many unique values there are.
-		for (new value = 0, ptr = first; ptr != last; ptr += cellbytes)
+		#emit LREF.S.pri   ptr
+		#emit STOR.S.pri   value
+		// First, check if this is valid and OUT the array.
+		if (0 <= value < start && array[value] <= value)
 		{
-			#emit LREF.S.pri   ptr
-			#emit STOR.S.pri   value
-			// First, check if this is valid and OUT the array.
-			if (0 <= value < start && array[value] <= value)
+			// Is this unique?
+			for (new i2 = first, v2 = 0; i2 != ptr; i2 += cellbytes)
 			{
-				// Is this unique?
-				for (new i2 = first, v2 = 0; i2 != ptr; i2 += cellbytes)
+				#emit LREF.S.pri   i2
+				#emit STOR.S.pri   v2
+				if (value == v2)
 				{
-					#emit LREF.S.pri   i2
-					#emit STOR.S.pri   v2
-					if (value == v2)
-					{
-						// Only the first instance of any number is counted.
-						--num;
-						break;
-					}
+					// Only the first instance of any number is counted.
+					--num;
+					break;
 				}
 			}
-			else
-			{
-				--num;
-			}
+		}
+		else
+		{
+			--num;
 		}
 	}
 	if (count <= num)
@@ -502,42 +515,80 @@ static stock Iter_RandomFree_Impl(count, const array[], start, num)
 	}
 	// There are enough elements to search from after exclusions.
 	count = random(count - num);
-	if (num)
-	{
-		for ( ; ; )
-		{
-Iter_RandomFree_Internal_loop:
-			--start;
-			// Check if this is an excluded value.
-			if (array[start] > start)
-			{
-				continue;
-			}
-			for (num = first; num != last; num += cellbytes)
-			{
-				#emit LREF.S.pri   num
-				#emit LOAD.S.alt   start
-				#emit JEQ          Iter_RandomFree_Internal_loop
-			}
-			// Don't use `do {} while ();` or this decrement will be run when
-			// the `continue;` above is hit.
-			if (!count--)
-			{
-				return start;
-			}
-		}
-	}
-	// No exclutions, use the old code.
 	for ( ; ; )
 	{
+Iter_RandomFree_Internal_loop:
 		--start;
-		// Check if this value is not included in any iterator.  If it isn't
-		// then decrement the count until we have run out of values to test.
-		if (array[start] <= start && !count--)
+		// Check if this is an excluded value.
+		if (array[start] > start)
+		{
+			continue;
+		}
+		for (num = first; num != last; num += cellbytes)
+		{
+			#emit LREF.S.pri   num
+			#emit LOAD.S.alt   start
+			#emit JEQ          Iter_RandomFree_Internal_loop
+		}
+		// Don't use `do {} while ();` or this decrement will be run when
+		// the `continue;` above is hit.
+		if (count == 0)
 		{
 			break;
 		}
+		--count
 	}
+	return start;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="count">Number of items in the iterator.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="start">Size of the iterator.</param>
+ * <remarks>
+ *   Returns a random unused value from an iterator.  No exclusions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Iter_RandomFree_Single(count, const array[], start)
+{
+	printf("start = %d, count = %d, rem = %d", start, count, start - count);
+	// Get the unused count, not the used count.
+	count = start - count;
+	if (count <= 0)
+	{
+		return INVALID_ITERATOR_SLOT;
+	}
+	// There are enough elements to search from after exclusions.
+	count = random(count);
+	printf("random = %d", count);
+	// No exclutions, use the old code.
+	new ins = 0;
+	for ( ; ; )
+	{
+		//printf("start = %d, count = %d", start, count);
+		--start;
+		// Check if this value is not included in any iterator.  If it isn't
+		// then decrement the count until we have run out of values to test.
+		if (array[start] > start)
+		{
+			++ins;
+		}
+		else if (count == 0)
+		{
+			break;
+		}
+		else
+		{
+			--count;
+		}
+		//if (array[start] <= start && !count--)
+		//{
+		//	break;
+		//}
+	}
+	printf("index = %d, %d", start, count);
 	return start;
 }
 
@@ -561,9 +612,14 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
 	while (slots--)
 		count += counts[slots];
 	new
-		n = numargs() - 4,
-		s,
-		e;
+		n = numargs() - 4;
+	if (n == 0)
+	{
+		return Iter_RandomFree_Single(count, array, start);
+	}
+	new
+		e,
+		s;
 	// Get the range of the dynamic parameters.
 	#emit ADDR.pri             __param4_offset
 	#emit STOR.S.pri           s
@@ -578,7 +634,7 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...
 		#emit PUSH.pri
 		s += cellbytes;
 	}
-	s = Iter_RandomFree_Impl(count, array, start, n);
+	s = Iter_RandomFree_Multi(count, array, start, n);
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
@@ -720,7 +776,7 @@ stock Iter_FreeMulti_Internal(const array[], trueSize, start)
 
 stock Iter_Add_InternalC(&count, array[], size, value)
 {
-	Debug_Print3("Iter_Add called: %d, %d, %d", count, size, value);
+	printf("Iter_Add called: %d, %d, %d", count, size, value);
 	if (0 <= value < size && array[value] <= value)
 	{
 		Debug_Print5("Iter_Add: In iterator");
@@ -738,7 +794,7 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		//
 		if (next > value)
 		{
-			//printf("Version 0");
+			printf("Version 0");
 			last = size;
 		}
 		//
@@ -749,7 +805,7 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		//
 		else if (value > (last = (last == size) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1)))
 		{
-			//printf("Version 1");
+			printf("Version 1");
 			next = size;
 		}
 		// Version 2 is currently commented out - I got the density backwards.
@@ -799,7 +855,7 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		//
 		else if ((last - value) * 3 < value - next)
 		{
-			//printf("Version 3");
+			printf("Version 3");
 			while (last > value)
 			{
 				Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
@@ -815,7 +871,7 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		//
 		else
 		{
-			//printf("Version 4");
+			printf("Version 4");
 			last = size;
 			while (next < value)
 			{
