@@ -302,7 +302,7 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 		n = numargs() - 6;
 	if (n == 0)
 	{
-		return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_Single(count, array, start));
+		return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_Single(count, array, size));
 	}
 	new
 		e,
