@@ -726,7 +726,7 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		Debug_Print5("Iter_Add: In iterator");
 		new
 			next = array[size],
-			last = Iter_Prev_InternalD(array, size + 1, size);
+			last = array[size - 1];
 		// We use many heuristics to try and find where in the list to insert
 		// this new value as fast as possible.
 		//
@@ -743,7 +743,7 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		//   It is being inserted at the end.  By far the most common case when
 		//   initialising some list of items.
 		//
-		else if (value > last)
+		else if (value > (last = (last == size) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1)))
 		{
 			next = size;
 		}
