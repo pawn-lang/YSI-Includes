@@ -3752,7 +3752,7 @@ static Iterator:y_iter_huge1<65535>; // Maximum.
 	ASSERT_EQ(Iter_Count(y_iter_huge1), 50100);
 }
 
-static Iterator:y_iter_huge2<65535>; // Maximum.
+static Iterator:y_iter_huge2<65000>; // Maximum.
 
 @test(.group = "y_iterate") y_iter_huge2()
 {
