@@ -268,7 +268,6 @@ stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 		s += cellbytes;
 	}
 	s = Iter_RandomFree_Multi(count, array, start, n);
-	printf("Found random %d, %d, %d, %d", count, start, n, s);
 	// Pop the extra parameters.
 	#emit LCTRL                __stk
 	#emit LOAD.S.alt           n
@@ -553,20 +552,7 @@ Iter_RandomFree_Internal_loop:
 
 static stock Iter_RandomFree_Single(count, const array[], start)
 {
-	printf("start = %d, count = %d, rem = %d", start, count, start - count);
 	// Get the unused count, not the used count.
-	new cnt = 0;
-	for (new i = 0; i != start; ++i)
-	{
-		if (array[i] > i)
-		{
-			++cnt;
-		}
-	}
-	if (cnt != count)
-	{
-		printf("Error found");
-	}
 	count = start - count;
 	if (count <= 0)
 	{
@@ -574,9 +560,7 @@ static stock Iter_RandomFree_Single(count, const array[], start)
 	}
 	// There are enough elements to search from after exclusions.
 	count = random(count);
-	printf("random = %d", count);
 	// No exclutions, use the old code.
-	cnt = 0;
 	for ( ; ; )
 	{
 		--start;
@@ -590,13 +574,7 @@ static stock Iter_RandomFree_Single(count, const array[], start)
 			}
 			--count;
 		}
-		else ++cnt;
-		//if (array[start] <= start && !count--)
-		//{
-		//	break;
-		//}
 	}
-	printf("index = %d, %d, %d", start, count, cnt);
 	return start;
 }
 
@@ -784,7 +762,7 @@ stock Iter_FreeMulti_Internal(const array[], trueSize, start)
 
 stock Iter_Add_InternalC(&count, array[], size, value)
 {
-	printf("Iter_Add called: %d, %d, %d", count, size, value);
+	Debug_Print3("Iter_Add called: %d, %d, %d", count, size, value);
 	if (0 <= value < size && array[value] <= value)
 	{
 		Debug_Print5("Iter_Add: In iterator");
@@ -800,86 +778,81 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		//   before the end insertion case because of a bug getting `prev` in
 		//   empty lists.
 		//
-		//if (next > value)
-		//{
-		//	printf("Version 0");
-		//	last = size;
-		//}
-		////
-		//// Version 1:
-		////
-		////   It is being inserted at the end.  By far the most common case when
-		////   initialising some list of items.
-		////
-		//else if (value > (last = (last == size) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1)))
-		//{
-		//	printf("Version 1");
-		//	next = size;
-		//}
-		//// Version 2 is currently commented out - I got the density backwards.
-		//////
-		////// Version 2:
-		//////
-		//////   If the array is densely filled then just looping linearly from the
-		//////   value until we hit something in the array will be faster than
-		//////   iterating through the list.  For that we need the average number of
-		//////   steps required, which is `count * 5/6 / 2`, the 5/6 coming from the
-		//////   forwards/backwards split.  So if `(last - first) / count / 2` is
-		//////   smaller than that number then the density is sufficient to justify
-		//////   a linear scan.  For the scan lower bound we don't use `5/6` because
-		//////   we can go forwards at any point in the array.
-		//////
-		//////   Simplify:
-		//////
-		//////     d = last - next + 1
-		//////     c = count
-		//////   
-		//////     d / c / 2 < c * 5/6 / 2
-		//////     d / c     < c * 5/6
-		//////     d         < c^2 * 5/6
-		//////
-		//////   Note: The code now uses `3/4` not `5/6` because it is slightly
-		//////   faster to compute, and the `prev` code is inlined so also slightly
-		//////   faster than the originally profiled version.
-		//////
-		////else if ((last - next + 1) < (count * count * 3) >> 2)
-		////{
-		////	//printf("Version 2");
-		////	next = value + 1;
-		////	while (array[next] <= next)
-		////	{
-		////		++next;
-		////	}
-		////	last = array[next - 1],
-		////	last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
-		////}
-		////
-		//// Version 3:
-		////
-		////   Iterating forwards is about five times faster than iterating
-		////   backwards, but if the new value is near the end of the array (i.e.
-		////   in the last sixth) it is still faster to go forwards than
-		////   backwards.  Note we reduced these ratios to `3/4`.
-		////
-		//else if ((last - value) * 3 < value - next)
-		//{
-		//	printf("Version 3");
-		//	while (last > value)
-		//	{
-		//		Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
-		//		next = last,
-		//		last = array[next - 1],
-		//		last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
-		//	}
-		//}
-		////
-		//// Version 4:
-		////
-		////   Base case.  Loop through the list forwards.
-		////
-		//else
+		if (next > value)
 		{
-			printf("Version 4");
+			last = size;
+		}
+		//
+		// Version 1:
+		//
+		//   It is being inserted at the end.  By far the most common case when
+		//   initialising some list of items.
+		//
+		else if (value > (last = (last == size) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1)))
+		{
+			next = size;
+		}
+		// Version 2 is currently commented out - I got the density backwards.
+		////
+		//// Version 2:
+		////
+		////   If the array is densely filled then just looping linearly from the
+		////   value until we hit something in the array will be faster than
+		////   iterating through the list.  For that we need the average number of
+		////   steps required, which is `count * 5/6 / 2`, the 5/6 coming from the
+		////   forwards/backwards split.  So if `(last - first) / count / 2` is
+		////   smaller than that number then the density is sufficient to justify
+		////   a linear scan.  For the scan lower bound we don't use `5/6` because
+		////   we can go forwards at any point in the array.
+		////
+		////   Simplify:
+		////
+		////     d = last - next + 1
+		////     c = count
+		////   
+		////     d / c / 2 < c * 5/6 / 2
+		////     d / c     < c * 5/6
+		////     d         < c^2 * 5/6
+		////
+		////   Note: The code now uses `3/4` not `5/6` because it is slightly
+		////   faster to compute, and the `prev` code is inlined so also slightly
+		////   faster than the originally profiled version.
+		////
+		//else if ((last - next + 1) < (count * count * 3) >> 2)
+		//{
+		//	next = value + 1;
+		//	while (array[next] <= next)
+		//	{
+		//		++next;
+		//	}
+		//	last = array[next - 1],
+		//	last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
+		//}
+		//
+		// Version 3:
+		//
+		//   Iterating forwards is about five times faster than iterating
+		//   backwards, but if the new value is near the end of the array (i.e.
+		//   in the last sixth) it is still faster to go forwards than
+		//   backwards.  Note we reduced these ratios to `3/4`.
+		//
+		else if ((last - value) * 3 < value - next)
+		{
+			while (last > value)
+			{
+				Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
+				next = last,
+				last = array[next - 1],
+				last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
+			}
+		}
+		//
+		// Version 4:
+		//
+		//   Base case.  Loop through the list forwards.
+		//
+		else
+		{
 			last = size;
 			while (next < value)
 			{
@@ -891,23 +864,19 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		// Increase `size` so we modulo over the whole array, not just the
 		// valid values subset.
 		++size;
-		printf("Iter_Add: Adding %d, %d, %d, %d, %d, %d", last, value, size, next, next - 1, (value - 1) % size);
+		Debug_Print5("Iter_Add: Removing %d, %d, %d, %d, %d, %d", last, value, size, next, next - 1, (value - 1) % size);
 		if ((last + 1) % size != value)
 		{
 			Debug_Print5("Iter_Add: Type A");
 			// Reverse from us to `last`.
 			array[(value - 1) % size] = (last + 1) * -65536;
-			printf("Setting A idx %d = %d", (value - 1) % size, (last + 1) * -65536);
 		}
 		if (value + 1 != next)
 		{
 			Debug_Print5("Iter_Add: Type B");
 			// Reverse from `next` to us.
 			array[next - 1] = (value + 1) * -65536;
-			printf("Setting B idx %d = %d", next - 1, (value + 1) * -65536);
 		}
-		printf("Setting C idx %d = %d", value, next);
-		printf("Setting C idx %d = %d", last, value);
 		return
 			++count,
 			array[value] = next,

@@ -3741,37 +3741,35 @@ iterfunc stock y_iter_yield7a(x)
 	ASSERT_EQ(idx, sizeof(answers));
 }
 
-static Iterator:y_iter_huge1<65535>; // Maximum.
+static Iterator:y_iter_huge1<32767>; // Maximum.
 
 @test(.group = "y_iterate") y_iter_huge1()
 {
-	for (new i = 0; i != 50100; ++i)
+	for (new i = 0; i != 20100; ++i)
 	{
 		Iter_Add(y_iter_huge1, i);
 	}
-	ASSERT_EQ(Iter_Count(y_iter_huge1), 50100);
+	ASSERT_EQ(Iter_Count(y_iter_huge1), 20100);
 }
 
-static Iterator:y_iter_huge2<65000>; // Maximum.
+static Iterator:y_iter_huge2<32767>; // Maximum.
 
 @test(.group = "y_iterate") y_iter_huge2()
 {
-	printf("Adding:");
-	for (new i = 0; i != 50100; ++i)
+	for (new i = 0; i != 20100; ++i)
 	{
 		//printf(" - iteration %d", i);
 		ASSERT_EQ(Iter_Count(y_iter_huge2), i);
 		Iter_RandomAdd(y_iter_huge2);
 		ASSERT_EQ(Iter_Count(y_iter_huge2), i + 1);
 	}
-	ASSERT_EQ(Iter_Count(y_iter_huge2), 50100);
+	ASSERT_EQ(Iter_Count(y_iter_huge2), 20100);
 	new c = 0;
-	printf("Looping:");
 	foreach (new i : y_iter_huge2)
 	{
 		++c;
 	}
-	ASSERT_EQ(c, 50100);
+	ASSERT_EQ(c, 20100);
 }
 
 @test(.group = "y_iterate") y_iter_AddHeuristics()
