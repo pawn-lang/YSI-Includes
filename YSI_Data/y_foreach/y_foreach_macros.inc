@@ -892,7 +892,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 
 // Detect array declarations: "Iterator:X[20]<4>", "Iterator:X<10, 4>", and the
 // frankly silly "Iterator:X[20]<10, 4>".
-#define F@c:F@d:(((%0,%1)&0x7FFF)+1-(%9))]={%2}F@a$,Iter_Single@%9$%7$ F@d:((%0)+((%1)&0x7FFF)-((%1)&0xFFFF8000))]={%2}F@a$,Iter_Multi@%9$[%0]%7$
+#define F@c:F@d:((%0,%1)+1)]={%2}F@a$,Iter_Single@%9$%7$ F@d:((%0)+(%1))]={%2}F@a$,Iter_Multi@%9$[%0]%7$
 #if __COMPILER_NESTED_ELLIPSIS
 	#define F@d:%0]={%2}F@a$,Iter_%8@%9[%3$%7$ %0]={{%2},...},Iter_%8@%9[%3$%7$
 #else
@@ -941,7 +941,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define _Y_ITER_DO_FOREACH(%1,%0,%8) (_:F@n:F@A:F@m:F@a$%1,%0,%8$
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>%8,%8$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1]&%832767)<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>%8,%8$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
 #define iterstart(%1)%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o))-1+(_:%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
@@ -959,7 +959,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define F@l:(%0[%2]%8$(%1)%9) (%0(%1,%2)%8$%9)
 
 // Normal iterator.
-#define F@m:%9$%1,%0,%8$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1]&%832767)!=(F@s(Iterator@%0)-1);
+#define F@m:%9$%1,%0,%8$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1])!=(F@s(Iterator@%0)-1);
 
 // Reverse multi-iterator.
 #define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2)));_:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
@@ -1059,8 +1059,8 @@ stock const
 
 #undef Iterator
 FUNC_PAWNDOC(Iterator:Iterator(name));
-#define _no_itertag:Iterator@%1$[_:F@c:F@d:(((%3:%2)&0x7FFF)+1-(%9))]%9$ %3:Iterator@%1$[_:F@c:F@d:(((%2)&0x7FFF)+1-((%2)&0xFFFF8000))]={%3:0,%3:1,...}F@a$
-#define ITERATOR__%1<%2> _no_itertag:Iterator@%1 F@a$[_:F@c:F@d:(((%2)&0x7FFF)+1-((%2)&0xFFFF8000))]={_no_itertag:0,_no_itertag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
+#define _no_itertag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
+#define ITERATOR__%1<%2> _no_itertag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={_no_itertag:0,_no_itertag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
 
 #if YSI_KEYWORD(Iterator)
 	#define Iterator:%1<%2> ITERATOR__ %1<%2>

@@ -352,6 +352,7 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 	ASSERT_EQ(Iter_Next(iter, 3), 4);
 	ASSERT_EQ(Iter_Prev(iter, 4), 3);
 	ASSERT_EQ(Iter_First(iter), 3);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5], Iterator@iter[6], Iterator@iter[15], Iterator@iter[16], Iterator@iter[17], Iterator@iter[18], Iterator@iter[19], Iterator@iter[20]);
 	ASSERT_EQ(Iter_Last(iter), 4);
 	Iter_Add(iter, 18);
 	ASSERT_EQ(Iter_Last(iter), 18);
@@ -1222,26 +1223,46 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 @test(.group = "y_iterate") y_iter_Iter_Alloc()
 {
 	new
-		Iterator:iter1<60>;
+		Iterator:iter1<12>;
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_ZE(Iter_Alloc(iter1));
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 1);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 2);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 3);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 4);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 5);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	Iter_Remove(iter1, 5);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 5);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 6);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 7);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 8);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 9);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	Iter_Remove(iter1, 5);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	Iter_Remove(iter1, 6);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	Iter_Remove(iter1, 7);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 5);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 6);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 7);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 	ASSERT_EQ(Iter_Alloc(iter1), 10);
+	//printf("%d %d %d %d %d %d %d %d %d %d %d %d %d", Iterator@iter1[0], Iterator@iter1[1], Iterator@iter1[2], Iterator@iter1[3], Iterator@iter1[4], Iterator@iter1[5], Iterator@iter1[6], Iterator@iter1[7], Iterator@iter1[8], Iterator@iter1[9], Iterator@iter1[10], Iterator@iter1[11], Iterator@iter1[12]);
 }
 
 @test(.group = "y_iterate") y_iter_Normal()

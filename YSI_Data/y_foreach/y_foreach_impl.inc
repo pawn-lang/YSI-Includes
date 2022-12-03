@@ -658,7 +658,7 @@ stock Iter_Alloc_InternalC(&count, array[], size, ...)
 			return
 				++count,
 				array[(value - 1) % size] = (last + 1) % size,
-				array[next - 1] = value + 1,
+				array[next - 1] = (value + 1) % size,
 				array[value] = next,
 				array[last] = value;
 		}
@@ -768,7 +768,7 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		Debug_Print5("Iter_Add: In iterator");
 		new
 			next = array[size],
-			last = array[size - 1];
+			last;
 		// We use many heuristics to try and find where in the list to insert
 		// this new value as fast as possible.
 		//
@@ -778,80 +778,56 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		//   before the end insertion case because of a bug getting `prev` in
 		//   empty lists.
 		//
-		if (next > value)
-		{
-			last = size;
-		}
-		//
-		// Version 1:
-		//
-		//   It is being inserted at the end.  By far the most common case when
-		//   initialising some list of items.
-		//
-		else if (value > (last = (last == size) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1)))
-		{
-			next = size;
-		}
-		// Version 2 is currently commented out - I got the density backwards.
-		////
-		//// Version 2:
-		////
-		////   If the array is densely filled then just looping linearly from the
-		////   value until we hit something in the array will be faster than
-		////   iterating through the list.  For that we need the average number of
-		////   steps required, which is `count * 5/6 / 2`, the 5/6 coming from the
-		////   forwards/backwards split.  So if `(last - first) / count / 2` is
-		////   smaller than that number then the density is sufficient to justify
-		////   a linear scan.  For the scan lower bound we don't use `5/6` because
-		////   we can go forwards at any point in the array.
-		////
-		////   Simplify:
-		////
-		////     d = last - next + 1
-		////     c = count
-		////   
-		////     d / c / 2 < c * 5/6 / 2
-		////     d / c     < c * 5/6
-		////     d         < c^2 * 5/6
-		////
-		////   Note: The code now uses `3/4` not `5/6` because it is slightly
-		////   faster to compute, and the `prev` code is inlined so also slightly
-		////   faster than the originally profiled version.
-		////
-		//else if ((last - next + 1) < (count * count * 3) >> 2)
+		//if (next > value)
 		//{
-		//	next = value + 1;
-		//	while (array[next] <= next)
-		//	{
-		//		++next;
-		//	}
-		//	last = array[next - 1],
-		//	last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
+		//	last = size;
 		//}
-		//
-		// Version 3:
-		//
-		//   Iterating forwards is about five times faster than iterating
-		//   backwards, but if the new value is near the end of the array (i.e.
-		//   in the last sixth) it is still faster to go forwards than
-		//   backwards.  Note we reduced these ratios to `3/4`.
-		//
-		else if ((last - value) * 3 < value - next)
-		{
-			while (last > value)
-			{
-				Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
-				next = last,
-				last = array[next - 1],
-				last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
-			}
-		}
-		//
-		// Version 4:
-		//
-		//   Base case.  Loop through the list forwards.
-		//
-		else
+		////
+		//// Version 1:
+		////
+		////   It is being inserted at the end.  By far the most common case when
+		////   initialising some list of items.
+		////
+		//else if (value > (last = Iter_Prev_InternalD(array, size, value)))
+		//{
+		//	next = size;
+		//}
+		//// Version 2 is currently commented out - I got the density backwards.
+		//////
+		////// Version 2:
+		//////
+		//////   If the array is densely filled then just looping linearly from the
+		//////   value until we hit something in the array will be faster than
+		//////   iterating through the list.  For that we need the average number of
+		//////   steps required, which is `count / 2`.  So if
+		//////   `(last - first) / count / 2` is smaller than that number then the
+		//////   density is sufficient to justify a linear scan.
+		//////
+		//////   Simplify:
+		//////
+		//////     d = last - next + 1
+		//////     c = count
+		//////   
+		//////     d / c / 2 < c / 2
+		//////     d / c     < c
+		//////     d         < c^2
+		//////
+		////else if ((last - next + 1) < count * count)
+		////{
+		////	next = value + 1;
+		////	while (array[next] <= next)
+		////	{
+		////		++next;
+		////	}
+		////	last = array[next - 1],
+		////	last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
+		////}
+		////
+		//// Version 3:
+		////
+		////   Base case.  Loop through the list forwards.
+		////
+		//else
 		{
 			last = size;
 			while (next < value)
@@ -863,22 +839,13 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		}
 		// Increase `size` so we modulo over the whole array, not just the
 		// valid values subset.
-		++size;
-		Debug_Print5("Iter_Add: Removing %d, %d, %d, %d, %d, %d", last, value, size, next, next - 1, (value - 1) % size);
-		if ((last + 1) % size != value)
-		{
-			Debug_Print5("Iter_Add: Type A");
-			// Reverse from us to `last`.
-			array[(value - 1) % size] = (last + 1) * -65536;
-		}
-		if (value + 1 != next)
-		{
-			Debug_Print5("Iter_Add: Type B");
-			// Reverse from `next` to us.
-			array[next - 1] = (value + 1) * -65536;
-		}
+		Debug_Print5("Iter_Add: Adding %d, %d, %d, %d, %d, %d", last, value, size, next, next - 1, (value - 1) % (size + 1));
+		
 		return
+			++size,
 			++count,
+			array[(value - 1) % size] = (last + 1) % size,
+			array[next - 1] = value + 1,
 			array[value] = next,
 			array[last] = value;
 	}
@@ -957,28 +924,32 @@ stock Iter_Remove_InternalC(&count, array[], size, value)
 		// This version has reverse iterators, which need maintaining, and can
 		// be used in place of a loop to jump backwards in the list.
 		--count;
-		new last = Iter_Prev_InternalD(array, size, value);
-		Debug_Print5("Iter_Remove: found %d", last);
-		array[last] = array[value];
-		if (array[last] == value + 1)
+		new
+			next,
+			last = value;
+		do
 		{
-			Debug_Print5("Iter_Remove: type A");
-			Debug_Print5("Iter_Remove: %d, %d, %d, %d", array[last], array[value], (array[last] - 1) % size, array[(array[last] - 1) % size]);
-			// We are going one step later, which means that the removed value
-			// needs to point both forwards and backwards at the same time.
-			return
-				array[value] |= (last + 1) * -65536;
+			last = (last - 1) % size,
+			next = array[last];
 		}
-		else
-		{
-			Debug_Print5("Iter_Remove: type B");
-			Debug_Print5("Iter_Remove: %d, %d, %d, %d", array[last], array[value], (array[last] - 1) % size, array[(array[last] - 1) % size]);
-			return
-				// For being out the iterator, but still usable in `foreach`.
-				array[value] |= -65536,
-				// Set the reverse pointer.
-				array[(array[last] - 1) % size] = (last + 1) * -65536;
-		}
+		while (next < 0);
+		Debug_Print5("Iter_Remove: found %d, %d, %d, %d", min(next, last), array[value], min((next - 1) % size, last), array[value] - 1);
+		return
+			last = min((next - 1) % size, last),
+			next = array[value],
+			
+			// These next four lines are done in a very specific order because
+			// it is possible for two of the indexes to be the same when two
+			// iterator entries are adjacent.  Thus we set the reverse pointers
+			// first, then the next pointers, as the latter are more important.
+			
+			// Set the pointers for `last`.
+			array[(value - 1) % size] = (last + 1) % size,
+			array[next - 1] = (last + 1) % size,
+			
+			// Set the pointers for `next`.
+			array[last] = next,
+			array[value] = next | cellmin;
 	}
 	else
 	{
@@ -999,8 +970,7 @@ stock Iter_Remove_InternalD(&count, array[], start, size, value)
 			{
 				return
 					--count,
-					array[last] = array[value],
-					array[value] |= -65536;
+					array[value] = (array[last] = array[value]) | cellmin;
 			}
 			last = start;
 		}
@@ -1319,16 +1289,14 @@ stock
 stock
 	Iter_Prev_InternalD(const array[], size, slot)
 {
-	new prev = array[(slot - 1) % size];
-	if (prev == slot)
+	new
+		ptr;
+	do
 	{
-		// The previous value is also in.
-		return (prev - 1) % size;
+		slot = (slot - 1) % size,
+		ptr = array[slot];
 	}
-	// Otherwise, we use the new `prev` method for values that aren't in, which
-	// involves a division so they can represent both the last value and keep a
-	// vague representation of their old `next` value for removals in loops.
-	//return ceildiv(prev, -65536);
-	return (prev & ~0xFFFF) / -65536 - 1;
+	while (ptr < 0);
+	return (ptr - 1) % size;
 }
 
