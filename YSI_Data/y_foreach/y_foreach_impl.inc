@@ -778,56 +778,56 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 		//   before the end insertion case because of a bug getting `prev` in
 		//   empty lists.
 		//
-		//if (next > value)
+		if (next > value)
+		{
+			last = size;
+		}
+		//
+		// Version 1:
+		//
+		//   It is being inserted at the end.  By far the most common case when
+		//   initialising some list of items.
+		//
+		else if (value > (last = Iter_Prev_InternalD(array, size + 1, size)))
+		{
+			next = size;
+		}
+		// Version 2 is currently commented out - I got the density backwards.
+		////
+		//// Version 2:
+		////
+		////   If the array is densely filled then just looping linearly from the
+		////   value until we hit something in the array will be faster than
+		////   iterating through the list.  For that we need the average number of
+		////   steps required, which is `count / 2`.  So if
+		////   `(last - first) / count / 2` is smaller than that number then the
+		////   density is sufficient to justify a linear scan.
+		////
+		////   Simplify:
+		////
+		////     d = last - next + 1
+		////     c = count
+		////   
+		////     d / c / 2 < c / 2
+		////     d / c     < c
+		////     d         < c^2
+		////
+		//else if ((last - next + 1) < count * count)
 		//{
-		//	last = size;
+		//	next = value + 1;
+		//	while (array[next] <= next)
+		//	{
+		//		++next;
+		//	}
+		//	last = array[next - 1],
+		//	last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
 		//}
-		////
-		//// Version 1:
-		////
-		////   It is being inserted at the end.  By far the most common case when
-		////   initialising some list of items.
-		////
-		//else if (value > (last = Iter_Prev_InternalD(array, size, value)))
-		//{
-		//	next = size;
-		//}
-		//// Version 2 is currently commented out - I got the density backwards.
-		//////
-		////// Version 2:
-		//////
-		//////   If the array is densely filled then just looping linearly from the
-		//////   value until we hit something in the array will be faster than
-		//////   iterating through the list.  For that we need the average number of
-		//////   steps required, which is `count / 2`.  So if
-		//////   `(last - first) / count / 2` is smaller than that number then the
-		//////   density is sufficient to justify a linear scan.
-		//////
-		//////   Simplify:
-		//////
-		//////     d = last - next + 1
-		//////     c = count
-		//////   
-		//////     d / c / 2 < c / 2
-		//////     d / c     < c
-		//////     d         < c^2
-		//////
-		////else if ((last - next + 1) < count * count)
-		////{
-		////	next = value + 1;
-		////	while (array[next] <= next)
-		////	{
-		////		++next;
-		////	}
-		////	last = array[next - 1],
-		////	last = (last == next) ? (last - 1) : ((last & ~0xFFFF) / -65536 - 1);
-		////}
-		////
-		//// Version 3:
-		////
-		////   Base case.  Loop through the list forwards.
-		////
-		//else
+		//
+		// Version 3:
+		//
+		//   Base case.  Loop through the list forwards.
+		//
+		else
 		{
 			last = size;
 			while (next < value)
