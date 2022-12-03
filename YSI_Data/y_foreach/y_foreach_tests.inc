@@ -1306,9 +1306,9 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 {
 	new Iterator:iter<5>;
 	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
-    Iter_Add(iter, 1);
-	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
     Iter_Add(iter, 2);
+	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
+    Iter_Add(iter, 1);
 	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
     Iter_Remove(iter, 1);
 	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
@@ -4021,6 +4021,25 @@ static Iterator:y_iter_huge2<32767>; // Maximum.
 		}
 		++j;
 	}
+	//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+	//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+	//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+	//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+	//);
+	//j = Iter_Last(iter);
+	//printf("%d", j);
+	//j = Iter_Prev(iter, j);
+	//printf("%d", j);
+	//j = Iter_Prev(iter, j);
+	//printf("%d", j);
+	//j = Iter_Prev(iter, j);
+	//printf("%d", j);
+	//j = Iter_Prev(iter, j);
+	//printf("%d", j);
+	//j = Iter_Prev(iter, j);
+	//printf("%d", j);
+	//j = Iter_Prev(iter, j);
+	//printf("%d", j);
 	j = 0;
 	FOREACH__(new i : Reverse(iter))
 	{

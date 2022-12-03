@@ -933,9 +933,9 @@ stock Iter_Remove_InternalC(&count, array[], size, value)
 			next = array[last];
 		}
 		while (next < 0);
-		Debug_Print5("Iter_Remove: found %d, %d, %d, %d", min(next, last), array[value], min((next - 1) % size, last), array[value] - 1);
+		Debug_Print5("Iter_Remove: found %d, %d, %d, %d", min(next, last), array[value], min(next - 1, last) % size, array[value] - 1);
 		return
-			last = min((next - 1) % size, last),
+			last = min(next - 1, last) % size,
 			next = array[value],
 			
 			// These next four lines are done in a very specific order because
@@ -1297,6 +1297,6 @@ stock
 		ptr = array[slot];
 	}
 	while (ptr < 0);
-	return (ptr - 1) % size;
+	return min(ptr - 1, slot) % size;
 }
 
