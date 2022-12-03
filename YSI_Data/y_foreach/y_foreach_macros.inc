@@ -941,7 +941,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define _Y_ITER_DO_FOREACH(%1,%0,%8) (_:F@n:F@A:F@m:F@a$%1,%0,%8$
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>%8,%8$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>%8,%8$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1]&%8cellmax)<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
 #define iterstart(%1)%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o))-1+(_:%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
@@ -959,7 +959,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define F@l:(%0[%2]%8$(%1)%9) (%0(%1,%2)%8$%9)
 
 // Normal iterator.
-#define F@m:%9$%1,%0,%8$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1])!=(F@s(Iterator@%0)-1);
+#define F@m:%9$%1,%0,%8$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1]&%8cellmax)!=(F@s(Iterator@%0)-1);
 
 // Reverse multi-iterator.
 #define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2)));_:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));

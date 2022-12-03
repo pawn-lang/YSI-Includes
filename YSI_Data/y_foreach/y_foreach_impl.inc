@@ -970,7 +970,8 @@ stock Iter_Remove_InternalD(&count, array[], start, size, value)
 			{
 				return
 					--count,
-					array[value] = (array[last] = array[value]) | cellmin;
+					array[last] = array[value],
+					array[value] |= cellmin;
 			}
 			last = start;
 		}

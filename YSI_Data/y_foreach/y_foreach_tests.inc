@@ -4325,18 +4325,73 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 	new
 		Iterator:iter<5, 20>,
 		n;
+	//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+	//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+	//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+	//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+	//);
 	Iter_Add(iter<0>, 1);
+	//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+	//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+	//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+	//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+	//);
 	Iter_Add(iter<0>, 2);
+	//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+	//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+	//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+	//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+	//);
 	Iter_Add(iter<1>, 3);
+	//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+	//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+	//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+	//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+	//);
 	Iter_Add(iter<1>, 4);
+	//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+	//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+	//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+	//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+	//);
 	Iter_Add(iter<1>, 5);
+	//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+	//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+	//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+	//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+	//);
 	Iter_Add(iter<1>, 6);
+	//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+	//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+	//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+	//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+	//);
 	Iter_Add(iter<0>, 7);
+	//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+	//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+	//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+	//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+	//);
 	Iter_Add(iter<0>, 8);
+	//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+	//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+	//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+	//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+	//);
 	n = 0;
 	foreach (new i : iter<1>)
 	{
+		//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+		//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+		//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+		//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+		//);
 		Iter_Remove(iter<1>, i);
+		//printf("arr: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d"
+		//	, Iterator@iter[ 0 + 0], Iterator@iter[ 0 + 1], Iterator@iter[ 0 + 2], Iterator@iter[ 0 + 3], Iterator@iter[ 0 + 4], Iterator@iter[ 0 + 5], Iterator@iter[ 0 + 6]
+		//	, Iterator@iter[ 7 + 0], Iterator@iter[ 7 + 1], Iterator@iter[ 7 + 2], Iterator@iter[ 7 + 3], Iterator@iter[ 7 + 4], Iterator@iter[ 7 + 5], Iterator@iter[ 7 + 6]
+		//	, Iterator@iter[14 + 0], Iterator@iter[14 + 1], Iterator@iter[14 + 2], Iterator@iter[14 + 3], Iterator@iter[14 + 4], Iterator@iter[14 + 5], Iterator@iter[14 + 6]
+		//);
 		n += i;
 	}
 	foreach (new i : iter<0>)
