@@ -319,14 +319,14 @@ Suppress warnings when `_:` is used (correctly) instead of `_no_itertag:`. This 
 
 
 
-### `Iter_Add`:
+### `Iter_Add_InternalC`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_Add(&count, array[], size, value)
+Iter_Add_InternalC(&count, array[], size, value)
 ```
 
 
@@ -345,9 +345,12 @@ Adds a value to a given iterator set. Now detects when you try and add the last 
 
 
 #### Depends on
+* [`Iter_Prev_InternalD`](#Iter_Prev_InternalD)
+* [`YSI_PrintF__`](#YSI_PrintF__)
+* [`YSI_gDebugLevel`](#YSI_gDebugLevel)
 * [`cellmin`](#cellmin)
 #### Estimated stack usage
-3 cells
+13 cells
 
 
 
@@ -380,14 +383,14 @@ Loop over all values in any iterator. This is different to looping over the iter
 
 
 
-### `Iter_Alloc`:
+### `Iter_Alloc_InternalC`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_Alloc(&count, array[], size, ...)
+Iter_Alloc_InternalC(&count, array[], size, ...)
 ```
 
 
@@ -412,14 +415,14 @@ Finds the first free slot in the iterator and add it. Excepting requested values
 
 
 
-### `Iter_Clear`:
+### `Iter_Clear_InternalC`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_Clear(array[], size, entries, ...)
+Iter_Clear_InternalC(array[], size, entries, ...)
 ```
 
 
@@ -444,14 +447,14 @@ Resets an iterator.
 
 
 
-### `Iter_Clear`:
+### `Iter_Clear_InternalD`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_Clear(array[], size, entries, elems, counts[], start)
+Iter_Clear_InternalD(array[], size, entries, elems, counts[], start)
 ```
 
 
@@ -476,14 +479,14 @@ Resets an iterator.
 
 
 
-### `Iter_Contains`:
+### `Iter_Contains_InternalC`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_Contains(array[], size, value)
+Iter_Contains_InternalC(array[], size, value)
 ```
 
 
@@ -505,14 +508,14 @@ Checks if this item is in the iterator.
 
 
 
-### `Iter_Contains`:
+### `Iter_Contains_InternalD`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_Contains(count, array[], size, start, value)
+Iter_Contains_InternalD(count, array[], size, start, value)
 ```
 
 
@@ -536,14 +539,14 @@ Checks if this item is in the iterator.
 
 
 
-### `Iter_Count`:
+### `Iter_Count_InternalC`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_Count(counts[], slots)
+Iter_Count_InternalC(counts[], slots)
 ```
 
 
@@ -561,6 +564,73 @@ Return the total number of elements in all slots together.
 
 #### Estimated stack usage
 2 cells
+
+
+
+### `Iter_Debug_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Debug_InternalC(name[], array[], size, count)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`name`	 | 	` [] ` iterator name.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of the iterator.	 |
+| 	`count`	 | 	The number of elements added.	 |
+
+#### Remarks
+Print the contents of an iterator for debugging.
+
+
+#### Depends on
+* [`cellmax`](#cellmax)
+* [`printf`](#printf)
+#### Estimated stack usage
+19 cells
+
+
+
+### `Iter_Debug_InternalD`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Debug_InternalD(name[], array[], size, counts[], slots)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`name`	 | 	` [] ` iterator name.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of the iterator.	 |
+| 	`counts`	 | 	` [] ` The number of elements added.	 |
+| 	`slots`	 | 	The number of start points.	 |
+
+#### Remarks
+Print the contents of an iterator for debugging.
+
+
+#### Depends on
+* [`cellmax`](#cellmax)
+* [`printf`](#printf)
+#### Estimated stack usage
+21 cells
 
 
 
@@ -758,14 +828,14 @@ Loop over all values NOT in any iterator. Similar to repeatedly calling `Iter_Fr
 
 
 
-### `Iter_Prev`:
+### `Iter_Prev_InternalC`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_Prev(array[], elems, size, slot)
+Iter_Prev_InternalC(array[], elems, size, slot)
 ```
 
 
@@ -788,14 +858,14 @@ Gets the element in an iterator that points to the current element.
 
 
 
-### `Iter_Prev`:
+### `Iter_Prev_InternalD`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_Prev(array[], size, slot)
+Iter_Prev_InternalD(array[], size, slot)
 ```
 
 
@@ -812,19 +882,21 @@ Iter_Prev(array[], size, slot)
 Gets the element in an iterator that points to the current element.
 
 
+#### Depends on
+* [`min`](#min)
 #### Estimated stack usage
-2 cells
+5 cells
 
 
 
-### `Iter_RandomAdd`:
+### `Iter_RandomAdd_InternalC`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_RandomAdd(&count, array[], start, ...)
+Iter_RandomAdd_InternalC(&count, array[], start, ...)
 ```
 
 
@@ -844,9 +916,10 @@ Adds a random value to an iterator.
 
 #### Depends on
 * [`Hooks_NumArgs`](#Hooks_NumArgs)
-* [`Iter_Add`](#Iter_Add)
-* [`Iter_RandomFree_Impl`](#Iter_RandomFree_Impl)
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`Iter_Add_InternalC`](#Iter_Add_InternalC)
+* [`Iter_RandomFree_Multi`](#Iter_RandomFree_Multi)
+* [`Iter_RandomFree_Single`](#Iter_RandomFree_Single)
+* [`__cell_shift`](#__cell_shift)
 * [`__param3_offset`](#__param3_offset)
 * [`__stk`](#__stk)
 * [`cellbytes`](#cellbytes)
@@ -855,14 +928,14 @@ Adds a random value to an iterator.
 
 
 
-### `Iter_RandomAdd`:
+### `Iter_RandomAdd_InternalD`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_RandomAdd(counts[], array[], size, slots, start, slot, ...)
+Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 ```
 
 
@@ -885,9 +958,10 @@ Adds a random value to an iterator.
 
 #### Depends on
 * [`Hooks_NumArgs`](#Hooks_NumArgs)
-* [`Iter_Add`](#Iter_Add)
-* [`Iter_RandomFree_Impl`](#Iter_RandomFree_Impl)
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`Iter_Add_InternalD`](#Iter_Add_InternalD)
+* [`Iter_RandomFree_Multi`](#Iter_RandomFree_Multi)
+* [`Iter_RandomFree_Single`](#Iter_RandomFree_Single)
+* [`__cell_shift`](#__cell_shift)
 * [`__param6_offset`](#__param6_offset)
 * [`__stk`](#__stk)
 * [`cellbytes`](#cellbytes)
@@ -896,50 +970,14 @@ Adds a random value to an iterator.
 
 
 
-### `Iter_RandomFree_Impl`:
+### `Iter_RandomFree_InternalC`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_RandomFree_Impl(count, array[], start, num)
-```
-
-
-#### Parameters
-
-
-| 	**Name**	 | 	**Info**	 |
-|	---	|	---	|
-| 	`count`	 | 	Number of items in the iterator.	 |
-| 	`array`	 | 	` [] ` iterator data.	 |
-| 	`start`	 | 	Size of the iterator.	 |
-| 	`num`	 | 		 |
-
-#### Remarks
-Returns a random unused value from an iterator.
-
-
-#### Depends on
-* [`FIXES_random`](#FIXES_random)
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
-* [`__param4_offset`](#__param4_offset)
-* [`cellbytes`](#cellbytes)
-* [`cellmin`](#cellmin)
-#### Estimated stack usage
-7 cells
-
-
-
-### `Iter_RandomFree`:
-
-
-#### Syntax
-
-
-```pawn
-Iter_RandomFree(count, array[], start, ...)
+Iter_RandomFree_InternalC(count, array[], start, ...)
 ```
 
 
@@ -959,8 +997,9 @@ Returns a random unused value from an iterator.
 
 #### Depends on
 * [`Hooks_NumArgs`](#Hooks_NumArgs)
-* [`Iter_RandomFree_Impl`](#Iter_RandomFree_Impl)
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`Iter_RandomFree_Multi`](#Iter_RandomFree_Multi)
+* [`Iter_RandomFree_Single`](#Iter_RandomFree_Single)
+* [`__cell_shift`](#__cell_shift)
 * [`__param3_offset`](#__param3_offset)
 * [`__stk`](#__stk)
 * [`cellbytes`](#cellbytes)
@@ -969,14 +1008,14 @@ Returns a random unused value from an iterator.
 
 
 
-### `Iter_RandomFree`:
+### `Iter_RandomFree_InternalD`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_RandomFree(counts[], array[], start, slots, ...)
+Iter_RandomFree_InternalD(counts[], array[], start, slots, ...)
 ```
 
 
@@ -997,8 +1036,9 @@ Returns a random unused value from an iterator.
 
 #### Depends on
 * [`Hooks_NumArgs`](#Hooks_NumArgs)
-* [`Iter_RandomFree_Impl`](#Iter_RandomFree_Impl)
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`Iter_RandomFree_Multi`](#Iter_RandomFree_Multi)
+* [`Iter_RandomFree_Single`](#Iter_RandomFree_Single)
+* [`__cell_shift`](#__cell_shift)
 * [`__param4_offset`](#__param4_offset)
 * [`__stk`](#__stk)
 * [`cellbytes`](#cellbytes)
@@ -1007,14 +1047,82 @@ Returns a random unused value from an iterator.
 
 
 
-### `Iter_RandomRemove`:
+### `Iter_RandomFree_Multi`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_RandomRemove(&count, array[], start, ...)
+Iter_RandomFree_Multi(count, array[], start, num)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`start`	 | 	Size of the iterator.	 |
+| 	`num`	 | 		 |
+
+#### Remarks
+Returns a random unused value from an iterator. Takes a load of hidden extra parameters on the stack, which are values to not return.
+
+
+#### Depends on
+* [`FIXES_random`](#FIXES_random)
+* [`__cell_shift`](#__cell_shift)
+* [`__param4_offset`](#__param4_offset)
+* [`cellbytes`](#cellbytes)
+* [`cellmin`](#cellmin)
+#### Estimated stack usage
+7 cells
+
+
+
+### `Iter_RandomFree_Single`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomFree_Single(count, array[], start)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`start`	 | 	Size of the iterator.	 |
+
+#### Remarks
+Returns a random unused value from an iterator. No exclusions.
+
+
+#### Depends on
+* [`FIXES_random`](#FIXES_random)
+* [`cellmin`](#cellmin)
+#### Estimated stack usage
+4 cells
+
+
+
+### `Iter_RandomRemove_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomRemove_InternalC(&count, array[], start, ...)
 ```
 
 
@@ -1035,8 +1143,8 @@ Removes a random value from an iterator.
 #### Depends on
 * [`Hooks_NumArgs`](#Hooks_NumArgs)
 * [`Iter_Random_Impl`](#Iter_Random_Impl)
-* [`Iter_Remove`](#Iter_Remove)
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`Iter_Remove_InternalC`](#Iter_Remove_InternalC)
+* [`__cell_shift`](#__cell_shift)
 * [`__param3_offset`](#__param3_offset)
 * [`__stk`](#__stk)
 * [`cellbytes`](#cellbytes)
@@ -1045,14 +1153,14 @@ Removes a random value from an iterator.
 
 
 
-### `Iter_RandomRemove`:
+### `Iter_RandomRemove_InternalD`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_RandomRemove(&count, array[], size, start, ...)
+Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 ```
 
 
@@ -1075,8 +1183,8 @@ Removes a random value from an iterator.
 #### Depends on
 * [`Hooks_NumArgs`](#Hooks_NumArgs)
 * [`Iter_Random_Impl`](#Iter_Random_Impl)
-* [`Iter_Remove`](#Iter_Remove)
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`Iter_Remove_InternalD`](#Iter_Remove_InternalD)
+* [`__cell_shift`](#__cell_shift)
 * [`__param4_offset`](#__param4_offset)
 * [`__stk`](#__stk)
 * [`cellbytes`](#cellbytes)
@@ -1112,7 +1220,7 @@ Returns a random value from an iterator. If additional parameters are given they
 
 #### Depends on
 * [`FIXES_random`](#FIXES_random)
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__cell_shift`](#__cell_shift)
 * [`__param4_offset`](#__param4_offset)
 * [`cellbytes`](#cellbytes)
 * [`cellmin`](#cellmin)
@@ -1149,7 +1257,7 @@ Returns a random value from an iterator. If additional parameters are given they
 #### Depends on
 * [`Hooks_NumArgs`](#Hooks_NumArgs)
 * [`Iter_Random_Impl`](#Iter_Random_Impl)
-* [`__COMPILER_CELL_SHIFT`](#__COMPILER_CELL_SHIFT)
+* [`__cell_shift`](#__cell_shift)
 * [`__param3_offset`](#__param3_offset)
 * [`__stk`](#__stk)
 * [`cellbytes`](#cellbytes)
@@ -1158,14 +1266,14 @@ Returns a random value from an iterator. If additional parameters are given they
 
 
 
-### `Iter_Remove`:
+### `Iter_Remove_InternalC`:
 
 
 #### Syntax
 
 
 ```pawn
-Iter_Remove(&count, array[], size, value)
+Iter_Remove_InternalC(&count, array[], size, value)
 ```
 
 
@@ -1184,10 +1292,12 @@ Removes a value from an iterator.
 
 
 #### Depends on
-* [`Iter_Prev`](#Iter_Prev)
+* [`YSI_PrintF__`](#YSI_PrintF__)
+* [`YSI_gDebugLevel`](#YSI_gDebugLevel)
 * [`cellmin`](#cellmin)
+* [`min`](#min)
 #### Estimated stack usage
-7 cells
+12 cells
 
 
 
@@ -1218,7 +1328,7 @@ Removes a value from an iterator safely.
 
 
 #### Depends on
-* [`Iter_Prev`](#Iter_Prev)
+* [`Iter_Prev_InternalD`](#Iter_Prev_InternalD)
 * [`cellmin`](#cellmin)
 #### Estimated stack usage
 6 cells
@@ -1278,8 +1388,8 @@ Sets up all existing iterators. Does nothing for "XXLocal" ones, since they are 
 * [`FIXES_IsValidActor`](#FIXES_IsValidActor)
 * [`FIXES_IsVehicleStreamedIn`](#FIXES_IsVehicleStreamedIn)
 * [`GetVehicleModel`](#GetVehicleModel)
-* [`Iter_Add`](#Iter_Add)
-* [`Iter_Clear`](#Iter_Clear)
+* [`Iter_Add_InternalC`](#Iter_Add_InternalC)
+* [`Iter_Clear_InternalC`](#Iter_Clear_InternalC)
 * [`Iter_Init_Internal`](#Iter_Init_Internal)
 * [`Iter_OnYSIInit`](#Iter_OnYSIInit)
 * [`Iter_Single@Actor`](#Iter_Single@Actor)
@@ -1361,7 +1471,7 @@ Update the internal list of which players `forplayerid` can see.
 * [`operator*(_no_itertag:,_:)`](#operator*(_no_itertag:,_:))
 * [`FALSE`](#FALSE)
 * [`FIXES_IsPlayerNPC`](#FIXES_IsPlayerNPC)
-* [`Iter_Add`](#Iter_Add)
+* [`Iter_Add_InternalC`](#Iter_Add_InternalC)
 * [`Iter_OnPlayerStreamIn`](#Iter_OnPlayerStreamIn)
 * [`Iter_Single@StreamedBot`](#Iter_Single@StreamedBot)
 * [`Iter_Single@StreamedCharacter`](#Iter_Single@StreamedCharacter)
@@ -1372,6 +1482,8 @@ Update the internal list of which players `forplayerid` can see.
 * [`Iterator@StreamedCharacter`](#Iterator@StreamedCharacter)
 * [`Iterator@StreamedPlayer`](#Iterator@StreamedPlayer)
 * [`Iterator@StreamedPlayer`](#Iterator@StreamedPlayer)
+* [`YSI_PrintF__`](#YSI_PrintF__)
+* [`YSI_gDebugLevel`](#YSI_gDebugLevel)
 #### Attributes
 * `public`
 #### Estimated stack usage
@@ -1428,7 +1540,7 @@ Update the internal list of which players `forplayerid` can see.
 * [`FALSE`](#FALSE)
 * [`FIXES_IsPlayerNPC`](#FIXES_IsPlayerNPC)
 * [`Iter_OnPlayerStreamOut`](#Iter_OnPlayerStreamOut)
-* [`Iter_Remove`](#Iter_Remove)
+* [`Iter_Remove_InternalC`](#Iter_Remove_InternalC)
 * [`Iter_Single@StreamedBot`](#Iter_Single@StreamedBot)
 * [`Iter_Single@StreamedCharacter`](#Iter_Single@StreamedCharacter)
 * [`Iter_Single@StreamedPlayer`](#Iter_Single@StreamedPlayer)
@@ -1438,6 +1550,8 @@ Update the internal list of which players `forplayerid` can see.
 * [`Iterator@StreamedCharacter`](#Iterator@StreamedCharacter)
 * [`Iterator@StreamedPlayer`](#Iterator@StreamedPlayer)
 * [`Iterator@StreamedPlayer`](#Iterator@StreamedPlayer)
+* [`YSI_PrintF__`](#YSI_PrintF__)
+* [`YSI_gDebugLevel`](#YSI_gDebugLevel)
 #### Attributes
 * `public`
 #### Estimated stack usage
@@ -1476,7 +1590,7 @@ Adds a player to the loop data. Now sorts the list too. Note that I found the mo
 * [`operator*(_no_itertag:,_:)`](#operator*(_no_itertag:,_:))
 * [`FALSE`](#FALSE)
 * [`FIXES_IsPlayerNPC`](#FIXES_IsPlayerNPC)
-* [`Iter_Add`](#Iter_Add)
+* [`Iter_Add_InternalC`](#Iter_Add_InternalC)
 * [`Iter_OnPlayerConnect`](#Iter_OnPlayerConnect)
 * [`Iter_Single@Bot`](#Iter_Single@Bot)
 * [`Iter_Single@Character`](#Iter_Single@Character)
@@ -1484,6 +1598,8 @@ Adds a player to the loop data. Now sorts the list too. Note that I found the mo
 * [`Iterator@Bot`](#Iterator@Bot)
 * [`Iterator@Character`](#Iterator@Character)
 * [`Iterator@Player`](#Iterator@Player)
+* [`YSI_PrintF__`](#YSI_PrintF__)
+* [`YSI_gDebugLevel`](#YSI_gDebugLevel)
 #### Attributes
 * `public`
 #### Automaton
@@ -1523,7 +1639,7 @@ Removes a player from the loop data. No longer uses "hook" to ENSURE that this i
 * [`FALSE`](#FALSE)
 * [`FIXES_IsPlayerNPC`](#FIXES_IsPlayerNPC)
 * [`Iter_OnPlayerDisconnect`](#Iter_OnPlayerDisconnect)
-* [`Iter_Remove`](#Iter_Remove)
+* [`Iter_Remove_InternalC`](#Iter_Remove_InternalC)
 * [`Iter_Single@Bot`](#Iter_Single@Bot)
 * [`Iter_Single@Character`](#Iter_Single@Character)
 * [`Iter_Single@Player`](#Iter_Single@Player)
@@ -1614,4 +1730,6 @@ Used to declare a special iterator function. Examples:
 
 #### Attributes
 * `native`
+
+
 
