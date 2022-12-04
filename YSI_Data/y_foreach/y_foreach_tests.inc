@@ -371,6 +371,21 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 	ASSERT_ZE(Iter_Next(iter, 20));
 }
 
+@test(.group = "y_iterate") y_iter_Debug()
+{
+	// Check OOB numbers.
+	new
+		Iterator:iter1<20>;
+	Iter_Add(iter1, 4);
+	Iter_Add(iter1, 18);
+	Iter_Debug(iter1);
+	new
+		Iterator:iter2<6, 20>;
+	Iter_Add(iter2<2>, 4);
+	Iter_Add(iter2<2>, 18);
+	Iter_Debug(iter2<>);
+}
+
 @test(.group = "y_iterate") y_iter_Add3()
 {
 	// Check OOB numbers.

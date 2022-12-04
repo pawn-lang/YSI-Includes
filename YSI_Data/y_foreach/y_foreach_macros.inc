@@ -638,6 +638,21 @@ FUNC_PAWNDOC(Iter_Last(Iterator:iter<>));
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
+ * <param name="iter">Name of the iterator to</param>
+ * <remarks>
+ *   Print information about an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FUNC_PAWNDOC(Iter_Debug(Iterator:iter<>));
+#define Iter_Debug(%0) _ITER<Iter_Debug_Internal>(%0,_:_ITER_NO_ANGLES:#%0)
+#define Iter_Debug_InternalA(%0,%1,%9)    (Iter_Debug_InternalC(%9,%1,F@s(%1)-1,%0))
+#define Iter_Debug_InternalB(%0,%2,%1,%9) (Iter_Debug_InternalD(%9,%1,F@s(%1)-F@s(%0),%0,F@s(%0)))
+
+#define _ITER_NO_ANGLES:#%0<>, #%0,
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to get the next element in.</param>
  * <param name="cur">The current element.</param>
  * <remarks>
