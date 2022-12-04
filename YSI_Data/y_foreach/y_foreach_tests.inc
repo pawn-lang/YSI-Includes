@@ -387,8 +387,8 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 	Iter_Add(iter2<3>, 11);
 	Iter_Add(iter2<4>, 12);
 	Iter_Debug(iter2<>);
-	ASSET_EQ(Iter_Available(iter1), 18);
-	ASSET_EQ(Iter_Available(iter2<>), 15);
+	ASSERT_EQ(Iter_Available(iter1), 18);
+	ASSERT_EQ(Iter_Available(iter2<>), 15);
 }
 
 @test(.group = "y_iterate") y_iter_Add3()
