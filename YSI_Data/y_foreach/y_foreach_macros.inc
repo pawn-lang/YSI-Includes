@@ -420,7 +420,7 @@ FUNC_PAWNDOC(Iter_Random(Iterator:iter<>));
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
- * <param name="iter">Name of the iterator to get a random slot from.</param>
+ * <param name="iter">Name of the iterator to get the number of elements in.</param>
  * <remarks>
  *   Returns the number of items in this iterator.
  *
@@ -434,6 +434,22 @@ FUNC_PAWNDOC(Iter_Count(Iterator:iter<>));
 #define Iter_Count_InternalA(%0,%1)    (%0)
 #define Iter_Count_InternalB(%0,%2,%1) (_:F@E:(%0 F@a$[%2]))
 #define F@E:(%0$[]) Iter_Count_InternalC(%0$)
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="iter">Name of the iterator to get the number of unused elements in.</param>
+ * <remarks>
+ *   Returns the number of unused items in this iterator.
+ *
+ * native Iter_Available(Iterator:Name&lt;&gt;);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FUNC_PAWNDOC(Iter_Available(Iterator:iter<>));
+#define Iter_Available _ITER<Iter_Available_Internal>
+#define Iter_Available_InternalA(%0,%1)    (F@s(%1)-1-(%0))
+#define Iter_Available_InternalB(%0,%2,%1) (F@s(%1)-F@s(%0)-Iter_Count_InternalC(%0))
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
