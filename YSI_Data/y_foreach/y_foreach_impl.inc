@@ -928,8 +928,8 @@ stock Iter_Remove_InternalC(&count, array[], size, value)
 			last = value;
 		do
 		{
-			last = (last - 1) % size,
-			next = array[last];
+			--last,
+			next = array[last % size];
 		}
 		while (next < 0);
 		Debug_Print5("Iter_Remove: found %d, %d, %d, %d", min(next, last), array[value], min(next - 1, last) % size, array[value] - 1);
@@ -1293,8 +1293,8 @@ stock
 		ptr;
 	do
 	{
-		slot = (slot - 1) % size,
-		ptr = array[slot];
+		--slot,
+		ptr = array[slot % size];
 	}
 	while (ptr < 0);
 	return min(ptr - 1, slot) % size;

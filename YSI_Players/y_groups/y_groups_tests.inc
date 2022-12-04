@@ -351,6 +351,7 @@ Optional plugins:
 	call OnPlayerConnect(5);
 	call OnPlayerConnect(6);
 	
+	//printf("================ 1 ================");
 	Group_SetPlayer(g[0], 0, true);
 	Group_SetPlayer(g[0], 1, true);
 	Group_SetPlayer(g[0], 2, true);
@@ -364,17 +365,44 @@ Optional plugins:
 	ASSERT_EQ(Group_GetCount(g[1]), 1);
 	ASSERT_EQ(Group_GetCount(g[2]), 3);
 
+	//printf("================ 2 ================");
+	//Group_DDDDDD(g[0]);
+	//printf("================ 3 ================");
 	call OnPlayerDisconnect(0, 0);
+	//Group_DDDDDD(g[0]);
+	//printf("================ 4 ================");
 	call OnPlayerDisconnect(1, 0);
+	//Group_DDDDDD(g[0]);
+	//printf("================ 5 ================");
+	//Group_DDDDDD(g[1]);
+	//Group_DDDDDD(g[2]);
 	call OnPlayerDisconnect(2, 0);
+	//Group_DDDDDD(g[0]);
+	//printf("================ 6 ================");
+	//Group_DDDDDD(g[1]);
+	//Group_DDDDDD(g[2]);
 	call OnPlayerDisconnect(3, 0);
+//	Group_DDDDDD(g[0]);
+//	Group_DDDDDD(g[1]);
+//	Group_DDDDDD(g[2]);
 	call OnPlayerDisconnect(4, 0);
+//	Group_DDDDDD(g[0]);
+//	Group_DDDDDD(g[1]);
+//	Group_DDDDDD(g[2]);
 	call OnPlayerDisconnect(5, 0);
+//	Group_DDDDDD(g[0]);
+//	Group_DDDDDD(g[1]);
+//	Group_DDDDDD(g[2]);
 	call OnPlayerDisconnect(6, 0);
+//	Group_DDDDDD(g[0]);
+//	Group_DDDDDD(g[1]);
+//	Group_DDDDDD(g[2]);
 
+	//printf("================ 7 ================");
 	Group_Destroy(g[0]);
 	Group_Destroy(g[1]);
 	Group_Destroy(g[2]);
+	//printf("================ 8 ================");
 }
 
 @test(.group = "y_groups") y_groups_SetBalancedIn2()

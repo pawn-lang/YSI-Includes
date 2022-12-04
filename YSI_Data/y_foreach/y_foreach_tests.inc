@@ -378,7 +378,7 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 		Iterator:iter1<20>;
 	Iter_Add(iter1, 4);
 	Iter_Add(iter1, 18);
-	Iter_Debug(iter1);
+	//Iter_Debug(iter1);
 	new
 		Iterator:iter2<6, 20>;
 	Iter_Add(iter2<2>, 4);
@@ -386,7 +386,7 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 	Iter_Add(iter2<3>, 10);
 	Iter_Add(iter2<3>, 11);
 	Iter_Add(iter2<4>, 12);
-	Iter_Debug(iter2<>);
+	//Iter_Debug(iter2<>);
 	ASSERT_EQ(Iter_Available(iter1), 18);
 	ASSERT_EQ(Iter_Available(iter2<>), 15);
 }
@@ -3795,7 +3795,7 @@ static Iterator:y_iter_huge1<65535>;
 
 static Iterator:y_iter_huge2<32767>;
 
-@test(.group = "y_iterate") y_iter_huge2()
+@test(.group = "y_iterate", .slow = true) y_iter_huge2()
 {
 	for (new i = 0; i != 20100; ++i)
 	{
@@ -4940,5 +4940,170 @@ static stock
 	//Debug_Level(0);
 	//Debug_Disable();
 	Server_EnableLongCall();
+}
+
+@test(.group = "y_iterate") y_iterate_Regression2()
+{
+	Server_DisableLongCall();
+	new Iterator:iter<10>;
+	//Iter_Debug(iter);
+	Iter_Add(iter, 0);
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 2);
+	//Iter_Debug(iter);
+	//Debug_Level(7);
+	//Debug_Enable();
+	Iter_Remove(iter, 0);
+	//Debug_Level(0);
+	//Debug_Disable();
+	//Iter_Debug(iter);
+	Iter_Remove(iter, 1);
+	//Iter_Debug(iter);
+	Iter_Remove(iter, 2);
+	//Iter_Debug(iter);
+	//FOREACH__ (new i : iter)
+	//{
+	//}
+	ASSERT(Iter_Excludes(iter, 0));
+	ASSERT(Iter_Excludes(iter, 1));
+	ASSERT(Iter_Excludes(iter, 2));
+	//ASSERT_EQ(Iterator@iter[0], 5);
+	Server_EnableLongCall();
+}
+
+@test(.group = "y_iterate") y_iterate_End0()
+{
+	new Iterator:iter<10>;
+	Iter_Add(iter, 7);
+	Iter_Add(iter, 8);
+	Iter_Add(iter, 9);
+	Iter_Remove(iter, 7);
+	Iter_Remove(iter, 8);
+	Iter_Remove(iter, 9);
+	ASSERT(Iter_Excludes(iter, 0));
+	ASSERT(Iter_Excludes(iter, 1));
+	ASSERT(Iter_Excludes(iter, 2));
+	ASSERT(Iter_Excludes(iter, 7));
+	ASSERT(Iter_Excludes(iter, 8));
+	ASSERT(Iter_Excludes(iter, 9));
+}
+
+@test(.group = "y_iterate") y_iterate_End1()
+{
+	new Iterator:iter<10>;
+	Iter_Add(iter, 7);
+	Iter_Add(iter, 8);
+	Iter_Add(iter, 9);
+	Iter_Remove(iter, 9);
+	Iter_Remove(iter, 8);
+	Iter_Remove(iter, 7);
+	ASSERT(Iter_Excludes(iter, 0));
+	ASSERT(Iter_Excludes(iter, 1));
+	ASSERT(Iter_Excludes(iter, 2));
+	ASSERT(Iter_Excludes(iter, 7));
+	ASSERT(Iter_Excludes(iter, 8));
+	ASSERT(Iter_Excludes(iter, 9));
+}
+
+@test(.group = "y_iterate") y_iterate_End2()
+{
+	new Iterator:iter<10>;
+	Iter_Add(iter, 9);
+	Iter_Add(iter, 8);
+	Iter_Add(iter, 7);
+	Iter_Remove(iter, 7);
+	Iter_Remove(iter, 8);
+	Iter_Remove(iter, 9);
+	ASSERT(Iter_Excludes(iter, 0));
+	ASSERT(Iter_Excludes(iter, 1));
+	ASSERT(Iter_Excludes(iter, 2));
+	ASSERT(Iter_Excludes(iter, 7));
+	ASSERT(Iter_Excludes(iter, 8));
+	ASSERT(Iter_Excludes(iter, 9));
+}
+
+@test(.group = "y_iterate") y_iterate_End3()
+{
+	new Iterator:iter<10>;
+	Iter_Add(iter, 9);
+	Iter_Add(iter, 8);
+	Iter_Add(iter, 7);
+	Iter_Remove(iter, 9);
+	Iter_Remove(iter, 8);
+	Iter_Remove(iter, 7);
+	ASSERT(Iter_Excludes(iter, 0));
+	ASSERT(Iter_Excludes(iter, 1));
+	ASSERT(Iter_Excludes(iter, 2));
+	ASSERT(Iter_Excludes(iter, 7));
+	ASSERT(Iter_Excludes(iter, 8));
+	ASSERT(Iter_Excludes(iter, 9));
+}
+
+@test(.group = "y_iterate") y_iterate_End4()
+{
+	new Iterator:iter<10>;
+	Iter_Add(iter, 0);
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 2);
+	Iter_Remove(iter, 0);
+	Iter_Remove(iter, 1);
+	Iter_Remove(iter, 2);
+	ASSERT(Iter_Excludes(iter, 0));
+	ASSERT(Iter_Excludes(iter, 1));
+	ASSERT(Iter_Excludes(iter, 2));
+	ASSERT(Iter_Excludes(iter, 7));
+	ASSERT(Iter_Excludes(iter, 8));
+	ASSERT(Iter_Excludes(iter, 9));
+}
+
+@test(.group = "y_iterate") y_iterate_End5()
+{
+	new Iterator:iter<10>;
+	Iter_Add(iter, 0);
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 2);
+	Iter_Remove(iter, 2);
+	Iter_Remove(iter, 1);
+	Iter_Remove(iter, 0);
+	ASSERT(Iter_Excludes(iter, 0));
+	ASSERT(Iter_Excludes(iter, 1));
+	ASSERT(Iter_Excludes(iter, 2));
+	ASSERT(Iter_Excludes(iter, 7));
+	ASSERT(Iter_Excludes(iter, 8));
+	ASSERT(Iter_Excludes(iter, 9));
+}
+
+@test(.group = "y_iterate") y_iterate_End6()
+{
+	new Iterator:iter<10>;
+	Iter_Add(iter, 2);
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 0);
+	Iter_Remove(iter, 0);
+	Iter_Remove(iter, 1);
+	Iter_Remove(iter, 2);
+	ASSERT(Iter_Excludes(iter, 0));
+	ASSERT(Iter_Excludes(iter, 1));
+	ASSERT(Iter_Excludes(iter, 2));
+	ASSERT(Iter_Excludes(iter, 7));
+	ASSERT(Iter_Excludes(iter, 8));
+	ASSERT(Iter_Excludes(iter, 9));
+}
+
+@test(.group = "y_iterate") y_iterate_End7()
+{
+	new Iterator:iter<10>;
+	Iter_Add(iter, 2);
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 0);
+	Iter_Remove(iter, 2);
+	Iter_Remove(iter, 1);
+	Iter_Remove(iter, 0);
+	ASSERT(Iter_Excludes(iter, 0));
+	ASSERT(Iter_Excludes(iter, 1));
+	ASSERT(Iter_Excludes(iter, 2));
+	ASSERT(Iter_Excludes(iter, 7));
+	ASSERT(Iter_Excludes(iter, 8));
+	ASSERT(Iter_Excludes(iter, 9));
 }
 

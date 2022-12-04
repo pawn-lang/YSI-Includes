@@ -395,6 +395,8 @@ REMOTE_FUNC__ static void:_Group_Destroy(g, const _no_itertag:Iterator@gp[MAX_PL
 		// that other group as a direct result of being added to this group,
 		// but maybe they weren't - there's no way to know!
 		// Check it!  Local parameter iterator!
+		//printf("A");
+		//Iter_Debug_InternalC("GroupPlayers", Iterator@gp, MAX_PLAYERS, s);
 		FOREACH__ (new p : gp)
 		{
 			YSI_gTempAllowed_ = YSI_gGroupPlayers[p];
@@ -404,20 +406,30 @@ REMOTE_FUNC__ static void:_Group_Destroy(g, const _no_itertag:Iterator@gp[MAX_PL
 			GROUP_CHAIN<YSI_g_sNextUpdFunc>(p, YSI_gTempAllowed_, YSI_gGroupPlayers[p]);
 			YSI_gGroupPlayers[p][ps] &= pm;
 		}
+		//printf("B");
 	}
 	else
 	{
+		//printf("C");
+		//Iter_Debug_InternalC("GroupPlayers", Iterator@gp, MAX_PLAYERS, s);
 		FOREACH__ (new p : gp)
 		{
 			// Remove all players from this group.
 			YSI_gGroupPlayers[p][ps] &= pm;
 		}
+		//printf("D");
 	}
 }
 
 // Added for the fun of it.
 FOREIGN__ void:Group_Destroy(Group:group);
 
+//Group_DDDDDD(Group:group)
+//{
+//	GROUP_FIX(group);
+//	Iter_Debug(GroupPlayers[_:group]);
+//}
+	
 GLOBAL__ void:Group_Destroy(Group:group)
 {
 	Debug_Print2("Group_Destroy called: %i", _:group);
