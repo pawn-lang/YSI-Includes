@@ -311,6 +311,23 @@ FUNC_PAWNDOC(bool:Iter_Contains(Iterator:iter<>, value));
  * <library>y_iterate</library>
  * <param name="iter">Name of the iterator to check membership of.</param>
  * <param name="value">Value to check.</param>
+ * <remarks>
+ *   Checks if the given value is NOT in the given iterator.
+ *
+ * native Iter_Excludes(Iterator:Name&lt;&gt;, value);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FUNC_PAWNDOC(bool:Iter_Excludes(Iterator:iter<>, value));
+#define Iter_Excludes _BOOL_ITER<Iter_Excludes_Internal>
+#define Iter_Excludes_InternalA(%0,%1,%9)     (!Iter_Contains_InternalC(_:%1,F@s(%1)-F@s(%0),Iter_Tag(%1,%9)))
+#define Iter_Excludes_InternalB(%0,%2,%1,%9)  (!Iter_Contains_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),-%2+F@s(%1)-1,Iter_Tag(%1,%9)))
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_iterate</library>
+ * <param name="iter">Name of the iterator to check membership of.</param>
+ * <param name="value">Value to check.</param>
  * <returns>
  *   Index in which the value is contained in the multi-iterator.
  * </returns>
