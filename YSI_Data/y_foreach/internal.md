@@ -871,3 +871,939 @@ this code, taken straight from "y_iterate":
 // the failed `new` macro call above.
 #define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%1,%2||| %2=_Y_ITER_FOREACH_SIZE(%1);_:(%2=_Y_ITER_ARRAY$%1$YSII_Ag[%2])!=_Y_ITER_MAYBE_ARRAY(%1);
 ```
+
+## `A`/`B`/`C`/`D`
+
+Many internal functions have `A`/`B`/`C`/`D` suffixes.  Generally when you declare an iterator function it can take standard iterators or multi-iterators, but the implementations for these are usually wildly different.  Thus declaring a function like `Iter_Add` is compiled in to one of two different versions depending on the parameter (if it has `<>`s or not).  The `_InternalA` variant is for when there is no `<>`, and the `_InternalB` variant for multi-iterators.  When the code needs further macro generation the `A`/`B` versions are usually macros that do more translations, but to avoid recursive applications the second level uses `C` and `D` respectively.  Hence most of the internal implementation functions end up being that.  You'll notice that these functions tend to take wildly different parameters than those exposed by their API wrappers.  This is just because we need a lot of information about iterators like their true sizes.
+
+## Internal Functions
+
+
+### `Iter_Add_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Add_InternalC(&count, array[], size, value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	` & ` Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Array start index.	 |
+| 	`value`	 | 	Item to add.	 |
+
+#### Remarks
+Adds a value to a given iterator set. Now detects when you try and add the last item multiple times, as well as all the other items. Now simplified even further with the new internal representation. The modulo code is for iterator reversal.
+
+
+#### Depends on
+* [`Iter_Prev_InternalD`](#Iter_Prev_InternalD)
+* [`YSI_PrintF__`](#YSI_PrintF__)
+* [`YSI_gDebugLevel`](#YSI_gDebugLevel)
+* [`cellmin`](#cellmin)
+#### Estimated stack usage
+13 cells
+
+
+
+### `Iter_All_Internal`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_All_Internal(array[], size, value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [] ` The internal iterator data.	 |
+| 	`size`	 | 	The internal iterator size.	 |
+| 	`value`	 | 	The current iterator step.	 |
+
+#### Remarks
+Loop over all values in any iterator. This is different to looping over the iterator normally for multi-dimensional iterators, since it will return all values in ANY iterator in their numerical order. For single dimensional iterators it is exactly the same, just a little slower.
+
+
+#### Estimated stack usage
+1 cells
+
+
+
+### `Iter_Alloc_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Alloc_InternalC(&count, array[], size, ...)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	` & ` Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Array start index.	 |
+| 	`...`	 | 		 |
+
+#### Remarks
+Finds the first free slot in the iterator and add it. Excepting requested values.
+
+
+#### Depends on
+* [`cellmin`](#cellmin)
+#### Estimated stack usage
+4 cells
+
+
+
+### `Iter_Clear_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Clear_InternalC(array[], size, entries, ...)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of information.	 |
+| 	`entries`	 | 	Size of the count data.	 |
+| 	`...`	 | 	Optional single multi-iterator to clear.	 |
+
+#### Remarks
+Resets an iterator.
+
+
+#### Depends on
+* [`setarg`](#setarg)
+#### Estimated stack usage
+5 cells
+
+
+
+### `Iter_Clear_InternalD`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Clear_InternalD(array[], size, entries, elems, counts[], start)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of base array.	 |
+| 	`entries`	 | 	Size of the count data.	 |
+| 	`elems`	 | 	Number of iterator elements.	 |
+| 	`counts`	 | 	` [] ` Number of items in the iterator.	 |
+| 	`start`	 | 	Optional single multi-iterator to clear.	 |
+
+#### Remarks
+Resets an iterator.
+
+
+#### Estimated stack usage
+1 cells
+
+
+### `Iter_Contains_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Contains_InternalC(array[], size, value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of the iterator.	 |
+| 	`value`	 | 	Item to check.	 |
+
+#### Remarks
+Checks if this item is in the iterator.
+
+
+#### Estimated stack usage
+1 cells
+
+
+
+### `Iter_Contains_InternalD`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Contains_InternalD(count, array[], size, start, value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 		 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of the iterator.	 |
+| 	`start`	 | 		 |
+| 	`value`	 | 	Item to check.	 |
+
+#### Remarks
+Checks if this item is in the iterator.
+
+
+#### Estimated stack usage
+1 cells
+
+
+
+### `Iter_Count_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Count_InternalC(counts[], slots)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`counts`	 | 	` [] ` Number of items in each iterator part.	 |
+| 	`slots`	 | 	Number of multi-iterator values.	 |
+
+#### Remarks
+Return the total number of elements in all slots together.
+
+
+#### Estimated stack usage
+2 cells
+
+
+
+### `Iter_Debug_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Debug_InternalC(name[], array[], size, count)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`name`	 | 	` [] ` iterator name.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of the iterator.	 |
+| 	`count`	 | 	The number of elements added.	 |
+
+#### Remarks
+Print the contents of an iterator for debugging.
+
+
+#### Depends on
+* [`cellmax`](#cellmax)
+* [`printf`](#printf)
+#### Estimated stack usage
+19 cells
+
+
+
+### `Iter_Debug_InternalD`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Debug_InternalD(name[], array[], size, counts[], slots)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`name`	 | 	` [] ` iterator name.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of the iterator.	 |
+| 	`counts`	 | 	` [] ` The number of elements added.	 |
+| 	`slots`	 | 	The number of start points.	 |
+
+#### Remarks
+Print the contents of an iterator for debugging.
+
+
+#### Depends on
+* [`cellmax`](#cellmax)
+* [`printf`](#printf)
+#### Estimated stack usage
+21 cells
+
+
+
+### `Iter_FreeMulti_Internal`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_FreeMulti_Internal(array[], trueSize, start)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [] ` multi-iterator data.	 |
+| 	`trueSize`	 | 	Size of the multi-iterator.	 |
+| 	`start`	 | 	End [?, since start points are backwards] of the multi-iterator.	 |
+
+#### Remarks
+Finds the first free multi index in the multi-iterator.
+
+
+#### Depends on
+* [`cellmin`](#cellmin)
+#### Estimated stack usage
+2 cells
+
+
+
+### `Iter_Free_Internal`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Free_Internal(array[], size)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of the iterator.	 |
+
+#### Remarks
+Finds the first free slot in the iterator.
+
+
+#### Depends on
+* [`cellmin`](#cellmin)
+#### Estimated stack usage
+2 cells
+
+
+
+### `Iter_GetMulti_Internal`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_GetMulti_Internal(array[], trueSize, size, value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [] ` multi-iterator data.	 |
+| 	`trueSize`	 | 	Size of the multi-iterator per index.	 |
+| 	`size`	 | 	Size of the multi-iterator.	 |
+| 	`value`	 | 	Item to check.	 |
+
+#### Returns
+INVALID_ITERATOR_SLOT on failure. Index of the multi-iterator the value is contained.
+
+
+#### Remarks
+Checks if this item is in the multi-iterator at all, and if it is returns which index it is in.
+
+
+#### Depends on
+* [`cellmin`](#cellmin)
+#### Estimated stack usage
+1 cells
+
+
+
+### `Iter_Index_Internal`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Index_Internal(count, array[], start, size, index, wrap)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`start`	 | 	Array start index.	 |
+| 	`size`	 | 	Array size.	 |
+| 	`index`	 | 	Index to find Nth value.	 |
+| 	`wrap`	 | 	`bool ` Keep going around until a value is found?	 |
+
+#### Remarks
+Allows you to find the Nth value in the iterator. DO NOT call this in a loop to get all values - that totally defeats the purpose of "foreach", just use a normal "foreach" loop with an index counter for that case.
+
+
+#### Depends on
+* [`cellmin`](#cellmin)
+#### Estimated stack usage
+1 cells
+
+
+
+### `Iter_Init_Internal`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Init_Internal(array[][], first[], s0, s1, entries)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [][] ` Iterator array to initialise.	 |
+| 	`first`	 | 	` [] ` First iterator slot.	 |
+| 	`s0`	 | 	Size of first dimension.	 |
+| 	`s1`	 | 	Size of second dimension.	 |
+| 	`entries`	 | 	Number of start points.	 |
+
+#### Remarks
+Multi-dimensional arrays can't be initialised at compile time, so need to be done at run time, which is slightly annoying.
+
+
+#### Depends on
+* [`FIXES_memcpy`](#FIXES_memcpy)
+* [`cellbytes`](#cellbytes)
+#### Estimated stack usage
+10 cells
+
+
+
+### `Iter_None_Internal`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_None_Internal(array[], size, value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [] ` The internal iterator data.	 |
+| 	`size`	 | 	The internal iterator size.	 |
+| 	`value`	 | 	The current iterator step.	 |
+
+#### Remarks
+Loop over all values NOT in any iterator. Similar to repeatedly calling `Iter_Free`, though that will return the same value twice if called twice in a row. Instead, this function will loop through the missing ones.
+
+
+#### Estimated stack usage
+1 cells
+
+
+
+### `Iter_Prev_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Prev_InternalC(array[], elems, size, slot)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`elems`	 | 	Number of elements in the iterator.	 |
+| 	`size`	 | 	Size of the iterator.	 |
+| 	`slot`	 | 	The current slot.	 |
+
+#### Remarks
+Gets the element in an iterator that points to the current element.
+
+
+#### Estimated stack usage
+2 cells
+
+
+
+### `Iter_Prev_InternalD`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Prev_InternalD(array[], size, slot)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of the iterator.	 |
+| 	`slot`	 | 	The current slot.	 |
+
+#### Remarks
+Gets the element in an iterator that points to the current element.
+
+
+#### Depends on
+* [`min`](#min)
+#### Estimated stack usage
+5 cells
+
+
+
+### `Iter_RandomAdd_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomAdd_InternalC(&count, array[], start, ...)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	` & ` Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`start`	 | 	Size of the iterator.	 |
+| 	`...`	 | 		 |
+
+#### Remarks
+Adds a random value to an iterator.
+
+
+#### Depends on
+* [`Hooks_NumArgs`](#Hooks_NumArgs)
+* [`Iter_Add_InternalC`](#Iter_Add_InternalC)
+* [`Iter_RandomFree_Multi`](#Iter_RandomFree_Multi)
+* [`Iter_RandomFree_Single`](#Iter_RandomFree_Single)
+* [`__cell_shift`](#__cell_shift)
+* [`__param3_offset`](#__param3_offset)
+* [`__stk`](#__stk)
+* [`cellbytes`](#cellbytes)
+#### Estimated stack usage
+10 cells
+
+
+
+### `Iter_RandomAdd_InternalD`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`counts`	 | 	` [] ` Number of items in each iterator part.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Size of the iterator.	 |
+| 	`slots`	 | 	Number of multi-iterator values.	 |
+| 	`start`	 | 		 |
+| 	`slot`	 | 	Multi-iterator slot to add to.	 |
+| 	`...`	 | 		 |
+
+#### Remarks
+Adds a random value to an iterator.
+
+
+#### Depends on
+* [`Hooks_NumArgs`](#Hooks_NumArgs)
+* [`Iter_Add_InternalD`](#Iter_Add_InternalD)
+* [`Iter_RandomFree_Multi`](#Iter_RandomFree_Multi)
+* [`Iter_RandomFree_Single`](#Iter_RandomFree_Single)
+* [`__cell_shift`](#__cell_shift)
+* [`__param6_offset`](#__param6_offset)
+* [`__stk`](#__stk)
+* [`cellbytes`](#cellbytes)
+#### Estimated stack usage
+12 cells
+
+
+
+### `Iter_RandomFree_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomFree_InternalC(count, array[], start, ...)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`start`	 | 	Size of the iterator.	 |
+| 	`...`	 | 		 |
+
+#### Remarks
+Returns a random unused value from an iterator.
+
+
+#### Depends on
+* [`Hooks_NumArgs`](#Hooks_NumArgs)
+* [`Iter_RandomFree_Multi`](#Iter_RandomFree_Multi)
+* [`Iter_RandomFree_Single`](#Iter_RandomFree_Single)
+* [`__cell_shift`](#__cell_shift)
+* [`__param3_offset`](#__param3_offset)
+* [`__stk`](#__stk)
+* [`cellbytes`](#cellbytes)
+#### Estimated stack usage
+10 cells
+
+
+
+### `Iter_RandomFree_InternalD`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomFree_InternalD(counts[], array[], start, slots, ...)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`counts`	 | 	` [] ` Number of items in each iterator part.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`start`	 | 	Size of the iterator.	 |
+| 	`slots`	 | 	Number of multi-iterator values.	 |
+| 	`...`	 | 		 |
+
+#### Remarks
+Returns a random unused value from an iterator.
+
+
+#### Depends on
+* [`Hooks_NumArgs`](#Hooks_NumArgs)
+* [`Iter_RandomFree_Multi`](#Iter_RandomFree_Multi)
+* [`Iter_RandomFree_Single`](#Iter_RandomFree_Single)
+* [`__cell_shift`](#__cell_shift)
+* [`__param4_offset`](#__param4_offset)
+* [`__stk`](#__stk)
+* [`cellbytes`](#cellbytes)
+#### Estimated stack usage
+11 cells
+### `Iter_RandomRemove_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomRemove_InternalC(&count, array[], start, ...)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	` & ` Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`start`	 | 	Size of the iterator.	 |
+| 	`...`	 | 		 |
+
+#### Remarks
+Removes a random value from an iterator.
+
+
+#### Depends on
+* [`Hooks_NumArgs`](#Hooks_NumArgs)
+* [`Iter_Random_Impl`](#Iter_Random_Impl)
+* [`Iter_Remove_InternalC`](#Iter_Remove_InternalC)
+* [`__cell_shift`](#__cell_shift)
+* [`__param3_offset`](#__param3_offset)
+* [`__stk`](#__stk)
+* [`cellbytes`](#cellbytes)
+#### Estimated stack usage
+10 cells
+
+
+
+### `Iter_RandomRemove_InternalD`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	` & ` Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 		 |
+| 	`start`	 | 	Size of the iterator.	 |
+| 	`...`	 | 		 |
+| 	`slots`	 | 	Number of multi-iterator values.	 |
+
+#### Remarks
+Removes a random value from an iterator.
+
+
+#### Depends on
+* [`Hooks_NumArgs`](#Hooks_NumArgs)
+* [`Iter_Random_Impl`](#Iter_Random_Impl)
+* [`Iter_Remove_InternalD`](#Iter_Remove_InternalD)
+* [`__cell_shift`](#__cell_shift)
+* [`__param4_offset`](#__param4_offset)
+* [`__stk`](#__stk)
+* [`cellbytes`](#cellbytes)
+#### Estimated stack usage
+11 cells
+### `Iter_Random_Internal`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Random_Internal(count, array[], start, ...)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`start`	 | 	Size of the iterator.	 |
+| 	`...`	 | 	Excluded elements.	 |
+
+#### Remarks
+Returns a random value from an iterator. If additional parameters are given they are excluded from consideration. This allows you to chain calls to get multiple random values so follows: new president = Iter_Random(Player); new vicePresident = Iter_Random(Player, president); new primeMinister = Iter_Random(Player, president, vicePresident); new minister = Iter_Random(Player, president, vicePresident, primeMinister); None of those values can be the same, and this saves horrible random- dependent loops.
+
+
+#### Depends on
+* [`Hooks_NumArgs`](#Hooks_NumArgs)
+* [`Iter_Random_Impl`](#Iter_Random_Impl)
+* [`__cell_shift`](#__cell_shift)
+* [`__param3_offset`](#__param3_offset)
+* [`__stk`](#__stk)
+* [`cellbytes`](#cellbytes)
+#### Estimated stack usage
+10 cells
+### `Iter_Remove_InternalC`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Remove_InternalC(&count, array[], size, value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	` & ` Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` iterator data.	 |
+| 	`size`	 | 	Number of iterator elements.	 |
+| 	`value`	 | 	Item to remove.	 |
+
+#### Remarks
+Removes a value from an iterator.
+
+
+#### Depends on
+* [`YSI_PrintF__`](#YSI_PrintF__)
+* [`YSI_gDebugLevel`](#YSI_gDebugLevel)
+* [`cellmin`](#cellmin)
+* [`min`](#min)
+#### Estimated stack usage
+12 cells
+
+
+
+### `Iter_SafeRemove`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_SafeRemove(iter[], value, &next)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to remove data from.	 |
+| 	`value`	 | 	Data to remove.	 |
+| 	`next`	 | 	` & ` Container for the pointer to the next element.	 |
+
+#### Remarks
+Wrapper for Iter_SafeRemoveInternal. Common use: Iter_SafeRemove(iter, i, i); native Iter_SafeRemove(Iterator:Name<>, value, &next);
+
+
+#### Attributes
+* `native`
+
+
+### `Iter_SafeRemove_1`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_SafeRemove_1(&count, array[], size, value, &last)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`count`	 | 	` & ` Number of items in the iterator.	 |
+| 	`array`	 | 	` [] ` Iterator data.	 |
+| 	`size`	 | 	Number of iterator elements.	 |
+| 	`value`	 | 	Item to remove.	 |
+| 	`last`	 | 	` & ` Pointer in which to store the last pointer.	 |
+
+#### Remarks
+Removes a value from an iterator safely.
+
+
+#### Depends on
+* [`Iter_Prev_InternalD`](#Iter_Prev_InternalD)
+* [`cellmin`](#cellmin)
+#### Estimated stack usage
+6 cells
+
