@@ -3675,18 +3675,18 @@ iterfunc stock y_iter_yield5()
 
 @test(.group = "y_iterate", .slow = true) y_iter_yield5a()
 {
-	new
-		k = 0;
-	for (new i = 0; i != 65536; ++i)
-	{
-		if (i % 655 == 0)
-			printf("%d%%...", i / 655);
-		for (new j = 0; j != 65536; ++j)
-		{
-			++k;
-		}
-	}
-	ASSERT_ZE(k); // Overflow.
+	//new
+	//	k = 0;
+	//for (new i = 0; i != 65536; ++i)
+	//{
+	//	if (i % 655 == 0)
+	//		printf("%d%%...", i / 655);
+	//	for (new j = 0; j != 65536; ++j)
+	//	{
+	//		++k;
+	//	}
+	//}
+	//ASSERT_ZE(k); // Overflow.
 	new
 		count = 0,
 		bool:ever = false;
