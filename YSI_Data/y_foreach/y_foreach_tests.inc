@@ -3762,18 +3762,18 @@ iterfunc stock y_iter_yield7a(x)
 	ASSERT_EQ(idx, sizeof(answers));
 }
 
-static Iterator:y_iter_huge1<32767>; // Maximum.
+static Iterator:y_iter_huge1<65535>;
 
 @test(.group = "y_iterate") y_iter_huge1()
 {
-	for (new i = 0; i != 20100; ++i)
+	for (new i = 0; i != 50100; ++i)
 	{
 		Iter_Add(y_iter_huge1, i);
 	}
-	ASSERT_EQ(Iter_Count(y_iter_huge1), 20100);
+	ASSERT_EQ(Iter_Count(y_iter_huge1), 50100);
 }
 
-static Iterator:y_iter_huge2<32767>; // Maximum.
+static Iterator:y_iter_huge2<32767>;
 
 @test(.group = "y_iterate") y_iter_huge2()
 {
@@ -3792,6 +3792,262 @@ static Iterator:y_iter_huge2<32767>; // Maximum.
 	}
 	ASSERT_EQ(c, 20100);
 }
+
+/*static Iterator:y_iter_huge3<32767>;
+
+static stock Iter_RandomFree_Single_2(count, const array[], start)
+{
+	// Get the unused count, not the used count.
+	count = start - count;
+	if (count <= 0)
+	{
+		return INVALID_ITERATOR_SLOT;
+	}
+	// There are enough elements to search from after exclusions.
+	count = random(count);
+	// No exclutions, use the old code.
+	for ( ; ; )
+	{
+		--start;
+		// Check if this value is not included in any iterator.  If it isn't
+		// then decrement the count until we have run out of values to test.
+		if (array[start] <= start)
+		{
+			if (count == 0)
+			{
+				break;
+			}
+			--count;
+		}
+	}
+	return start;
+}
+
+@profileinit() y_iter_huge2a()
+{
+	Iter_Clear(y_iter_huge3);
+}
+
+@profile(1) y_iter_huge2a()
+{
+	for (new i = 0; i != 20100; ++i)
+	{
+		new s = Iter_RandomFree_Single_2(Iter_TrueCount(y_iter_huge3), Iter_TrueArray(y_iter_huge3), Iter_End(y_iter_huge3));
+		Iter_Add(y_iter_huge3, s);
+	}
+}
+
+static stock Iter_Add_InternalC_A(&count, array[], size, value)
+{
+	Debug_Print3("Iter_Add called: %d, %d, %d", count, size, value);
+	if (0 <= value < size && array[value] <= value)
+	{
+		Debug_Print5("Iter_Add: In iterator");
+		new
+			next = array[size],
+			last;
+		// We use many heuristics to try and find where in the list to insert
+		// this new value as fast as possible.
+		//
+		// Version 0:
+		//
+		//   The value is being added to the very start of the list.  Only comes
+		//   before the end insertion case because of a bug getting `prev` in
+		//   empty lists.
+		//
+		if (next > value)
+		{
+			last = size;
+		}
+		//
+		// Version 1:
+		//
+		//   It is being inserted at the end.  By far the most common case when
+		//   initialising some list of items.
+		//
+		else if (value > (last = Iter_Prev_InternalD(array, size + 1, size)))
+		{
+			next = size;
+		}
+		//
+		// Version 2:
+		//
+		//   If the array is densely filled then just looping linearly from the
+		//   value until we hit something in the array will be faster than
+		//   iterating through the list.  For that we need the average number of
+		//   steps required, which is `count / 2`.  So if
+		//   `(last - first) / count / 2` is smaller than that number then the
+		//   density is sufficient to justify a linear scan.
+		//
+		//   Simplify:
+		//
+		//     d = last - next + 1
+		//     c = count
+		//   
+		//     d / c / 2 < c / 2
+		//     d / c     < c
+		//     d         < c^2
+		//
+		//else if ((last - next + 1) < count * count)
+		//{
+		//	next = value + 1;
+		//	while (array[next] <= next)
+		//	{
+		//		++next;
+		//	}
+		//	last = Iter_Prev_InternalD(array, size + 1, next);
+		//}
+		//
+		// Version 3:
+		//
+		//   Base case.  Loop through the list forwards.
+		//
+		else
+		{
+			last = size;
+			while (next < value)
+			{
+				Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
+				last = next,
+				next = array[last];
+			}
+		}
+		// Increase `size` so we modulo over the whole array, not just the
+		// valid values subset.
+		Debug_Print5("Iter_Add: Adding %d, %d, %d, %d, %d, %d", last, value, size, next, next - 1, (value - 1) % (size + 1));
+		
+		return
+			++size,
+			++count,
+			array[(value - 1) % size] = (last + 1) % size,
+			array[next - 1] = value + 1,
+			array[value] = next,
+			array[last] = value;
+	}
+	return INVALID_ITERATOR_SLOT;
+}
+
+static Iterator:y_iter_huge4<32767>;
+
+@profileinit() y_iter_huge2b()
+{
+	Iter_Clear(y_iter_huge4);
+}
+
+@profile(1) y_iter_huge2b()
+{
+	for (new i = 0; i != 20100; ++i)
+	{
+		new s = Iter_RandomFree_Single_2(Iter_TrueCount(y_iter_huge4), Iter_TrueArray(y_iter_huge4), Iter_End(y_iter_huge4));
+		Iter_Add_InternalC_A(Iter_TrueCount(y_iter_huge4), Iter_TrueArray(y_iter_huge4), Iter_TrueSize(y_iter_huge4) - 1, s);
+	}
+}
+
+static stock Iter_Add_InternalC_B(&count, array[], size, value)
+{
+	Debug_Print3("Iter_Add called: %d, %d, %d", count, size, value);
+	if (0 <= value < size && array[value] <= value)
+	{
+		Debug_Print5("Iter_Add: In iterator");
+		new
+			next = array[size],
+			last;
+		// We use many heuristics to try and find where in the list to insert
+		// this new value as fast as possible.
+		//
+		// Version 0:
+		//
+		//   The value is being added to the very start of the list.  Only comes
+		//   before the end insertion case because of a bug getting `prev` in
+		//   empty lists.
+		//
+		if (next > value)
+		{
+			last = size;
+		}
+		//
+		// Version 1:
+		//
+		//   It is being inserted at the end.  By far the most common case when
+		//   initialising some list of items.
+		//
+		//else if (value > (last = Iter_Prev_InternalD(array, size + 1, size)))
+		//{
+		//	next = size;
+		//}
+		//
+		// Version 2:
+		//
+		//   If the array is densely filled then just looping linearly from the
+		//   value until we hit something in the array will be faster than
+		//   iterating through the list.  For that we need the average number of
+		//   steps required, which is `count / 2`.  So if
+		//   `(last - first) / count / 2` is smaller than that number then the
+		//   density is sufficient to justify a linear scan.
+		//
+		//   Simplify:
+		//
+		//     d = last - next + 1
+		//     c = count
+		//   
+		//     d / c / 2 < c / 2
+		//     d / c     < c
+		//     d         < c^2
+		//
+		else if ((Iter_Prev_InternalD(array, size + 1, size) - next + 1) < count * count)
+		{
+			next = value + 1;
+			while (array[next] <= next)
+			{
+				++next;
+			}
+			last = Iter_Prev_InternalD(array, size + 1, next);
+		}
+		//
+		// Version 3:
+		//
+		//   Base case.  Loop through the list forwards.
+		//
+		else
+		{
+			last = size;
+			while (next < value)
+			{
+				Debug_Print6("Iter_Add: Finding prev %d, %d", next, last);
+				last = next,
+				next = array[last];
+			}
+		}
+		// Increase `size` so we modulo over the whole array, not just the
+		// valid values subset.
+		Debug_Print5("Iter_Add: Adding %d, %d, %d, %d, %d, %d", last, value, size, next, next - 1, (value - 1) % (size + 1));
+		
+		return
+			++size,
+			++count,
+			array[(value - 1) % size] = (last + 1) % size,
+			array[next - 1] = value + 1,
+			array[value] = next,
+			array[last] = value;
+	}
+	return INVALID_ITERATOR_SLOT;
+}
+
+static Iterator:y_iter_huge5<32767>;
+
+@profileinit() y_iter_huge2c()
+{
+	Iter_Clear(y_iter_huge5);
+}
+
+@profile(1) y_iter_huge2c()
+{
+	for (new i = 0; i != 20100; ++i)
+	{
+		new s = Iter_RandomFree_Single_2(Iter_TrueCount(y_iter_huge5), Iter_TrueArray(y_iter_huge5), Iter_End(y_iter_huge5));
+		Iter_Add_InternalC_B(Iter_TrueCount(y_iter_huge5), Iter_TrueArray(y_iter_huge5), Iter_TrueSize(y_iter_huge5) - 1, s);
+	}
+}*/
 
 @test(.group = "y_iterate") y_iter_AddHeuristics()
 {
