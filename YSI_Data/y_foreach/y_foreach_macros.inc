@@ -87,7 +87,7 @@ Optional plugins:
 */
 
 // Temp definition for documentation.  Will be corrected at the end of the file.
-#define Iterator:%1<%2> Iterator:%1[]
+#define Iterator:%1<%2>%3)= Iterator:%1[%2]%3)=
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
