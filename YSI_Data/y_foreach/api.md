@@ -319,6 +319,62 @@ Suppress warnings when `_:` is used (correctly) instead of `_no_itertag:`. This 
 
 
 
+### `ITER_SAFE_REMOVE`:
+
+
+#### Syntax
+
+
+```pawn
+ITER_SAFE_REMOVE(iter[], &index)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to deal with safely.	 |
+| 	`index`	 | 	` & ` Index.	 |
+
+#### Remarks
+Call functions that modify an iterator safely from inside a loop:
+
+```pawn
+  DestroyVehicle(vehicleid)  {  Iter_Remove(Vehicle, vehicleid);  }  foreach (new vehicleid : Vehicle)  {  ITER_SAFE_REMOVE(Vehicle, vehicleid)  {  DestroyVehicle(vehicleid);  }  }  
+```
+
+
+#### Attributes
+* `native`
+
+### `Iter_Add`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Add(iter[], value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to add the data to.	 |
+| 	`value`	 | 	Value to add to the iterator.	 |
+
+#### Remarks
+Wrapper for Iter_AddInternal. native Iter_Add(Iterator:Name<>, value);
+
+
+#### Attributes
+* `native`
+
 ### `Iter_Add_InternalC`:
 
 
@@ -383,6 +439,31 @@ Loop over all values in any iterator. This is different to looping over the iter
 
 
 
+### `Iter_Alloc`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Alloc(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the first free slot in.	 |
+
+#### Remarks
+Finds an empty slot in an iterator, adds that slot to the iterator, and returns the now added slot. native Iter_Alloc(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
 ### `Iter_Alloc_InternalC`:
 
 
@@ -414,6 +495,81 @@ Finds the first free slot in the iterator and add it. Excepting requested values
 4 cells
 
 
+
+### `Iter_Available`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Available(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the number of unused elements in.	 |
+
+#### Remarks
+Returns the number of unused items in this iterator. native Iter_Available(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
+### `Iter_Begin`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Begin(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the start of.	 |
+
+#### Remarks
+Gets a point BEFORE the start of the iterator (the theoretical beginning).
+
+
+#### Attributes
+* `native`
+
+### `Iter_Clear`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Clear(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to empty.	 |
+
+#### Remarks
+Wrapper for Iter_Clear_Internal. Although it doesn't fit my normal strict spacing, the end of "B" is correct, namely: "_:F@s(%0),%2)". This uses the "_:%0,)" macro to consume a trailing comma when nothing is given in "%2", so I can't have a leading space sadly. "- 2" in place of the normal "- 1" is CORRECT! native Iter_Clear(IteratorArray:Name[]<>);
+
+
+#### Attributes
+* `native`
 
 ### `Iter_Clear_InternalC`:
 
@@ -479,6 +635,36 @@ Resets an iterator.
 
 
 
+### `Iter_Contains`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Contains(iter[], value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to check membership of.	 |
+| 	`value`	 | 	Value to check.	 |
+
+#### Tag
+`bool:`
+
+
+#### Remarks
+Checks if the given value is in the given iterator. native Iter_Contains(Iterator:Name<>, value);
+
+
+#### Attributes
+* `native`
+
 ### `Iter_Contains_InternalC`:
 
 
@@ -539,6 +725,31 @@ Checks if this item is in the iterator.
 
 
 
+### `Iter_Count`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Count(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the number of elements in.	 |
+
+#### Remarks
+Returns the number of items in this iterator. native Iter_Count(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
 ### `Iter_Count_InternalC`:
 
 
@@ -566,6 +777,31 @@ Return the total number of elements in all slots together.
 2 cells
 
 
+
+### `Iter_Debug`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Debug(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to	 |
+
+#### Remarks
+Print information about an iterator.
+
+
+#### Attributes
+* `native`
 
 ### `Iter_Debug_InternalC`:
 
@@ -634,6 +870,161 @@ Print the contents of an iterator for debugging.
 
 
 
+### `Iter_End`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_End(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the end of.	 |
+
+#### Remarks
+Gets a point AFTER the end of the iterator (think "MAX_PLAYERS").
+
+
+#### Attributes
+* `native`
+
+### `Iter_Excludes`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Excludes(iter[], value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to check membership of.	 |
+| 	`value`	 | 	Value to check.	 |
+
+#### Tag
+`bool:`
+
+
+#### Remarks
+Checks if the given value is NOT in the given iterator. native Iter_Excludes(Iterator:Name<>, value);
+
+
+#### Attributes
+* `native`
+
+### `Iter_FastClear`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_FastClear(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to empty.	 |
+
+#### Remarks
+Uses a static array copy to blank the iterator instead of a loop. BROKEN! native Iter_FastClear(IteratorArray:Name[]<>);
+
+
+#### Attributes
+* `native`
+
+### `Iter_First`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_First(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the first valid element in.	 |
+
+#### Remarks
+Gets the first element in an iterator.
+
+
+#### Attributes
+* `native`
+
+### `Iter_Free`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Free(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the first free slot in.	 |
+
+#### Remarks
+Wrapper for Iter_Free_Internal. Returns a slot NOT in the current iterator. native Iter_Free(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
+### `Iter_FreeMulti`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_FreeMulti(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the multi-iterator to get the first free slot in.	 |
+
+#### Remarks
+Wrapper for Iter_FreeMulti_Internal. Returns a slot NOT in the current multi-iterator. native Iter_FreeMulti(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
 ### `Iter_FreeMulti_Internal`:
 
 
@@ -695,6 +1086,36 @@ Finds the first free slot in the iterator.
 
 
 
+### `Iter_GetMulti`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_GetMulti(iter[], value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to check membership of.	 |
+| 	`value`	 | 	Value to check.	 |
+
+#### Returns
+Index in which the value is contained in the multi-iterator.
+
+
+#### Remarks
+Checks if the given value is in the given iterator, and if it is return which index it is contained. native Iter_GetMulti(Iterator:Name<>, value);
+
+
+#### Attributes
+* `native`
+
 ### `Iter_GetMulti_Internal`:
 
 
@@ -731,6 +1152,33 @@ Checks if this item is in the multi-iterator at all, and if it is returns which 
 
 
 
+### `Iter_Index`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Index(iter[], index, wrap)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get a slot in by index.	 |
+| 	`index`	 | 	Index.	 |
+| 	`wrap`	 | 	`bool ` Keep going around until a value is found?	 |
+
+#### Remarks
+Wrapper for Iter_Index_Internal. Returns the Nth value in the iterator (requires looping due to the way iterators are stored and optimised for loops not direct access). native Iter_Index(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
 ### `Iter_Index_Internal`:
 
 
@@ -764,6 +1212,64 @@ Allows you to find the Nth value in the iterator. DO NOT call this in a loop to 
 1 cells
 
 
+
+### `Iter_Init`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Init(iter[][])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [][] ` Name of the iterator array to initialise.	 |
+
+#### Remarks
+Wrapper for Iter_Init_Internal. When `__COMPILER_NESTED_ELLIPSIS` is set, this isn't needed because multi-dimensional iterators can be initialised with the new `{{0, 1, ...), ...}` feature. In that case `I@ = 0` is called as a `void` function that does nothing but ends in a semi-colon (`I@` is used a lot in YSI as a `do nothing` enabler).
+
+```pawn
+native Iter_Init(IteratorArray:Name[]<>);
+```
+
+
+#### Attributes
+* `native`
+
+### `Iter_InitAndClear`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_InitAndClear(iter[][])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [][] ` Name of the iterator array to initialise.	 |
+
+#### Remarks
+Wrapper for Iter_Init_Internal. ALWAYS resets the array.
+
+```pawn
+native Iter_InitAndClear(IteratorArray:Name[]<>);
+```
+
+
+#### Attributes
+* `native`
 
 ### `Iter_Init_Internal`:
 
@@ -799,6 +1305,157 @@ Multi-dimensional arrays can't be initialised at compile time, so need to be don
 
 
 
+### `Iter_IsEmpty`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_IsEmpty(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to test the emptiness of.	 |
+
+#### Remarks
+For multi-iterators `Iter_IsEmpty(a<>)` and `Iter_IsEmpty(a<5>)` are different. The first returns `true` when all values are unused by any slot. The second returns `true` when that slot alone has no values, even if every single value is used by other slots. native Iter_IsEmpty(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
+### `Iter_IsFull`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_IsFull(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to test the fullness of.	 |
+
+#### Remarks
+For multi-iterators `Iter_IsFull(a<>)` and `Iter_IsFull(a<5>)` are different. The first returns `true` when all values are used, in any slot. The second returns `true` when that slot alone has all values. native Iter_IsFull(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
+### `Iter_Last`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Last(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to	 |
+
+#### Remarks
+Gets the last element in an iterator. Works by getting the previous item from the one BEFORE the first element (i.e. the one before the sentinel).
+
+
+#### Attributes
+* `native`
+
+### `Iter_Next`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Next(iter[], cur)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the next element in.	 |
+| 	`cur`	 | 	The current element.	 |
+
+#### Remarks
+Gets the element in an iterator after the current one.
+
+
+#### Attributes
+* `native`
+
+### `Iter_NonEmpty`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_NonEmpty(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to test the non-emptiness of.	 |
+
+#### Remarks
+For multi-iterators `Iter_NonEmpty(a<>)` and `Iter_NonEmpty(a<5>)` are different. The first returns `true` when any value is used, in any slot. The second returns `true` when that slot alone has any values. native Iter_NonEmpty(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
+### `Iter_NonFull`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_NonFull(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to test the non-fullness of.	 |
+
+#### Remarks
+For multi-iterators `Iter_NonFull(a<>)` and `Iter_NonFull(a<5>)` are different. The first returns `true` when not all values are used anywhere. The second returns `true` when that slot alone is missing some values, even if those values are in other slots. native Iter_NonFull(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
 ### `Iter_None_Internal`:
 
 
@@ -827,6 +1484,32 @@ Loop over all values NOT in any iterator. Similar to repeatedly calling `Iter_Fr
 1 cells
 
 
+
+### `Iter_Prev`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Prev(iter[], cur)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the previous element in.	 |
+| 	`cur`	 | 	The current element.	 |
+
+#### Remarks
+Gets the element in an iterator before the current one. Slow.
+
+
+#### Attributes
+* `native`
 
 ### `Iter_Prev_InternalC`:
 
@@ -888,6 +1571,56 @@ Gets the element in an iterator that points to the current element.
 5 cells
 
 
+
+### `Iter_Random`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Random(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get a random slot from.	 |
+
+#### Remarks
+Wrapper for Iter_RandomInternal. native Iter_Random(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
+
+### `Iter_RandomAdd`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomAdd(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to add a random slot to.	 |
+
+#### Remarks
+Wrapper for Iter_RandomAddInternal. native Iter_RandomAdd(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
 
 ### `Iter_RandomAdd_InternalC`:
 
@@ -969,6 +1702,31 @@ Adds a random value to an iterator.
 12 cells
 
 
+
+### `Iter_RandomFree`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomFree(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get a random unused slot for.	 |
+
+#### Remarks
+Wrapper for Iter_RandomFree_Internal. native Iter_RandomFree(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
 
 ### `Iter_RandomFree_InternalC`:
 
@@ -1114,6 +1872,31 @@ Returns a random unused value from an iterator. No exclusions.
 4 cells
 
 
+
+### `Iter_RandomRemove`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_RandomRemove(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to remove a random slot from.	 |
+
+#### Remarks
+Wrapper for Iter_RandomRemoveInternal. native Iter_RandomRemove(Iterator:Name<>);
+
+
+#### Attributes
+* `native`
 
 ### `Iter_RandomRemove_InternalC`:
 
@@ -1266,6 +2049,32 @@ Returns a random value from an iterator. If additional parameters are given they
 
 
 
+### `Iter_Remove`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Remove(iter[], value)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to remove data from.	 |
+| 	`value`	 | 	Data to remove.	 |
+
+#### Remarks
+Wrapper for Iter_RemoveInternal. native Iter_Remove(Iterator:Name<>, value);
+
+
+#### Attributes
+* `native`
+
 ### `Iter_Remove_InternalC`:
 
 
@@ -1301,6 +2110,33 @@ Removes a value from an iterator.
 
 
 
+### `Iter_SafeRemove`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_SafeRemove(iter[], value, &next)
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to remove data from.	 |
+| 	`value`	 | 	Data to remove.	 |
+| 	`next`	 | 	` & ` Container for the pointer to the next element.	 |
+
+#### Remarks
+Wrapper for Iter_SafeRemoveInternal. Common use: Iter_SafeRemove(iter, i, i); native Iter_SafeRemove(Iterator:Name<>, value, &next);
+
+
+#### Attributes
+* `native`
+
 ### `Iter_SafeRemove_1`:
 
 
@@ -1334,6 +2170,156 @@ Removes a value from an iterator safely.
 6 cells
 
 
+
+### `Iter_Size`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Size(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the size of.	 |
+
+#### Remarks
+Accesses the size of an iterator.
+
+
+#### Attributes
+* `native`
+
+### `Iter_Starts`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_Starts(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the true starts of.	 |
+
+#### Remarks
+Accesses the number of starts in a multi-iterator.
+
+
+#### Attributes
+* `native`
+
+### `Iter_TrueArray`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_TrueArray(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the true array of.	 |
+
+#### Remarks
+Accesses the internal array of an iterator.
+
+
+#### Attributes
+* `native`
+
+### `Iter_TrueCount`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_TrueCount(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the true count of.	 |
+
+#### Remarks
+Accesses the internal count of an iterator.
+
+
+#### Attributes
+* `native`
+
+### `Iter_TrueMulti`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_TrueMulti(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Multi iterator to get the true count of.	 |
+
+#### Remarks
+Accesses the internal count of a multi-iterator.
+
+
+#### Attributes
+* `native`
+
+### `Iter_TrueSize`:
+
+
+#### Syntax
+
+
+```pawn
+Iter_TrueSize(iter[])
+```
+
+
+#### Parameters
+
+
+| 	**Name**	 | 	**Info**	 |
+|	---	|	---	|
+| 	`iter`	 | 	`Iterator [] ` Name of the iterator to get the true size of.	 |
+
+#### Remarks
+Accesses the internal size of an iterator.
+
+
+#### Attributes
+* `native`
 
 ### `Iterator`:
 
@@ -1730,6 +2716,5 @@ Used to declare a special iterator function. Examples:
 
 #### Attributes
 * `native`
-
 
 
