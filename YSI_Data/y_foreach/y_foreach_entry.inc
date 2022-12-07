@@ -119,62 +119,24 @@ Optional plugins:
 	#define _inc_y_iterate
 #endif
 
-// Extra macro so that those paranoid about accidentally including YSI can
-// ensure it never happens.
 #if defined NEVER_Y_ITERATE
-	// Set `FOREACH_VERSION` as equal to whatever the version of the stand-alone
-	// include is.
-	#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
-	#undef _inc_y_iterate
-	#undef _Y_ITERATE_LOCAL_VERSION
-	#if defined _FOREACH_INC_TEST
-		// This is `foreach` testing our version - nothing more need doing.
-		#endinput
-	#endif
-	// Otherwise, include `foreach`.  Don't use `#tryinclude`, since they want
-	// a version of `foreach` and it would be an error to not give them one.
-	#define _FOREACH_NO_TEST
-	#include <foreach>
-	#endinput
+	#error `NEVER_Y_ITERATE` is stupid.
 #endif
 
-// Foreach is testing us.
 #if defined _FOREACH_INC_TEST
-	#if !defined _Y_ITERATE_FOUND
-		// Set up so that you can use `FOREACH_VERSION` even if the older
-		// stand-alone version doesn't support it.
-		#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
-		#define _FOREACH_CUR_VERSION _Y_ITERATE_LOCAL_VERSION
-	#endif
-	#endinput
+	// Foreach is testing us.
+	#error Old <foreach.inc> found - delete it.
 #endif
 
 #if !defined _FOREACH_NO_TEST
 	#define _FOREACH_INC_TEST
-	// Ignore the broken stand-alone version.
-	#define _foreach_included
 	#tryinclude <foreach>
 	#undef _FOREACH_INC_TEST
 	// <foreach> exists - test which is newer.
 	#if defined _FOREACH_LOCAL_VERSION
-		#if _FOREACH_LOCAL_VERSION > _Y_ITERATE_LOCAL_VERSION
-			// Foreach is newer.
-			#if defined _inc_foreach
-				#undef _inc_foreach
-			#endif
-			#define _FOREACH_NO_TEST
-			// Actually include the code.
-			#include <foreach>
-			// Mark the include as found and exit.
-			#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
-			#define _FOREACH_INC_TEST
-			#define _Y_ITERATE_FOUND
-			#endinput
-		#endif
+		#error Old <foreach.inc> found - delete it.
 	#elseif defined foreach && __COMPILER_1ST_PASS
-		// I made this a warning on compilers that supported them, but that's a
-		// silly idea!
-		#error The old <foreach> include is no longer compatible with YSI.
+		#error Old <foreach.inc> found - delete it.
 	#endif
 #endif
 
