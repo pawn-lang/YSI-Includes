@@ -3121,22 +3121,22 @@ stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
 	ASSERT_ZE(count);
 }
 
-#if _FOREACH_PLAYERS
-	@test(.group = "y_iterate") y_iter_Deprecate()
-	{
-		#pragma tabsize 4
-		/* ================================================================== */
-		/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                    | */
-		/* |                                                                | */
-		/* | */ FOREACH__ (Player, i)                                      /* | */
-		/* |                                                                | */
-		/* | It tests that the old syntax is nicely deprecated.             | */
-		/* ================================================================== */
-		#pragma tabsize 4
-		{
-		}
-	}
-#endif
+//#if _FOREACH_PLAYERS
+//	@test(.group = "y_iterate") y_iter_Deprecate()
+//	{
+//		#pragma tabsize 4
+//		/* ================================================================== */
+//		/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                    | */
+//		/* |                                                                | */
+//		/* | */ FOREACH__ (Player, i)                                      /* | */
+//		/* |                                                                | */
+//		/* | It tests that the old syntax is nicely deprecated.             | */
+//		/* ================================================================== */
+//		#pragma tabsize 4
+//		{
+//		}
+//	}
+//#endif
 
 @test(.group = "y_iterate") y_iter_Random()
 {

@@ -1070,10 +1070,10 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 
 // This is the old version, but DON'T add "new" because that already exists from
 // the failed "new" macro call above.
-#define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%2,%1||| using_deprecated_foreach_syntax,%1=_Y_ITER_DO_FOREACH(%1,%2,_no_itertag:)++using_deprecated_foreach_syntax
+//#define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%2,%1||| using_deprecated_foreach_syntax,%1=_Y_ITER_DO_FOREACH(%1,%2,_no_itertag:)++using_deprecated_foreach_syntax
 
 stock const
-	/**
+	/*
 	 * <library>y_iterate</library>
 	 * <remarks>
 	 *   This variable is re-declared when you do <c>foreach (Player, i)</c> or
@@ -1088,7 +1088,7 @@ stock const
 	 *   later.
 	 * </remarks>
 	 */
-	bool:using_deprecated_foreach_syntax = false,
+	//bool:using_deprecated_foreach_syntax = false,
 	/**
 	 * <library>y_iterate</library>
 	 */
