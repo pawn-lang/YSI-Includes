@@ -3513,13 +3513,13 @@ iterfunc stock y_iter_yield0()
 		++count;
 	}
 	ASSERT_ZE(count);
-	count = 0;
-	FOREACH__ (new i : y_iter_yield0[])
-	{
-		#pragma unused i
-		++count;
-	}
-	ASSERT_ZE(count);
+	//count = 0;
+	//FOREACH__ (new i : y_iter_yield0[])
+	//{
+	//	#pragma unused i
+	//	++count;
+	//}
+	//ASSERT_ZE(count);
 }
 
 iterfunc stock y_iter_yield1()
@@ -3548,13 +3548,13 @@ iterfunc stock y_iter_yield1()
 		++count;
 	}
 	ASSERT_EQ(count, 10);
-	count = 0;
-	FOREACH__ (new i : y_iter_yield1[])
-	{
-		#pragma unused i
-		++count;
-	}
-	ASSERT_EQ(count, 10);
+	//count = 0;
+	//FOREACH__ (new i : y_iter_yield1[])
+	//{
+	//	#pragma unused i
+	//	++count;
+	//}
+	//ASSERT_EQ(count, 10);
 }
 
 iterfunc stock y_iter_yield2(step, target = 100)
@@ -5216,5 +5216,18 @@ static stock
 		total += i;
 	}
 	ASSERT_EQ(total, -4 + -3 + -2 + -1);
+}
+
+@test(.group = "y_iterate") y_iterate_Array()
+{
+	new total;
+	new array[] = { 5, 6, 7, 8 };
+
+	total = 0;
+	foreach (new i : array[])
+	{
+		total += i;
+	}
+	ASSERT_EQ(total, 5 + 6 + 7 + 8);
 }
 

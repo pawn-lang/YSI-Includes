@@ -986,7 +986,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define F@j:%7$%5(%0)       %5A(F@g(Iter_Single@%0,),F@h:Iterator@%0)
 #define F@i:%7$%5(%0<%2>%1) %5B(F@h:Iter_Multi@%0,%2,F@h:Iterator@%0%1)
 
-#define _Y_ITER_DO_FOREACH(%1,%0,%8) (_:F@Q:F@n:F@A:F@m:F@a$%1,%0,%8$
+#define _Y_ITER_DO_FOREACH(%1,%0,%8) (_:F@Q:F@R:F@n:F@A:F@m:F@a$%1,%0,%8$
 
 // `..` range syntax.  Allows implicit `0`:
 //
@@ -995,6 +995,10 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 //
 const F@Q = cellbits - 1;
 #define F@Q:%9$%1,%4..%5,%8$ (%4-1+1));_:(%1)!=(%5);(%1)+=((((%5)-(%4-1+1))>>F@Q)|1)
+
+// `foreach (new i : array[])`
+#define F@R:%9$%1,%4[],%8$ %4[0]),_F@R%1=0;_F@R%1!=F@s(%4);%1=%4[(++_F@R%1)%F@s(%4)]
+#define _F@R%0\32; _F@R
 
 // Multi-iterator.
 #define F@n:%9$%1,%0<%2>%8,%8$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1]&%8cellmax)<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
