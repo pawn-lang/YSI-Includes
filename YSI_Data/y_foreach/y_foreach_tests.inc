@@ -5164,3 +5164,57 @@ static stock
 	ASSERT(Iter_Excludes(iter, 9));
 }
 
+@test(.group = "y_iterate") y_iterate_Range()
+{
+	new total;
+
+	total = 0;
+	foreach (new i : 5 .. 10)
+	{
+		//printf("i 0 = %d", i);
+		total += i;
+	}
+	ASSERT_EQ(total, 5 + 6 + 7 + 8 + 9);
+
+	/*total = ( 10 -1+1);
+	printf("%d", total);
+	total = (( 2)-( 10 -1+1));
+	printf("%d", total);
+	total = ((( 2)-( 10 -1+1))>>(cellbits-1));
+	printf("%d", total);
+	total = (((( 2)-( 10 -1+1))>>(cellbits-1))|1);
+	printf("%d", total);*/
+	
+	total = 0;
+	foreach (new i : 10 .. 2)
+	{
+		//printf("i 1 = %d", i);
+		total += i;
+	}
+	ASSERT_EQ(total, 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10);
+
+	total = 0;
+	foreach (new i : .. 10)
+	{
+		//printf("i 2 = %d", i);
+		total += i;
+	}
+	ASSERT_EQ(total, 0 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9);
+
+	total = 0;
+	foreach (new i : -5 .. -1)
+	{
+		//printf("i 3 = %d", i);
+		total += i;
+	}
+	ASSERT_EQ(total, -5 + -4 + -3 + -2);
+
+	total = 0;
+	foreach (new i : -1 .. -5)
+	{
+		//printf("i 4 = %d", i);
+		total += i;
+	}
+	ASSERT_EQ(total, -4 + -3 + -2 + -1);
+}
+
