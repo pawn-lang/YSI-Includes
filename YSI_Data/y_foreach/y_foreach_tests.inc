@@ -2513,7 +2513,7 @@ stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
 //	ASSERT_EQ(count, 4095 * 2 * 32);
 }
 
-/*@test(.group = "y_iterate") y_iter_Syntax6c()
+@test(.group = "y_iterate") y_iter_Syntax6c()
 {
 	new
 		count = 0;
@@ -2586,7 +2586,7 @@ stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
 //	FOREACH__ ( j : y_iter_Syntax6[y_iter_Syntax6a_num]) { ++count; }
 //	FOREACH__ ( j : y_iter_Syntax6[y_iter_Syntax6a_num] ) { ++count; }
 //	ASSERT_EQ(count, 4095 * 2 * 32);
-}*/
+}
 
 @test(.group = "y_iterate") y_iter_Syntax2a()
 {
@@ -3507,12 +3507,19 @@ iterfunc stock y_iter_yield0()
 	}
 	ASSERT_ZE(count);
 	count = 0;
-	FOREACH__ (new i : y_iter_yield0())
+	FOREACH__ (new i : y_iter_yield0)
 	{
 		#pragma unused i
 		++count;
 	}
 	ASSERT_ZE(count);
+	//count = 0;
+	//FOREACH__ (new i : y_iter_yield0[])
+	//{
+	//	#pragma unused i
+	//	++count;
+	//}
+	//ASSERT_ZE(count);
 }
 
 iterfunc stock y_iter_yield1()
@@ -3541,6 +3548,13 @@ iterfunc stock y_iter_yield1()
 		++count;
 	}
 	ASSERT_EQ(count, 10);
+	//count = 0;
+	//FOREACH__ (new i : y_iter_yield1[])
+	//{
+	//	#pragma unused i
+	//	++count;
+	//}
+	//ASSERT_EQ(count, 10);
 }
 
 iterfunc stock y_iter_yield2(step, target = 100)
@@ -3573,7 +3587,7 @@ iterfunc stock y_iter_yield2(step, target = 100)
 	}
 	ASSERT_EQ(count, 2);
 	count = 0;
-	FOREACH__ (new i : y_iter_yield2(5))
+	FOREACH__ (new i : y_iter_yield2[5])
 	{
 		ASSERT_ZE(i % 5);
 		++count;
@@ -3613,7 +3627,7 @@ iterfunc stock y_iter_yield3(step, target = 100)
 	}
 	ASSERT_EQ(count, 2);
 	count = 0;
-	FOREACH__ (new i : y_iter_yield3(5))
+	FOREACH__ (new i : y_iter_yield3[5])
 	{
 		ASSERT_ZE(i % 5);
 		++count;
@@ -3760,7 +3774,7 @@ iterfunc stock y_iter_yield7a(x)
 			2
 		},
 		idx = 0;
-	FOREACH__ (new i : y_iter_yield7a(2))
+	FOREACH__ (new i : y_iter_yield7a[2])
 	{
 		ASSERT(idx < sizeof (answers) && i == answers[idx]);
 		++idx;
