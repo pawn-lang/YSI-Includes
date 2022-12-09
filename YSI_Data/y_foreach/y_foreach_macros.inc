@@ -109,52 +109,58 @@ Optional plugins:
  *   Used to declare a special iterator function.  Examples:
  *
  *   <code>
- * iterfunc stock OnlyZero(cur)                                                    <br />
- * {                                                                               <br /><indent />
- *   if (cur == -1)                                                              <br /><indent /><indent />
- *      return 0;                                                               <br /><indent />
- *   return -1;                                                                  <br />
- * }                                                                               <br />
+ * iterfunc stock OnlyZero(cur)                                                 <br />
+ * {                                                                            <br /><indent />
+ *     if (cur == -1)                                                           <br /><indent /><indent />
+ *         return 0;                                                            <br /><indent />
+ *     return -1;                                                               <br />
+ * }                                                                            <br />
  *   </code>
  *
  *   <code>
- * iterfunc stock AlsoOnlyZero[cellmin](cur)                                       <br />
- * {                                                                               <br /><indent />
- *   if (cur == cellmin)                                                         <br /><indent /><indent />
- *      return 0;                                                               <br /><indent />
- *   return cellmin;                                                             <br />
- * }                                                                               <br />
+ * iterfunc stock AlsoOnlyZero[cellmin](cur)                                    <br />
+ * {                                                                            <br /><indent />
+ *     if (cur == cellmin)                                                      <br /><indent /><indent />
+ *         return 0;                                                            <br /><indent />
+ *     return cellmin;                                                          <br />
+ * }                                                                            <br />
  *   </code>
  *
  *   <code>
- * iterfunc stock OneToTen[cellmin](cur)                                           <br />
- * {                                                                               <br /><indent />
- *   if (cur == cellmin)                                                         <br /><indent /><indent />
- *      return 1;                                                               <br /><indent />
- *   if (cur == 10)                                                              <br /><indent /><indent />
- *      return cellmin;                                                         <br /><indent />
- *   return cur + 1;                                                             <br />
- * }                                                                               <br />
+ * iterfunc stock OneToTen[cellmin](cur)                                        <br />
+ * {                                                                            <br /><indent />
+ *     if (cur == cellmin)                                                      <br /><indent /><indent />
+ *         return 1;                                                            <br /><indent />
+ *     if (cur == 10)                                                           <br /><indent /><indent />
+ *         return cellmin;                                                      <br /><indent />
+ *     return cur + 1;                                                          <br />
+ * }                                                                            <br />
  *   </code>
  *
  *   <code>
- * iterfunc stock OneToN(cur, n)                                                   <br />
- * {                                                                               <br /><indent />
- *   if (n &lt; 1)                                                               <br /><indent /><indent />
- *      return -1;                                                              <br /><indent />
- *   if (cur == -1)                                                              <br /><indent /><indent />
- *      return 1;                                                               <br /><indent />
- *   if (cur == n)                                                               <br /><indent /><indent />
- *      return -1;                                                              <br /><indent />
- *   return cur + 1;                                                             <br />
- * }                                                                               <br />
+ * iterfunc stock OneToN(cur, n)                                                <br />
+ * {                                                                            <br /><indent />
+ *     if (n &lt; 1)                                                            <br /><indent /><indent />
+ *         return -1;                                                           <br /><indent />
+ *     if (cur == -1)                                                           <br /><indent /><indent />
+ *         return 1;                                                            <br /><indent />
+ *     if (cur == n)                                                            <br /><indent /><indent />
+ *         return -1;                                                           <br /><indent />
+ *     return cur + 1;                                                          <br />
+ * }                                                                            <br />
  *   </code>
  *
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+// Special iterator function declaration.
 FUNC_PAWNDOC(iterfunc(params));
 #define iterfunc%0(%1) F@y:%0(%1)
+
+// @iterfunc
+#define @iterfunc(%2)%0(%1) Iter_Func@%0(%1);u@(u[_:F@Y:F@w:u@$stock const F@z:Iterator@%0[-1]=F@z:0,iterstart@%0[-1]=(%2);Iter_Func@%0[-1](%1)F@a$
+
+#define F@Y:%8$%0[%3]=%1,%5[%3]=(.start=%6);%2[%3](%4) %8$%0=%1,%5=(%6);%2(%4)
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
@@ -1030,7 +1036,7 @@ const F@Q = cellbits - 1;
 // Special iterator function declaration.
 #define F@y:%0(%1) Y_FOREACH_SQ:Iter_Func@%0[]$(%1);Y_FOREACH_STOCK stock const F@z:Iterator@%0=F@z:0,iterstart@%0=-1;Iter_Func@%0(%1)F@a$
 
-#define Y_FOREACH_STOCK __:F@w:$
+#define Y_FOREACH_STOCK u@(u[_:F@w:u@$
 
 // Get rid of ALL square brackets after the first function name.
 #define Y_FOREACH_SQ:%0[%1$ %0
@@ -1047,7 +1053,6 @@ const F@Q = cellbits - 1;
 #define __foreach_u@_1
 // Can't `#undef` this because it declares a `forward` with the same name.
 #define u@$ 1]);
-#define __:%0$ u@(u[_:%0 u@$
 
 // Consume spaces in the iterator state variables.
 #define Iter_State@%0\32;%1) Iter_State@%0%1)
