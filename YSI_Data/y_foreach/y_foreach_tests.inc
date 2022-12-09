@@ -5240,14 +5240,30 @@ static stock
 	return cur + 1;
 }
 
+@iterfunc() y_iterate_@iterfunc_3(cur)
+{
+	if (cur == 10)
+	{
+		return -1;
+	}
+	return cur + 1;
+}
+
 @test(.group = "y_iterate") y_iterate_@iterfunc_1()
 {
-	new total = 0;
+	new total;
+	total = 0;
 	foreach (new i : y_iterate_@iterfunc_1())
 	{
 		total += i;
 	}
 	ASSERT_EQ(total, 40);
+	total = 0;
+	foreach (new i : y_iterate_@iterfunc_3())
+	{
+		total += i;
+	}
+	ASSERT_EQ(total, 55);
 }
 
 //@iterfunc(.yield = true) y_iterate_@iterfunc_2()
