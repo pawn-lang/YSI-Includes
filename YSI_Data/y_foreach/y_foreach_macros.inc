@@ -158,7 +158,7 @@ FUNC_PAWNDOC(iterfunc(params));
 #define iterfunc%0(%1) F@y:%0(%1)
 
 // @iterfunc
-#define @iterfunc(%2)%0(%1) Iter_Func@%0(%1);u@(u[_:F@Y:F@w:u@$stock const F@z:Iterator@%0[-1]=F@z:0,iterstart@%0[-1]=(%2);Iter_Func@%0[-1](%1)F@a$
+#define @iterfunc(%2)%0(%1) Iter_Func@%0(%1);Y_FOREACH_STOCK(F@Y:F@w:) stock const F@z:Iterator@%0[-1]=F@z:0,iterstart@%0[-1]=(%2);Iter_Func@%0[-1](%1)F@a$
 
 #define F@Y:%8$%0[%3]=%1,%5[%3]=(.start=%6);%2[%3](%4) %8$%0=%1,%5=(%6);%2(%4)
 
@@ -1034,9 +1034,9 @@ const F@Q = cellbits - 1;
 #define F@q:%9$%1,%0$ F@s(Iterator@%0)-2));_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
 
 // Special iterator function declaration.
-#define F@y:%0(%1) Y_FOREACH_SQ:Iter_Func@%0[]$(%1);Y_FOREACH_STOCK stock const F@z:Iterator@%0=F@z:0,iterstart@%0=-1;Iter_Func@%0(%1)F@a$
+#define F@y:%0(%1) Y_FOREACH_SQ:Iter_Func@%0[]$(%1);Y_FOREACH_STOCK(F@w:) stock const F@z:Iterator@%0=F@z:0,iterstart@%0=-1;Iter_Func@%0(%1)F@a$
 
-#define Y_FOREACH_STOCK u@(u[_:F@w:u@$
+#define Y_FOREACH_STOCK(%0) u@(u[_:%0u@$
 
 // Get rid of ALL square brackets after the first function name.
 #define Y_FOREACH_SQ:%0[%1$ %0
