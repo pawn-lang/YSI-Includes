@@ -5231,7 +5231,7 @@ static stock
 	ASSERT_EQ(total, 5 + 6 + 7 + 8);
 }
 
-@iterfunc(.start = 5) y_iterate_@iterfunc_1(cur)
+@iterfunc(.start = 5) y_iterate@iterfunc_1(cur)
 {
 	if (cur == 10)
 	{
@@ -5240,7 +5240,7 @@ static stock
 	return cur + 1;
 }
 
-@iterfunc() y_iterate_@iterfunc_3(cur)
+@iterfunc() y_iterate@iterfunc_3(cur)
 {
 	if (cur == 10)
 	{
@@ -5249,28 +5249,29 @@ static stock
 	return cur + 1;
 }
 
-@test(.group = "y_iterate") y_iterate_@iterfunc_1()
+@test(.group = "y_iterate") y_iterate@iterfunc_1()
 {
 	new total;
 	total = 0;
-	foreach (new i : y_iterate_@iterfunc_1())
+	foreach (new i : y_iterate@iterfunc_1())
 	{
 		total += i;
 	}
 	ASSERT_EQ(total, 40);
 	total = 0;
-	foreach (new i : y_iterate_@iterfunc_3())
+	foreach (new i : y_iterate@iterfunc_3())
 	{
 		total += i;
 	}
 	ASSERT_EQ(total, 55);
 }
 
-//@iterfunc(.yield = true) y_iterate_@iterfunc_2()
-//{
-//}
-//
-//@test(.group = "y_iterate") y_iterate_@iterfunc_2()
-//{
-//}
+@iterfunc(.yield = true) y_iterate@iterfunc_2(initial)
+{
+	return 5;
+}
+
+@test(.group = "y_iterate") y_iterate@iterfunc_2()
+{
+}
 

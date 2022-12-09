@@ -158,9 +158,25 @@ FUNC_PAWNDOC(iterfunc(params));
 #define iterfunc%0(%1) F@y:%0(%1)
 
 // @iterfunc
-#define @iterfunc(%2)%0(%1) Iter_Func@%0(%1);Y_FOREACH_STOCK(F@Y:F@w:) stock const F@z:Iterator@%0[-1]=F@z:0,iterstart@%0[-1]=(%2);Iter_Func@%0[-1](%1)F@a$
+#define @iterfunc(%2)%0(%1) Iter_Func@%0(%1);Y_FOREACH_STOCK(F@Y:F@Z:)(%2,) stock const F@z:Iterator@%0=F@z:0,iterstart@%0=(-1);Iter_Func@%0(%1)F@a$
 
-#define F@Y:%8$%0[%3]=%1,%5[%3]=(.start=%6);%2[%3](%4) %8$%0=%1,%5=(%6);%2(%4)
+// Detect an annotation parameter.
+#define F@Y:%8$(.%3,%7)%0=%1,%5=(%6) F@X%3:F@Y:%8$(%7)%0=%1,%5=(%6)
+
+// End annotations.
+#define F@Z:%8$(%9)%0=%1,%5=(%6) %8$%0=%1,%5=(%6)
+
+// Resolve the parameters.
+#define F@X%0\32; F@X
+#define F@Xstart=%6:%8$(%7)%0=%1,%5=(%9) %8$(%7)%0=%1,%5=(%6)
+// Insert the value in to the tag.  Skip the last `e` because it is the end of
+// both `true` and `false`, and gives a very very hard end to the symbole name -
+// it can't have a space in it.
+#define F@Xyield=%6e: F@X%6yield:
+#define F@Xtruyield:F@Y:%8$(%7)%0=%1,%5=(%6);Iter_Func@%2(%4) %8$(%7)%0=%1,%5=(-1);Iter_Func@%2(%4){return Iter_Yield@%2(%4);}stock Iter_Yield@%2(%4)
+#define F@Xfalsyield: // Ignore this.
+
+#define Iter_Yield@%0\32;
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
