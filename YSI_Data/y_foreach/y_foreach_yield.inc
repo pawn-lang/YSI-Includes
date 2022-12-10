@@ -140,6 +140,7 @@ public OnCodeInit()
 #endif
 
 /**
+ * <library>y_iterate</library>
  * <remarks>
  * </remarks>
  */
@@ -200,7 +201,12 @@ stock bool:Iter_YieldEnter()
 	return false;
 }
 
+static stock
+	size_l = 0,
+	src_l = 0;
+
 /**
+ * <library>y_iterate</library>
  * <remarks>
  * <p>Because of the strange way we manipulate the stack, this function actually
  * gets called twice as often as you would expect.  Essentially, for this
@@ -236,10 +242,6 @@ stock bool:Iter_YieldEnter()
  * means we need to store the state on our own stack.</p>
  * </remarks>
  */
-
-static stock
-	size_l = 0,
-	src_l = 0;
 
 stock bool:Iter_YieldLoop()
 {
@@ -319,6 +321,12 @@ stock bool:Iter_YieldLoop()
 	}
 	return true;
 }
+
+/**
+ * <library>y_iterate</library>
+ * <remarks>
+ * </remarks>
+ */
 
 stock Iter_YieldReturn(value)
 {
@@ -421,5 +429,16 @@ stock Iter_YieldReturn(value)
 	#emit LIDX
 	#emit SCTRL        __jmp
 	#emit SCTRL        __cip
+}
+
+/**
+ * <library>y_iterate</library>
+ * <remarks>
+ * </remarks>
+ */
+
+stock Iter_NewYield()
+{
+	
 }
 

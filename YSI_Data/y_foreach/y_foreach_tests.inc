@@ -5266,12 +5266,25 @@ static stock
 	ASSERT_EQ(total, 55);
 }
 
-@iterfunc(.yield = true) y_iterate@iterfunc_2(initial)
+@iterfunc(.yield = true) y_iterate@iterfunc_2()
 {
-	return 5;
+	static calls = 0;
+	if (calls++ == 5)
+	{
+		calls = 0;
+		return -1;
+	}
+	return 100;
 }
 
 @test(.group = "y_iterate") y_iterate@iterfunc_2()
 {
+	new total;
+	total = 0;
+	foreach (new i : y_iterate@iterfunc_2())
+	{
+		total += i;
+	}
+	ASSERT_EQ(total, 500);
 }
 

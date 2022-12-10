@@ -173,10 +173,26 @@ FUNC_PAWNDOC(iterfunc(params));
 // both `true` and `false`, and gives a very hard end to the symbole name - it
 // can't have a space in it.  Also drop other parameters like `.start`.
 #define F@Xyield=%6e: F@X%6yield:
-#define F@Xtruyield:F@Y:%8$(%7)%0=%1,%5=(%6);Iter_Func@%2(%4) %8$(%7)Iter_Yield@%2(%4);%0=%1,%5=(-1);Iter_Func@%2(__cur,%4){return Iter_Yield@%2(%4);}Iter_Yield@%2(%4)
+#define F@Xtruyield:F@Y:%8$(%7)%0=%1,%5=(%6);Iter_Func@%2(%4) %8$(%7)Iter_Yield@%2(%4);%0=%1,%5=(-1);Iter_Func@%2(_:__cur,%4){return Iter_Yield@%2(%4);}Iter_Yield@%2(%4)
 #define F@Xfalsyield: // Ignore this.
 
-#define Iter_Yield@%0\32;
+// Some call variations.  `-d` seemed to make no difference:
+//
+// -O0:
+//
+//     call .Func
+//     stor.s.pri fffffffc
+//     const.alt ffffffff
+//     neq
+//     jzer 1
+//
+// -O1/-O2:
+//
+//     call .Func
+//     stor.s.pri fffffffc
+//     const.alt ffffffff
+//     jeq 1
+//
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
@@ -876,6 +892,7 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define iterstart@%0\32;%1$ iterstart@%0%1$
 #define Iterator@%0\32;%1$ Iterator@%0%1$
 #define Iter_Func@%0\32;%1$ Iter_Func@%0%1$
+#define Iter_Yield@%0\32;%1$ Iter_Yield@%0%1$
 #define Iter_Single@%0\32;%1$ Iter_Single@%0%1$
 #define Iter_Multi@%0\32;%1$ Iter_Multi@%0%1$
 #define Iter_Init@%0\32;%1$ Iter_Init@%0%1$
@@ -891,6 +908,14 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 //#define Iter_Func@global%0(%2) global Iter_Func@%0(%2)
 #define Iter_Func@public public Iter_Func@
 #define Iter_Func@forward forward Iter_Func@
+
+#define Iter_Yield@stock stock Iter_Yield@
+#define Iter_Yield@static static Iter_Yield@
+// Must do this manually I think.
+//#define Iter_Yield@foreign%0(%2) foreign Iter_Yield@%0(%2)
+//#define Iter_Yield@global%0(%2) global Iter_Yield@%0(%2)
+#define Iter_Yield@public public Iter_Yield@
+#define Iter_Yield@forward forward Iter_Yield@
 
 // Drop modifiers - the only place these can appear is under `iterfunc` with the
 // dummy variable, which we don't want to modify more than we already have.
@@ -924,6 +949,27 @@ FUNC_PAWNDOC(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
 #define Iter_Func@Timer:        ITER_TAG_FUNC(Timer)
 #define Iter_Func@File:         ITER_TAG_FUNC(File)
 #define Iter_Func@Float:        ITER_TAG_FUNC(Float)
+
+#define ITER_TAG_YIELD(%0)%1(%2) %0:Iter_Yield@%1(%2)
+
+// Many tag types that may come up as iterator function return types.
+#define Iter_Yield@_:            ITER_TAG_YIELD(_)
+#define Iter_Yield@bool:         ITER_TAG_YIELD(bool)
+#define Iter_Yield@PlayerText3D: ITER_TAG_YIELD(PlayerText3D)
+#define Iter_Yield@Text3D:       ITER_TAG_YIELD(Text3D)
+#define Iter_Yield@DB:           ITER_TAG_YIELD(DB)
+#define Iter_Yield@DBResult:     ITER_TAG_YIELD(DBResult)
+#define Iter_Yield@Language:     ITER_TAG_YIELD(Language)
+#define Iter_Yield@Bit:          ITER_TAG_YIELD(Bit)
+#define Iter_Yield@Text:         ITER_TAG_YIELD(Text)
+#define Iter_Yield@Menu:         ITER_TAG_YIELD(Menu)
+#define Iter_Yield@Style:        ITER_TAG_YIELD(Style)
+#define Iter_Yield@XML:          ITER_TAG_YIELD(XML)
+#define Iter_Yield@Bintree:      ITER_TAG_YIELD(Bintree)
+#define Iter_Yield@Group:        ITER_TAG_YIELD(Group)
+#define Iter_Yield@Timer:        ITER_TAG_YIELD(Timer)
+#define Iter_Yield@File:         ITER_TAG_YIELD(File)
+#define Iter_Yield@Float:        ITER_TAG_YIELD(Float)
 
 #define ITER_TAG(%0)%1={%2,%3,...}%4: using_deprecated_itertag_syntax,%0:Iterator@%1={%0:0,%0:1,...}F@a$,Iter_Single@
 
