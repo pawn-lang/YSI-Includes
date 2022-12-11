@@ -96,6 +96,7 @@ Optional plugins:
 //#define HOOK_PUBLIC__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
 //#define HOOK_public__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
 
+/*
 // We can't deprecate defines or constants, only functions.
 #pragma deprecated Use `return 0;`.
 stock Y_HOOKS_CONTINUE_RETURN_0()
@@ -139,6 +140,13 @@ stock Y_HOOKS_BREAK_RETURN_1()
 // Matches `\10;` to avoid a double replacement, so we can use the same name for
 // both the macro and the function, to give a nicer warning message.
 #define Y_HOOKS_BREAK_RETURN_1%0\10; Y_HOOKS_BREAK_RETURN_1()%0
+*/
+
+// Apparently people like these.
+#define Y_HOOKS_CONTINUE_RETURN_0 (0)
+#define Y_HOOKS_CONTINUE_RETURN_1 (1)
+#define Y_HOOKS_BREAK_RETURN_0 (~0)
+#define Y_HOOKS_BREAK_RETURN_1 (~1)
 
 #if !defined MAX_HOOK_REPLACEMENTS
 	#define MAX_HOOK_REPLACEMENTS (16)
