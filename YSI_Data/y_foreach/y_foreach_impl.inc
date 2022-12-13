@@ -1289,6 +1289,13 @@ stock
 stock
 	Iter_Prev_InternalD(const array[], size, slot)
 {
+	if (array[slot] == slot)
+	{
+		// Special initial case for empty iterators.  When they aren't properly
+		// initialised the reverse code doesn't work yet, until at least one
+		// thing has been added.
+		return slot;
+	}
 	new
 		ptr;
 	do
