@@ -143,16 +143,16 @@ public OnAndroidTimer(playerid)
 
 public OnPlayerDisconnect(playerid, reason)
 {
+#if defined Android_OnPlayerDisconnect
+	Android_OnPlayerDisconnect(playerid, reason);
+#endif
+
 	if (YSI_g_sTimers[playerid])
 	{
 		KillTimer(YSI_g_sTimers[playerid]);
 		YSI_g_sTimers[playerid] = 0;
 	}
-
 	YSI_g_sIsAndroid[playerid] = bool:-1;
-#if defined Android_OnPlayerDisconnect
-	Android_OnPlayerDisconnect(playerid, reason);
-#endif
 	return 1;
 }
 
