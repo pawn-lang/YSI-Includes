@@ -313,10 +313,10 @@ stock Text3D:va_Create3DTextLabel(const fmat[], colour, Float:x, Float:y, Float:
 stock bool:va_Update3DTextLabelText(Text3D:textid, colour, const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	if (YSI_CheckNumargs__(3))
-		return Update3DTextLabelText(textid, colour, fmat);
+		return bool:Update3DTextLabelText(textid, colour, fmat);
 	return
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(3)),
-		Update3DTextLabelText(textid, colour, YSI_UNSAFE_HUGE_STRING);
+		bool:Update3DTextLabelText(textid, colour, YSI_UNSAFE_HUGE_STRING);
 }
 
 stock PlayerText3D:va_CreatePlayer3DTextLabel(playerid, const fmat[], colour, Float:x, Float:y, Float:z, Float:drawDistance, parentPlayerid = INVALID_PLAYER_ID, parentVehicleid = INVALID_VEHICLE_ID, bool:testLOS = false, GLOBAL_TAG_TYPES:...)
@@ -331,10 +331,10 @@ stock PlayerText3D:va_CreatePlayer3DTextLabel(playerid, const fmat[], colour, Fl
 stock bool:va_UpdatePlayer3DTextLabelText(playerid, PlayerText3D:textid, colour, const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	if (YSI_CheckNumargs__(4))
-		return UpdatePlayer3DTextLabelText(playerid, textid, colour, fmat);
+		return bool:UpdatePlayer3DTextLabelText(playerid, textid, colour, fmat);
 	return
 		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(4)),
-		UpdatePlayer3DTextLabelText(playerid, textid, colour, YSI_UNSAFE_HUGE_STRING);
+		bool:UpdatePlayer3DTextLabelText(playerid, textid, colour, YSI_UNSAFE_HUGE_STRING);
 }
 
 stock bool:va_SetSVarString(const svar[], const fmat[], GLOBAL_TAG_TYPES:...)
