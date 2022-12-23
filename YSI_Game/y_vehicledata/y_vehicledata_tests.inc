@@ -549,7 +549,7 @@ static stock bool:VIM_LocalEmpty(const str[])
 	ASSERT_ZE(strcmp(Model_Name(401), "Bravura"));
 	ASSERT_ZE(strcmp(Model_Name(402), "Buffalo"));
 	ASSERT_ZE(strcmp(Model_Name(403), "Linerunner"));
-	ASSERT_ZE(strcmp(Model_Name(404), "Perenniel"));
+	ASSERT_ZE(strcmp(Model_Name(404), "Perennial"));
 	ASSERT_ZE(strcmp(Model_Name(405), "Sentinel"));
 	ASSERT_ZE(strcmp(Model_Name(406), "Dumper"));
 	ASSERT_ZE(strcmp(Model_Name(407), "Firetruck"));
@@ -591,7 +591,7 @@ static stock bool:VIM_LocalEmpty(const str[])
 	ASSERT_ZE(strcmp(Model_Name(443), "Packer"));
 	ASSERT_ZE(strcmp(Model_Name(444), "Monster"));
 	ASSERT_ZE(strcmp(Model_Name(445), "Admiral"));
-	ASSERT_ZE(strcmp(Model_Name(446), "Squallo"));
+	ASSERT_ZE(strcmp(Model_Name(446), "Squalo"));
 	ASSERT_ZE(strcmp(Model_Name(447), "Seasparrow"));
 	ASSERT_ZE(strcmp(Model_Name(448), "Pizzaboy"));
 	ASSERT_ZE(strcmp(Model_Name(449), "Tram"));
@@ -647,10 +647,10 @@ static stock bool:VIM_LocalEmpty(const str[])
 	ASSERT_ZE(strcmp(Model_Name(499), "Benson"));
 	ASSERT_ZE(strcmp(Model_Name(500), "Mesa"));
 	ASSERT_ZE(strcmp(Model_Name(501), "RC Goblin"));
-	ASSERT_ZE(strcmp(Model_Name(502), "Hotring Racer"));
-	ASSERT_ZE(strcmp(Model_Name(503), "Hotring Racer"));
+	ASSERT_ZE(strcmp(Model_Name(502), "Hotring Racer \"A\""));
+	ASSERT_ZE(strcmp(Model_Name(503), "Hotring Racer \"B\""));
 	ASSERT_ZE(strcmp(Model_Name(504), "Bloodring Banger"));
-	ASSERT_ZE(strcmp(Model_Name(505), "Rancher"));
+	ASSERT_ZE(strcmp(Model_Name(505), "Rancher Lure"));
 	ASSERT_ZE(strcmp(Model_Name(506), "Super GT"));
 	ASSERT_ZE(strcmp(Model_Name(507), "Elegant"));
 	ASSERT_ZE(strcmp(Model_Name(508), "Journey"));
