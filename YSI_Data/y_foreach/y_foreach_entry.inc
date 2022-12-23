@@ -369,6 +369,10 @@ Optional plugins:
 
 #include "y_foreach_macros"
 
+#if _FOREACH_VEHICLES
+	#include "..\..\YSI_Game\y_vehicledata\y_vehicledata_entry"
+#endif
+
 #include "y_foreach_impl"
 #include "y_foreach_yield"
 

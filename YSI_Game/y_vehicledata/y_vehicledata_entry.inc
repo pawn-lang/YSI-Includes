@@ -247,6 +247,10 @@ native y_vehicledata_StrUnpack(dest[], const src[], size = sizeof (dest)) = stru
 #define Model_TopSpeed(%0) (VIM_TopSpeed(Model_ToVIM(%0)))
 #define VIM_TopSpeed(%0) (YSI_gVehicleTopSpeed[(%0)])
 
+#define Vehicle_Seats(%0) (VIM_Seats(Vehicle_GetVIM(%0)))
+#define Model_Seats(%0) (VIM_Seats(Model_ToVIM(%0)))
+#define VIM_Seats(%0) (YSI_gVehicleSeats[(%0)])
+
 /*
 
     88                                                                88  
@@ -333,10 +337,6 @@ enum e_VEHICLE_FLAGS:(<<= 1)
 /*
 
 This comment can be collapsed - it pushes line numbers down to match models.
-
-
-
-
 
 
 

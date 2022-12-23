@@ -4816,15 +4816,15 @@ static stock
 		ASSERT_EQ(Iter_Count(YSI_g_sStressTest), i);
 		n = Iter_RandomAdd(YSI_g_sStressTest);
 		ASSERT_EQ(Iter_Count(YSI_g_sStressTest), i + 1);
-		ASSERT(Iterator@YSI_g_sStressTest[n] >= 0);
+		ASSERT(_:Iterator@YSI_g_sStressTest[n] >= 0);
 		//for (new j = 0; j != 2 * YSI_G_C_STRESS_SIZE + 1; ++j)
 		foreach (new j : YSI_g_sStressTest)
 		{
-			ASSERT(Iterator@YSI_g_sStressTest[j] >= 0);
-			if (Iterator@YSI_g_sStressTest[j] < 0)
+			ASSERT(_:Iterator@YSI_g_sStressTest[j] >= 0);
+			if (_:Iterator@YSI_g_sStressTest[j] < 0)
 			{
 				printf("Failed adding %d", n);
-				printf("iter[%d] = %d", j, Iterator@YSI_g_sStressTest[j]);
+				printf("iter[%d] = %d", j, _:Iterator@YSI_g_sStressTest[j]);
 				Server_Abort(0);
 			}
 		}
@@ -4871,8 +4871,8 @@ static stock
 			ASSERT_EQ(Iter_Count(YSI_g_sStressTest), n);
 			foreach (new j : YSI_g_sStressTest)
 			{
-				ASSERT(Iterator@YSI_g_sStressTest[j] >= 0);
-				if (Iterator@YSI_g_sStressTest[j] < 0)
+				ASSERT(_:Iterator@YSI_g_sStressTest[j] >= 0);
+				if (_:Iterator@YSI_g_sStressTest[j] < 0)
 				{
 					if (action < 0)
 						printf("Removed %d", action - cellmin);
@@ -4936,7 +4936,7 @@ static stock
 	Iter_Remove(iter, 1);
 	Iter_Remove(iter, 3);
 	Iter_Remove(iter, 2);
-	ASSERT_EQ(Iterator@iter[0], 5);
+	ASSERT_EQ(_:Iterator@iter[0], 5);
 	//Debug_Level(0);
 	//Debug_Disable();
 	Server_EnableLongCall();
