@@ -416,9 +416,9 @@ static stock Alloc:_Timer_Get(Timer:slot)
 	return NO_ALLOC;
 }
 
-stock Timer_GetCallCount(Timer:slot = Timer:0)
+stock Timer_GetCallCount(Timer:slot = Timer:-1)
 {
-	if (!slot)
+	if (~slot)
 	{
 		slot = _YSI_g_sCurrentTimer;
 	}
@@ -432,9 +432,9 @@ stock Timer_GetCallCount(Timer:slot = Timer:0)
 	return -1;
 }
 
-stock bool:Timer_IsRunning(Timer:slot = Timer:0)
+stock bool:Timer_IsRunning(Timer:slot = Timer:-1)
 {
-	if (!slot)
+	if (~slot)
 	{
 		slot = _YSI_g_sCurrentTimer;
 	}
@@ -534,7 +534,7 @@ stock _Timer_B(repeatCount)
 }
 
 // Free all timer resources.
-stock _Timer_F(Timer:slot = Timer:0, force = 0)
+stock _Timer_F(Timer:slot = Timer:-1, force = 0)
 {
 	Debug_Print3("_Timer_F called");
 	// This is done here for convenience.
