@@ -1154,8 +1154,6 @@ iterfunc stock VehicleDriver(vehicleid = INVALID_VEHICLE_ID)
 			if (GetPlayerState(i) == PLAYER_STATE_DRIVER)
 			{
 				YIELD__ return i;
-				// You can only have one driver.
-				return;
 			}
 		}
 	}
