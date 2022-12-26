@@ -97,6 +97,8 @@ Optional plugins:
 	#pragma warning disable 231
 #endif
 
+#define __YSI_CALL_UPGRADED
+
 // If the files only exist in one place, they will only be included once because
 // of using "#tryinclude.inc".  If they happen to exist in two places, their own
 // internal include guards (or the compiler's one) will prevent their multiple
@@ -500,7 +502,7 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
-#elseif !defined O@G_
+#elseif !defined __AMX_CALL_UPGRADED
 	#error Re-download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
