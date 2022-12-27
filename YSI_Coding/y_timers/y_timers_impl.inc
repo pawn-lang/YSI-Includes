@@ -404,6 +404,10 @@ static stock Alloc:Timer_GetSingleSlot(len)
 
 static stock Alloc:_Timer_Get(Timer:slot)
 {
+	if (slot == Timer:0)
+	{
+		return NO_ALLOC;
+	}
 	new Alloc:cur = YSI_g_sTimerList;
 	while (cur != NO_ALLOC)
 	{
@@ -418,7 +422,7 @@ static stock Alloc:_Timer_Get(Timer:slot)
 
 stock Timer_GetCallCount(Timer:slot = Timer:-1)
 {
-	if (~slot)
+	if (!~slot)
 	{
 		slot = _YSI_g_sCurrentTimer;
 	}
@@ -434,7 +438,7 @@ stock Timer_GetCallCount(Timer:slot = Timer:-1)
 
 stock bool:Timer_IsRunning(Timer:slot = Timer:-1)
 {
-	if (~slot)
+	if (!~slot)
 	{
 		slot = _YSI_g_sCurrentTimer;
 	}
