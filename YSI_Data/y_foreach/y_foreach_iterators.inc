@@ -130,8 +130,10 @@ Optional plugins:
 		#if _FOREACH_STREAMED
 			ITERATOR__ StreamedVehicle[MAX_PLAYERS]<MAX_VEHICLES>,
 		#endif
-		ITERATOR__ Vehicle<MAX_VEHICLES>,
-		ITERATOR__ VehicleOccupant<MAX_PLAYERS>;
+		ITERATOR__ Vehicle<MAX_VEHICLES>;
+
+	static
+		ITERATOR__ PlayersFromVehicles<MAX_PLAYERS>;
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -716,7 +718,7 @@ stock Iter_All_Internal(const array[], size, value)
 	{
 			new ret = Iter_OnPlayerDisconnect(playerid, reason);
 		#if _FOREACH_VEHICLES 
-			Iter_Remove(VehicleOccupant, playerid);
+			Iter_Remove(PlayersFromVehicles, playerid);
 		#endif
 		#if _FOREACH_BOTS
 			Iter_Remove(Character, playerid);
@@ -1090,11 +1092,11 @@ static stock const
 
 			if (newstate == PLAYER_STATE_DRIVER || newstate == PLAYER_STATE_PASSENGER)
 			{
-				Iter_Add(VehicleOccupant, playerid);
+				Iter_Add(PlayersFromVehicles, playerid);
 			}
 			else if (oldstate == PLAYER_STATE_DRIVER || oldstate == PLAYER_STATE_PASSENGER) 
 			{
-				Iter_Remove(VehicleOccupant, playerid);
+				Iter_Remove(PlayersFromVehicles, playerid);
 			}
 			return ret;
 		}
@@ -1108,69 +1110,112 @@ static stock const
 		#endif
 #endif
 
-iterfunc stock VehiclePassenger(vehicleid = INVALID_VEHICLE_ID)
+iterfunc stock VehicleOccupant(vehicleid = INVALID_VEHICLE_ID, bool:includeDriver = true, bool:includePassenger = true)
 {
-	if (vehicleid == INVALID_VEHICLE_ID)
+	if (includeDriver && includePassenger)
 	{
-		FOREACH__ (new i : VehicleOccupant)
+		if (vehicleid == INVALID_VEHICLE_ID)
 		{
-			if (GetPlayerState(i) == PLAYER_STATE_PASSENGER)
+			FOREACH__ (new i : PlayersFromVehicles)
 			{
 				YIELD__ return i;
 			}
 		}
-	}
-	else
-	{
-		new 
-			vehicleModelSeats = Vehicle_Seats(vehicleid) - 1;
-		if (vehicleModelSeats == 0)
+		else
 		{
-			// Can't have passengers.
-			return;
-		}
-		
-		FOREACH__ (new i : VehicleOccupant)
-		{
-			if (GetPlayerVehicleID(i) == vehicleid && GetPlayerState(i) == PLAYER_STATE_PASSENGER)
+			new
+				vehicleSeatsOccupied, 
+				vehicleModelSeats = Vehicle_Seats(vehicleid);
+			FOREACH__ (new i : PlayersFromVehicles)
 			{
-				YIELD__ return i;
-				if (--vehicleModelSeats == 0)
+				if (GetPlayerVehicleID(i) == vehicleid)
 				{
+					YIELD__ return i;
+					if (++vehicleSeatsOccupied == vehicleModelSeats) 
+					{
+						return;
+					}
+				}
+			}
+		}
+	}
+	else if (includeDriver)
+	{
+		if (vehicleid == INVALID_VEHICLE_ID)
+		{
+			FOREACH__ (new i : PlayersFromVehicles)
+			{
+				if (GetPlayerState(i) == PLAYER_STATE_DRIVER)
+				{
+					YIELD__ return i;
+					// You can only have one driver.
+					return;
+				}
+			}
+		}
+		else
+		{
+			FOREACH__ (new i : PlayersFromVehicles)
+			{
+				if (GetPlayerVehicleID(i) == vehicleid && GetPlayerState(i) == PLAYER_STATE_DRIVER)
+				{
+					YIELD__ return i;
+					// You can only have one driver.
 					return;
 				}
 			}
 		}
 	}
+	else if (includePassenger)
+	{
+		if (vehicleid == INVALID_VEHICLE_ID)
+		{
+			FOREACH__ (new i : PlayersFromVehicles)
+			{
+				if (GetPlayerState(i) == PLAYER_STATE_PASSENGER)
+				{
+					YIELD__ return i;
+				}
+			}
+		}
+		else
+		{
+			new
+				vehicleSeatsOccupied, 
+				vehicleModelSeats = Vehicle_Seats(vehicleid) - 1;
+			if (vehicleModelSeats == 0)
+			{
+				// Can't have passengers.
+				return;
+			}
+			FOREACH__ (new i : PlayersFromVehicles)
+			{
+				if (GetPlayerVehicleID(i) == vehicleid && GetPlayerState(i) == PLAYER_STATE_PASSENGER)
+				{
+					YIELD__ return i;
+					if (++vehicleSeatsOccupied == vehicleModelSeats) 
+					{
+						return;
+					}
+				}
+			}
+		}
+	}
+	// Else no loop - we want everyone who is in a vehicle, but not a driver or
+	// a passenger.  I think that limits us to captives in the boot and Sideshow
+	// Bob strapped to the underside.
+}
+#define Iterator@VehicleOccupant iteryield
+
+iterfunc stock VehiclePassenger(vehicleid = INVALID_VEHICLE_ID)
+{
+	Iter_Func@VehicleOccupant(vehicleid, false, true);
 }
 #define Iterator@VehiclePassenger iteryield
 
 iterfunc stock VehicleDriver(vehicleid = INVALID_VEHICLE_ID)
 {
-	if (vehicleid == INVALID_VEHICLE_ID)
-	{
-		FOREACH__ (new i : VehicleOccupant)
-		{
-			if (GetPlayerState(i) == PLAYER_STATE_DRIVER)
-			{
-				YIELD__ return i;
-				// You can only have one driver.
-				return;
-			}
-		}
-	}
-	else
-	{
-		FOREACH__ (new i : VehicleOccupant)
-		{
-			if (GetPlayerVehicleID(i) == vehicleid && GetPlayerState(i) == PLAYER_STATE_DRIVER)
-			{
-				YIELD__ return i;
-				// You can only have one driver.
-				return;
-			}
-		}
-	}
+	Iter_Func@VehicleOccupant(vehicleid, true, false);
 }
 #define Iterator@VehicleDriver iteryield
 
