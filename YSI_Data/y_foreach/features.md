@@ -1098,7 +1098,13 @@ foreach (new i : StreamedVehicle[playerid])
 
 ### `VehicleOccupant`
 
-Loop over all players in a vehicle:
+Loop over all players (driver and passengers) in any vehicle:
+
+```pawn
+foreach (new i : VehicleOccupant)
+```
+
+Or loop over all players in a single vehicle:
 
 ```pawn
 foreach (new i : VehicleOccupant(vehicleid))
