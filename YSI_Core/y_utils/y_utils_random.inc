@@ -87,6 +87,9 @@ Optional plugins:
 
 /// <p/>
 
+#define YSI_RANGE(%0,%1) ((%1) - (%0))
+#define YSI_RANDOM(%0,%1) (YSI_Random__(YSI_RANGE(%0, %1)) + (%0))
+
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - random</library>
  * <remarks>
@@ -375,7 +378,7 @@ stock RandomMinMaxExceptMany(min, max, ...)
 			for ( ; ; )
 			{
 				// Get a random number.
-				i = YSI_Random__(max - min) + min;
+				i = YSI_RANDOM(min, max);
 				// Check if it is invalid.
 				j = 1;
 				while (++j != args)
@@ -722,7 +725,7 @@ stock RandomPointInCircleDistributed(Float:centreX, Float:centreY, Float:radius,
 #define RandomPointInCircle RandomPointInCircleDistributed
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils - maths</library>
+ * <library>y_utils - random</library>
  * <summary>
  *   TryPercentage(percentage);
  * </summary>
@@ -744,7 +747,7 @@ stock bool:TryPercentage(percentage)
 #define _ALS_TryPercentage
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils - maths</library>
+ * <library>y_utils - random</library>
  * <summary>
  *   TryPermille(permille);
  * </summary>
@@ -769,7 +772,7 @@ stock bool:TryPermille(permille)
 #define _ALS_TryPermille
 
 /*-------------------------------------------------------------------------*//**
- * <library>y_utils - maths</library>
+ * <library>y_utils - random</library>
  * <summary>
  *   TryPPM(ppm);
  * </summary>
@@ -792,4 +795,126 @@ stock bool:TryPPM(ppm)
 
 #define TryPPM(%0) (random(1000000) < (%0))
 #define _ALS_TryPPM
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - random</library>
+ * <param name="output">The optional string to write to.</param>
+ * <param name="cased">Allow both upper- and lower-case letters.</param>
+ * <param name="grouped">Groups of characters have equal probability.</param>
+ * <param name="len">The size of the string.</param>
+ * <returns>
+ *   A random character.
+ * </returns>
+ * <remarks>
+ *   Can be used to return a character or a string.  Use the return value with
+ *   no parameters for a single character, or pass a destination array for a
+ *   string.
+ *   <p />
+ *   Selects letters from <c>A</c> to <c>Z</c>, or also <c>a</c> to <c>z</c> if
+ *   <c>cased</c> is <c>true</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock RandomAlpha(output[] = "", .cased = false, .grouped = false, len = sizeof (output))
+{
+	// There are only two possible groups (upper- and lower-case letters), and
+	// both have the same number of elements, so `grouped` being on or off will
+	// give the same results.
+	#pragma unused grouped
+	new
+		i = -1,
+		ch;
+	--len;
+	do
+	{
+		if (cased)
+		{
+			ch = YSI_Random__(YSI_RANGE('A', 'Z' + 1) + YSI_RANGE('a', 'z' + 1)),
+			ch =
+				(ch >= YSI_RANGE('A', 'Z' + 1)) ? ch + ('a' - YSI_RANGE('A', 'Z' + 1)) :
+				ch + 'A';
+		}
+		else
+		{
+			ch = YSI_RANDOM('A', 'Z' + 1);
+		}
+		output[++i] = ch;
+	}
+	while (i != len);
+	output[len] = '\0';
+	return ch;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - random</library>
+ * <param name="output">The optional string to write to.</param>
+ * <param name="cased">Allow both upper- and lower-case letters.</param>
+ * <param name="grouped">Groups of characters have equal probability.</param>
+ * <param name="len">The size of the string.</param>
+ * <returns>
+ *   A random character.
+ * </returns>
+ * <remarks>
+ *   Can be used to return a character or a string.  Use the return value with
+ *   no parameters for a single character, or pass a destination array for a
+ *   string.
+ *   <p />
+ *   Selects letters from <c>a</c> to <c>z</c>, <c>A</c> to <c>Z</c>, or
+ *   numbers; with every character having equal likelihood.  Unless
+ *   <c>grouped</c> is true, in which case numbers are just as likely to appear
+ *   as upper- or lower-case letters.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock RandomAlphaNum(output[] = "", .cased = false, .grouped = false, len = sizeof (output))
+{
+	new
+		i = -1,
+		ch;
+	--len;
+	do
+	{
+		if (grouped)
+		{
+			if (cased) switch (YSI_Random__(3))
+			{
+			case 0:
+				ch = YSI_RANDOM('0', '9' + 1);
+			case 1:
+				ch = YSI_RANDOM('A', 'Z' + 1);
+			case 2:
+				ch = YSI_RANDOM('a', 'z' + 1);
+			}
+			else switch (YSI_Random__(2))
+			{
+			case 0:
+				ch = YSI_RANDOM('0', '9' + 1);
+			case 1:
+				ch = YSI_RANDOM('A', 'Z' + 1);
+			}
+		}
+		else
+		{
+			if (cased)
+			{
+				ch = YSI_Random__(YSI_RANGE('0', '9' + 1) + YSI_RANGE('A', 'Z' + 1) + YSI_RANGE('a', 'z' + 1)),
+				ch =
+					(ch >= YSI_RANGE('A', 'Z' + 1) + YSI_RANGE('a', 'z' + 1)) ? ch + ('0' - YSI_RANGE('A', 'Z' + 1) - YSI_RANGE('a', 'z' + 1)) :
+					(ch >= YSI_RANGE('A', 'Z' + 1)) ? ch + ('a' - YSI_RANGE('A', 'Z' + 1)) :
+					ch + 'A';
+			}
+			else
+			{
+				ch = YSI_Random__(YSI_RANGE('0', '9' + 1) + YSI_RANGE('A', 'Z' + 1)),
+				ch =
+					(ch >= YSI_RANGE('A', 'Z' + 1)) ? ch + ('0' - YSI_RANGE('A', 'Z' + 1)) :
+					ch + 'A';
+			}
+		}
+		output[++i] = ch;
+	}
+	while (i != len);
+	output[len] = '\0';
+	return ch;
+}
 
