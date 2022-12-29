@@ -86,3 +86,26 @@ new Float:gPreviousHealth;
 }
 ```
 
+## Example 5 - Groups
+
+You can collect a number of tests together as a single test suite.  You can then choose to only run tests in that one group:
+
+```pawn
+#define RUN_TESTS // Auto-run tests.
+#define JUST_TEST_GROUP "suite" // Select the suite to run.
+
+#include <YSI_Core\y_testing>
+
+@test(.group = "suite") Test1()
+{
+}
+
+@test(.group = "suite") Test2()
+{
+}
+
+@test(.group = "suite") Test3()
+{
+}
+```
+
