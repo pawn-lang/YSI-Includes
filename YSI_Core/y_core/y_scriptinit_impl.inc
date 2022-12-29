@@ -2039,6 +2039,27 @@ public _ScriptInit_FixState() <_script_init_fix_state : false>
 {
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <returns>
+ *   <c>true</c> if crashdetect needs updating.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Server_UpgradeCrashDetect()
+{
+	// Test `LCTRL(255) & 0x11 == 0x01`.  If that's true we have an older
+	// version of crashdetect.
+	#emit ZERO.pri
+	#emit LCTRL         0xFF
+	#emit CONST.alt     33
+	#emit AND
+	#emit CONST.alt     1
+	#emit EQ
+	#emit RETN
+	return false;
+}
+
 #if __COMPILER___EMIT_U
 	#endinput
 #endif

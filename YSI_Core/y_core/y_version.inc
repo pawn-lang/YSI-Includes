@@ -624,6 +624,20 @@ static stock YVers_PrintHeader()
 			YSI_EMPTY
 		);
 	}
+	else if (Server_UpgradeCrashDetect())
+	{
+		Server_PrintIntroPart(
+			"Crashdetect: <warning>",
+			YSI_EMPTY,
+			"  Crashdetect has been found, but may ",
+			"  need updating.  Get the unofficial",
+			"          fixed release from:",
+			YSI_EMPTY,
+			"          github.com/Y-Less/          ",
+			"       samp-plugin-crashdetect/",
+			YSI_EMPTY
+		);
+	}
 	else
 	{
 		Server_PrintIntroPart("Crashdetect: <found>");

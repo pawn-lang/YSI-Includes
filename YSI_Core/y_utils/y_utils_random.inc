@@ -815,7 +815,7 @@ stock bool:TryPPM(ppm)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomAlpha(output[] = "", .cased = false, .grouped = false, len = sizeof (output))
+/*stock RandomAlpha(output[] = "", cased = false, grouped = false, len = sizeof (output))
 {
 	// There are only two possible groups (upper- and lower-case letters), and
 	// both have the same number of elements, so `grouped` being on or off will
@@ -843,7 +843,7 @@ stock RandomAlpha(output[] = "", .cased = false, .grouped = false, len = sizeof 
 	while (i != len);
 	output[len] = '\0';
 	return ch;
-}
+}*/
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - random</library>
@@ -866,7 +866,7 @@ stock RandomAlpha(output[] = "", .cased = false, .grouped = false, len = sizeof 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomAlphaNum(output[] = "", .cased = false, .grouped = false, len = sizeof (output))
+/*stock RandomAlphaNum(output[] = "", cased = false, grouped = false, len = sizeof (output))
 {
 	new
 		i = -1,
@@ -916,5 +916,5 @@ stock RandomAlphaNum(output[] = "", .cased = false, .grouped = false, len = size
 	while (i != len);
 	output[len] = '\0';
 	return ch;
-}
+}*/
 
