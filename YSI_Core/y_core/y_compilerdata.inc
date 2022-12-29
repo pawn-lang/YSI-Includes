@@ -500,6 +500,9 @@ static stock const
 	#endif
 #endif
 
+// https://github.com/pawn-lang/compiler/issues/719
+#define __COMPILER_NAMED.
+
 /**
  * <library>y_compilerdata</library>
  * <remarks>

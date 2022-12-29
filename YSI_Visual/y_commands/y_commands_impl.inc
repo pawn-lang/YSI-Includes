@@ -2299,9 +2299,9 @@ native Command_Strcat_(dest[], src, len) = strcat;
  *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
-	stock Command_Decorator__(const string:func__[], const string:name[] = "", altcnt__ = 0, altptr__ = 0, prefix = '/', Group:group = Group:0, bool:disabled = false, bool: hidden = false)
+	stock Command_Decorator__(const __COMPILER_NAMED.string:func__[], const __COMPILER_NAMED.string:name[] = "", __COMPILER_NAMED.altcnt__ = 0, __COMPILER_NAMED.altptr__ = 0, __COMPILER_NAMED.prefix = '/', __COMPILER_NAMED.Group:group = Group:0, __COMPILER_NAMED.bool:disabled = false, __COMPILER_NAMED.bool:hidden = false)
 #else
-	stock Command_Decorator__(const string:func__[], const string:name[] = "", altcnt__ = 0, altptr__ = 0, Group:group = Group:0, bool:disabled = false, bool: hidden = false)
+	stock Command_Decorator__(const __COMPILER_NAMED.string:func__[], const __COMPILER_NAMED.string:name[] = "", __COMPILER_NAMED.altcnt__ = 0, __COMPILER_NAMED.altptr__ = 0, __COMPILER_NAMED.Group:group = Group:0, __COMPILER_NAMED.bool:disabled = false, __COMPILER_NAMED.bool:hidden = false)
 #endif
 {
 	state y_groups : y_groups_exists;

@@ -391,3 +391,12 @@ While normally there are YSI keywords so you can enable `this` as a short form o
 
 There is currently no support for varaibles like `this.Data[ANGLE]`, but I'm thinking about how to achieve it.
 
+## `__COMPILER_NAMED.`
+
+Use to half replicate https://github.com/pawn-lang/compiler/issues/719, or at least indicate the intention to have parameters only used by their name:
+
+```pawn
+Function(__COMPILER_NAMED.arg = 5)
+{
+}
+```
