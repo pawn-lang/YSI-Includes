@@ -721,3 +721,75 @@ stock RandomPointInCircleDistributed(Float:centreX, Float:centreY, Float:radius,
 
 #define RandomPointInCircle RandomPointInCircleDistributed
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - maths</library>
+ * <summary>
+ *   TryPercentage(percentage);
+ * </summary>
+ * <param name="percentage">The likelihood of returning <c>true</c>.</param>
+ * <returns>
+ *   <c>true</c>, <c>percentage%</c> of the time; or <c>false</c>
+ * </returns>
+ * <remarks>
+ *   Basically a percentage random number generator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:TryPercentage(percentage)
+{
+	return random(100) < percentage;
+}
+
+#define TryPercentage(%0) (random(100) < (%0))
+#define _ALS_TryPercentage
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - maths</library>
+ * <summary>
+ *   TryPermille(permille);
+ * </summary>
+ * <param name="permille">The likelihood of returning <c>true</c>.</param>
+ * <returns>
+ *   <c>true</c>, <c>permille%o</c> of the time; or <c>false</c>
+ * </returns>
+ * <remarks>
+ *   Basically a permille random number generator (that's out of 1000).  Could be
+ *   used to replicate something with a <c>42.1%</c> chance of happening via:
+ *   <br />
+ *   <c>TryPermille(421)</c>
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:TryPermille(permille)
+{
+	return random(1000) < permille;
+}
+
+#define TryPermille(%0) (random(1000) < (%0))
+#define _ALS_TryPermille
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_utils - maths</library>
+ * <summary>
+ *   TryPPM(ppm);
+ * </summary>
+ * <param name="ppm">The likelihood of returning <c>true</c>.</param>
+ * <returns>
+ *   <c>true</c>, <c>ppm%oooo</c> of the time; or <c>false</c>
+ * </returns>
+ * <remarks>
+ *   Basically a ppm random number generator (that's out of 1000000).  Could be
+ *   used to replicate something with a <c>1.0001%</c> chance of happening via:
+ *   <br />
+ *   <c>TryPPM(10001)</c>
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:TryPPM(ppm)
+{
+	return random(1000000) < ppm;
+}
+
+#define TryPPM(%0) (random(1000000) < (%0))
+#define _ALS_TryPPM
+
