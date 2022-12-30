@@ -150,12 +150,22 @@ forward __pragma_ctrlchar(character);
  */
 #define __pragma_deprecated(,%0); {new deprecated_%0=__deprecated(#%0);}
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated The parameter is deprecated.
 stock __deprecated(const symbol[])
 {
 	return 0;
 }
 #define deprecated_%0\32;%1= deprecated_%1=
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /**
  * <library>y_compilerdata</library>

@@ -2248,6 +2248,11 @@ static stock Area_IsInCube(Float:x, Float:y, Float:z, const Float:bounds[])
 
 //foreign Area_GetPlayerArea(playerid);
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
 #pragma deprecated Use Area_GetPlayerAreas
 stock Area_GetPlayerArea(playerid)
 {
@@ -2257,7 +2262,9 @@ stock Area_GetPlayerArea(playerid)
 	}
 	return NO_AREA;
 }
-
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player to set areas of.</param>

@@ -1222,6 +1222,12 @@ stock Group:Group_Create(const string:name[] = "")
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated use "GroupMember"
 stock Iter_Func@Group(start, Group:group)
 {
@@ -1234,6 +1240,10 @@ stock Iter_Func@Group(start, Group:group)
 	}
 	return Iter_Func@GroupMember(start, Group:group);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 // Else.  VERY similar to the `iterstart` macro, but without the first `J@`,
 // which is used both for `sizeof` (we already gave it `I@`) and for detecting

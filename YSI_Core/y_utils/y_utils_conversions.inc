@@ -116,11 +116,21 @@ Optional plugins:
 		}
 	}
 
+	#if __COMPILER_WARNING_SUPPRESSION
+		// On old compilers, only issue the warning at the call site.
+		#pragma warning push
+		#pragma warning disable 234
+	#endif
+
 	#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
 	stock bool:isnumeric(const string:str[])
 	{
 		return IsNumeric(str);
 	}
+
+	#if __COMPILER_WARNING_SUPPRESSION
+		#pragma warning pop
+	#endif
 
 	// Ensure this branch is hit a second time.
 	stock YSI_IsNumeric__()
@@ -181,11 +191,21 @@ stock bool:IsHex(const string:str[])
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `IsHex` (i.e. use proper capitalisation).
 stock bool:ishex(const string:str[])
 {
 	return IsHex(str);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - conversions</library>
@@ -266,11 +286,21 @@ stock HexStr(const string:str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `HexStr` (i.e. use proper capitalisation).
 stock hexstr(const string:str[])
 {
 	return HexStr(str);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - conversions</library>
@@ -304,11 +334,21 @@ stock bool:BoolStr(const string:str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `BoolStr` (i.e. use proper capitalisation).
 stock bool:boolstr(const string:str[])
 {
 	return BoolStr(str);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - conversions</library>
@@ -424,9 +464,19 @@ stock BinStr(const string:str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `BinStr` (i.e. use proper capitalisation).
 stock binstr(const string:str[])
 {
 	return BinStr(str);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 

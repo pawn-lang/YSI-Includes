@@ -303,11 +303,21 @@ stock bool:EndOfLine(const string:line[], pos)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `EndOfLine` (i.e. use proper capitalisation).
 stock bool:endofline(const string:line[], pos)
 {
 	return EndOfLine(line, pos);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - strings</library>
@@ -337,11 +347,21 @@ stock ChrFind(needle, const string:haystack[], start = 0)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `ChrFind` (i.e. use proper capitalisation).
 stock chrfind(needle, const string:haystack[], start = 0)
 {
 	return ChrFind(needle, haystack, start);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - strings</library>
@@ -357,11 +377,21 @@ stock chrfind(needle, const string:haystack[], start = 0)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `ChrFind` (i.e. use proper capitalisation, and bounds checks).
 stock chrfindp(needle, const string:haystack[], start = 0)
 {
 	return ChrFind(needle, haystack, start);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - strings</library>
@@ -397,6 +427,12 @@ stock Unpack(const string:str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Unpack` (i.e. use proper capitalisation).
 stock unpack(const string:str[])
 {
@@ -411,6 +447,10 @@ stock unpack(const string:str[])
 	}
 	return ret;
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - strings</library>

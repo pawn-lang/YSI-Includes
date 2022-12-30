@@ -173,6 +173,12 @@ stock BernsteinHash(const string:str[] /* 12 */)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `BernsteinHash` (i.e. use proper capitalisation).
 stock bernstein(const string:str[] /* 12 */)
 {
@@ -193,6 +199,10 @@ stock bernstein(const string:str[] /* 12 */)
 		return h;
 	#endif
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - encodings</library>

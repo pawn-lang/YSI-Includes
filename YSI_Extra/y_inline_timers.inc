@@ -207,11 +207,21 @@ stock Timer_CreateCallback(Func:func<>, initialOrTime, timeOrCount = 0, count = 
 	return _:func;
 }
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Timer_CreateCallback`.
 stock SetCallbackTimer(Func:func<>, initialOrTime, timeOrCount = 0, count = -1)
 {
 	return Timer_CreateCallback(func, initialOrTime, timeOrCount, count);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Timer to kill.</param>
@@ -228,9 +238,19 @@ stock Timer_KillCallback(func)
 	return KillTimer(timer);
 }
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Timer_KillCallback`.
 stock KillCallbackTimer(func)
 {
 	return Timer_KillCallback(func);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 

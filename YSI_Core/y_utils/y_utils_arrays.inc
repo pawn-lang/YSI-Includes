@@ -114,11 +114,21 @@ native RawMemCpy_(dest, src, index, numbytes, maxlength) = memcpy;
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `RawMemCpy` (i.e. use proper capitalisation).
 stock rawMemcpy(dest, src, numbytes)
 {
 	return RawMemCpy(dest, src, numbytes);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - arrays</library>
@@ -166,6 +176,12 @@ stock MemSet(arr[], value = 0, size = sizeof (arr))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `MemSet` (i.e. use proper capitalisation).
 stock memset(arr[], val = 0, size = sizeof (arr))
 {
@@ -176,6 +192,10 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	// Convert the size from cells to bytes.
 	return RawMemSet(addr, val, size * cellbytes);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - arrays</library>
@@ -326,11 +346,21 @@ stock RawMemSet(address /* 12 */, value /* 16 */, size /* 20 */)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `RawMemSet` (i.e. use proper capitalisation).
 stock rawMemset(address /* 12 */, value /* 16 */, size /* 20 */)
 {
 	return RawMemSet(address, value, size);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - arrays</library>
@@ -370,11 +400,21 @@ stock MemCmp(arr1[], arr2[], count)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `MemCmp` (i.e. use proper capitalisation).
 stock memcmp(arr1[], arr2[], count)
 {
 	return MemCmp(arr1, arr2, count);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - arrays</library>

@@ -392,11 +392,21 @@ public Y_Less_says_ta_for_using_YSI()
 			}
 		}
 
+	#if __COMPILER_WARNING_SUPPRESSION
+		// On old compilers, only issue the warning at the call site.
+		#pragma warning push
+		#pragma warning disable 234
+	#endif
+
 		#pragma deprecated Use `IsNumeric` (i.e. use proper capitalisation).
 		stock isnumeric(const number[])
 		{
 			return IsNumeric(number);
 		}
+
+	#if __COMPILER_WARNING_SUPPRESSION
+		#pragma warning pop
+	#endif
 
 		// Ensure this branch is hit a second time.
 		stock YSI_IsNumericTest__()
@@ -652,6 +662,12 @@ stock _YSI_ConstMod(const &var, const val)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated It's just unreadable rubbish.
 stock DONT_USE_SCM(a, b, const c[])
 {
@@ -661,6 +677,10 @@ stock DONT_USE_SCM(a, b, const c[])
 	#undef SCM
 #endif
 #define SCM D0NT_USE
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define __COMPILER_EARLY_PASS
 

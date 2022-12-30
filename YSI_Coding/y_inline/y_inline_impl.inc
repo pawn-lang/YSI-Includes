@@ -1168,11 +1168,21 @@ stock Function:GetLocalFunction(const func[], const spec[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `@.func(params);`.
 stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 {
 	return Indirect_Call(_:func, 0, ___(1));
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="string1">First string as a pointer.</param>
@@ -1317,11 +1327,21 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `@.func(params);`.
 stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 {
 	return Indirect_Call(func[E_CALLBACK_DATA_ALLOC], 0, ___(1));
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Info on the function to be called.</param>
@@ -1339,17 +1359,37 @@ stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Indirect_Array(_:func, tagof (func), params);`.
 stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (params))
 {
 	return Indirect_Array(func[E_CALLBACK_DATA_ALLOC], 0, params, num);
 }
 
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
+
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated No longer required.
 stock Inline_Reset(callback[E_CALLBACK_DATA])
 {
 	return (callback[E_CALLBACK_DATA_ALLOC] = 0);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 native Callback_Strcat_(dest, const src[], len) = strcat;
 
@@ -1365,6 +1405,12 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
  *   stub, and no stored data.
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
 
 #pragma deprecated Remove or use `Indirect_Claim(func);`.
 #if __COMPILER_BUG_317
@@ -1443,6 +1489,10 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 	}
 #endif
 
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <param name="input">Callback to release.</param>
  * <remarks>
@@ -1450,12 +1500,22 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Remove or use `Indirect_Release(func);`.
 stock Callback_Release(const input[E_CALLBACK_DATA])
 {
 	Indirect_Release(input[E_CALLBACK_DATA_ALLOC]);
 	return 0;
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {

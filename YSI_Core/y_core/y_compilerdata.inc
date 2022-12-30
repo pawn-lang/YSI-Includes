@@ -525,14 +525,6 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #endif
 #define DEFAULT__ __COMPILER_DEFAULT
 
-#if !__COMPILER_PRAGMA
-	#include "y_compilerdata___pragma"
-#endif
-
-// Blank function that does nothing except returns.
-#define __COMPILER_UNUSED(%0) __pragma("unused", %0)
-#define __COMPILER_NAKED() __pragma("naked")
-
 /**
  * <library>y_compilerdata</library>
  * <remarks>
@@ -550,6 +542,14 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #else
 	#include "y_compilerdata_old"
 #endif
+
+#if !__COMPILER_PRAGMA
+	#include "y_compilerdata___pragma"
+#endif
+
+// Blank function that does nothing except returns.
+#define __COMPILER_UNUSED(%0) __pragma("unused", %0)
+#define __COMPILER_NAKED() __pragma("naked")
 
 /**
  * <library>y_compilerdata</library>

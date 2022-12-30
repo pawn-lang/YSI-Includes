@@ -279,11 +279,21 @@ stock bool:Server_JITExists()
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_JITComplete`.
 stock bool:Server_JITComplete()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITED) != E_SCRIPTINIT_STATE_NONE;
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
@@ -304,11 +314,21 @@ stock bool:Script_JITComplete()
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_CacheLoaded`.
 stock bool:Server_CacheLoaded()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD) != E_SCRIPTINIT_STATE_NONE;
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
@@ -329,11 +349,21 @@ stock bool:Script_CacheLoaded()
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_CacheSaved`.
 stock bool:Server_CacheSaved()
 {
 	return (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_DUMPED) != E_SCRIPTINIT_STATE_NONE;
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
@@ -354,6 +384,12 @@ stock bool:Script_CacheSaved()
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_IsFilterscript`.
 stock bool:Server_IsFilterscript()
 {
@@ -365,6 +401,10 @@ stock bool:Server_IsFilterscript()
 	return false;
 #endif
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
@@ -390,6 +430,12 @@ forward bool:Script_IsFilterscript();
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_IsGameMode`.
 stock bool:Server_IsGameMode()
 {
@@ -401,6 +447,10 @@ stock bool:Server_IsGameMode()
 	return true;
 #endif
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
@@ -502,6 +552,12 @@ forward bool:Server_IsSAMP();
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_IsLinuxCompiler`.
 stock bool:Server_IsLinuxCompiler()
 {
@@ -511,6 +567,10 @@ stock bool:Server_IsLinuxCompiler()
 		return false;
 	#endif
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
@@ -534,6 +594,12 @@ forward bool:Script_IsLinuxCompiler();
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_IsWindowsCompiler`.
 stock bool:Server_IsWindowsCompiler()
 {
@@ -543,6 +609,10 @@ stock bool:Server_IsWindowsCompiler()
 		return false;
 	#endif
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>

@@ -990,6 +990,12 @@ stock Iter_Remove_InternalD(&count, array[], start, size, value)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated You can now use `Iter_Remove()` in loops.
 stock Iter_SafeRemove_1(&count, array[], size, value, &last)
 {
@@ -1024,6 +1030,16 @@ stock Iter_SafeRemove_1(&count, array[], size, value, &last)
 	}
 }
 
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
+
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated You can now use `Iter_Remove()` in loops.
 stock Iter_SafeRemove_2(&count, array[], start, size, value, &last)
 {
@@ -1046,6 +1062,10 @@ stock Iter_SafeRemove_2(&count, array[], start, size, value, &last)
 	}
 	return INVALID_ITERATOR_SLOT;
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>

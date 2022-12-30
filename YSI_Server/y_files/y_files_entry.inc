@@ -82,6 +82,12 @@ Optional plugins:
 #define Files_CopySync Files_Copy
 #define Files_MoveSync Files_Move
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 // Declare the functions that might not exist.
 #pragma deprecated Use `Files_RemoveDirSync`, the async code doesn't save time.
 forward bool:Files_RemoveDirAsync(const string:dir[]);
@@ -93,6 +99,10 @@ forward bool:Files_MoveAsync(const string:src[], const string:dst[]);
 forward bool:Files_CopyAsync(const string:src[], const string:dst[]);
 forward bool:Files_RemoveDirSync(const string:dir[]);
 forward bool:Files_CreateDirSync(const string:dir[]);
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #if !defined YSI_LARGE_FILE_SIZE
 	#define YSI_LARGE_FILE_SIZE (1024 * 1024) // 1Mb

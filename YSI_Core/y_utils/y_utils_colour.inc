@@ -176,6 +176,12 @@ stock InterpolateColourLinear(startColour, endColour, Float:fraction = FLOAT_NAN
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 {
@@ -183,6 +189,10 @@ stock InterpolateColorLinear(startColour, endColour, Float:fraction)
 	return InterpolateColourLinear(startColour, endColour, value, maxvalue, minvalue);
 }
 
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <param name="startColour">One of the two colours.</param>
@@ -200,12 +210,23 @@ stock InterpolateColorLinear(startColour, endColour, Float:fraction)
  *   if not given.
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
 
 #pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColor(startColour, endColour, value, maxvalue, minvalue = 0)
 {
 	return InterpolateColourLinear(startColour, endColour, floatdiv(value - minvalue, maxvalue - minvalue));
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
  * <param name="startColour">One of the two colours.</param>
@@ -224,12 +245,21 @@ stock InterpolateColor(startColour, endColour, value, maxvalue, minvalue = 0)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
 
 #pragma deprecated Use `InterpolateColourLinear` instead.
 stock InterpolateColour(startColour, endColour, value, maxvalue, minvalue = 0)
 {
 	return InterpolateColourLinear(startColour, endColour, floatdiv(value - minvalue, maxvalue - minvalue));
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>
@@ -323,12 +353,22 @@ stock InterpolateColourGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `InterpolateColourGamma` instead.
 stock InterpolateColorGamma(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
 	Debug_Warning("`InterpolateColorGamma()` called, please use `InterpolateColourGamma()` isntead,");
 	return InterpolateColourGamma(startColour, endColour, fraction);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define FLOAT_SRGB_ADJUST (14.025) // 0.055 * 255.0
 #define FLOAT_SRGB_TRANSFORM_LOW  (3294.6) // 12.92 * 255.0
@@ -521,12 +561,22 @@ stock InterpolateColourSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `InterpolateColourSRGB` instead.
 stock InterpolateColorSRGB(startColour, endColour, Float:fraction = FLOAT_NAN)
 {
 	Debug_Warning("`InterpolateColorSRGB()` called, please use `InterpolateColourSRGB()` isntead,");
 	return InterpolateColourSRGB(startColour, endColour, fraction);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_utils - colour</library>

@@ -317,6 +317,12 @@ GGLOBAL__ bool:Group_...Denied(Group:g,_GROUP_MAKE_TAG:el)
 	return (0 <= _:el < _GROUP_MAKE_LIMIT && g <= GROUP_GLOBAL && Bit_Get(YSI_g_sElementDenied[_:el], _:GROUP_TEMP_FIX(g)));
 }
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Group_...Allowed` or `Group_...Denied`.
 stock E_GROUP_SET:_GROUP_MAKE_NAME<Group_Get...>(Group:g,_GROUP_MAKE_TAG:el)
 {
@@ -329,6 +335,10 @@ stock E_GROUP_SET:_GROUP_MAKE_NAME<Group_Get...>(Group:g,_GROUP_MAKE_TAG:el)
 		_GROUP_MAKE_NAME<Group_...Allowed>(g, el) ? E_GROUP_SET:ALLOW :
 		E_GROUP_SET:UNDEF;
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <summary>Group_Set...Default</summary>
@@ -631,6 +641,12 @@ stock bool:_GROUP_MAKE_NAME<Group_Global...Denied>(_GROUP_MAKE_TAG:el)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Group_Global...Allowed` or `Group_Global...Denied`.
 stock E_GROUP_SET:_GROUP_MAKE_NAME<Group_GetGlobal...>(_GROUP_MAKE_TAG:el)
 {
@@ -643,6 +659,10 @@ stock E_GROUP_SET:_GROUP_MAKE_NAME<Group_GetGlobal...>(_GROUP_MAKE_TAG:el)
 		_GROUP_MAKE_NAME<Group_...Allowed>(GROUP_GLOBAL, el) ? E_GROUP_SET:ALLOW :
 		E_GROUP_SET:UNDEF;
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <summary>Group_SetGlobal...Default</summary>

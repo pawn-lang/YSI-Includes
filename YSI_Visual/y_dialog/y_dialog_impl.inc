@@ -112,11 +112,19 @@ stock bool:Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, DIALOG_S
 	return bool:Dialog_ShowPlayerNative(playerid, YSI_DIALOG_ID_1, style, title, caption, button1, button2);
 }
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
 #pragma deprecated Use Dialog_ShowCallback
 stock bool:Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
 	return bool:Dialog_ShowCallback(playerid, F@_@iiiis:callback[E_CALLBACK_DATA:0], style, title, caption, button1, button2);
 }
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 stock bool:Dialog_Show(playerid, DIALOG_STYLE:style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {

@@ -586,11 +586,21 @@ stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarEntry`
 stock AMX_GetPubvarEntry(idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	return AMX_GetEntryBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicEntry( AMX_GetEntryBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeEntry( AMX_GetEntryLinear(AMX_TABLE_NATIVES,
@@ -852,11 +862,21 @@ stock AMX_GetEntryLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarEntryPrefix`
 stock AMX_GetPubvarEntryPrefix(idx, &buffer, pattern)
 {
 	return AMX_GetEntryPrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_NATIVES,
@@ -1073,11 +1093,21 @@ stock AMX_GetEntryPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarEntrySuffix`
 stock AMX_GetPubvarEntrySuffix(idx, &buffer, pattern)
 {
 	return AMX_GetEntrySuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeEntrySuffix( AMX_GetEntrySuffix(AMX_TABLE_NATIVES,
@@ -1178,11 +1208,21 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarName`
 stock AMX_GetPubvarName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
 {
 	return AMX_GetNameBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicName( AMX_GetNameBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeName( AMX_GetNameLinear(AMX_TABLE_NATIVES,
@@ -1299,11 +1339,21 @@ stock AMX_GetNameLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const p
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarNamePrefix`
 stock AMX_GetPubvarNamePrefix(idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	return AMX_GetNamePrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_NATIVES,
@@ -1399,11 +1449,21 @@ stock AMX_GetNamePrefixLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], p
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarNameSuffix`
 stock AMX_GetPubvarNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	return AMX_GetNameSuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicNameSuffix( AMX_GetNameSuffix(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeNameSuffix( AMX_GetNameSuffix(AMX_TABLE_NATIVES,
@@ -1457,11 +1517,21 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarPointer`
 stock AMX_GetPubvarPointer(idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	return AMX_GetPointerBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicPointer( AMX_GetPointerBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativePointer( AMX_GetPointerLinear(AMX_TABLE_NATIVES,
@@ -1566,11 +1636,21 @@ stock AMX_GetPointerLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = ""
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarPointerPrefix`
 stock AMX_GetPubvarPointerPrefix(idx, &buffer, pattern)
 {
 	return AMX_GetPointerPrefixBinary(E_AMX_TABLE:table, idx, buffer, pattern);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativePointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_NATIVES,
@@ -1674,11 +1754,21 @@ stock AMX_GetPointerPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarPointerSuffix`
 stock AMX_GetPubvarPointerSuffix(idx, &buffer, pattern)
 {
 	return AMX_GetPointerSuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -1719,11 +1809,21 @@ stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarCount`
 stock AMX_GetPubvarCount()
 {
 	return AMX_GetCount(AMX_TABLE_PUBVARS);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicCount( AMX_GetCount(AMX_TABLE_PUBLICS
 #define AMX_GetNativeCount( AMX_GetCount(AMX_TABLE_NATIVES
@@ -1761,11 +1861,21 @@ stock AMX_GetCount(E_AMX_TABLE:table)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarValue`
 stock AMX_GetPubvarValue(idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	return AMX_GetValueBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicValue( AMX_GetValueBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeValue( AMX_GetValueLinear(AMX_TABLE_NATIVES,
@@ -1865,11 +1975,21 @@ stock AMX_GetValueLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarValuePrefix`
 stock AMX_GetPubvarValuePrefix(idx, &buffer, pattern)
 {
 	return AMX_GetValuePrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicValuePrefix( AMX_GetValuePrefixBinary(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_NATIVES,
@@ -1967,11 +2087,21 @@ stock AMX_GetValuePrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_GetPubVarValueSuffix`
 stock AMX_GetPubvarValueSuffix(idx, &buffer, pattern)
 {
 	return AMX_GetValueSuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 #define AMX_GetPublicValueSuffix( AMX_GetValueSuffix(AMX_TABLE_PUBLICS,
 #define AMX_GetNativeValueSuffix( AMX_GetValueSuffix(AMX_TABLE_NATIVES,
@@ -2205,11 +2335,21 @@ stock AMX_GetStringFromEntry(tableEntry, str[], size = sizeof (str))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `AMX_ReadPackedString`
 stock AMX_ReadString(addr, str[], len = sizeof (str))
 {
 	AMX_ReadPackedString(addr, str, len);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -2316,6 +2456,12 @@ stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
  *   the common case, but turned out to be way slower.
  * </remarks>
  *//*------------------------------------------------------------------------**/
+
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
 
 #pragma deprecated Use `AMX_WritePackedString`
 stock AMX_WriteString(addr, const str[], len = sizeof (str))
@@ -2477,6 +2623,10 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 			}
 	}
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>

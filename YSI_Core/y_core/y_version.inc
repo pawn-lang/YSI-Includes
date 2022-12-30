@@ -194,6 +194,12 @@ stock Server_GetJITString(version[], vlen = sizeof (version))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_GetCompilerVersion`.
 stock Server_GetCompilerVersion()
 {
@@ -205,6 +211,10 @@ stock Server_GetCompilerVersion()
 		return 0x03023664;
 	#endif
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
@@ -261,11 +271,21 @@ stock Script_GetCompilerString(version[], os[], vlen = sizeof (version), olen = 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_GetCompilerString`.
 stock Server_GetCompilerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
 {
 	Script_GetCompilerString(version, os, vlen, olen);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
@@ -431,11 +451,21 @@ stock Script_GetIncludesVersion()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_GetIncludesVersion`.
 stock Server_GetServerVersion()
 {
 	return Script_GetIncludesVersion();
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>
@@ -532,11 +562,21 @@ stock Script_GetIncludesString(version[], vlen = sizeof (version))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if __COMPILER_WARNING_SUPPRESSION
+	// On old compilers, only issue the warning at the call site.
+	#pragma warning push
+	#pragma warning disable 234
+#endif
+
 #pragma deprecated Use `Script_GetIncludesString`.
 stock Server_GetServerString(version[], os[], vlen = sizeof (version), olen = sizeof (os))
 {
 	return Script_GetIncludesString(version, os, vlen, olen);
 }
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_scriptdata</library>

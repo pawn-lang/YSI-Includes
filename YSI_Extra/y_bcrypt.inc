@@ -96,11 +96,21 @@ Optional plugins:
 		return _YSI_BCryptGetHash(hash);
 	}
 
+	#if __COMPILER_WARNING_SUPPRESSION
+		// On old compilers, only issue the warning at the call site.
+		#pragma warning push
+		#pragma warning disable 234
+	#endif
+
 	// Plus keep the original version for backwards-compatibility.
 	#pragma deprecated Use `BCrypt_GetHash`.
 	native bool:YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
 	#define YSI_BCryptGetHash(%0,%1) YSI_BCryptGetHash(%0)
 	#define _ALS_YSI_BCryptGetHash
+
+	#if __COMPILER_WARNING_SUPPRESSION
+		#pragma warning pop
+	#endif
 
 	public _YSI_BCryptCheckDone(extra, ptr)
 	{
