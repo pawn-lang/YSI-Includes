@@ -5288,3 +5288,63 @@ static stock
 	ASSERT_EQ(total, 500);
 }
 
+@test(.group = "y_iterate") y_iterate_Vehicles()
+{
+	new vehicleid = CreateVehicle(401, 10.0, 10.0, 3.0, 0.0, -1, -1, 10, false);
+	new playerid = 0;
+	foreach (new i : Vehicle)
+	{
+	}
+	foreach (new i : LocalVehicle)
+	{
+	}
+	foreach (new i : StreamedVehicle[playerid])
+	{
+	}
+	foreach (new i : VehicleOccupant)
+	{
+	}
+	foreach (new i : VehicleOccupant[vehicleid])
+	{
+	}
+	foreach (new i : VehicleDriver)
+	{
+	}
+	foreach (new i : VehicleDriver[vehicleid])
+	{
+	}
+	foreach (new i : VehiclePassenger)
+	{
+	}
+	foreach (new i : VehiclePassenger[vehicleid])
+	{
+	}
+	foreach (new i : Vehicle)
+	{
+	}
+	foreach (new i : LocalVehicle)
+	{
+	}
+	foreach (new i : StreamedVehicle[playerid])
+	{
+	}
+	foreach (new i : VehicleOccupant())
+	{
+	}
+	foreach (new i : VehicleOccupant(vehicleid))
+	{
+	}
+	foreach (new i : VehicleDriver())
+	{
+	}
+	foreach (new i : VehicleDriver(vehicleid))
+	{
+	}
+	foreach (new i : VehiclePassenger())
+	{
+	}
+	foreach (new i : VehiclePassenger(vehicleid))
+	{
+	}
+}
+

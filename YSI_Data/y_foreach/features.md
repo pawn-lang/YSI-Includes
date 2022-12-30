@@ -1107,7 +1107,7 @@ foreach (new i : VehicleOccupant)
 Or loop over all players in a single vehicle:
 
 ```pawn
-foreach (new i : VehicleOccupant(vehicleid))
+foreach (new i : VehicleOccupant[vehicleid])
 ```
 
 ### `VehicleDriver`
@@ -1115,7 +1115,13 @@ foreach (new i : VehicleOccupant(vehicleid))
 Loop over all players driving a vehicle:
 
 ```pawn
-foreach (new i : VehicleDriver(vehicleid))
+foreach (new i : VehicleDriver[vehicleid])
+```
+
+Loop over all players driving any vehicle:
+
+```pawn
+foreach (new i : VehicleDriver)
 ```
 
 ### `VehiclePassenger`
@@ -1123,7 +1129,13 @@ foreach (new i : VehicleDriver(vehicleid))
 Loop over all passengers in a vehicle:
 
 ```pawn
-foreach (new i : VehiclePassenger(vehicleid))
+foreach (new i : VehiclePassenger[vehicleid])
+```
+
+Loop over all passengers in any vehicle:
+
+```pawn
+foreach (new i : VehiclePassenger)
 ```
 
 ### `Command`
@@ -1139,7 +1151,7 @@ foreach (new i : Command)
 Loop over all y_commands command IDs that the given player can use:
 
 ```pawn
-foreach (new i : PlayerCommand(playerid))
+foreach (new i : PlayerCommand[playerid])
 ```
 
 ### `Group`
@@ -1155,7 +1167,7 @@ foreach (new Group:g : Group)
 Loop over all y_groups groups a single player is in:
 
 ```pawn
-foreach (new Group:g : PlayerGroups(playerid)) // [sic]
+foreach (new Group:g : PlayerGroups[playerid]) // [sic]
 ```
 
 ### `GroupMember`
@@ -1163,7 +1175,7 @@ foreach (new Group:g : PlayerGroups(playerid)) // [sic]
 Loop over everyone in a y_groups group:
 
 ```pawn
-foreach (new i : GroupMember(groupid)) // [sic]
+foreach (new i : GroupMember[groupid]) // [sic]
 ```
 
 ### `Group_...`
@@ -1172,7 +1184,7 @@ For every library that uses y_groups for permissions, there is an iterator to lo
 that library in a group.  For example, to loop over all the commands enabled in a group:
 
 ```pawn
-foreach (new i : Group_Command(groupid))
+foreach (new i : Group_Command[groupid])
 ```
 
 ## You don't need n-dimensional arrays.
