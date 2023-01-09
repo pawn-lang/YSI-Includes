@@ -104,6 +104,17 @@ stock va_fprintf(File:fhnd, const fmat[], GLOBAL_TAG_TYPES:...)
 }
 #define va_fwrite va_fprintf
 
+stock bool:va_SetVehicleNumberPlate(vehicleid, const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	// No open.mp version yet (probably because I forgot it in y_va, so
+	// subsequently didn't see it when doing the open.mp natives).
+	if (YSI_CheckNumargs__(3))
+		return bool:SetVehicleNumberPlate(vehicleid, fmat);
+	return
+		format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(2)),
+		bool:SetVehicleNumberPlate(vehicleid, YSI_UNSAFE_HUGE_STRING);
+}
+
 #if defined __OPEN_MP_VERSION
 	native PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, const fmat[], GLOBAL_TAG_TYPES:...) = CreatePlayerTextDraw;
 	native va_SetPlayerChatBubble(playerid, const fmat[], colour, Float:drawDistance, expireTime, GLOBAL_TAG_TYPES:...) = SetPlayerChatBubble;
