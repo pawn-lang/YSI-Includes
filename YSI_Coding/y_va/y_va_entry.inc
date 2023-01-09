@@ -623,3 +623,9 @@ stock bool:va_SetVehicleNumberPlate(vehicleid, const fmat[], GLOBAL_TAG_TYPES:..
 	#define TextDrawSetStringForPlayer( va_TextDrawSetStringForPlayer(
 #endif
 
+#if defined _ALS_SetVehicleNumberPlate
+	#undef SetVehicleNumberPlate
+#endif
+#define _ALS_SetVehicleNumberPlate
+#define SetVehicleNumberPlate( va_SetVehicleNumberPlate(
+
