@@ -657,9 +657,12 @@ HOOK__ y_hooks_MyFunc1(a, b)
 	g_y_hooksVar += a + b;
 }
 
-forward OnPlayerEnterDynamicArea(p, a);
+#if !defined STREAMER_TAG_AREA
+	#define STREAMER_TAG_AREA _
+#endif
+forward OnPlayerEnterDynamicArea(playerid, STREAMER_TAG_AREA:areaid);
 
-public OnPlayerEnterDynamicArea(p, a) { g_y_hooksVar += 100; }
+public OnPlayerEnterDynamicArea(playerid, STREAMER_TAG_AREA:areaid) { g_y_hooksVar += 100; }
 
 HOOK__ OnPlayerEnterDynArea(p, a) { g_y_hooksVar += 10; }
 
