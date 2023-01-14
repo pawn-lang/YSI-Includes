@@ -789,6 +789,8 @@ stock AMX_GetEntryBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", 
 
 stock AMX_GetEntryLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
+	// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native lookup
+	// method.
 	Debug_Print7("AMX_GetEntry called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
 		base = 0,
