@@ -742,17 +742,17 @@ stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
 #pragma deprecated Use `AMX_GetPubVarEntry`
 stock AMX_GetPubvarEntry(idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
-	return AMX_GetEntryBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
+	return AMX_GetEntry(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning pop
 #endif
 
-#define AMX_GetPublicEntry( AMX_GetEntryBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetLibraryEntry( AMX_GetEntryLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarEntry( AMX_GetEntryBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagEntry( AMX_GetEntryLinear(AMX_TABLE_TAGS,
+#define AMX_GetPublicEntry( AMX_GetEntry(AMX_TABLE_PUBLICS,
+#define AMX_GetLibraryEntry( AMX_GetEntry(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarEntry( AMX_GetEntry(AMX_TABLE_PUBVARS,
+#define AMX_GetTagEntry( AMX_GetEntry(AMX_TABLE_TAGS,
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -788,7 +788,7 @@ stock AMX_GetPubvarEntry(idx, &buffer, const pattern[] = "", const bool:exact = 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock AMX_GetEntryBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	Debug_Print7("AMX_GetEntryBinary called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
@@ -1090,17 +1090,17 @@ stock AMX_GetNativeEntry(idx, &buffer, const pattern[] = "", const bool:exact = 
 #pragma deprecated Use `AMX_GetPubVarEntryPrefix`
 stock AMX_GetPubvarEntryPrefix(idx, &buffer, pattern)
 {
-	return AMX_GetEntryPrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
+	return AMX_GetEntryPrefix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning pop
 #endif
 
-#define AMX_GetPublicEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetLibraryEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarEntryPrefix( AMX_GetEntryPrefixBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagEntryPrefix( AMX_GetEntryPrefixLinear(AMX_TABLE_TAGS,
+#define AMX_GetPublicEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_PUBLICS,
+#define AMX_GetLibraryEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_PUBVARS,
+#define AMX_GetTagEntryPrefix( AMX_GetEntryPrefix(AMX_TABLE_TAGS,
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -1149,7 +1149,7 @@ stock AMX_GetPubvarEntryPrefix(idx, &buffer, pattern)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock AMX_GetEntryPrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
+stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetEntryPrefixBinary called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
@@ -1569,7 +1569,7 @@ stock AMX_GetNativeEntrySuffix(idx, &buffer, pattern)
  *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
  * </returns>
  * <remarks>
- *   See <em>AMX_GetNameBinary</em>.
+ *   See <em>AMX_GetName</em>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1582,17 +1582,17 @@ stock AMX_GetNativeEntrySuffix(idx, &buffer, pattern)
 #pragma deprecated Use `AMX_GetPubVarName`
 stock AMX_GetPubvarName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
 {
-	return AMX_GetNameBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
+	return AMX_GetName(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning pop
 #endif
 
-#define AMX_GetPublicName( AMX_GetNameBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetLibraryName( AMX_GetNameLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarName( AMX_GetNameBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagName( AMX_GetNameLinear(AMX_TABLE_TAGS,
+#define AMX_GetPublicName( AMX_GetName(AMX_TABLE_PUBLICS,
+#define AMX_GetLibraryName( AMX_GetName(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarName( AMX_GetName(AMX_TABLE_PUBVARS,
+#define AMX_GetTagName( AMX_GetName(AMX_TABLE_TAGS,
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -1627,12 +1627,12 @@ stock AMX_GetPubvarName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", cons
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock AMX_GetNameBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
+stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
 {
 	Debug_Print7("AMX_GetNameBinary called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
-	idx = AMX_GetEntryBinary(table, idx, pointer, pattern, exact);
+	idx = AMX_GetEntry(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
 		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
@@ -1732,7 +1732,7 @@ stock AMX_GetNativeName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", cons
  *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
  * </returns>
  * <remarks>
- *   See <c>AMX_GetNamePrefixBinary</c>
+ *   See <c>AMX_GetNamePrefix</c>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1745,17 +1745,17 @@ stock AMX_GetNativeName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", cons
 #pragma deprecated Use `AMX_GetPubVarNamePrefix`
 stock AMX_GetPubvarNamePrefix(idx, buffer[FUNCTION_LENGTH], pattern)
 {
-	return AMX_GetNamePrefixBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern);
+	return AMX_GetNamePrefix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning pop
 #endif
 
-#define AMX_GetPublicNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetLibraryNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarNamePrefix( AMX_GetNamePrefixBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagNamePrefix( AMX_GetNamePrefixLinear(AMX_TABLE_TAGS,
+#define AMX_GetPublicNamePrefix( AMX_GetNamePrefix(AMX_TABLE_PUBLICS,
+#define AMX_GetLibraryNamePrefix( AMX_GetNamePrefix(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarNamePrefix( AMX_GetNamePrefix(AMX_TABLE_PUBVARS,
+#define AMX_GetTagNamePrefix( AMX_GetNamePrefix(AMX_TABLE_TAGS,
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -1780,12 +1780,12 @@ stock AMX_GetPubvarNamePrefix(idx, buffer[FUNCTION_LENGTH], pattern)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock AMX_GetNamePrefixBinary(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
+stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	Debug_Print7("AMX_GetNamePrefixBinary called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
-	idx = AMX_GetEntryPrefixBinary(table, idx, pointer, pattern);
+	idx = AMX_GetEntryPrefix(table, idx, pointer, pattern);
 	if (idx)
 	{
 		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
@@ -1962,7 +1962,7 @@ stock AMX_GetNativeNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
  *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
  * </returns>
  * <remarks>
- *   See <c>AMX_GetPointerBinary</c>.
+ *   See <c>AMX_GetPointer</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1975,17 +1975,17 @@ stock AMX_GetNativeNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
 #pragma deprecated Use `AMX_GetPubVarPointer`
 stock AMX_GetPubvarPointer(idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
-	return AMX_GetPointerBinary(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
+	return AMX_GetPointer(AMX_TABLE_PUBVARS, idx, buffer, pattern, exact);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning pop
 #endif
 
-#define AMX_GetPublicPointer( AMX_GetPointerBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetLibraryPointer( AMX_GetPointerLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarPointer( AMX_GetPointerBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagPointer( AMX_GetPointerLinear(AMX_TABLE_TAGS,
+#define AMX_GetPublicPointer( AMX_GetPointer(AMX_TABLE_PUBLICS,
+#define AMX_GetLibraryPointer( AMX_GetPointer(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarPointer( AMX_GetPointer(AMX_TABLE_PUBVARS,
+#define AMX_GetTagPointer( AMX_GetPointer(AMX_TABLE_TAGS,
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -2012,12 +2012,12 @@ stock AMX_GetPubvarPointer(idx, &buffer, const pattern[] = "", const bool:exact 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock AMX_GetPointerBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
 	Debug_Print7("AMX_GetPointerBinary called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
 		pointer = 0;
-	idx = AMX_GetEntryBinary(table, idx, pointer, pattern, exact);
+	idx = AMX_GetEntry(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
 		#emit LREF.S.pri pointer
@@ -2106,7 +2106,7 @@ stock AMX_GetNativePointer(idx, &buffer, const pattern[] = "", const bool:exact 
  *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
  * </returns>
  * <remarks>
- *   See <c>AMX_GetPointerPrefixBinary</c>
+ *   See <c>AMX_GetPointerPrefix</c>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2119,17 +2119,17 @@ stock AMX_GetNativePointer(idx, &buffer, const pattern[] = "", const bool:exact 
 #pragma deprecated Use `AMX_GetPubVarPointerPrefix`
 stock AMX_GetPubvarPointerPrefix(idx, &buffer, pattern)
 {
-	return AMX_GetPointerPrefixBinary(E_AMX_TABLE:table, idx, buffer, pattern);
+	return AMX_GetPointerPrefix(E_AMX_TABLE:table, idx, buffer, pattern);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning pop
 #endif
 
-#define AMX_GetPublicPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetLibraryPointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarPointerPrefix( AMX_GetPointerPrefixBinary(AMX_TABLE_PUBVARS,
-#define AMX_GetTagPointerPrefix( AMX_GetPointerPrefixLinear(AMX_TABLE_TAGS,
+#define AMX_GetPublicPointerPrefix( AMX_GetPointerPrefix(AMX_TABLE_PUBLICS,
+#define AMX_GetLibraryPointerPrefix( AMX_GetPointerPrefix(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarPointerPrefix( AMX_GetPointerPrefix(AMX_TABLE_PUBVARS,
+#define AMX_GetTagPointerPrefix( AMX_GetPointerPrefix(AMX_TABLE_TAGS,
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -2154,12 +2154,12 @@ stock AMX_GetPubvarPointerPrefix(idx, &buffer, pattern)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock AMX_GetPointerPrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
+stock AMX_GetPointerPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetPointerPrefixBinary called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer = 0;
-	idx = AMX_GetEntryPrefixBinary(table, idx, pointer, pattern);
+	idx = AMX_GetEntryPrefix(table, idx, pointer, pattern);
 	if (idx)
 	{
 		#emit LREF.S.pri pointer
@@ -2385,7 +2385,7 @@ stock AMX_GetCount(E_AMX_TABLE:table)
  *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
  * </returns>
  * <remarks>
- *   See <c>AMX_GetValueBinary</c>.
+ *   See <c>AMX_GetValue</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2405,9 +2405,9 @@ stock AMX_GetPubvarValue(idx, &buffer, const pattern[] = "", const bool:exact = 
 	#pragma warning pop
 #endif
 
-#define AMX_GetPublicValue( AMX_GetValueBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetLibraryValue( AMX_GetValueLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetTagValue( AMX_GetValueLinear(AMX_TABLE_TAGS,
+#define AMX_GetPublicValue( AMX_GetValue(AMX_TABLE_PUBLICS,
+#define AMX_GetLibraryValue( AMX_GetValue(AMX_TABLE_LIBRARIES,
+#define AMX_GetTagValue( AMX_GetValue(AMX_TABLE_TAGS,
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -2472,12 +2472,12 @@ stock AMX_GetPubVarValue(idx, &buffer, const pattern[] = "", const bool:exact = 
 #endif
 
 #pragma deprecated Getting these values are meaningless.
-stock AMX_GetValueBinary(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
+stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
-	Debug_Print7("AMX_GetValueBinary called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
+	Debug_Print7("AMX_GetValue called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	buffer = 0;
 	// Don't even need to look up a pointer, just advance `idx`.
-	return AMX_GetEntryBinary(table, idx, idx, pattern, exact);
+	return AMX_GetEntry(table, idx, idx, pattern, exact);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
@@ -2571,7 +2571,7 @@ stock AMX_GetNativeValue(idx, &buffer, const pattern[] = "", const bool:exact = 
  *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
  * </returns>
  * <remarks>
- *   See <c>AMX_GetValuePrefixBinary</c>.
+ *   See <c>AMX_GetValuePrefix</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2591,9 +2591,9 @@ stock AMX_GetPubvarValuePrefix(idx, &buffer, pattern)
 	#pragma warning pop
 #endif
 
-#define AMX_GetPublicValuePrefix( AMX_GetValuePrefixBinary(AMX_TABLE_PUBLICS,
-#define AMX_GetLibraryValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_LIBRARIES,
-#define AMX_GetTagValuePrefix( AMX_GetValuePrefixLinear(AMX_TABLE_TAGS,
+#define AMX_GetPublicValuePrefix( AMX_GetValuePrefix(AMX_TABLE_PUBLICS,
+#define AMX_GetLibraryValuePrefix( AMX_GetValuePrefix(AMX_TABLE_LIBRARIES,
+#define AMX_GetTagValuePrefix( AMX_GetValuePrefix(AMX_TABLE_TAGS,
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -2653,12 +2653,12 @@ stock AMX_GetPubVarValuePrefix(idx, &buffer, pattern)
 #endif
 
 #pragma deprecated Getting these values are meaningless.
-stock AMX_GetValuePrefixBinary(E_AMX_TABLE:table, idx, &buffer, pattern)
+stock AMX_GetValuePrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	Debug_Print7("AMX_GetValuePrefixBinary called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	Debug_Print7("AMX_GetValuePrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	buffer = 0;
 	// Don't even need to look up a pointer, just advance `idx`.
-	return AMX_GetEntryPrefixBinary(table, idx, idx, pattern);
+	return AMX_GetEntryPrefix(table, idx, idx, pattern);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
@@ -3524,7 +3524,7 @@ stock AMX_GetTagByValue(tag, name[], len = sizeof (name))
 		idx,
 		buffer,
 		value;
-	while ((idx = AMX_GetEntryLinear(AMX_TABLE_TAGS, idx, buffer)))
+	while ((idx = AMX_GetEntry(AMX_TABLE_TAGS, idx, buffer)))
 	{
 		#emit LREF.S.pri buffer
 		#emit STOR.S.pri value
