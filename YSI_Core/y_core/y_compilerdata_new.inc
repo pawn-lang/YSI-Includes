@@ -105,6 +105,97 @@ stock YSI_gAMXAddress_;
 	#define AMX_Read(%0) (_:(__emit( LOAD.U.pri %0, STOR.pri YSI_gAMXAddress_, LREF.pri YSI_gAMXAddress_ )))
 	#define AMX_Write(%0,%1) __emit( PUSH.U %1, LOAD.U.alt %0, STOR.alt YSI_gAMXAddress_, POP.pri, SREF.pri YSI_gAMXAddress_ )
 	#define AMX_Ref(%0) (_:(__emit( ADDR.U.pri %0 )))
+	
+	#if 0
+		// To beat:
+		#emit PUSH.S o
+		#emit PUSH.S n
+		#emit PUSH.C 8
+		#emit SYSREQ.C getarg
+		#emit STACK 12
+		
+		// Plus a tiny bit of native overhead.
+		// Seems unlikely...  But we managed it!
+		
+		getarg(n)
+		{
+			// I tried to find a cunning way to get `FRM` in to `alt`, like the
+			// `STACK 0` trick, but there doesn't seem to be one.  That's a lie,
+			// I found one moments after writing that sentence:
+			//
+			//     #emit ADDR.alt 0
+			//
+			// Not that it matters, because the realisation led to a better way
+			// of doing it anyway.
+			#emit ADDR.alt   __param0_offset
+			// In writing this code I just learnt that `LOAD.U` compiles to
+			// `CONST` when given a constant, which is exactly what I hoped it
+			// would do, but I hadn't confirmed it did.
+			#emit LOAD.U.pri n
+			// Load the value of the parameter (which is itself a pointer).
+			#emit LIDX
+			// If there is no offset, just load again.
+			#emit LOAD.I
+			// And amazingly we've actually beaten the default call in
+			// instruction count alone!
+		}
+		
+		getarg(n, o)
+		{
+			#emit ADDR.alt   __param0_offset
+			#emit LOAD.U.pri n
+			#emit LIDX
+			#emit MOVE.alt
+			#emit LOAD.U.pri o
+			#emit LIDX
+		}
+	#endif
+	
+	// Custom code for both the 1- and 2-arg variants.
+	#define getarg(%0) ((_:getarg__:__emit(ADDR.alt __param0_offset, LOAD.U.pri %0, LIDX, LOAD.I)))
+	#define getarg__:__emit(%0,%1,%2,%3,%4))) __emit(ADDR.alt __param0_offset, %1, LIDX, MOVE.alt, LOAD.U.pri %2, LIDX)))
+	#define _ALS_getarg
+	
+	#if 0
+		// To beat:
+		#emit PUSH.S v
+		#emit PUSH.S o
+		#emit PUSH.S n
+		#emit PUSH.C 12
+		#emit SYSREQ.C setarg
+		#emit STACK 16
+		
+		// Plus a tiny bit of native overhead.
+		// Seems unlikely...  But we managed it!
+		
+		setarg(n, v)
+		{
+			#emit ADDR.alt   __param0_offset
+			#emit LOAD.U.pri n
+			#emit LIDX
+			#emit MOVE.alt
+			#emit LOAD.U.pri v
+			#emit STOR.I
+		}
+		
+		setarg(n, o, v)
+		{
+			#emit ADDR.alt   __param0_offset
+			#emit LOAD.U.pri n
+			#emit LIDX
+			#emit MOVE.alt
+			#emit LOAD.U.pri o
+			#emit IDXADDR
+			#emit MOVE.alt
+			#emit LOAD.U.pri v
+			#emit STOR.I
+		}
+	#endif
+	
+	// Custom code for both the 1- and 2-arg variants.
+	#define setarg(%0,%1) ((_:setarg__:__emit(ADDR.alt __param0_offset, LOAD.U.pri %0, LIDX, MOVE.alt, LOAD.U.pri %1, STOR.I)))
+	#define setarg__:__emit(%0,%1,%2,%3,%4,%5,%6))) __emit(ADDR.alt __param0_offset, %1, LIDX, MOVE.alt, LOAD.U.pri %2, IDXADDR, MOVE.alt, %5, STOR.I)))
+	#define _ALS_setarg
 #endif
 
 // Error with:
