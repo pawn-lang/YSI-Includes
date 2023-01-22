@@ -939,8 +939,6 @@ stock AMX_GetNativeEntry(idx, &buffer, const pattern[] = "", const bool:exact = 
 {
 	Debug_Print7("AMX_GetNativeEntry called: %i, %i, \"%s\", %i", idx, buffer, pattern, exact);
 	new
-		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
-		// lookup method.
 		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
@@ -1213,8 +1211,6 @@ stock AMX_GetNativeEntryPrefix(idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetNativeEntryPrefix called: %i, %i, %i", idx, buffer, pattern);
 	new
-		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
-		// lookup method.
 		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
@@ -1407,8 +1403,6 @@ stock AMX_GetNativeEntrySuffix(idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetNativeEntrySuffix called: %i, %i, %i", idx, buffer, pattern);
 	new
-		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
-		// lookup method.
 		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
@@ -1567,8 +1561,6 @@ stock AMX_GetNativeName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", cons
 {
 	Debug_Print7("AMX_GetNativeName called: %i, \"%s\", \"%s\"", idx, buffer, pattern);
 	new
-		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
-		// lookup method.
 		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
@@ -1716,8 +1708,6 @@ stock AMX_GetNativeNamePrefix(idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	Debug_Print7("AMX_GetNativeNamePrefix called: %i, \"%s\", %i", idx, buffer, pattern);
 	new
-		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
-		// lookup method.
 		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
@@ -1831,8 +1821,6 @@ stock AMX_GetNativeNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	Debug_Print7("AMX_GetNativeNameSuffix called: %i, \"%s\", %i", idx, buffer, pattern);
 	new
-		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
-		// lookup method.
 		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
