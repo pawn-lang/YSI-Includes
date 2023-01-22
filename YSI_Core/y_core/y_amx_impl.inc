@@ -220,6 +220,144 @@ static stock E_AMX_TABLE:_@E_AMX_TABLE() { return E_AMX_TABLE; }
 	#define __32(%0) (%0)
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <summary>
+ *   Swap two pointers in the header.  Pointers are always 32-bit, regardless of
+ *   cell size, so this may require some bit manipulation.
+ * </summary>
+ * <remarks>
+ *   Shamelessly ripped from amx_assembly (but I wrote the original, so...)
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock AMX_HeaderTableSwap(addr0, addr1)
+{
+	#if cellbits == 64
+		new
+			v0,
+			v1,
+			v3;
+		return
+			// Swap the pointers.
+			v0 = AMX_Read(addr0),
+			v1 = AMX_Read(addr1),
+			AMX_Write(addr1, v0),
+			AMX_Write(addr0, v1),
+			// Move on.
+			addr0 += cellbytes,
+			addr1 += cellbytes,
+			// Swap the names.  These pointers are always 32-bit, at least in
+			// the AMX versions we deal with.  Thus we mask the upper bits.
+			v0 = AMX_Read(addr0),
+			v1 = AMX_Read(addr1),
+			AMX_Write(addr1, (v0 & 0x00000000FFFFFFFF) | (v1 & 0xFFFFFFFF00000000)),
+			AMX_Write(addr0, (v1 & 0x00000000FFFFFFFF) | (v0 & 0xFFFFFFFF00000000));
+	#else
+		new
+			v0,
+			v1;
+		return
+			// Swap the pointers.
+			v0 = AMX_Read(addr0),
+			v1 = AMX_Read(addr1),
+			AMX_Write(addr1, v0),
+			AMX_Write(addr0, v1),
+			// Move on.
+			addr0 += cellbytes,
+			addr1 += cellbytes,
+			// Swap the names.
+			v0 = AMX_Read(addr0),
+			v1 = AMX_Read(addr1),
+			AMX_Write(addr1, v0),
+			AMX_Write(addr0, v1);
+	#endif
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <summary>
+ *   The partition operation for a quicksort.
+ * </summary>
+ * <remarks>
+ *   Shamelessly ripped from amx_assembly (but I wrote the original, so...)
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock AMX_HeaderTablePartition(low, high, dat, defsize)
+{
+	new
+		pivot = __32(AMX_Read(high + cellbytes)) - dat,
+		j = low;
+	for (low -= defsize; j != high; j += defsize)
+	{
+		if (AMX_CompareHeaderStrings(__32(AMX_Read(j + cellbytes)) - dat, pivot) < 0)
+		{
+			// Swap.
+			low += defsize,
+			AMX_HeaderTableSwap(low, j);
+		}
+	}
+	return
+		low += defsize,
+		AMX_HeaderTableSwap(low, high),
+		low;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <summary>
+ *   Sort a list of names in the AMX header.
+ * </summary>
+ * <remarks>
+ *   Shamelessly ripped from amx_assembly (but I wrote the original, so...)
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock AMX_HeaderTableQuickSort(low, high, dat, defsize)
+{
+	if (low < high)
+	{
+		new
+			partition = AMX_HeaderTablePartition(low - dat, high - dat, dat, defsize) + dat;
+		AMX_HeaderTableQuickSort(low, partition - defsize, dat, defsize);
+		AMX_HeaderTableQuickSort(partition + defsize, high, dat, defsize);
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <summary>
+ *   Compares a string stored in the name table starting at "s1" (packed) with
+ *   another string in the name table starting at "s2" (packed).
+ * </summary>
+ * <remarks>
+ *   Shamelessly ripped from amx_assembly (but I wrote the original, so...)
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock AMX_CompareHeaderStrings(s1, s2)
+{
+	new c1 = 0, c2 = 0;
+	new diff = 0;
+
+	do
+	{
+		c1 = AMX_Read(s1) & 0xFF;
+		++s1;
+		c2 = AMX_Read(s2) & 0xFF;
+		++s2;
+		diff = c1 - c2;
+		if (diff != 0)
+		{
+			break;
+		}
+	}
+	while ((c1 & c2));
+
+	return diff;
+}
+
 // This is based on the AMX version used in SA:MP - it DOES NOT match the code
 // found in the PAWN documentation as that's for a later version.
 public OnCodeInit()
@@ -303,6 +441,15 @@ public OnCodeInit()
 	// have for more advanced functionality (none of which actually exists yet).
 	AMX_REAL_ADDRESS = AMX_GetGlobal();
 	AMX_REAL_DATA = AMX_REAL_ADDRESS - AMX_BASE_ADDRESS;
+	// Since this code was copied from amx_assembly there are some weird `-`s in
+	// it.  All amx_assembly code is written relative to the AMX base address,
+	// which has the advantage that all header data is used exactly as it is in
+	// the header.  All y_amx code is written relative to DAT, which has the
+	// advantage that most reads and writes need no offset manipulations.
+	// However, this does mean that when porting code from one place to the
+	// other a lot of adjustments are required.
+	AMX_HeaderTableQuickSort(AMX_HEADER_TAGS - AMX_BASE_ADDRESS, AMX_HEADER_NAMETABLE - __defsize_cells - AMX_BASE_ADDRESS, -AMX_BASE_ADDRESS, __defsize_cells);
+	AMX_HeaderTableQuickSort(AMX_HEADER_LIBRARIES - AMX_BASE_ADDRESS, AMX_HEADER_PUBVARS - __defsize_cells - AMX_BASE_ADDRESS, -AMX_BASE_ADDRESS, __defsize_cells);
 	// Call next ALS callback.
 	#if defined YSI_LOCK_MODE
 		GetServerVarAsString(YSI_gLockData, YSI_gLockData[5], sizeof (YSI_gLockData) - 5);
