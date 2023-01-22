@@ -334,3 +334,20 @@ const __CompilerAddress = __addressof(__CompilerAddress2) - __addressof(__Compil
 	const __optimisation = 0;
 #endif
 
+/*
+                                                                                                  
+     ad88888ba  888888888888  ,ad8888ba,    88888888ba   88  
+    d8"     "8b      88      d8"'    `"8b   88      "8b  88  
+    Y8,              88     d8'        `8b  88      ,8P  88  
+    `Y8aaaaa,        88     88          88  88aaaaaa8P'  88  
+      `"""""8b,      88     88          88  88""""""'    88  
+            `8b      88     Y8,        ,8P  88           ""  
+    Y8a     a8P      88      Y8a.    .a8P   88           aa  
+     "Y88888P"       88       `"Y8888Y"'    88           88  
+                                                         
+                                                         
+
+*/
+
+// There is a `#endinput` above.  Don't put new code down here!
+
