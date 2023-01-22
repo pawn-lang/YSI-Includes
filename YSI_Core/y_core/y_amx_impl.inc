@@ -238,39 +238,37 @@ static stock AMX_HeaderTableSwap(addr0, addr1)
 			v0,
 			v1,
 			v3;
-		return
-			// Swap the pointers.
-			v0 = AMX_Read(addr0),
-			v1 = AMX_Read(addr1),
-			AMX_Write(addr1, v0),
-			AMX_Write(addr0, v1),
-			// Move on.
-			addr0 += cellbytes,
-			addr1 += cellbytes,
-			// Swap the names.  These pointers are always 32-bit, at least in
-			// the AMX versions we deal with.  Thus we mask the upper bits.
-			v0 = AMX_Read(addr0),
-			v1 = AMX_Read(addr1),
-			AMX_Write(addr1, (v0 & 0x00000000FFFFFFFF) | (v1 & 0xFFFFFFFF00000000)),
-			AMX_Write(addr0, (v1 & 0x00000000FFFFFFFF) | (v0 & 0xFFFFFFFF00000000));
+		// Swap the pointers.
+		v0 = AMX_Read(addr0),
+		v1 = AMX_Read(addr1),
+		AMX_Write(addr1, v0),
+		AMX_Write(addr0, v1),
+		// Move on.
+		addr0 += cellbytes,
+		addr1 += cellbytes,
+		// Swap the names.  These pointers are always 32-bit, at least in
+		// the AMX versions we deal with.  Thus we mask the upper bits.
+		v0 = AMX_Read(addr0),
+		v1 = AMX_Read(addr1),
+		AMX_Write(addr1, (v0 & 0x00000000FFFFFFFF) | (v1 & 0xFFFFFFFF00000000)),
+		AMX_Write(addr0, (v1 & 0x00000000FFFFFFFF) | (v0 & 0xFFFFFFFF00000000));
 	#else
 		new
 			v0,
 			v1;
-		return
-			// Swap the pointers.
-			v0 = AMX_Read(addr0),
-			v1 = AMX_Read(addr1),
-			AMX_Write(addr1, v0),
-			AMX_Write(addr0, v1),
-			// Move on.
-			addr0 += cellbytes,
-			addr1 += cellbytes,
-			// Swap the names.
-			v0 = AMX_Read(addr0),
-			v1 = AMX_Read(addr1),
-			AMX_Write(addr1, v0),
-			AMX_Write(addr0, v1);
+		// Swap the pointers.
+		v0 = AMX_Read(addr0),
+		v1 = AMX_Read(addr1),
+		AMX_Write(addr1, v0),
+		AMX_Write(addr0, v1),
+		// Move on.
+		addr0 += cellbytes,
+		addr1 += cellbytes,
+		// Swap the names.
+		v0 = AMX_Read(addr0),
+		v1 = AMX_Read(addr1),
+		AMX_Write(addr1, v0),
+		AMX_Write(addr0, v1);
 	#endif
 }
 
@@ -298,10 +296,9 @@ static stock AMX_HeaderTablePartition(low, high, dat, defsize)
 			AMX_HeaderTableSwap(low, j);
 		}
 	}
-	return
-		low += defsize,
-		AMX_HeaderTableSwap(low, high),
-		low;
+	low += defsize,
+	AMX_HeaderTableSwap(low, high);
+	return low;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2001,7 +1998,7 @@ stock AMX_GetNativePointer(idx, &buffer, const pattern[] = "", const bool:exact 
 #pragma deprecated Use `AMX_GetPubVarPointerPrefix`
 stock AMX_GetPubvarPointerPrefix(idx, &buffer, pattern)
 {
-	return AMX_GetPointerPrefix(E_AMX_TABLE:table, idx, buffer, pattern);
+	return AMX_GetPointerPrefix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
@@ -2078,11 +2075,6 @@ stock AMX_GetNativePointerPrefix(idx, &buffer, pattern)
 	return idx;
 }
 
-#define AMX_GetPublicPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_PUBLICS,
-#define AMX_GetLibraryPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_LIBRARIES,
-#define AMX_GetPubVarPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_PUBVARS,
-#define AMX_GetTagPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_TAGS,
-
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
  * <param name="idx">When iterating, the offset to start at.</param>
@@ -2111,6 +2103,11 @@ stock AMX_GetPubvarPointerSuffix(idx, &buffer, pattern)
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning pop
 #endif
+
+#define AMX_GetPublicPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_PUBLICS,
+#define AMX_GetLibraryPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_LIBRARIES,
+#define AMX_GetPubVarPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_PUBVARS,
+#define AMX_GetTagPointerSuffix( AMX_GetPointerSuffix(AMX_TABLE_TAGS,
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
@@ -2529,7 +2526,7 @@ stock AMX_GetNativeValuePrefix(idx, &buffer, pattern)
 #pragma deprecated Use `AMX_GetPubVarValueSuffix`
 stock AMX_GetPubvarValueSuffix(idx, &buffer, pattern)
 {
-	return AMX_GetValueSuffix(AMX_TABLE_PUBVARS, idx, buffer, pattern);
+	return AMX_GetPubVarValueSuffix(idx, buffer, pattern);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
