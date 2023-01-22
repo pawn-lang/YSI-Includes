@@ -77,3 +77,23 @@ static stock
 	ASSERT(x >= 10);
 }
 
+@test(.group = "y_amx") y_amx_Natives()
+{
+	new idx, ptr, buf[FUNCTION_LENGTH];
+	idx = AMX_GetNativeEntry(0, ptr, "printf", true);
+	ASSERT_NZ(idx);
+	ASSERT_NZ(ptr);
+	idx = AMX_GetNativePointer(0, ptr, "printf", true);
+	ASSERT_NZ(idx);
+	ASSERT_NZ(ptr);
+	idx = AMX_GetNativePointer(idx, ptr, "printf", true);
+	ASSERT_NZ(idx);
+	ASSERT_NZ(ptr);
+	idx = 0;
+	while ((idx = AMX_GetNativeNamePrefix(idx, buf, _A<prin>)))
+	{
+		strunpack(buf, buf);
+		printf("Found %d = `%s`", idx, buf);
+	}
+}
+

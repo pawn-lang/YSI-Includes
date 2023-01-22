@@ -924,45 +924,64 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 
 stock AMX_GetNativeEntry(idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
-	// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native lookup
-	// method.
 	Debug_Print7("AMX_GetNativeEntry called: %i, %i, \"%s\", %i", idx, buffer, pattern, exact);
 	new
+		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
+		// lookup method.
+		bool:slowNeeded = true,
 		base = 0,
-		publics = 0,
-		count = 0;
-	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base, publics),
-	AMX_GetBaseCount(AMX_TABLE_NATIVES, base, count);
-	new
+		count = 0,
 		addr = 0,
-		pos = idx * __defsize_cells + base + cellbytes,
+		pos = 0,
 		str[FUNCTION_LENGTH];
+	AMX_GetBaseCount(AMX_TABLE_NATIVES, base, count);
+	if (slowNeeded)
+	{
+		addr = AMX_GetFirstNativeString();
+		while (pos < idx)
+		{
+			// Skip earlier names.
+			addr = addr + AMX_ReadLength(addr) + 1,
+			++pos;
+		}
+	}
+	pos = idx * __defsize_cells + base + cellbytes;
 	while (idx++ < count)
 	{
-		addr = __32(AMX_Read(pos)) + AMX_BASE_ADDRESS;
-		if (addr != AMX_BASE_ADDRESS)
+		if (pattern[0] == '\0')
 		{
-			if (pattern[0] == '\0')
+			buffer = pos - cellbytes;
+			return idx;
+		}
+		if (slowNeeded)
+		{
+			AMX_ReadPackedString(addr, str),
+			addr = addr + strlen(str) + 1;
+		}
+		else
+		{
+			addr = __32(AMX_Read(pos)) + AMX_BASE_ADDRESS;
+			if (addr == AMX_BASE_ADDRESS)
+			{
+				pos += __defsize_cells;
+				continue;
+			}
+			AMX_ReadPackedString(addr, str);
+		}
+		if (exact)
+		{
+			if (strcmp(str, pattern) == 0)
 			{
 				buffer = pos - cellbytes;
 				return idx;
 			}
-			AMX_ReadPackedString(addr, str);
-			if (exact)
+		}
+		else
+		{
+			if (strfind(str, pattern) != -1)
 			{
-				if (strcmp(str, pattern) == 0)
-				{
-					buffer = pos - cellbytes;
-					return idx;
-				}
-			}
-			else
-			{
-				if (strfind(str, pattern) != -1)
-				{
-					buffer = pos - cellbytes;
-					return idx;
-				}
+				buffer = pos - cellbytes;
+				return idx;
 			}
 		}
 		pos += __defsize_cells;
@@ -1180,28 +1199,52 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 stock AMX_GetNativeEntryPrefix(idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetNativeEntryPrefix called: %i, %i, %i", idx, buffer, pattern);
+	new
+		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
+		// lookup method.
+		bool:slowNeeded = true,
 		base = 0,
-		publics = 0,
 		count = 0,
 		addr = 0,
 		pos;
-	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base, publics),
 	AMX_GetBaseCount(AMX_TABLE_NATIVES, base, count);
 	// Get the address of the string.
+	if (slowNeeded)
+	{
+		addr = AMX_GetFirstNativeString();
+		while (pos < idx)
+		{
+			// Skip earlier names.
+			addr = addr + AMX_ReadLength(addr) + 1,
+			++pos;
+		}
+	}
 	pos = idx * __defsize_cells + base + cellbytes;
 	while (idx++ < count)
 	{
-		#emit LREF.S.pri                pos
-		#emit CONST.alt                 0xFFFFFFFF
-		#emit AND
-		#emit LOAD.alt                  AMX_BASE_ADDRESS
-		#emit ADD
-		#emit STOR.S.pri                addr
-		//addr = __32(addr);
-		if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == pattern)
+		if (slowNeeded)
 		{
-			buffer = pos - cellbytes;
-			return idx;
+			if (AMX_Read(addr) == pattern)
+			{
+				buffer = pos - cellbytes;
+				return idx;
+			}
+			addr = addr + AMX_ReadLength(addr) + 1;
+		}
+		else
+		{
+			#emit LREF.S.pri                pos
+			#emit CONST.alt                 0xFFFFFFFF
+			#emit AND
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
+			#emit STOR.S.pri                addr
+			//addr = __32(addr);
+			if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == pattern)
+			{
+				buffer = pos - cellbytes;
+				return idx;
+			}
 		}
 		pos += __defsize_cells;
 	}
@@ -1351,20 +1394,32 @@ stock AMX_GetNativeEntrySuffix(idx, &buffer, pattern)
 {
 	Debug_Print7("AMX_GetNativeEntrySuffix called: %i, %i, %i", idx, buffer, pattern);
 	new
+		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
+		// lookup method.
+		bool:slowNeeded = true,
 		base = 0,
-		publics = 0,
 		count = 0,
 		addr = 0,
-		ch = 0;
+		pos = 0;
 	#if cellbits == 64
 		// Suffixes are always 32-bit.
 		pattern = pattern & 0xFFFFFFFF;
 	#endif
-	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base, publics),
 	AMX_GetBaseCount(AMX_TABLE_NATIVES, base, count);
-	for (new pos = idx * __defsize_cells + base + cellbytes; idx < count; pos += __defsize_cells)
+	if (slowNeeded)
 	{
-		++idx;
+		addr = AMX_GetFirstNativeString();
+		while (pos < idx)
+		{
+			// Skip earlier names.
+			addr = addr + AMX_ReadLength(addr) + 1,
+			++pos;
+		}
+		pos = idx * __defsize_cells + base + cellbytes;
+	}
+	else
+	{
+		pos = idx * __defsize_cells + base + cellbytes;
 		// Get the address of the string.
 		#emit LREF.S.pri                pos
 		#emit CONST.alt                 0xFFFFFFFF
@@ -1372,40 +1427,21 @@ stock AMX_GetNativeEntrySuffix(idx, &buffer, pattern)
 		#emit LOAD.alt                  AMX_BASE_ADDRESS
 		#emit ADD
 		#emit STOR.S.pri                addr
-		//addr = __32(addr);
-		if (addr == AMX_BASE_ADDRESS)
-		{
-			continue;
-		}
-		for ( ; ; )
-		{
-			// Find the end of the string.
-			ch = AMX_Read(addr);
-			if (ch & 0x000000FF)
-			{
-				if (ch & 0x0000FF00)
-				{
-					if (ch & 0x00FF0000)
-					{
-						if (ch & 0xFF000000)
-						{
-							addr += 4;
-							continue;
-						}
-						else addr -= 1;
-					}
-					else addr -= 2;
-				}
-				else addr -= 3;
-			}
-			else addr -= 4;
-			break;
-		}
+	}
+	while (idx++ < count)
+	{
+		// Because we need the end of the string, thus the length, to use the
+		// suffix there's no point separating this code for the fast and slow
+		// search methods.  We always just read the last four bytes.
+		addr = addr + AMX_ReadLength(addr) - 4;
 		if (__32(AMX_Read(addr)) == pattern)
 		{
 			buffer = pos - cellbytes;
 			return idx;
 		}
+		// Skip the rest of the string.
+		addr += 5;
+		pos += __defsize_cells
 	}
 	return 0;
 }
@@ -1518,13 +1554,64 @@ stock AMX_GetNativeName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", cons
 {
 	Debug_Print7("AMX_GetNativeName called: %i, \"%s\", \"%s\"", idx, buffer, pattern);
 	new
-		pointer = 0;
-	idx = AMX_GetNativeEntry(idx, pointer, pattern, exact);
-	if (idx)
+		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
+		// lookup method.
+		bool:slowNeeded = true,
+		base = 0,
+		count = 0,
+		addr = 0,
+		pos = 0;
+	AMX_GetBaseCount(AMX_TABLE_NATIVES, base, count);
+	if (slowNeeded)
 	{
-		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
+		addr = AMX_GetFirstNativeString();
+		while (pos < idx)
+		{
+			// Skip earlier names.
+			addr = addr + AMX_ReadLength(addr) + 1,
+			++pos;
+		}
 	}
-	return idx;
+	pos = idx * __defsize_cells + base + cellbytes;
+	while (idx++ < count)
+	{
+		if (pattern[0] == '\0')
+		{
+			buffer = pos - cellbytes;
+			return idx;
+		}
+		if (slowNeeded)
+		{
+			AMX_ReadPackedString(addr, buffer),
+			addr = addr + strlen(buffer) + 1;
+		}
+		else
+		{
+			addr = __32(AMX_Read(pos)) + AMX_BASE_ADDRESS;
+			if (addr == AMX_BASE_ADDRESS)
+			{
+				pos += __defsize_cells;
+				continue;
+			}
+			AMX_ReadPackedString(addr, buffer);
+		}
+		if (exact)
+		{
+			if (strcmp(buffer, pattern) == 0)
+			{
+				return idx;
+			}
+		}
+		else
+		{
+			if (strfind(buffer, pattern) != -1)
+			{
+				return idx;
+			}
+		}
+		pos += __defsize_cells,
+	}
+	return 0;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1616,13 +1703,55 @@ stock AMX_GetNativeNamePrefix(idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	Debug_Print7("AMX_GetNativeNamePrefix called: %i, \"%s\", %i", idx, buffer, pattern);
 	new
-		pointer = 0;
-	idx = AMX_GetNativeEntryPrefix(idx, pointer, pattern);
-	if (idx)
+		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
+		// lookup method.
+		bool:slowNeeded = true,
+		base = 0,
+		count = 0,
+		addr = 0,
+		pos;
+	AMX_GetBaseCount(AMX_TABLE_NATIVES, base, count);
+	// Get the address of the string.
+	if (slowNeeded)
 	{
-		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
+		addr = AMX_GetFirstNativeString();
+		while (pos < idx)
+		{
+			// Skip earlier names.
+			addr = addr + AMX_ReadLength(addr) + 1,
+			++pos;
+		}
 	}
-	return idx;
+	pos = idx * __defsize_cells + base + cellbytes;
+	while (idx++ < count)
+	{
+		if (slowNeeded)
+		{
+			if (AMX_Read(addr) == pattern)
+			{
+				AMX_ReadPackedString(addr, buffer);
+				return idx;
+			}
+			addr = addr + AMX_ReadLength(addr) + 1;
+		}
+		else
+		{
+			#emit LREF.S.pri                pos
+			#emit CONST.alt                 0xFFFFFFFF
+			#emit AND
+			#emit LOAD.alt                  AMX_BASE_ADDRESS
+			#emit ADD
+			#emit STOR.S.pri                addr
+			//addr = __32(addr);
+			if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == pattern)
+			{
+				AMX_ReadPackedString(addr, buffer);
+				return idx;
+			}
+		}
+		pos += __defsize_cells;
+	}
+	return 0;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1685,47 +1814,61 @@ stock AMX_GetPubvarNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
-{
-	Debug_Print7("AMX_GetNameSuffix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
-	new
-		pointer = 0;
-	idx = AMX_GetEntrySuffix(table, idx, pointer, pattern);
-	if (idx)
-	{
-		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
-	}
-	return idx;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_amx</library>
- * <param name="idx">When iterating, the offset to start at.</param>
- * <param name="buffer">The name return value, as a packed sring.</param>
- * <param name="pattern">A suffix to look for.</param>
- * <returns>
- *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
- * </returns>
- * <remarks>
- *   This scans through any table to look for names ending with the given four
- *   byte suffix.  These suffixes are defined in the same way as the prefixes
- *   used by <c>AMX_GetPublicEntryPrefix</c> et. al, but the scanning is much
- *   harder because the full names must all be read.  Unlike prefix scanning,
- *   suffix scanning is very inefficient.  Returns the full name.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
 stock AMX_GetNativeNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
 {
 	Debug_Print7("AMX_GetNativeNameSuffix called: %i, \"%s\", %i", idx, buffer, pattern);
 	new
-		pointer = 0;
-	idx = AMX_GetNativeEntrySuffix(idx, pointer, pattern);
-	if (idx)
+		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
+		// lookup method.
+		bool:slowNeeded = true,
+		base = 0,
+		count = 0,
+		addr = 0,
+		pos = 0;
+	#if cellbits == 64
+		// Suffixes are always 32-bit.
+		pattern = pattern & 0xFFFFFFFF;
+	#endif
+	AMX_GetBaseCount(AMX_TABLE_NATIVES, base, count);
+	if (slowNeeded)
 	{
-		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
+		addr = AMX_GetFirstNativeString();
+		while (pos < idx)
+		{
+			// Skip earlier names.
+			addr = addr + AMX_ReadLength(addr) + 1,
+			++pos;
+		}
+		pos = idx * __defsize_cells + base + cellbytes;
 	}
-	return idx;
+	else
+	{
+		pos = idx * __defsize_cells + base + cellbytes;
+		// Get the address of the string.
+		#emit LREF.S.pri                pos
+		#emit CONST.alt                 0xFFFFFFFF
+		#emit AND
+		#emit LOAD.alt                  AMX_BASE_ADDRESS
+		#emit ADD
+		#emit STOR.S.pri                addr
+	}
+	while (idx++ < count)
+	{
+		// Because we need the end of the string, thus the length, to use the
+		// suffix there's no point separating this code for the fast and slow
+		// search methods.  We always just read the last four bytes.
+		base = addr + AMX_ReadLength(addr) - 4;
+		if (__32(AMX_Read(base)) == pattern)
+		{
+			buffer = pos - cellbytes;
+			AMX_ReadPackedString(addr, buffer);
+			return idx;
+		}
+		// Skip the rest of the string.
+		addr = base + 5;
+		pos += __defsize_cells
+	}
+	return 0;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -3209,6 +3352,12 @@ static stock AMX_GetFirstNativeString()
 		base = 0,
 		count = 0;
 	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base, count);
+	// If this fails there are no public functions in the AMX.  This case is
+	// handled correctly in the more generic server implementation, but not here
+	// because YSI always has several publics defined to reach this point.  Note
+	// that if you DO want to handle it just set the start of the native names
+	// to the start of the nametable.
+	assert(count);
 	base = AMX_GetEntryFromPublicIndex(count - 1);
 	base += cellbytes;
 	#emit LREF.S.pri                base
