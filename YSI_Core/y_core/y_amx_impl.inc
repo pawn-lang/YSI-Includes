@@ -3353,21 +3353,27 @@ static stock AMX_GetFirstNativeString()
 		base = 0,
 		count = 0;
 	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base, count);
-	// If this fails there are no public functions in the AMX.  This case is
-	// handled correctly in the more generic server implementation, but not here
-	// because YSI always has several publics defined to reach this point.  Note
-	// that if you DO want to handle it just set the start of the native names
-	// to the start of the nametable.
-	assert(count);
-	base = AMX_GetEntryFromPublicIndex(count - 1);
-	base += cellbytes;
-	#emit LREF.S.pri                base
-	#emit CONST.alt                 0xFFFFFFFF
-	#emit AND
-	#emit LOAD.alt                  AMX_BASE_ADDRESS
-	#emit ADD
-	#emit STOR.S.pri                base
-	return base + AMX_ReadLength(base) + 1;
+	if (count)
+	{
+		base = AMX_GetEntryFromPublicIndex(count - 1);
+		base += cellbytes;
+		#emit LREF.S.pri                base
+		#emit CONST.alt                 0xFFFFFFFF
+		#emit AND
+		#emit LOAD.alt                  AMX_BASE_ADDRESS
+		#emit ADD
+		#emit STOR.S.pri                base
+		return base + AMX_ReadLength(base) + 1;
+	}
+	else
+	{
+		// If there are no public functions then the first things in the
+		// nametable are the natives; so just return that offset.  I had a long
+		// comment about this, and an assert to ensure that there was always at
+		// least one public.  Then I realised the correct implementation was so
+		// trivial I may as well do it.
+		return AMX_HEADER_NAMETABLE;
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
