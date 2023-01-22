@@ -469,6 +469,19 @@ public OnCodeInit()
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
  * <returns>
+ *   Check that we can use direct offsets to native names.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+forward bool:AMX_NativeNamePointers();
+
+#if __COMPILER___EMIT_U
+	#define AMX_NativeNamePointers() (bool:(__emit(ZERO.pri, LCTRL __flg, CONST.alt 512, AND, EQ.C.pri 0)))
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <returns>
  *   The passed address, in the server not the AMX.
  * </returns>
  *//*------------------------------------------------------------------------**/
@@ -928,7 +941,7 @@ stock AMX_GetNativeEntry(idx, &buffer, const pattern[] = "", const bool:exact = 
 	new
 		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
 		// lookup method.
-		bool:slowNeeded = true,
+		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
 		addr = 0,
@@ -1202,7 +1215,7 @@ stock AMX_GetNativeEntryPrefix(idx, &buffer, pattern)
 	new
 		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
 		// lookup method.
-		bool:slowNeeded = true,
+		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
 		addr = 0,
@@ -1396,7 +1409,7 @@ stock AMX_GetNativeEntrySuffix(idx, &buffer, pattern)
 	new
 		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
 		// lookup method.
-		bool:slowNeeded = true,
+		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
 		addr = 0,
@@ -1556,7 +1569,7 @@ stock AMX_GetNativeName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", cons
 	new
 		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
 		// lookup method.
-		bool:slowNeeded = true,
+		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
 		addr = 0,
@@ -1705,7 +1718,7 @@ stock AMX_GetNativeNamePrefix(idx, buffer[FUNCTION_LENGTH], pattern)
 	new
 		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
 		// lookup method.
-		bool:slowNeeded = true,
+		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
 		addr = 0,
@@ -1820,7 +1833,7 @@ stock AMX_GetNativeNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
 	new
 		// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native
 		// lookup method.
-		bool:slowNeeded = true,
+		bool:slowNeeded = !AMX_NativeNamePointers(),
 		base = 0,
 		count = 0,
 		addr = 0,
@@ -3868,4 +3881,23 @@ stock AMX_Ref(const &addr)
 #if __COMPILER_CONST_REF
 	#pragma warning pop
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_amx</library>
+ * <returns>
+ *   Check that we can use direct offsets to native names.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:AMX_NativeNamePointers()
+{
+	#emit ZERO.pri
+	#emit LCTRL                         __flg
+	#emit CONST.alt                     512
+	#emit AND
+	#emit EQ.C.pri                      0
+	#emit RETN
+
+	return true;
+}
 

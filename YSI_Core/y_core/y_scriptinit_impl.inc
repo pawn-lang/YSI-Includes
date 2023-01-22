@@ -529,7 +529,7 @@ forward bool:Server_IsOpenMP();
 #define Server_Is_open.mp Server_IsOpenMP
 
 #if __COMPILER___EMIT_U
-	#define Server_IsOpenMP() (bool:(__emit(ZERO.pri, ZERO.alt, LCTRL 9, NEQ)))
+	#define Server_IsOpenMP() (bool:(__emit(ZERO.pri, ZERO.alt, LCTRL __flg, NEQ)))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -542,7 +542,7 @@ forward bool:Server_IsOpenMP();
 forward bool:Server_IsSAMP();
 
 #if __COMPILER___EMIT_U
-	#define Server_IsSAMP() (bool:(__emit(ZERO.pri, LCTRL 9, EQ.C.pri 0)))
+	#define Server_IsSAMP() (bool:(__emit(ZERO.pri, LCTRL __flg, EQ.C.pri 0)))
 #endif
 
 /*-------------------------------------------------------------------------*//**
