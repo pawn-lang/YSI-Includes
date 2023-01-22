@@ -898,86 +898,6 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
- * <param name="table">Which unsorted table to scan through.</param>
- * <param name="idx">When iterating, the offset to start at.</param>
- * <param name="buffer">The return value, with a pointer to a table entry.</param>
- * <param name="pattern">An optional name to look for.</param>
- * <param name="exact">When true find the pattern exactly, otherwise just include it.</param>
- * <returns>
- *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
- * </returns>
- * <remarks>
- *   This scans through the given unsorted table to find one matching the given
- *   name pattern, or just the next one when no pattern is given.  Loop over all
- *   libraries with:
- *   <p/>
- *   <code>
- *    new idx = 0, buffer;                             <br />
- *    while ((idx = AMX_GetLibraryEntry(idx, buffer))) <br />
- *    {                                                <br />
- *    }
- *   </code>
- *   <p/>
- *   The <em>entry</em> is a pointer in to the table itself, i.e. address/name
- *   pair relative to <c>DAT</c>.  You should not use this function directly,
- *   but one of the macro wrappers defined for unsorted tables:
- *   <p/>
- *   <c>AMX_GetLibraryEntry</c>
- *   <c>AMX_GetTagEntry</c>
- *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock AMX_GetEntryLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
-{
-	// TODO: Test `LCTRL 9 & 0x200`.  If it is set use the slow native lookup
-	// method.
-	Debug_Print7("AMX_GetEntryLinear called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
-	new
-		base = 0,
-		count = 0;
-	AMX_GetBaseCount(table, base, count);
-	new
-		addr = 0,
-		pos = idx * __defsize_cells + base + cellbytes,
-		str[FUNCTION_LENGTH];
-	while (idx++ < count)
-	{
-		addr = __32(AMX_Read(pos)) + AMX_BASE_ADDRESS;
-		if (addr != AMX_BASE_ADDRESS)
-		{
-			if (pattern[0] == '\0')
-			{
-				buffer = pos - cellbytes;
-				return idx;
-			}
-			AMX_ReadPackedString(addr, str);
-			if (exact)
-			{
-				if (strcmp(str, pattern) == 0)
-				{
-					buffer = pos - cellbytes;
-					return idx;
-				}
-			}
-			else
-			{
-				if (strfind(str, pattern) != -1)
-				{
-					buffer = pos - cellbytes;
-					return idx;
-				}
-			}
-		}
-		pos += __defsize_cells;
-	}
-	return 0;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_amx</library>
  * <param name="idx">When iterating, the offset to start at.</param>
  * <param name="buffer">The return value, with a pointer to a table entry.</param>
  * <param name="pattern">An optional name to look for.</param>
@@ -1204,76 +1124,6 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
     
 		// Now we re-check the value at `idx`.
 	}
-	// Get the address of the string.
-	pos = idx * __defsize_cells + base + cellbytes;
-	while (idx++ < count)
-	{
-		#emit LREF.S.pri                pos
-		#emit CONST.alt                 0xFFFFFFFF
-		#emit AND
-		#emit LOAD.alt                  AMX_BASE_ADDRESS
-		#emit ADD
-		#emit STOR.S.pri                addr
-		//addr = __32(addr);
-		if (addr != AMX_BASE_ADDRESS && AMX_Read(addr) == pattern)
-		{
-			buffer = pos - cellbytes;
-			return idx;
-		}
-		pos += __defsize_cells;
-	}
-	return 0;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_amx</library>
- * <param name="table">Which unsorted table to scan through.</param>
- * <param name="idx">When iterating, the offset to start at.</param>
- * <param name="buffer">The return value, with a pointer to a table entry.</param>
- * <param name="pattern">A prefix to look for.</param>
- * <returns>
- *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
- * </returns>
- * <remarks>
- *   This scans through the given unsorted table to find one whose name starts
- *   with the given prefix.  Prefixes are four bytes built from the first four
- *   characters in a name.  Prefixes are used extensively for looping over
- *   special function types as they require no string decoding and so can be
- *   compared very quickly.  The <c>_A</c> macro can be used to convert four
- *   characters in to the special format used by <c>pattern</c> (which is really
- *   just the C string as a 32-bit number).
- *   <p/>
- *   All the special <c>Func:</c> tags which encode parameter types could be
- *   looped over like so:
- *   <p/>
- *   <code>
- *    new idx = 0, buffer;                                         <br />
- *    while ((idx = AMX_GetTagEntryPrefix(idx, buffer, _A&lt;F@_@&gt;))) <br />
- *    {                                                            <br />
- *    }
- *   </code>
- *   <p/>
- *   The <em>entry</em> is a pointer in to the table itself, i.e. address/name
- *   pair relative to <c>DAT</c>.  You should not use this function directly,
- *   but one of the macro wrappers defined for unsorted tables:
- *   <p/>
- *   <c>AMX_GetLibraryEntryPrefix</c>
- *   <c>AMX_GetTagEntryPrefix</c>
- *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock AMX_GetEntryPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
-{
-	Debug_Print7("AMX_GetEntryPrefixLinear called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
-	new
-		base = 0,
-		count = 0,
-		addr = 0,
-		pos;
-	AMX_GetBaseCount(table, base, count);
 	// Get the address of the string.
 	pos = idx * __defsize_cells + base + cellbytes;
 	while (idx++ < count)
@@ -1642,52 +1492,6 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
- * <param name="table">Which unsorted table to scan through.</param>
- * <param name="idx">When iterating, the offset to start at.</param>
- * <param name="buffer">The name return value, as a packed sring.</param>
- * <param name="pattern">A prefix to look for.</param>
- * <param name="exact">True to match the pattern exactly, false for contains.</param>
- * <returns>
- *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
- * </returns>
- * <remarks>
- *   This scans through the given unsorted table to find one whose name contains
- *   the given pattern, or all of them when there is no pattern.  Loop over all
- *   the defined player callbacks like so:
- *   <p/>
- *   <code>
- *    new idx = 0, buffer[FUNCTION_LENGTH];                             <br />
- *    while ((idx = AMX_GetPublicName(idx, buffer, "OnPlayer", false))) <br />
- *    {                                                                 <br />
- *    }
- *   </code>
- *   <p/>
- *   You should not use this function directly, but one of the macro wrappers
- *   defined for sorted tables:
- *   <p/>
- *   <c>AMX_GetLibraryNameLinear</c>
- *   <c>AMX_GetTagNameLinear</c>
- *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock AMX_GetNameLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], const pattern[] = "", const bool:exact = false)
-{
-	Debug_Print7("AMX_GetNameLinear called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
-	new
-		pointer = 0;
-	idx = AMX_GetEntryLinear(table, idx, pointer, pattern, exact);
-	if (idx)
-	{
-		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
-	}
-	return idx;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_amx</library>
  * <param name="idx">When iterating, the offset to start at.</param>
  * <param name="buffer">The name return value, as a packed sring.</param>
  * <param name="pattern">A prefix to look for.</param>
@@ -1786,42 +1590,6 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern
 	new
 		pointer = 0;
 	idx = AMX_GetEntryPrefix(table, idx, pointer, pattern);
-	if (idx)
-	{
-		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
-	}
-	return idx;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_amx</library>
- * <param name="table">Which unsorted table to scan through.</param>
- * <param name="idx">When iterating, the offset to start at.</param>
- * <param name="buffer">The name return value, as a packed string.</param>
- * <param name="pattern">A prefix to scan for.</param>
- * <returns>
- *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
- * </returns>
- * <remarks>
- *   This scans through the given unsorted table to find the next entry matching
- *   the given prefix, and returns the full name of the entry.  You should not
- *   use this function directly, but one of the macro wrappers defined for
- *   unsorted tables:
- *   <p/>
- *   <c>AMX_GetLibraryNamePrefix</c>
- *   <c>AMX_GetTagNamePrefix</c>
- *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock AMX_GetNamePrefixLinear(E_AMX_TABLE:table, idx, buffer[FUNCTION_LENGTH], pattern)
-{
-	Debug_Print7("AMX_GetNamePrefixLinear called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
-	new
-		pointer = 0;
-	idx = AMX_GetEntryPrefixLinear(table, idx, pointer, pattern);
 	if (idx)
 	{
 		AMX_ReadPackedString(__32(AMX_Read(pointer + cellbytes)) + AMX_BASE_ADDRESS, buffer);
@@ -2028,45 +1796,6 @@ stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", cons
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
- * <param name="table">Which unsorted table to scan through.</param>
- * <param name="idx">When iterating, the offset to start at.</param>
- * <param name="buffer">The pointer return value.</param>
- * <param name="pattern">A prefix to look for.</param>
- * <param name="exact">True to match the pattern exactly, false for contains.</param>
- * <returns>
- *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
- * </returns>
- * <remarks>
- *   This scans through the given unsorted table to find one whose name includes
- *   or exactly matches the given pattern.  The return value is the pointer from
- *   in the entry, not the entry itself, nor the data the pointer references
- *   (e.g. a funcion).  You should not use this function directly, but one of
- *   the macro wrappers defined for unsorted tables:
- *   <p/>
- *   <c>AMX_GetLibraryPointer</c>
- *   <c>AMX_GetTagPointer</c>
- *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock AMX_GetPointerLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
-{
-	Debug_Print7("AMX_GetPointerLinear called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
-	new
-		pointer = 0;
-	idx = AMX_GetEntryLinear(table, idx, pointer, pattern, exact);
-	if (idx)
-	{
-		#emit LREF.S.pri pointer
-		#emit SREF.S.pri buffer
-	}
-	return idx;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_amx</library>
  * <param name="idx">When iterating, the offset to start at.</param>
  * <param name="buffer">The pointer return value.</param>
  * <param name="pattern">A prefix to look for.</param>
@@ -2160,43 +1889,6 @@ stock AMX_GetPointerPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	new
 		pointer = 0;
 	idx = AMX_GetEntryPrefix(table, idx, pointer, pattern);
-	if (idx)
-	{
-		#emit LREF.S.pri pointer
-		#emit SREF.S.pri buffer
-	}
-	return idx;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_amx</library>
- * <param name="table">Which unsorted table to scan through.</param>
- * <param name="idx">When iterating, the offset to start at.</param>
- * <param name="buffer">The pointer return value.</param>
- * <param name="pattern">A prefix to scan for.</param>
- * <returns>
- *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
- * </returns>
- * <remarks>
- *   This scans through the given unsorted table to find the next entry matching
- *   the given prefix, and returns a pointer to the data.  You should not use
- *   this function directly, but one of the macro wrappers defined for unsorted
- *   tables:
- *   <p/>
- *   <c>AMX_GetLibraryPointerPrefix</c>
- *   <c>AMX_GetTagPointerPrefix</c>
- *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock AMX_GetPointerPrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
-{
-	Debug_Print7("AMX_GetPointerPrefixLinear called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
-	new
-		pointer = 0;
-	idx = AMX_GetEntryPrefixLinear(table, idx, pointer, pattern);
 	if (idx)
 	{
 		#emit LREF.S.pri pointer
@@ -2486,49 +2178,6 @@ stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_amx</library>
- * <param name="table">Which unsorted table to scan through.</param>
- * <param name="idx">When iterating, the offset to start at.</param>
- * <param name="buffer">The data return value.</param>
- * <param name="pattern">A prefix to look for.</param>
- * <param name="exact">True to match the pattern exactly, false for contains.</param>
- * <returns>
- *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
- * </returns>
- * <remarks>
- *   This scans through the given unsorted table to find one whose name includes
- *   or exactly matches the given pattern.  The return value is the data pointed
- *   to by the entry.  You should not use this function directly, but one of the
- *   macro wrappers defined for unsorted tables:
- *   <p/>
- *   <c>AMX_GetLibraryValue</c>
- *   <c>AMX_GetTagValue</c>
- *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-#if __COMPILER_WARNING_SUPPRESSION
-	// On old compilers, only issue the warning at the call site.
-	#pragma warning push
-	#pragma warning disable 234
-#endif
-
-#pragma deprecated Getting these values are meaningless.
-stock AMX_GetValueLinear(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
-{
-	Debug_Print7("AMX_GetValueLinear called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
-	buffer = 0;
-	// Don't even need to look up a pointer, just advance `idx`.
-	return AMX_GetEntryLinear(table, idx, idx, pattern, exact);
-}
-
-#if __COMPILER_WARNING_SUPPRESSION
-	#pragma warning pop
-#endif
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_amx</library>
  * <param name="idx">When iterating, the offset to start at.</param>
  * <param name="buffer">The data return value.</param>
  * <param name="pattern">A prefix to look for.</param>
@@ -2659,48 +2308,6 @@ stock AMX_GetValuePrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	buffer = 0;
 	// Don't even need to look up a pointer, just advance `idx`.
 	return AMX_GetEntryPrefix(table, idx, idx, pattern);
-}
-
-#if __COMPILER_WARNING_SUPPRESSION
-	#pragma warning pop
-#endif
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_amx</library>
- * <param name="table">Which unsorted table to scan through.</param>
- * <param name="idx">When iterating, the offset to start at.</param>
- * <param name="buffer">The data return value.</param>
- * <param name="pattern">A prefix to scan for.</param>
- * <returns>
- *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
- * </returns>
- * <remarks>
- *   This scans through the given unsorted table to find the next entry matching
- *   the given prefix, and returns the data pointed to by that entry.  You
- *   should not use this function directly, but one of the macro wrappers
- *   defined for unsorted tables:
- *   <p/>
- *   <c>AMX_GetLibraryValuePrefix</c>
- *   <c>AMX_GetTagValuePrefix</c>
- *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-#if __COMPILER_WARNING_SUPPRESSION
-	// On old compilers, only issue the warning at the call site.
-	#pragma warning push
-	#pragma warning disable 234
-#endif
-
-#pragma deprecated Getting these values are meaningless.
-stock AMX_GetValuePrefixLinear(E_AMX_TABLE:table, idx, &buffer, pattern)
-{
-	Debug_Print7("AMX_GetValuePrefixLinear called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
-	buffer = 0;
-	// Don't even need to look up a pointer, just advance `idx`.
-	return AMX_GetEntryPrefixLinear(table, idx, idx, pattern);
 }
 
 #if __COMPILER_WARNING_SUPPRESSION
