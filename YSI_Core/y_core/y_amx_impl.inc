@@ -782,9 +782,9 @@ stock AMX_GetPubvarEntry(idx, &buffer, const pattern[] = "", const bool:exact = 
  *   <p/>
  *   <c>AMX_GetPublicEntry</c>
  *   <c>AMX_GetPubVarEntry</c>
+ *   <c>AMX_GetLibraryEntry</c>
+ *   <c>AMX_GetTagEntry</c>
  *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1058,9 +1058,9 @@ stock AMX_GetPubvarEntryPrefix(idx, &buffer, pattern)
  *   <p/>
  *   <c>AMX_GetPublicEntryPrefix</c>
  *   <c>AMX_GetPubVarEntryPrefix</c>
+ *   <c>AMX_GetLibraryEntryPrefix</c>
+ *   <c>AMX_GetTagEntryPrefix</c>
  *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
  *   <p/>
  *   Prefixes are widely used in YSI as the names are sorted and so can be
  *   binary searched, the entries point to the start of the names, and once a
@@ -1173,14 +1173,7 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
  *   </code>
  *   <p/>
  *   The <em>entry</em> is a pointer in to the table itself, i.e. address/name
- *   pair relative to <c>DAT</c>.  You should not use this function directly,
- *   but one of the macro wrappers defined for unsorted tables:
- *   <p/>
- *   <c>AMX_GetLibraryEntryPrefix</c>
- *   <c>AMX_GetTagEntryPrefix</c>
- *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
+ *   pair relative to <c>DAT</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1263,7 +1256,15 @@ stock AMX_GetPubvarEntrySuffix(idx, &buffer, pattern)
  *   byte suffix.  These suffixes are defined in the same way as the prefixes
  *   used by <c>AMX_GetPublicEntryPrefix</c> et. al, but the scanning is much
  *   harder because the full names must all be read.  Unlike prefix scanning,
- *   suffix scanning is very inefficient.  Returns the table entry.
+ *   suffix scanning is very inefficient.  Returns the table entry.  You should
+ *   not use this function directly, but one of the macro wrappers defined for
+ *   sorted tables:
+ *   <p/>
+ *   <c>AMX_GetPublicEntrySuffix</c>
+ *   <c>AMX_GetPubVarEntrySuffix</c>
+ *   <c>AMX_GetLibraryEntrySuffix</c>
+ *   <c>AMX_GetTagEntrySuffix</c>
+ *   <p/>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1469,11 +1470,11 @@ stock AMX_GetPubvarName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", cons
  *   You should not use this function directly, but one of the macro wrappers
  *   defined for sorted tables:
  *   <p/>
- *   <c>AMX_GetPublicNamePrefix</c>
- *   <c>AMX_GetPubVarNamePrefix</c>
+ *   <c>AMX_GetPublicName</c>
+ *   <c>AMX_GetPubVarName</c>
+ *   <c>AMX_GetLibraryName</c>
+ *   <c>AMX_GetTagName</c>
  *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1578,9 +1579,9 @@ stock AMX_GetPubvarNamePrefix(idx, buffer[FUNCTION_LENGTH], pattern)
  *   <p/>
  *   <c>AMX_GetPublicNamePrefix</c>
  *   <c>AMX_GetPubVarNamePrefix</c>
+ *   <c>AMX_GetLibraryNamePrefix</c>
+ *   <c>AMX_GetTagNamePrefix</c>
  *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1672,7 +1673,15 @@ stock AMX_GetPubvarNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
  *   byte suffix.  These suffixes are defined in the same way as the prefixes
  *   used by <c>AMX_GetPublicEntryPrefix</c> et. al, but the scanning is much
  *   harder because the full names must all be read.  Unlike prefix scanning,
- *   suffix scanning is very inefficient.  Returns the full name.
+ *   suffix scanning is very inefficient.  Returns the full name.  You should
+ *   not use this function directly, but one of the macro wrappers defined for
+ *   sorted tables:
+ *   <p/>
+ *   <c>AMX_GetPublicNameSuffix</c>
+ *   <c>AMX_GetPubVarNameSuffix</c>
+ *   <c>AMX_GetLibraryNameSuffix</c>
+ *   <c>AMX_GetTagNameSuffix</c>
+ *   <p/>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1774,9 +1783,9 @@ stock AMX_GetPubvarPointer(idx, &buffer, const pattern[] = "", const bool:exact 
  *   <p/>
  *   <c>AMX_GetPublicPointer</c>
  *   <c>AMX_GetPubVarPointer</c>
+ *   <c>AMX_GetLibraryPointer</c>
+ *   <c>AMX_GetTagPointer</c>
  *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1877,9 +1886,9 @@ stock AMX_GetPubvarPointerPrefix(idx, &buffer, pattern)
  *   <p/>
  *   <c>AMX_GetPublicPointerPrefix</c>
  *   <c>AMX_GetPubVarPointerPrefix</c>
+ *   <c>AMX_GetLibraryPointerPrefix</c>
+ *   <c>AMX_GetTagPointerPrefix</c>
  *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1973,7 +1982,15 @@ stock AMX_GetPubvarPointerSuffix(idx, &buffer, pattern)
  *   byte suffix.  These suffixes are defined in the same way as the prefixes
  *   used by <c>AMX_GetPublicEntryPrefix</c> et. al, but the scanning is much
  *   harder because the full names must all be read.  Unlike prefix scanning,
- *   suffix scanning is very inefficient.  Returns the data pointer.
+ *   suffix scanning is very inefficient.  Returns the data pointer.  You should
+ *   not use this function directly, but one of the macro wrappers defined for
+ *   sorted tables:
+ *   <p/>
+ *   <c>AMX_GetPublicPointerSuffix</c>
+ *   <c>AMX_GetPubVarPointerSuffix</c>
+ *   <c>AMX_GetLibraryPointerSuffix</c>
+ *   <c>AMX_GetTagPointerSuffix</c>
+ *   <p/>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2150,10 +2167,9 @@ stock AMX_GetPubVarValue(idx, &buffer, const pattern[] = "", const bool:exact = 
  *   macro wrappers defined for sorted tables:
  *   <p/>
  *   <c>AMX_GetPublicValue</c>
- *   <c>AMX_GetPubVarValue</c>
+ *   <c>AMX_GetLibraryValue</c>
+ *   <c>AMX_GetTagValue</c>
  *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2288,10 +2304,9 @@ stock AMX_GetPubVarValuePrefix(idx, &buffer, pattern)
  *   defined for sorted tables:
  *   <p/>
  *   <c>AMX_GetPublicValuePrefix</c>
- *   <c>AMX_GetPubVarValuePrefix</c>
+ *   <c>AMX_GetLibraryValuePrefix</c>
+ *   <c>AMX_GetTagValuePrefix</c>
  *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2325,15 +2340,7 @@ stock AMX_GetValuePrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
  * </returns>
  * <remarks>
  *   This scans through the given unsorted table to find the next entry matching
- *   the given prefix, and returns the data pointed to by that entry.  You
- *   should not use this function directly, but one of the macro wrappers
- *   defined for unsorted tables:
- *   <p/>
- *   <c>AMX_GetLibraryValuePrefix</c>
- *   <c>AMX_GetTagValuePrefix</c>
- *   <p/>
- *   Note that amx_assembly now sorts the library and tag headers, so those
- *   could be binary searched, but this library cannot rely on that.
+ *   the given prefix, and returns the data pointed to by that entry.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2365,7 +2372,7 @@ stock AMX_GetNativeValuePrefix(idx, &buffer, pattern)
  *   The next index (<c>idx</c>) to continue scanning from, or <c>0</c>.
  * </returns>
  * <remarks>
- *   See <em>AMX_GetNameSuffix</em>.
+ *   See <em>AMX_GetPubVarValueSuffix</em>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -2436,6 +2443,13 @@ stock AMX_GetPubVarValueSuffix(idx, &buffer, pattern)
  *   used by <c>AMX_GetPublicEntryPrefix</c> et. al, but the scanning is much
  *   harder because the full names must all be read.  Unlike prefix scanning,
  *   suffix scanning is very inefficient.  Returns data from the data pointer.
+ *   You should not use this function directly, but one of the macro wrappers
+ *   defined for sorted tables:
+ *   <p/>
+ *   <c>AMX_GetPublicValueSuffix</c>
+ *   <c>AMX_GetLibraryValueSuffix</c>
+ *   <c>AMX_GetTagValueSuffix</c>
+ *   <p/>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
