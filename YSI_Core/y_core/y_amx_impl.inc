@@ -1444,8 +1444,8 @@ stock AMX_GetNativeEntrySuffix(idx, &buffer, pattern)
 			return idx;
 		}
 		// Skip the rest of the string.
-		addr += 5;
-		pos += __defsize_cells
+		addr += 5,
+		pos += __defsize_cells;
 	}
 	return 0;
 }
@@ -1611,7 +1611,7 @@ stock AMX_GetNativeName(idx, buffer[FUNCTION_LENGTH], const pattern[] = "", cons
 				return idx;
 			}
 		}
-		pos += __defsize_cells,
+		pos += __defsize_cells;
 	}
 	return 0;
 }
@@ -1863,8 +1863,8 @@ stock AMX_GetNativeNameSuffix(idx, buffer[FUNCTION_LENGTH], pattern)
 			return idx;
 		}
 		// Skip the rest of the string.
-		addr = base + 5;
-		pos += __defsize_cells
+		addr = base + 5,
+		pos += __defsize_cells;
 	}
 	return 0;
 }
