@@ -1324,56 +1324,31 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		base = 0,
 		count = 0,
 		addr = 0,
-		ch = 0;
+		pos = 0;
 	#if cellbits == 64
 		// Suffixes are always 32-bit.
 		pattern = pattern & 0xFFFFFFFF;
 	#endif
 	AMX_GetBaseCount(table, base, count);
-	for (new pos = idx * __defsize_cells + base + cellbytes; idx < count; pos += __defsize_cells)
+	pos = idx * __defsize_cells + base + cellbytes;
+	// Get the address of the string.
+	#emit LREF.S.pri                pos
+	#emit CONST.alt                 0xFFFFFFFF
+	#emit AND
+	#emit LOAD.alt                  AMX_BASE_ADDRESS
+	#emit ADD
+	#emit STOR.S.pri                addr
+	while (idx++ < count)
 	{
-		++idx;
-		// Get the address of the string.
-		#emit LREF.S.pri                pos
-		#emit CONST.alt                 0xFFFFFFFF
-		#emit AND
-		#emit LOAD.alt                  AMX_BASE_ADDRESS
-		#emit ADD
-		#emit STOR.S.pri                addr
-		//addr = __32(addr);
-		if (addr == AMX_BASE_ADDRESS)
-		{
-			continue;
-		}
-		for ( ; ; )
-		{
-			// Find the end of the string.
-			ch = AMX_Read(addr);
-			if (ch & 0x000000FF)
-			{
-				if (ch & 0x0000FF00)
-				{
-					if (ch & 0x00FF0000)
-					{
-						if (ch & 0xFF000000)
-						{
-							addr += 4;
-							continue;
-						}
-						else addr -= 1;
-					}
-					else addr -= 2;
-				}
-				else addr -= 3;
-			}
-			else addr -= 4;
-			break;
-		}
+		addr = addr + AMX_ReadLength(addr) - 4;
 		if (__32(AMX_Read(addr)) == pattern)
 		{
 			buffer = pos - cellbytes;
 			return idx;
 		}
+		// Skip the rest of the string.
+		addr += 5,
+		pos += __defsize_cells;
 	}
 	return 0;
 }
