@@ -103,7 +103,7 @@ stock YSI_gAMXAddress_;
 
 #if __COMPILER___EMIT_U
 	#define AMX_Read(%0) (_:(__emit( LOAD.U.pri %0, STOR.pri YSI_gAMXAddress_, LREF.pri YSI_gAMXAddress_ )))
-	#define AMX_Write(%0,%1) __emit( PUSH.U %1, LOAD.U.alt %0, STOR.alt YSI_gAMXAddress_, POP.pri, SREF.pri YSI_gAMXAddress_ )
+	#define AMX_Write(%0,%1) __emit( PUSH.U %1, LOAD.U.pri %0, STOR.pri YSI_gAMXAddress_, POP.pri, SREF.pri YSI_gAMXAddress_ )
 	#define AMX_Ref(%0) (_:(__emit( ADDR.U.pri %0 )))
 #endif
 

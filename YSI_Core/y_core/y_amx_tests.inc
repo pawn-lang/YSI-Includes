@@ -97,3 +97,19 @@ static stock
 	}
 }
 
+@test(.group = "y_amx") y_amx_CallNative()
+{
+	//PrintAmxHeader();
+	clamp(0, 5, 6);
+	new res, addr = GetNativeAddressFromName("clamp");
+	//printf("Address = %08x", addr);
+	res = CallNativeByAddress(addr, 10, 11, 12);
+	ASSERT_EQ(res, 11);
+	res = CallNativeByAddress(addr, 10, 5, 15);
+	ASSERT_EQ(res, 10);
+	res = CallNativeByAddress(addr, 100, 7, 9);
+	ASSERT_EQ(res, 9);
+	res = CallNativeByAddress(addr, 6, 6, 6);
+	ASSERT_EQ(res, 6);
+}
+
