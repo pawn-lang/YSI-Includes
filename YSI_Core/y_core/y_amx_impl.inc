@@ -2886,45 +2886,73 @@ stock AMX_ReadPackedString(addr, str[], len = sizeof (str))
 
 stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
 {
-	new
-		buffer = 0,
-		idx = 0;
-	len -= cellbytes - 1;
-	while (idx < len)
-	{
+		new
+			buffer = 0,
+			idx = 0;
+		len -= cellbytes - 1;
+		while (idx < len)
+		{
+				// Read 4/8 bytes.
+				#emit LREF.S.pri                addr
+				#emit STOR.S.pri                buffer
+				if (
+					((str[idx++] = (buffer       ) & 0xFF) == 0) ||
+					((str[idx++] = (buffer >>> 8 ) & 0xFF) == 0) ||
+					((str[idx++] = (buffer >>> 16) & 0xFF) == 0) ||
+					((str[idx++] = (buffer >>> 24) & 0xFF) == 0))
+				{
+					return;
+				}
+			#if cellbits == 64
+				if (
+					((str[idx++] = (buffer >>> 32) & 0xFF) == 0) ||
+					((str[idx++] = (buffer >>> 40) & 0xFF) == 0) ||
+					((str[idx++] = (buffer >>> 48) & 0xFF) == 0) ||
+					((str[idx++] = (buffer >>> 56) & 0xFF) == 0))
+				{
+					return;
+				}
+			#endif
+				addr += cellbytes;
+		}
+		len += cellbytes - 1;
 		// Read 4 bytes.
 		#emit LREF.S.pri                addr
 		#emit STOR.S.pri                buffer
-		if (
-			((str[idx++] = buffer & 0xFF) == 0) ||
-			((str[idx++] = (buffer >>> 8) & 0xFF) == 0) ||
-			((str[idx++] = (buffer >>> 16) & 0xFF) == 0) ||
-			((str[idx++] = buffer >>> 24) == 0))
+		if (!(str[idx++] = (buffer       ) & 0xFF) || (idx == len))
 		{
 			return;
 		}
-		addr += cellbytes;
-	}
-	len += cellbytes - 1;
-	// Read 4 bytes.
-	#emit LREF.S.pri                addr
-	#emit STOR.S.pri                buffer
-	if (!(str[idx++] = buffer & 0xFF) || (idx == len))
-	{
-		return;
-	}
-	if (!(str[idx++] = (buffer >>> 8) & 0xFF) || (idx == len))
-	{
-		return;
-	}
-	if (!(str[idx++] = (buffer >>> 16) & 0xFF) || (idx == len))
-	{
-		return;
-	}
-	if (!(str[idx++] = buffer >>> 24) || (idx == len))
-	{
-		return;
-	}
+		if (!(str[idx++] = (buffer >>> 8 ) & 0xFF) || (idx == len))
+		{
+			return;
+		}
+		if (!(str[idx++] = (buffer >>> 16) & 0xFF) || (idx == len))
+		{
+			return;
+		}
+	#if cellbits == 64
+		if (!(str[idx++] = (buffer >>> 24) & 0xFF) || (idx == len))
+		{
+			return;
+		}
+		if (!(str[idx++] = (buffer >>> 32) & 0xFF) || (idx == len))
+		{
+			return;
+		}
+		if (!(str[idx++] = (buffer >>> 40) & 0xFF) || (idx == len))
+		{
+			return;
+		}
+		if (!(str[idx++] = (buffer >>> 48) & 0xFF) || (idx == len))
+		{
+			return;
+		}
+		//if (!(str[idx++] = (buffer >>> 56) & 0xFF) || (idx == len))
+		//{
+		//	return;
+		//}
+	#endif
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -3184,6 +3212,10 @@ stock AMX_ReadArray(addr, dest[], len = sizeof (dest))
 {
 	// I tried to use memcpy, I couldn't get it to work, even when exactly
 	// replicating compiler generated code...
+	//
+	// Given how old this code is, the reason for the above could well have been
+	// the `SYSREQ.C memcpy` bug, which is long-since fixed.  So I should look
+	// at this again.
 	while (len--)
 	{
 		// Load the address possibly outside "dat".  Can't be done using only
