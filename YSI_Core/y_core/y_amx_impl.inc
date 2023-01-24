@@ -3215,7 +3215,8 @@ stock AMX_ReadArray(addr, dest[], len = sizeof (dest))
 	//
 	// Given how old this code is, the reason for the above could well have been
 	// the `SYSREQ.C memcpy` bug, which is long-since fixed.  So I should look
-	// at this again.
+	// at this again.  However, could also just be that we're operating outside
+	// `DAT` and `memcpy` tries to prevent that.
 	while (len--)
 	{
 		// Load the address possibly outside "dat".  Can't be done using only
