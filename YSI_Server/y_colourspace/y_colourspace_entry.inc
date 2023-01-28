@@ -26,27 +26,27 @@ enum
 #define YUC_GetB(%0:%1) YUC_GetB_%0(%1)
 #define YUC_GetA(%0:%1) YUC_GetA_%0(%1)
 
-#define YUC_GetR_RGB(%1) (((%1) >>> 16) & 0xFF)
-#define YUC_GetG_RGB(%1) (((%1) >>>  8) & 0xFF)
-#define YUC_GetB_RGB(%1) (((%1)       ) & 0xFF)
+#define YUC_GetR_RGB(%1) (((_:(%1)) >>> 16) & 0xFF)
+#define YUC_GetG_RGB(%1) (((_:(%1)) >>>  8) & 0xFF)
+#define YUC_GetB_RGB(%1) (((_:(%1))       ) & 0xFF)
 #define YUC_GetA_RGB(%1) (0)
 
 #if cellbits == 64
-	#define YUC_GetR_RGBA(%1) (((%1) >>> 24) & 0xFF)
+	#define YUC_GetR_RGBA(%1) (((_:(%1)) >>> 24) & 0xFF)
 #else
-	#define YUC_GetR_RGBA(%1) (((%1) >>> 24))
+	#define YUC_GetR_RGBA(%1) (((_:(%1)) >>> 24))
 #endif
-#define YUC_GetG_RGBA(%1) (((%1) >>> 16) & 0xFF)
-#define YUC_GetB_RGBA(%1) (((%1) >>>  8) & 0xFF)
-#define YUC_GetA_RGBA(%1) (((%1)       ) & 0xFF)
+#define YUC_GetG_RGBA(%1) (((_:(%1)) >>> 16) & 0xFF)
+#define YUC_GetB_RGBA(%1) (((_:(%1)) >>>  8) & 0xFF)
+#define YUC_GetA_RGBA(%1) (((_:(%1))       ) & 0xFF)
 
-#define YUC_GetR_ARGB(%1) (((%1) >>> 16) & 0xFF)
-#define YUC_GetG_ARGB(%1) (((%1) >>>  8) & 0xFF)
-#define YUC_GetB_ARGB(%1) (((%1)       ) & 0xFF)
+#define YUC_GetR_ARGB(%1) (((_:(%1)) >>> 16) & 0xFF)
+#define YUC_GetG_ARGB(%1) (((_:(%1)) >>>  8) & 0xFF)
+#define YUC_GetB_ARGB(%1) (((_:(%1))       ) & 0xFF)
 #if cellbits == 64
-	#define YUC_GetA_ARGB(%1) (((%1) >>> 24) & 0xFF)
+	#define YUC_GetA_ARGB(%1) (((_:(%1)) >>> 24) & 0xFF)
 #else
-	#define YUC_GetA_ARGB(%1) (((%1) >>> 24))
+	#define YUC_GetA_ARGB(%1) (((_:(%1)) >>> 24))
 #endif
 
 #define YUC_SetR(%0:%1) YUC_SetR_%0(%1)
@@ -68,6 +68,59 @@ enum
 #define YUC_SetG_ARGB(%1) (((%1) & 0xFF) <<  8)
 #define YUC_SetB_ARGB(%1) (((%1) & 0xFF)      )
 #define YUC_SetA_ARGB(%1) (((%1) & 0xFF) << 24)
+
+// The `HSX` values are stored in following format:
+//
+//   (H * 3.0) * 100 * 100 + (S * 100.0) * 100 + (X * 100.0)
+//
+// This expands `S` and `X` from `0-1` to `0-100`, and allows storing 20 minute
+// increments for `H`.
+
+#define YUC_GetH(%0:%1) YUC_GetH_%0(%1)
+#define YUC_GetS(%0:%1) YUC_GetS_%0(%1)
+#define YUC_GetX(%0:%1) YUC_GetX_%0(%1)
+#define YUC_GetA(%0:%1) YUC_GetA_%0(%1)
+
+#define YUC_GetH_HSX(%1) (float((_:(%1)) / 10000) / 3.0)
+#define YUC_GetS_HSX(%1) (float((_:(%1)) / 100 % 100) / 100.0)
+#define YUC_GetX_HSX(%1) (float((_:(%1)) % 100) / 100.0)
+#define YUC_GetA_HSX(%1) (0)
+
+// We could combine the `>>>` and `/` stages with `/ 2560000`, but then we have
+// to worry about signs.  This just solves it easily.
+#define YUC_GetH_HSXA(%1) (float(((_:(%1)) >>> 8) / 10000) / 3.0)
+#define YUC_GetS_HSXA(%1) (float(((_:(%1)) >>> 8) / 100 % 100) / 100.0)
+#define YUC_GetX_HSXA(%1) (float(((_:(%1)) >>> 8) % 100) / 100.0)
+#define YUC_GetA_HSXA(%1) ((_:(%1)) & 0xFF)
+
+#define YUC_GetH_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF) / 10000) / 3.0)
+#define YUC_GetS_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF) / 100 % 100) / 100.0)
+#define YUC_GetX_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF) % 100) / 100.0)
+#if cellbits == 64
+	#define YUC_GetA_AHSX(%1) (((_:(%1)) >>> 24) & 0xFF)
+#else
+	#define YUC_GetA_AHSX(%1) ((_:(%1)) >>> 24)
+#endif
+
+#define YUC_SetH(%0:%1) YUC_SetH_%0(%1)
+#define YUC_SetS(%0:%1) YUC_SetS_%0(%1)
+#define YUC_SetX(%0:%1) YUC_SetX_%0(%1)
+#define YUC_SetA(%0:%1) YUC_SetA_%0(%1)
+
+#define YUC_SetH_HSX(%1) (floatround((%1) * 3.0) * 10000)
+#define YUC_SetS_HSX(%1) (floatround((%1) * 100.0) * 100)
+#define YUC_SetX_HSX(%1) (floatround((%1) * 100.0)      )
+#define YUC_SetA_HSX(%1) (0)
+
+#define YUC_SetH_HSXA(%1) ((floatround((%1) * 3.0) * 10000) << 8)
+#define YUC_SetS_HSXA(%1) ((floatround((%1) * 100.0) * 100) << 8)
+#define YUC_SetX_HSXA(%1) ((floatround((%1) * 100.0)      ) << 8)
+#define YUC_SetA_HSXA(%1) ((%1) & 0xFF)
+
+#define YUC_SetH_AHSX(%1) (floatround((%1) * 3.0) * 10000)
+#define YUC_SetS_AHSX(%1) (floatround((%1) * 100.0) * 100)
+#define YUC_SetX_AHSX(%1) (floatround((%1) * 100.0)      )
+#define YUC_SetA_AHSX(%1) (((%1) & 0xFF) << 24)
 
 #define YUC_Min(%0,%1,%2) min(min((%0), (%1)), (%2))
 #define YUC_Max(%0,%1,%2) max(max((%0), (%1)), (%2))
@@ -293,6 +346,186 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 	}
 }
 
+stock HSI:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSI(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return HSI:(YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l));
+}
+
+stock HSIA:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSI(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return HSIA:((YUC_SetH(HSXA:h) + YUC_SetS(HSXA:s) + YUC_SetX(HSXA:l)) | YUC_SetA(HSXA:255));
+}
+
+stock AHSI:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSI(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return AHSI:((YUC_SetH(AHSX:h) + YUC_SetS(AHSX:s) + YUC_SetX(AHSX:l)) | YUC_SetA(AHSX:255));
+}
+
+stock HSI:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSI(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return HSI:(YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l));
+}
+
+stock HSIA:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSI(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return HSIA:((YUC_SetH(HSXA:h) + YUC_SetS(HSXA:s) + YUC_SetX(HSXA:l)) | YUC_SetA(HSXA:YUC_GetA(RGBA:value)));
+}
+
+stock AHSI:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSI(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return AHSI:((YUC_SetH(AHSX:h) + YUC_SetS(AHSX:s) + YUC_SetX(AHSX:l)) | YUC_SetA(AHSX:YUC_GetA(RGBA:value)));
+}
+
+stock HSI:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSI(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return HSI:(YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l));
+}
+
+stock HSIA:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSI(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return HSIA:((YUC_SetH(HSXA:h) + YUC_SetS(HSXA:s) + YUC_SetX(HSXA:l)) | YUC_SetA(HSXA:YUC_GetA(ARGB:value)));
+}
+
+stock AHSI:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSI(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return AHSI:((YUC_SetH(AHSX:h) + YUC_SetS(AHSX:s) + YUC_SetX(AHSX:l)) | YUC_SetA(AHSX:YUC_GetA(ARGB:value)));
+}
+
+stock HSV:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSV(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return HSV:(YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l));
+}
+
+stock HSVA:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSV(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return HSVA:((YUC_SetH(HSXA:h) + YUC_SetS(HSXA:s) + YUC_SetX(HSXA:l)) | YUC_SetA(HSXA:255));
+}
+
+stock AHSV:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSV(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return AHSV:((YUC_SetH(AHSX:h) + YUC_SetS(AHSX:s) + YUC_SetX(AHSX:l)) | YUC_SetA(AHSX:255));
+}
+
+stock HSV:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSV(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return HSV:(YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l));
+}
+
+stock HSVA:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSV(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return HSVA:((YUC_SetH(HSXA:h) + YUC_SetS(HSXA:s) + YUC_SetX(HSXA:l)) | YUC_SetA(HSXA:YUC_GetA(RGBA:value)));
+}
+
+stock AHSV:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSV(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return AHSV:((YUC_SetH(AHSX:h) + YUC_SetS(AHSX:s) + YUC_SetX(AHSX:l)) | YUC_SetA(AHSX:YUC_GetA(RGBA:value)));
+}
+
+stock HSV:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSV(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return HSV:(YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l));
+}
+
+stock HSVA:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSV(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return HSVA:((YUC_SetH(HSXA:h) + YUC_SetS(HSXA:s) + YUC_SetX(HSXA:l)) | YUC_SetA(HSXA:YUC_GetA(ARGB:value)));
+}
+
+stock AHSV:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSV(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return AHSV:((YUC_SetH(AHSX:h) + YUC_SetS(AHSX:s) + YUC_SetX(AHSX:l)) | YUC_SetA(AHSX:YUC_GetA(ARGB:value)));
+}
+
 stock HSL:operator=(RGB:value)
 {
 	new
@@ -300,7 +533,7 @@ stock HSL:operator=(RGB:value)
 		Float:s,
 		Float:l;
 	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
-	return 0; // TODO:
+	return HSL:(YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l));
 }
 
 stock HSLA:operator=(RGB:value)
@@ -310,7 +543,7 @@ stock HSLA:operator=(RGB:value)
 		Float:s,
 		Float:l;
 	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
-	return 0 | 0xFF; // TODO:
+	return HSLA:((YUC_SetH(HSXA:h) + YUC_SetS(HSXA:s) + YUC_SetX(HSXA:l)) | YUC_SetA(HSXA:255));
 }
 
 stock AHSL:operator=(RGB:value)
@@ -320,7 +553,7 @@ stock AHSL:operator=(RGB:value)
 		Float:s,
 		Float:l;
 	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
-	return 0 | 0xFF000000; // TODO:
+	return AHSL:((YUC_SetH(AHSX:h) + YUC_SetS(AHSX:s) + YUC_SetX(AHSX:l)) | YUC_SetA(AHSX:255));
 }
 
 stock HSL:operator=(RGBA:value)
@@ -329,8 +562,8 @@ stock HSL:operator=(RGBA:value)
 		Float:h,
 		Float:s,
 		Float:l;
-	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
-	return 0; // TODO:
+	YUC_RGBToHSL(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return HSL:(YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l));
 }
 
 stock HSLA:operator=(RGBA:value)
@@ -339,8 +572,8 @@ stock HSLA:operator=(RGBA:value)
 		Float:h,
 		Float:s,
 		Float:l;
-	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
-	return 0 | YUC_GetA(RGB:value); // TODO:
+	YUC_RGBToHSL(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return HSLA:((YUC_SetH(HSXA:h) + YUC_SetS(HSXA:s) + YUC_SetX(HSXA:l)) | YUC_SetA(HSXA:YUC_GetA(RGBA:value)));
 }
 
 stock AHSL:operator=(RGBA:value)
@@ -349,8 +582,8 @@ stock AHSL:operator=(RGBA:value)
 		Float:h,
 		Float:s,
 		Float:l;
-	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
-	return 0 | YUC_GetA(RGB:value); // TODO:
+	YUC_RGBToHSL(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return AHSL:((YUC_SetH(AHSX:h) + YUC_SetS(AHSX:s) + YUC_SetX(AHSX:l)) | YUC_SetA(AHSX:YUC_GetA(RGBA:value)));
 }
 
 stock HSL:operator=(ARGB:value)
@@ -359,8 +592,8 @@ stock HSL:operator=(ARGB:value)
 		Float:h,
 		Float:s,
 		Float:l;
-	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
-	return 0; // TODO:
+	YUC_RGBToHSL(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return HSL:(YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l));
 }
 
 stock HSLA:operator=(ARGB:value)
@@ -369,8 +602,8 @@ stock HSLA:operator=(ARGB:value)
 		Float:h,
 		Float:s,
 		Float:l;
-	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
-	return 0 | YUC_GetA(RGB:value); // TODO:
+	YUC_RGBToHSL(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return HSLA:((YUC_SetH(HSXA:h) + YUC_SetS(HSXA:s) + YUC_SetX(HSXA:l)) | YUC_SetA(HSXA:YUC_GetA(ARGB:value)));
 }
 
 stock AHSL:operator=(ARGB:value)
@@ -379,7 +612,7 @@ stock AHSL:operator=(ARGB:value)
 		Float:h,
 		Float:s,
 		Float:l;
-	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
-	return 0 | YUC_GetA(RGB:value); // TODO:
+	YUC_RGBToHSL(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return AHSL:((YUC_SetH(AHSX:h) + YUC_SetS(AHSX:s) + YUC_SetX(AHSX:l)) | YUC_SetA(AHSX:YUC_GetA(ARGB:value)));
 }
 
