@@ -21,10 +21,58 @@ enum
 //   * `AHSV:` - Alpha, Hue, Saturation, Value
 //
 
+#define YUC_GetR(%0:%1) YUC_GetR_%0(%1)
+#define YUC_GetG(%0:%1) YUC_GetG_%0(%1)
+#define YUC_GetB(%0:%1) YUC_GetB_%0(%1)
+#define YUC_GetA(%0:%1) YUC_GetA_%0(%1)
+
+#define YUC_GetR_RGB(%1) (((%1) >>> 16) & 0xFF)
+#define YUC_GetG_RGB(%1) (((%1) >>>  8) & 0xFF)
+#define YUC_GetB_RGB(%1) (((%1)       ) & 0xFF)
+#define YUC_GetA_RGB(%1) (0)
+
+#if cellbits == 64
+	#define YUC_GetR_RGBA(%1) (((%1) >>> 24) & 0xFF)
+#else
+	#define YUC_GetR_RGBA(%1) (((%1) >>> 24))
+#endif
+#define YUC_GetG_RGBA(%1) (((%1) >>> 16) & 0xFF)
+#define YUC_GetB_RGBA(%1) (((%1) >>>  8) & 0xFF)
+#define YUC_GetA_RGBA(%1) (((%1)       ) & 0xFF)
+
+#define YUC_GetR_ARGB(%1) (((%1) >>> 16) & 0xFF)
+#define YUC_GetG_ARGB(%1) (((%1) >>>  8) & 0xFF)
+#define YUC_GetB_ARGB(%1) (((%1)       ) & 0xFF)
+#if cellbits == 64
+	#define YUC_GetA_ARGB(%1) (((%1) >>> 24) & 0xFF)
+#else
+	#define YUC_GetA_ARGB(%1) (((%1) >>> 24))
+#endif
+
+#define YUC_SetR(%0:%1) YUC_SetR_%0(%1)
+#define YUC_SetG(%0:%1) YUC_SetG_%0(%1)
+#define YUC_SetB(%0:%1) YUC_SetB_%0(%1)
+#define YUC_SetA(%0:%1) YUC_SetA_%0(%1)
+
+#define YUC_SetR_RGB(%1) (((%1) & 0xFF) << 16)
+#define YUC_SetG_RGB(%1) (((%1) & 0xFF) <<  8)
+#define YUC_SetB_RGB(%1) (((%1) & 0xFF)      )
+#define YUC_SetA_RGB(%1) (0)
+
+#define YUC_SetR_RGBA(%1) (((%1) & 0xFF) << 24)
+#define YUC_SetG_RGBA(%1) (((%1) & 0xFF) << 16)
+#define YUC_SetB_RGBA(%1) (((%1) & 0xFF) <<  8)
+#define YUC_SetA_RGBA(%1) (((%1) & 0xFF)      )
+
+#define YUC_SetR_ARGB(%1) (((%1) & 0xFF) << 16)
+#define YUC_SetG_ARGB(%1) (((%1) & 0xFF) <<  8)
+#define YUC_SetB_ARGB(%1) (((%1) & 0xFF)      )
+#define YUC_SetA_ARGB(%1) (((%1) & 0xFF) << 24)
+
 #define YUC_Min(%0,%1,%2) min(min((%0), (%1)), (%2))
 #define YUC_Max(%0,%1,%2) max(max((%0), (%1)), (%2))
 
-YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
+stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 {
 	// We could use `max` here, but we also need to know which was the answer.
 	new
@@ -101,7 +149,7 @@ YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 	}
 }
 
-YUC_RGBToHSV(r, g, b, &Float:h, &Float:s, &Float:v)
+stock YUC_RGBToHSV(r, g, b, &Float:h, &Float:s, &Float:v)
 {
 	// We could use `max` here, but we also need to know which was the answer.
 	new
@@ -173,7 +221,7 @@ YUC_RGBToHSV(r, g, b, &Float:h, &Float:s, &Float:v)
 	}
 }
 
-YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
+stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 {
 	// We could use `max` here, but we also need to know which was the answer.
 	new
@@ -243,5 +291,95 @@ YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 		}
 		s = l <= 0.0 || l >= 1.0 ? 0.0 : c / (1.0 - floatabs(2.0 * l - 1.0));
 	}
+}
+
+stock HSL:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return 0; // TODO:
+}
+
+stock HSLA:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return 0 | 0xFF; // TODO:
+}
+
+stock AHSL:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return 0 | 0xFF000000; // TODO:
+}
+
+stock HSL:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return 0; // TODO:
+}
+
+stock HSLA:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return 0 | YUC_GetA(RGB:value); // TODO:
+}
+
+stock AHSL:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return 0 | YUC_GetA(RGB:value); // TODO:
+}
+
+stock HSL:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return 0; // TODO:
+}
+
+stock HSLA:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return 0 | YUC_GetA(RGB:value); // TODO:
+}
+
+stock AHSL:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return 0 | YUC_GetA(RGB:value); // TODO:
 }
 
