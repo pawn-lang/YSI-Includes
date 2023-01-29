@@ -19,6 +19,21 @@
 //   * `AHSV:` - Alpha, Hue, Saturation, Value
 //
 
+/*
+
+    88b           d88                                                              
+    888b         d888                                                              
+    88`8b       d8'88                                                              
+    88 `8b     d8' 88  ,adPPYYba,   ,adPPYba,  8b,dPPYba,   ,adPPYba,   ,adPPYba,  
+    88  `8b   d8'  88  ""     `Y8  a8"     ""  88P'   "Y8  a8"     "8a  I8[    ""  
+    88   `8b d8'   88  ,adPPPPP88  8b          88          8b       d8   `"Y8ba,   
+    88    `888'    88  88,    ,88  "8a,   ,aa  88          "8a,   ,a8"  aa    ]8I  
+    88     `8'     88  `"8bbdP"Y8   `"Ybbd8"'  88           `"YbbdP"'   `"YbbdP"'  
+
+
+
+*/
+
 #define YUC_AToA(%0:%1,%2:%3) YUC_AToA_%0_%2
 
 #define YUC_AToA_RGB_RGB(%0,%1)   (RGB:0)
@@ -108,7 +123,9 @@
 
 #define YUC_GetH(%0:%1) YUC_GetH_%0(%1)
 #define YUC_GetS(%0:%1) YUC_GetS_%0(%1)
-#define YUC_GetX(%0:%1) YUC_GetX_%0(%1)
+#define YUC_GetI(%0:%1) YUC_GetX_%0(%1)
+#define YUC_GetV(%0:%1) YUC_GetX_%0(%1)
+#define YUC_GetL(%0:%1) YUC_GetX_%0(%1)
 #define YUC_GetA(%0:%1) YUC_GetA_%0(%1)
 
 #define YUC_GetH_HSX(%1) (float((_:(%1)) / 10201      ) /   3.0)
@@ -134,7 +151,9 @@
 
 #define YUC_SetH(%0:%1) YUC_SetH_%0(%1)
 #define YUC_SetS(%0:%1) YUC_SetS_%0(%1)
-#define YUC_SetX(%0:%1) YUC_SetX_%0(%1)
+#define YUC_SetI(%0:%1) YUC_SetX_%0(%1)
+#define YUC_SetV(%0:%1) YUC_SetX_%0(%1)
+#define YUC_SetL(%0:%1) YUC_SetX_%0(%1)
 #define YUC_SetA(%0:%1) YUC_SetA_%0(%1)
 
 #define YUC_SetH_HSX(%1) (floatround((%1) *   3.0) * 10201)
@@ -158,51 +177,65 @@
 
 #define YUC_SetH_HSI(%1) (HSI:YUC_SetH_HSX(%1))
 #define YUC_SetS_HSI(%1) (HSI:YUC_SetS_HSX(%1))
-#define YUC_SetI_HSI(%1) (HSI:YUC_SetI_HSX(%1))
+#define YUC_SetX_HSI(%1) (HSI:YUC_SetI_HSX(%1))
 #define YUC_SetA_HSI(%1) (HSI:YUC_SetA_HSX(%1))
 
 #define YUC_SetH_HSIA(%1) (HSIA:YUC_SetH_HSXA(%1))
 #define YUC_SetS_HSIA(%1) (HSIA:YUC_SetS_HSXA(%1))
-#define YUC_SetI_HSIA(%1) (HSIA:YUC_SetI_HSXA(%1))
+#define YUC_SetX_HSIA(%1) (HSIA:YUC_SetI_HSXA(%1))
 #define YUC_SetA_HSIA(%1) (HSIA:YUC_SetA_HSXA(%1))
 
 #define YUC_SetH_AHSI(%1) (AHSI:YUC_SetH_AHSX(%1))
 #define YUC_SetS_AHSI(%1) (AHSI:YUC_SetS_AHSX(%1))
-#define YUC_SetI_AHSI(%1) (AHSI:YUC_SetI_AHSX(%1))
+#define YUC_SetX_AHSI(%1) (AHSI:YUC_SetI_AHSX(%1))
 #define YUC_SetA_AHSI(%1) (AHSI:YUC_SetA_AHSX(%1))
 
 #define YUC_SetH_HSV(%1) (HSV:YUC_SetH_HSX(%1))
 #define YUC_SetS_HSV(%1) (HSV:YUC_SetS_HSX(%1))
-#define YUC_SetV_HSV(%1) (HSV:YUC_SetI_HSX(%1))
+#define YUC_SetX_HSV(%1) (HSV:YUC_SetI_HSX(%1))
 #define YUC_SetA_HSV(%1) (HSV:YUC_SetA_HSX(%1))
 
 #define YUC_SetH_HSVA(%1) (HSVA:YUC_SetH_HSXA(%1))
 #define YUC_SetS_HSVA(%1) (HSVA:YUC_SetS_HSXA(%1))
-#define YUC_SetV_HSVA(%1) (HSVA:YUC_SetI_HSXA(%1))
+#define YUC_SetX_HSVA(%1) (HSVA:YUC_SetI_HSXA(%1))
 #define YUC_SetA_HSVA(%1) (HSVA:YUC_SetA_HSXA(%1))
 
 #define YUC_SetH_AHSV(%1) (AHSV:YUC_SetH_AHSX(%1))
 #define YUC_SetS_AHSV(%1) (AHSV:YUC_SetS_AHSX(%1))
-#define YUC_SetV_AHSV(%1) (AHSV:YUC_SetI_AHSX(%1))
+#define YUC_SetX_AHSV(%1) (AHSV:YUC_SetI_AHSX(%1))
 #define YUC_SetA_AHSV(%1) (AHSV:YUC_SetA_AHSX(%1))
 
 #define YUC_SetH_HSL(%1) (HSL:YUC_SetH_HSX(%1))
 #define YUC_SetS_HSL(%1) (HSL:YUC_SetS_HSX(%1))
-#define YUC_SetL_HSL(%1) (HSL:YUC_SetI_HSX(%1))
+#define YUC_SetX_HSL(%1) (HSL:YUC_SetI_HSX(%1))
 #define YUC_SetA_HSL(%1) (HSL:YUC_SetA_HSX(%1))
 
 #define YUC_SetH_HSLA(%1) (HSLA:YUC_SetH_HSXA(%1))
 #define YUC_SetS_HSLA(%1) (HSLA:YUC_SetS_HSXA(%1))
-#define YUC_SetL_HSLA(%1) (HSLA:YUC_SetI_HSXA(%1))
+#define YUC_SetX_HSLA(%1) (HSLA:YUC_SetI_HSXA(%1))
 #define YUC_SetA_HSLA(%1) (HSLA:YUC_SetA_HSXA(%1))
 
 #define YUC_SetH_AHSL(%1) (AHSL:YUC_SetH_AHSX(%1))
 #define YUC_SetS_AHSL(%1) (AHSL:YUC_SetS_AHSX(%1))
-#define YUC_SetL_AHSL(%1) (AHSL:YUC_SetI_AHSX(%1))
+#define YUC_SetX_AHSL(%1) (AHSL:YUC_SetI_AHSX(%1))
 #define YUC_SetA_AHSL(%1) (AHSL:YUC_SetA_AHSX(%1))
 
 #define YUC_Min(%0,%1,%2) min(min((%0), (%1)), (%2))
 #define YUC_Max(%0,%1,%2) max(max((%0), (%1)), (%2))
+/*
+                                                                                                                             
+      ,ad8888ba,                                                                                                             
+     d8"'    `"8b                                                                   ,d                                       
+    d8'                                                                             88                                       
+    88              ,adPPYba,   8b,dPPYba,   8b       d8   ,adPPYba,  8b,dPPYba,  MM88MMM  ,adPPYba,  8b,dPPYba,  ,adPPYba,  
+    88             a8"     "8a  88P'   `"8a  `8b     d8'  a8P_____88  88P'   "Y8    88    a8P_____88  88P'   "Y8  I8[    ""  
+    Y8,            8b       d8  88       88   `8b   d8'   8PP"""""""  88            88    8PP"""""""  88           `"Y8ba,   
+     Y8a.    .a8P  "8a,   ,a8"  88       88    `8b,d8'    "8b,   ,aa  88            88,   "8b,   ,aa  88          aa    ]8I  
+      `"Y8888Y"'    `"YbbdP"'   88       88      "8"       `"Ybbd8"'  88            "Y888  `"Ybbd8"'  88          `"YbbdP"'  
+
+
+
+*/
 
 stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 {
@@ -425,6 +458,21 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 	}
 }
 
+/*
+
+      ,ad8888ba,                                                                                             
+     d8"'    `"8b                                         ,d                               ,d                
+    d8'                                                   88                               88                
+    88              ,adPPYba,   8b,dPPYba,   ,adPPYba,  MM88MMM  ,adPPYYba,  8b,dPPYba,  MM88MMM  ,adPPYba,  
+    88             a8"     "8a  88P'   `"8a  I8[    ""    88     ""     `Y8  88P'   `"8a   88     I8[    ""  
+    Y8,            8b       d8  88       88   `"Y8ba,     88     ,adPPPPP88  88       88   88      `"Y8ba,   
+     Y8a.    .a8P  "8a,   ,a8"  88       88  aa    ]8I    88,    88,    ,88  88       88   88,    aa    ]8I  
+      `"Y8888Y"'    `"YbbdP"'   88       88  `"YbbdP"'    "Y888  `"8bbdP"Y8  88       88   "Y888  `"YbbdP"'  
+                                                                                                         
+                                                                                                         
+
+*/
+
 stock RGB:operator=(_:value)
 {
 	return RGB:value;
@@ -440,6 +488,111 @@ stock ARGB:operator=(_:value)
 	return ARGB:value;
 }
 
+stock HSI:operator=(_:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:i;
+	YUC_RGBToHSI(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, i);
+	return YUC_SetH(HSI:h) + YUC_SetS(HSI:s) + YUC_SetI(HSI:i);
+}
+
+stock HSIA:operator=(_:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:i;
+	YUC_RGBToHSI(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, i);
+	return YUC_SetH(HSIA:h) + YUC_SetS(HSIA:s) + YUC_SetI(HSIA:i) | YUC_SetA(HSIA:YUC_GetA(RGBA:value));
+}
+
+stock AHSI:operator=(_:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:i;
+	YUC_RGBToHSI(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, i);
+	return YUC_SetH(AHSI:h) + YUC_SetS(AHSI:s) + YUC_SetI(AHSI:i) | YUC_SetA(AHSI:YUC_GetA(RGBA:value));
+}
+
+stock HSV:operator=(_:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:v;
+	YUC_RGBToHSV(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, v);
+	return YUC_SetH(HSV:h) + YUC_SetS(HSV:s) + YUC_SetV(HSV:v);
+}
+
+stock HSVA:operator=(_:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:v;
+	YUC_RGBToHSV(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, v);
+	return YUC_SetH(HSVA:h) + YUC_SetS(HSVA:s) + YUC_SetV(HSVA:v) | YUC_SetA(HSVA:YUC_GetA(RGBA:value));
+}
+
+stock AHSV:operator=(_:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:v;
+	YUC_RGBToHSV(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, v);
+	return YUC_SetH(AHSV:h) + YUC_SetS(AHSV:s) + YUC_SetV(AHSV:v) | YUC_SetA(AHSV:YUC_GetA(RGBA:value));
+}
+
+stock HSL:operator=(_:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return YUC_SetH(HSL:h) + YUC_SetS(HSL:s) + YUC_SetL(HSL:l);
+}
+
+stock HSLA:operator=(_:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return YUC_SetH(HSLA:h) + YUC_SetS(HSLA:s) + YUC_SetL(HSLA:l) | YUC_SetA(HSLA:YUC_GetA(RGBA:value));
+}
+
+stock AHSL:operator=(_:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return YUC_SetH(AHSL:h) + YUC_SetS(AHSL:s) + YUC_SetL(AHSL:l) | YUC_SetA(AHSL:YUC_GetA(RGBA:value));
+}
+
+/*
+
+    888888888888             88888888ba     ,ad8888ba,   88888888ba   
+         88                  88      "8b   d8"'    `"8b  88      "8b  
+         88                  88      ,8P  d8'            88      ,8P  
+         88   ,adPPYba,      88aaaaaa8P'  88             88aaaaaa8P'  
+         88  a8"     "8a     88""""88'    88      88888  88""""""8b,  
+         88  8b       d8     88    `8b    Y8,        88  88      `8b  
+         88  "8a,   ,a8"     88     `8b    Y8a.    .a88  88      a8P  
+         88   `"YbbdP"'      88      `8b    `"Y88888P"   88888888P"   
+
+
+
+*/
+
 stock HSI:operator=(RGB:value)
 {
 	new
@@ -447,7 +600,7 @@ stock HSI:operator=(RGB:value)
 		Float:s,
 		Float:l;
 	YUC_RGBToHSI(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
-	return HSI:(YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l));
+	return YUC_SetH(HSX:h) + YUC_SetS(HSX:s) + YUC_SetX(HSX:l);
 }
 
 stock HSIA:operator=(RGB:value)
