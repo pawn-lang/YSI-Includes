@@ -105,19 +105,19 @@
 #define YUC_SetX(%0:%1) YUC_SetX_%0(%1)
 #define YUC_SetA(%0:%1) YUC_SetA_%0(%1)
 
-#define YUC_SetH_HSX(%1) (floatround((%1) * 3.0) * 10201)
-#define YUC_SetS_HSX(%1) (floatround((%1) * 100.0) * 101)
-#define YUC_SetX_HSX(%1) (floatround((%1) * 100.0)      )
+#define YUC_SetH_HSX(%1) (floatround((%1) *   3.0) * 10201)
+#define YUC_SetS_HSX(%1) (floatround((%1) * 100.0)   * 101)
+#define YUC_SetX_HSX(%1) (floatround((%1) * 100.0)        )
 #define YUC_SetA_HSX(%1) (0)
 
-#define YUC_SetH_HSXA(%1) ((floatround((%1) * 3.0) * 10201) << 8)
-#define YUC_SetS_HSXA(%1) ((floatround((%1) * 100.0) * 101) << 8)
-#define YUC_SetX_HSXA(%1) ((floatround((%1) * 100.0)      ) << 8)
+#define YUC_SetH_HSXA(%1) ((floatround((%1) *   3.0) * 10201) << 8)
+#define YUC_SetS_HSXA(%1) ((floatround((%1) * 100.0)   * 101) << 8)
+#define YUC_SetX_HSXA(%1) ((floatround((%1) * 100.0)        ) << 8)
 #define YUC_SetA_HSXA(%1) ((%1) & 0xFF)
 
-#define YUC_SetH_AHSX(%1) (floatround((%1) * 3.0) * 10201)
-#define YUC_SetS_AHSX(%1) (floatround((%1) * 100.0) * 101)
-#define YUC_SetX_AHSX(%1) (floatround((%1) * 100.0)      )
+#define YUC_SetH_AHSX(%1) (floatround((%1) *   3.0) * 10201)
+#define YUC_SetS_AHSX(%1) (floatround((%1) * 100.0)   * 101)
+#define YUC_SetX_AHSX(%1) (floatround((%1) * 100.0)        )
 #define YUC_SetA_AHSX(%1) (((%1) & 0xFF) << 24)
 
 #define YUC_Min(%0,%1,%2) min(min((%0), (%1)), (%2))
@@ -312,8 +312,6 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 				c = fr - fb,
 				h = 60.0 * ((fg - fb) / c),
 				l = (fr + fb) / 2.0;
-				printf("yes: %.2f, %.2f, %.2f", c, h, l);
-				printf("yes: %.2f, %.2f, %.2f", (fg - fb), (fg - fb) / c, 60.0 * ((fg - fb) / c));
 			}
 		}
 		else
@@ -343,9 +341,6 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 			}
 		}
 		s = l <= 0.0 || l >= 1.0 ? 0.0 : c / (1.0 - floatabs(2.0 * l - 1.0));
-		printf("h = %.2f", h);
-		printf("s = %.2f", s);
-		printf("l = %.2f", l);
 	}
 }
 
@@ -632,5 +627,100 @@ stock AHSL:operator=(ARGB:value)
 		Float:l;
 	YUC_RGBToHSL(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
 	return AHSL:((YUC_SetH(AHSX:h) + YUC_SetS(AHSX:s) + YUC_SetX(AHSX:l)) | YUC_SetA(AHSX:YUC_GetA(ARGB:value)));
+}
+
+stock RGB:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	new
+		r,
+		g,
+		b;
+	YUC_HSLToRGB(h, s, l, r, g, b);
+	return RGB:(YUC_SetR(RGB:YUC_GetR(RGB:value)) | YUC_SetG(RGB:YUC_GetG(RGB:value)) | YUC_SetB(RGB:YUC_GetB(RGB:value)));
+}
+
+stock RGBA:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return RGBA:(YUC_SetR(RGBA:YUC_GetR(RGB:value)) | YUC_SetG(RGBA:YUC_GetG(RGB:value)) | YUC_SetB(RGBA:YUC_GetB(RGB:value)) | YUC_SetA(RGBA:0xFF));
+}
+
+stock ARGB:operator=(RGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGB:value), YUC_GetG(RGB:value), YUC_GetB(RGB:value), h, s, l);
+	return ARGB:(YUC_SetR(ARGB:YUC_GetR(RGB:value)) | YUC_SetG(ARGB:YUC_GetG(RGB:value)) | YUC_SetB(ARGB:YUC_GetB(RGB:value)) | YUC_SetA(ARGB:0xFF));
+}
+
+stock RGB:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return RGB:(YUC_SetR(RGB:YUC_GetR(RGBA:value)) | YUC_SetG(RGB:YUC_GetG(RGBA:value)) | YUC_SetB(RGB:YUC_GetB(RGBA:value)));
+}
+
+stock RGBA:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return RGBA:(YUC_SetR(RGBA:YUC_GetR(RGBA:value)) | YUC_SetG(RGBA:YUC_GetG(RGBA:value)) | YUC_SetB(RGBA:YUC_GetB(RGBA:value)) | YUC_SetA(RGBA:YUC_GetA(RGBA:value)));
+}
+
+stock ARGB:operator=(RGBA:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(RGBA:value), YUC_GetG(RGBA:value), YUC_GetB(RGBA:value), h, s, l);
+	return ARGB:(YUC_SetR(ARGB:YUC_GetR(RGBA:value)) | YUC_SetG(ARGB:YUC_GetG(RGBA:value)) | YUC_SetB(ARGB:YUC_GetB(RGBA:value)) | YUC_SetA(ARGB:YUC_GetA(RGBA:value)));
+}
+
+stock RGB:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return RGB:(YUC_SetR(RGB:YUC_GetR(ARGB:value)) | YUC_SetG(RGB:YUC_GetG(ARGB:value)) | YUC_SetB(RGB:YUC_GetB(ARGB:value)));
+}
+
+stock RGBA:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return RGBA:(YUC_SetR(RGBA:YUC_GetR(ARGB:value)) | YUC_SetG(RGBA:YUC_GetG(ARGB:value)) | YUC_SetB(RGBA:YUC_GetB(ARGB:value)) | YUC_SetA(RGBA:YUC_GetA(ARGB:value)));
+}
+
+stock ARGB:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return ARGB:(YUC_SetR(ARGB:YUC_GetR(ARGB:value)) | YUC_SetG(ARGB:YUC_GetG(ARGB:value)) | YUC_SetB(ARGB:YUC_GetB(ARGB:value)) | YUC_SetA(ARGB:YUC_GetA(ARGB:value)));
 }
 
