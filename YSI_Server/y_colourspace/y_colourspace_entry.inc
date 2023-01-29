@@ -76,20 +76,28 @@
 #define YUC_SetB(%0:%1) YUC_SetB_%0(%1)
 #define YUC_SetA(%0:%1) YUC_SetA_%0(%1)
 
-#define YUC_SetR_RGB(%1) (((%1) & 0xFF) << 16)
-#define YUC_SetG_RGB(%1) (((%1) & 0xFF) <<  8)
-#define YUC_SetB_RGB(%1) (((%1) & 0xFF)      )
-#define YUC_SetA_RGB(%1) (0)
+#define YUC_SetR_RGB(%1) (RGB:((%1) << 16 & 0x00FF0000))
+#define YUC_SetG_RGB(%1) (RGB:((%1) <<  8 & 0x0000FF00))
+#define YUC_SetB_RGB(%1) (RGB:((%1)       & 0x000000FF))
+#define YUC_SetA_RGB(%1) (RGB:0)
 
-#define YUC_SetR_RGBA(%1) (((%1) & 0xFF) << 24)
-#define YUC_SetG_RGBA(%1) (((%1) & 0xFF) << 16)
-#define YUC_SetB_RGBA(%1) (((%1) & 0xFF) <<  8)
-#define YUC_SetA_RGBA(%1) (((%1) & 0xFF)      )
+#if cellbits == 64
+	#define YUC_SetR_RGBA(%1) (RGBA:((%1) << 24 & 0xFF000000))
+#else
+	#define YUC_SetR_RGBA(%1) (RGBA:((%1) << 24             ))
+#endif
+#define YUC_SetG_RGBA(%1) (RGBA:((%1) << 16 & 0x00FF0000))
+#define YUC_SetB_RGBA(%1) (RGBA:((%1) <<  8 & 0x0000FF00))
+#define YUC_SetA_RGBA(%1) (RGBA:((%1)       & 0x000000FF))
 
-#define YUC_SetR_ARGB(%1) (((%1) & 0xFF) << 16)
-#define YUC_SetG_ARGB(%1) (((%1) & 0xFF) <<  8)
-#define YUC_SetB_ARGB(%1) (((%1) & 0xFF)      )
-#define YUC_SetA_ARGB(%1) (((%1) & 0xFF) << 24)
+#define YUC_SetR_ARGB(%1) (RGBA:((%1) << 16 & 0x00FF0000))
+#define YUC_SetG_ARGB(%1) (RGBA:((%1) <<  8 & 0x0000FF00))
+#define YUC_SetB_ARGB(%1) (RGBA:((%1)       & 0x000000FF))
+#if cellbits == 64
+	#define YUC_SetA_ARGB(%1) (RGBA:((%1) << 24 & 0xFF000000))
+#else
+	#define YUC_SetA_ARGB(%1) (RGBA:((%1) << 24             ))
+#endif
 
 // The `HSX` values are stored in following format:
 //
@@ -142,7 +150,56 @@
 #define YUC_SetH_AHSX(%1) (floatround((%1) *   3.0) * 10201)
 #define YUC_SetS_AHSX(%1) (floatround((%1) * 100.0)   * 101)
 #define YUC_SetX_AHSX(%1) (floatround((%1) * 100.0)        )
-#define YUC_SetA_AHSX(%1) (((%1) & 0xFF) << 24)
+#if cellbits == 64
+	#define YUC_SetA_AHSX(%1) ((%1) << 24 & 0xFF000000)
+#else
+	#define YUC_SetA_AHSX(%1) ((%1) << 24             )
+#endif
+
+#define YUC_SetH_HSI(%1) (HSI:YUC_SetH_HSX(%1))
+#define YUC_SetS_HSI(%1) (HSI:YUC_SetS_HSX(%1))
+#define YUC_SetI_HSI(%1) (HSI:YUC_SetI_HSX(%1))
+#define YUC_SetA_HSI(%1) (HSI:YUC_SetA_HSX(%1))
+
+#define YUC_SetH_HSIA(%1) (HSIA:YUC_SetH_HSXA(%1))
+#define YUC_SetS_HSIA(%1) (HSIA:YUC_SetS_HSXA(%1))
+#define YUC_SetI_HSIA(%1) (HSIA:YUC_SetI_HSXA(%1))
+#define YUC_SetA_HSIA(%1) (HSIA:YUC_SetA_HSXA(%1))
+
+#define YUC_SetH_AHSI(%1) (AHSI:YUC_SetH_AHSX(%1))
+#define YUC_SetS_AHSI(%1) (AHSI:YUC_SetS_AHSX(%1))
+#define YUC_SetI_AHSI(%1) (AHSI:YUC_SetI_AHSX(%1))
+#define YUC_SetA_AHSI(%1) (AHSI:YUC_SetA_AHSX(%1))
+
+#define YUC_SetH_HSV(%1) (HSV:YUC_SetH_HSX(%1))
+#define YUC_SetS_HSV(%1) (HSV:YUC_SetS_HSX(%1))
+#define YUC_SetV_HSV(%1) (HSV:YUC_SetI_HSX(%1))
+#define YUC_SetA_HSV(%1) (HSV:YUC_SetA_HSX(%1))
+
+#define YUC_SetH_HSVA(%1) (HSVA:YUC_SetH_HSXA(%1))
+#define YUC_SetS_HSVA(%1) (HSVA:YUC_SetS_HSXA(%1))
+#define YUC_SetV_HSVA(%1) (HSVA:YUC_SetI_HSXA(%1))
+#define YUC_SetA_HSVA(%1) (HSVA:YUC_SetA_HSXA(%1))
+
+#define YUC_SetH_AHSV(%1) (AHSV:YUC_SetH_AHSX(%1))
+#define YUC_SetS_AHSV(%1) (AHSV:YUC_SetS_AHSX(%1))
+#define YUC_SetV_AHSV(%1) (AHSV:YUC_SetI_AHSX(%1))
+#define YUC_SetA_AHSV(%1) (AHSV:YUC_SetA_AHSX(%1))
+
+#define YUC_SetH_HSL(%1) (HSL:YUC_SetH_HSX(%1))
+#define YUC_SetS_HSL(%1) (HSL:YUC_SetS_HSX(%1))
+#define YUC_SetL_HSL(%1) (HSL:YUC_SetI_HSX(%1))
+#define YUC_SetA_HSL(%1) (HSL:YUC_SetA_HSX(%1))
+
+#define YUC_SetH_HSLA(%1) (HSLA:YUC_SetH_HSXA(%1))
+#define YUC_SetS_HSLA(%1) (HSLA:YUC_SetS_HSXA(%1))
+#define YUC_SetL_HSLA(%1) (HSLA:YUC_SetI_HSXA(%1))
+#define YUC_SetA_HSLA(%1) (HSLA:YUC_SetA_HSXA(%1))
+
+#define YUC_SetH_AHSL(%1) (AHSL:YUC_SetH_AHSX(%1))
+#define YUC_SetS_AHSL(%1) (AHSL:YUC_SetS_AHSX(%1))
+#define YUC_SetL_AHSL(%1) (AHSL:YUC_SetI_AHSX(%1))
+#define YUC_SetA_AHSL(%1) (AHSL:YUC_SetA_AHSX(%1))
 
 #define YUC_Min(%0,%1,%2) min(min((%0), (%1)), (%2))
 #define YUC_Max(%0,%1,%2) max(max((%0), (%1)), (%2))
