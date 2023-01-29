@@ -19,6 +19,30 @@
 //   * `AHSV:` - Alpha, Hue, Saturation, Value
 //
 
+#define YUC_AToA(%0:%1,%2:%3) YUC_AToA_%0_%2
+
+#define YUC_AToA_RGB_RGB(%0,%1)   (RGB:0)
+#define YUC_AToA_RGB_RGBA(%0,%1)  (RGBA:0x000000FF)
+#define YUC_AToA_RGB_ARGB(%0,%1)  (ARGB:0xFF000000)
+#define YUC_AToA_RGBA_RGB(%0,%1)  (RGB:0)
+#define YUC_AToA_RGBA_RGBA(%0,%1) (RGBA:(_:(%0) & 0x000000FF))
+#if cellbits == 64
+	#define YUC_AToA_RGBA_ARGB(%0,%1) (ARGB:(_:(%0) << 24 & 0xFF000000))
+#else
+	#define YUC_AToA_RGBA_ARGB(%0,%1) (ARGB:(_:(%0) << 24))
+#endif
+#define YUC_AToA_ARGB_RGB(%0,%1)  (RGB:0)
+#if cellbits == 64
+	#define YUC_AToA_ARGB_RGBA(%0,%1) (RGBA:(_:(%0) >>> 24 & 0x000000FF))
+#else
+	#define YUC_AToA_ARGB_RGBA(%0,%1) (RGBA:(_:(%0) >>> 24))
+#endif
+#define YUC_AToA_ARGB_ARGB(%0,%1) (ARGB:(_:(%0) & 0xFF000000))
+
+#define YUC_AToA_RGB_%0\32; YUC_AToA_RGB_
+#define YUC_AToA_RGBA_%0\32; YUC_AToA_RGBA_
+#define YUC_AToA_ARGB_%0\32; YUC_AToA_ARGB_
+
 #define YUC_GetR(%0:%1) YUC_GetR_%0(%1)
 #define YUC_GetG(%0:%1) YUC_GetG_%0(%1)
 #define YUC_GetB(%0:%1) YUC_GetB_%0(%1)
@@ -91,9 +115,9 @@
 #define YUC_GetX_HSXA(%1) (float(((_:(%1)) >>> 8)         % 101) / 100.0)
 #define YUC_GetA_HSXA(%1) ((_:(%1)) & 0xFF)
 
-#define YUC_GetH_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF) / 10201      ) /   3.0)
-#define YUC_GetS_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF) /   101 % 101) / 100.0)
-#define YUC_GetX_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF)         % 101) / 100.0)
+#define YUC_GetH_AHSX(%1) (float(((_:(%1)) & 0x00FFFFFF) / 10201      ) /   3.0)
+#define YUC_GetS_AHSX(%1) (float(((_:(%1)) & 0x00FFFFFF) /   101 % 101) / 100.0)
+#define YUC_GetX_AHSX(%1) (float(((_:(%1)) & 0x00FFFFFF)         % 101) / 100.0)
 #if cellbits == 64
 	#define YUC_GetA_AHSX(%1) (((_:(%1)) >>> 24) & 0xFF)
 #else
