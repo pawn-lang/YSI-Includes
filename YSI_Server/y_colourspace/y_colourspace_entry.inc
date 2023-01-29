@@ -3,8 +3,6 @@
 #endif
 #define _INC_Y_COLOURSPACE
 
-enum 
-
 // Available colour spaces:
 //
 //   * `RGB:` - No alpha.
@@ -149,7 +147,7 @@ stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 			{
 				// b largest, g smallest.
 				c = fb - fg,
-				h = (fr - fg) / c + 4.0,
+				h = 60.0 * ((fr - fg) / c + 4.0),
 				i = (fr + rg + fb) / 3.0,
 				s = i <= 0.0 ? 0.0 : 1 - rg / i;
 			}
@@ -157,7 +155,7 @@ stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 			{
 				// r largest, g smallest.
 				c = fr - fg,
-				h = (fg - fb) / c + 6.0,
+				h = 60.0 * ((fg - fb) / c + 6.0),
 				i = (fr + rg + fb) / 3.0,
 				s = i <= 0.0 ? 0.0 : 1 - rg / i;
 			}
@@ -165,7 +163,7 @@ stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 			{
 				// r largest, b smallest.
 				c = fr - fb,
-				h = (fg - fb) / c + 0.0,
+				h = 60.0 * ((fg - fb) / c),
 				i = (fr + rg + fb) / 3.0,
 				s = i <= 0.0 ? 0.0 : 1 - rb / i;
 			}
@@ -176,7 +174,7 @@ stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 			{
 				// b largest, r smallest.
 				c = fb - fr,
-				h = (fr - fg) / c + 4.0,
+				h = 60.0 * ((fr - fg) / c + 4.0),
 				i = (fr + rg + fb) / 3.0,
 				s = i <= 0.0 ? 0.0 : 1 - rr / i;
 			}
@@ -184,7 +182,7 @@ stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 			{
 				// g largest, r smallest.
 				c = fg - fr,
-				h = (fb - fr) / c + 2.0,
+				h = 60.0 * ((fb - fr) / c + 2.0),
 				i = (fr + rg + fb) / 3.0,
 				s = i <= 0.0 ? 0.0 : 1 - rr / i;
 			}
@@ -192,7 +190,7 @@ stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 			{
 				// g largest, b smallest.
 				c = fg - fb,
-				h = (fb - fr) / c + 2.0,
+				h = 60.0 * ((fb - fr) / c + 2.0),
 				i = (fr + rg + fb) / 3.0,
 				s = i <= 0.0 ? 0.0 : 1 - rb / i;
 				// We could handle the special case here, since `r == g == b` is a
@@ -226,21 +224,21 @@ stock YUC_RGBToHSV(r, g, b, &Float:h, &Float:s, &Float:v)
 			{
 				// b largest, g smallest.
 				c = fb - fg,
-				h = (fr - fg) / c + 4.0,
+				h = 60.0 * ((fr - fg) / c + 4.0),
 				v = fb;
 			}
 			else if (b > g) // r >= b > g
 			{
 				// r largest, g smallest.
 				c = fr - fg,
-				h = (fg - fb) / c + 6.0,
+				h = 60.0 * ((fg - fb) / c + 6.0),
 				v = fr;
 			}
 			else // r > g >= b
 			{
 				// r largest, b smallest.
 				c = fr - fb,
-				h = (fg - fb) / c + 0.0,
+				h = 60.0 * ((fg - fb) / c),
 				v = fr;
 			}
 		}
@@ -250,21 +248,21 @@ stock YUC_RGBToHSV(r, g, b, &Float:h, &Float:s, &Float:v)
 			{
 				// b largest, r smallest.
 				c = fb - fr,
-				h = (fr - fg) / c + 4.0,
+				h = 60.0 * ((fr - fg) / c + 4.0),
 				v = fb;
 			}
 			else if (b > r) // g >= b > r
 			{
 				// g largest, r smallest.
 				c = fg - fr,
-				h = (fb - fr) / c + 2.0,
+				h = 60.0 * ((fb - fr) / c + 2.0),
 				v = fg;
 			}
 			else // g >= r >= b
 			{
 				// g largest, b smallest.
 				c = fg - fb,
-				h = (fb - fr) / c + 2.0,
+				h = 60.0 * ((fb - fr) / c + 2.0),
 				v = fg;
 				// We could handle the special case here, since `r == g == b` is a
 				// subset of `g >= r >= b`, but better to separate it.
@@ -298,21 +296,21 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 			{
 				// b largest, g smallest.
 				c = fb - fg,
-				h = (fr - fg) / c + 4.0,
+				h = 60.0 * ((fr - fg) / c + 4.0),
 				l = (fb + fg) / 2.0;
 			}
 			else if (b > g) // r >= b > g
 			{
 				// r largest, g smallest.
 				c = fr - fg,
-				h = (fg - fb) / c + 6.0,
+				h = 60.0 * ((fg - fb) / c + 6.0),
 				l = (fr + fg) / 2.0;
 			}
 			else // r > g >= b
 			{
 				// r largest, b smallest.
 				c = fr - fb,
-				h = (fg - fb) / c + 0.0,
+				h = 60.0 * ((fg - fb) / c),
 				l = (fr + fb) / 2.0;
 			}
 		}
@@ -322,21 +320,21 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 			{
 				// b largest, r smallest.
 				c = fb - fr,
-				h = (fr - fg) / c + 4.0,
+				h = 60.0 * ((fr - fg) / c + 4.0),
 				l = (fb + fr) / 2.0;
 			}
 			else if (b > r) // g >= b > r
 			{
 				// g largest, r smallest.
 				c = fg - fr,
-				h = (fb - fr) / c + 2.0,
+				h = 60.0 * ((fb - fr) / c + 2.0),
 				l = (fg + fr) / 2.0;
 			}
 			else // g >= r >= b
 			{
 				// g largest, b smallest.
 				c = fg - fb,
-				h = (fb - fr) / c + 2.0,
+				h = 60.0 * ((fb - fr) / c + 2.0),
 				l = (fg + fb) / 2.0;
 				// We could handle the special case here, since `r == g == b` is a
 				// subset of `g >= r >= b`, but better to separate it.
@@ -344,6 +342,21 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 		}
 		s = l <= 0.0 || l >= 1.0 ? 0.0 : c / (1.0 - floatabs(2.0 * l - 1.0));
 	}
+}
+
+stock RGB:operator=(_:value)
+{
+	return RGB:value;
+}
+
+stock RGBA:operator=(_:value)
+{
+	return RGBA:value;
+}
+
+stock ARGB:operator=(_:value)
+{
+	return ARGB:value;
 }
 
 stock HSI:operator=(RGB:value)
