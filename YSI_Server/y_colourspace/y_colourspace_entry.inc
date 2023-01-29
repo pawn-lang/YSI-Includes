@@ -69,7 +69,7 @@
 
 // The `HSX` values are stored in following format:
 //
-//   (H * 3.0) * 100 * 100 + (S * 100.0) * 100 + (X * 100.0)
+//   (H * 3.0) * 101 * 101 + (S * 100.0) * 101 + (X * 100.0)
 //
 // This expands `S` and `X` from `0-1` to `0-100`, and allows storing 20 minute
 // increments for `H`.
@@ -79,21 +79,21 @@
 #define YUC_GetX(%0:%1) YUC_GetX_%0(%1)
 #define YUC_GetA(%0:%1) YUC_GetA_%0(%1)
 
-#define YUC_GetH_HSX(%1) (float((_:(%1)) / 10000) / 3.0)
-#define YUC_GetS_HSX(%1) (float((_:(%1)) / 100 % 100) / 100.0)
-#define YUC_GetX_HSX(%1) (float((_:(%1)) % 100) / 100.0)
+#define YUC_GetH_HSX(%1) (float((_:(%1)) / 10201      ) /   3.0)
+#define YUC_GetS_HSX(%1) (float((_:(%1)) /   101 % 101) / 100.0)
+#define YUC_GetX_HSX(%1) (float((_:(%1))         % 101) / 100.0)
 #define YUC_GetA_HSX(%1) (0)
 
 // We could combine the `>>>` and `/` stages with `/ 2560000`, but then we have
 // to worry about signs.  This just solves it easily.
-#define YUC_GetH_HSXA(%1) (float(((_:(%1)) >>> 8) / 10000) / 3.0)
-#define YUC_GetS_HSXA(%1) (float(((_:(%1)) >>> 8) / 100 % 100) / 100.0)
-#define YUC_GetX_HSXA(%1) (float(((_:(%1)) >>> 8) % 100) / 100.0)
+#define YUC_GetH_HSXA(%1) (float(((_:(%1)) >>> 8) / 10201      ) /   3.0)
+#define YUC_GetS_HSXA(%1) (float(((_:(%1)) >>> 8) /   101 % 101) / 100.0)
+#define YUC_GetX_HSXA(%1) (float(((_:(%1)) >>> 8)         % 101) / 100.0)
 #define YUC_GetA_HSXA(%1) ((_:(%1)) & 0xFF)
 
-#define YUC_GetH_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF) / 10000) / 3.0)
-#define YUC_GetS_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF) / 100 % 100) / 100.0)
-#define YUC_GetX_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF) % 100) / 100.0)
+#define YUC_GetH_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF) / 10201      ) /   3.0)
+#define YUC_GetS_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF) /   101 % 101) / 100.0)
+#define YUC_GetX_AHSX(%1) (float(((_:(%1)) & 0xFFFFFF)         % 101) / 100.0)
 #if cellbits == 64
 	#define YUC_GetA_AHSX(%1) (((_:(%1)) >>> 24) & 0xFF)
 #else
@@ -105,18 +105,18 @@
 #define YUC_SetX(%0:%1) YUC_SetX_%0(%1)
 #define YUC_SetA(%0:%1) YUC_SetA_%0(%1)
 
-#define YUC_SetH_HSX(%1) (floatround((%1) * 3.0) * 10000)
-#define YUC_SetS_HSX(%1) (floatround((%1) * 100.0) * 100)
+#define YUC_SetH_HSX(%1) (floatround((%1) * 3.0) * 10201)
+#define YUC_SetS_HSX(%1) (floatround((%1) * 100.0) * 101)
 #define YUC_SetX_HSX(%1) (floatround((%1) * 100.0)      )
 #define YUC_SetA_HSX(%1) (0)
 
-#define YUC_SetH_HSXA(%1) ((floatround((%1) * 3.0) * 10000) << 8)
-#define YUC_SetS_HSXA(%1) ((floatround((%1) * 100.0) * 100) << 8)
+#define YUC_SetH_HSXA(%1) ((floatround((%1) * 3.0) * 10201) << 8)
+#define YUC_SetS_HSXA(%1) ((floatround((%1) * 100.0) * 101) << 8)
 #define YUC_SetX_HSXA(%1) ((floatround((%1) * 100.0)      ) << 8)
 #define YUC_SetA_HSXA(%1) ((%1) & 0xFF)
 
-#define YUC_SetH_AHSX(%1) (floatround((%1) * 3.0) * 10000)
-#define YUC_SetS_AHSX(%1) (floatround((%1) * 100.0) * 100)
+#define YUC_SetH_AHSX(%1) (floatround((%1) * 3.0) * 10201)
+#define YUC_SetS_AHSX(%1) (floatround((%1) * 100.0) * 101)
 #define YUC_SetX_AHSX(%1) (floatround((%1) * 100.0)      )
 #define YUC_SetA_AHSX(%1) (((%1) & 0xFF) << 24)
 
@@ -128,8 +128,8 @@ stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 	// We could use `max` here, but we also need to know which was the answer.
 	new
 		Float:fr = r / 255.0,
-		Float:fg = g / 256.0,
-		Float:fb = b / 256.0;
+		Float:fg = g / 255.0,
+		Float:fb = b / 255.0;
 	if (r == g && g == b)
 	{
 		// Special case.
@@ -205,8 +205,8 @@ stock YUC_RGBToHSV(r, g, b, &Float:h, &Float:s, &Float:v)
 	// We could use `max` here, but we also need to know which was the answer.
 	new
 		Float:fr = r / 255.0,
-		Float:fg = g / 256.0,
-		Float:fb = b / 256.0;
+		Float:fg = g / 255.0,
+		Float:fb = b / 255.0;
 	if (r == g && g == b)
 	{
 		// Special case.
@@ -277,8 +277,8 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 	// We could use `max` here, but we also need to know which was the answer.
 	new
 		Float:fr = r / 255.0,
-		Float:fg = g / 256.0,
-		Float:fb = b / 256.0;
+		Float:fg = g / 255.0,
+		Float:fb = b / 255.0;
 	if (r == g && g == b)
 	{
 		// Special case.
@@ -312,6 +312,8 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 				c = fr - fb,
 				h = 60.0 * ((fg - fb) / c),
 				l = (fr + fb) / 2.0;
+				printf("yes: %.2f, %.2f, %.2f", c, h, l);
+				printf("yes: %.2f, %.2f, %.2f", (fg - fb), (fg - fb) / c, 60.0 * ((fg - fb) / c));
 			}
 		}
 		else
@@ -341,6 +343,9 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 			}
 		}
 		s = l <= 0.0 || l >= 1.0 ? 0.0 : c / (1.0 - floatabs(2.0 * l - 1.0));
+		printf("h = %.2f", h);
+		printf("s = %.2f", s);
+		printf("l = %.2f", l);
 	}
 }
 
