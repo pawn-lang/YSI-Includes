@@ -133,12 +133,42 @@
 #define YUC_GetX_HSX(%1) (float((_:(%1))         % 101) / 100.0)
 #define YUC_GetA_HSX(%1) (0)
 
+#define YUC_GetH_HSI(%1) YUC_GetH_HSX(%1)
+#define YUC_GetS_HSI(%1) YUC_GetS_HSX(%1)
+#define YUC_GetX_HSI(%1) YUC_GetX_HSX(%1)
+#define YUC_GetA_HSI(%1) YUC_GetA_HSX(%1)
+
+#define YUC_GetH_HSV(%1) YUC_GetH_HSX(%1)
+#define YUC_GetS_HSV(%1) YUC_GetS_HSX(%1)
+#define YUC_GetX_HSV(%1) YUC_GetX_HSX(%1)
+#define YUC_GetA_HSV(%1) YUC_GetA_HSX(%1)
+
+#define YUC_GetH_HSL(%1) YUC_GetH_HSX(%1)
+#define YUC_GetS_HSL(%1) YUC_GetS_HSX(%1)
+#define YUC_GetX_HSL(%1) YUC_GetX_HSX(%1)
+#define YUC_GetA_HSL(%1) YUC_GetA_HSX(%1)
+
 // We could combine the `>>>` and `/` stages with `/ 2560000`, but then we have
-// to worry about signs.  This just solves it easily.
+// to wofry about signs.  This just solves it easily.
 #define YUC_GetH_HSXA(%1) (float(((_:(%1)) >>> 8) / 10201      ) /   3.0)
 #define YUC_GetS_HSXA(%1) (float(((_:(%1)) >>> 8) /   101 % 101) / 100.0)
 #define YUC_GetX_HSXA(%1) (float(((_:(%1)) >>> 8)         % 101) / 100.0)
 #define YUC_GetA_HSXA(%1) ((_:(%1)) & 0xFF)
+
+#define YUC_GetH_HSIA(%1) YUC_GetH_HSXA(%1)
+#define YUC_GetS_HSIA(%1) YUC_GetS_HSXA(%1)
+#define YUC_GetX_HSIA(%1) YUC_GetX_HSXA(%1)
+#define YUC_GetA_HSIA(%1) YUC_GetA_HSXA(%1)
+
+#define YUC_GetH_HSVA(%1) YUC_GetH_HSXA(%1)
+#define YUC_GetS_HSVA(%1) YUC_GetS_HSXA(%1)
+#define YUC_GetX_HSVA(%1) YUC_GetX_HSXA(%1)
+#define YUC_GetA_HSVA(%1) YUC_GetA_HSXA(%1)
+
+#define YUC_GetH_HSLA(%1) YUC_GetH_HSXA(%1)
+#define YUC_GetS_HSLA(%1) YUC_GetS_HSXA(%1)
+#define YUC_GetX_HSLA(%1) YUC_GetX_HSXA(%1)
+#define YUC_GetA_HSLA(%1) YUC_GetA_HSXA(%1)
 
 #define YUC_GetH_AHSX(%1) (float(((_:(%1)) & 0x00FFFFFF) / 10201      ) /   3.0)
 #define YUC_GetS_AHSX(%1) (float(((_:(%1)) & 0x00FFFFFF) /   101 % 101) / 100.0)
@@ -148,6 +178,21 @@
 #else
 	#define YUC_GetA_AHSX(%1) ((_:(%1)) >>> 24)
 #endif
+
+#define YUC_GetH_AHSI(%1) YUC_GetH_AHSX(%1)
+#define YUC_GetS_AHSI(%1) YUC_GetS_AHSX(%1)
+#define YUC_GetX_AHSI(%1) YUC_GetX_AHSX(%1)
+#define YUC_GetA_AHSI(%1) YUC_GetA_AHSX(%1)
+
+#define YUC_GetH_AHSV(%1) YUC_GetH_AHSX(%1)
+#define YUC_GetS_AHSV(%1) YUC_GetS_AHSX(%1)
+#define YUC_GetX_AHSV(%1) YUC_GetX_AHSX(%1)
+#define YUC_GetA_AHSV(%1) YUC_GetA_AHSX(%1)
+
+#define YUC_GetH_AHSL(%1) YUC_GetH_AHSX(%1)
+#define YUC_GetS_AHSL(%1) YUC_GetS_AHSX(%1)
+#define YUC_GetX_AHSL(%1) YUC_GetX_AHSX(%1)
+#define YUC_GetA_AHSL(%1) YUC_GetA_AHSX(%1)
 
 #define YUC_SetH(%0:%1) YUC_SetH_%0(%1)
 #define YUC_SetS(%0:%1) YUC_SetS_%0(%1)
@@ -248,7 +293,7 @@ stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 	{
 		// Special case.
 		h = 0.0,
-		i = rg,
+		i = fg,
 		s = 0.0;
 	}
 	else
@@ -259,54 +304,54 @@ stock YUC_RGBToHSI(r, g, b, &Float:h, &Float:s, &Float:i)
 		{
 			if (b > r) // b > r > g
 			{
-				// b largest, g smallest.
+				// b lafgest, g smallest.
 				c = fb - fg,
 				h = 60.0 * ((fr - fg) / c + 4.0),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rg / i;
+				i = (fr + fg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - fg / i;
 			}
 			else if (b > g) // r >= b > g
 			{
-				// r largest, g smallest.
+				// r lafgest, g smallest.
 				c = fr - fg,
 				h = 60.0 * ((fg - fb) / c + 6.0),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rg / i;
+				i = (fr + fg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - fg / i;
 			}
 			else // r > g >= b
 			{
-				// r largest, b smallest.
+				// r lafgest, b smallest.
 				c = fr - fb,
 				h = 60.0 * ((fg - fb) / c),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rb / i;
+				i = (fr + fg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - fb / i;
 			}
 		}
 		else
 		{
 			if (b > g) // b > g >= r
 			{
-				// b largest, r smallest.
+				// b lafgest, r smallest.
 				c = fb - fr,
 				h = 60.0 * ((fr - fg) / c + 4.0),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rr / i;
+				i = (fr + fg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - fr / i;
 			}
 			else if (b > r) // g >= b > r
 			{
-				// g largest, r smallest.
+				// g lafgest, r smallest.
 				c = fg - fr,
 				h = 60.0 * ((fb - fr) / c + 2.0),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rr / i;
+				i = (fr + fg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - fr / i;
 			}
 			else // g >= r >= b
 			{
-				// g largest, b smallest.
+				// g lafgest, b smallest.
 				c = fg - fb,
 				h = 60.0 * ((fb - fr) / c + 2.0),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rb / i;
+				i = (fr + fg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - fb / i;
 				// We could handle the special case here, since `r == g == b` is a
 				// subset of `g >= r >= b`, but better to separate it.
 			}
@@ -336,21 +381,21 @@ stock YUC_RGBToHSV(r, g, b, &Float:h, &Float:s, &Float:v)
 		{
 			if (b > r) // b > r > g
 			{
-				// b largest, g smallest.
+				// b lafgest, g smallest.
 				c = fb - fg,
 				h = 60.0 * ((fr - fg) / c + 4.0),
 				v = fb;
 			}
 			else if (b > g) // r >= b > g
 			{
-				// r largest, g smallest.
+				// r lafgest, g smallest.
 				c = fr - fg,
 				h = 60.0 * ((fg - fb) / c + 6.0),
 				v = fr;
 			}
 			else // r > g >= b
 			{
-				// r largest, b smallest.
+				// r lafgest, b smallest.
 				c = fr - fb,
 				h = 60.0 * ((fg - fb) / c),
 				v = fr;
@@ -360,21 +405,21 @@ stock YUC_RGBToHSV(r, g, b, &Float:h, &Float:s, &Float:v)
 		{
 			if (b > g) // b > g >= r
 			{
-				// b largest, r smallest.
+				// b lafgest, r smallest.
 				c = fb - fr,
 				h = 60.0 * ((fr - fg) / c + 4.0),
 				v = fb;
 			}
 			else if (b > r) // g >= b > r
 			{
-				// g largest, r smallest.
+				// g lafgest, r smallest.
 				c = fg - fr,
 				h = 60.0 * ((fb - fr) / c + 2.0),
 				v = fg;
 			}
 			else // g >= r >= b
 			{
-				// g largest, b smallest.
+				// g lafgest, b smallest.
 				c = fg - fb,
 				h = 60.0 * ((fb - fr) / c + 2.0),
 				v = fg;
@@ -408,21 +453,21 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 		{
 			if (b > r) // b > r > g
 			{
-				// b largest, g smallest.
+				// b lafgest, g smallest.
 				c = fb - fg,
 				h = 60.0 * ((fr - fg) / c + 4.0),
 				l = (fb + fg) / 2.0;
 			}
 			else if (b > g) // r >= b > g
 			{
-				// r largest, g smallest.
+				// r lafgest, g smallest.
 				c = fr - fg,
 				h = 60.0 * ((fg - fb) / c + 6.0),
 				l = (fr + fg) / 2.0;
 			}
 			else // r > g >= b
 			{
-				// r largest, b smallest.
+				// r lafgest, b smallest.
 				c = fr - fb,
 				h = 60.0 * ((fg - fb) / c),
 				l = (fr + fb) / 2.0;
@@ -432,21 +477,21 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 		{
 			if (b > g) // b > g >= r
 			{
-				// b largest, r smallest.
+				// b lafgest, r smallest.
 				c = fb - fr,
 				h = 60.0 * ((fr - fg) / c + 4.0),
 				l = (fb + fr) / 2.0;
 			}
 			else if (b > r) // g >= b > r
 			{
-				// g largest, r smallest.
+				// g lafgest, r smallest.
 				c = fg - fr,
 				h = 60.0 * ((fb - fr) / c + 2.0),
 				l = (fg + fr) / 2.0;
 			}
 			else // g >= r >= b
 			{
-				// g largest, b smallest.
+				// g lafgest, b smallest.
 				c = fg - fb,
 				h = 60.0 * ((fb - fr) / c + 2.0),
 				l = (fg + fb) / 2.0;
@@ -463,7 +508,8 @@ stock YUC_HSIToRGB(Float:h, Float:s, Float:i, &r, &g, &b)
 	h /= 60.0;
 	new
 		// I'm sure there's some clever way to do `mod 2` in IEEE 754.  We do
-		// know the limits though, since `h` can't be higher than `6`.
+		// know the limits though, since `h` can't be higher than `6`, and since
+		// this code represents `h mod 2 - 1` we can just combine two steps.
 		Float:z = floatabs(
 			(h >= 6.0) ? h - 7.0 :
 			(h >= 4.0) ? h - 5.0 :
@@ -473,12 +519,12 @@ stock YUC_HSIToRGB(Float:h, Float:s, Float:i, &r, &g, &b)
 		Float:x = c * (1.0 - z);
 	z = i * (1 - s);
 	// Could use a binary search here.
-	if (h <= 1.0)      r = floatround(c + z), g = floatround(x + z), b = floatround(    z);
-	else if (h <= 2.0) r = floatround(x + z), g = floatround(c + z), b = floatround(    z);
-	else if (h <= 3.0) r = floatround(    z), g = floatround(c + z), b = floatround(x + z);
-	else if (h <= 4.0) r = floatround(    z), g = floatround(x + z), b = floatround(c + z);
-	else if (h <= 5.0) r = floatround(x + z), g = floatround(    z), b = floatround(c + z);
-	else               r = floatround(c + z), g = floatround(    z), b = floatround(x + z);
+	if (h <= 1.0)      r = floatround((c + z) * 255.0), g = floatround((x + z) * 255.0), b = floatround((    z) * 255.0);
+	else if (h <= 2.0) r = floatround((x + z) * 255.0), g = floatround((c + z) * 255.0), b = floatround((    z) * 255.0);
+	else if (h <= 3.0) r = floatround((    z) * 255.0), g = floatround((c + z) * 255.0), b = floatround((x + z) * 255.0);
+	else if (h <= 4.0) r = floatround((    z) * 255.0), g = floatround((x + z) * 255.0), b = floatround((c + z) * 255.0);
+	else if (h <= 5.0) r = floatround((x + z) * 255.0), g = floatround((    z) * 255.0), b = floatround((c + z) * 255.0);
+	else               r = floatround((c + z) * 255.0), g = floatround((    z) * 255.0), b = floatround((x + z) * 255.0);
 }
 
 /*
@@ -649,7 +695,7 @@ stock RGB:operator=(AHSI:value)
 
 
 
-
+#endinput
 
 
 
