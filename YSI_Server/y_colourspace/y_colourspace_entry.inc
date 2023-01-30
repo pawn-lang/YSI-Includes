@@ -458,6 +458,93 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 	}
 }
 
+stock YUC_HSIToRGB(Float:h, Float:s, Float:i, &r, &g, &b)
+{
+	h /= 60.0;
+	// I'm sure there's some clever way to do `mod 2` in IEEE 754.  We do know
+	// the limits though, since `h` can't be higher than `6`.
+	if (h >= 32.0) h -= 32.0;
+	if (h >= 16.0) h -= 16.0;
+	if (h >= 8.0) h -= 8.0;
+	if (h >= 4.0) h -= 4.0;
+	if (h >= 2.0) h -= 2.0;
+	new
+		Float:z = 
+	// We could use `max` here, but we also need to know which was the answer.
+	new
+		Float:fr = r / 255.0,
+		Float:fg = g / 255.0,
+		Float:fb = b / 255.0;
+	if (r == g && g == b)
+	{
+		// Special case.
+		h = 0.0,
+		i = rg,
+		s = 0.0;
+	}
+	else
+	{
+		new
+			Float:c;
+		if (r > g)
+		{
+			if (b > r) // b > r > g
+			{
+				// b largest, g smallest.
+				c = fb - fg,
+				h = 60.0 * ((fr - fg) / c + 4.0),
+				i = (fr + rg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - rg / i;
+			}
+			else if (b > g) // r >= b > g
+			{
+				// r largest, g smallest.
+				c = fr - fg,
+				h = 60.0 * ((fg - fb) / c + 6.0),
+				i = (fr + rg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - rg / i;
+			}
+			else // r > g >= b
+			{
+				// r largest, b smallest.
+				c = fr - fb,
+				h = 60.0 * ((fg - fb) / c),
+				i = (fr + rg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - rb / i;
+			}
+		}
+		else
+		{
+			if (b > g) // b > g >= r
+			{
+				// b largest, r smallest.
+				c = fb - fr,
+				h = 60.0 * ((fr - fg) / c + 4.0),
+				i = (fr + rg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - rr / i;
+			}
+			else if (b > r) // g >= b > r
+			{
+				// g largest, r smallest.
+				c = fg - fr,
+				h = 60.0 * ((fb - fr) / c + 2.0),
+				i = (fr + rg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - rr / i;
+			}
+			else // g >= r >= b
+			{
+				// g largest, b smallest.
+				c = fg - fb,
+				h = 60.0 * ((fb - fr) / c + 2.0),
+				i = (fr + rg + fb) / 3.0,
+				s = i <= 0.0 ? 0.0 : 1 - rb / i;
+				// We could handle the special case here, since `r == g == b` is a
+				// subset of `g >= r >= b`, but better to separate it.
+			}
+		}
+	}
+}
+
 /*
 
       ,ad8888ba,                                                                                             
@@ -592,6 +679,68 @@ stock AHSL:operator=(_:value)
 
 
 */
+
+//stock RGB:operator=(RGB:value)
+//{
+//	return value;
+//}
+
+stock RGB:operator=(RGBA:value)
+{
+	return RGB:(_:value << 8 | 0x000000FF);
+}
+
+stock RGB:operator=(ARGB:value)
+{
+	return RGB:(_:value | 0xFF000000);
+}
+
+stock RGB:operator=(HSI:value)
+{
+	return value;
+}
+
+stock RGB:operator=(HSIA:value)
+{
+	return RGB:(_:value << 8 | 0x000000FF);
+}
+
+stock RGB:operator=(AHSI:value)
+{
+	return RGB:(_:value | 0xFF000000);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+stock RGB:operator=(ARGB:value)
+{
+	new
+		Float:h,
+		Float:s,
+		Float:l;
+	YUC_RGBToHSL(YUC_GetR(ARGB:value), YUC_GetG(ARGB:value), YUC_GetB(ARGB:value), h, s, l);
+	return RGB:(YUC_SetR(RGB:YUC_GetR(ARGB:value)) | YUC_SetG(RGB:YUC_GetG(ARGB:value)) | YUC_SetB(RGB:YUC_GetB(ARGB:value)));
+}
+
+
+
+
 
 stock HSI:operator=(RGB:value)
 {
