@@ -461,88 +461,24 @@ stock YUC_RGBToHSL(r, g, b, &Float:h, &Float:s, &Float:l)
 stock YUC_HSIToRGB(Float:h, Float:s, Float:i, &r, &g, &b)
 {
 	h /= 60.0;
-	// I'm sure there's some clever way to do `mod 2` in IEEE 754.  We do know
-	// the limits though, since `h` can't be higher than `6`.
-	if (h >= 32.0) h -= 32.0;
-	if (h >= 16.0) h -= 16.0;
-	if (h >= 8.0) h -= 8.0;
-	if (h >= 4.0) h -= 4.0;
-	if (h >= 2.0) h -= 2.0;
 	new
-		Float:z = 
-	// We could use `max` here, but we also need to know which was the answer.
-	new
-		Float:fr = r / 255.0,
-		Float:fg = g / 255.0,
-		Float:fb = b / 255.0;
-	if (r == g && g == b)
-	{
-		// Special case.
-		h = 0.0,
-		i = rg,
-		s = 0.0;
-	}
-	else
-	{
-		new
-			Float:c;
-		if (r > g)
-		{
-			if (b > r) // b > r > g
-			{
-				// b largest, g smallest.
-				c = fb - fg,
-				h = 60.0 * ((fr - fg) / c + 4.0),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rg / i;
-			}
-			else if (b > g) // r >= b > g
-			{
-				// r largest, g smallest.
-				c = fr - fg,
-				h = 60.0 * ((fg - fb) / c + 6.0),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rg / i;
-			}
-			else // r > g >= b
-			{
-				// r largest, b smallest.
-				c = fr - fb,
-				h = 60.0 * ((fg - fb) / c),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rb / i;
-			}
-		}
-		else
-		{
-			if (b > g) // b > g >= r
-			{
-				// b largest, r smallest.
-				c = fb - fr,
-				h = 60.0 * ((fr - fg) / c + 4.0),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rr / i;
-			}
-			else if (b > r) // g >= b > r
-			{
-				// g largest, r smallest.
-				c = fg - fr,
-				h = 60.0 * ((fb - fr) / c + 2.0),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rr / i;
-			}
-			else // g >= r >= b
-			{
-				// g largest, b smallest.
-				c = fg - fb,
-				h = 60.0 * ((fb - fr) / c + 2.0),
-				i = (fr + rg + fb) / 3.0,
-				s = i <= 0.0 ? 0.0 : 1 - rb / i;
-				// We could handle the special case here, since `r == g == b` is a
-				// subset of `g >= r >= b`, but better to separate it.
-			}
-		}
-	}
+		// I'm sure there's some clever way to do `mod 2` in IEEE 754.  We do
+		// know the limits though, since `h` can't be higher than `6`.
+		Float:z = floatabs(
+			(h >= 6.0) ? h - 7.0 :
+			(h >= 4.0) ? h - 5.0 :
+			(h >= 2.0) ? h - 3.0 :
+			             h - 1.0),
+		Float:c = 3.0 * i * s / (2.0 - z),
+		Float:x = c * (1.0 - z);
+	z = i * (1 - s);
+	// Could use a binary search here.
+	if (h <= 1.0)      r = floatround(c + z), g = floatround(x + z), b = floatround(    z);
+	else if (h <= 2.0) r = floatround(x + z), g = floatround(c + z), b = floatround(    z);
+	else if (h <= 3.0) r = floatround(    z), g = floatround(c + z), b = floatround(x + z);
+	else if (h <= 4.0) r = floatround(    z), g = floatround(x + z), b = floatround(c + z);
+	else if (h <= 5.0) r = floatround(x + z), g = floatround(    z), b = floatround(c + z);
+	else               r = floatround(c + z), g = floatround(    z), b = floatround(x + z);
 }
 
 /*
