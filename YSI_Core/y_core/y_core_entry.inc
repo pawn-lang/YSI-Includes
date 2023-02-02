@@ -273,6 +273,28 @@ forward bool:DisasmWrite(const filename[]);
 		@_ = -1;
 #endif
 
+/**
+ *   <remarks>
+ *   If running on SA:MP this will remain <c>0</c>, open.mp will set it.
+ *   open.mp versions look like:
+ *   <code>
+ *      01.04.02.0544
+ *   </code>
+ *   Thus they are encoded here as:
+ *   <code>
+ *      (major << 28) | (minor << 21) | (patch << 14) | (prerel)
+ *   </code>
+ *   </remarks>
+ */
+#if defined __OPEN_MP_VERSION
+	static stock
+		y_core_OPEN_MP_VERSION = 0;
+#else
+	public const
+		__OPEN_MP_VERSION = 0;
+	#pragma unused __OPEN_MP_VERSION
+#endif
+
 // Magical macro.
 #define u@$ 1]);
 //#define MY_THING u@(u[_:%0 u@$

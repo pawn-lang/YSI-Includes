@@ -528,9 +528,7 @@ forward bool:Server_IsOpenMP();
 #define Server_Isopen.mp Server_IsOpenMP
 #define Server_Is_open.mp Server_IsOpenMP
 
-#if __COMPILER___EMIT_U
-	#define Server_IsOpenMP() (bool:(__emit(ZERO.pri, ZERO.alt, LCTRL __flg, NEQ)))
-#endif
+#define Server_IsOpenMP() (__OPEN_MP_VERSION != 0)
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
@@ -541,9 +539,7 @@ forward bool:Server_IsOpenMP();
 
 forward bool:Server_IsSAMP();
 
-#if __COMPILER___EMIT_U
-	#define Server_IsSAMP() (bool:(__emit(ZERO.pri, LCTRL __flg, EQ.C.pri 0)))
-#endif
+#define Server_IsSAMP() (__OPEN_MP_VERSION == 0)
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
@@ -2133,45 +2129,6 @@ stock bool:Server_UpgradeCrashDetect()
 #if __COMPILER___EMIT_U
 	#endinput
 #endif
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_serverdata</library>
- * <returns>
- *   <c>true</c> if this script is running on an open.mp server currently.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-stock bool:Server_IsOpenMP()
-{
-	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
-	// `pri` is 0 it wasn't set by the control register.
-	#emit ZERO.pri
-	#emit ZERO.alt
-	#emit LCTRL                __flg
-	#emit NEQ
-	#emit RETN
-
-	return false;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_serverdata</library>
- * <returns>
- *   <c>true</c> if this script is running on a SA:MP server currently.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-stock bool:Server_IsSAMP()
-{
-	// SA:MP doesn't have the AMX flags in register 9, open.mp does.  Thus if
-	// `pri` is 0 it wasn't set by the control register.
-	#emit ZERO.pri
-	#emit LCTRL                __flg
-	#emit EQ.C.pri             0
-	#emit RETN
-
-	return false;
-}
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
