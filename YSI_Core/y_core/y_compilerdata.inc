@@ -259,15 +259,6 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 	#define __COMPILER_BASIC_CHAR
 #endif
 
-//#define __COMPILER_PREFIX_CHARSOF __COMPILER_PACKED_CHARSOF
-//#define __COMPILER_BASIC_CHARSOF __COMPILER_UNPACKED_CHARSOF
-//#define __COMPILER_PREFIX_CHAR __COMPILER_PACKED_CHAR
-//#define __COMPILER_BASIC_CHAR __COMPILER_UNPACKED_CHAR
-
-#if YSI_KEYWORD(charsof)
-	#define charsof __COMPILER_BASIC_CHARSOF
-#endif
-
 #define __COMPILER_UNPACKEDMAX ((1<<cellbits)-1)
 
 #include "y_compilerdata_codepage"
