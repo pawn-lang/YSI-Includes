@@ -400,3 +400,76 @@ Function(__COMPILER_NAMED.arg = 5)
 {
 }
 ```
+
+## String Packing
+
+Under normal compiler settings strings are declared with `""` and packed strings with `!""`.  However, there's a setting to invert this - `#pragma pack`:
+
+```pawn
+#pragma pack 1
+new str[] = "This string is unpacked.";
+// `str` ends up as twenty-five cells big.
+```
+
+```pawn
+#pragma pack 0
+new str[] = "This string is packed.";
+// `str` ends up as six cells big.
+```
+
+As you can also specify the default string packing behaviour on the command line it becomes almost impossible to know in code whether a string will be packed or not:
+
+```pawn
+new str[] = "This string may or may not be packed.";
+// `str` ends up as ten or thirty-eight cells big.
+```
+
+*y_compilerdata* provide some facilities to write more controlled code, so you know that a string will be always packed or unpacked.  The following code always packs the string, regardless of compiler settings:
+
+```pawn
+new str[] = __COMPILER_PACK"This string is packed.";
+// `str` ends up as six cells big.
+```
+
+Similarly we can always ensure that a string is always unpacked with:
+
+```pawn
+new str[] = __COMPILER_UNPACK"This string is unpacked.";
+// `str` ends up as twenty-five cells big.
+```
+
+The test macro `__COMPILER_STRING_PACKING` has the value set by `#pragma pack`, so can be used to see which mode is in use.  In SA:MP this was mostly useless, but is more important now with open.mp fully supporting packed strings.
+
+`__COMPILER_PACK` and `__COMPILER_UNPACK` form a pair of macros, with other macros provided for use with the default facilities (i.e. `!`).
+
+## Prefixed And Basic Strings
+
+Because `!""` and `""` may be packed or unpacked strings, depending on the value of `#pragma pack`, some new terminology has been introduced - prefix and basic strings.  `!""` is a prefix string, because it has a prefix of `!` (there's also the possible prefix of `\`, but that already has a name - a raw string).  `""` is a basic string because it doesn't have a prefix (again, it could have `\`, which would be a raw basic string).  A prefix string may be packed or unpacked, but for simplicity it is always prefixed.
+
+
+`__COMPILER_PREFIX_CHARSOF` and `__COMPILER_BASIC_CHARSOF` count the number of characters (including `NULL`) in strings using `!""` and `""` respectively.  Although `!""` might be used for unpacked strings with `#pragma pack 0` the correct macro to use is still `__COMPILER_PREFIX_CHARSOF` because `!` was used, and vice-versa.  `__COMPILER_PREFIX_CHAR` and `__COMPILER_BASIC_CHAR` can then be used in place of `char` to declare an array large enough to hold that many prefix (`!""`) and basic (`""`) characters in an array (again including `NULL`):
+
+```pawn
+new input[] = !"This is packed by default.";
+
+new copy[__COMPILER_PREFIX_CHARSOF (input) __COMPILER_BASIC_CHAR];
+```
+
+That code will count how many characters (including `NULL`) there are in the prefix string (via `__COMPILER_PREFIX_CHARSOF`), then declare an array large enough to hold that many characters in a basic array (using `__COMPILER_BASIC_CHAR`).  `__COMPILER_PREFIX_CHARSOF (input)` is always `27`, regardless of the value of `#pragma pack`, because there are that many characters (including `NULL`) in the string; they may be packed or unpacked, it doesn't matter.  With default settings `__COMPILER_BASIC_CHAR` will thus do nothing and declare this array to be `27` cells large, enough to hold all the input characters one per cell.  When default packing is enabled (`#pragma pack 0`) `__COMPILER_PREFIX_CHARSOF (input)` is still `27` because it is always `27`, but `__COMPILER_BASIC_CHAR` is now the same as `char` and thus declares `copy` as seven cells long, enough to store the whole string packed.
+
+This example will declare two arrays of exactly the right size and pack or unpack the data from one to the other depending on compiler settings:
+
+```pawn
+new input[] = "This string is packed or unpacked.";
+
+new output[__COMPILER_BASIC_CHARSOF (input) __COMPILER_PACKED_CHAR];
+
+#if __COMPILER_STRING_PACKING
+	// Basic strings are packed, so unpack the input.
+	strunpack(output, input);
+#else
+	// Basic strings are unpacked, so pack the input.
+	strpack(output, input);
+#endif
+```
+

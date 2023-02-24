@@ -245,10 +245,27 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 	#define __COMPILER_STRING_PACKING (1)
 	#define __COMPILER_PACK
 	#define __COMPILER_UNPACK !""
+	#define __COMPILER_PREFIX_CHARSOF(%0) (sizeof (%0))
+	#define __COMPILER_BASIC_CHARSOF(%0) ((sizeof (%0)) * cellbytes)
+	#define __COMPILER_PREFIX_CHAR
+	#define __COMPILER_BASIC_CHAR char
 #else
 	#define __COMPILER_STRING_PACKING (0)
 	#define __COMPILER_PACK !""
 	#define __COMPILER_UNPACK
+	#define __COMPILER_PREFIX_CHARSOF(%0) ((sizeof (%0) - 1) / cellbytes + 1)
+	#define __COMPILER_BASIC_CHARSOF(%0) (sizeof (%0))
+	#define __COMPILER_PREFIX_CHAR char
+	#define __COMPILER_BASIC_CHAR
+#endif
+
+//#define __COMPILER_PREFIX_CHARSOF __COMPILER_PACKED_CHARSOF
+//#define __COMPILER_BASIC_CHARSOF __COMPILER_UNPACKED_CHARSOF
+//#define __COMPILER_PREFIX_CHAR __COMPILER_PACKED_CHAR
+//#define __COMPILER_BASIC_CHAR __COMPILER_UNPACKED_CHAR
+
+#if YSI_KEYWORD(charsof)
+	#define charsof __COMPILER_BASIC_CHARSOF
 #endif
 
 #define __COMPILER_UNPACKEDMAX ((1<<cellbits)-1)
