@@ -446,23 +446,22 @@ The test macro `__COMPILER_STRING_PACKING` has the value set by `#pragma pack`, 
 
 Because `!""` and `""` may be packed or unpacked strings, depending on the value of `#pragma pack`, some new terminology has been introduced - prefix and basic strings.  `!""` is a prefix string, because it has a prefix of `!` (there's also the possible prefix of `\`, but that already has a name - a raw string).  `""` is a basic string because it doesn't have a prefix (again, it could have `\`, which would be a raw basic string).  A prefix string may be packed or unpacked, but for simplicity it is always prefixed.
 
-
 `__COMPILER_PREFIX_CHARSOF` and `__COMPILER_BASIC_CHARSOF` count the number of characters (including `NULL`) in strings using `!""` and `""` respectively.  Although `!""` might be used for unpacked strings with `#pragma pack 0` the correct macro to use is still `__COMPILER_PREFIX_CHARSOF` because `!` was used, and vice-versa.  `__COMPILER_PREFIX_CHAR` and `__COMPILER_BASIC_CHAR` can then be used in place of `char` to declare an array large enough to hold that many prefix (`!""`) and basic (`""`) characters in an array (again including `NULL`):
 
 ```pawn
 new input[] = !"This is packed by default.";
 
-new copy[__COMPILER_PREFIX_CHARSOF (input) __COMPILER_BASIC_CHAR];
+new copy[__COMPILER_PREFIX_CHARSOF(input) __COMPILER_BASIC_CHAR];
 ```
 
-That code will count how many characters (including `NULL`) there are in the prefix string (via `__COMPILER_PREFIX_CHARSOF`), then declare an array large enough to hold that many characters in a basic array (using `__COMPILER_BASIC_CHAR`).  `__COMPILER_PREFIX_CHARSOF (input)` is always `27`, regardless of the value of `#pragma pack`, because there are that many characters (including `NULL`) in the string; they may be packed or unpacked, it doesn't matter.  With default settings `__COMPILER_BASIC_CHAR` will thus do nothing and declare this array to be `27` cells large, enough to hold all the input characters one per cell.  When default packing is enabled (`#pragma pack 0`) `__COMPILER_PREFIX_CHARSOF (input)` is still `27` because it is always `27`, but `__COMPILER_BASIC_CHAR` is now the same as `char` and thus declares `copy` as seven cells long, enough to store the whole string packed.
+That code will count how many characters (including `NULL`) there are in the prefix string (via `__COMPILER_PREFIX_CHARSOF`), then declare an array large enough to hold that many characters in a basic array (using `__COMPILER_BASIC_CHAR`).  `__COMPILER_PREFIX_CHARSOF(input)` is always `27`, regardless of the value of `#pragma pack`, because there are that many characters (including `NULL`) in the string; they may be packed or unpacked, it doesn't matter.  With default settings `__COMPILER_BASIC_CHAR` will thus do nothing and declare this array to be `27` cells large, enough to hold all the input characters one per cell.  When default packing is enabled (`#pragma pack 0`) `__COMPILER_PREFIX_CHARSOF(input)` is still `27` because it is always `27`, but `__COMPILER_BASIC_CHAR` is now the same as `char` and thus declares `copy` as seven cells long, enough to store the whole string packed.
 
 This example will declare two arrays of exactly the right size and pack or unpack the data from one to the other depending on compiler settings:
 
 ```pawn
 new input[] = "This string is packed or unpacked.";
 
-new output[__COMPILER_BASIC_CHARSOF (input) __COMPILER_PREFIX_CHAR];
+new output[__COMPILER_BASIC_CHARSOF(input) __COMPILER_PREFIX_CHAR];
 
 #if __COMPILER_STRING_PACKING
 	// Basic strings are packed, so unpack the input.
@@ -474,4 +473,14 @@ new output[__COMPILER_BASIC_CHARSOF (input) __COMPILER_PREFIX_CHAR];
 ```
 
 Note that there's no YSI equivalent for explicitly packed and unpacked strings because `char` and nothing are that.
+
+You can use a combination of techniques to for example always unpack a string from an unknown start point:
+
+```pawn
+new input[] = !"unknown string";
+new output[__COMPILER_PREFIX_CHARSOF(input)];
+strunpack(output, input);
+```
+
+Here `input` may be packed or unpacked, we don't know.  `[__COMPILER_PREFIX_CHARSOF(input)]` declares an array with as many cells as there are characters in the input; no `char` suffix is used here so it is always cells.  `strunpack` checks if the input is packed or not before retreiving the data, so regardless of the packing of the input the output will be correctly unpacked in to a sufficiently large array.  The reason that plain `sizeof (input)` can't be used here is that the output array will be too small when `input` is packed; and while `sizeof (input) * cellbytes` will always make the output array large enough it may waste 75% of the space when the input is unpacked.
 
