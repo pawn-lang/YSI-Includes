@@ -462,7 +462,7 @@ This example will declare two arrays of exactly the right size and pack or unpac
 ```pawn
 new input[] = "This string is packed or unpacked.";
 
-new output[__COMPILER_BASIC_CHARSOF (input) __COMPILER_PACKED_CHAR];
+new output[__COMPILER_BASIC_CHARSOF (input) __COMPILER_PREFIX_CHAR];
 
 #if __COMPILER_STRING_PACKING
 	// Basic strings are packed, so unpack the input.
@@ -473,3 +473,4 @@ new output[__COMPILER_BASIC_CHARSOF (input) __COMPILER_PACKED_CHAR];
 #endif
 ```
 
+Note that there's no YSI equivalent for explicitly packed and unpacked strings because `char` and nothing are that.
