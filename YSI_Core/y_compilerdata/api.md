@@ -4,6 +4,35 @@ This file is, strictly speaking, an internal YSI library, which is why it is fou
 2. Determining information about the compiler.
 3. Attempting to fix certain compiler bugs.  These are often fixed in updated compilers, but YSI builds on the old and new compilers, so sadly sometimes still needs work-arounds.
 
+## `cellbytes`
+
+By default the compiler defines `cellbits`, which is the number of bits in a cell (normally thirty-two); however, the number of bytes in a cell (four) is very frequently needed (in my anecdotal experience it is vastly more common).  Thus YSI, amx_assembly, and several other libraries (even the open.mp official includes) all define this constant:
+
+```pawn
+#if !defined cellbytes
+	const cellbytes = cellbits / charbits;
+#endif
+```
+
+Now the chance of `charbits` ever being anything other than eight is basically 0%, but it is still used anyway.  Because of bugs with compiler documentation comments the version in YSI is:
+
+```pawn
+/**
+ * <library>y_compilerdata</library>
+ * <remarks>
+ *   The number of bytes in a cell.  There is the number of bits as a constant
+ *   built-in, but not the number of bytes.
+ * </remarks>
+ */
+#if defined cellbytes
+	static stock YSI_cellbytes__ = 0;
+#else
+	const cellbytes = cellbits / charbits;
+#endif
+```
+
+But that's functionally equivalent.
+
 ## String Returns
 
 The original compiler has a code generation bug returning strings (actually arrays) from functions with variable arguments, i.e. this won't work correctly:
@@ -483,4 +512,34 @@ strunpack(output, input);
 ```
 
 Here `input` may be packed or unpacked, we don't know.  `[__COMPILER_PREFIX_CHARSOF(input)]` declares an array with as many cells as there are characters in the input; no `char` suffix is used here so it is always cells.  `strunpack` checks if the input is packed or not before retreiving the data, so regardless of the packing of the input the output will be correctly unpacked in to a sufficiently large array.  The reason that plain `sizeof (input)` can't be used here is that the output array will be too small when `input` is packed; and while `sizeof (input) * cellbytes` will always make the output array large enough it may waste 75% of the space when the input is unpacked.
+
+## Packed And Prefixed Strings
+
+Just to clarify the last two sections...
+
+There are two types of strings in question here - those that are packed (i.e. four characters per cell) and those that start with `!`.  Normally these are the same thing, this is the declaration of a packed string:
+
+```pawn
+new storage[12 char] = !"Hello World";
+```
+
+*However*, if you change compiler settings the meaning of `!` is swapped and that code errors; `!` no longer declares a packed string but an unpacked string (i.e. one character per cell) and thus the `storage` variable is too small (since it can only hold twelve bytes, not twelve characters).
+
+So the facilities provided by *y_compilerdata* allow you to solve this problem in two ways.  Either you use `char` and ensure that the string is always packed, or you use `!` and ensure that the variable is declared correctly for strings using the prefix:
+
+```pawn
+new packedStorage[12 char] = __COMPILER_PACK"Hello World";
+
+new prefixedStorage[12 __COMPILER_PREFIX_CHAR] = !"Hello World";
+```
+
+The first variable (`packedStorage`) will always take up exactly twelve bytes, and the string will always be packed regardless of compiler settings.  On the other hand the second variable (`prefixedStorage`) will always use the least space required to store the string, but the string may or may not be packed.
+
+Just for completion's sake, the opposites are also possible:
+
+```pawn
+new unpackedStorage[12] = __COMPILER_UNPACK"Hello World";
+
+new basicStorage[12 __COMPILER_BASIC_CHAR] = "Hello World";
+```
 

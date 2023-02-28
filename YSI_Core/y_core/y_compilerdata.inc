@@ -133,7 +133,7 @@ const __debug = debug;
  * <library>y_compilerdata</library>
  * <remarks>
  *   The number of bytes in a cell.  There is the number of bits as a constant
- *   built-in, but no the number of bytes.
+ *   built-in, but not the number of bytes.
  * </remarks>
  */
 #if defined cellbytes
