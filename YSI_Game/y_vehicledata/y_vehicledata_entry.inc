@@ -1047,6 +1047,7 @@ stock
 		},
 	YSI_gVehicleSeats[VIM:VIM_MODEL_COUNT] = 
 		{
+			0,
 			4, 
 			2, 
 			2, 
@@ -1258,7 +1259,8 @@ stock
 			1, 
 			4, 
 			1, 
-			1
+			1,
+			0
 		};
 /*-------------------------------------------------------------------------*//**
  * <param name="vehicleid">The vehicleid to get speed.</param>
