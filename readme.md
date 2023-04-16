@@ -109,6 +109,7 @@ Libraries for interacting with persistent data.
 
 * [y_amx](YSI_Storage/y_amx.md)
 * [y_bitmap](YSI_Storage/y_bitmap.md)
+* [y_dumpamx](YSI_Storage/y_dumpamx.md)
 * [y_ini](YSI_Storage/y_ini.md)
 * [y_php](YSI_Storage/y_php.md)
 * [y_svar](YSI_Storage/y_svar.md)
