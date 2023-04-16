@@ -108,4 +108,3 @@ Optional plugins:
 #if !defined _INC_y_core
 	#error Could not find y_compilerdata
 #endif
-
