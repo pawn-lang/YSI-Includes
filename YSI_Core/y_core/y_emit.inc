@@ -110,6 +110,15 @@ const __args_offset     =   2 * __cell_bytes;
 /**
  * <library>y_emit</library>
  * <remarks>
+ *   The offset in the stack from the frame pointer to the start of the memory
+ *   block with the passed arguments is.
+ * </remarks>
+ */
+const __params_offset   =   3 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
  *   The offset in the stack from the frame pointer to the first parameter.
  *   This is directly after the previous frame pointer, the return address,
  *   and the parameter count.
