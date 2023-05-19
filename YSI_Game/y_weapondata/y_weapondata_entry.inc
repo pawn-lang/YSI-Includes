@@ -736,3 +736,62 @@ stock Float:Weapon_GetClipSize(weaponid)
 {
     return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? YSI_g_WeaponClipSize[weaponid] : WEAPONDATA_INVALID_RETURN;
 }
+
+static stock YSI_g_WeaponIconsNames[47][32] =
+{
+    "hud:fist",
+    "brassknuckle:BRASSKNUCKLEicon", // doesn't display, SA-MP's internal limit to create in textdraw
+    "golfclub:golfclubicon",
+    "nitestick:nitestickicon",
+    "knifecur:knifecuricon",
+    "bat:baticon",
+    "shovel:shovelicon",
+    "poolcue:poolcueicon",
+    "katana:katanaicon",
+    "chnsaw:chnsawicon",
+    "gun_dildo1:gun_dildo1icon",
+    "gun_dildo2:gun_dildo2icon",
+    "gun_vibe1:gun_vibe1icon",
+    "gun_vibe2:gun_vibe2icon",
+    "flower:flowericon",
+    "gun_cane:gun_caneicon",
+    "grenade:grenadeicon",
+    "TearGas:TearGasicon",
+    "molotov:molotovicon",
+    "colt45:colt45icon",
+    "silenced:silencedicon",
+    "desert_eagle:desert_eagleicon", // doesn't display, SA-MP's internal limit to create in textdraw
+    "chromegun:chromegunicon",
+    "shotgspa:shotgspaicon",
+    "sawnoff:sawnofficon",
+    "micro_uzi:micro_uziicon",
+    "mp5lng:mp5lngicon",
+    "ak47:ak47icon",
+    "M4:M4icon",
+    "tec9:tec9icon",
+    "cuntgun:cuntgunicon",
+    "SNIPER:SNIPERicon",
+    "rocketla:rocketlaicon",
+    "heatseek:heatseekicon",
+    "flame:flameicon",
+    "minigun:minigunicon",
+    "satchel:satchelicon",
+    "bomb:bombicon",
+    "SPRAYCAN:SPRAYCANicon",
+    "fire_ex:fire_exicon",
+    "camera:Cameraicon",
+    "nvgoggles:nvgogglesicon",
+    "irgoggles:irgogglesicon",
+    "gun_para:gun_paraIcon"
+};
+
+stock bool:Weapon_GetTxdIconName(weaponid, dest[], size = sizeof (dest))
+{
+    dest[0] = '\0';
+    if ((weaponid >= 0 && weaponid <= 18 || weaponid >= 22 && weaponid <= 46))
+    {
+        strcat(dest, YSI_g_WeaponIconsNames[weaponid], size);
+        return true;
+    }
+    return false;
+}
