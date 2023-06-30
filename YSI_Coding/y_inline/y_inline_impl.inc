@@ -2188,23 +2188,72 @@ stock Callback_Restore_(...)
 stock Inline_Debug(ptr)
 {
 	// Get back to normal memory.
-	new Alloc:data = Malloc_Reconcile(ResolvedAlloc:Indirect_DePtr(ptr));
-	printf("ptr:                    %d", _:ptr);
-	printf("resolved:               %d", _:Indirect_DePtr(ptr));
+	new
+		Alloc:data = Malloc_Reconcile(ResolvedAlloc:Indirect_DePtr(ptr)),
+		type = mget(data, E_INDIRECTION_ALWAYS_NULL),
+		tmp[32];
+	// If `ALWAYS_NULL` isn't null, this isn't an indirection handler.
+	if ('\0' < type <= '~')
+	{
+		printf("Type: String");
+		mgets(tmp, 32, ptr, 0);
+		printf("    %s", tmp);
+		return;
+	}
+	if (type != 0)
+	{
+		printf("Type: Ptr");
+		printf("    %08x", type);
+		return;
+	}
+	type = mget(data, E_INDIRECTION_HANDER);
+	if (type == _:addressof (Callback_RemoteHandler_<x>))
+	{
+		printf("Type: Remote");
+	}
+	else if (type == _:addressof (Callback_LocalHandler_<x>))
+	{
+		printf("Type: Local");
+	}
+	else if (type == _:addressof (Callback_CallHandler_<x>))
+	{
+		printf("Type: Indirect");
+	}
+	else
+	{
+		printf("Type: Unknown");
+	}
+	// Normal callback handler.
+	printf("    ptr:                       %d", _:ptr);
+	printf("    resolved:                  %d", _:Indirect_DePtr(ptr));
 	#emit CONST.alt     YSI_gMallocMemory
 	#emit STOR.S.alt    ptr
-	printf("memory:                 %d", _:ptr);
-	printf("slot:                   %d", _:data);
-	printf("E_INLINE_CALL_NULL:     %d", mget(data, E_INLINE_CALL_NULL));
-	printf("E_INLINE_CALL_HANDLER:  %d", mget(data, E_INLINE_CALL_HANDLER));
-	printf("E_INLINE_CALL_CLAIM:    %d", mget(data, E_INLINE_CALL_CLAIM));
-	printf("E_INLINE_CALL_RELEASE:  %d", mget(data, E_INLINE_CALL_RELEASE));
-	printf("E_INLINE_CALL_METADATA: %d", mget(data, E_INLINE_CALL_METADATA));
-	printf("E_INLINE_CALL_TIMER:    %d", mget(data, E_INLINE_CALL_TIMER));
-	printf("E_INLINE_CALL_FLAGS:    %d", mget(data, E_INLINE_CALL_FLAGS));
-	printf("E_INLINE_CALL_SIZE:     %d", mget(data, E_INLINE_CALL_SIZE));
-	printf("E_INLINE_CALL_SOURCE:   %d", mget(data, E_INLINE_CALL_SOURCE));
-	printf("E_INLINE_CALL_FUNCTION: %d", mget(data, E_INLINE_CALL_FUNCTION));
-	printf("E_INLINE_CALL_PARAMS:   %d", _:Malloc_Reconcile(ResolvedAlloc:mget(data, E_INLINE_CALL_FUNCTION)));
+	printf("    memory:                    %d", _:ptr);
+	printf("    slot:                      %d", _:data);
+	printf("    E_INDIRECTION_ALWAYS_NULL: 0"); // Must be `0` to get this far.
+	printf("    E_INDIRECTION_HANDER:      %d", type);
+	printf("    E_INDIRECTION_CLAIM:       %d", mget(data, E_INDIRECTION_CLAIM));
+	printf("    E_INDIRECTION_RELEASE:     %d", mget(data, E_INDIRECTION_RELEASE));
+	printf("    E_INDIRECTION_METADATA:    %d", mget(data, E_INDIRECTION_METADATA));
+	printf("    E_INDIRECTION_TAG:         %d", mget(data, E_INDIRECTION_TAG));
+	printf("    E_INDIRECTION_OWNER:       %d", mget(data, E_INDIRECTION_OWNER));
+	if (type == _:addressof (Callback_RemoteHandler_<x>) || type == _:addressof (Callback_LocalHandler_<x>))
+	{
+		printf("    E_PUBLIC_CALL_TIMER:       %d", mget(data, E_PUBLIC_CALL_TIMER));
+		printf("    E_PUBLIC_CALL_FLAGS:       %d", mget(data, E_PUBLIC_CALL_FLAGS));
+		mgets(tmp, MAX_PUBLIC_CALL_SPECIFIERS, ptr, _:E_PUBLIC_CALL_SPECIFIER);
+		printf("    E_PUBLIC_CALL_SIZE:        %s", tmp);
+		mgets(tmp, FUNCTION_LENGTH, ptr, _:E_PUBLIC_CALL_FUNCTION);
+		printf("    E_PUBLIC_CALL_FUNCTION:    %s", tmp);
+	}
+	else if (type == _:addressof (Callback_CallHandler_<x>))
+	{
+		printf("    E_INLINE_CALL_TIMER:       %d", mget(data, E_INLINE_CALL_TIMER));
+		printf("    E_INLINE_CALL_FLAGS:       %d", mget(data, E_INLINE_CALL_FLAGS));
+		printf("    E_INLINE_CALL_SIZE:        %d", mget(data, E_INLINE_CALL_SIZE));
+		printf("    E_INLINE_CALL_SOURCE:      %d", mget(data, E_INLINE_CALL_SOURCE));
+		printf("    E_INLINE_CALL_FUNCTION:    %d", mget(data, E_INLINE_CALL_FUNCTION));
+		printf("    E_INLINE_CALL_PARAMS:      %d", _:Malloc_Reconcile(ResolvedAlloc:mget(data, E_INLINE_CALL_FUNCTION)));
+	}
 }
 
