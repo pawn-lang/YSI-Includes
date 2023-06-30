@@ -377,8 +377,8 @@ public Inline_MaybeConst_(ResolvedAlloc:slot)
 {
 	// If this function is called, the given inline has been claimed, but has
 	// left the current scope, so can't have its closure written back to.
-	KillTimer(AMX_Read(_:slot + (_:E_INLINE_CALL_TIMER * cellbytes)));
-	AMX_Write(_:slot + (_:E_INLINE_CALL_TIMER * cellbytes), 0);
+	KillTimer(AMX_Read(_:slot + E_INLINE_CALL_TIMER__));
+	AMX_Write(_:slot + E_INLINE_CALL_TIMER__, 0);
 }
 
 static stock Inline_FoundStart(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
@@ -1075,7 +1075,7 @@ operator*(func, Inline_EBC:ebc)
 		data = Indirect_DePtr_(func);
 	if (data >= 0 && AMX_Read(data) == 0)
 	{
-		AMX_Write(data + (_:E_INDIRECTION_OWNER * cellbytes), ebc);
+		AMX_Write(data + E_INDIRECTION_OWNER_bytes, ebc);
 	}
 	return func;
 }
@@ -1086,7 +1086,7 @@ operator*(@Ik:func, Inline_EBC:ebc)
 		data = Indirect_DePtr_(func);
 	if (data >= 0 && AMX_Read(data) == 0)
 	{
-		AMX_Write(data + (_:E_INDIRECTION_OWNER * cellbytes), ebc);
+		AMX_Write(data + E_INDIRECTION_OWNER_bytes, ebc);
 	}
 	return func;
 }
@@ -1097,7 +1097,7 @@ stock Inline_GetOwner__(func)
 		data = Indirect_DePtr_(func);
 	if (data >= 0 && AMX_Read(data) == 0)
 	{
-		return AMX_Read(data + (_:E_INDIRECTION_OWNER * cellbytes));
+		return AMX_Read(data + E_INDIRECTION_OWNER_bytes);
 	}
 	return 0;
 }
@@ -1356,8 +1356,8 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(ret));
 				new
 					ResolvedAlloc:ra = Malloc_Resolve(closure);
-				RawMemCpy(_:ra + (_:E_INLINE_CALL_PARAMS * cellbytes), ptr, size);
-				AMX_Write(_:ra + ((_:E_INLINE_CALL_PARAMS + 2) * cellbytes) + frm - ptr, args);
+				RawMemCpy(_:ra + E_INLINE_CALL_PARAMS__, ptr, size);
+				AMX_Write(_:ra + (E_INLINE_CALL_PARAMS__ + __2_cells) + frm - ptr, args);
 				return Indirect_Ptr(ra);
 			}
 		}
@@ -1554,7 +1554,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			if (ret < 0 || AMX_Read(ret))
 				return true;
 			// Check the format, since we might have a new one to use here.
-			numArgs = AMX_Read(ret + (_:E_INDIRECTION_HANDER * cellbytes));
+			numArgs = AMX_Read(ret + E_INDIRECTION_HANDER_bytes);
 			if (numArgs == _:addressof (Callback_LocalHandler_<x>) || numArgs == _:addressof (Callback_RemoteHandler_<x>))
 			{
 				if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_specifier) == '\0')
@@ -2131,7 +2131,7 @@ static stock Inline_DoCodeGen(const scanner[CodeScanner], const data[E_INLINE_DA
 
 public Callback_Release_(ResolvedAlloc:a)
 {
-	KillTimer(AMX_Read(_:a + (_:E_INLINE_CALL_TIMER * cellbytes)));
+	KillTimer(AMX_Read(_:a + E_INLINE_CALL_TIMER__));
 	free(Malloc_Reconcile(a));
 }
 
@@ -2197,8 +2197,8 @@ stock Inline_UI_(const &header, tag)
 	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(header));
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
-	RawMemCpy(_:ra + (_:E_INLINE_CALL_PARAMS * cellbytes), ptr, size);
-	AMX_Write(_:ra + ((_:E_INLINE_CALL_PARAMS + 2) * cellbytes) + frm, args);
+	RawMemCpy(_:ra + E_INLINE_CALL_PARAMS__, ptr, size);
+	AMX_Write(_:ra + (E_INLINE_CALL_PARAMS__ + __2_cells) + frm, args);
 	return Indirect_Ptr(ra);
 }
 #if __COMPILER_CONST_REF
@@ -2237,18 +2237,18 @@ stock Callback_Restore_(...)
 	if (closure < 0 || AMX_Read(closure))
 		return true;
 	// Called via a timer, or is const, or wasn't actually called, or is a public.
-	if (AMX_Read(closure + (_:E_INLINE_CALL_FLAGS * cellbytes)) || !AMX_Read(closure + (_:E_INLINE_CALL_TIMER * cellbytes)))
+	if (AMX_Read(closure + E_INLINE_CALL_FLAGS__) || !AMX_Read(closure + E_INLINE_CALL_TIMER__))
 	{
 		return 0;
 	}
 	new
-		ptr = AMX_Read(closure + (_:E_INLINE_CALL_SOURCE * cellbytes)),
+		ptr = AMX_Read(closure + E_INLINE_CALL_SOURCE__),
 		frm = AMX_Read(ptr) + cellbytes;
 	frm = ptr + AMX_Read(frm);
 	new
 		ret = GetFrameReturn(frm),
 		pfr = GetFramePreviousFrame(frm);
-	RawMemCpy(ptr, closure + (_:E_INLINE_CALL_PARAMS * cellbytes), AMX_Read(closure + (_:E_INLINE_CALL_SIZE * cellbytes))),
+	RawMemCpy(ptr, closure + E_INLINE_CALL_PARAMS__, AMX_Read(closure + E_INLINE_CALL_SIZE__)),
 	SetFrameReturn(frm, ret),
 	SetFramePreviousFrame(frm, pfr);
 	return 0;
