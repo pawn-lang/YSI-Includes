@@ -334,7 +334,7 @@ stock operator~(I@T:inlines[], size)
 	// using information gathered here.
 	#pragma unused inlines
 	// Get the return address.
-	#emit LOAD.S.alt       4
+	#emit LOAD.S.alt       __return_offset
 	// Read the code before the return.
 	#emit LCTRL            __cod
 	#emit ADD
@@ -499,7 +499,7 @@ static stock Inline_StoreData(const data[E_INLINE_DATA])
 	new
 		header = data[E_INLINE_DATA_NAME];
 	// Add a pointer to the function itself (after `JUMP`).
-	AMX_Write(header, data[E_INLINE_DATA_START] + 10 * cellbytes);
+	AMX_Write(header, data[E_INLINE_DATA_START] + __10_cells);
 	// Store the local stack size at this point.
 	AMX_Write(header + cellbytes, data[E_INLINE_DATA_LOCALS]);
 	// Store the tag data.  TODO: Put this in the compiler with
@@ -520,7 +520,7 @@ static stock Inline_StoreData(const data[E_INLINE_DATA])
 			tag[cur + 4] = 'a';
 		}
 	}
-	AMX_Write(header + 2 * cellbytes, GetTagIDFromName(tag));
+	AMX_Write(header + __2_cells, GetTagIDFromName(tag));
 }
 
 static stock Inline_FoundUsingInline(const scanner[CodeScanner])
@@ -543,15 +543,15 @@ static stock Inline_FoundUsingInline(const scanner[CodeScanner])
 	{
 		switch (CodeScanGetMatchLength(scanner))
 		{
-			case 8 * cellbytes:
+			case __8_cells:
 			{
-				CodeScanGetMatchAsm(scanner, ctx, 6 * cellbytes);
+				CodeScanGetMatchAsm(scanner, ctx, __6_cells);
 				@emit PUSH.pri
 				@emit NOP
 			}
-			case 10 * cellbytes:
+			case __10_cells:
 			{
-				CodeScanGetMatchAsm(scanner, ctx, 7 * cellbytes);
+				CodeScanGetMatchAsm(scanner, ctx, __7_cells);
 				@emit NOP
 				@emit NOP
 			}
@@ -658,15 +658,15 @@ public OnCodeInit()
 			CodeScanMatcherInit(csm1a, &Inline_FoundStart);
 			CodeScanMatcherData(csm1a, AMX_Ref(data[E_INLINE_DATA:0]));
 			CodeScanMatcherPattern(csm1a,
-				OP(STACK,              -4)
+				OP(STACK,              -__1_cell)
 				OP(CONST_PRI,          ???)
 				OP(INVERT)
 				OP(INVERT)
 				OP(PUSH_PRI)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &I@T)
 				OP(STOR_S_PRI,         ???)
-				OP(STACK,              -4)
+				OP(STACK,              -__1_cell)
 				OP(LOAD_S_PRI,         ???)
 				OP(STOR_S_PRI,         ???)
 			);
@@ -677,15 +677,15 @@ public OnCodeInit()
 			CodeScanMatcherInit(csm1b, &Inline_FoundStart);
 			CodeScanMatcherData(csm1b, AMX_Ref(data[E_INLINE_DATA:0]));
 			CodeScanMatcherPattern(csm1b,
-				OP(STACK,              -4)
+				OP(STACK,              -__1_cell)
 				OP(CONST_PRI,          ???)
 				OP(INVERT)
 				OP(INVERT)
 				OP(PUSH_PRI)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &I@T)
 				OP(STOR_S_PRI,         ???)
-				OP(STACK,              -4)
+				OP(STACK,              -__1_cell)
 				OP(LOAD_S_PRI,         ???)
 				OP(STOR_S_PRI,         ???)
 			);
@@ -714,7 +714,7 @@ public OnCodeInit()
 			CodeScanMatcherData(csm3a, AMX_Ref(data[E_INLINE_DATA:0]));
 			CodeScanMatcherPattern(csm3a,
 				OP(ZERO_PRI)
-				OP(HEAP,               4)
+				OP(HEAP,               __1_cell)
 				OP(STOR_I)
 				OP(PUSH_ALT)
 			);
@@ -725,7 +725,7 @@ public OnCodeInit()
 			CodeScanMatcherData(csm3b, AMX_Ref(data[E_INLINE_DATA:0]));
 			CodeScanMatcherPattern(csm3b,
 				OP(ZERO_PRI)
-				OP(HEAP,               4)
+				OP(HEAP,               __1_cell)
 				OP(STOR_I)
 				OP(MOVE_PRI)
 				OP(PUSH_PRI)
@@ -758,7 +758,7 @@ public OnCodeInit()
 			CodeScanMatcherData(csm4a, AMX_Ref(data[E_INLINE_DATA:0]));
 			CodeScanMatcherPattern(csm4a,
 				OP(CONST_PRI,          ???)
-				OP(HEAP,               4)
+				OP(HEAP,               __1_cell)
 				OP(STOR_I)
 				OP(PUSH_ALT)
 			);
@@ -769,7 +769,7 @@ public OnCodeInit()
 			CodeScanMatcherData(csm4b, AMX_Ref(data[E_INLINE_DATA:0]));
 			CodeScanMatcherPattern(csm4b,
 				OP(CONST_PRI,          ???)
-				OP(HEAP,               4)
+				OP(HEAP,               __1_cell)
 				OP(STOR_I)
 				OP(MOVE_PRI)
 				OP(PUSH_PRI)
@@ -793,7 +793,7 @@ public OnCodeInit()
 			CodeScanMatcherData(csm6a, AMX_Ref(data[E_INLINE_DATA:0]));
 			CodeScanMatcherPattern(csm6a,
 				OP(PUSH_C,             ???)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &I@K)
 			);
 			CodeScanAddMatcher(scanner, csm6a);
@@ -804,7 +804,7 @@ public OnCodeInit()
 			CodeScanMatcherPattern(csm6b,
 				OP(CONST_PRI,          ???)
 				OP(PUSH_PRI)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &I@K)
 			);
 			CodeScanAddMatcher(scanner, csm6b);
@@ -815,7 +815,7 @@ public OnCodeInit()
 			CodeScanMatcherPattern(csm6c,
 				OP(ZERO_PRI)
 				OP(PUSH_PRI)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &I@K)
 			);
 			CodeScanAddMatcher(scanner, csm6c);
@@ -827,7 +827,7 @@ public OnCodeInit()
 			CodeScanMatcherPattern(csm7a,
 				OP(ADDR_PRI,           ???)
 				OP(PUSH_PRI)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &Inline_UI_)
 				OP(LOAD_S_PRI,         ???)
 				OP(PUSH_PRI)
@@ -838,7 +838,7 @@ public OnCodeInit()
 			CodeScanMatcherInit(csm7b, &Inline_FoundUsingInline);
 			CodeScanMatcherPattern(csm7b,
 				OP(PUSH_ADR,           ???)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &Inline_UI_)
 				OP(PUSH_S,             ???)
 			);
@@ -849,7 +849,7 @@ public OnCodeInit()
 			CodeScanMatcherInit(csm7c, &Inline_FoundUsingInline);
 			CodeScanMatcherPattern(csm7c,
 				OP(PUSH2_ADR,          ???, ???)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &Inline_UI_)
 				OP(PUSH_S,             ???)
 			);
@@ -859,7 +859,7 @@ public OnCodeInit()
 			CodeScanMatcherInit(csm7d, &Inline_FoundUsingInline);
 			CodeScanMatcherPattern(csm7d,
 				OP(PUSH3_ADR,          ???, ???, ???)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &Inline_UI_)
 				OP(PUSH_S,             ???)
 			);
@@ -869,7 +869,7 @@ public OnCodeInit()
 			CodeScanMatcherInit(csm7e, &Inline_FoundUsingInline);
 			CodeScanMatcherPattern(csm7e,
 				OP(PUSH4_ADR,          ???, ???, ???, ???)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &Inline_UI_)
 				OP(PUSH_S,             ???)
 			);
@@ -879,7 +879,7 @@ public OnCodeInit()
 			CodeScanMatcherInit(csm7f, &Inline_FoundUsingInline);
 			CodeScanMatcherPattern(csm7f,
 				OP(PUSH5_ADR,          ???, ???, ???, ???, ???)
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &Inline_UI_)
 				OP(PUSH_S,             ???)
 			);
@@ -910,7 +910,7 @@ public OnCodeInit()
 				OP(PUSH_C,             1)
 				OP(ADDR_PRI,           ???)
 				OP(PUSH_PRI)
-				OP(PUSH_C,             8)
+				OP(PUSH_C,             __2_cells)
 				OP(CALL,               YSI_g_sInlineLinkedList)
 			);
 			CodeScanAddMatcher(scanner, csm8a);
@@ -919,7 +919,7 @@ public OnCodeInit()
 			new csm9a[CodeScanMatcher];
 			CodeScanMatcherInit(csm9a, &Inline_Found@return);
 			CodeScanMatcherPattern(csm9a,
-				OP(PUSH_C,             4)
+				OP(PUSH_C,             __1_cell)
 				OP(CALL,               &Callback_Return_)
 			);
 			CodeScanAddMatcher(scanner, csm9a);
@@ -1225,7 +1225,7 @@ static stock Inline_NumArgs(frm)
 {
 	#emit LOAD.S.alt          frm
 Inline_NumArgs_load:
-	#emit CONST.pri           8
+	#emit CONST.pri           __args_offset
 	#emit ADD
 	#emit LOAD.I
 	#emit ZERO.alt
@@ -1256,15 +1256,15 @@ static stock Callback_InlineByName(const name[], tag)
 		new
 			ret = AMX_Read(ptr);
 		// Compare the tags.
-		if (tag == 0 || tag == AMX_Read(ret + 2 * cellbytes))
+		if (tag == 0 || tag == AMX_Read(ret + __2_cells))
 		{
 			// Compare the names.
-			if (!Inline_Strcmp(ret + 3 * cellbytes, name))
+			if (!Inline_Strcmp(ret + __3_cells, name))
 			{
 				new
 					frm = ptr + AMX_Read(ret + cellbytes),
 					args = Inline_NumArgs(frm),
-					size = frm - ptr + 12 + args,
+					size = frm - ptr + __3_cells + args,
 					Alloc:closure = malloc((size >>> __cell_shift) + (_:E_INLINE_CALL - 1));
 				if (!closure)
 					return 0;
@@ -1538,7 +1538,7 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__("Inline_MaybeConst_", 0, false, "i", AMX_Ref(func[E_INLINE_CALL_NULL]));
+	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__("Inline_MaybeConst_", 0, false, YSI_gsSpecifier_i, AMX_Ref(func[E_INDIRECTION_ALWAYS_NULL]));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1573,9 +1573,9 @@ static Callback_CallHandler_(...)
 	#emit PUSH.C           0                   // 21
 	#emit PUSH.S           __local0_offset     // 23
 	#emit PUSH.pri                             // 24
-	#emit PUSH.C           20                  // 26
+	#emit PUSH.C           __5_cells           // 26
 	#emit SYSREQ.C         memcpy              // 28
-	#emit STACK            24                  // 30
+	#emit STACK            __6_cells           // 30
 	// "jump" in to the code.
 	#emit LOAD.S.pri       __local0_offset     // 32
 	#emit ADD.C            __m1_cell           // 34
@@ -1594,7 +1594,7 @@ static Callback_CallHandler_(...)
 	#emit PUSH.C           0                   // 47
 	#emit PUSH.pri                             // 48
 	#emit PUSH.S           __local0_offset     // 50
-	#emit PUSH.C           20                  // 52
+	#emit PUSH.C           __10_cells          // 52
 	#emit SYSREQ.C         memcpy              // 54
 	
 	// At this point, we've written the closure back to the structure.
@@ -1627,7 +1627,7 @@ static Callback_CallHandler_(...)
 
 static stock Callback_RemoteHandler_(...)
 {
-	#emit LOAD.S.alt       8
+	#emit LOAD.S.alt       __args_offset
 	#emit LCTRL            __stk
 	#emit SUB
 	#emit SCTRL            __stk
@@ -1637,11 +1637,11 @@ static stock Callback_RemoteHandler_(...)
 	#emit PUSH.alt
 	#emit PUSH.alt
 	#emit PUSH.C           0
-	#emit PUSH.adr         12
+	#emit PUSH.adr         __param0_offset
 	#emit PUSH.pri
-	#emit PUSH.C           20
+	#emit PUSH.C           __5_cells
 	#emit SYSREQ.C         memcpy
-	#emit STACK 24
+	#emit STACK            __6_cells
 	
 	// Push the specifier and function name.
 	#emit LOAD.pri         INDIRECTION_DATA
@@ -1649,8 +1649,8 @@ static stock Callback_RemoteHandler_(...)
 	#emit PUSH.pri
 	#emit ADD.C            E_PUBLIC_CALL_specifier // (E_PUBLIC_CALL_FUNCTION - E_PUBLIC_CALL_SPECIFIER) * cellbytes
 	#emit PUSH.pri
-	#emit LOAD.S.pri       8
-	#emit ADD.C            8
+	#emit LOAD.S.pri       __args_offset
+	#emit ADD.C            __2_cells
 	#emit PUSH.pri
 	#emit SYSREQ.C         CallRemoteFunction
 	
@@ -1675,7 +1675,7 @@ static stock Callback_RemoteHandler_(...)
 
 static stock Callback_LocalHandler_(...)
 {
-	#emit LOAD.S.alt       8
+	#emit LOAD.S.alt       __args_offset
 	#emit LCTRL            __stk
 	#emit SUB
 	#emit SCTRL            __stk
@@ -1685,11 +1685,11 @@ static stock Callback_LocalHandler_(...)
 	#emit PUSH.alt
 	#emit PUSH.alt
 	#emit PUSH.C           0
-	#emit PUSH.adr         12
+	#emit PUSH.adr         __param0_offset
 	#emit PUSH.pri
-	#emit PUSH.C           20
+	#emit PUSH.C           __5_cells
 	#emit SYSREQ.C         memcpy
-	#emit STACK 24
+	#emit STACK            __6_cells
 	
 	// Push the specifier and function name.
 	#emit LOAD.pri         INDIRECTION_DATA
@@ -1697,8 +1697,8 @@ static stock Callback_LocalHandler_(...)
 	#emit PUSH.pri
 	#emit ADD.C            E_PUBLIC_CALL_specifier // (E_PUBLIC_CALL_FUNCTION - E_PUBLIC_CALL_SPECIFIER) * cellbytes
 	#emit PUSH.pri
-	#emit LOAD.S.pri       8
-	#emit ADD.C            8
+	#emit LOAD.S.pri       __args_offset
+	#emit ADD.C            __2_cells
 	#emit PUSH.pri
 	#emit SYSREQ.C         CallLocalFunction
 	
@@ -1731,7 +1731,7 @@ static stock Callback_LocalHandler_(...)
 static stock Inline_GenerateLocalsCopy(ctx[AsmContext], const parameters[], count)
 {
 	new
-		input = 12;
+		input = __param0_offset;
 	for (new i = 0; i != count; ++i)
 	{
 		switch (parameters[i])
@@ -1748,9 +1748,9 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], const parameters[], coun
 			@emit PUSH.C           YSI_MAX_INLINE_STRING
 			@emit PUSH.S           input
 			@emit PUSH.alt
-			@emit PUSH.C           12
+			@emit PUSH.C           __3_cells
 			@emit SYSREQ.C         nativeidxof(YSI_StrUnpack__<aai>)
-			@emit STACK            16
+			@emit STACK            __4_cells
 		}
 		default:
 		{
@@ -1818,7 +1818,7 @@ static stock Inline_GenerateLocalsStore(ctx[AsmContext], const parameters[], cou
 				@emit STACK            accumulate
 			accumulate = 0;
 			@emit POP.alt
-			@emit SREF.S.alt       (count << __cell_shift) + 12
+			@emit SREF.S.alt       (count << __cell_shift) + __param0_offset
 		}
 		case 0:
 			accumulate += cellbytes;
@@ -1841,12 +1841,12 @@ static stock Inline_GeneratePreamble(ctx[AsmContext], locals)
 	@emit STACK            0
 	@emit LCTRL            __frm
 	@emit XCHG
-	@emit ADD.C            locals + 4
+	@emit ADD.C            locals + __1_cell
 	@emit SCTRL            __frm
 	@emit STOR.S.alt       0
 	// Get the return address.
 	@emit POP.pri
-	@emit STOR.S.pri       4
+	@emit STOR.S.pri       __return_offset
 }
 
 static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const count, bool:isConst, locals, inlineParams)
@@ -1887,7 +1887,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			@emit SCTRL            __stk
 			// We will remove everything from the stack later, as well as the
 			// two values on the stack for `memcpy` restoration.
-			@emit CONST.pri        8
+			@emit CONST.pri        __2_cells
 			@emit ADD
 			Inline_GenerateLocalsStore(ctx, parameters, count);
 			// Restore the return value.
@@ -1899,7 +1899,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 		{
 			// If we are here, we are in the context of `Callback_Call`, with no
 			// locals on the stack.
-			@emit STACK            8
+			@emit STACK            __2_cells
 			@emit RETN
 		}
 	}
@@ -1942,14 +1942,14 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 	// invalid address (in the middle of an OpCode we just wrote out).
 	new
 		startaddr = data[E_INLINE_DATA_USER],
-		endaddrDAT = CodeScanGetMatchHole(scanner, 1) - 8,
+		endaddrDAT = CodeScanGetMatchHole(scanner, 1) - __2_cells,
 		endaddrCOD = endaddrDAT + YSI_g_sJumpOffset,
 		nop = _:RelocateOpcode(OP_NOP),
 		dctx[DisasmContext];
 	// Using the local decompiler, go through the code and remove any jumps to
 	// outside of [startaddr, endaddrDAT].  Convert them all to `RETN; NOP`.
 	CodeScanGetMatchDisasm(scanner, dctx, CodeScanGetMatchLength(scanner));
-	dctx[DisasmContext_end_ip] = endaddrDAT + AMX_HEADER_COD + 16;
+	dctx[DisasmContext_end_ip] = endaddrDAT + AMX_HEADER_COD + __4_cells;
 	while (DisasmNext(dctx) != DISASM_DONE)
 	{
 		// Is this a jump?  The only jumps that can get out of this constraint
@@ -1958,7 +1958,7 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 		// `break`, `continue`, or `goto`.
 		if (DisasmGetOpcode(dctx) == OP_JUMP && !(startaddr <= DisasmGetOperandReloc(dctx) < endaddrDAT))
 		{
-			AMX_Write(DisasmGetCurIp(dctx) + 4, endaddrCOD);
+			AMX_Write(DisasmGetCurIp(dctx) + __1_cell, endaddrCOD);
 		}
 	}
 	// Save this end address for when we detect inline function destructor calls.  This way we don't
@@ -1982,45 +1982,45 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 		while (DisasmNext(dctx) != DISASM_DONE && DisasmGetOpcode(dctx) != OP_STACK)
 		{
 			AMX_Write(endaddrDAT, _:DisasmGetOpcode(dctx));
-			endaddrDAT += 4;
+			endaddrDAT += __1_cell;
 			for (startaddr = 0; startaddr < DisasmGetNumOperands(dctx); ++startaddr)
 			{
 				AMX_Write(endaddrDAT, _:DisasmGetOperand(dctx, startaddr));
-				endaddrDAT += 4;
+				endaddrDAT += __1_cell;
 			}
 			startaddr = 0;
 		}
-		@emit JUMP             endaddrDAT - AMX_HEADER_COD + YSI_g_sJumpOffset + 24
+		@emit JUMP             endaddrDAT - AMX_HEADER_COD + YSI_g_sJumpOffset + __6_cells
 		AMX_Write(endaddrDAT     , _:RelocateOpcode(OP_STACK));
-		AMX_Write(endaddrDAT + 4 , data[E_INLINE_DATA_STACK]);
-		AMX_Write(endaddrDAT + 8 , _:RelocateOpcode(OP_ZERO_PRI));
-		AMX_Write(endaddrDAT + 12, _:RelocateOpcode(OP_RETN));
+		AMX_Write(endaddrDAT + __1_cell , data[E_INLINE_DATA_STACK]);
+		AMX_Write(endaddrDAT + __2_cells, _:RelocateOpcode(OP_ZERO_PRI));
+		AMX_Write(endaddrDAT + __3_cells, _:RelocateOpcode(OP_RETN));
 		if (!startaddr)
 		{
 			// The write extended beyond the limit of where codescan was up to.  Adjust the stack
 			// back down again by the size of the closure data (i.e. the data outside the current
 			// inline).  This is AFTER the return, since we don't actually want the code to run,
 			// just correct codescan's view of the world.
-			AMX_Write(DisasmGetCurIp(dctx) + 4, -data[E_INLINE_DATA_LOCALS]);
+			AMX_Write(DisasmGetCurIp(dctx) + __1, -data[E_INLINE_DATA_LOCALS]);
 		}
 	}
 	else if (data[E_INLINE_DATA_STACK])
 	{
 		// No parameters, but some stack.
-		@emit JUMP             endaddrCOD + 16
+		@emit JUMP             endaddrCOD + __4_cells
 		AMX_Write(endaddrDAT     , _:RelocateOpcode(OP_STACK));
-		AMX_Write(endaddrDAT + 4 , data[E_INLINE_DATA_STACK]);
-		AMX_Write(endaddrDAT + 8 , _:RelocateOpcode(OP_ZERO_PRI));
-		AMX_Write(endaddrDAT + 12, _:RelocateOpcode(OP_RETN));
+		AMX_Write(endaddrDAT + __1_cell , data[E_INLINE_DATA_STACK]);
+		AMX_Write(endaddrDAT + __2_cells, _:RelocateOpcode(OP_ZERO_PRI));
+		AMX_Write(endaddrDAT + __3_cells, _:RelocateOpcode(OP_RETN));
 	}
 	else
 	{
 		// No cleanup, no stack correction, no need to satisfy codescan.
-		@emit JUMP             endaddrCOD + 16
+		@emit JUMP             endaddrCOD + __4_cells
 		AMX_Write(endaddrDAT     , _:RelocateOpcode(OP_ZERO_PRI));
-		AMX_Write(endaddrDAT + 4 , _:RelocateOpcode(OP_RETN));
-		AMX_Write(endaddrDAT + 8 , nop);
-		AMX_Write(endaddrDAT + 12, nop);
+		AMX_Write(endaddrDAT + __1_cell , _:RelocateOpcode(OP_RETN));
+		AMX_Write(endaddrDAT + __2_cells, nop);
+		AMX_Write(endaddrDAT + __3_cells, nop);
 	}
 }
 
@@ -2099,7 +2099,7 @@ stock Inline_UI_(const &header)
 		ptr = Inline_Ref(header),
 		frm = AMX_Read(header + cellbytes),
 		args = Inline_NumArgs(ptr + frm),
-		size = frm + 12 + args,
+		size = frm + __3_cells + args,
 		// The size of the allocation makes very little difference, so even if
 		// it isn't needed, we allocate extra memory here for the closure
 		// storage.  The other option would be allocating it separately later
