@@ -377,8 +377,8 @@ public Inline_MaybeConst_(ResolvedAlloc:slot)
 {
 	// If this function is called, the given inline has been claimed, but has
 	// left the current scope, so can't have its closure written back to.
-	KillTimer(AMX_Read(_:slot + _:E_INLINE_CALL_TIMER * cellbytes));
-	AMX_Write(_:slot + _:E_INLINE_CALL_TIMER * cellbytes, 0);
+	KillTimer(AMX_Read(_:slot + (_:E_INLINE_CALL_TIMER * cellbytes)));
+	AMX_Write(_:slot + (_:E_INLINE_CALL_TIMER * cellbytes), 0);
 }
 
 static stock Inline_FoundStart(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
@@ -1020,31 +1020,95 @@ Note:
 #define INLINE_const(%9)%8$(%0)%1(%2) %8$(%0)1(%2)
 #define _@const%0\32; _@
 
-#define USING_INLINE__ (@Ik:@Il:Inline_UI_(),)
-#define USING__%0\32; (@Ip:@Iq:@Iw:@Iv:@Io:@Iu:@Ia:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
-#define USING_PUBLIC__ (@Ik:@Il:Inline_UP_(),)
-#define USING_CALLBACK__ (@Ik:@Il:Inline_UP_(),)
-#define USING_FUNCTION__ (@Ik:@Il:Inline_US_(),)
-#define USING_STOCK__ (@Ik:@Il:Inline_US_(),)
-#define USING_RESOLVED__ (@Ik:@Il:0,)
-#define USING_ASYNC__ (@Ik:@Il:Inline_UA_(),)
+#define USING_INLINE__ (@Ix:@Ik:@Il:Inline_UI_(),)
+#define USING__%0\32; (@Ip:@Iq:@Iw:@Iv:@Io:@Iu:@Ia:@Ix:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
+#define USING_PUBLIC__ (@Ix:@Ik:@Il:Inline_UP_(),)
+#define USING_CALLBACK__ (@Ix:@Ik:@Il:Inline_UP_(),)
+#define USING_FUNCTION__ (@Ix:@Ik:@Il:Inline_US_(),)
+#define USING_STOCK__ (@Ix:@Ik:@Il:Inline_US_(),)
+#define USING_RESOLVED__ (@Ix:@Ik:@Il:0,)
+#define USING_ASYNC__ (@Ix:@Ik:@Il:Inline_UA_(),)
 
 // Old `using`.
 #if YSI_KEYWORD(callback_tag)
-	#define callback_tag: (@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
+	#define callback_tag: (@Ix:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
 #endif
 #if YSI_KEYWORD(using)
 	#define using USING__
 #endif
 
 // Parameter type for passing callbacks about.
-#define @Ip:%0)inline @Ik:@Il:Inline_UI_(),)
-#define @Iq:%0)callback @Ik:@Il:Inline_UP_(),)
-#define @Iw:%0)function @Ik:@Il:Inline_US_(),)
-#define @Iv:%0)stock @Ik:@Il:Inline_US_(),)
-#define @Io:%0)public @Ik:@Il:Inline_UP_(),)
-#define @Iu:%0)resolved @Ik:@Il:0,)
-#define @Ia:%0)async @Ik:@Il:Inline_UA_(),)
+#define @Ip:%0)inline @Ix:@Ik:@Il:Inline_UI_(),)
+#define @Iq:%0)callback @Ix:@Ik:@Il:Inline_UP_(),)
+#define @Iw:%0)function @Ix:@Ik:@Il:Inline_US_(),)
+#define @Iv:%0)stock @Ix:@Ik:@Il:Inline_US_(),)
+#define @Io:%0)public @Ix:@Ik:@Il:Inline_UP_(),)
+#define @Iu:%0)resolved @Ix:@Ik:@Il:0,)
+#define @Ia:%0)async @Ix:@Ik:@Il:Inline_UA_(),)
+
+// This is the implementation of y_ebc, converting a call like:
+//
+//   SetTimerInline(EBC(playerid, using inline Code), 1000, false);
+//
+// To:
+//
+//   SetTimerInline(using inline Code$(EBC(playerid)), 1000, false);
+//
+// Then to:
+//
+//   SetTimerInline(using inline Code * (EBC(playerid)), 1000, false);
+//
+// This seems a little indirect, and it is, but that's because of how `using`
+// also compiles, so the true final result is:
+//
+//   SetTimerInline((Inline_UI_(Code) * (EBC(playerid)), Code), 1000, false);
+//
+// So that tags are preserved.
+#define @Ix:%0,%1$(%2) %0*(%2),%1
+
+#define EBC(%0,%1) (%1)$(Inline_EBC__(_:(%0),_:@Iz:tagof(%0)))
+#define @Iz:tagof(%0:%1))) tagof(%0:)))
+
+operator*(func, Inline_EBC:ebc)
+{
+	new
+		data = Indirect_DePtr_(func);
+	if (data >= 0 && AMX_Read(data) == 0)
+	{
+		AMX_Write(data + (_:E_INDIRECTION_OWNER * cellbytes), ebc);
+	}
+	return func;
+}
+
+operator*(@Ik:func, Inline_EBC:ebc)
+{
+	new
+		data = Indirect_DePtr_(func);
+	if (data >= 0 && AMX_Read(data) == 0)
+	{
+		AMX_Write(data + (_:E_INDIRECTION_OWNER * cellbytes), ebc);
+	}
+	return func;
+}
+
+stock Inline_GetOwner__(func)
+{
+	new
+		data = Indirect_DePtr_(func);
+	if (data >= 0 && AMX_Read(data) == 0)
+	{
+		return AMX_Read(data + (_:E_INDIRECTION_OWNER * cellbytes));
+	}
+	return 0;
+}
+
+#define Inline_GetOwner(%0) Inline_GetOwner__(_:(%0))
+
+stock Inline_EBC:Inline_EBC__(owner, tag)
+{
+	// 10 bits for the tag (max 1024), 22 for the ID (max 4,194,303).
+	return Inline_EBC:(owner | (tag & 0x3FF << 22));
+}
 
 // Detect a `using` parameter that is not the last parameter.  Actually handles
 // nested calls quite nicely - `X(Y(using inline Z), 5)` should be detected as a
@@ -1058,7 +1122,7 @@ Note:
 #define @Il:%0)%1) %0%1))
 
 // Detect a callback with a tag.
-#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1,#%0),F@_@%0:%2$)
+#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1,#%0,tagof(F@_@%0:)),F@_@%0:%2$)
 
 // Normally `F@_@` doesn't consume spaces because it is a valid tag on its own.
 // However, in this case we know that extra specifiers after the tag prefix
@@ -1073,9 +1137,9 @@ Note:
 #define @In:%0(%1)%3),%2$) %0%3),%2$),.bExtra=true,.extra=%1)
 
 // Move the callback parameter inside the brackets.
-#define Inline_US_(),%0) I@,addressof(%0))
-#define Inline_UI_(),%0) Inline_UI_(_:%0),%0)
-#define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),F@_@:I@ I@O$)
+#define Inline_US_()%8,%0) I@%8,addressof(%0))
+#define Inline_UI_()%8,%0) Inline_UI_(_:%0,tagof(%0))%8,%0)
+#define Inline_UP_()%8,%0) Inline_UP_(_:@Ir:@Is:@In:#%0)%8,F@_@:I@ I@O$)
 #define @Im:Callback_Find_(,I@),F@_@:I@%0) Callback_Find_(#%0,I@),F@_@:I@)
 
 stock I@F()
@@ -1113,12 +1177,14 @@ stock I@K(n)
  *//*------------------------------------------------------------------------**/
 
 #define Function: F@_@:
-stock Function:GetRemoteFunction(const func[], const spec[])
+stock Function:GetRemoteFunction(const func[], const spec[], F@_@:tag = F@_@:0)
 {
 	new
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
 	if (!closure)
+	{
 		return Function:0;
+	}
 	mset(closure, _:E_INDIRECTION_ALWAYS_NULL, 0);
 	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_RemoteHandler_<x>));
 	mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
@@ -1126,13 +1192,13 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
-	mset(closure, _:E_INDIRECTION_TAG, 0);
+	mset(closure, _:E_INDIRECTION_TAG, tag ? (_:tag) : tagof (tag));
 	mset(closure, _:E_INDIRECTION_OWNER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
 	return Function:Indirect_Ptr(Malloc_Resolve(closure));
 }
-#define GetRemoteFunction(&%0<%1>) (F@_@%1:GetRemoteFunction(#%0, #%1))
+#define GetRemoteFunction(&%0<%1>) (F@_@%1:GetRemoteFunction(#%0, #%1, F@_@:tagof (F@_@%1:)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Public function to get.</param>
@@ -1152,16 +1218,20 @@ stock Function:GetRemoteFunction(const func[], const spec[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Function:GetLocalFunction(const func[], const spec[])
+stock Function:GetLocalFunction(const func[], const spec[], F@_@:tag = F@_@:0)
 {
 	Debug_Print4("GetLocalFunction called: %s, %s", func, spec);
 	if (funcidx(func) == -1)
+	{
 		return Function:0;
+	}
 	Debug_Print6("GetLocalFunction: 0");
 	new
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
 	if (!closure)
+	{
 		return Function:0;
+	}
 	Debug_Print6("GetLocalFunction: 1");
 	mset(closure, _:E_INDIRECTION_ALWAYS_NULL, 0);
 	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_LocalHandler_<x>));
@@ -1170,7 +1240,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
-	mset(closure, _:E_INDIRECTION_TAG, 0);
+	mset(closure, _:E_INDIRECTION_TAG, tag ? (_:tag) : tagof (tag));
 	mset(closure, _:E_INDIRECTION_OWNER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
@@ -1178,7 +1248,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	mgets(tmp, MAX_PUBLIC_CALL_SPECIFIERS, closure, _:E_PUBLIC_CALL_SPECIFIER);
 	return Function:Indirect_Ptr(Malloc_Resolve(closure));
 }
-#define GetLocalFunction(&%0<%1>) (F@_@%1:GetLocalFunction(#%0, #%1))
+#define GetLocalFunction(&%0<%1>) (F@_@%1:GetLocalFunction(#%0, #%1, F@_@:tagof (F@_@%1:)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Function pointer to call.</param>
@@ -1279,15 +1349,15 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
 				mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 				mset(closure, _:E_INDIRECTION_METADATA, 0);
-				mset(closure, _:E_INDIRECTION_TAG, 0);
+				mset(closure, _:E_INDIRECTION_TAG, tag);
 				mset(closure, _:E_INDIRECTION_OWNER, 0);
 				mset(closure, _:E_INLINE_CALL_SIZE, size);
 				mset(closure, _:E_INLINE_CALL_SOURCE, ptr);
 				mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(ret));
 				new
 					ResolvedAlloc:ra = Malloc_Resolve(closure);
-				RawMemCpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
-				AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm - ptr, args);
+				RawMemCpy(_:ra + (_:E_INLINE_CALL_PARAMS * cellbytes), ptr, size);
+				AMX_Write(_:ra + ((_:E_INLINE_CALL_PARAMS + 2) * cellbytes) + frm - ptr, args);
 				return Indirect_Ptr(ra);
 			}
 		}
@@ -1320,7 +1390,7 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 		new
 			tagname[FUNCTION_LENGTH];
 		GetTagNameFromID(tag, tagname);
-		return !!(dest = _:GetRemoteFunction(name, tagname[4]));
+		return !!(dest = _:GetRemoteFunction(name, tagname[4], F@_@:tag));
 	}
 	if (funcidx(name) == -1)
 	{
@@ -1332,7 +1402,7 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 	new
 		tagname[FUNCTION_LENGTH];
 	GetTagNameFromID(tag, tagname);
-	return !!(dest = _:GetLocalFunction(name, tagname[4]));
+	return !!(dest = _:GetLocalFunction(name, tagname[4], F@_@:tag));
 }
 
 #define Callback_Find(%0,%1) Callback_Find_(%0,_:%1,.tag=tagof(%1))
@@ -1484,7 +1554,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			if (ret < 0 || AMX_Read(ret))
 				return true;
 			// Check the format, since we might have a new one to use here.
-			numArgs = AMX_Read(ret + _:E_INDIRECTION_HANDER * cellbytes);
+			numArgs = AMX_Read(ret + (_:E_INDIRECTION_HANDER * cellbytes));
 			if (numArgs == _:addressof (Callback_LocalHandler_<x>) || numArgs == _:addressof (Callback_RemoteHandler_<x>))
 			{
 				if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_specifier) == '\0')
@@ -1936,7 +2006,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			@emit SCTRL            __stk
 		}
 		// Jump to `Callback_Call_restore_stack:` to perform common cleanup.
-		@emit JUMP             YSI_g_sCallbackCallAddress + 39 * cellbytes
+		@emit JUMP             YSI_g_sCallbackCallAddress + (39 * cellbytes)
 	}
 }
 
@@ -2061,7 +2131,7 @@ static stock Inline_DoCodeGen(const scanner[CodeScanner], const data[E_INLINE_DA
 
 public Callback_Release_(ResolvedAlloc:a)
 {
-	KillTimer(AMX_Read(_:a + _:E_INLINE_CALL_TIMER * cellbytes));
+	KillTimer(AMX_Read(_:a + (_:E_INLINE_CALL_TIMER * cellbytes)));
 	free(Malloc_Reconcile(a));
 }
 
@@ -2083,7 +2153,7 @@ static stock Inline_Ref(const &ptr)
 	#pragma warning push
 	#pragma warning disable 238
 #endif
-stock Inline_UI_(const &header)
+stock Inline_UI_(const &header, tag)
 {
 	// We use `&header` instead of `return` so that we can keep the tags
 	// correct.  This also passes an address that we know is the bottom of the
@@ -2120,25 +2190,25 @@ stock Inline_UI_(const &header)
 	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
-	mset(closure, _:E_INDIRECTION_TAG, 0);
+	mset(closure, _:E_INDIRECTION_TAG, tag);
 	mset(closure, _:E_INDIRECTION_OWNER, 0);
 	mset(closure, _:E_INLINE_CALL_SIZE, size);
 	mset(closure, _:E_INLINE_CALL_SOURCE, ptr);
 	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(header));
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
-	RawMemCpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
-	AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm, args);
+	RawMemCpy(_:ra + (_:E_INLINE_CALL_PARAMS * cellbytes), ptr, size);
+	AMX_Write(_:ra + ((_:E_INLINE_CALL_PARAMS + 2) * cellbytes) + frm, args);
 	return Indirect_Ptr(ra);
 }
 #if __COMPILER_CONST_REF
 	#pragma warning pop
 #endif
 
-stock Inline_UP_(const func[], const spec[] = "")
+stock Inline_UP_(const func[], const spec[] = "", tag = 0)
 {
 	// Convert a function name to a pointer.
-	I@ = _:GetLocalFunction(func, spec);
+	I@ = _:GetLocalFunction(func, spec, F@_@:tag);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2167,18 +2237,18 @@ stock Callback_Restore_(...)
 	if (closure < 0 || AMX_Read(closure))
 		return true;
 	// Called via a timer, or is const, or wasn't actually called, or is a public.
-	if (AMX_Read(closure + _:E_INLINE_CALL_FLAGS * cellbytes) || !AMX_Read(closure + _:E_INLINE_CALL_TIMER * cellbytes))
+	if (AMX_Read(closure + (_:E_INLINE_CALL_FLAGS * cellbytes)) || !AMX_Read(closure + (_:E_INLINE_CALL_TIMER * cellbytes)))
 	{
 		return 0;
 	}
 	new
-		ptr = AMX_Read(closure + _:E_INLINE_CALL_SOURCE * cellbytes),
+		ptr = AMX_Read(closure + (_:E_INLINE_CALL_SOURCE * cellbytes)),
 		frm = AMX_Read(ptr) + cellbytes;
 	frm = ptr + AMX_Read(frm);
 	new
 		ret = GetFrameReturn(frm),
 		pfr = GetFramePreviousFrame(frm);
-	RawMemCpy(ptr, closure + _:E_INLINE_CALL_PARAMS * cellbytes, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes)),
+	RawMemCpy(ptr, closure + (_:E_INLINE_CALL_PARAMS * cellbytes), AMX_Read(closure + (_:E_INLINE_CALL_SIZE * cellbytes))),
 	SetFrameReturn(frm, ret),
 	SetFramePreviousFrame(frm, pfr);
 	return 0;
