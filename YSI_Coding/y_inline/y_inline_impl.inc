@@ -272,7 +272,7 @@ forward Inline_MaybeConst_(ResolvedAlloc:slot);
 #define CALL@I@K%8() I@K%8(0)
 #define CALL@I@T%8() I@T%8(__ARR)
 
-#define CALL@Inline_UI_%8() Inline_UI_%8(__REF)
+#define CALL@Inline_UI_%8() Inline_UI_%8(__REF,0)
 
 #define CALL@Callback_Return_%8() Callback_Return_%8(0)
 
@@ -1069,7 +1069,7 @@ Note:
 #define EBC(%0,%1) (%1)$(Inline_EBC__(_:(%0),_:@Iz:tagof(%0)))
 #define @Iz:tagof(%0:%1))) tagof(%0:)))
 
-operator*(func, Inline_EBC:ebc)
+stock operator*(func, Inline_EBC:ebc)
 {
 	new
 		data = Indirect_DePtr_(func);
@@ -1080,7 +1080,7 @@ operator*(func, Inline_EBC:ebc)
 	return func;
 }
 
-operator*(@Ik:func, Inline_EBC:ebc)
+stock operator*(@Ik:func, Inline_EBC:ebc)
 {
 	new
 		data = Indirect_DePtr_(func);
@@ -2075,7 +2075,7 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 			// back down again by the size of the closure data (i.e. the data outside the current
 			// inline).  This is AFTER the return, since we don't actually want the code to run,
 			// just correct codescan's view of the world.
-			AMX_Write(DisasmGetCurIp(dctx) + __1, -data[E_INLINE_DATA_LOCALS]);
+			AMX_Write(DisasmGetCurIp(dctx) + __1_cell, -data[E_INLINE_DATA_LOCALS]);
 		}
 	}
 	else if (data[E_INLINE_DATA_STACK])
