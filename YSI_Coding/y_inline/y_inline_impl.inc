@@ -168,33 +168,45 @@ __COMPILER_STATIC_ENUM e_INLINE_FLAG (<<= 1)
 	// it sets the flags to exactly `0`.
 }
 
+#define MAX_PUBLIC_CALL_SPECIFIERS (32)
+
 __COMPILER_STATIC_ENUM E_INLINE_CALL
 {
-	/*  0 */ E_INLINE_CALL_NULL,
-	/*  1 */ E_INLINE_CALL_HANDLER,
-	/*  2 */ E_INLINE_CALL_CLAIM,
-	/*  3 */ E_INLINE_CALL_RELEASE,
-	/*  4 */ E_INLINE_CALL_METADATA,
-	/*  5 */ E_INLINE_CALL_TIMER, // To release unneeded inlines.
-	/*  6 */ E_INLINE_CALL_FLAGS,
-	/*  7 */ E_INLINE_CALL_SIZE,
-	/*  8 */ E_INLINE_CALL_SOURCE,
-	/*  9 */ E_INLINE_CALL_FUNCTION,
-	/* 10 */ ResolvedAlloc:E_INLINE_CALL_PARAMS // At least the frame header.
+	/*  0 */ E_INLINE_INDIRECTION__[E_INDIRECTION],
+	/*  7 */ E_INLINE_CALL_TIMER, // To release unneeded inlines.
+	/*  8 */ E_INLINE_CALL_FLAGS,
+	/*  9 */ E_INLINE_CALL_SIZE,
+	/* 10 */ E_INLINE_CALL_SOURCE,
+	/* 11 */ E_INLINE_CALL_FUNCTION,
+	/* 12 */ ResolvedAlloc:E_INLINE_CALL_PARAMS // At least the frame header.
 }
 
 __COMPILER_STATIC_ENUM E_PUBLIC_CALL
 {
-	/*  0 */ E_PUBLIC_CALL_NULL,
-	/*  1 */ E_PUBLIC_CALL_HANDLER,
-	/*  2 */ E_PUBLIC_CALL_CLAIM,
-	/*  3 */ E_PUBLIC_CALL_RELEASE,
-	/*  4 */ E_PUBLIC_CALL_METADATA,
-	/*  5 */ E_PUBLIC_CALL_TIMER, // To release unneeded remotes.
-	/*  6 */ E_PUBLIC_CALL_FLAGS,
-	/*  7 */ E_PUBLIC_CALL_SPECIFIER[32],
-	/* 39 */ E_PUBLIC_CALL_FUNCTION[FUNCTION_LENGTH]
+	/*  0 */ E_PUBLIC_INDIRECTION__[E_INDIRECTION],
+	/*  7 */ E_PUBLIC_CALL_TIMER, // To release unneeded remotes.
+	/*  8 */ E_PUBLIC_CALL_FLAGS,
+	/*  9 */ E_PUBLIC_CALL_SPECIFIER[MAX_PUBLIC_CALL_SPECIFIERS],
+	/* 41 */ E_PUBLIC_CALL_FUNCTION[FUNCTION_LENGTH]
 }
+
+// Constant offsets for assembly.
+const
+	E_INLINE_CALL__           = _:E_INLINE_CALL * cellbytes,
+	E_INLINE_CALL_TIMER__     = _:E_INLINE_CALL_TIMER * cellbytes,
+	E_INLINE_CALL_FLAGS__     = _:E_INLINE_CALL_FLAGS * cellbytes,
+	E_INLINE_CALL_size        = _:E_INLINE_CALL_SIZE,
+	E_INLINE_CALL_SIZE__      = _:E_INLINE_CALL_SIZE * cellbytes,
+	E_INLINE_CALL_SOURCE__    = _:E_INLINE_CALL_SOURCE * cellbytes,
+	E_INLINE_CALL_FUNCTION__  = _:E_INLINE_CALL_FUNCTION * cellbytes,
+	E_INLINE_CALL_PARAMS__    = _:E_INLINE_CALL_PARAMS * cellbytes,
+	E_PUBLIC_CALL__           = _:E_PUBLIC_CALL * cellbytes,
+	E_PUBLIC_CALL_TIMER__     = _:E_PUBLIC_CALL_TIMER * cellbytes,
+	E_PUBLIC_CALL_FLAGS__     = _:E_PUBLIC_CALL_FLAGS * cellbytes,
+	E_PUBLIC_CALL_SPECIFIER__ = _:E_PUBLIC_CALL_SPECIFIER * cellbytes,
+	E_PUBLIC_CALL_FUNCTION__  = _:E_PUBLIC_CALL_FUNCTION * cellbytes,
+	E_INLINE_CALL_diff        = (_:E_INLINE_CALL_FLAGS - _:E_INLINE_CALL_PARAMS) * cellbytes,
+	E_PUBLIC_CALL_specifier    = MAX_PUBLIC_CALL_SPECIFIERS * cellbytes;
 
 #if 0
 
@@ -1103,13 +1115,15 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
 	if (!closure)
 		return Function:0;
-	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
-	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_RemoteHandler_<x>));
-	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
-	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__("Inline_MaybeFree_", 0, false, "i", _:closure));
+	mset(closure, _:E_INDIRECTION_ALWAYS_NULL, 0);
+	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_RemoteHandler_<x>));
+	mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
+	mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
+	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gsInline_MaybeFree, 0, false, YSI_gsSpecifier_i, _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
-	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
+	mset(closure, _:E_INDIRECTION_METADATA, 0);
+	mset(closure, _:E_INDIRECTION_TAG, 0);
+	mset(closure, _:E_INDIRECTION_OWNER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
 	return Function:Indirect_Ptr(Malloc_Resolve(closure));
@@ -1145,17 +1159,19 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	if (!closure)
 		return Function:0;
 	Debug_Print6("GetLocalFunction: 1");
-	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
-	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_LocalHandler_<x>));
-	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
-	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__("Inline_MaybeFree_", 0, false, "i", _:closure));
+	mset(closure, _:E_INDIRECTION_ALWAYS_NULL, 0);
+	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_LocalHandler_<x>));
+	mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
+	mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
+	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gsInline_MaybeFree, 0, false, YSI_gsSpecifier_i, _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
-	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
+	mset(closure, _:E_INDIRECTION_METADATA, 0);
+	mset(closure, _:E_INDIRECTION_TAG, 0);
+	mset(closure, _:E_INDIRECTION_OWNER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
-	new tmp[32];
-	mgets(tmp, 32, closure, _:E_PUBLIC_CALL_SPECIFIER);
+	new tmp[MAX_PUBLIC_CALL_SPECIFIERS];
+	mgets(tmp, MAX_PUBLIC_CALL_SPECIFIERS, closure, _:E_PUBLIC_CALL_SPECIFIER);
 	return Function:Indirect_Ptr(Malloc_Resolve(closure));
 }
 #define GetLocalFunction(&%0<%1>) (F@_@%1:GetLocalFunction(#%0, #%1))
@@ -1252,13 +1268,15 @@ static stock Callback_InlineByName(const name[], tag)
 					Alloc:closure = malloc((size >>> __cell_shift) + (_:E_INLINE_CALL - 1));
 				if (!closure)
 					return 0;
-				mset(closure, _:E_INLINE_CALL_NULL, 0);
-				mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
-				mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
-				mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-				mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__("Inline_MaybeFree_", 0, false, "i", _:closure));
+				mset(closure, _:E_INDIRECTION_ALWAYS_NULL, 0);
+				mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_CallHandler_<x>));
+				mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
+				mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
+				mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(YSI_gsInline_MaybeFree, 0, false, YSI_gsSpecifier_i, _:closure));
 				mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
-				mset(closure, _:E_INLINE_CALL_METADATA, 0);
+				mset(closure, _:E_INDIRECTION_METADATA, 0);
+				mset(closure, _:E_INDIRECTION_TAG, 0);
+				mset(closure, _:E_INDIRECTION_OWNER, 0);
 				mset(closure, _:E_INLINE_CALL_SIZE, size);
 				mset(closure, _:E_INLINE_CALL_SOURCE, ptr);
 				mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(ret));
@@ -1447,11 +1465,11 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 		// different to in the indirection include which knows to resolve the
 		// pointer before checking this, unlike here were we don't know the
 		// type.
-		assert(AMX_HEADER_DAT - AMX_HEADER_COD > 128);
+		assert(AMX_HEADER_DAT - AMX_HEADER_COD > E_PUBLIC_CALL_specifier);
 		ret = getarg(0 + __COMPILER_BUG_317);
 		if (ret == 0)
 			return false;
-		if (!(0 < ret < 128))
+		if (!(0 < ret < E_PUBLIC_CALL_specifier))
 		{
 			// Resolved inline.
 			Debug_Print3("Callback_Get: Found resolved callback: %08x", ret);
@@ -1462,13 +1480,13 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			if (ret < 0 || AMX_Read(ret))
 				return true;
 			// Check the format, since we might have a new one to use here.
-			numArgs = AMX_Read(ret + _:E_PUBLIC_CALL_HANDLER * cellbytes);
+			numArgs = AMX_Read(ret + _:E_INDIRECTION_HANDER * cellbytes);
 			if (numArgs == _:addressof (Callback_LocalHandler_<x>) || numArgs == _:addressof (Callback_RemoteHandler_<x>))
 			{
-				if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes) == '\0')
+				if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_specifier) == '\0')
 				{
 					// Given an explicit specifier here, not before.
-					Callback_Strcat_(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes, expect[4], 32);
+					Callback_Strcat_(ret + _:E_PUBLIC_CALL_specifier, expect[4], MAX_PUBLIC_CALL_SPECIFIERS);
 				}
 			}
 			return true;
@@ -1540,9 +1558,9 @@ static Callback_CallHandler_(...)
 	// Get the size, and update `INDIRECTION_DATA` to point to the data.
 	#emit LOAD.alt         INDIRECTION_DATA    // 2
 	#emit MOVE.pri                             // 3
-	#emit ADD.C            40                  // 5, E_INLINE_CALL_PARAMS * cellbytes
+	#emit ADD.C            E_INLINE_CALL_PARAMS__ // 5, E_INLINE_CALL_PARAMS * cellbytes
 	#emit PUSH.pri                             // 6
-	#emit CONST.pri        7                   // 8, E_INLINE_CALL_SIZE
+	#emit CONST.pri        E_INLINE_CALL_size  // 8, E_INLINE_CALL_SIZE
 	#emit LIDX                                 // 9
 	#emit PUSH.pri                             // 10
 	#emit STACK            0                   // 12
@@ -1584,11 +1602,11 @@ static Callback_CallHandler_(...)
 	// `e_INLINE_FLAG_CONST` from the flags (actually clears all the flags,
 	// since `e_INLINE_FLAG_PUBLIC` isn't set here either).
 	#emit LOAD.S.pri       __local0_offset     // 56
-	#emit ADD.C            __m4_cells          // 58 , E_INLINE_CALL_FLAGS - E_INLINE_CALL_PARAMS
+	#emit ADD.C            E_INLINE_CALL_diff  // 58, (E_INLINE_CALL_FLAGS - E_INLINE_CALL_PARAMS) * cellbytes
 	#emit MOVE.alt                             // 59
 	#emit ZERO.pri                             // 60
 	#emit STOR.I                               // 61
-	
+
 	#emit LCTRL            __frm               // 63
 	#emit SCTRL            __stk               // 65
 	#emit LOAD.pri         I@                  // 67
@@ -1627,9 +1645,9 @@ static stock Callback_RemoteHandler_(...)
 	
 	// Push the specifier and function name.
 	#emit LOAD.pri         INDIRECTION_DATA
-	#emit ADD.C            28  // E_PUBLIC_CALL_SPECIFIER * cellbytes
+	#emit ADD.C            E_PUBLIC_CALL_SPECIFIER__  // E_PUBLIC_CALL_SPECIFIER * cellbytes
 	#emit PUSH.pri
-	#emit ADD.C            128 // (E_PUBLIC_CALL_FUNCTION - E_PUBLIC_CALL_SPECIFIER) * cellbytes
+	#emit ADD.C            E_PUBLIC_CALL_specifier // (E_PUBLIC_CALL_FUNCTION - E_PUBLIC_CALL_SPECIFIER) * cellbytes
 	#emit PUSH.pri
 	#emit LOAD.S.pri       8
 	#emit ADD.C            8
@@ -1675,9 +1693,9 @@ static stock Callback_LocalHandler_(...)
 	
 	// Push the specifier and function name.
 	#emit LOAD.pri         INDIRECTION_DATA
-	#emit ADD.C            28  // E_PUBLIC_CALL_SPECIFIER * cellbytes
+	#emit ADD.C            E_PUBLIC_CALL_SPECIFIER__  // E_PUBLIC_CALL_SPECIFIER * cellbytes
 	#emit PUSH.pri
-	#emit ADD.C            128 // (E_PUBLIC_CALL_FUNCTION - E_PUBLIC_CALL_SPECIFIER) * cellbytes
+	#emit ADD.C            E_PUBLIC_CALL_specifier // (E_PUBLIC_CALL_FUNCTION - E_PUBLIC_CALL_SPECIFIER) * cellbytes
 	#emit PUSH.pri
 	#emit LOAD.S.pri       8
 	#emit ADD.C            8
@@ -2091,13 +2109,15 @@ stock Inline_UI_(const &header)
 	Debug_Print5("Inline_UI_: %d %d %d %d %d", ptr, frm, size, _:closure, AMX_Read(header));
 	if (!closure)
 		return 0;
-	mset(closure, _:E_INLINE_CALL_NULL, 0);
-	mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
-	mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
-	mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__("Inline_MaybeFree_", 0, false, "i", _:closure));
+	mset(closure, _:E_INDIRECTION_ALWAYS_NULL, 0);
+	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_CallHandler_<x>));
+	mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
+	mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
+	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(YSI_gsInline_MaybeFree, 0, false, YSI_gsSpecifier_i, _:closure));
 	mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
-	mset(closure, _:E_INLINE_CALL_METADATA, 0);
+	mset(closure, _:E_INDIRECTION_METADATA, 0);
+	mset(closure, _:E_INDIRECTION_TAG, 0);
+	mset(closure, _:E_INDIRECTION_OWNER, 0);
 	mset(closure, _:E_INLINE_CALL_SIZE, size);
 	mset(closure, _:E_INLINE_CALL_SOURCE, ptr);
 	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(header));
