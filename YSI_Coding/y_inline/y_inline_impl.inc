@@ -276,6 +276,10 @@ forward Inline_MaybeConst_(ResolvedAlloc:slot);
 
 #define CALL@Callback_Return_%8() Callback_Return_%8(0)
 
+static stock const
+	YSI_gscSpecifier_i[] = "i",
+	YSI_gscInline_MaybeFree[] = "Inline_MaybeFree_";
+
 static stock
 	YSI_g_sFakeE_INLINE_CALL[E_INLINE_CALL];
 	
@@ -1119,7 +1123,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_RemoteHandler_<x>));
 	mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gsInline_MaybeFree, 0, false, YSI_gsSpecifier_i, _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
 	mset(closure, _:E_INDIRECTION_TAG, 0);
@@ -1163,7 +1167,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_LocalHandler_<x>));
 	mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gsInline_MaybeFree, 0, false, YSI_gsSpecifier_i, _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
 	mset(closure, _:E_INDIRECTION_TAG, 0);
@@ -1272,7 +1276,7 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_CallHandler_<x>));
 				mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
 				mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-				mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(YSI_gsInline_MaybeFree, 0, false, YSI_gsSpecifier_i, _:closure));
+				mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
 				mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 				mset(closure, _:E_INDIRECTION_METADATA, 0);
 				mset(closure, _:E_INDIRECTION_TAG, 0);
@@ -1538,7 +1542,7 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__("Inline_MaybeConst_", 0, false, YSI_gsSpecifier_i, AMX_Ref(func[E_INDIRECTION_ALWAYS_NULL]));
+	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__("Inline_MaybeConst_", 0, false, YSI_gscSpecifier_i, AMX_Ref(func[E_INDIRECTION_ALWAYS_NULL]));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2113,7 +2117,7 @@ stock Inline_UI_(const &header)
 	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_CallHandler_<x>));
 	mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(YSI_gsInline_MaybeFree, 0, false, YSI_gsSpecifier_i, _:closure));
+	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
 	mset(closure, _:E_INDIRECTION_TAG, 0);
