@@ -195,7 +195,6 @@ const
 	E_INLINE_CALL__           = _:E_INLINE_CALL * cellbytes,
 	E_INLINE_CALL_TIMER__     = _:E_INLINE_CALL_TIMER * cellbytes,
 	E_INLINE_CALL_FLAGS__     = _:E_INLINE_CALL_FLAGS * cellbytes,
-	E_INLINE_CALL_size        = _:E_INLINE_CALL_SIZE,
 	E_INLINE_CALL_SIZE__      = _:E_INLINE_CALL_SIZE * cellbytes,
 	E_INLINE_CALL_SOURCE__    = _:E_INLINE_CALL_SOURCE * cellbytes,
 	E_INLINE_CALL_FUNCTION__  = _:E_INLINE_CALL_FUNCTION * cellbytes,
@@ -206,7 +205,7 @@ const
 	E_PUBLIC_CALL_SPECIFIER__ = _:E_PUBLIC_CALL_SPECIFIER * cellbytes,
 	E_PUBLIC_CALL_FUNCTION__  = _:E_PUBLIC_CALL_FUNCTION * cellbytes,
 	E_INLINE_CALL_diff        = (_:E_INLINE_CALL_FLAGS - _:E_INLINE_CALL_PARAMS) * cellbytes,
-	E_PUBLIC_CALL_specifier    = MAX_PUBLIC_CALL_SPECIFIERS * cellbytes;
+	E_PUBLIC_CALL_specifier   = MAX_PUBLIC_CALL_SPECIFIERS * cellbytes;
 
 #if 0
 
@@ -293,7 +292,7 @@ stock operator*(func, Inline_EBC:ebc)
 		data = Indirect_DePtr_(func);
 	if (data >= 0 && AMX_Read(data) == 0)
 	{
-		AMX_Write(data + E_INDIRECTION_OWNER_bytes, ebc);
+		AMX_Write(data + E_INDIRECTION_OWNER__, ebc);
 	}
 	return func;
 }
@@ -304,7 +303,7 @@ stock operator*(@Ik:func, Inline_EBC:ebc)
 		data = Indirect_DePtr_(func);
 	if (data >= 0 && AMX_Read(data) == 0)
 	{
-		AMX_Write(data + E_INDIRECTION_OWNER_bytes, ebc);
+		AMX_Write(data + E_INDIRECTION_OWNER__, ebc);
 	}
 	return func;
 }
@@ -1142,7 +1141,7 @@ stock Inline_GetOwner__(func)
 		data = Indirect_DePtr_(func);
 	if (data >= 0 && AMX_Read(data) == 0)
 	{
-		return AMX_Read(data + E_INDIRECTION_OWNER_bytes);
+		return AMX_Read(data + E_INDIRECTION_OWNER__);
 	}
 	return 0;
 }
@@ -1594,7 +1593,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			if (ret < 0 || AMX_Read(ret))
 				return true;
 			// Check the format, since we might have a new one to use here.
-			numArgs = AMX_Read(ret + E_INDIRECTION_HANDER_bytes);
+			numArgs = AMX_Read(ret + E_INDIRECTION_HANDER__);
 			if (numArgs == _:addressof (Callback_LocalHandler_<x>) || numArgs == _:addressof (Callback_RemoteHandler_<x>))
 			{
 				if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_specifier) == '\0')
@@ -1674,7 +1673,7 @@ static Callback_CallHandler_(...)
 	#emit MOVE.pri                             // 3
 	#emit ADD.C            E_INLINE_CALL_PARAMS__ // 5, E_INLINE_CALL_PARAMS * cellbytes
 	#emit PUSH.pri                             // 6
-	#emit CONST.pri        E_INLINE_CALL_size  // 8, E_INLINE_CALL_SIZE
+	#emit CONST.pri        E_INLINE_CALL_SIZE  // 8, E_INLINE_CALL_SIZE
 	#emit LIDX                                 // 9
 	#emit PUSH.pri                             // 10
 	#emit STACK            0                   // 12
@@ -2308,7 +2307,7 @@ stock Inline_Debug(ptr)
 	if ('\0' < type <= '~')
 	{
 		printf("Type: String");
-		mgets(tmp, 32, ptr, 0);
+		mgets(tmp, 32, data, 0);
 		printf("    %s", tmp);
 		return;
 	}
@@ -2353,9 +2352,9 @@ stock Inline_Debug(ptr)
 	{
 		printf("    E_PUBLIC_CALL_TIMER:       %d", mget(data, E_PUBLIC_CALL_TIMER));
 		printf("    E_PUBLIC_CALL_FLAGS:       %d", mget(data, E_PUBLIC_CALL_FLAGS));
-		mgets(tmp, MAX_PUBLIC_CALL_SPECIFIERS, ptr, _:E_PUBLIC_CALL_SPECIFIER);
+		mgets(tmp, MAX_PUBLIC_CALL_SPECIFIERS, data, _:E_PUBLIC_CALL_SPECIFIER);
 		printf("    E_PUBLIC_CALL_SIZE:        %s", tmp);
-		mgets(tmp, FUNCTION_LENGTH, ptr, _:E_PUBLIC_CALL_FUNCTION);
+		mgets(tmp, FUNCTION_LENGTH, data, _:E_PUBLIC_CALL_FUNCTION);
 		printf("    E_PUBLIC_CALL_FUNCTION:    %s", tmp);
 	}
 	else if (type == _:addressof (Callback_CallHandler_<x>))
