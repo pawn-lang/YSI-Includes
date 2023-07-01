@@ -1160,8 +1160,7 @@ stock Inline_GetOwner__(func)
 #define @Il:%0)%1) %0%1))
 
 // Detect a callback with a tag.
-#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1,#%0,@I0<F@_@%0:>),F@_@%0:%2$)
-#define @I0<%0> tagof(%0)
+#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1,#%0),F@_@%0:%2$)
 
 // Normally `F@_@` doesn't consume spaces because it is a valid tag on its own.
 // However, in this case we know that extra specifiers after the tag prefix
@@ -1177,7 +1176,7 @@ stock Inline_GetOwner__(func)
 
 // Move the callback parameter inside the brackets.
 #define Inline_US_()%8,%0) I@%8,addressof(%0))
-#define Inline_UI_()%8,%0) Inline_UI_(_:%0,@I0<%0>)%8,%0)
+#define Inline_UI_()%8,%0) Inline_UI_(_:%0,tagof(%0))%8,%0)
 #define Inline_UP_()%8,%0) Inline_UP_(_:@Ir:@Is:@In:#%0)%8,F@_@:I@ I@O$)
 #define @Im:Callback_Find_(,I@),F@_@:I@%0) Callback_Find_(#%0,I@),F@_@:I@)
 
@@ -1216,7 +1215,7 @@ stock I@K(n)
  *//*------------------------------------------------------------------------**/
 
 #define Function: F@_@:
-stock Function:GetRemoteFunction(const func[], const spec[], F@_@:tag = F@_@:0)
+stock Function:GetRemoteFunction(const func[], const spec[], tag = 0)
 {
 	new
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
@@ -1231,13 +1230,23 @@ stock Function:GetRemoteFunction(const func[], const spec[], F@_@:tag = F@_@:0)
 	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
-	mset(closure, _:E_INDIRECTION_TAG, tag ? (_:tag) : tagof (tag));
+	if (tag)
+	{
+		mset(closure, _:E_INDIRECTION_TAG, tag);
+	}
+	else
+	{
+		new
+			tn[FUNCTION_LENGTH] = "F@_@";
+		strcat(tn, spec);
+		mset(closure, _:E_INDIRECTION_TAG, GetTagIDFromName(tn));
+	}
 	mset(closure, _:E_INDIRECTION_OWNER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
 	return Function:Indirect_Ptr(Malloc_Resolve(closure));
 }
-#define GetRemoteFunction(&%0<%1>) (F@_@%1:GetRemoteFunction(#%0, #%1, F@_@:tagof (F@_@%1:)))
+#define GetRemoteFunction(&%0<%1>) (F@_@%1:GetRemoteFunction(#%0, #%1))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Public function to get.</param>
@@ -1257,7 +1266,7 @@ stock Function:GetRemoteFunction(const func[], const spec[], F@_@:tag = F@_@:0)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Function:GetLocalFunction(const func[], const spec[], F@_@:tag = F@_@:0)
+stock Function:GetLocalFunction(const func[], const spec[], tag = 0)
 {
 	Debug_Print4("GetLocalFunction called: %s, %s", func, spec);
 	if (funcidx(func) == -1)
@@ -1279,7 +1288,17 @@ stock Function:GetLocalFunction(const func[], const spec[], F@_@:tag = F@_@:0)
 	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
-	mset(closure, _:E_INDIRECTION_TAG, tag ? (_:tag) : tagof (tag));
+	if (tag)
+	{
+		mset(closure, _:E_INDIRECTION_TAG, tag);
+	}
+	else
+	{
+		new
+			tn[FUNCTION_LENGTH] = "F@_@";
+		strcat(tn, spec);
+		mset(closure, _:E_INDIRECTION_TAG, GetTagIDFromName(tn));
+	}
 	mset(closure, _:E_INDIRECTION_OWNER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
@@ -1287,7 +1306,7 @@ stock Function:GetLocalFunction(const func[], const spec[], F@_@:tag = F@_@:0)
 	mgets(tmp, MAX_PUBLIC_CALL_SPECIFIERS, closure, _:E_PUBLIC_CALL_SPECIFIER);
 	return Function:Indirect_Ptr(Malloc_Resolve(closure));
 }
-#define GetLocalFunction(&%0<%1>) (F@_@%1:GetLocalFunction(#%0, #%1, F@_@:tagof (F@_@%1:)))
+#define GetLocalFunction(&%0<%1>) (F@_@%1:GetLocalFunction(#%0, #%1))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Function pointer to call.</param>
@@ -1429,7 +1448,7 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 		new
 			tagname[FUNCTION_LENGTH];
 		GetTagNameFromID(tag, tagname);
-		return !!(dest = _:GetRemoteFunction(name, tagname[4], F@_@:tag));
+		return !!(dest = _:GetRemoteFunction(name, tagname[4], tag));
 	}
 	if (funcidx(name) == -1)
 	{
@@ -1441,7 +1460,7 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 	new
 		tagname[FUNCTION_LENGTH];
 	GetTagNameFromID(tag, tagname);
-	return !!(dest = _:GetLocalFunction(name, tagname[4], F@_@:tag));
+	return !!(dest = _:GetLocalFunction(name, tagname[4], tag));
 }
 
 #define Callback_Find(%0,%1) Callback_Find_(%0,_:%1,.tag=tagof(%1))
@@ -2248,7 +2267,7 @@ stock Inline_UI_(const &header, tag)
 stock Inline_UP_(const func[], const spec[] = "", tag = 0)
 {
 	// Convert a function name to a pointer.
-	I@ = _:GetLocalFunction(func, spec, F@_@:tag);
+	I@ = _:GetLocalFunction(func, spec, tag);
 }
 
 /*-------------------------------------------------------------------------*//**
