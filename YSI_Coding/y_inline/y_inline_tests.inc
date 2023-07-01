@@ -502,14 +502,8 @@ static stock
 		YSI_g_sRemoteTestVar = g;
 	}
 	y_inline_Get(using inline func, cc);
-	printf("1:");
-	Inline_Debug(cc[0]);
 	Callback_Call(cc);
-	printf("2:");
-	Inline_Debug(cc[0]);
 	Callback_Call(cc);
-	printf("3:");
-	Inline_Debug(cc[0]);
 	Callback_Call(cc);
 	YSI_g_sRemoteTestVar = 0;
 	Callback_Call(cc);
