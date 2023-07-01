@@ -2239,7 +2239,7 @@ stock Inline_UI_(const &header, tag)
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
 	RawMemCpy(_:ra + E_INLINE_CALL_PARAMS__, ptr, size);
 	AMX_Write(_:ra + (E_INLINE_CALL_PARAMS__ + __2_cells) + frm, args);
-	printf("ptr = %08x, addr = %08x, data = %08x", Indirect_Ptr(ra), ra, closure);
+	Debug_Print5("Inline_UI_: ptr = %08x, addr = %08x, data = %08x", Indirect_Ptr(ra), ra, closure);
 	return Indirect_Ptr(ra);
 }
 #if __COMPILER_CONST_REF
@@ -2303,9 +2303,8 @@ stock Inline_Debug(ptr)
 		Alloc:data = Alloc:Malloc_Reconcile(ResolvedAlloc:Indirect_DePtr(ptr)),
 		type = mget(data, E_INDIRECTION_ALWAYS_NULL),
 		tmp[32];
-	printf("ptr = %08x, addr = %08x, data = %08x", ptr, Indirect_DePtr(ptr), data);
+	Debug_Print5("Inline_Debug_: ptr = %08x, addr = %08x, data = %08x, type = %d", ptr, Indirect_DePtr(ptr), data, type);
 	// If `ALWAYS_NULL` isn't null, this isn't an indirection handler.
-	printf("type: %d", type);
 	if ('\0' < type <= '~')
 	{
 		printf("Type: String");
