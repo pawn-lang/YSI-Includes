@@ -1203,12 +1203,13 @@ stock Inline_GetOwner__(func)
 #define @Il:%0)%1) %0%1))
 
 // Detect a callback with a tag.
-#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1,#%0,tagof(F@_@%0:)),F@_@%0:%2$)
+#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1,#%0,@I0<F@_@%0:>),F@_@%0:%2$)
+#define @I0<%0> tagof(%0)
 
 // Normally `F@_@` doesn't consume spaces because it is a valid tag on its own.
 // However, in this case we know that extra specifiers after the tag prefix
 // exist so we can check fairly safely.
-#define @It:%0),F@_@%9\32;%1:%2$) @It:%0),F@_@%9%1:%2$)
+#define @It:%0,%3),F@_@%9\32;%1:%2$) @It:%0,%3),F@_@%9%1:%2$)
 
 // Detect a callback that starts with "On".  These are often redefined and we
 // want to keep the original.
@@ -1219,7 +1220,7 @@ stock Inline_GetOwner__(func)
 
 // Move the callback parameter inside the brackets.
 #define Inline_US_()%8,%0) I@%8,addressof(%0))
-#define Inline_UI_()%8,%0) Inline_UI_(_:%0,tagof(%0))%8,%0)
+#define Inline_UI_()%8,%0) Inline_UI_(_:%0,@I0<%0>)%8,%0)
 #define Inline_UP_()%8,%0) Inline_UP_(_:@Ir:@Is:@In:#%0)%8,F@_@:I@ I@O$)
 #define @Im:Callback_Find_(,I@),F@_@:I@%0) Callback_Find_(#%0,I@),F@_@:I@)
 
