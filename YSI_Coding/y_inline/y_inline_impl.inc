@@ -276,6 +276,39 @@ forward Inline_MaybeConst_(ResolvedAlloc:slot);
 
 #define CALL@Callback_Return_%8() Callback_Return_%8(0)
 
+// Never had to fake an operator call for `addressof` before.
+#define CALL@Inline_operatorMul1%8() ((0)*%8(Inline_EBC:0))
+#define CALL@Inline_operatorMul2%8() ((@Ik:0)*%8(Inline_EBC:0))
+#define CALL@Inline_EBC__%8() Inline_EBC__%8(0,0)
+
+stock Inline_EBC:Inline_EBC__(owner, tag)
+{
+	// 10 bits for the tag (max 1024), 22 for the ID (max 4,194,303).
+	return Inline_EBC:(owner | (tag & 0x3FF << 22));
+}
+
+stock operator*(func, Inline_EBC:ebc)
+{
+	new
+		data = Indirect_DePtr_(func);
+	if (data >= 0 && AMX_Read(data) == 0)
+	{
+		AMX_Write(data + E_INDIRECTION_OWNER_bytes, ebc);
+	}
+	return func;
+}
+
+stock operator*(@Ik:func, Inline_EBC:ebc)
+{
+	new
+		data = Indirect_DePtr_(func);
+	if (data >= 0 && AMX_Read(data) == 0)
+	{
+		AMX_Write(data + E_INDIRECTION_OWNER_bytes, ebc);
+	}
+	return func;
+}
+
 static stock const
 	YSI_gscSpecifier_i[] = "i",
 	YSI_gscInline_MaybeFree[] = "Inline_MaybeFree_";
@@ -569,6 +602,28 @@ static stock Inline_FoundUsingInline(const scanner[CodeScanner])
 		@emit NOP
 	}
 #endif
+	return 0;
+}
+
+static stock Inline_FoundEBC(const scanner[CodeScanner])
+{
+	new
+		ctx[AsmContext];
+	switch (CodeScanGetMatchLength(scanner))
+	{
+		case __11_cells:
+		{
+			CodeScanGetMatchAsm(scanner, ctx, __9_cells);
+			@emit PUSH.pri
+			@emit NOP
+		}
+		case __12_cells:
+		{
+			CodeScanGetMatchAsm(scanner, ctx, __9_cells);
+			@emit NOP
+			@emit NOP
+		}
+	}
 	return 0;
 }
 
@@ -889,7 +944,61 @@ public OnCodeInit()
 			);
 			CodeScanAddMatcher(scanner, csm7f);
 		#endif
-		
+			
+			new csm10a[CodeScanMatcher];
+			CodeScanMatcherInit(csm10a, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm10a,
+				OP(CALL,               &Inline_EBC__)
+				OP(POP_ALT)
+				OP(PUSH_PRI)
+				OP(PUSH_ALT)
+				OP(PUSH_C,             8)
+				OP(CALL,               &Inline_operatorMul1)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm10a);
+
+			new csm10b[CodeScanMatcher];
+			CodeScanMatcherInit(csm10b, &Inline_FoundUsingInline);
+			CodeScanMatcherPattern(csm10b,
+				OP(CALL,               &Inline_EBC__)
+				OP(POP_ALT)
+				OP(PUSH_PRI)
+				OP(PUSH_ALT)
+				OP(PUSH_C,             8)
+				OP(CALL,               &Inline_operatorMul1)
+				OP(LOAD_S_PRI,         ???)
+				OP(PUSH_PRI)
+			);
+			CodeScanAddMatcher(scanner, csm10b);
+
+			new csm10c[CodeScanMatcher];
+			CodeScanMatcherInit(csm10c, &Inline_FoundEBC);
+			CodeScanMatcherPattern(csm10c,
+				OP(CALL,               &Inline_EBC__)
+				OP(POP_ALT)
+				OP(PUSH_PRI)
+				OP(PUSH_ALT)
+				OP(PUSH_C,             8)
+				OP(CALL,               &Inline_operatorMul2)
+				OP(PUSH_S,             ???)
+			);
+			CodeScanAddMatcher(scanner, csm10c);
+
+			new csm10d[CodeScanMatcher];
+			CodeScanMatcherInit(csm10d, &Inline_FoundEBC);
+			CodeScanMatcherPattern(csm10d,
+				OP(CALL,               &Inline_EBC__)
+				OP(POP_ALT)
+				OP(PUSH_PRI)
+				OP(PUSH_ALT)
+				OP(PUSH_C,             8)
+				OP(CALL,               &Inline_operatorMul2)
+				OP(LOAD_S_PRI,         ???)
+				OP(PUSH_PRI)
+			);
+			CodeScanAddMatcher(scanner, csm10d);
+
 			// Destructors.
 			{
 				// We can't directly get the address of a destructor.  Instead,
@@ -1069,28 +1178,6 @@ Note:
 #define EBC(%0,%1) (%1)$(Inline_EBC__(_:(%0),_:@Iz:tagof(%0)))
 #define @Iz:tagof(%0:%1))) tagof(%0:)))
 
-stock operator*(func, Inline_EBC:ebc)
-{
-	new
-		data = Indirect_DePtr_(func);
-	if (data >= 0 && AMX_Read(data) == 0)
-	{
-		AMX_Write(data + E_INDIRECTION_OWNER_bytes, ebc);
-	}
-	return func;
-}
-
-stock operator*(@Ik:func, Inline_EBC:ebc)
-{
-	new
-		data = Indirect_DePtr_(func);
-	if (data >= 0 && AMX_Read(data) == 0)
-	{
-		AMX_Write(data + E_INDIRECTION_OWNER_bytes, ebc);
-	}
-	return func;
-}
-
 stock Inline_GetOwner__(func)
 {
 	new
@@ -1103,12 +1190,6 @@ stock Inline_GetOwner__(func)
 }
 
 #define Inline_GetOwner(%0) Inline_GetOwner__(_:(%0))
-
-stock Inline_EBC:Inline_EBC__(owner, tag)
-{
-	// 10 bits for the tag (max 1024), 22 for the ID (max 4,194,303).
-	return Inline_EBC:(owner | (tag & 0x3FF << 22));
-}
 
 // Detect a `using` parameter that is not the last parameter.  Actually handles
 // nested calls quite nicely - `X(Y(using inline Z), 5)` should be detected as a
