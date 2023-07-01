@@ -886,7 +886,7 @@ public OnCodeInit()
 			CodeScanMatcherPattern(csm7a,
 				OP(ADDR_PRI,           ???)
 				OP(PUSH_PRI)
-				OP(PUSH_C,             __1_cell)
+				OP(PUSH_C,             __2_cells)
 				OP(CALL,               &Inline_UI_)
 				OP(LOAD_S_PRI,         ???)
 				OP(PUSH_PRI)
@@ -897,53 +897,11 @@ public OnCodeInit()
 			CodeScanMatcherInit(csm7b, &Inline_FoundUsingInline);
 			CodeScanMatcherPattern(csm7b,
 				OP(PUSH_ADR,           ???)
-				OP(PUSH_C,             __1_cell)
+				OP(PUSH_C,             __2_cells)
 				OP(CALL,               &Inline_UI_)
 				OP(PUSH_S,             ???)
 			);
 			CodeScanAddMatcher(scanner, csm7b);
-		
-		#if __COMPILER_O2
-			new csm7c[CodeScanMatcher];
-			CodeScanMatcherInit(csm7c, &Inline_FoundUsingInline);
-			CodeScanMatcherPattern(csm7c,
-				OP(PUSH2_ADR,          ???, ???)
-				OP(PUSH_C,             __1_cell)
-				OP(CALL,               &Inline_UI_)
-				OP(PUSH_S,             ???)
-			);
-			CodeScanAddMatcher(scanner, csm7c);
-			
-			new csm7d[CodeScanMatcher];
-			CodeScanMatcherInit(csm7d, &Inline_FoundUsingInline);
-			CodeScanMatcherPattern(csm7d,
-				OP(PUSH3_ADR,          ???, ???, ???)
-				OP(PUSH_C,             __1_cell)
-				OP(CALL,               &Inline_UI_)
-				OP(PUSH_S,             ???)
-			);
-			CodeScanAddMatcher(scanner, csm7d);
-			
-			new csm7e[CodeScanMatcher];
-			CodeScanMatcherInit(csm7e, &Inline_FoundUsingInline);
-			CodeScanMatcherPattern(csm7e,
-				OP(PUSH4_ADR,          ???, ???, ???, ???)
-				OP(PUSH_C,             __1_cell)
-				OP(CALL,               &Inline_UI_)
-				OP(PUSH_S,             ???)
-			);
-			CodeScanAddMatcher(scanner, csm7e);
-			
-			new csm7f[CodeScanMatcher];
-			CodeScanMatcherInit(csm7f, &Inline_FoundUsingInline);
-			CodeScanMatcherPattern(csm7f,
-				OP(PUSH5_ADR,          ???, ???, ???, ???, ???)
-				OP(PUSH_C,             __1_cell)
-				OP(CALL,               &Inline_UI_)
-				OP(PUSH_S,             ???)
-			);
-			CodeScanAddMatcher(scanner, csm7f);
-		#endif
 			
 			new csm10a[CodeScanMatcher];
 			CodeScanMatcherInit(csm10a, &Inline_FoundUsingInline);
@@ -1724,8 +1682,8 @@ static Callback_CallHandler_(...)
 	#emit SCTRL            __stk               // 15
 	// Grow the stack.
 	// Call memcpy (put the native's parameters on the stack beyond `dest`).
-	#emit PUSH.S           __m2_cells          // 17
-	#emit PUSH.S           __m2_cells          // 19
+	#emit PUSH.S           __local1_offset     // 17
+	#emit PUSH.S           __local1_offset     // 19
 	#emit PUSH.C           0                   // 21
 	#emit PUSH.S           __local0_offset     // 23
 	#emit PUSH.pri                             // 24
@@ -1750,7 +1708,7 @@ static Callback_CallHandler_(...)
 	#emit PUSH.C           0                   // 47
 	#emit PUSH.pri                             // 48
 	#emit PUSH.S           __local0_offset     // 50
-	#emit PUSH.C           __10_cells          // 52
+	#emit PUSH.C           __5_cells           // 52
 	#emit SYSREQ.C         memcpy              // 54
 	
 	// At this point, we've written the closure back to the structure.
@@ -2281,6 +2239,7 @@ stock Inline_UI_(const &header, tag)
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
 	RawMemCpy(_:ra + E_INLINE_CALL_PARAMS__, ptr, size);
 	AMX_Write(_:ra + (E_INLINE_CALL_PARAMS__ + __2_cells) + frm, args);
+	printf("ptr = %08x, addr = %08x, data = %08x", Indirect_Ptr(ra), ra, closure);
 	return Indirect_Ptr(ra);
 }
 #if __COMPILER_CONST_REF
@@ -2341,10 +2300,12 @@ stock Inline_Debug(ptr)
 {
 	// Get back to normal memory.
 	new
-		Alloc:data = Malloc_Reconcile(ResolvedAlloc:Indirect_DePtr(ptr)),
+		Alloc:data = Alloc:Malloc_Reconcile(ResolvedAlloc:Indirect_DePtr(ptr)),
 		type = mget(data, E_INDIRECTION_ALWAYS_NULL),
 		tmp[32];
+	printf("ptr = %08x, addr = %08x, data = %08x", ptr, Indirect_DePtr(ptr), data);
 	// If `ALWAYS_NULL` isn't null, this isn't an indirection handler.
+	printf("type: %d", type);
 	if ('\0' < type <= '~')
 	{
 		printf("Type: String");
