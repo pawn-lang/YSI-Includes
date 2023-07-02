@@ -331,7 +331,7 @@ static stock const
 
 static stock
 	YSI_g_sFakeE_INLINE_CALL[E_INLINE_CALL];
-	
+
 #define CALL@Callback_Claim_%8() Callback_Claim_%8(YSI_g_sFakeE_INLINE_CALL)
 #define P@YSI_g_sFakeE_INLINE_CALL0 P@__ARR0
 
