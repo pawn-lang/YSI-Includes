@@ -90,7 +90,10 @@ __COMPILER_TAG_DATA(Player, INVALID_PLAYER_ID);
 __COMPILER_TAG_DATA(Object, INVALID_OBJECT_ID);
 
 static stock
-	YSI_g_sKnownOwnedCallbacks = 0;
+	YSI_g_sKnownOwnedCallbacks = 0,
+	YSI_g_sFakeE_INDIRECTION[E_INDIRECTION];
+
+#define CALL@EBC_Claim_%8() EBC_Claim_%8(YSI_g_sFakeE_INDIRECTION)
 
 stock bool:Inline_HasEBC() <y_inline_ebc : y_inline_has_ebc>
 {
@@ -120,6 +123,17 @@ stock EBC_Deactivate_(owner, tag)
 }
 #define EBC_Deactivate(%0) EBC_Deactivate(_:(%0),_:tagof(%0))
 
+static stock EBC_Claim_(func[E_INDIRECTION])
+{
+	// Reset the claim pointer.
+	func[E_INDIRECTION_CLAIM] = func[E_INDIRECTION_NEXT];
+	// Add this callback to the list of known callbacks.
+	func[E_INDIRECTION_NEXT] = YSI_g_sKnownOwnedCallbacks;
+	YSI_g_sKnownOwnedCallbacks = ref(func[E_INDIRECTION_NEXT]);
+	// Re-claim the function using the original pointer.
+	Indirect_Claim(Indirect_Ref_(func));
+}
+
 stock EBC_Activate_(func, ebc) <y_inline_ebc : y_inline_has_ebc>
 {
 	new
@@ -128,14 +142,11 @@ stock EBC_Activate_(func, ebc) <y_inline_ebc : y_inline_has_ebc>
 	{
 		// Store the owner.
 		AMX_Write(data + E_INDIRECTION_OWNER__, ebc);
-		// Add this callback to the list of known callbacks.
-		AMX_Write(data + E_INDIRECTION_NEXT__, YSI_g_sKnownOwnedCallbacks);
-		YSI_g_sKnownOwnedCallbacks = data + E_INDIRECTION_NEXT__;
-		// Claim the function, since it is no longer bound to a scopre but to an
-		// external owner.
-		// TODO:  Use this claim machinery to do the EBC claiming instead.  We
-		// can reuse `NEXT` to hold the original claim pointer temporarily.
-		Indirect_Claim(func);
+		// Change the claim pointer to our internal one, so we add it to the
+		// list if this is ever claimed.
+		ebc = AMX_Read(data + E_INDIRECTION_CLAIM__);
+		AMX_Write(data + E_INDIRECTION_NEXT__, ebc);
+		AMX_Write(data + E_INDIRECTION_CLAIM__, _:addressof (EBC_Claim_));
 	}
 	return func;
 }
