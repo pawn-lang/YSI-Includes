@@ -154,6 +154,11 @@ stock Callback_Return_(value)
 	return value;
 }
 
+stock Callback_Blank_(...)
+{
+	return 0;
+}
+
 __COMPILER_STATIC_ENUM e_INLINE_FLAG (<<= 1)
 {
 	e_INLINE_FLAG_NONE = 0,
@@ -293,6 +298,8 @@ stock operator*(func, Inline_EBC:ebc)
 	if (data >= 0 && AMX_Read(data) == 0)
 	{
 		AMX_Write(data + E_INDIRECTION_OWNER__, ebc);
+		// Claim the function, since it is no longer bound to a scopre but to an
+		// external owner.
 	}
 	return func;
 }
@@ -304,6 +311,8 @@ stock operator*(@Ik:func, Inline_EBC:ebc)
 	if (data >= 0 && AMX_Read(data) == 0)
 	{
 		AMX_Write(data + E_INDIRECTION_OWNER__, ebc);
+		// Claim the function, since it is no longer bound to a scopre but to an
+		// external owner.
 	}
 	return func;
 }
@@ -1132,8 +1141,9 @@ Note:
 // So that tags are preserved.
 #define @Ix:%0,%1$(%2) %0*(%2),%1
 
-#define EBC(%0,%1) (%1)$(Inline_EBC__(_:(%0),_:@Iz:tagof(%0)))
-#define @Iz:tagof(%0:%1))) tagof(%0:)))
+forward EBC(GLOBAL_TAG_TYPES:owner, F@_@:func, tag = tagof (owner));
+#define EBC(%0,%1) EBC PP_DEFER(%0,F@_@:@I0:(%1))
+#define @I0:(%0,%1)) (%0),%1)
 
 stock Inline_GetOwner__(func)
 {
@@ -2314,6 +2324,16 @@ stock Callback_Restore_(...)
 }
 #define Callback_Restore(%0) Callback_Restore_(_:%0)
 
+stock Callback_GetEBCStubPointer_() <y_inline_ebc : y_inline_no_ebc>
+{
+	return 0;
+}
+
+stock Callback_GetEBCStubPointer_() <>
+{
+	return 0;
+}
+
 stock Inline_Debug(ptr)
 {
 	// Get back to normal memory.
@@ -2348,6 +2368,11 @@ stock Inline_Debug(ptr)
 	else if (type == _:addressof (Callback_CallHandler_<x>))
 	{
 		printf("Type: Indirect");
+	}
+	else if (type == _:addressof (Callback_Blank_<x>))
+	{
+		// 
+		printf("Type: Disabled");
 	}
 	else
 	{
