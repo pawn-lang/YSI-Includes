@@ -90,24 +90,18 @@ __COMPILER_TAG_DATA(Player, INVALID_PLAYER_ID);
 __COMPILER_TAG_DATA(Object, INVALID_OBJECT_ID);
 
 static stock
-	YSI_g_sKnownOwnedCallbacks;
+	YSI_g_sKnownOwnedCallbacks = 0;
 
-//static stock EBC_BlankStub(...)
-//{
-//	// Does absolutely nothing.  Just returns.
-//	return 0;
-//}
-//
-//stock Callback_GetEBCStubPointer_() <y_inline_ebc : y_inline_has_ebc>
-//{
-//	return _:addressof (EBC_BlankStub<x>);
-//}
+stock bool:Inline_HasEBC() <y_inline_ebc : y_inline_has_ebc>
+{
+	return true;
+}
 
 stock EBC_Deactivate_(owner, tag)
 {
 	new
 		stub = _:addressof (Callback_Blank_<x>),
-		ebc = owner | (tag & 0x3FF << 22);
+		ebc = _:Inline_EBC__(owner, tag);
 	// Loop through every owned known inline and deactivate it.
 	for (new prev = ref(YSI_g_sKnownOwnedCallbacks), cur = YSI_g_sKnownOwnedCallbacks; cur; prev = cur, cur = AMX_Read(cur))
 	{
@@ -125,4 +119,24 @@ stock EBC_Deactivate_(owner, tag)
 	}
 }
 #define EBC_Deactivate(%0) EBC_Deactivate(_:(%0),_:tagof(%0))
+
+stock EBC_Activate_(func, ebc) <y_inline_ebc : y_inline_has_ebc>
+{
+	new
+		data = Indirect_DePtr_(func);
+	if (data >= 0 && AMX_Read(data) == 0)
+	{
+		// Store the owner.
+		AMX_Write(data + E_INDIRECTION_OWNER__, ebc);
+		// Add this callback to the list of known callbacks.
+		AMX_Write(data + E_INDIRECTION_NEXT__, YSI_g_sKnownOwnedCallbacks);
+		YSI_g_sKnownOwnedCallbacks = data + E_INDIRECTION_NEXT__;
+		// Claim the function, since it is no longer bound to a scopre but to an
+		// external owner.
+		// TODO:  Use this claim machinery to do the EBC claiming instead.  We
+		// can reuse `NEXT` to hold the original claim pointer temporarily.
+		Indirect_Claim(func);
+	}
+	return func;
+}
 

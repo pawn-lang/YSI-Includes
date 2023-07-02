@@ -291,30 +291,38 @@ stock Inline_EBC:Inline_EBC__(owner, tag)
 	return Inline_EBC:(owner | (tag & 0x3FF << 22));
 }
 
+stock EBC_Activate_(func, ebc) <>
+{
+	#pragma unused ebc
+	return func;
+}
+
+stock EBC_Activate_(func, ebc) <y_inline_ebc : y_inline_no_ebc>
+{
+	// Can never be called.  Don't do anything.
+	#pragma unused ebc
+	return func;
+}
+
+stock bool:Inline_HasEBC() <>
+{
+	return false;
+}
+
+stock bool:Inline_HasEBC() <y_inline_ebc : y_inline_no_ebc>
+{
+	// Can never be called.  Just set the states.
+	return false;
+}
+
 stock operator*(func, Inline_EBC:ebc)
 {
-	new
-		data = Indirect_DePtr_(func);
-	if (data >= 0 && AMX_Read(data) == 0)
-	{
-		AMX_Write(data + E_INDIRECTION_OWNER__, ebc);
-		// Claim the function, since it is no longer bound to a scopre but to an
-		// external owner.
-	}
-	return func;
+	return EBC_Activate_(func, _:ebc);
 }
 
 stock operator*(@Ik:func, Inline_EBC:ebc)
 {
-	new
-		data = Indirect_DePtr_(func);
-	if (data >= 0 && AMX_Read(data) == 0)
-	{
-		AMX_Write(data + E_INDIRECTION_OWNER__, ebc);
-		// Claim the function, since it is no longer bound to a scopre but to an
-		// external owner.
-	}
-	return func;
+	return EBC_Activate_(_:func, _:ebc);
 }
 
 static stock const
@@ -1012,6 +1020,8 @@ public OnCodeInit()
 			// Can't remember off the top of my head).
 			CodeScanRunFast(scanner, &I@T);
 	}
+	
+	state y_inline_ebc : y_inline_has_ebc;
 	
 	#if defined Inline_OnCodeInit
 		Inline_OnCodeInit();
@@ -2323,16 +2333,6 @@ stock Callback_Restore_(...)
 	return 0;
 }
 #define Callback_Restore(%0) Callback_Restore_(_:%0)
-
-stock Callback_GetEBCStubPointer_() <y_inline_ebc : y_inline_no_ebc>
-{
-	return 0;
-}
-
-stock Callback_GetEBCStubPointer_() <>
-{
-	return 0;
-}
 
 stock Inline_Debug(ptr)
 {
