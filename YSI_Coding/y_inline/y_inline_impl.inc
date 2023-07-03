@@ -281,8 +281,7 @@ forward Inline_MaybeConst_(ResolvedAlloc:slot);
 #define CALL@Callback_Return_%8() Callback_Return_%8(0)
 
 // Never had to fake an operator call for `addressof` before.
-#define CALL@Inline_operatorMul1%8() ((0)*%8(Inline_EBC:0))
-#define CALL@Inline_operatorMul2%8() ((@Ik:0)*%8(Inline_EBC:0))
+#define CALL@Inline_operatorMul2%8() ((@Ik:0)*%8(0))
 #define CALL@Inline_EBC__%8() Inline_EBC__%8(0,0)
 
 stock Inline_EBC:Inline_EBC__(owner, tag)
@@ -315,12 +314,7 @@ stock bool:Inline_HasEBC() <y_inline_ebc : y_inline_no_ebc>
 	return false;
 }
 
-stock operator*(func, Inline_EBC:ebc)
-{
-	return EBC_Activate_(func, _:ebc);
-}
-
-stock operator*(@Ik:func, Inline_EBC:ebc)
+stock operator*(@Ik:func, ebc)
 {
 	return EBC_Activate_(_:func, _:ebc);
 }
@@ -1173,8 +1167,10 @@ stock Inline_GetOwner__(func)
 // final parameter, but this detects it instead and gives
 // `X(Y(Inline_UI_(Z)), 5)`, which is still correct.  This only falls down on
 // code like `X(Y(using inline Z) - 10, 5)`, which currently becomes
-// `X(Y(Inline_UI_(Z - 10)), 5)`
-#define @Ik:@Il:%0)%1, %0%1),
+// `X(Y(Inline_UI_(Z - 10)), 5)`.  Keeps the `@Ik:` tag because it is used later
+// with `*` to detect EBC usage but the match is not recursive because the
+// following `@Il:` is removed.
+#define @Ik:@Il:%0)%1, @Ik:%0%1),
 
 // Detect a `using` parameter that is the last parameter.
 #define @Il:%0)%1) %0%1))
