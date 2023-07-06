@@ -329,8 +329,16 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 
 // Don't define `__PawnBuild` if it doesn't exist, but do create an alternate
 // symbol (with a consistent naming scheme) that always exists.
+#if defined __pawn_build
+	#undef __pawn_build
+#endif
 #if defined __PawnBuild
-	#define __pawn_build __PawnBuild
+	#if __PawnBuild == 0
+		#undef __PawnBuild
+		#define __pawn_build 0
+	#else
+		#define __pawn_build __PawnBuild
+	#endif
 #else
 	#define __pawn_build 0
 #endif
