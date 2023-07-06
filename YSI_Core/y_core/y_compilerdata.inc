@@ -327,34 +327,39 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 #define this__,) this__)
 #define __COMPILER_THIS (0)
 
+// Don't define `__PawnBuild` if it doesn't exist, but do create an alternate
+// symbol (with a consistent naming scheme) that always exists.
+#if defined __PawnBuild
+	#define __pawn_build __PawnBuild
+#else
+	#define __pawn_build 0
+#endif
+
 #if (__Pawn & 0x0F) >= 0x0A
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
 
 	#define __COMPILER_USER_WARNING (1)
 
-	#if !defined __PawnBuild
-		#define __PawnBuild 0
-	#endif
-	#if __PawnBuild >= 2
+	#if __pawn_build >= 2
 		#undef __COMPILER_STATIC_ENUM
 		#define __COMPILER_STATIC_ENUM static enum
 	#endif
-	#if __PawnBuild >= 4
+	#if __pawn_build >= 4
 		#undef __COMPILER_OPTION
 		#define __COMPILER_OPTION (1)
 		#pragma option -(+
 	#endif
-	#if __PawnBuild >= 8
+	#if __pawn_build >= 8
 		#undef __COMPILER_BUG_317
 		#define __COMPILER_BUG_317 (0)
 	#endif
 	// I don't actually know when this was introduced.
-	#if __PawnBuild == 10
+	#if __pawn_build == 10
 		#undef __COMPILER_FUNC_DECL_BUG
 		#define __COMPILER_FUNC_DECL_BUG (1)
 	#endif
-	#if __PawnBuild >= 10
+	#if __pawn_build >= 10
 		#if !__COMPILER_DOCUMENTING
 			#undef __COMPILER___EMIT_U
 			#define __COMPILER___EMIT_U (1)
@@ -364,7 +369,7 @@ static stock const __COMPILER_PACKED_TEST[] = " ";
 		#define __COMPILER_ADDRESSOF (1)
 	#endif
 	// Disable `__COMPILER_PRAGMA` for now, while there's no `PROC` generated.
-	#if __PawnBuild >= 11
+	#if __pawn_build >= 11
 		#undef __COMPILER_NAMEOF
 		//#undef __COMPILER_PRAGMA
 		
@@ -579,14 +584,6 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 //	#define _yI@%0\32; _yI@
 //	#define const%0:%1[%2]=%3:%4; const _yI@%1[%2]=%4,%0:%1[sizeof(_yI@%1)];PREINIT__ %1()_YSI_ConstCpy__(_:(%1),(_yI@%1),0,sizeof(%1)*4,sizeof(%1));
 //#endif
-
-// Don't define `__PawnBuild` if it doesn't exist, but do create an alternate
-// symbol (with a consistent naming scheme) that always exists.
-#if defined __PawnBuild
-	#define __pawn_build __PawnBuild
-#else
-	#define __pawn_build 0
-#endif
 
 // Consistent naming of compiler defined values. 
 #define __Line __line
