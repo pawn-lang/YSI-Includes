@@ -205,7 +205,7 @@ stock Server_GetCompilerVersion()
 {
 	#if ((__Pawn & 0x0F) >= 0x0A)
 		// Accurate version.
-		return (__Pawn << 16) | __PawnBuild;
+		return (__Pawn << 16) | __pawn_build;
 	#else
 		// Estimate version - probably this one.
 		return 0x03023664;
@@ -227,7 +227,7 @@ stock Script_GetCompilerVersion()
 {
 	#if ((__Pawn & 0x0F) >= 0x0A)
 		// Accurate version.
-		return (__Pawn << 16) | __PawnBuild;
+		return (__Pawn << 16) | __pawn_build;
 	#else
 		// Estimate version - probably this one.
 		return 0x03023664;
@@ -245,7 +245,7 @@ stock Script_GetCompilerString(version[], os[], vlen = sizeof (version), olen = 
 {
 	#if ((__Pawn & 0x0F) >= 0x0A)
 		// Accurate version.
-		format(version, vlen, "%d.%02d.%02d", __Pawn >>> 8, __Pawn & 0xFF, __PawnBuild);
+		format(version, vlen, "%d.%02d.%02d", __Pawn >>> 8, __Pawn & 0xFF, __pawn_build);
 	#else
 		// Estimate version - probably this one.
 		version[0] = '\0',

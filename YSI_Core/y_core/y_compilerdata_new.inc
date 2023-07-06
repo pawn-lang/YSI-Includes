@@ -238,7 +238,7 @@ stock YSI_gAMXAddress_;
 // Disable the warning for `const &var`.
 #define __COMPILER_CONST_REF (1)
 
-#if __PawnBuild < 10 || defined __optimisation
+#if __pawn_build < 10 || defined __optimisation
 	#endinput
 #endif
 
