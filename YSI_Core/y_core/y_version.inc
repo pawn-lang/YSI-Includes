@@ -479,8 +479,11 @@ stock Script_GetIncludesString(version[], vlen = sizeof (version))
 	// Not done yet.
 	version[0] = '\0';
 	// SA:MP version determination (from includes only).
-	#if defined __SAMP_INCLUDES_VERSION
-		// No SA:MP version.
+	#if defined __OPEN_MP_VERSION
+		// open.mp version.
+		format(version, vlen, "open.mp v%06x", __SAMP_INCLUDES_VERSION);
+	#elseif defined __SAMP_INCLUDES_VERSION
+		// SA:MP version.
 		format(version, vlen, "samp-stdlib v%06x", __SAMP_INCLUDES_VERSION);
 	#elseif !defined _samp_included
 		// No SA:MP version.
