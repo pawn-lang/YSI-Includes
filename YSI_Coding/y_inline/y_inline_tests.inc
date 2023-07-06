@@ -1879,3 +1879,30 @@ static stock
 	Timer_CreateCallback(using inline Total, 100 * 51, 1);
 }
 
+static stock y_inline_MultiClaimRel(Func:f<>)
+{
+	Indirect_Claim(f);
+	Indirect_Claim(f);
+	Indirect_Claim(f);
+	Indirect_Claim(f);
+	Indirect_Claim(f);
+	@.f();
+	Callback_Restore(f);
+	Indirect_Release(f);
+	Indirect_Release(f);
+	Indirect_Release(f);
+	Indirect_Release(f);
+	Indirect_Release(f);
+}
+
+@test(.group = "y_inline") y_inline_MultiClaimRel()
+{
+	new a = 0;
+	inline Irrelevant()
+	{
+		a = 1;
+	}
+	y_inline_MultiClaimRel(using inline Irrelevant);
+	ASSERT_EQ(a, 1);
+}
+
