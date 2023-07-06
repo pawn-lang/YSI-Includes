@@ -281,42 +281,20 @@ forward Inline_MaybeConst_(ResolvedAlloc:slot);
 #define CALL@Callback_Return_%8() Callback_Return_%8(0)
 
 // Never had to fake an operator call for `addressof` before.
-#define CALL@Inline_operatorMul2%8() ((@Ik:0)*%8(0))
+#define CALL@Inline_operatorMul%8() ((@Ik:0)*%8(0))
 #define CALL@Inline_EBC__%8() Inline_EBC__%8(0,0)
 
-stock Inline_EBC:Inline_EBC__(owner, tag)
+stock Inline_EBC__(owner, tag)
 {
 	// 10 bits for the tag (max 1024), 22 for the ID (max 4,194,303).
-	return Inline_EBC:(owner | (tag & 0x3FF << 22));
-}
-
-stock EBC_Activate_(func, ebc) <>
-{
-	#pragma unused ebc
-	return func;
-}
-
-stock EBC_Activate_(func, ebc) <y_inline_ebc : y_inline_no_ebc>
-{
-	// Can never be called.  Don't do anything.
-	#pragma unused ebc
-	return func;
-}
-
-stock bool:Inline_HasEBC() <>
-{
-	return false;
-}
-
-stock bool:Inline_HasEBC() <y_inline_ebc : y_inline_no_ebc>
-{
-	// Can never be called.  Just set the states.
-	return false;
+	return (owner | (tag & 0x3FF << 22));
 }
 
 stock operator*(@Ik:func, ebc)
 {
-	return EBC_Activate_(_:func, _:ebc);
+	printf("Setting the owner");
+	Indirect_SetOwner(func, ebc);
+	return _:func;
 }
 
 static stock const
@@ -921,7 +899,7 @@ public OnCodeInit()
 				OP(PUSH_PRI)
 				OP(PUSH_ALT)
 				OP(PUSH_C,             8)
-				OP(CALL,               &Inline_operatorMul1)
+				OP(CALL,               &Inline_operatorMul)
 				OP(PUSH_S,             ???)
 			);
 			CodeScanAddMatcher(scanner, csm10a);
@@ -934,38 +912,11 @@ public OnCodeInit()
 				OP(PUSH_PRI)
 				OP(PUSH_ALT)
 				OP(PUSH_C,             8)
-				OP(CALL,               &Inline_operatorMul1)
+				OP(CALL,               &Inline_operatorMul)
 				OP(LOAD_S_PRI,         ???)
 				OP(PUSH_PRI)
 			);
 			CodeScanAddMatcher(scanner, csm10b);
-
-			new csm10c[CodeScanMatcher];
-			CodeScanMatcherInit(csm10c, &Inline_FoundEBC);
-			CodeScanMatcherPattern(csm10c,
-				OP(CALL,               &Inline_EBC__)
-				OP(POP_ALT)
-				OP(PUSH_PRI)
-				OP(PUSH_ALT)
-				OP(PUSH_C,             8)
-				OP(CALL,               &Inline_operatorMul2)
-				OP(PUSH_S,             ???)
-			);
-			CodeScanAddMatcher(scanner, csm10c);
-
-			new csm10d[CodeScanMatcher];
-			CodeScanMatcherInit(csm10d, &Inline_FoundEBC);
-			CodeScanMatcherPattern(csm10d,
-				OP(CALL,               &Inline_EBC__)
-				OP(POP_ALT)
-				OP(PUSH_PRI)
-				OP(PUSH_ALT)
-				OP(PUSH_C,             8)
-				OP(CALL,               &Inline_operatorMul2)
-				OP(LOAD_S_PRI,         ???)
-				OP(PUSH_PRI)
-			);
-			CodeScanAddMatcher(scanner, csm10d);
 
 			// Destructors.
 			{
@@ -1014,8 +965,6 @@ public OnCodeInit()
 			// Can't remember off the top of my head).
 			CodeScanRunFast(scanner, &I@T);
 	}
-	
-	state y_inline_ebc : y_inline_has_ebc;
 	
 	#if defined Inline_OnCodeInit
 		Inline_OnCodeInit();
@@ -1148,19 +1097,6 @@ Note:
 forward EBC(GLOBAL_TAG_TYPES:owner, F@_@:func, tag = tagof (owner));
 #define EBC(%0,%1) EBC PP_DEFER(%0,F@_@:@I0:(%1))
 #define @I0:(%0,%1)) (%0),%1)
-
-stock Inline_GetOwner__(func)
-{
-	new
-		data = Indirect_DePtr_(func);
-	if (data >= 0 && AMX_Read(data) == 0)
-	{
-		return AMX_Read(data + E_INDIRECTION_OWNER__);
-	}
-	return 0;
-}
-
-#define Inline_GetOwner(%0) Inline_GetOwner__(_:(%0))
 
 // Detect a `using` parameter that is not the last parameter.  Actually handles
 // nested calls quite nicely - `X(Y(using inline Z), 5)` should be detected as a
@@ -1685,6 +1621,7 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
+	printf("Claiming the function");
 	KillTimer(func[E_INLINE_CALL_TIMER]);
 	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__("Inline_MaybeConst_", 0, false, YSI_gscSpecifier_i, AMX_Ref(func[E_INDIRECTION_ALWAYS_NULL]));
 }
