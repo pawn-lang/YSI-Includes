@@ -208,9 +208,7 @@ const
 	E_PUBLIC_CALL_TIMER__     = _:E_PUBLIC_CALL_TIMER * cellbytes,
 	E_PUBLIC_CALL_FLAGS__     = _:E_PUBLIC_CALL_FLAGS * cellbytes,
 	E_PUBLIC_CALL_SPECIFIER__ = _:E_PUBLIC_CALL_SPECIFIER * cellbytes,
-	E_PUBLIC_CALL_FUNCTION__  = _:E_PUBLIC_CALL_FUNCTION * cellbytes,
-	E_INLINE_CALL_diff        = (_:E_INLINE_CALL_FLAGS - _:E_INLINE_CALL_PARAMS) * cellbytes,
-	E_PUBLIC_CALL_specifier   = MAX_PUBLIC_CALL_SPECIFIERS * cellbytes;
+	E_PUBLIC_CALL_FUNCTION__  = _:E_PUBLIC_CALL_FUNCTION * cellbytes;
 
 #if 0
 
@@ -292,7 +290,6 @@ stock Inline_EBC__(owner, tag)
 
 stock operator*(@Ik:func, ebc)
 {
-	printf("Setting the owner");
 	Indirect_SetOwner(func, ebc);
 	return _:func;
 }
@@ -1621,7 +1618,6 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
-	printf("Claiming the function");
 	KillTimer(func[E_INLINE_CALL_TIMER]);
 	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__("Inline_MaybeConst_", 0, false, YSI_gscSpecifier_i, AMX_Ref(func[E_INDIRECTION_ALWAYS_NULL]));
 }
@@ -1639,6 +1635,8 @@ static stock Callback_Claim_(func[E_INLINE_CALL])
 
 static Callback_CallHandler_(...)
 {
+	const E_INLINE_CALL_diff = (_:E_INLINE_CALL_FLAGS - _:E_INLINE_CALL_PARAMS) * cellbytes;
+	
 	// This is called by `@`, and given the above enum in `INDIRECTION_DATA`.
 	// Get the size, and update `INDIRECTION_DATA` to point to the data.
 	#emit LOAD.alt         INDIRECTION_DATA    // 2
@@ -1712,6 +1710,8 @@ static Callback_CallHandler_(...)
 
 static stock Callback_RemoteHandler_(...)
 {
+	const E_PUBLIC_CALL_specifier = MAX_PUBLIC_CALL_SPECIFIERS * cellbytes;
+	
 	#emit LOAD.S.alt       __args_offset
 	#emit LCTRL            __stk
 	#emit SUB
@@ -1760,6 +1760,8 @@ static stock Callback_RemoteHandler_(...)
 
 static stock Callback_LocalHandler_(...)
 {
+	const E_PUBLIC_CALL_specifier = MAX_PUBLIC_CALL_SPECIFIERS * cellbytes;
+	
 	#emit LOAD.S.alt       __args_offset
 	#emit LCTRL            __stk
 	#emit SUB
