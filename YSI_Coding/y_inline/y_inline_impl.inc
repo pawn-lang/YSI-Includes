@@ -1549,11 +1549,11 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 		// different to in the indirection include which knows to resolve the
 		// pointer before checking this, unlike here were we don't know the
 		// type.
-		assert(AMX_HEADER_DAT - AMX_HEADER_COD > E_PUBLIC_CALL_specifier);
+		assert(AMX_HEADER_DAT - AMX_HEADER_COD > E_PUBLIC_CALL_SPECIFIER__);
 		ret = getarg(0 + __COMPILER_BUG_317);
 		if (ret == 0)
 			return false;
-		if (!(0 < ret < E_PUBLIC_CALL_specifier))
+		if (!(0 < ret < 128))
 		{
 			// Resolved inline.
 			Debug_Print3("Callback_Get: Found resolved callback: %08x", ret);
@@ -1567,10 +1567,10 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			numArgs = AMX_Read(ret + E_INDIRECTION_HANDER__);
 			if (numArgs == _:addressof (Callback_LocalHandler_<x>) || numArgs == _:addressof (Callback_RemoteHandler_<x>))
 			{
-				if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_specifier) == '\0')
+				if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_SPECIFIER__) == '\0')
 				{
 					// Given an explicit specifier here, not before.
-					Callback_Strcat_(ret + _:E_PUBLIC_CALL_specifier, expect[4], MAX_PUBLIC_CALL_SPECIFIERS);
+					Callback_Strcat_(ret + _:E_PUBLIC_CALL_SPECIFIER__, expect[4], MAX_PUBLIC_CALL_SPECIFIERS);
 				}
 			}
 			return true;
