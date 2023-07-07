@@ -2358,3 +2358,10 @@ stock Inline_Debug(ptr)
 	}
 }
 
+stock Inline_Disconnect_(id, tag)
+{
+	Indirect_Disconnect(Inline_EBC__(id, tag));
+}
+#define Inline_Disconnect(%0) Inline_Disconnect_(_:(%0), tagof (%0))
+#define Inline_Disconnect_(_:(%0,%1),%9) Inline_Disconnect_(_:(%0), (%1))
+

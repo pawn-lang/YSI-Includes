@@ -1908,7 +1908,7 @@ static stock y_inline_MultiClaimRel(Func:f<>)
 	ASSERT_EQ(a, 1);
 }
 
-static stock y_inline_EBCClaimRelease(Func:f<i>, i)
+static stock y_inline_EBCClaimRelease(Func:f<i>)
 {
 	Indirect_Claim(f);
 	@.f(Indirect_GetOwner(f));
@@ -1925,12 +1925,12 @@ static stock y_inline_EBCClaimRelease(Func:f<i>, i)
 		a = owner;
 	}
 	new ret = 100;
-	ret = y_inline_EBCClaimRelease(EBC__(ret, using inline Irrelevant), 5);
+	ret = y_inline_EBCClaimRelease(EBC__(ret, using inline Irrelevant));
 	ASSERT_EQ(ret, 0);
 	ASSERT_EQ(a, 100);
 }
 
-static stock y_inline_EBCDontCall(Func:f<i>, i)
+static stock y_inline_EBCDontCall(Func:f<i>)
 {
 	Indirect_Claim(f);
 	@.f(Indirect_GetOwner(f));
@@ -1939,6 +1939,7 @@ static stock y_inline_EBCDontCall(Func:f<i>, i)
 	Callback_Restore(f);
 	new id = 100;
 	Indirect_Disconnect(id);
+	Inline_Disconnect(id);
 	@.f(Indirect_GetOwner(f));
 	Callback_Restore(f);
 	Indirect_Release(f);
@@ -1953,8 +1954,76 @@ static stock y_inline_EBCDontCall(Func:f<i>, i)
 		a = a + owner + 1;
 	}
 	new id = 100;
-	id = y_inline_EBCDontCall(EBC__(id, using inline Irrelevant), 5);
+	id = y_inline_EBCDontCall(EBC__(id, using inline Irrelevant));
 	ASSERT_EQ(id, 0);
 	ASSERT_EQ(a, 202);
+}
+
+static stock Func:y_inline_ClaimAndReturn<i>(Func:f<i>)
+{
+	Indirect_Claim(f);
+	return f;
+}
+
+@test(.group = "y_inline") y_inline_MultipleOwners()
+{
+	new
+		Func:funcs<i>[20],
+		owner1 = 40,
+		owner2 = 33,
+		total,
+		Func:f<i>;
+	inline const Callback(owner)
+	{
+		@return owner + 1;
+	}
+
+	funcs[0] = y_inline_ClaimAndReturn(EBC__(owner1, using inline Callback));
+	funcs[1] = y_inline_ClaimAndReturn(EBC__(owner1, using inline Callback));
+	funcs[2] = y_inline_ClaimAndReturn(EBC__(owner1, using inline Callback));
+	funcs[3] = y_inline_ClaimAndReturn(EBC__(owner1, using inline Callback));
+	funcs[4] = y_inline_ClaimAndReturn(EBC__(owner2, using inline Callback));
+	funcs[5] = y_inline_ClaimAndReturn(EBC__(owner2, using inline Callback));
+	funcs[6] = y_inline_ClaimAndReturn(EBC__(owner2, using inline Callback));
+
+	total = 0;
+
+	for (new i = 0; i != 7; ++i)
+	{
+		f = funcs[i];
+		total += @.f(Indirect_GetOwner(f));
+		//Callback_Restore(f);
+	}
+
+	ASSERT_EQ(total, 40 * 4 + 33 * 3 + 7);
+
+	total = 0;
+
+	for (new i = 0; i != 7; ++i)
+	{
+		if (i == 2)
+		{
+			Inline_Disconnect(owner1);
+		}
+		f = funcs[i];
+		total += @.f(Indirect_GetOwner(f));
+		//Callback_Restore(f);
+	}
+
+	ASSERT_EQ(total, 40 * 2 + 33 * 3 + 5);
+
+	total = 0;
+	funcs[7] = y_inline_ClaimAndReturn(EBC__(owner1, using inline Callback));
+	funcs[8] = y_inline_ClaimAndReturn(EBC__(owner1, using inline Callback));
+	funcs[9] = y_inline_ClaimAndReturn(EBC__(owner1, using inline Callback));
+
+	for (new i = 0; i != 10; ++i)
+	{
+		f = funcs[i];
+		total += @.f(Indirect_GetOwner(f));
+		//Callback_Restore(f);
+	}
+
+	ASSERT_EQ(total, 40 * 3 + 33 * 3 + 6);
 }
 
