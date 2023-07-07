@@ -1930,3 +1930,31 @@ static stock y_inline_EBCClaimRelease(Func:f<i>, i)
 	ASSERT_EQ(a, 100);
 }
 
+static stock y_inline_EBCDontCall(Func:f<i>, i)
+{
+	Indirect_Claim(f);
+	@.f(Indirect_GetOwner(f));
+	Callback_Restore(f);
+	@.f(Indirect_GetOwner(f));
+	Callback_Restore(f);
+	new id = 100;
+	Indirect_Disconnect(id);
+	@.f(Indirect_GetOwner(f));
+	Callback_Restore(f);
+	Indirect_Release(f);
+	return Indirect_GetOwner(f);
+}
+
+@test(.group = "y_inline") y_inline_EBCDontCall()
+{
+	new a = 0;
+	inline Irrelevant(owner)
+	{
+		a = a + owner + 1;
+	}
+	new id = 100;
+	id = y_inline_EBCDontCall(EBC__(id, using inline Irrelevant), 5);
+	ASSERT_EQ(id, 0);
+	ASSERT_EQ(a, 202);
+}
+
