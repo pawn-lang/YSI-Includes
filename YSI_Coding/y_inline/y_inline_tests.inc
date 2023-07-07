@@ -1910,11 +1910,8 @@ static stock y_inline_MultiClaimRel(Func:f<>)
 
 static stock y_inline_EBCClaimRelease(Func:f<i>, i)
 {
-	printf("%d", Indirect_GetOwner(f));
 	Indirect_Claim(f);
-	printf("%d", Indirect_GetOwner(f));
 	@.f(Indirect_GetOwner(f));
-	printf("%d", Indirect_GetOwner(f));
 	Callback_Restore(f);
 	Indirect_Release(f);
 	return Indirect_GetOwner(f);

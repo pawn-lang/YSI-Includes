@@ -290,7 +290,6 @@ stock Inline_EBC__(owner, tag)
 
 stock operator*(@Ik:func, ebc)
 {
-	printf("Set ower: %d, %d", func, ebc);
 	Indirect_SetOwner(func, ebc);
 	return _:func;
 }
@@ -890,7 +889,7 @@ public OnCodeInit()
 			CodeScanAddMatcher(scanner, csm7b);
 			
 			new csm10a[CodeScanMatcher];
-			CodeScanMatcherInit(csm10a, &Inline_FoundUsingInline);
+			CodeScanMatcherInit(csm10a, &Inline_FoundEBC);
 			CodeScanMatcherPattern(csm10a,
 				OP(CALL,               &Inline_EBC__)
 				OP(POP_ALT)
@@ -903,7 +902,7 @@ public OnCodeInit()
 			CodeScanAddMatcher(scanner, csm10a);
 
 			new csm10b[CodeScanMatcher];
-			CodeScanMatcherInit(csm10b, &Inline_FoundUsingInline);
+			CodeScanMatcherInit(csm10b, &Inline_FoundEBC);
 			CodeScanMatcherPattern(csm10b,
 				OP(CALL,               &Inline_EBC__)
 				OP(POP_ALT)
@@ -2315,6 +2314,16 @@ stock Inline_Debug(ptr)
 		printf("Type: Unknown");
 	}
 	// Normal callback handler.
+	/*{
+		AddressofResolve();
+		new
+			amxhdr[AMX_HDR];
+		GetAmxHeader(amxhdr);
+		new
+			s = _:ptr - amxhdr[AMX_HDR_DAT] + amxhdr[AMX_HDR_COD];
+		printf("    sub:                       %d", s);
+		printf("    null:                      %d", AMX_Read(s));
+	}*/
 	printf("    ptr:                       %d", _:ptr);
 	printf("    resolved:                  %d", _:Indirect_DePtr(ptr));
 	#emit CONST.alt     YSI_gMallocMemory
@@ -2328,6 +2337,7 @@ stock Inline_Debug(ptr)
 	printf("    E_INDIRECTION_METADATA:    %d", mget(data, E_INDIRECTION_METADATA));
 	printf("    E_INDIRECTION_TAG:         %d", mget(data, E_INDIRECTION_TAG));
 	printf("    E_INDIRECTION_OWNER:       %d", mget(data, E_INDIRECTION_OWNER));
+	printf("    E_INDIRECTION_NEXT:        %d", mget(data, E_INDIRECTION_NEXT));
 	if (type == _:addressof (Callback_RemoteHandler_<x>) || type == _:addressof (Callback_LocalHandler_<x>))
 	{
 		printf("    E_PUBLIC_CALL_TIMER:       %d", mget(data, E_PUBLIC_CALL_TIMER));
