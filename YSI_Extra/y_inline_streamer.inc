@@ -106,8 +106,9 @@ Optional plugins:
 	// Push a fake extra parameter.
 	native bool:BAD_Streamer_HasIntData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_HasIntData;
 
-	stock bool:YSI_Streamer_HasIntData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data)
+	stock bool:YSI_Streamer_HasIntData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0)
 	{
+		#pragma unused fakeExtraParameter
 		// This isn't a compile-time constant, so we can't use `#if`.
 		if (Streamer_IncludeFileVersion > 0x295)
 		{
@@ -125,8 +126,9 @@ Optional plugins:
 	// Push a fake extra parameter.
 	native bool:BAD_Streamer_RemoveIntData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0) = Streamer_RemoveIntData;
 
-	stock bool:YSI_Streamer_RemoveIntData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data)
+	stock bool:YSI_Streamer_RemoveIntData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id, data, fakeExtraParameter = 0)
 	{
+		#pragma unused fakeExtraParameter
 		// This isn't a compile-time constant, so we can't use `#if`.
 		if (Streamer_IncludeFileVersion > 0x295)
 		{
