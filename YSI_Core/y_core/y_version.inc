@@ -479,7 +479,7 @@ stock Script_GetIncludesString(version[], vlen = sizeof (version))
 	// Not done yet.
 	version[0] = '\0';
 	// SA:MP version determination (from includes only).
-	#if defined __OPEN_MP_VERSION
+	#if defined _INC_open_mp
 		// open.mp version.
 		format(version, vlen, "open.mp v%06x", __SAMP_INCLUDES_VERSION);
 	#elseif defined __SAMP_INCLUDES_VERSION
