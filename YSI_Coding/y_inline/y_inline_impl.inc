@@ -290,6 +290,7 @@ stock Inline_EBC__(owner, tag)
 
 stock operator*(@Ik:func, ebc)
 {
+	printf("Set ower: %d, %d", func, ebc);
 	Indirect_SetOwner(func, ebc);
 	return _:func;
 }

@@ -71,6 +71,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#define EBC__(%0,%1) (%1)$(Inline_EBC__(_:(%0),_:tagof(%0)))
+
 static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA], const f[] = "")
 {
 	return Callback_Get(c, ret, f);
@@ -1904,5 +1906,30 @@ static stock y_inline_MultiClaimRel(Func:f<>)
 	}
 	y_inline_MultiClaimRel(using inline Irrelevant);
 	ASSERT_EQ(a, 1);
+}
+
+static stock y_inline_EBCClaimRelease(Func:f<i>, i)
+{
+	printf("%d", Indirect_GetOwner(f));
+	Indirect_Claim(f);
+	printf("%d", Indirect_GetOwner(f));
+	@.f(Indirect_GetOwner(f));
+	printf("%d", Indirect_GetOwner(f));
+	Callback_Restore(f);
+	Indirect_Release(f);
+	return Indirect_GetOwner(f);
+}
+
+@test(.group = "y_inline") y_inline_EBCClaimRelease()
+{
+	new a = 0;
+	inline Irrelevant(owner)
+	{
+		a = owner;
+	}
+	new ret = 100;
+	ret = y_inline_EBCClaimRelease(EBC__(ret, using inline Irrelevant), 5);
+	ASSERT_EQ(ret, 0);
+	ASSERT_EQ(a, 100);
 }
 
