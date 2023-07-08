@@ -1939,7 +1939,7 @@ static stock y_inline_EBCDontCall(Func:f<i>)
 	Callback_Restore(f);
 	new id = 100;
 	Indirect_Disconnect(id);
-	Inline_Disconnect(id);
+	Indirect_Disconnect(Inline_EBC__(id, tagof (id)));
 	@.f(Indirect_GetOwner(f));
 	Callback_Restore(f);
 	Indirect_Release(f);
@@ -2003,7 +2003,7 @@ static stock Func:y_inline_ClaimAndReturn<i>(Func:f<i>)
 	{
 		if (i == 2)
 		{
-			Inline_Disconnect(owner1);
+			Indirect_Disconnect(Inline_EBC__(owner1, tagof (owner1)));
 		}
 		f = funcs[i];
 		total += @.f(Indirect_GetOwner(f));

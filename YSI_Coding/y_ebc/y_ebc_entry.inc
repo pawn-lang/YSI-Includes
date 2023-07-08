@@ -77,6 +77,7 @@ Optional plugins:
 */
 
 #include "..\y_inline"
+#include "..\y_hooks"
 
 // The fake definition from y_inline to give nicer errors.
 #undef EBC
@@ -88,31 +89,40 @@ Optional plugins:
 __COMPILER_TAG_DATA(Vehicle, INVALID_VEHICLE_ID);
 __COMPILER_TAG_DATA(Player, INVALID_PLAYER_ID);
 __COMPILER_TAG_DATA(Object, INVALID_OBJECT_ID);
-
-static stock
-	YSI_g_sKnownOwnedCallbacks = 0,
-	YSI_g_sFakeE_INDIRECTION[E_INDIRECTION];
+__COMPILER_TAG_DATA(PlayerObject, INVALID_OBJECT_ID);
 
 stock EBC_Deactivate_(owner, tag)
 {
-	new
-		stub = _:addressof (Callback_Blank_<x>),
-		ebc = _:Inline_EBC__(owner, tag);
-	// Loop through every owned known inline and deactivate it.
-	for (new prev = ref(YSI_g_sKnownOwnedCallbacks), cur = YSI_g_sKnownOwnedCallbacks; cur; prev = cur, cur = AMX_Read(cur))
-	{
-		if (AMX_Read(cur + (E_INDIRECTION_OWNER__ - E_INDIRECTION_NEXT__)) == ebc)
-		{
-			// This is a match.  Disable it by replacing the handler with `RETN`, and remove this
-			// from the list.
-			AMX_Write(cur + (E_INDIRECTION_HANDER__ - E_INDIRECTION_NEXT__), stub);
-			new
-				next = AMX_Read(cur);
-			AMX_Write(cur, 0);
-			cur = prev;
-			AMX_Write(cur, next);
-		}
-	}
+	Indirect_Disconnect(Inline_EBC__(owner, tag));
 }
-#define EBC_Deactivate(%0) EBC_Deactivate(_:(%0),_:tagof(%0))
+#define EBC_Deactivate(%0) EBC_Deactivate_(_:(%0), tagof (%0))
+#define EBC_Deactivate_(_:(%0,%1),%9) EBC_Deactivate_(_:(%0), (%1))
+
+// Hook standard destructors.
+
+HOOK__ OnPlayerDisconnect(playerid, reason)
+{
+	#pragma unused reason
+	EBC_Deactivate(playerid, tagof(playerid)); // _: (default).
+	EBC_Deactivate(playerid, tagof(Player:));
+	return 1;
+}
+
+HOOK_NATIVE__ bool:DestroyVehicle(vehicleid)
+{
+	EBC_Deactivate(vehicleid, tagof(Vehicle:));
+	return CONTINUE__(vehicleid);
+}
+
+HOOK_NATIVE__ bool:DestroyObject(objectid)
+{
+	EBC_Deactivate(objectid, tagof(Object:));
+	return CONTINUE__(objectid);
+}
+
+HOOK_NATIVE__ bool:DestroyPlayerObject(playerid, objectid)
+{
+	EBC_Deactivate((objectid << 10) | playerid, tagof(PlayerObject:));
+	return CONTINUE__(playerid, objectid);
+}
 

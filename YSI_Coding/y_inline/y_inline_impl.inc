@@ -284,8 +284,8 @@ forward Inline_MaybeConst_(ResolvedAlloc:slot);
 
 stock Inline_EBC__(owner, tag)
 {
-	// 10 bits for the tag (max 1024), 22 for the ID (max 4,194,303).
-	return (owner | (tag & 0x3FF << 22));
+	// 8 bits for the tag (max 256), 24 for the ID (max 4,194,303 * 4).
+	return (owner | (tag & 0x3FF << 24));
 }
 
 stock operator*(@Ik:func, ebc)
@@ -2357,11 +2357,4 @@ stock Inline_Debug(ptr)
 		printf("    E_INLINE_CALL_PARAMS:      %d", _:Malloc_Reconcile(ResolvedAlloc:mget(data, E_INLINE_CALL_FUNCTION)));
 	}
 }
-
-stock Inline_Disconnect_(id, tag)
-{
-	Indirect_Disconnect(Inline_EBC__(id, tag));
-}
-#define Inline_Disconnect(%0) Inline_Disconnect_(_:(%0), tagof (%0))
-#define Inline_Disconnect_(_:(%0,%1),%9) Inline_Disconnect_(_:(%0), (%1))
 
