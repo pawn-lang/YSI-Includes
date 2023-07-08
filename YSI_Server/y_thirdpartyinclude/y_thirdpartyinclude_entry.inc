@@ -555,7 +555,7 @@ Optional plugins:
 #tryinclude <indirection>
 #if !defined _INC_indirection
 	#error Download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
-#elseif !defined INDIR2_ || defined INDIR4_
+#elseif !defined Indirect_SetOwner
 	#error Re-download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
