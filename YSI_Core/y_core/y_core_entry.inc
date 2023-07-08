@@ -295,6 +295,35 @@ forward bool:DisasmWrite(const filename[]);
 	#pragma unused __OPEN_MP_VERSION
 #endif
 
+/**
+ *   <remarks>
+ *   Do we need to fix fopen?
+ *   </remarks>
+ */
+stock
+	bool:YSI_gsBuggedFOpen = false;
+
+stock File:YSI_FOpen__(const filename[], filemode:mode = io_readwrite)
+{
+	if (YSI_gsBuggedFOpen)
+	{
+		new
+			File:f = fopen(filename, mode);
+		if (f && !fclose(f))
+		{
+			// Couldn't close the apparently opened file.
+			return File:0;
+		}
+	}
+	return fopen(filename, mode);
+}
+
+#if defined _ALS_fopen
+	#undef fopen
+#endif
+#define _ALS_fopen
+#define fopen( YSI_FOpen__(
+
 // Magical macro.
 #define u@$ 1]);
 //#define MY_THING u@(u[_:%0 u@$

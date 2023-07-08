@@ -376,7 +376,15 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 			bool:first = true,
 			path[38] = __COMPILER_UNPACK"     /scriptfiles/", // The `18`s below are this length.
 			test[YSI_DIR_LENGTH + 8],
-			File:file;
+			File:file = fopen(".doesntexist/YSI", io_read);
+		if (file)
+		{
+			// Probably bugged fopen.
+			YSI_gsBuggedFOpen = true;
+		}
+		#if defined fcreatedir
+			fcreatedir("YSI");
+		#endif
 		for (new E_YSI_DIR:dir = E_YSI_DIR:0; dir != E_YSI_DIR; ++dir)
 		{
 			if (YSI_gsDefaultDirs[dir]{0} == '/')
@@ -394,23 +402,41 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 				}
 				else
 				{
-					if (first)
-					{
-						Server_PrintIntroPart(" Missing YSI scriptfiles directories: ", YSI_EMPTY),
-						first = false;
-					}
-					Server_PrintIntroPart(path);
-					if ((file = fopen(test[4], io_write)))
-					{
-						// Found `dir/`.
-						StrCpy(YSI_gsDefaultDirs[dir], path[18 + 4]),
-						fclose(file);
-					}
-					else
-					{
-						// Found nothing.
-						YSI_gsDefaultDirs[dir][0] = '\0';
-					}
+					#if defined fcreatedir
+						fcreatedir("YSI");
+						printf("creating 1: %s", path[18]);
+						fcreatedir(path[18]);
+						//if ((file = fopen(test, io_write)))
+						//{
+						//	fclose(file);
+						//}
+						//else
+						//{
+						//	path[21] = '\\';
+						//	printf("creating 2: %s", path[18]);
+						//	fcreatedir(path);
+						//	path[21] = '/';
+						//}
+						StrCpy(YSI_gsDefaultDirs[dir], path[18]);
+					#else
+						if (first)
+						{
+							Server_PrintIntroPart(" Missing YSI scriptfiles directories: ", YSI_EMPTY),
+							first = false;
+						}
+						Server_PrintIntroPart(path);
+						if ((file = fopen(test[4], io_write)))
+						{
+							// Found `dir/`.
+							StrCpy(YSI_gsDefaultDirs[dir], path[18 + 4]),
+							fclose(file);
+						}
+						else
+						{
+							// Found nothing.
+							YSI_gsDefaultDirs[dir][0] = '\0';
+						}
+					#endif
 				}
 			}
 		}
