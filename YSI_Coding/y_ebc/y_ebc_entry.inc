@@ -77,7 +77,6 @@ Optional plugins:
 */
 
 #include "..\y_inline"
-#include "..\y_hooks"
 
 // The fake definition from y_inline to give nicer errors.
 #undef EBC
@@ -100,29 +99,60 @@ stock EBC_Deactivate_(owner, tag)
 
 // Hook standard destructors.
 
-HOOK__ OnPlayerDisconnect(playerid, reason)
+public OnPlayerDisconnect(playerid, reason)
 {
 	#pragma unused reason
 	EBC_Deactivate(playerid, tagof(playerid)); // _: (default).
 	EBC_Deactivate(playerid, tagof(Player:));
-	return 1;
+	#if defined EBC_OnPlayerDisconnect
+		return EBC_OnPlayerDisconnect(playerid, reason);
+	#else
+		return 1;
+	#endif
 }
 
-HOOK_NATIVE__ bool:DestroyVehicle(vehicleid)
+#if defined _ALS_OnPlayerDisconnect
+	#undef OnPlayerDisconnect
+#endif
+#define _ALS_OnPlayerDisconnect
+#define OnPlayerDisconnect( EBC_OnPlayerDisconnect(
+#if defined EBC_OnPlayerDisconnect
+	forward EBC_OnPlayerDisconnect(playerid, reason);
+#endif
+
+stock bool:EBC_DestroyVehicle(vehicleid)
 {
 	EBC_Deactivate(vehicleid, tagof(Vehicle:));
-	return CONTINUE__(vehicleid);
+	return bool:DestroyVehicle(vehicleid);
 }
 
-HOOK_NATIVE__ bool:DestroyObject(objectid)
+#if defined _ALS_DestroyVehicle
+	#undef DestroyVehicle
+#endif
+#define _ALS_DestroyVehicle
+#define DestroyVehicle( EBC_DestroyVehicle(
+
+stock bool:EBC_DestroyObject(objectid)
 {
 	EBC_Deactivate(objectid, tagof(Object:));
-	return CONTINUE__(objectid);
+	return bool:DestroyObject(objectid);
 }
 
-HOOK_NATIVE__ bool:DestroyPlayerObject(playerid, objectid)
+#if defined _ALS_DestroyObject
+	#undef DestroyObject
+#endif
+#define _ALS_DestroyObject
+#define DestroyObject( EBC_DestroyObject(
+
+stock bool:EBC_DestroyPlayerObject(playerid, objectid)
 {
 	EBC_Deactivate((objectid << 10) | playerid, tagof(PlayerObject:));
-	return CONTINUE__(playerid, objectid);
+	return bool:DestroyPlayerObject(playerid, objectid);
 }
+
+#if defined _ALS_DestroyPlayerObject
+	#undef DestroyPlayerObject
+#endif
+#define _ALS_DestroyPlayerObject
+#define DestroyPlayerObject( EBC_DestroyPlayerObject(
 
