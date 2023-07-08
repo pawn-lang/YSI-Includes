@@ -1,6 +1,6 @@
 # y_ebc
 
-A tiny wrapper around inlines (and other callback pointers) to assign owners to them and subsequently kill them when not needed, i.e. when the owner is destroyed/disconnected.
+Entity Based Callbacks (EBCs) are tiny wrappers around inlines (and other callback pointers) to assign owners to them and subsequently kill them when not needed, i.e. when the owner is destroyed/disconnected.
 
 ## YSI
 
