@@ -1162,6 +1162,50 @@ hook stock y_hooks_HookedStock(str[], v, &c)
 	ASSERT_EQ(YSI_g_sMinC, 6);
 }
 
+#if defined _ALS_strlen
+	#error Found exsting strlen hook in y_hooks tests.
+#endif
+
+stock y_hooks_strlen_1(const string[])
+{
+	YSI_g_sMinA += 10;
+	return strlen(string);
+}
+
+#define strlen( y_hooks_strlen_1(
+
+hook native strlen(const string[])
+{
+	YSI_g_sMinA *= 2;
+	return continue(string);
+}
+
+#tryinclude "..\YSI_Coding\y_unique"
+#tryinclude "..\..\YSI_Coding\y_unique"
+
+hook native strlen(const string[])
+{
+	YSI_g_sMinA = 50;
+	return continue(string);
+}
+
+//stock y_hooks_strlen_2(const string[])
+//{
+//	YSI_g_sMinA = 50;
+//	return strlen(string);
+//}
+//
+//#define strlen( y_hooks_strlen_2(
+
+@test(.group = "y_hooks") y_hooks_strlen()
+{
+	ASSERT_EQ(strlen("Hello world."), 12);
+	ASSERT_EQ(YSI_g_sMinA, 50 * 2 + 10);
+}
+
+// Don't affect other code.
+#undef strlen
+
 //@hook(.callback = "OnNewHooks") OnNewHooks1(playerid)
 //{
 //	#pragma unused playerid

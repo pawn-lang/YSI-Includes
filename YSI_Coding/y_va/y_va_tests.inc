@@ -131,7 +131,7 @@ static stock y_va_printf_3(num, other, const str[], va_args<>)
 	YSI_g_sVariable = 8;
 	y_va_CallLocalFunction(0, 45);
 	ASSERT_EQ(YSI_g_sVariable, 9);
-	ASSERT_EQ(123, y_va_CallLocalFunction(1, 45));
+	ASSERT_EQ(y_va_CallLocalFunction(1, 45), 123);
 	ASSERT_EQ(YSI_g_sVariable, 45);
 }
 
