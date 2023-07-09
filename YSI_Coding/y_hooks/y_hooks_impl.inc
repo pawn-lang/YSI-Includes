@@ -2261,33 +2261,32 @@ static stock Hooks_RegisterNPSHook(compressedFormat, address, const string:name[
 		// can fake a `CALL.N <addr> <params>` op to replace the `SYSREQ.N` in
 		// the same amount of space.  This is neither JIT nor cache-compatible.
 		// (actually it might be cache-compatible).
-		@emit POP.alt                                                           // 1
-		@emit CONST.pri     AMX_HEADER_COD                                      // 7
-		@emit ADD                                                               // 40
-		static argCountRef = 0;
-		@emit STOR.pri      argCountRef                                         // 42
-		@emit LREF.pri      argCountRef                                         // 44
-		//@emit LOAD.I
-		@emit PUSH.pri                                                          // 45
-
+		@emit POP.pri
+		@emit ADD.C         AMX_HEADER_COD
+		@emit STOR.pri      ref(J@)
+		@emit LREF.alt      ref(J@)
+		@emit PUSH.alt
+		@emit ADD.C         (__1_cell - AMX_HEADER_COD)
+		
+		// Push and pop so that we can jump in to the middle of this code.
+		@emit PUSH.pri
+		@emit POP.pri
+		
 		// Chain the functions.
 		if (YSI_g_sNPSBaseCall == addr)
 		{
-			@emit PUSH3.C       compressedFormat, YSI_g_sNPSStack, __2_cells    // 5
+			@emit PUSH3.C       compressedFormat, (YSI_g_sNPSStack + __11_cells), __2_cells    // 5
 			YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
 		}
 		else if (YSI_g_sNPSBaseCall == cellmin)
 		{
-			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), __2_cells // 5
+			@emit PUSH3.C       compressedFormat, (type < 0 ? type : (addr + __11_cells)), __2_cells // 5
 			YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
 		}
 		else
 		{
-			@emit PUSH3.C       compressedFormat, (type < 0 ? type : addr), __2_cells // 5
+			@emit PUSH3.C       compressedFormat, (type < 0 ? type : (addr + __11_cells)), __2_cells // 5
 		}
-
-		@emit CONST.pri     __1_cell                                            // 47
-		@emit ADD                                                               // 48
 	}
 	else
 #endif
@@ -2447,9 +2446,9 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 	@emit JZER.label   Hooks_Continue_loop
 
 	// Adjust the given parameter.
-	@emit LREF.S.pri   -__1_cell
+	@emit LREF.S.pri   __local0_offset
 	@emit LOAD.I
-	@emit SREF.S.pri   -__1_cell
+	@emit SREF.S.pri   __local0_offset
 	@emit JUMP.label   Hooks_Continue_loop
 
 	@emit Hooks_Continue_done:
