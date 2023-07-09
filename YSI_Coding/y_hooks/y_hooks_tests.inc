@@ -1100,6 +1100,8 @@ hook stock y_hooks_HookedStock(str[], v, &c)
 @hook(.native = "clamp", .order = 5) MyClampHook1(value, min, max)
 {
 	// A native function we can easily replicate, in tests only.
+	//printf("clamp 2: %d, %d, %d, %d", numargs(), value, min, max);
+	//DumpFullStack();
 	return
 		(YSI_g_sMinA = min),
 		(YSI_g_sMinB = max),
@@ -1111,15 +1113,18 @@ hook stock y_hooks_HookedStock(str[], v, &c)
 
 @hook(.native = "clamp", .order = 5) MyClampHook2(value, min, max)
 {
+	//printf("clamp 1: %d, %d, %d, %d", numargs(), value, min, max);
 	// A native function we can easily replicate, in tests only.
 	return continue(value, min, max + 5);
 }
 
 @hook(.native = "clamp", .order = 5) MyClampHook3(value, min, max)
 {
+	//printf("clamp 0: %d, %d, %d, %d", numargs(), value, min, max);
 	// A native function we can easily replicate, in tests only.
 	return continue(value, min - 5, max);
 }
+
 @test(.group = "y_hooks") HookClamp()
 {
 	ASSERT_EQ(clamp(100, 70, 90), 90);
@@ -1141,6 +1146,20 @@ hook stock y_hooks_HookedStock(str[], v, &c)
 	ASSERT_EQ(YSI_g_sMinA, 5);
 	ASSERT_EQ(YSI_g_sMinB, 25);
 	ASSERT_EQ(YSI_g_sMinC, 15);
+}
+
+@test(.group = "y_hooks") y_va_HookClamp()
+{
+	// Check a regression.
+	ASSERT_EQ(clamp(11, 55, 101), 55);
+	ASSERT_EQ(YSI_g_sMinA, 50);
+	ASSERT_EQ(YSI_g_sMinB, 106);
+	ASSERT_EQ(YSI_g_sMinC, 50);
+
+	ASSERT_EQ(clamp(5, 11, 12), 11);
+	ASSERT_EQ(YSI_g_sMinA, 6);
+	ASSERT_EQ(YSI_g_sMinB, 17);
+	ASSERT_EQ(YSI_g_sMinC, 6);
 }
 
 //@hook(.callback = "OnNewHooks") OnNewHooks1(playerid)
