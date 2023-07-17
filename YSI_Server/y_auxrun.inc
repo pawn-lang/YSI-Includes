@@ -2,87 +2,91 @@
 
 static
 	YSI_g_sByteCode[1000] = {
-		__asm(00,00,05,0C), __asm(08,08,F1,E0), __asm(00,08,00,10), __asm(00,00,01,18),
-		__asm(00,00,04,94), __asm(00,00,05,0C), __asm(08,00,05,0C), __asm(FF,FF,FF,FF),
+		__asm(00,00,05,44), __asm(08,08,F1,E0), __asm(00,08,00,10), __asm(00,00,01,34),
+		__asm(00,00,04,C8), __asm(00,00,05,44), __asm(08,00,05,44), __asm(FF,FF,FF,FF),
 		__asm(00,00,00,38), __asm(00,00,00,70), __asm(00,00,00,98), __asm(00,00,00,98),
-		__asm(00,00,00,98), __asm(00,00,00,98), __asm(00,00,00,08), __asm(00,00,00,9A),
-		__asm(00,00,01,F0), __asm(00,00,00,9E), __asm(00,00,00,34), __asm(00,00,00,A2),
-		__asm(00,00,03,2C), __asm(00,00,00,A6), __asm(00,00,02,4C), __asm(00,00,00,BC),
-		__asm(00,00,02,A0), __asm(00,00,00,CF), __asm(00,00,00,90), __asm(00,00,00,DD),
-		__asm(00,00,00,00), __asm(00,00,00,E1), __asm(00,00,00,00), __asm(00,00,00,EB),
-		__asm(00,00,00,00), __asm(00,00,00,F7), __asm(00,00,00,00), __asm(00,00,00,FE),
-		__asm(00,00,00,00), __asm(00,00,01,11), __asm(5F,43,00,15), __asm(5F,47,00,5F),
-		__asm(5F,4E,00,5F), __asm(6E,4F,00,5F), __asm(65,69,6C,43), __asm(68,43,74,6E),
-		__asm(52,6B,63,65), __asm(6F,70,73,65), __asm(00,65,73,6E), __asm(69,46,6E,4F),
-		__asm(72,65,74,6C), __asm(69,72,63,53), __asm(6E,49,74,70), __asm(4F,00,74,69),
-		__asm(6F,63,52,6E), __asm(6D,6F,43,6E), __asm(64,6E,61,6D), __asm(5F,5F,53,00),
-		__asm(61,65,68,00), __asm(61,70,73,70), __asm(73,00,65,63), __asm(72,70,74,65),
-		__asm(72,65,70,6F), __asm(6D,00,79,74), __asm(70,63,6D,65), __asm(61,43,00,79),
-		__asm(65,52,6C,6C), __asm(65,74,6F,6D), __asm(63,6E,75,46), __asm(6E,6F,69,74),
-		__asm(72,74,73,00), __asm(00,70,6D,63), __asm(00,00,00,78), __asm(00,00,00,00),
-		__asm(00,00,00,2E), __asm(00,00,00,1F), __asm(00,00,00,02), __asm(00,00,00,0F),
-		__asm(00,00,00,6C), __asm(00,00,00,0B), __asm(02,00,00,00), __asm(00,00,00,0F),
-		__asm(00,00,00,68), __asm(00,00,00,59), __asm(00,00,00,30), __asm(00,00,00,7B),
-		__asm(00,00,00,00), __asm(00,00,00,27), __asm(00,00,00,40), __asm(00,00,00,24),
-		__asm(00,00,00,27), __asm(00,00,00,44), __asm(00,00,00,27), __asm(00,00,00,1B),
-		__asm(00,00,00,27), __asm(00,00,00,10), __asm(00,00,00,7B), __asm(00,00,00,01),
-		__asm(00,00,00,2C), __asm(00,00,00,14), __asm(00,00,00,2B), __asm(00,00,00,1F),
-		__asm(00,00,00,04), __asm(00,00,00,4E), __asm(00,00,00,20), __asm(00,00,00,04),
-		__asm(00,00,00,78), __asm(00,00,00,00), __asm(00,00,00,2E), __asm(00,00,00,01),
-		__asm(00,00,00,68), __asm(00,00,00,04), __asm(00,00,00,10), __asm(00,00,00,3E),
-		__asm(00,00,01,B0), __asm(00,00,00,03), __asm(00,00,00,10), __asm(00,00,00,02),
-		__asm(00,00,00,68), __asm(00,00,00,50), __asm(00,00,00,0C), __asm(00,00,00,01),
-		__asm(00,00,00,4F), __asm(00,00,00,0F), __asm(00,00,00,68), __asm(00,00,00,27),
-		__asm(00,00,00,40), __asm(00,00,00,28), __asm(00,00,00,6C), __asm(00,00,00,27),
+		__asm(00,00,00,A0), __asm(00,00,00,A0), __asm(00,00,00,08), __asm(00,00,00,A2),
+		__asm(00,00,01,F0), __asm(00,00,00,A6), __asm(00,00,00,34), __asm(00,00,00,AA),
+		__asm(00,00,03,2C), __asm(00,00,00,AE), __asm(00,00,02,4C), __asm(00,00,00,C4),
+		__asm(00,00,02,A0), __asm(00,00,00,D7), __asm(00,00,00,90), __asm(00,00,00,E5),
+		__asm(00,00,00,00), __asm(00,00,00,E9), __asm(00,00,00,00), __asm(00,00,00,F3),
+		__asm(00,00,00,00), __asm(00,00,00,FF), __asm(00,00,00,00), __asm(00,00,01,06),
+		__asm(00,00,00,00), __asm(00,00,01,19), __asm(00,00,00,70), __asm(00,00,01,20),
+		__asm(5F,43,00,15), __asm(5F,47,00,5F), __asm(5F,4E,00,5F), __asm(6E,4F,00,5F),
+		__asm(65,69,6C,43), __asm(68,43,74,6E), __asm(52,6B,63,65), __asm(6F,70,73,65),
+		__asm(00,65,73,6E), __asm(69,46,6E,4F), __asm(72,65,74,6C), __asm(69,72,63,53),
+		__asm(6E,49,74,70), __asm(4F,00,74,69), __asm(6F,63,52,6E), __asm(6D,6F,43,6E),
+		__asm(64,6E,61,6D), __asm(5F,5F,53,00), __asm(61,65,68,00), __asm(61,70,73,70),
+		__asm(73,00,65,63), __asm(72,70,74,65), __asm(72,65,70,6F), __asm(6D,00,79,74),
+		__asm(70,63,6D,65), __asm(61,43,00,79), __asm(65,52,6C,6C), __asm(65,74,6F,6D),
+		__asm(63,6E,75,46), __asm(6E,6F,69,74), __asm(72,74,73,00), __asm(00,70,6D,63),
+		__asm(50,4F,5F,5F), __asm(4D,5F,4E,45), __asm(45,56,5F,50), __asm(4F,49,53,52),
+		__asm(00,00,00,4E), __asm(00,00,00,78), __asm(00,00,00,00), __asm(00,00,00,2E),
+		__asm(00,00,00,1F), __asm(00,00,00,02), __asm(00,00,00,0F), __asm(00,00,00,6C),
+		__asm(00,00,00,0B), __asm(02,00,00,00), __asm(00,00,00,0F), __asm(00,00,00,68),
+		__asm(00,00,00,59), __asm(00,00,00,30), __asm(00,00,00,7B), __asm(00,00,00,00),
+		__asm(00,00,00,27), __asm(00,00,00,40), __asm(00,00,00,24), __asm(00,00,00,27),
 		__asm(00,00,00,44), __asm(00,00,00,27), __asm(00,00,00,1B), __asm(00,00,00,27),
 		__asm(00,00,00,10), __asm(00,00,00,7B), __asm(00,00,00,01), __asm(00,00,00,2C),
-		__asm(00,00,00,14), __asm(00,00,00,27), __asm(00,00,00,00), __asm(00,00,00,01),
-		__asm(00,00,00,6C), __asm(00,00,00,57), __asm(00,00,00,04), __asm(00,00,00,11),
-		__asm(FF,FF,FF,FC), __asm(00,00,00,04), __asm(00,00,00,10), __asm(00,00,00,45),
-		__asm(00,00,00,02), __asm(00,00,00,4E), __asm(00,00,00,20), __asm(00,00,00,02),
-		__asm(00,00,00,04), __asm(00,00,00,10), __asm(00,00,00,14), __asm(00,00,00,6C),
-		__asm(00,00,00,0F), __asm(00,00,00,6C), __asm(00,00,00,27), __asm(02,00,00,00),
-		__asm(00,00,00,29), __asm(00,00,00,10), __asm(00,00,00,27), __asm(00,00,00,00),
-		__asm(00,00,00,29), __asm(00,00,00,0C), __asm(00,00,00,29), __asm(FF,FF,FF,FC),
-		__asm(00,00,00,27), __asm(00,00,00,14), __asm(00,00,00,7B), __asm(00,00,00,02),
-		__asm(00,00,00,2C), __asm(00,00,00,18), __asm(00,00,00,2C), __asm(00,00,00,04),
-		__asm(00,00,00,33), __asm(00,00,01,E8), __asm(00,00,00,27), __asm(00,00,00,40),
-		__asm(00,00,00,27), __asm(00,00,00,00), __asm(00,00,00,27), __asm(00,00,00,44),
+		__asm(00,00,00,14), __asm(00,00,00,2B), __asm(00,00,00,1F), __asm(00,00,00,04),
+		__asm(00,00,00,4E), __asm(00,00,00,20), __asm(00,00,00,04), __asm(00,00,00,78),
+		__asm(00,00,00,00), __asm(00,00,00,2E), __asm(00,00,00,01), __asm(00,00,00,68),
+		__asm(00,00,00,04), __asm(00,00,00,10), __asm(00,00,00,3E), __asm(00,00,01,B0),
+		__asm(00,00,00,03), __asm(00,00,00,10), __asm(00,00,00,02), __asm(00,00,00,68),
+		__asm(00,00,00,50), __asm(00,00,00,0C), __asm(00,00,00,01), __asm(00,00,00,4F),
+		__asm(00,00,00,0F), __asm(00,00,00,68), __asm(00,00,00,27), __asm(00,00,00,40),
+		__asm(00,00,00,28), __asm(00,00,00,6C), __asm(00,00,00,27), __asm(00,00,00,44),
 		__asm(00,00,00,27), __asm(00,00,00,1B), __asm(00,00,00,27), __asm(00,00,00,10),
 		__asm(00,00,00,7B), __asm(00,00,00,01), __asm(00,00,00,2C), __asm(00,00,00,14),
-		__asm(00,00,00,59), __asm(00,00,00,30), __asm(00,00,00,2E), __asm(00,00,00,01),
-		__asm(00,00,00,6C), __asm(00,00,00,20), __asm(00,00,00,02), __asm(00,00,00,03),
-		__asm(00,00,00,0C), __asm(00,00,00,24), __asm(00,00,00,57), __asm(00,00,00,04),
-		__asm(00,00,00,24), __asm(00,00,00,27), __asm(00,00,00,48), __asm(00,00,00,27),
-		__asm(00,00,00,44), __asm(00,00,00,27), __asm(00,00,00,10), __asm(00,00,00,7B),
-		__asm(00,00,00,03), __asm(00,00,00,2C), __asm(00,00,00,14), __asm(00,00,00,59),
-		__asm(00,00,00,30), __asm(00,00,00,2E), __asm(00,00,00,27), __asm(00,00,00,00),
-		__asm(00,00,00,27), __asm(00,00,00,00), __asm(00,00,00,27), __asm(00,00,00,44),
+		__asm(00,00,00,27), __asm(00,00,00,00), __asm(00,00,00,01), __asm(00,00,00,6C),
+		__asm(00,00,00,57), __asm(00,00,00,04), __asm(00,00,00,11), __asm(FF,FF,FF,FC),
+		__asm(00,00,00,04), __asm(00,00,00,10), __asm(00,00,00,45), __asm(00,00,00,02),
+		__asm(00,00,00,4E), __asm(00,00,00,20), __asm(00,00,00,02), __asm(00,00,00,04),
+		__asm(00,00,00,10), __asm(00,00,00,14), __asm(00,00,00,6C), __asm(00,00,00,0F),
+		__asm(00,00,00,6C), __asm(00,00,00,27), __asm(02,00,00,00), __asm(00,00,00,29),
+		__asm(00,00,00,10), __asm(00,00,00,27), __asm(00,00,00,00), __asm(00,00,00,29),
+		__asm(00,00,00,0C), __asm(00,00,00,29), __asm(FF,FF,FF,FC), __asm(00,00,00,27),
+		__asm(00,00,00,14), __asm(00,00,00,7B), __asm(00,00,00,02), __asm(00,00,00,2C),
+		__asm(00,00,00,18), __asm(00,00,00,2C), __asm(00,00,00,04), __asm(00,00,00,33),
+		__asm(00,00,01,E8), __asm(00,00,00,27), __asm(00,00,00,40), __asm(00,00,00,27),
+		__asm(00,00,00,00), __asm(00,00,00,27), __asm(00,00,00,44), __asm(00,00,00,27),
+		__asm(00,00,00,1B), __asm(00,00,00,27), __asm(00,00,00,10), __asm(00,00,00,7B),
+		__asm(00,00,00,01), __asm(00,00,00,2C), __asm(00,00,00,14), __asm(00,00,00,59),
+		__asm(00,00,00,30), __asm(00,00,00,2E), __asm(00,00,00,01), __asm(00,00,00,6C),
+		__asm(00,00,00,20), __asm(00,00,00,02), __asm(00,00,00,03), __asm(00,00,00,0C),
+		__asm(00,00,00,24), __asm(00,00,00,57), __asm(00,00,00,04), __asm(00,00,00,24),
+		__asm(00,00,00,27), __asm(00,00,00,48), __asm(00,00,00,27), __asm(00,00,00,44),
+		__asm(00,00,00,27), __asm(00,00,00,10), __asm(00,00,00,7B), __asm(00,00,00,03),
+		__asm(00,00,00,2C), __asm(00,00,00,14), __asm(00,00,00,59), __asm(00,00,00,30),
+		__asm(00,00,00,2E), __asm(00,00,00,27), __asm(00,00,00,00), __asm(00,00,00,27),
+		__asm(00,00,00,00), __asm(00,00,00,27), __asm(00,00,00,44), __asm(00,00,00,27),
+		__asm(00,00,00,1B), __asm(00,00,00,27), __asm(00,00,00,10), __asm(00,00,00,7B),
+		__asm(00,00,00,01), __asm(00,00,00,2C), __asm(00,00,00,14), __asm(00,00,00,1F),
+		__asm(00,00,00,02), __asm(00,00,00,0F), __asm(00,00,00,6C), __asm(00,00,00,59),
+		__asm(00,00,00,30), __asm(00,00,00,2E), __asm(00,00,00,27), __asm(7F,FF,FF,FF),
+		__asm(00,00,00,27), __asm(00,00,00,01), __asm(00,00,00,27), __asm(00,00,00,4C),
+		__asm(00,00,00,29), __asm(00,00,00,0C), __asm(00,00,00,27), __asm(00,00,00,10),
+		__asm(00,00,00,7B), __asm(00,00,00,04), __asm(00,00,00,2C), __asm(00,00,00,14),
+		__asm(00,00,00,36), __asm(00,00,03,24), __asm(00,00,00,27), __asm(00,00,00,40),
+		__asm(00,00,00,27), __asm(00,00,00,1B), __asm(00,00,00,27), __asm(00,00,00,4C),
 		__asm(00,00,00,27), __asm(00,00,00,1B), __asm(00,00,00,27), __asm(00,00,00,10),
 		__asm(00,00,00,7B), __asm(00,00,00,01), __asm(00,00,00,2C), __asm(00,00,00,14),
-		__asm(00,00,00,1F), __asm(00,00,00,02), __asm(00,00,00,0F), __asm(00,00,00,6C),
-		__asm(00,00,00,59), __asm(00,00,00,30), __asm(00,00,00,2E), __asm(00,00,00,27),
-		__asm(7F,FF,FF,FF), __asm(00,00,00,27), __asm(00,00,00,01), __asm(00,00,00,27),
-		__asm(00,00,00,4C), __asm(00,00,00,29), __asm(00,00,00,0C), __asm(00,00,00,27),
-		__asm(00,00,00,10), __asm(00,00,00,7B), __asm(00,00,00,04), __asm(00,00,00,2C),
-		__asm(00,00,00,14), __asm(00,00,00,36), __asm(00,00,03,24), __asm(00,00,00,27),
-		__asm(00,00,00,40), __asm(00,00,00,27), __asm(00,00,00,1B), __asm(00,00,00,27),
-		__asm(00,00,00,4C), __asm(00,00,00,27), __asm(00,00,00,1B), __asm(00,00,00,27),
-		__asm(00,00,00,10), __asm(00,00,00,7B), __asm(00,00,00,01), __asm(00,00,00,2C),
-		__asm(00,00,00,14), __asm(00,00,00,54), __asm(00,00,00,30), __asm(00,00,00,59),
-		__asm(00,00,00,30), __asm(00,00,00,2E), __asm(00,00,00,85), __asm(00,00,00,18),
-		__asm(00,00,00,85), __asm(00,00,00,14), __asm(00,00,00,85), __asm(00,00,00,10),
-		__asm(00,00,00,85), __asm(00,00,00,0C), __asm(00,00,00,27), __asm(00,00,00,70),
-		__asm(00,00,00,27), __asm(00,00,00,4C), __asm(00,00,00,27), __asm(00,00,00,18),
-		__asm(00,00,00,7B), __asm(00,00,00,03), __asm(00,00,00,2C), __asm(00,00,00,1C),
-		__asm(00,00,00,30), __asm(70,61,65,68), __asm(63,61,70,73), __asm(00,00,00,65),
+		__asm(00,00,00,54), __asm(00,00,00,30), __asm(00,00,00,59), __asm(00,00,00,30),
+		__asm(00,00,00,2E), __asm(00,00,00,01), __asm(00,00,00,70), __asm(00,00,00,35),
+		__asm(00,00,03,48), __asm(00,00,00,59), __asm(00,00,00,30), __asm(00,00,00,85),
+		__asm(00,00,00,18), __asm(00,00,00,85), __asm(00,00,00,14), __asm(00,00,00,85),
+		__asm(00,00,00,10), __asm(00,00,00,85), __asm(00,00,00,0C), __asm(00,00,00,27),
+		__asm(00,00,00,74), __asm(00,00,00,27), __asm(00,00,00,4C), __asm(00,00,00,27),
+		__asm(00,00,00,18), __asm(00,00,00,7B), __asm(00,00,00,03), __asm(00,00,00,2C),
+		__asm(00,00,00,1C), __asm(00,00,00,30), __asm(70,61,65,68), __asm(63,61,70,73),
+		__asm(00,00,00,65), __asm(00,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00),
 		__asm(00,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00),
 		__asm(00,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00),
-		__asm(00,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00),
-		__asm(00,00,00,00), __asm(00,00,00,00), __asm(52,5F,5F,00), __asm(61,69,00,00),
-		__asm(46,49,58,45), __asm(53,5F,4F,6E), __asm(43,6C,69,65), __asm(6E,74,43,68),
-		__asm(65,63,6B,52), __asm(65,73,70,6F), __asm(6E,73,65,00), __asm(02,00,00,00),
-		__asm(00,00,00,00), __asm(69,69,69,69), __asm(00,00,00,00)
+		__asm(00,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00), __asm(52,5F,5F,00),
+		__asm(61,69,00,00), __asm(46,49,58,45), __asm(53,5F,4F,6E), __asm(43,6C,69,65),
+		__asm(6E,74,43,68), __asm(65,63,6B,52), __asm(65,73,70,6F), __asm(6E,73,65,00),
+		__asm(02,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00), __asm(69,69,69,69),
+		__asm(00,00,00,00)
 	},
 	YSI_g_sLastNative[64] = "-", // Invalid.
 	YSI_g_sRequestedData = 0;
@@ -219,6 +223,8 @@ y_rconfix_Load()
 		#endif
 		// Rewrite the bytecode to include the name of the new native.
 		YSI_g_sByteCode[offset] = NATIVE_NAME_OFFSET;
+		offset = __32(YSI_g_sByteCode[0]) / cellbytes - 1;
+		YSI_g_sByteCode[offset] = __OPEN_MP_VERSION;
 		// Not loaded yet.  We don't care if the file already exists because
 		// this is the first time we've got here this server run, thus the
 		// available natives may have changed since the last time we wrote it.
@@ -270,10 +276,14 @@ stock y_rconfix_Unload()
 
 */
 
+//#pragma option -a
+#define SPACE_IN_MB (128)
+
 // This is the source code of the filterscript embedded in an array avove.  Feel
 // free to recompile it yourself and compare the bytes.  I use compiler version
 // 3.10.11; settings don't matter since these next few lines override them all
 // anyway.
+
 #pragma compress 0
 #pragma option -O1
 #pragma option -d0
@@ -281,26 +291,28 @@ stock y_rconfix_Unload()
 #pragma option -(+
 #pragma pack 0
 
-#define SPACE_IN_MB (128)
-
-//#pragma option -a
+#if !defined __PawnBuild
+	#error Requires compiler version 3.10.11.
+#endif
+#if __PawnBuild != 11
+	#error Requires compiler version 3.10.11.
+#endif
 
 // A few conveniences.
 const
+	#if cellbits == 64
+		SHIFT = 3,
+	#elseif cellbits == 32
+		SHIFT = 2,
+	#else
+		#error Unknown bit width.
+	#endif
 	cellbytes = cellbits / charbits,
 	__hea = 2,
 	__stk = 4;
 
 // Allocate a lot of space for temporary storage.
 #pragma dynamic SPACE_IN_MB * 1024 * 1024 / cellbytes
-
-#if cellbits == 64
-	const SHIFT = 3;
-#elseif cellbits == 32
-	const SHIFT = 2;
-#else
-	#error Unknown bit width.
-#endif
 
 forward OnFilterScriptInit();
 forward OnRconCommand(const cmd[]);
@@ -311,9 +323,9 @@ forward C__(); // Clear
 forward S__(const data[], length); // Set
 forward G__(address); // Get
 
-// PUT NO NATIVES ABOVE `TheNative`!
+// PUT NO NATIVES ABOVE HERE!
 // This is just a placeholder.  We rewrite the name when generating the FS.
-native TheNative() = heapspace;
+native YAR();
 
 // Custom versions of natives, some of which allow us to pass raw addresses.
 native bool:SetProperty(id, const name[], value, const string[]) = setproperty;
@@ -325,16 +337,23 @@ native CallRemoteFunction(const function[], const specifier[], ...) = CallRemote
 // Reserve space in the header for a function name up to 63 characters.
 new const
 	// This is at DAT address 0, which is brilliant for locating it.
-	NATIVE[64 char] = !"paehcaps\0\0\0e", // "heapspace" C-ified.
-	EMPTY[] = "",
+	NATIVE[64 char] = "",
 	RESULT[] = !"R__",
 	AI[] = !"ai",
+	IIII[] = !"iiii",
 	// Use the same string for everything, so we only need one.  And pack it.
 	FIXES_RESPONSE[] = !"FIXES_OnClientCheckResponse";
 
 new
 	gAvailable = SPACE_IN_MB * 1024 * 1024 / cellbytes,
+	// This might be a constant...
 	gAllocated = 0;
+
+new const
+	// This is written by our loader, NOT the server.  We do this just to save
+	// space in the header from not needing to make this `public`.  To
+	// facilitate this, it is the very last thing in the file.
+	__OPEN_MP_VERSION = 0;
 
 public C__()
 {
@@ -350,10 +369,10 @@ public N__()
 		args = 4 * cellbytes,
 		clear = 5 * cellbytes;
 	// The correct parameters are already on the stack.  Reuse them.
-	#emit SYSREQ.C     TheNative
+	#emit SYSREQ.C     YAR
 
 	// Save the return value.
-	#emit PUSH.C       EMPTY
+	#emit PUSH.C       NATIVE
 	#emit PUSH.pri
 	#emit PUSH.C       RESULT
 	#emit PUSH.C       27
@@ -377,7 +396,7 @@ public S__(const data[], length)
 	if (gAvailable > length)
 	{
 		gAvailable = gAvailable - length - 1;
-		SetProperty(27, RESULT, gAllocated, EMPTY);
+		SetProperty(27, RESULT, gAllocated, NATIVE);
 
 		new dest = 0;
 		// First, re-allocate the heap.
@@ -399,7 +418,9 @@ public S__(const data[], length)
 	}
 	else
 	{
-		SetProperty(27, RESULT, 0, EMPTY);
+		// We don't need the last parameter, so it doesn't matter what it is.
+		// Save some space by re-using something irrelevant.
+		SetProperty(27, RESULT, 0, NATIVE);
 	}
 }
 
@@ -438,8 +459,8 @@ public OnRconCommand(const cmd[])
 	// The smallest I could make the assembly without `#emit`.
 	if (StrCmp(cmd, FIXES_RESPONSE, true, cellmax) == 0)
 	{
-		// We used to use padding
-		return !SetProperty(27, FIXES_RESPONSE, 27, EMPTY);
+		// We used to use padding, but now the FS isn't packed (unfortunatley).
+		return !SetProperty(27, FIXES_RESPONSE, 27, NATIVE);
 	}
 	return 0;
 }
@@ -447,7 +468,11 @@ public OnRconCommand(const cmd[])
 // This callback needs to invoke a different callback in GMs.
 public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 {
+	if (__OPEN_MP_VERSION)
+	{
+		return 0;
+	}
 	// Invoke the global callback.
-	return CallRemoteFunction(FIXES_RESPONSE, !"iiii", playerid, actionid, memaddr, retndata);
+	return CallRemoteFunction(FIXES_RESPONSE, IIII, playerid, actionid, memaddr, retndata);
 }
 
