@@ -28,29 +28,29 @@
 
 #define SPACE_IN_MB (128)
 
-// Allocate a lot of space for temporary storage.
-#if cellbits == 32
-	#define KB_TO_CELLS 256
-	#pragma dynamic SPACE_IN_MB * 1024 * 1024 / 4
-#elseif cellbits == 64
-	#define KB_TO_CELLS 128
-	#pragma dynamic SPACE_IN_MB * 1024 * 1024 / 8
-#else
-	#error
-#endif
-
-//#pragma option -a
-
-forward N__(); // Native
-forward C__(); // Clear
-forward S__(const data[], length); // Set
-forward G__(address); // Get
+#pragma option -a
 
 // A few conveniences.
 const
 	cellbytes = cellbits / charbits,
 	__hea = 2,
 	__stk = 4;
+
+// Allocate a lot of space for temporary storage.
+#pragma dynamic SPACE_IN_MB * 1024 * 1024 / cellbytes
+
+#if cellbits == 64
+	const SHIFT = 3;
+#elseif cellbits == 32
+	const SHIFT = 2;
+#else
+	#error Unknown bit width.
+#endif
+
+forward N__(); // Native
+forward C__(); // Clear
+forward S__(const data[], length); // Set
+forward G__(address); // Get
 
 // PUT NO NATIVES ABOVE `TheNative`!
 
@@ -115,26 +115,29 @@ public N__()
 public S__(const data[], length)
 {
 	// Subtract `cellbytes` to ensure we have space for the hidden length.
-	if ((SPACE_IN_MB * 1024 * 1024 - cellbytes) - gAllocated >= length)
+	if ((SPACE_IN_MB * 1024 * 1024 / cellbytes - 1) - gAllocated >= length)
 	{
 		new dest;
 		// First, re-allocate the heap.
 		#emit LCTRL        __hea
 		#emit LOAD.alt     gAllocated
+		#emit SHL.C.alt    SHIFT
 		#emit ADD
 		#emit STOR.S.pri   dest
 		#emit LOAD.S.alt   length
+		#emit SHL.C.alt    SHIFT
 		#emit ADD
 		#emit SCTRL        __hea
 		
 		// Save the length to the slot.
+		#emit LOAD.S.alt   length
 		#emit SREF.S.alt   dest
 
 		// gAllocated is the return address.  Mostly...  The cell immediately prior
 		// is used to store the length of this segment, hidden away.
-		SetProperty(42, RESULT, gAllocated + cellbytes, EMPTY);
-		MemCpy(dest, data, 0, length, SPACE_IN_MB * 1024 * 1024 / cellbytes);
-		gAllocated += length + cellbytes;
+		SetProperty(42, RESULT, gAllocated + 1, EMPTY);
+		MemCpy(dest, data, 0, length * cellbytes, SPACE_IN_MB * 1024 * 1024 / cellbytes);
+		gAllocated = gAllocated + length + 1;
 	}
 	else
 	{
@@ -147,11 +150,13 @@ public G__(address)
 	// Re-allocate the heap.
 	#emit HEAP         0
 	#emit LOAD.pri     gAllocated
+	#emit SHL.C.pri    SHIFT
 	#emit ADD
 	#emit SCTRL        __hea
 
 	// Get our offset.
 	#emit LOAD.S.pri   address
+	#emit SHL.C.pri    SHIFT
 	#emit ADD
 	#emit STOR.S.pri   address
 	// Use `CallRemoteFunction` to pass the data back.
