@@ -1,3 +1,5 @@
+#define __asm(%0,%1,%2,%3) (((0x%3) << 24) | ((0x%2) << 16) | (0x%1 << 8) | (0x%0))
+
 static
 	YSI_g_sByteCode[1000] = {
 		__asm(00,00,05,0C), __asm(08,08,F1,E0), __asm(00,08,00,10), __asm(00,00,01,18),
@@ -87,20 +89,10 @@ static
 
 // The header byte widths never change, but cell offsets in to it do.
 #if cellbits == 64
-	// This is the location in the file of the pointer to the native we are
-	// `*0x24 + 4`, replacing.  It should be the first native, so could be found
-	// at i.e. one cell after the start of the native functions block.
-	FINAL__ NATIVE_POINTER_OFFSET = YSI_g_sByteCode[4] >>> 32;
-
 	// The data array we write the new name in to.  This is found strictly at
 	// the start of DAT, so is at `*0x10`.
 	FINAL__ NATIVE_NAME_OFFSET = YSI_g_sByteCode[2] & 0xFFFFFFFF;
 #elseif cellbits == 32
-	// This is the location in the file of the pointer to the native we are
-	// `*0x24 + 4`, replacing.  It should be the first native, so could be found
-	// at i.e. one cell after the start of the native functions block.
-	FINAL__ NATIVE_POINTER_OFFSET = YSI_g_sByteCode[9];
-
 	// The data array we write the new name in to.  This is found strictly at
 	// the start of DAT, so is at `*0x10`.
 	FINAL__ NATIVE_NAME_OFFSET = YSI_g_sByteCode[4];
@@ -111,7 +103,7 @@ static
 static stock bool:YAR_DumpFile()
 {
 	new
-		File:f = fopen("yar.amx", io_write);
+		File:f = fopen("ysi_aux_runtime.amx", io_write);
 	if (f)
 	{
 		fblockwrite(f, YSI_g_sByteCode);
@@ -123,9 +115,7 @@ static stock bool:YAR_DumpFile()
 
 static stock YAR_WriteNative(const name[])
 {
-	#if cellbits != 32
-		#error TODO!
-	#endif
+	// Data should always be aligned, I think.
 	new
 		pack[64 char],
 		i = -1,
@@ -140,7 +130,7 @@ static stock YAR_WriteNative(const name[])
 	while (!Cell_HasZeroByte(pack[i]));
 }
 
-stock bool:YAR_CreateFileWithNative(const name[])
+stock bool:HasNative(const name[])
 {
 	if (strcmp(name, YSI_g_sLastNative) == 0)
 	{
@@ -148,8 +138,6 @@ stock bool:YAR_CreateFileWithNative(const name[])
 		return true;
 	}
 	
-	// Rewrite the bytecode to include the name of the new native.
-	YSI_g_sByteCode[NATIVE_POINTER_OFFSET] = NATIVE_NAME_OFFSET;
 	YAR_WriteNative(name);
 
 	if (!YAR_DumpFile())
@@ -160,7 +148,7 @@ stock bool:YAR_CreateFileWithNative(const name[])
 	// Reload the FS, and test that it did load.  If it didn't the native we
 	// want to use probably doesn't exist.
 	deleteproperty(27, "R__");
-	SendRconCommand("reloadfs ../scriptfiles/ysi_aux_runtime");
+	YSI_SendRconCommand__("reloadfs ../scriptfiles/ysi_aux_runtime");
 	if (existproperty(27, "R__"))
 	{
 		// Succeeded, the new native must exist.
@@ -173,9 +161,21 @@ stock bool:YAR_CreateFileWithNative(const name[])
 	YAR_WriteNative(YSI_g_sLastNative);
 	if (YAR_DumpFile())
 	{
-		SendRconCommand("loadfs ../scriptfiles/ysi_aux_runtime");
+		YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
 	}
 
+	return false;
+}
+
+stock bool:CallNative(const name[], &ret, const specifier[], GLOBAL_TAG_TYPES:...)
+{
+	// This call creates the filterscript.
+	if (HasNative(name))
+	{
+		CallRemoteFunction("N__", specifier, ___(3));
+		ret = getproperty(27, "R__");
+		return true;
+	}
 	return false;
 }
 
@@ -186,6 +186,71 @@ public R__(const data[], length)
 		// Save it.
 		YSI_g_sRequestedData = 0;
 	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_rconfix</library>
+ * <remarks>
+ *   This code is always needed, even if fixes.inc exists, because y_master can
+ *   repeatedly load and unload it to use as a buffer filterscript.  Basically,
+ *   because this FS is always loaded it ensures that 16 other filterscripts
+ *   can't all be loaded at once.  So if 15 are loaded and we need an extra
+ *   space to reload one while preserving data we can unload this one, use the
+ *   spare space, then load this one back up again.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+y_rconfix_Load()
+{
+	// This is the old version from fixes.inc, just remove it.  Our version will
+	// be correctly detected by fixes.inc and thus not replaced.
+	YSI_SendRconCommand__("unloadfs ../scriptfiles/callbackfix");
+	if (YSI_g_sLastNative[0] == '-')
+	{
+		// This is the location in the file of the pointer to the native we are
+		// `*0x24 + 4`, replacing.  It should be the first native, so could be
+		// found at i.e. one cell after the start of the native functions block.
+		#if cellbits == 64
+			new offset = YSI_g_sByteCode[4] >>> 32;
+		#elseif cellbits == 32
+			new offset = YSI_g_sByteCode[9];
+		#else
+			#error Unsupported `cellbits`.
+		#endif
+		// Rewrite the bytecode to include the name of the new native.
+		YSI_g_sByteCode[offset] = NATIVE_NAME_OFFSET;
+		// Not loaded yet.  We don't care if the file already exists because
+		// this is the first time we've got here this server run, thus the
+		// available natives may have changed since the last time we wrote it.
+		HasNative("heapspace");
+	}
+	else
+	{
+		YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
+	}
+	if (fexist("ysi_aux_runtime.amx"))
+	{
+		#if defined YSI_FIX_CALLBACKS
+			state OnClientCheckResponse : OnClientCheckResponse_GM;
+		#endif
+	}
+	else
+	{
+		Debug_Warning("Could not load RconCommand/ClientCheckResponse fix FS.");
+		Debug_Info("Ignore this error if the FS already loaded.");
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_rconfix</library>
+ * <remarks>
+ *   Unload the callback fix filterscript.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock y_rconfix_Unload()
+{
+	YSI_SendRconCommand__("unloadfs ../scriptfiles/ysi_aux_runtime");
 }
 
 #endinput
