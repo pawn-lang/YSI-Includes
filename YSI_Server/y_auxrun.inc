@@ -70,6 +70,7 @@ static const
 	RESULT[] = !"R__";
 
 static
+	gAvailable = SPACE_IN_MB * 1024 * 1024 / cellbytes,
 	gAllocated = 0;
 
 // A fake state to never trigger address naught detection in crashdetect.
@@ -81,7 +82,9 @@ public C__() <skip_address_naught>
 
 public C__() <>
 {
-	gAllocated = 0;
+	#emit LCTRL        __hea
+	#emit STOR.pri     gAllocated
+	gAvailable = SPACE_IN_MB * 1024 * 1024 / cellbytes;
 }
 
 #pragma naked
@@ -114,30 +117,29 @@ public N__()
 
 public S__(const data[], length)
 {
-	// Subtract `cellbytes` to ensure we have space for the hidden length.
-	if ((SPACE_IN_MB * 1024 * 1024 / cellbytes - 1) - gAllocated >= length)
+	// Strictly `>` to ensure we have space for the hidden length.
+	if (gAvailable > length)
 	{
+		gAvailable = gAvailable - length - 1;
+		SetProperty(42, RESULT, gAllocated, EMPTY);
+
 		new dest;
 		// First, re-allocate the heap.
-		#emit LCTRL        __hea
-		#emit LOAD.alt     gAllocated
-		#emit SHL.C.alt    SHIFT
-		#emit ADD
+		#emit LOAD.pri     gAllocated
+		#emit ADD.C        cellbytes
 		#emit STOR.S.pri   dest
 		#emit LOAD.S.alt   length
 		#emit SHL.C.alt    SHIFT
 		#emit ADD
 		#emit SCTRL        __hea
-		
+		#emit STOR.pri     gAllocated
+
 		// Save the length to the slot.
 		#emit LOAD.S.alt   length
 		#emit SREF.S.alt   dest
 
-		// gAllocated is the return address.  Mostly...  The cell immediately prior
-		// is used to store the length of this segment, hidden away.
-		SetProperty(42, RESULT, gAllocated + 1, EMPTY);
-		MemCpy(dest, data, 0, length * cellbytes, SPACE_IN_MB * 1024 * 1024 / cellbytes);
-		gAllocated = gAllocated + length + 1;
+		// gAllocated is the return address.  The first cell is the length.
+		MemCpy(dest, data, 0, length, SPACE_IN_MB * 1024 * 1024 / cellbytes);
 	}
 	else
 	{
@@ -148,24 +150,18 @@ public S__(const data[], length)
 public G__(address)
 {
 	// Re-allocate the heap.
-	#emit HEAP         0
 	#emit LOAD.pri     gAllocated
-	#emit SHL.C.pri    SHIFT
-	#emit ADD
 	#emit SCTRL        __hea
 
-	// Get our offset.
-	#emit LOAD.S.pri   address
-	#emit SHL.C.pri    SHIFT
-	#emit ADD
-	#emit STOR.S.pri   address
 	// Use `CallRemoteFunction` to pass the data back.
-	CallRemoteFunction(RESULT, !"ai", address, address - cellbytes); 
+	CallRemoteFunction(RESULT, !"ai", address + cellbytes, address); 
 }
 
 main()
 {
 	// Force the `NAME` data to be in the output.
 	SetProperty(42, NAME, 0, EMPTY);
+	#emit LCTRL        __hea
+	#emit STOR.pri     gAllocated
 }
 
