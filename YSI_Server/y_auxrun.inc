@@ -10,23 +10,61 @@ FINAL__ NATIVE_POINTER_OFFSET = YSI_g_sByteCode[9] / cellbytes + 1;
 
 // The data array we write the new name in to.  This is found strictly at the
 // start of DAT, so is at `*0x10`.
-FINAL__ NATIVE_NAME_OFFSET = YSI_g_sByteCode[4] / cellbytes;
+FINAL__ NATIVE_NAME_OFFSET = YSI_g_sByteCode[4];
 
 // The original name, for when servers restart with different plugins or
 // components.  Always re-write the file out when the server starts, to ensure
 // this gets reset.
 FINAL__ NATIVE_NAME_RESET = YSI_g_sByteCode[NATIVE_POINTER_OFFSET];
 
-bool:YAR_CreateNative(const name[])
+static stock bool:YAR_DumpFile()
+{
+	new
+		File:f = fopen("yar.amx", io_write);
+	if (f)
+	{
+		fblockwrite(f, YSI_g_sByteCode);
+		fclose(f);
+		return true;
+	}
+	return false;
+}
+
+static stock YAR_WriteNative(const name[])
+{
+	new
+		pack[64 char],
+		i = -1,
+		o = NATIVE_NAME_OFFSET / cellbytes;
+	strpack(pack, name);
+	do
+	{
+		++i;
+		YSI_g_sByteCode[o] = swapchars(pack[i]);
+		++o;
+	}
+	while (!Cell_HasZeroByte(pack[i]));
+}
+
+stock bool:YAR_CreateFileWithNative(const name[])
 {
 	if (strcmp(name, YSI_g_sLastNative) == 0)
 	{
 		// The script is already loaded with this native.  Can just call it.
 		return true;
 	}
+	
 	// Rewrite the bytecode to include the name of the new native.
 	YSI_g_sByteCode[NATIVE_POINTER_OFFSET] = NATIVE_NAME_OFFSET;
-	
+	YAR_WriteNative(name);
+
+	if (!YAR_DumpFile())
+	{
+		return false;
+	}
+
+	// Reload the FS, and test that it did load.  If it didn't the native we
+	// want to use probably doesn't exist.
 	deleteproperty(42, "R__");
 	SendRconCommand("reloadfs ../scriptfiles/yar");
 	if (existproperty(42, "R__"))
@@ -36,11 +74,14 @@ bool:YAR_CreateNative(const name[])
 		StrCpy(YSI_g_sLastNative, name);
 		return true;
 	}
+
 	// Reset to the previous version (known safe).
-	SendRconCommand("loadfs ../scriptfiles/yar");
-	// Then fully reset the file to a safe initial state, so that it is still
-	// good to load if the server restarts with different components.
-	YSI_g_sByteCode[NATIVE_POINTER_OFFSET] = NATIVE_NAME_RESET;
+	YAR_WriteNative(YSI_g_sLastNative);
+	if (YAR_DumpFile())
+	{
+		SendRconCommand("loadfs ../scriptfiles/yar");
+	}
+
 	return false;
 }
 
@@ -122,7 +163,7 @@ native CallRemoteFunction(const function[], const specifier[], arg1, arg2);
 // Reserve space in the header for a function name up to 63 characters.
 static const
 	// This is at DAT address 0, which is brilliant for locating it.
-	NAME[64 char] = !"NehTvita\0\0\0e", // "TheNative" C-ified.
+	NAME[64 char] = !"paehcaps\0\0\0e", // "heapspace" C-ified.
 	EMPTY[4 char] = "",
 	RESULT[] = !"R__";
 
@@ -210,7 +251,7 @@ public G__(address)
 public OnFilterScriptInit()
 {
 	// Force the `NAME` data to be in the output.
-	SetProperty(42, RESULT, NAME[0], EMPTY);
+	SetProperty(42, RESULT, 0, NAME);
 	#emit LCTRL        __hea
 	#emit STOR.pri     gAllocated
 }
