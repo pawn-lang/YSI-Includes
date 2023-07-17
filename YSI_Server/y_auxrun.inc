@@ -1,3 +1,59 @@
+
+// This is the location in the file of the pointer to the native we are
+// replacing.  It should be the first native, so could be found at
+// `*0x24 + 4`, i.e. one cell after the start of the native functions block.
+#define NATIVE_POINTER_OFFSET (0x00000064) // Location in the file of the pointer.
+
+// The data array we write the new name in to.  This is found strictly at the
+// start of DAT, so is at `*0x10`.
+#define NATIVE_NAME_OFFSET    (0x000003C4) // Location of the name array.
+
+// The original name, for when servers restart with different plugins or
+// components.  Always re-write the file out when the server starts, to ensure
+// this gets reset.
+#define NATIVE_NAME_RESET     (0x000000A5) // Location of the original native's name.
+
+static stock
+	YSI_g_sLastNative[64] = "-", // Invalid.
+	YSI_g_sRequestedData = 0;
+
+bool:YAR_CreateNative(const name[])
+{
+	if (strcmp(name, YSI_g_sLastNative) == 0)
+	{
+		// The script is already loaded with this native.  Can just call it.
+		return true;
+	}
+	// Rewrite the bytecode to include the name of the new native.
+	YSI_g_sByteCode[NATIVE_POINTER_OFFSET / 4] = NATIVE_NAME_OFFSET;
+	YSI_g_sByteCode[NATIVE_POINTER_OFFSET / 4] = NATIVE_NAME_OFFSET;
+	
+	deleteproperty(42, "R__");
+	SendRconCommand("reloadfs ../scriptfiles/yar");
+	if (existproperty(42, "R__"))
+	{
+		// Succeeded, the new native must exist.
+		// Cache it.
+		StrCpy(YSI_g_sLastNative, name);
+		return true;
+	}
+	// Reset to the previous version (known safe).
+	SendRconCommand("loadfs ../scriptfiles/yar");
+	// Then fully reset the file to a safe initial state, so that it is still
+	// good to load if the server restarts with different components.
+	YSI_g_sByteCode[NATIVE_POINTER_OFFSET / 4] = NATIVE_NAME_RESET;
+	return false;
+}
+
+public R__(const data[], length)
+{
+	if (YSI_g_sRequestedData)
+	{
+		// Save it.
+		YSI_g_sRequestedData = 0;
+	}
+}
+
 #endinput
 
 /*
@@ -17,7 +73,7 @@
 
 // This is the source code of the filterscript embedded in an array avove.  Feel
 // free to recompile it yourself and compare the bytes.  I use compiler version
-// 3.10.11, settings don't matter since these next few lines override them all
+// 3.10.11; settings don't matter since these next few lines override them all
 // anyway.
 #pragma compress 0
 #pragma option -O1
@@ -28,7 +84,7 @@
 
 #define SPACE_IN_MB (128)
 
-#pragma option -a
+//#pragma option -a
 
 // A few conveniences.
 const
@@ -47,6 +103,8 @@ const
 	#error Unknown bit width.
 #endif
 
+forward OnFilterScriptInit();
+
 forward N__(); // Native
 forward C__(); // Clear
 forward S__(const data[], length); // Set
@@ -55,7 +113,7 @@ forward G__(address); // Get
 // PUT NO NATIVES ABOVE `TheNative`!
 
 // This is just a placeholder.  We rewrite the name when generating the FS.
-native TheNative() = numargs;
+native TheNative() = heapspace;
 native bool:SetProperty(id, const name[], value, const string[]) = setproperty;
 
 // Custom versions of natives which allow us to pass raw addresses.
@@ -64,7 +122,7 @@ native CallRemoteFunction(const function[], const specifier[], arg1, arg2);
 
 // Reserve space in the header for a function name up to 63 characters.
 static const
-	// This is at DAT address 4, which is brilliant for locating it.
+	// This is at DAT address 0, which is brilliant for locating it.
 	NAME[64 char] = !"NehTvita\0\0\0e", // "TheNative" C-ified.
 	EMPTY[4 char] = "",
 	RESULT[] = !"R__";
@@ -73,14 +131,7 @@ static
 	gAvailable = SPACE_IN_MB * 1024 * 1024 / cellbytes,
 	gAllocated = 0;
 
-// A fake state to never trigger address naught detection in crashdetect.
-public C__() <skip_address_naught>
-{
-	// Never call this!
-	#emit HALT         13 // Invalid state.
-}
-
-public C__() <>
+public C__()
 {
 	#emit LCTRL        __hea
 	#emit STOR.pri     gAllocated
@@ -99,7 +150,7 @@ public N__()
 	// Save the return value.
 	#emit PUSH.C       EMPTY
 	#emit PUSH.pri
-	#emit PUSH.C       NAME
+	#emit PUSH.C       RESULT
 	#emit PUSH.C       42
 	#emit PUSH.C       args
 	#emit SYSREQ.C     SetProperty
@@ -123,7 +174,7 @@ public S__(const data[], length)
 		gAvailable = gAvailable - length - 1;
 		SetProperty(42, RESULT, gAllocated, EMPTY);
 
-		new dest;
+		new dest = 0;
 		// First, re-allocate the heap.
 		#emit LOAD.pri     gAllocated
 		#emit ADD.C        cellbytes
@@ -157,10 +208,10 @@ public G__(address)
 	CallRemoteFunction(RESULT, !"ai", address + cellbytes, address); 
 }
 
-main()
+public OnFilterScriptInit()
 {
 	// Force the `NAME` data to be in the output.
-	SetProperty(42, NAME, 0, EMPTY);
+	SetProperty(42, RESULT, NAME[0], EMPTY);
 	#emit LCTRL        __hea
 	#emit STOR.pri     gAllocated
 }
