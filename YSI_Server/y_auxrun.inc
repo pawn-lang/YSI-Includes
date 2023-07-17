@@ -1,21 +1,21 @@
+static stock
+	YSI_g_sByteCode[1000],
+	YSI_g_sLastNative[64] = "-", // Invalid.
+	YSI_g_sRequestedData = 0;
 
 // This is the location in the file of the pointer to the native we are
-// replacing.  It should be the first native, so could be found at
-// `*0x24 + 4`, i.e. one cell after the start of the native functions block.
-#define NATIVE_POINTER_OFFSET (0x00000064) // Location in the file of the pointer.
+// replacing.  It should be the first native, so could be found at `*0x24 + 4`,
+// i.e. one cell after the start of the native functions block.
+FINAL__ NATIVE_POINTER_OFFSET = YSI_g_sByteCode[9] / cellbytes + 1;
 
 // The data array we write the new name in to.  This is found strictly at the
 // start of DAT, so is at `*0x10`.
-#define NATIVE_NAME_OFFSET    (0x000003C4) // Location of the name array.
+FINAL__ NATIVE_NAME_OFFSET = YSI_g_sByteCode[4] / cellbytes;
 
 // The original name, for when servers restart with different plugins or
 // components.  Always re-write the file out when the server starts, to ensure
 // this gets reset.
-#define NATIVE_NAME_RESET     (0x000000A5) // Location of the original native's name.
-
-static stock
-	YSI_g_sLastNative[64] = "-", // Invalid.
-	YSI_g_sRequestedData = 0;
+FINAL__ NATIVE_NAME_RESET = YSI_g_sByteCode[NATIVE_POINTER_OFFSET];
 
 bool:YAR_CreateNative(const name[])
 {
@@ -25,8 +25,7 @@ bool:YAR_CreateNative(const name[])
 		return true;
 	}
 	// Rewrite the bytecode to include the name of the new native.
-	YSI_g_sByteCode[NATIVE_POINTER_OFFSET / 4] = NATIVE_NAME_OFFSET;
-	YSI_g_sByteCode[NATIVE_POINTER_OFFSET / 4] = NATIVE_NAME_OFFSET;
+	YSI_g_sByteCode[NATIVE_POINTER_OFFSET] = NATIVE_NAME_OFFSET;
 	
 	deleteproperty(42, "R__");
 	SendRconCommand("reloadfs ../scriptfiles/yar");
@@ -41,7 +40,7 @@ bool:YAR_CreateNative(const name[])
 	SendRconCommand("loadfs ../scriptfiles/yar");
 	// Then fully reset the file to a safe initial state, so that it is still
 	// good to load if the server restarts with different components.
-	YSI_g_sByteCode[NATIVE_POINTER_OFFSET / 4] = NATIVE_NAME_RESET;
+	YSI_g_sByteCode[NATIVE_POINTER_OFFSET] = NATIVE_NAME_RESET;
 	return false;
 }
 
