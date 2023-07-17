@@ -144,6 +144,8 @@ const
 #endif
 
 forward OnFilterScriptInit();
+forward OnRconCommand(const cmd[]);
+forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
 
 forward N__(); // Native
 forward C__(); // Clear
@@ -151,23 +153,26 @@ forward S__(const data[], length); // Set
 forward G__(address); // Get
 
 // PUT NO NATIVES ABOVE `TheNative`!
-
 // This is just a placeholder.  We rewrite the name when generating the FS.
 native TheNative() = heapspace;
-native bool:SetProperty(id, const name[], value, const string[]) = setproperty;
 
-// Custom versions of natives which allow us to pass raw addresses.
+// Custom versions of natives, some of which allow us to pass raw addresses.
+native bool:SetProperty(id, const name[], value, const string[]) = setproperty;
+native StrCmp(const string1[], const string2[], bool:ignorecase, length) = strcmp;
 native bool:MemCpy(dest, const src[], index, bytes, max) = memcpy;
-native CallRemoteFunction(const function[], const specifier[], arg1, arg2);
+native CallResponseFunction(const function[], const specifier[], &playerid, &actionid, &memaddr, &retndata) = CallRemoteFunction;
+native CallResultFunction(const function[], const specifier[], data, length) = CallRemoteFunction;
 
 // Reserve space in the header for a function name up to 63 characters.
-static const
+new const
 	// This is at DAT address 0, which is brilliant for locating it.
-	NAME[64 char] = !"paehcaps\0\0\0e", // "heapspace" C-ified.
+	NATIVE[64 char] = !"paehcaps\0\0\0e", // "heapspace" C-ified.
 	EMPTY[4 char] = "",
-	RESULT[] = !"R__";
+	RESULT[] = !"R__",
+	// Use the same string for everything, so we only need one.  And pack it.
+	FIXES_RESPONSE[] = !"FIXES_OnClientCheckResponse";
 
-static
+new
 	gAvailable = SPACE_IN_MB * 1024 * 1024 / cellbytes,
 	gAllocated = 0;
 
@@ -245,14 +250,33 @@ public G__(address)
 	#emit SCTRL        __hea
 
 	// Use `CallRemoteFunction` to pass the data back.
-	CallRemoteFunction(RESULT, !"ai", address + cellbytes, address); 
+	CallResultFunction(RESULT, !"ai", address + cellbytes, address); 
 }
 
 public OnFilterScriptInit()
 {
-	// Force the `NAME` data to be in the output.
-	SetProperty(42, RESULT, 0, NAME);
+	// Force the `NATIVE` data to be in the output.
+	SetProperty(42, RESULT, 0, NATIVE);
 	#emit LCTRL        __hea
 	#emit STOR.pri     gAllocated
+}
+
+// This callback just needs to exist in one filterscript.
+public OnRconCommand(const cmd[])
+{
+	// The smallest I could make the assembly without `#emit`.
+	if (StrCmp(cmd, FIXES_RESPONSE, true, cellmax) == 0)
+	{
+		// We used to use padding
+		return !SetProperty(27, FIXES_RESPONSE, 27, EMPTY);
+	}
+	return 0;
+}
+
+// This callback needs to invoke a different callback in GMs.
+public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
+{
+	// Invoke the global callback.
+	return CallResponseFunction(FIXES_RESPONSE, !"iiii", playerid, actionid, memaddr, retndata);
 }
 
