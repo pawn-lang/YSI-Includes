@@ -132,11 +132,11 @@ public S__(const data[], length)
 		#emit SHL.C.alt    SHIFT
 		#emit ADD
 		#emit SCTRL        __hea
-		#emit STOR.pri     gAllocated
 
 		// Save the length to the slot.
 		#emit LOAD.S.alt   length
-		#emit SREF.S.alt   dest
+		#emit SREF.alt     gAllocated
+		#emit STOR.pri     gAllocated
 
 		// gAllocated is the return address.  The first cell is the length.
 		MemCpy(dest, data, 0, length, SPACE_IN_MB * 1024 * 1024 / cellbytes);
