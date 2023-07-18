@@ -107,7 +107,7 @@ public OnCodeInit()
 			#emit PUSH.C     __2_cells
 			#emit LCTRL      __cip
 			#emit ADD.C      __9_cells
-			#emit LCTRL      __jmp
+			#emit LCTRL      __jit_jump
 			#emit PUSH.pri
 			#emit LOAD.S.pri pointer
 			#emit SCTRL      __cip
@@ -135,7 +135,7 @@ public OnCodeInit()
 					#emit PUSH.C     __2_cells
 					#emit LCTRL      __cip
 					#emit ADD.C      __9_cells
-					#emit LCTRL      __jmp
+					#emit LCTRL      __jit_jump
 					#emit PUSH.pri
 					#emit LOAD.S.pri pointer2
 					#emit SCTRL      __cip
@@ -202,7 +202,7 @@ public OnPlayerConnect(playerid)
 		// to get the return address then modifying "cip" to call the function.
 		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      __jmp
+		#emit LCTRL      __jit_jump
 		#emit PUSH.pri
 		#emit LOAD.S.pri data
 		#emit SCTRL      __cip
@@ -250,7 +250,7 @@ public OnPlayerDisconnect(playerid, reason)
 		// to get the return address then modifying "cip" to call the function.
 		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      __jmp
+		#emit LCTRL      __jit_jump
 		#emit PUSH.pri
 		#emit LOAD.S.pri data
 		#emit SCTRL      __cip

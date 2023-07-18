@@ -337,7 +337,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 			#emit PUSH.C                    0
 			#emit LCTRL                     __cip
 			#emit ADD.C                     __9_cells
-			#emit LCTRL                     __jmp
+			#emit LCTRL                     __jit_jump
 			#emit PUSH.pri
 			#emit LREF.S.pri                publicTableEntry
 			#emit SCTRL                     __cip
@@ -711,7 +711,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(addr)
 		#emit PUSH.C                    0
 		#emit LCTRL                     __cip
 		#emit ADD.C                     36
-		#emit LCTRL                     __jmp
+		#emit LCTRL                     __jit_jump
 		#emit PUSH.pri
 		#emit LREF.S.pri                addr
 		#emit SCTRL                     __cip
@@ -923,7 +923,7 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[Y_HOOKS_MAX_NAME])
 		#emit PUSH.C                    0
 		#emit LCTRL                     __cip
 		#emit ADD.C                     __9_cells
-		#emit LCTRL                     __jmp
+		#emit LCTRL                     __jit_jump
 		#emit PUSH.pri
 		#emit LREF.S.pri                ptr
 		#emit SCTRL                     __cip
@@ -1329,7 +1329,7 @@ public OnCodeInit()
 		#emit PUSH.C                    0
 		#emit LCTRL                     __cip
 		#emit ADD.C                     __9_cells
-		#emit LCTRL                     __jmp
+		#emit LCTRL                     __jit_jump
 		#emit PUSH.pri
 		#emit LREF.S.pri                entry
 		#emit SCTRL                     __cip
@@ -1413,7 +1413,7 @@ public OnCodeInit()
 				#emit PUSH.C                    0
 				#emit LCTRL                     __cip
 				#emit ADD.C                     __11_cells
-				#emit LCTRL                     __jmp
+				#emit LCTRL                     __jit_jump
 				#emit PUSH.pri
 				#emit LREF.S.pri                entry
 				#emit STOR.pri                  YSI_g_sNPSTrampoline
@@ -1492,7 +1492,7 @@ public OnCodeInit()
 		//		#emit PUSH.C                    0
 		//		#emit LCTRL                     __cip
 		//		#emit ADD.C                     __11_cells
-		//		#emit LCTRL                     __jmp
+		//		#emit LCTRL                     __jit_jump
 		//		#emit PUSH.pri
 		//		#emit LREF.S.pri                entry
 		//		#emit STOR.pri                  YSI_g_sNPSTrampoline
@@ -1812,7 +1812,7 @@ _Y_HOOKS_STATIC _Hooks_RepairStubFS()
 	#emit PUSH.C              0
 	#emit LCTRL               __cip
 	#emit ADD.C               __9_cells
-	#emit LCTRL               __jmp
+	#emit LCTRL               __jit_jump
 	#emit PUSH.pri
 	#emit LOAD.pri            YSI_g_sInitFSPtr
 	#emit SCTRL               __cip
@@ -1825,7 +1825,7 @@ _Y_HOOKS_STATIC _Hooks_RepairStubGM()
 	#emit PUSH.C              0
 	#emit LCTRL               __cip
 	#emit ADD.C               __9_cells
-	#emit LCTRL               __jmp
+	#emit LCTRL               __jit_jump
 	#emit PUSH.pri
 	#emit LOAD.pri            YSI_g_sInitGMPtr
 	#emit SCTRL               __cip

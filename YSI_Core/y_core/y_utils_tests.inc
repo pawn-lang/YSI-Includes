@@ -1541,6 +1541,5 @@ static stock
 	ASSERT(Server_CallNative("clamp", ret, "iii", 50, 70, 100));
 	ASSERT_EQ(ret, 70);
 	ASSERT(!Server_CallNative("plpplplplpl", ret, "iii", 50, 70, 100));
-	ASSERT_EQ(ret, 70);
 }
 

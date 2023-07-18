@@ -354,91 +354,174 @@ const __minus1 = -1;
 #endif
 
 // Control registers.
-#if !defined __register_names
-	/**
-	 * <library>y_emit</library>
-	 * <remarks>
-	 *   The <c>COD</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
-	 * </remarks>
-	 */
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The <c>COD</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __register_names
+	static stock YSI__cod = 0;
+#else
 	const __cod = 0;
-	
-	/**
-	 * <library>y_emit</library>
-	 * <remarks>
-	 *   The <c>DAT</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
-	 * </remarks>
-	 */
-	const __dat = 1;
-	
-	/**
-	 * <library>y_emit</library>
-	 * <remarks>
-	 *   The <c>HEA</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
-	 * </remarks>
-	 */
-	const __hea = 2;
-	
-	/**
-	 * <library>y_emit</library>
-	 * <remarks>
-	 *   The <c>STP</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
-	 * </remarks>
-	 */
-	const __stp = 3;
-	
-	/**
-	 * <library>y_emit</library>
-	 * <remarks>
-	 *   The <c>STK</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
-	 * </remarks>
-	 */
-	const __stk = 4;
-	
-	/**
-	 * <library>y_emit</library>
-	 * <remarks>
-	 *   The <c>FRM</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
-	 * </remarks>
-	 */
-	const __frm = 5;
-	
-	/**
-	 * <library>y_emit</library>
-	 * <remarks>
-	 *   The <c>CIP</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
-	 * </remarks>
-	 */
-	const __cip = 6;
-	
-	/**
-	 * <library>y_emit</library>
-	 * <remarks>
-	 *   The JIT plugin control register value for use in <c>LCTRL</c> and
-	 *   <c>SCTRL</c>.
-	 * </remarks>
-	 */
-	const __jit = 7;
-	
-	/**
-	 * <library>y_emit</library>
-	 * <remarks>
-	 *   The JIT plugin address translation register value for use in <c>LCTRL</c>
-	 *   and <c>SCTRL</c>.
-	 * </remarks>
-	 */
-	const __jmp = 8;
-	
-	/**
-	 * <library>y_emit</library>
-	 * <remarks>
-	 *   The open.mp VM flags register value for use in <c>LCTRL</c> and
-	 *   <c>SCTRL</c>.
-	 * </remarks>
-	 */
-	const __flg = 9;
-	#define __register_names
 #endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The <c>DAT</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __register_names
+	static stock YSI__dat = 1;
+#else
+	const __dat = 1;
+#endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The <c>HEA</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __register_names
+	static stock YSI__hea = 2;
+#else
+	const __hea = 2;
+#endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The <c>STP</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __register_names
+	static stock YSI__stp = 3;
+#else
+	const __stp = 3;
+#endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The <c>STK</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __register_names
+	static stock YSI__stk = 4;
+#else
+	const __stk = 4;
+#endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The <c>FRM</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __register_names
+	static stock YSI__frm = 5;
+#else
+	const __frm = 5;
+#endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The <c>CIP</c> register number for use in <c>LCTRL</c> and <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __register_names
+	static stock YSI__cip = 6;
+#else
+	const __cip = 6;
+#endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The JIT plugin control register value for use in <c>LCTRL</c> and
+ *   <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __register_names
+	static stock YSI__jit = 7;
+#else
+	const __jit = 7;
+#endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The JIT plugin control register value for use in <c>LCTRL</c> and
+ *   <c>SCTRL</c>.
+ * </remarks>
+ */
+const __jit_flag = 7;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The JIT plugin address translation register value for use in <c>LCTRL</c>
+ *   and <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __register_names
+	static stock YSI__jmp = 8;
+#else
+	const __jmp = 8;
+#endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The JIT plugin address translation register value for use in <c>LCTRL</c>
+ *   and <c>SCTRL</c>.
+ * </remarks>
+ */
+const __jit_jump = 8;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The open.mp VM flags register value for use in <c>LCTRL</c> and
+ *   <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __register_names
+	static stock YSI__flg = 9;
+#else
+	const __flg = 9;
+#endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The crashdetect time register value for use in <c>LCTRL</c> and
+ *   <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __crash_time
+	static stock YSI__crash_time = 254;
+#else
+	const __crash_time = 254;
+#endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The crashdetect flags register value for use in <c>LCTRL</c> and
+ *   <c>SCTRL</c>.
+ * </remarks>
+ */
+#if defined __crash_flag
+	static stock YSI__crash_flag = 255;
+#else
+	const __crash_flag = 255;
+#endif
+
+#define __register_names
 
 /**
  * <library>y_emit</library>

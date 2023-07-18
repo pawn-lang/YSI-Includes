@@ -2027,3 +2027,57 @@ static stock Func:y_inline_ClaimAndReturn<i>(Func:f<i>)
 	ASSERT_EQ(total, 40 * 3 + 33 * 3 + 6);
 }
 
+forward y_inline_CallLaterPublic();
+public y_inline_CallLaterPublic()
+{
+		printf("Called public later");
+	
+}
+
+static stock y_inline_CallLater(Func:cb<>)
+{
+	Indirect_Claim(cb);
+	SetTimerEx("Indirect_FromCallback", 100 + random(100), false, "ii", _:cb, true);
+}
+
+@test(.group = "y_inline") y_inline_CallLater()
+{
+	new a = 0;
+	inline const Callback()
+	{
+		printf("Called inline later (%d)", a);
+	}
+
+	a = 0;
+	y_inline_CallLater(using inline Callback);
+	a = 1;
+	y_inline_CallLater(using inline Callback);
+	a = 2;
+	y_inline_CallLater(using inline Callback);
+	a = 3;
+	y_inline_CallLater(using inline Callback);
+	a = 4;
+	y_inline_CallLater(using inline Callback);
+	a = 5;
+	y_inline_CallLater(using inline Callback);
+	a = 6;
+	y_inline_CallLater(using inline Callback);
+	a = 7;
+	y_inline_CallLater(using inline Callback);
+	a = 8;
+	y_inline_CallLater(using inline Callback);
+	a = 9;
+	y_inline_CallLater(using inline Callback);
+
+	y_inline_CallLater(using public y_inline_CallLaterPublic<>);
+	y_inline_CallLater(using public y_inline_CallLaterPublic<>);
+	y_inline_CallLater(using public y_inline_CallLaterPublic<>);
+	y_inline_CallLater(using public y_inline_CallLaterPublic<>);
+	y_inline_CallLater(using public y_inline_CallLaterPublic<>);
+	y_inline_CallLater(using public y_inline_CallLaterPublic<>);
+	y_inline_CallLater(using public y_inline_CallLaterPublic<>);
+	y_inline_CallLater(using public y_inline_CallLaterPublic<>);
+	y_inline_CallLater(using public y_inline_CallLaterPublic<>);
+	y_inline_CallLater(using public y_inline_CallLaterPublic<>);
+}
+

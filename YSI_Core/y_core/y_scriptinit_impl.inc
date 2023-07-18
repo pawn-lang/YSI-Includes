@@ -726,7 +726,7 @@ static stock ScriptInit_GetStartTime()
 forward Server_SetLongCallTime(usTime);
 
 #if __COMPILER___EMIT_U
-	#define Server_SetLongCallTime(%0) (__emit(LOAD.U.pri %0, SCTRL 0xFE))
+	#define Server_SetLongCallTime(%0) (__emit(LOAD.U.pri %0, SCTRL __crash_time))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -739,7 +739,7 @@ forward Server_SetLongCallTime(usTime);
 forward Server_DisableLongCall();
 
 #if __COMPILER___EMIT_U
-	#define Server_DisableLongCall() (__emit(CONST.pri 32, SCTRL 0xFF))
+	#define Server_DisableLongCall() (__emit(CONST.pri 32, SCTRL __crash_flag))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -752,7 +752,7 @@ forward Server_DisableLongCall();
 forward Server_EnableLongCall();
 
 #if __COMPILER___EMIT_U
-	#define Server_EnableLongCall() (__emit(CONST.pri 34, SCTRL 0xFF))
+	#define Server_EnableLongCall() (__emit(CONST.pri 34, SCTRL __crash_flag))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -765,7 +765,7 @@ forward Server_EnableLongCall();
 forward Server_ResetLongCallTime();
 
 #if __COMPILER___EMIT_U
-	#define Server_ResetLongCallTime() (__emit(CONST.pri 36, SCTRL 0xFF))
+	#define Server_ResetLongCallTime() (__emit(CONST.pri 36, SCTRL __crash_flag))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -780,7 +780,7 @@ forward Server_ResetLongCallTime();
 forward Server_RestartLongCall();
 
 #if __COMPILER___EMIT_U
-	#define Server_RestartLongCall() (__emit(CONST.pri 40, SCTRL 0xFF))
+	#define Server_RestartLongCall() (__emit(CONST.pri 40, SCTRL __crash_flag))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -796,7 +796,7 @@ forward Server_RestartLongCall();
 forward bool:Server_IsLongCallEnabled();
 
 #if __COMPILER___EMIT_U
-	#define Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 1, CONST.alt 1, AND)))
+	#define Server_IsLongCallEnabled() (bool:(__emit(ZERO.pri, LCTRL __crash_flag, SHR.C.pri 1, CONST.alt 1, AND)))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -810,7 +810,7 @@ forward bool:Server_IsLongCallEnabled();
 forward Server_GetLongCallTime();
 
 #if __COMPILER___EMIT_U
-	#define Server_GetLongCallTime() (__emit(ZERO.pri, LCTRL 0xFE))
+	#define Server_GetLongCallTime() (__emit(ZERO.pri, LCTRL __crash_time))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -824,7 +824,7 @@ forward Server_GetLongCallTime();
 forward Server_DisableDetectAddr0();
 
 #if __COMPILER___EMIT_U
-	#define Server_DisableDetectAddr0() (__emit(CONST.pri 64, SCTRL 0xFF))
+	#define Server_DisableDetectAddr0() (__emit(CONST.pri 64, SCTRL __crash_flag))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -838,7 +838,7 @@ forward Server_DisableDetectAddr0();
 forward Server_EnableDetectAddr0();
 
 #if __COMPILER___EMIT_U
-	#define Server_EnableDetectAddr0() (__emit(CONST.pri 192, SCTRL 0xFF))
+	#define Server_EnableDetectAddr0() (__emit(CONST.pri 192, SCTRL __crash_flag))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -851,7 +851,7 @@ forward Server_EnableDetectAddr0();
 forward bool:Server_IsDetectAddr0Enabled();
 
 #if __COMPILER___EMIT_U
-	#define Server_IsDetectAddr0Enabled() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 7, CONST.alt 1, AND)))
+	#define Server_IsDetectAddr0Enabled() (bool:(__emit(ZERO.pri, LCTRL __crash_flag, SHR.C.pri 7, CONST.alt 1, AND)))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -864,7 +864,7 @@ forward bool:Server_IsDetectAddr0Enabled();
 forward bool:Server_HasDetectAddr0();
 
 #if __COMPILER___EMIT_U
-	#define Server_HasDetectAddr0() (bool:(__emit(ZERO.pri, LCTRL 0xFF, SHR.C.pri 6, CONST.alt 1, AND)))
+	#define Server_HasDetectAddr0() (bool:(__emit(ZERO.pri, LCTRL __crash_flag, SHR.C.pri 6, CONST.alt 1, AND)))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -879,7 +879,7 @@ forward bool:Server_CrashDetectExists();
 #if __COMPILER___EMIT_U
 	// Could also do `ZERO.alt, NEQ`, but that's the same number of instructions
 	// and clobbers `alt`.
-	#define Server_CrashDetectExists() (bool:(__emit(ZERO.pri, LCTRL 0xFF, NOT, NOT)))
+	#define Server_CrashDetectExists() (bool:(__emit(ZERO.pri, LCTRL __crash_flag, NOT, NOT)))
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -1183,16 +1183,16 @@ stock Server_GetLongCallDefault()
 {
 	// Store the current value.
 	#emit ZERO.pri
-	#emit LCTRL         0xFE
+	#emit LCTRL         __crash_time
 	#emit MOVE.alt
 	// Reset to and read the default.
 	#emit CONST.pri     36
-	#emit SCTRL         0xFF
+	#emit SCTRL         __crash_flag
 	#emit ZERO.pri
-	#emit LCTRL         0xFE
+	#emit LCTRL         __crash_time
 	// Put the current value back.
 	#emit XCHG
-	#emit SCTRL         0xFE
+	#emit SCTRL         __crash_time
 	#emit MOVE.pri
 	#emit RETN
 	return 0;
@@ -2117,7 +2117,7 @@ stock bool:Server_UpgradeCrashDetect()
 	// Test `LCTRL(255) & 0x11 == 0x01`.  If that's true we have an older
 	// version of crashdetect.
 	#emit ZERO.pri
-	#emit LCTRL         0xFF
+	#emit LCTRL         __crash_flag
 	#emit CONST.alt     33
 	#emit AND
 	#emit CONST.alt     1
@@ -2142,7 +2142,7 @@ stock bool:Server_UpgradeCrashDetect()
 stock Server_SetLongCallTime(usTime)
 {
 	#emit LOAD.S.pri    usTime
-	#emit SCTRL         0xFE
+	#emit SCTRL         __crash_time
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2155,7 +2155,7 @@ stock Server_SetLongCallTime(usTime)
 stock Server_DisableLongCall()
 {
 	#emit CONST.pri     32
-	#emit SCTRL         0xFF
+	#emit SCTRL         __crash_flag
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2168,7 +2168,7 @@ stock Server_DisableLongCall()
 stock Server_EnableLongCall()
 {
 	#emit CONST.pri     34
-	#emit SCTRL         0xFF
+	#emit SCTRL         __crash_flag
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2181,7 +2181,7 @@ stock Server_EnableLongCall()
 stock Server_ResetLongCallTime()
 {
 	#emit CONST.pri     36
-	#emit SCTRL         0xFF
+	#emit SCTRL         __crash_flag
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2196,7 +2196,7 @@ stock Server_ResetLongCallTime()
 stock Server_RestartLongCall()
 {
 	#emit CONST.pri     40
-	#emit SCTRL         0xFF
+	#emit SCTRL         __crash_flag
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2212,7 +2212,7 @@ stock Server_RestartLongCall()
 stock bool:Server_IsLongCallEnabled()
 {
 	#emit ZERO.pri
-	#emit LCTRL         0xFF
+	#emit LCTRL         __crash_flag
 	#emit SHR.C.pri     1
 	#emit CONST.alt     1
 	#emit AND
@@ -2231,7 +2231,7 @@ stock bool:Server_IsLongCallEnabled()
 stock Server_GetLongCallTime()
 {
 	#emit ZERO.pri
-	#emit LCTRL         0xFE
+	#emit LCTRL         __crash_time
 	#emit RETN
 	return 0;
 }
@@ -2247,7 +2247,7 @@ stock Server_GetLongCallTime()
 stock Server_DisableDetectAddr0()
 {
 	#emit CONST.pri     64
-	#emit SCTRL         0xFF
+	#emit SCTRL         __crash_flag
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2261,7 +2261,7 @@ stock Server_DisableDetectAddr0()
 stock Server_EnableDetectAddr0()
 {
 	#emit CONST.pri     192
-	#emit SCTRL         0xFF
+	#emit SCTRL         __crash_flag
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2275,7 +2275,7 @@ stock bool:Server_IsDetectAddr0Enabled()
 {
 	// Is the check enabled?  0 if off or doesn't exist.
 	#emit ZERO.pri
-	#emit LCTRL         0xFF
+	#emit LCTRL         __crash_flag
 	#emit SHR.C.pri     7
 	#emit CONST.alt     1
 	#emit AND
@@ -2294,7 +2294,7 @@ stock bool:Server_HasDetectAddr0()
 {
 	// Is the check possible?
 	#emit ZERO.pri
-	#emit LCTRL         0xFF
+	#emit LCTRL         __crash_flag
 	#emit SHR.C.pri     6
 	#emit CONST.alt     1
 	#emit AND
@@ -2322,7 +2322,7 @@ stock bool:Server_CrashDetectExists()
 	// clobber `alt`.  This doesn't matter in this function, but might in the
 	// inline version.
 	#emit ZERO.pri
-	#emit LCTRL         0xFF
+	#emit LCTRL         __crash_flag
 	#emit NOT
 	#emit NOT
 	#emit RETN

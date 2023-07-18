@@ -315,7 +315,7 @@ stock bool:Iter_YieldLoop()
 		#emit SCTRL        __frm
 		#emit CONST.pri    6
 		#emit LIDX
-		#emit SCTRL        __jmp
+		#emit SCTRL        __jit_jump
 		#emit SCTRL        __cip
 		// Technically, we never return from here, but the compiler can't know!
 	}
@@ -427,7 +427,7 @@ stock Iter_YieldReturn(value)
 	#emit DEC          YSI_gIteratorDepth
 	#emit CONST.pri    2
 	#emit LIDX
-	#emit SCTRL        __jmp
+	#emit SCTRL        __jit_jump
 	#emit SCTRL        __cip
 }
 

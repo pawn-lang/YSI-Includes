@@ -332,7 +332,7 @@ Svar_Save()
 		// Now get the return address and push it.
 		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      __jmp
+		#emit LCTRL      __jit_jump
 		#emit PUSH.pri
 		// Call "Player_WriteArray" directly.
 		#emit CONST.pri  INI_WriteArray
@@ -356,7 +356,7 @@ public OnCodeInit()
 		#emit PUSH.C     0
 		#emit LCTRL      __cip
 		#emit ADD.C      __9_cells
-		#emit LCTRL      __jmp
+		#emit LCTRL      __jit_jump
 		#emit PUSH.pri
 		#emit LOAD.S.pri buffer
 		#emit SCTRL      __cip
