@@ -201,6 +201,14 @@ const __param9_offset   =  12 * __cell_bytes;
 /**
  * <library>y_emit</library>
  * <remarks>
+ *   The offset in the stack from the frame pointer to the tenth parameter.
+ * </remarks>
+ */
+const __param10_offset   =  13 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
  *   The offset in the stack from the frame pointer to the first local
  *   parameter.  As the stack grows down this is negative.
  * </remarks>
@@ -287,6 +295,15 @@ const __local8_offset   =  -9 * __cell_bytes;
  * </remarks>
  */
 const __local9_offset   = -10 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   The offset in the stack from the frame pointer to the tenth local
+ *   parameter.  As the stack grows down this is negative.
+ * </remarks>
+ */
+const __local10_offset   = -11 * __cell_bytes;
 
 // General values.
 
@@ -422,6 +439,138 @@ const __minus1 = -1;
 	const __flg = 9;
 	#define __register_names
 #endif
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -32 cells.
+ * </remarks>
+ */
+const __m32_cells = -32 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -32 cells.
+ * </remarks>
+ */
+const __m31_cells = -31 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -30 cells.
+ * </remarks>
+ */
+const __m30_cells = -30 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -29 cells.
+ * </remarks>
+ */
+const __m29_cells = -29 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -28 cells.
+ * </remarks>
+ */
+const __m28_cells = -28 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -27 cells.
+ * </remarks>
+ */
+const __m27_cells = -27 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -26 cells.
+ * </remarks>
+ */
+const __m26_cells = -26 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -25 cells.
+ * </remarks>
+ */
+const __m25_cells = -25 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -24 cells.
+ * </remarks>
+ */
+const __m24_cells = -24 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -23 cells.
+ * </remarks>
+ */
+const __m23_cells = -23 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -22 cells.
+ * </remarks>
+ */
+const __m22_cells = -22 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ *   Represents -21 cells.
+ * </remarks>
+ */
+const __m21_cells = -21 * __cell_bytes;
 
 /**
  * <library>y_emit</library>
@@ -873,4 +1022,124 @@ const  __19_cells =  19 * __cell_bytes;
  * </remarks>
  */
 const  __20_cells =  20 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __21_cells =  21 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __22_cells =  22 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __23_cells =  23 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __24_cells =  24 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __25_cells =  25 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __26_cells =  26 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __27_cells =  27 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __28_cells =  28 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __29_cells =  29 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __30_cells =  30 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __31_cells =  31 * __cell_bytes;
+
+/**
+ * <library>y_emit</library>
+ * <remarks>
+ *   Just a number of cells, converted to bytes, to make various bits of maths
+ *   more clear.  Some of these values overlap with parameter offsets and the
+ *   like, but these are separate to differentiate the different use-cases.
+ * </remarks>
+ */
+const  __32_cells =  32 * __cell_bytes;
 
