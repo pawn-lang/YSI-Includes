@@ -714,10 +714,29 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 	ASSERT(Cell_HasZeroByte(0xFF00FFFF));
 	ASSERT(Cell_HasZeroByte(0x0000FFFF));
 	ASSERT(Cell_HasZeroByte(0x00FFFFFF));
+	ASSERT(!Cell_HasZeroByte(0x20202020));
 	ASSERT(!Cell_HasZeroByte(0x55555555));
 	ASSERT(!Cell_HasZeroByte(0xFFFFFFFF));
 	ASSERT(!Cell_HasZeroByte(0x01010101));
 	ASSERT(!Cell_HasZeroByte(0x01FFFFFF));
 	ASSERT(!Cell_HasZeroByte(0xF00FFFFF));
+}
+
+@test(.group = "y_cell") y_cell_HasSpaceByte()
+{
+	ASSERT(Cell_HasSpaceByte(0x20202020));
+	ASSERT(Cell_HasSpaceByte(0x20802020));
+	ASSERT(Cell_HasSpaceByte(0xFFFFFF20));
+	ASSERT(Cell_HasSpaceByte(0xFFFF20FF));
+	ASSERT(Cell_HasSpaceByte(0xFFFF2020));
+	ASSERT(Cell_HasSpaceByte(0xFF20FFFF));
+	ASSERT(Cell_HasSpaceByte(0x2020FFFF));
+	ASSERT(Cell_HasSpaceByte(0x20FFFFFF));
+	ASSERT(!Cell_HasSpaceByte(0x00000000));
+	ASSERT(!Cell_HasSpaceByte(0x55555555));
+	ASSERT(!Cell_HasSpaceByte(0xFFFFFFFF));
+	ASSERT(!Cell_HasSpaceByte(0x01010101));
+	ASSERT(!Cell_HasSpaceByte(0x01FFFFFF));
+	ASSERT(!Cell_HasSpaceByte(0xF20FFFFF));
 }
 

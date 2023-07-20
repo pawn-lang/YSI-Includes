@@ -187,3 +187,33 @@ stock ORM_SaveInline(ORM:id, Func:cb<>)
 	return ret;
 }
 
+#if !defined YSI_TESTS
+	#endinput
+#endif
+
+#define MySQL_Connect mysql_connect
+#define MySQL_Close mysql_close
+#define MySQL_Log mysql_log
+
+public OnQueryError(errorid, const error[], const callback[], const query[], MySQL:handle)
+{
+	printf("ERROR: %d, %d (%s)", _:handle, errorid, error);
+	printf("    %s, %s", callback, query);
+}
+
+@test(.group = "y_inline_mysql") MySQL_PQueryInline()
+{
+	MySQL_Log(ERROR | WARNING | INFO | DEBUG);
+	new MySQL:sql = MySQL_Connect("127.0.0.1", "root", "", "y_inline_mysql");
+	ASSERT_NE(sql, MYSQL_INVALID_HANDLE);
+	if (sql)
+	{
+		inline const MySQLResult()
+		{
+			
+		}
+		MySQL_PQueryInline(sql, using inline MySQLResult, "CREATE TABLE IF NOT EXIST table1 ( Row int );");
+		MySQL_Close(sql);
+	}
+}
+
