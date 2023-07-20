@@ -113,6 +113,7 @@ Optional plugins:
 
 // The most first include, since it determines compiler settings that might be
 // used by literally any other include.
+#include "y_emit"
 #include "y_compilerdata"
 
 // The second include, because it sets up comments in all the others and has no
@@ -337,7 +338,6 @@ stock File:YSI_FOpen__(const filename[], filemode:mode = io_readwrite)
 
 #include "y_shortvar"
 #include "y_pp"
-#include "y_emit"
 #include "y_als_impl"
 
 // A few nicely named short strings used for properties.

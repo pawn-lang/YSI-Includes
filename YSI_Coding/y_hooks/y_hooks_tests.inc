@@ -852,70 +852,72 @@ HOOK__ OnPlayerCustomRpl() { g_y_hooksVar += 55; }
 	#error y_hooks tests require BAD_numargs
 #endif
 
-HOOK__ OnTestNumArgs0(a, b, c, d, e, f)
-{
-	ASSERT_EQ(Hooks_NumArgs(), 6);
-	ASSERT_EQ(numargs(), 6);
-}
+#if __COMPILER_MODIFIED
+	HOOK__ OnTestNumArgs0(a, b, c, d, e, f)
+	{
+		ASSERT_EQ(Hooks_NumArgs(), 6);
+		ASSERT_EQ(numargs(), 6);
+	}
 
-HOOK__ OnTestNumArgs1(a, b, c, d, f)
-{
-	ASSERT_EQ(Hooks_NumArgs(), 5);
-	ASSERT_NE(BAD_numargs(), 5);
-	ASSERT_EQ(numargs(), 5);
-}
+	HOOK__ OnTestNumArgs1(a, b, c, d, f)
+	{
+		ASSERT_EQ(Hooks_NumArgs(), 5);
+		ASSERT_NE(BAD_numargs(), 5);
+		ASSERT_EQ(numargs(), 5);
+	}
 
-forward OnTestNumArgs1(a, b, c, d, f);
-public OnTestNumArgs1(a, b, c, d, f)
-{
-	ASSERT_EQ(Hooks_NumArgs(), 5);
-	ASSERT_NE(BAD_numargs(), 5);
-	ASSERT_EQ(numargs(), 5);
-}
+	forward OnTestNumArgs1(a, b, c, d, f);
+	public OnTestNumArgs1(a, b, c, d, f)
+	{
+		ASSERT_EQ(Hooks_NumArgs(), 5);
+		ASSERT_NE(BAD_numargs(), 5);
+		ASSERT_EQ(numargs(), 5);
+	}
 
-HOOK__ OnTestNumArgs2(a, b, c, f)
-{
-	ASSERT_EQ(Hooks_NumArgs(), 4);
-	ASSERT_NE(BAD_numargs(), 4);
-	ASSERT_EQ(numargs(), 4);
-}
+	HOOK__ OnTestNumArgs2(a, b, c, f)
+	{
+		ASSERT_EQ(Hooks_NumArgs(), 4);
+		ASSERT_NE(BAD_numargs(), 4);
+		ASSERT_EQ(numargs(), 4);
+	}
 
-#tryinclude "..\YSI_Coding\y_unique"
-#tryinclude "..\..\YSI_Coding\y_unique"
+	#tryinclude "..\YSI_Coding\y_unique"
+	#tryinclude "..\..\YSI_Coding\y_unique"
 
-HOOK__ OnTestNumArgs2(a, b, c, f)
-{
-	ASSERT_EQ(Hooks_NumArgs(), 4);
-	ASSERT_NE(BAD_numargs(), 4);
-	ASSERT_EQ(numargs(), 4);
-}
+	HOOK__ OnTestNumArgs2(a, b, c, f)
+	{
+		ASSERT_EQ(Hooks_NumArgs(), 4);
+		ASSERT_NE(BAD_numargs(), 4);
+		ASSERT_EQ(numargs(), 4);
+	}
 
-forward OnTestNumArgs2(a, b, c, f);
-public OnTestNumArgs2(a, b, c, f)
-{
-	ASSERT_EQ(Hooks_NumArgs(), 4);
-	ASSERT_NE(BAD_numargs(), 4);
-	ASSERT_EQ(numargs(), 4);
-}
+	forward OnTestNumArgs2(a, b, c, f);
+	public OnTestNumArgs2(a, b, c, f)
+	{
+		ASSERT_EQ(Hooks_NumArgs(), 4);
+		ASSERT_NE(BAD_numargs(), 4);
+		ASSERT_EQ(numargs(), 4);
+	}
 
-static OnTestNumArgs4(total, ...)
-{
-	ASSERT_EQ(numargs(), total + 1);
-}
+	static OnTestNumArgs4(total, ...)
+	{
+		ASSERT_EQ(numargs(), total + 1);
+	}
 
-@test(.group = "y_hooks") y_hooks_numargs()
-{
-	CallLocalFunction("OnTestNumArgs0", "iiiiii", 0, 0, 0, 0, 0, 0);
-	CallLocalFunction("OnTestNumArgs1", "iiiii", 0, 0, 0, 0, 0);
-	CallLocalFunction("OnTestNumArgs2", "iiii", 0, 0, 0, 0);
-	OnTestNumArgs4(0);
-	OnTestNumArgs4(1, 1);
-	OnTestNumArgs4(2, 1, 2);
-	OnTestNumArgs4(3, 1, 2, 3);
-	OnTestNumArgs4(4, 1, 2, 3, 4);
-	OnTestNumArgs4(5, 1, 2, 3, 4, 5);
-	OnTestNumArgs4(6, 1, 2, 3, 4, 5, 6);
-}
+	@test(.group = "y_hooks") y_hooks_numargs()
+	{
+		CallLocalFunction("OnTestNumArgs0", "iiiiii", 0, 0, 0, 0, 0, 0);
+		CallLocalFunction("OnTestNumArgs1", "iiiii", 0, 0, 0, 0, 0);
+		CallLocalFunction("OnTestNumArgs2", "iiii", 0, 0, 0, 0);
+		OnTestNumArgs4(0);
+		OnTestNumArgs4(1, 1);
+		OnTestNumArgs4(2, 1, 2);
+		OnTestNumArgs4(3, 1, 2, 3);
+		OnTestNumArgs4(4, 1, 2, 3, 4);
+		OnTestNumArgs4(5, 1, 2, 3, 4, 5);
+		OnTestNumArgs4(6, 1, 2, 3, 4, 5, 6);
+	}
+#endif
 
 HOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_1>
 {

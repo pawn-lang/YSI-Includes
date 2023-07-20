@@ -97,6 +97,7 @@ Optional plugins:
 
 #if defined YSI_TESTS
 	// Get a new unique ID for the test hooks.
+	#include "..\y_va"
 	#include "..\y_unique\y_unique_entry"
 	#include "y_hooks_tests"
 #endif

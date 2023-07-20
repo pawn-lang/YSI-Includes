@@ -77,6 +77,8 @@ public
 	YSI_gpThirdpartyTestValuf = 43,
 	YSI_gpThirdpartyTest = 44;
 
+#pragma unused YSI_gpThirdpartyTestValud, YSI_gpThirdpartyTestValue, YSI_gpThirdpartyTestValuf, YSI_gpThirdpartyTest
+
 @test(.group = "y_thirdpartyinclude") GetSetPubVar()
 {
 	//ASSERT(GetNumPubVars() > 0);
@@ -123,4 +125,20 @@ public
 }
 
 #endif
+
+@test(.group = "y_thirdpartyinclude") CallNativeByAddress()
+{
+	//PrintAmxHeader();
+	clamp(0, 5, 6);
+	new res, addr = GetNativeAddressFromName("clamp");
+	//printf("Address = %08x", addr);
+	res = CallNativeByAddress(addr, 10, 11, 12);
+	ASSERT_EQ(res, 11);
+	res = CallNativeByAddress(addr, 10, 5, 15);
+	ASSERT_EQ(res, 10);
+	res = CallNativeByAddress(addr, 100, 7, 9);
+	ASSERT_EQ(res, 9);
+	res = CallNativeByAddress(addr, 6, 6, 6);
+	ASSERT_EQ(res, 6);
+}
 
