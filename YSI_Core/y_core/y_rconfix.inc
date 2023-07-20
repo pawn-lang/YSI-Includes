@@ -203,15 +203,15 @@ static stock YAR_WriteNative(const name[])
 		// The data array we write the new name in to.  This is found strictly
 		// at the start of DAT, so is at `*0x10`.
 		o = __32(YSI_g_sByteCode[16 / cellbytes]);
-	o = o / cellbytes;
+	o = o / cellbytes - 1;
 	strpack(pack, name);
 	do
 	{
 		++i;
-		YSI_g_sByteCode[o] = swapchars(pack[i]);
 		++o;
+		YSI_g_sByteCode[o] = swapchars(pack[i]);
 	}
-	while (!Cell_HasZeroByte(pack[i]));
+	while (YSI_g_sByteCode[o] > (cellmax >>> (charbits - 1)));
 }
 
 stock bool:Server_HasNative(const name[])

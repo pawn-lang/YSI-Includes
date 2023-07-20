@@ -350,8 +350,7 @@ stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
 {
 	// return (data - 0x01010101) & ~data & 0x80808080;
 	#emit LOAD.S.pri           data
-	#emit CONST.alt            YSI_g_c20s
-	#emit XOR
+	#emit INVERT
 	#emit MOVE.alt
 	#emit INVERT
 	#emit ADD.C                YSI_g_cFEs
@@ -382,7 +381,8 @@ stock Cell_HasSpaceByte(GLOBAL_TAG_TYPES:data)
 {
 	// return (data - 0x01010101) & ~data & 0x80808080;
 	#emit LOAD.S.pri           data
-	#emit INVERT
+	#emit CONST.alt            YSI_g_c20s
+	#emit XOR
 	#emit MOVE.alt
 	#emit INVERT
 	#emit ADD.C                YSI_g_cFEs

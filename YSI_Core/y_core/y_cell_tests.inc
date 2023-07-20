@@ -704,3 +704,20 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 	}
 }
 
+@test(.group = "y_cell") y_cell_HasZeroByte()
+{
+	ASSERT(Cell_HasZeroByte(0x00000000));
+	ASSERT(Cell_HasZeroByte(0x00800000));
+	ASSERT(Cell_HasZeroByte(0xFFFFFF00));
+	ASSERT(Cell_HasZeroByte(0xFFFF00FF));
+	ASSERT(Cell_HasZeroByte(0xFFFF0000));
+	ASSERT(Cell_HasZeroByte(0xFF00FFFF));
+	ASSERT(Cell_HasZeroByte(0x0000FFFF));
+	ASSERT(Cell_HasZeroByte(0x00FFFFFF));
+	ASSERT(!Cell_HasZeroByte(0x55555555));
+	ASSERT(!Cell_HasZeroByte(0xFFFFFFFF));
+	ASSERT(!Cell_HasZeroByte(0x01010101));
+	ASSERT(!Cell_HasZeroByte(0x01FFFFFF));
+	ASSERT(!Cell_HasZeroByte(0xF00FFFFF));
+}
+
