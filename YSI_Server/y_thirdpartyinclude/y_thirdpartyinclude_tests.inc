@@ -74,12 +74,14 @@ Optional plugins:
 public
 	YSI_gpThirdpartyTestValud = 41,
 	YSI_gpThirdpartyTestValue = 42,
-	YSI_gpThirdpartyTestValuf = 43;
+	YSI_gpThirdpartyTestValuf = 43,
+	YSI_gpThirdpartyTest = 44;
 
 @test(.group = "y_thirdpartyinclude") GetSetPubVar()
 {
 	//ASSERT(GetNumPubVars() > 0);
 	new value;
+	YSI_gpThirdpartyTestValue = 42;
 	ASSERT(GetPubVar("YSI_gpThirdpartyTestValue", value));
 	ASSERT_EQ(value, 42);
 	ASSERT(SetPubVar("YSI_gpThirdpartyTestValue", 101));
@@ -90,4 +92,35 @@ public
 	ASSERT(GetPubVar("YSI_gpThirdpartyTestValue", value));
 	ASSERT_EQ(value, 101);
 }
+
+#if defined getpubvar
+
+@test(.group = "y_thirdpartyinclude") GetSetPubVar2()
+{
+	ASSERT(numpubvars() >= 3);
+	YSI_gpThirdpartyTestValue = 7;
+	ASSERT_EQ(setpubvar("YSI_gpThirdpartyTestValue", 42), 7);
+	ASSERT_EQ(getpubvar("YSI_gpThirdpartyTestValue"), 42);
+	ASSERT_EQ(setpubvar("YSI_gpThirdpartyTestValue", 101), 42);
+	ASSERT_EQ(getpubvar("YSI_gpThirdpartyTestValud"), 41);
+	ASSERT_EQ(getpubvar("YSI_gpThirdpartyTestValuf"), 43);
+	ASSERT_EQ(getpubvar("YSI_gpThirdpartyTestValue"), 101);
+	ASSERT(existpubvar("YSI_gpThirdpartyTestValue"));
+	ASSERT(!existpubvar("YSI_gpThirdpartyTestValug"));
+}
+
+@test(.group = "y_thirdpartyinclude") GetSetPubVar3()
+{
+	YSI_gpThirdpartyTestValue = 789;
+	YSI_gpThirdpartyTest = 123;
+	ASSERT(existpubvar("YSI_gpThirdpartyTestValue"));
+	ASSERT(!existpubvar("YSI_gpThirdpartyTestValu"));
+	ASSERT(!existpubvar("YSI_gpThirdpartyTestVal"));
+	ASSERT(existpubvar("YSI_gpThirdpartyTest"));
+	ASSERT(!existpubvar("YSI_gpThirdpartyTestV"));
+	ASSERT_EQ(getpubvar("YSI_gpThirdpartyTestValue"), 789);
+	ASSERT_EQ(getpubvar("YSI_gpThirdpartyTest"), 123);
+}
+
+#endif
 

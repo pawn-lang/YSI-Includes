@@ -90,7 +90,9 @@ static stock
 	ASSERT_NZ(idx);
 	ASSERT_NZ(ptr);
 	idx = 0;
-	while ((idx = AMX_GetNativeNamePrefix(idx, buf, _A<prin>)))
+	// Shortened for the old compiler.
+	ptr = ('p' << 0) | ('r' << 8) | ('i' << 16) | ('n' << 24); // _A<prin>;
+	while ((idx = AMX_GetNativeNamePrefix(idx, buf, ptr)))
 	{
 		strunpack(buf, buf);
 		printf("Found %d = `%s`", idx, buf);

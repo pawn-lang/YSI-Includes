@@ -76,6 +76,8 @@ Optional plugins:
 #endif
 #define _INC_y_rconfix
 
+forward R__(const data[], length);
+
 #if !_YSI_SAFE_STARTUP
 	#if defined YSI_FIX_CALLBACKS
 		forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
@@ -92,13 +94,13 @@ static
 	// source (and feel free to recompile the source to verify that it is in
 	// fact the same thing).
 	YSI_g_sByteCode[] = {
-		__asm(20,05,00,00), __asm(E0,F1,08,08), __asm(10,00,08,00), __asm(14,01,00,00),
-		__asm(A8,04,00,00), __asm(20,05,00,00), __asm(20,05,00,08), __asm(FF,FF,FF,FF),
+		__asm(24,05,00,00), __asm(E0,F1,08,08), __asm(10,00,08,00), __asm(14,01,00,00),
+		__asm(AC,04,00,00), __asm(24,05,00,00), __asm(24,05,00,08), __asm(FF,FF,FF,FF),
 		__asm(38,00,00,00), __asm(70,00,00,00), __asm(98,00,00,00), __asm(98,00,00,00),
 		__asm(98,00,00,00), __asm(98,00,00,00), __asm(08,00,00,00), __asm(9A,00,00,00),
-		__asm(F0,01,00,00), __asm(9E,00,00,00), __asm(34,00,00,00), __asm(A2,00,00,00),
-		__asm(2C,03,00,00), __asm(A6,00,00,00), __asm(4C,02,00,00), __asm(BC,00,00,00),
-		__asm(A0,02,00,00), __asm(CF,00,00,00), __asm(90,00,00,00), __asm(DD,00,00,00),
+		__asm(F4,01,00,00), __asm(9E,00,00,00), __asm(34,00,00,00), __asm(A2,00,00,00),
+		__asm(30,03,00,00), __asm(A6,00,00,00), __asm(50,02,00,00), __asm(BC,00,00,00),
+		__asm(A4,02,00,00), __asm(CF,00,00,00), __asm(94,00,00,00), __asm(DD,00,00,00),
 		__asm(00,00,00,00), __asm(E1,00,00,00), __asm(00,00,00,00), __asm(E5,00,00,00),
 		__asm(00,00,00,00), __asm(F1,00,00,00), __asm(00,00,00,00), __asm(F8,00,00,00),
 		__asm(00,00,00,00), __asm(0B,01,00,00), __asm(15,00,43,5F), __asm(5F,00,47,5F),
@@ -112,68 +114,69 @@ static
 		__asm(70,00,00,00), __asm(78,00,00,00), __asm(00,00,00,00), __asm(2E,00,00,00),
 		__asm(1F,00,00,00), __asm(02,00,00,00), __asm(0F,00,00,00), __asm(70,00,00,00),
 		__asm(0B,00,00,00), __asm(00,00,00,02), __asm(0F,00,00,00), __asm(6C,00,00,00),
-		__asm(59,00,00,00), __asm(30,00,00,00), __asm(7B,00,00,00), __asm(00,00,00,00),
-		__asm(27,00,00,00), __asm(00,00,00,00), __asm(24,00,00,00), __asm(27,00,00,00),
+		__asm(59,00,00,00), __asm(30,00,00,00), __asm(2A,00,00,00), __asm(7B,00,00,00),
+		__asm(00,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00), __asm(24,00,00,00),
+		__asm(27,00,00,00), __asm(40,00,00,00), __asm(27,00,00,00), __asm(1B,00,00,00),
+		__asm(27,00,00,00), __asm(10,00,00,00), __asm(7B,00,00,00), __asm(01,00,00,00),
+		__asm(2C,00,00,00), __asm(14,00,00,00), __asm(2B,00,00,00), __asm(1F,00,00,00),
+		__asm(04,00,00,00), __asm(4E,00,00,00), __asm(20,00,00,00), __asm(04,00,00,00),
+		__asm(78,00,00,00), __asm(00,00,00,00), __asm(2E,00,00,00), __asm(01,00,00,00),
+		__asm(6C,00,00,00), __asm(04,00,00,00), __asm(10,00,00,00), __asm(3E,00,00,00),
+		__asm(B4,01,00,00), __asm(03,00,00,00), __asm(10,00,00,00), __asm(02,00,00,00),
+		__asm(6C,00,00,00), __asm(50,00,00,00), __asm(0C,00,00,00), __asm(01,00,00,00),
+		__asm(4F,00,00,00), __asm(0F,00,00,00), __asm(6C,00,00,00), __asm(27,00,00,00),
+		__asm(00,00,00,00), __asm(28,00,00,00), __asm(70,00,00,00), __asm(27,00,00,00),
 		__asm(40,00,00,00), __asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00),
 		__asm(10,00,00,00), __asm(7B,00,00,00), __asm(01,00,00,00), __asm(2C,00,00,00),
-		__asm(14,00,00,00), __asm(2B,00,00,00), __asm(1F,00,00,00), __asm(04,00,00,00),
-		__asm(4E,00,00,00), __asm(20,00,00,00), __asm(04,00,00,00), __asm(78,00,00,00),
-		__asm(00,00,00,00), __asm(2E,00,00,00), __asm(01,00,00,00), __asm(6C,00,00,00),
-		__asm(04,00,00,00), __asm(10,00,00,00), __asm(3E,00,00,00), __asm(B0,01,00,00),
-		__asm(03,00,00,00), __asm(10,00,00,00), __asm(02,00,00,00), __asm(6C,00,00,00),
-		__asm(50,00,00,00), __asm(0C,00,00,00), __asm(01,00,00,00), __asm(4F,00,00,00),
-		__asm(0F,00,00,00), __asm(6C,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00),
-		__asm(28,00,00,00), __asm(70,00,00,00), __asm(27,00,00,00), __asm(40,00,00,00),
+		__asm(14,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00), __asm(01,00,00,00),
+		__asm(70,00,00,00), __asm(57,00,00,00), __asm(04,00,00,00), __asm(11,00,00,00),
+		__asm(FC,FF,FF,FF), __asm(04,00,00,00), __asm(10,00,00,00), __asm(45,00,00,00),
+		__asm(02,00,00,00), __asm(4E,00,00,00), __asm(20,00,00,00), __asm(02,00,00,00),
+		__asm(04,00,00,00), __asm(10,00,00,00), __asm(14,00,00,00), __asm(70,00,00,00),
+		__asm(0F,00,00,00), __asm(70,00,00,00), __asm(27,00,00,00), __asm(00,00,00,02),
+		__asm(29,00,00,00), __asm(10,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00),
+		__asm(29,00,00,00), __asm(0C,00,00,00), __asm(29,00,00,00), __asm(FC,FF,FF,FF),
+		__asm(27,00,00,00), __asm(14,00,00,00), __asm(7B,00,00,00), __asm(02,00,00,00),
+		__asm(2C,00,00,00), __asm(18,00,00,00), __asm(2C,00,00,00), __asm(04,00,00,00),
+		__asm(33,00,00,00), __asm(EC,01,00,00), __asm(27,00,00,00), __asm(00,00,00,00),
+		__asm(27,00,00,00), __asm(00,00,00,00), __asm(27,00,00,00), __asm(40,00,00,00),
 		__asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00), __asm(10,00,00,00),
 		__asm(7B,00,00,00), __asm(01,00,00,00), __asm(2C,00,00,00), __asm(14,00,00,00),
-		__asm(27,00,00,00), __asm(00,00,00,00), __asm(01,00,00,00), __asm(70,00,00,00),
-		__asm(57,00,00,00), __asm(04,00,00,00), __asm(11,00,00,00), __asm(FC,FF,FF,FF),
-		__asm(04,00,00,00), __asm(10,00,00,00), __asm(45,00,00,00), __asm(02,00,00,00),
-		__asm(4E,00,00,00), __asm(20,00,00,00), __asm(02,00,00,00), __asm(04,00,00,00),
-		__asm(10,00,00,00), __asm(14,00,00,00), __asm(70,00,00,00), __asm(0F,00,00,00),
-		__asm(70,00,00,00), __asm(27,00,00,00), __asm(00,00,00,02), __asm(29,00,00,00),
-		__asm(10,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00), __asm(29,00,00,00),
-		__asm(0C,00,00,00), __asm(29,00,00,00), __asm(FC,FF,FF,FF), __asm(27,00,00,00),
-		__asm(14,00,00,00), __asm(7B,00,00,00), __asm(02,00,00,00), __asm(2C,00,00,00),
-		__asm(18,00,00,00), __asm(2C,00,00,00), __asm(04,00,00,00), __asm(33,00,00,00),
-		__asm(E8,01,00,00), __asm(27,00,00,00), __asm(00,00,00,00), __asm(27,00,00,00),
-		__asm(00,00,00,00), __asm(27,00,00,00), __asm(40,00,00,00), __asm(27,00,00,00),
-		__asm(1B,00,00,00), __asm(27,00,00,00), __asm(10,00,00,00), __asm(7B,00,00,00),
-		__asm(01,00,00,00), __asm(2C,00,00,00), __asm(14,00,00,00), __asm(59,00,00,00),
-		__asm(30,00,00,00), __asm(2E,00,00,00), __asm(01,00,00,00), __asm(70,00,00,00),
-		__asm(20,00,00,00), __asm(02,00,00,00), __asm(03,00,00,00), __asm(0C,00,00,00),
-		__asm(24,00,00,00), __asm(57,00,00,00), __asm(04,00,00,00), __asm(24,00,00,00),
-		__asm(27,00,00,00), __asm(44,00,00,00), __asm(27,00,00,00), __asm(40,00,00,00),
-		__asm(27,00,00,00), __asm(10,00,00,00), __asm(7B,00,00,00), __asm(03,00,00,00),
-		__asm(2C,00,00,00), __asm(14,00,00,00), __asm(59,00,00,00), __asm(30,00,00,00),
-		__asm(2E,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00), __asm(27,00,00,00),
-		__asm(00,00,00,00), __asm(27,00,00,00), __asm(40,00,00,00), __asm(27,00,00,00),
-		__asm(1B,00,00,00), __asm(27,00,00,00), __asm(10,00,00,00), __asm(7B,00,00,00),
-		__asm(01,00,00,00), __asm(2C,00,00,00), __asm(14,00,00,00), __asm(1F,00,00,00),
-		__asm(02,00,00,00), __asm(0F,00,00,00), __asm(70,00,00,00), __asm(59,00,00,00),
-		__asm(30,00,00,00), __asm(2E,00,00,00), __asm(27,00,00,00), __asm(FF,FF,FF,7F),
-		__asm(27,00,00,00), __asm(01,00,00,00), __asm(27,00,00,00), __asm(50,00,00,00),
-		__asm(29,00,00,00), __asm(0C,00,00,00), __asm(27,00,00,00), __asm(10,00,00,00),
-		__asm(7B,00,00,00), __asm(04,00,00,00), __asm(2C,00,00,00), __asm(14,00,00,00),
-		__asm(36,00,00,00), __asm(24,03,00,00), __asm(27,00,00,00), __asm(00,00,00,00),
-		__asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00), __asm(50,00,00,00),
+		__asm(59,00,00,00), __asm(30,00,00,00), __asm(2E,00,00,00), __asm(01,00,00,00),
+		__asm(70,00,00,00), __asm(20,00,00,00), __asm(02,00,00,00), __asm(03,00,00,00),
+		__asm(0C,00,00,00), __asm(24,00,00,00), __asm(57,00,00,00), __asm(04,00,00,00),
+		__asm(24,00,00,00), __asm(27,00,00,00), __asm(44,00,00,00), __asm(27,00,00,00),
+		__asm(40,00,00,00), __asm(27,00,00,00), __asm(10,00,00,00), __asm(7B,00,00,00),
+		__asm(03,00,00,00), __asm(2C,00,00,00), __asm(14,00,00,00), __asm(59,00,00,00),
+		__asm(30,00,00,00), __asm(2E,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00),
+		__asm(27,00,00,00), __asm(00,00,00,00), __asm(27,00,00,00), __asm(40,00,00,00),
 		__asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00), __asm(10,00,00,00),
 		__asm(7B,00,00,00), __asm(01,00,00,00), __asm(2C,00,00,00), __asm(14,00,00,00),
-		__asm(54,00,00,00), __asm(30,00,00,00), __asm(59,00,00,00), __asm(30,00,00,00),
-		__asm(2E,00,00,00), __asm(01,00,00,00), __asm(74,00,00,00), __asm(35,00,00,00),
-		__asm(48,03,00,00), __asm(59,00,00,00), __asm(30,00,00,00), __asm(85,00,00,00),
-		__asm(18,00,00,00), __asm(85,00,00,00), __asm(14,00,00,00), __asm(85,00,00,00),
-		__asm(10,00,00,00), __asm(85,00,00,00), __asm(0C,00,00,00), __asm(27,00,00,00),
-		__asm(48,00,00,00), __asm(27,00,00,00), __asm(50,00,00,00), __asm(27,00,00,00),
-		__asm(18,00,00,00), __asm(7B,00,00,00), __asm(03,00,00,00), __asm(2C,00,00,00),
-		__asm(1C,00,00,00), __asm(30,00,00,00), __asm(59,53,49,20), __asm(41,75,78,69),
-		__asm(6C,69,61,72), __asm(79,20,52,75), __asm(6E,74,69,6D), __asm(65,2C,20,28),
-		__asm(63,29,20,32), __asm(30,32,33,20), __asm(41,6C,65,78), __asm(20,22,59,5F),
-		__asm(4C,65,73,73), __asm(22,20,43,6F), __asm(6C,65,2E,00), __asm(00,00,00,00),
-		__asm(00,00,00,00), __asm(00,00,00,00), __asm(00,5F,5F,52), __asm(00,00,69,61),
-		__asm(69,69,69,69), __asm(00,00,00,00), __asm(45,58,49,46), __asm(6E,4F,5F,53),
-		__asm(65,69,6C,43), __asm(68,43,74,6E), __asm(52,6B,63,65), __asm(6F,70,73,65),
-		__asm(00,65,73,6E), __asm(00,00,00,02), __asm(00,00,00,00), __asm(00,00,00,00),
+		__asm(1F,00,00,00), __asm(02,00,00,00), __asm(0F,00,00,00), __asm(70,00,00,00),
+		__asm(59,00,00,00), __asm(30,00,00,00), __asm(2E,00,00,00), __asm(27,00,00,00),
+		__asm(FF,FF,FF,7F), __asm(27,00,00,00), __asm(01,00,00,00), __asm(27,00,00,00),
+		__asm(50,00,00,00), __asm(29,00,00,00), __asm(0C,00,00,00), __asm(27,00,00,00),
+		__asm(10,00,00,00), __asm(7B,00,00,00), __asm(04,00,00,00), __asm(2C,00,00,00),
+		__asm(14,00,00,00), __asm(36,00,00,00), __asm(28,03,00,00), __asm(27,00,00,00),
+		__asm(00,00,00,00), __asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00),
+		__asm(50,00,00,00), __asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00),
+		__asm(10,00,00,00), __asm(7B,00,00,00), __asm(01,00,00,00), __asm(2C,00,00,00),
+		__asm(14,00,00,00), __asm(54,00,00,00), __asm(30,00,00,00), __asm(59,00,00,00),
+		__asm(30,00,00,00), __asm(2E,00,00,00), __asm(01,00,00,00), __asm(74,00,00,00),
+		__asm(35,00,00,00), __asm(4C,03,00,00), __asm(59,00,00,00), __asm(30,00,00,00),
+		__asm(85,00,00,00), __asm(18,00,00,00), __asm(85,00,00,00), __asm(14,00,00,00),
+		__asm(85,00,00,00), __asm(10,00,00,00), __asm(85,00,00,00), __asm(0C,00,00,00),
+		__asm(27,00,00,00), __asm(48,00,00,00), __asm(27,00,00,00), __asm(50,00,00,00),
+		__asm(27,00,00,00), __asm(18,00,00,00), __asm(7B,00,00,00), __asm(03,00,00,00),
+		__asm(2C,00,00,00), __asm(1C,00,00,00), __asm(30,00,00,00), __asm(59,53,49,20),
+		__asm(41,75,78,69), __asm(6C,69,61,72), __asm(79,20,52,75), __asm(6E,74,69,6D),
+		__asm(65,2C,20,28), __asm(63,29,20,32), __asm(30,32,33,20), __asm(41,6C,65,78),
+		__asm(20,22,59,5F), __asm(4C,65,73,73), __asm(22,20,43,6F), __asm(6C,65,2E,00),
+		__asm(00,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00), __asm(00,5F,5F,52),
+		__asm(00,00,69,61), __asm(69,69,69,69), __asm(00,00,00,00), __asm(45,58,49,46),
+		__asm(6E,4F,5F,53), __asm(65,69,6C,43), __asm(68,43,74,6E), __asm(52,6B,63,65),
+		__asm(6F,70,73,65), __asm(00,65,73,6E), __asm(00,00,00,02), __asm(00,00,00,00),
+		__asm(00,00,00,00)
 	},
 	YSI_g_sLastNative[64] = "-", // Invalid.
 	YSI_g_sRequestedData = 0;
@@ -205,12 +208,10 @@ static stock YAR_WriteNative(const name[])
 	do
 	{
 		++i;
-		printf("Writing name: %s, %d", name, swapchars(pack[i]));
 		YSI_g_sByteCode[o] = swapchars(pack[i]);
 		++o;
 	}
 	while (!Cell_HasZeroByte(pack[i]));
-	printf("Written");
 }
 
 stock bool:Server_HasNative(const name[])
@@ -227,11 +228,18 @@ stock bool:Server_HasNative(const name[])
 	{
 		return false;
 	}
-
+	
 	// Reload the FS, and test that it did load.  If it didn't the native we
 	// want to use probably doesn't exist.
 	deleteproperty(27, "R__");
-	YSI_SendRconCommand__("reloadfs ../scriptfiles/ysi_aux_runtime");
+	if (YSI_g_sLastNative[0] == '-')
+	{
+		YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
+	}
+	else
+	{
+		YSI_SendRconCommand__("reloadfs ../scriptfiles/ysi_aux_runtime");
+	}
 	if (existproperty(27, "R__"))
 	{
 		// Succeeded, the new native must exist.
@@ -240,14 +248,16 @@ stock bool:Server_HasNative(const name[])
 		strcat(YSI_g_sLastNative, name);
 		return true;
 	}
-
-	// Reset to the previous version (known safe).
-	YAR_WriteNative(YSI_g_sLastNative);
-	if (YAR_DumpFile())
+	if (YSI_g_sLastNative[0] != '-')
 	{
-		YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
+		// Reset to the previous version (known safe).
+		YAR_WriteNative(YSI_g_sLastNative);
+		if (YAR_DumpFile())
+		{
+			YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
+		}
 	}
-
+	
 	return false;
 }
 
@@ -289,10 +299,8 @@ y_rconfix_Load()
 		#else
 			#error Unsupported `cellbits`.
 		#endif
-		printf("Writing %d to offset %d", __32(YSI_g_sByteCode[16 / cellbytes]), offset);
 		// Rewrite the bytecode to include the name of the new native.
-		YSI_g_sByteCode[offset] = __32(YSI_g_sByteCode[16 / cellbytes]);
-		//offset = __32(YSI_g_sByteCode[0]) / cellbytes - 1;
+		YSI_g_sByteCode[offset / cellbytes + 1] = __32(YSI_g_sByteCode[16 / cellbytes]);
 		YSI_g_sByteCode[sizeof (YSI_g_sByteCode) - 1] = __OPEN_MP_VERSION;
 		// Not loaded yet.  We don't care if the file already exists because
 		// this is the first time we've got here this server run, thus the
@@ -447,6 +455,8 @@ const
 // Allocate a lot of space for temporary storage.
 #pragma dynamic SPACE_IN_MB * 1024 * 1024 / cellbytes
 
+#define open.mp __OPEN_MP_VERSION
+
 forward OnFilterScriptInit();
 forward OnRconCommand(const cmd[]);
 forward OnClientCheckResponse(playerid, actionid, memaddr, retndata);
@@ -487,7 +497,7 @@ new const
 	// This is written by our loader, NOT the server.  We do this just to save
 	// space in the header from not needing to make this `public`.  To
 	// facilitate this, it is the very last thing in the file.
-	__OPEN_MP_VERSION = 0;
+	open.mp = 0;
 
 public C__()
 {
@@ -502,6 +512,10 @@ public N__()
 	const
 		args = 4 * cellbytes,
 		clear = 5 * cellbytes;
+	
+	// Remove the return address.
+	#emit POP.pri
+	
 	// The correct parameters are already on the stack.  Reuse them.
 	#emit SYSREQ.C     YSI
 
@@ -602,7 +616,7 @@ public OnRconCommand(const cmd[])
 // This callback needs to invoke a different callback in GMs.
 public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 {
-	if (__OPEN_MP_VERSION)
+	if (open.mp)
 	{
 		return 0;
 	}
