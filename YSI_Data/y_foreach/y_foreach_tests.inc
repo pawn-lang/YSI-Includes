@@ -781,8 +781,6 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 	ASSERT_EQ(Iter_RandomFree(iter<1>), cellmin);
 }
 
-#endinput
-
 @test(.group = "y_iterate") y_iter_RandomFree3()
 {
 	new
@@ -4565,7 +4563,6 @@ iterfunc stock y_iterate_NestedInner(a = 5, b)
 	new
 		Iterator:iter<5, 20>,
 		n;
-	Iter_Init(iter);
 	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
 	Iter_Add(iter<0>, 1);
 	//printf("arr: %d, %d, %d, %d, %d, %d", Iterator@iter[0], Iterator@iter[1], Iterator@iter[2], Iterator@iter[3], Iterator@iter[4], Iterator@iter[5]);
@@ -4976,32 +4973,35 @@ static stock
 @test(.group = "y_iterate") y_iterate_End0()
 {
 	new Iterator:iter<10>;
-	new first, last;
+	new first, last, begin;
 	first = Iter_First(iter);
 	last = Iter_Last(iter);
-	ASSERT_EQ(first, Iter_Begin(iter));
-	ASSERT_EQ(last, Iter_Begin(iter));
-	ASSERT_EQ(Iter_Next(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Prev(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Next(iter, last), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Prev(iter, last), Iter_Begin(iter));
+	begin = Iter_Begin(iter);
+	ASSERT_EQ(first, begin);
+	ASSERT_EQ(last, begin);
+	ASSERT_EQ(Iter_Next(iter, first), begin);
+	ASSERT_EQ(Iter_Prev(iter, first), begin);
+	ASSERT_EQ(Iter_Next(iter, last), begin);
+	ASSERT_EQ(Iter_Prev(iter, last), begin);
 	Iter_Add(iter, 7);
 	first = Iter_First(iter);
 	last = Iter_Last(iter);
 	ASSERT_EQ(first, 7);
 	ASSERT_EQ(last, 7);
-	ASSERT_EQ(Iter_Next(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Prev(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Next(iter, last), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Prev(iter, last), Iter_Begin(iter));
+	begin = Iter_Begin(iter);
+	ASSERT_EQ(Iter_Next(iter, first), begin);
+	ASSERT_EQ(Iter_Prev(iter, first), begin);
+	ASSERT_EQ(Iter_Next(iter, last), begin);
+	ASSERT_EQ(Iter_Prev(iter, last), begin);
 	Iter_Add(iter, 8);
 	first = Iter_First(iter);
 	last = Iter_Last(iter);
 	ASSERT_EQ(first, 7);
 	ASSERT_EQ(last, 8);
 	ASSERT_EQ(Iter_Next(iter, first), 8);
-	ASSERT_EQ(Iter_Prev(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Next(iter, last), Iter_Begin(iter));
+	begin = Iter_Begin(iter);
+	ASSERT_EQ(Iter_Prev(iter, first), begin);
+	ASSERT_EQ(Iter_Next(iter, last), begin);
 	ASSERT_EQ(Iter_Prev(iter, last), 7);
 	Iter_Add(iter, 9);
 	first = Iter_First(iter);
@@ -5009,8 +5009,9 @@ static stock
 	ASSERT_EQ(first, 7);
 	ASSERT_EQ(last, 9);
 	ASSERT_EQ(Iter_Next(iter, first), 8);
-	ASSERT_EQ(Iter_Prev(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Next(iter, last), Iter_Begin(iter));
+	begin = Iter_Begin(iter);
+	ASSERT_EQ(Iter_Prev(iter, first), begin);
+	ASSERT_EQ(Iter_Next(iter, last), begin);
 	ASSERT_EQ(Iter_Prev(iter, last), 8);
 	Iter_Remove(iter, 7);
 	first = Iter_First(iter);
@@ -5018,27 +5019,30 @@ static stock
 	ASSERT_EQ(first, 8);
 	ASSERT_EQ(last, 9);
 	ASSERT_EQ(Iter_Next(iter, first), 9);
-	ASSERT_EQ(Iter_Prev(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Next(iter, last), Iter_Begin(iter));
+	begin = Iter_Begin(iter);
+	ASSERT_EQ(Iter_Prev(iter, first), begin);
+	ASSERT_EQ(Iter_Next(iter, last), begin);
 	ASSERT_EQ(Iter_Prev(iter, last), 8);
 	Iter_Remove(iter, 8);
 	first = Iter_First(iter);
 	last = Iter_Last(iter);
 	ASSERT_EQ(first, 9);
 	ASSERT_EQ(last, 9);
-	ASSERT_EQ(Iter_Next(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Prev(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Next(iter, last), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Prev(iter, last), Iter_Begin(iter));
+	begin = Iter_Begin(iter);
+	ASSERT_EQ(Iter_Next(iter, first), begin);
+	ASSERT_EQ(Iter_Prev(iter, first), begin);
+	ASSERT_EQ(Iter_Next(iter, last), begin);
+	ASSERT_EQ(Iter_Prev(iter, last), begin);
 	Iter_Remove(iter, 9);
 	first = Iter_First(iter);
 	last = Iter_Last(iter);
-	ASSERT_EQ(first, Iter_Begin(iter));
-	ASSERT_EQ(last, Iter_Begin(iter));
-	ASSERT_EQ(Iter_Next(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Prev(iter, first), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Next(iter, last), Iter_Begin(iter));
-	ASSERT_EQ(Iter_Prev(iter, last), Iter_Begin(iter));
+	begin = Iter_Begin(iter);
+	ASSERT_EQ(first, begin);
+	ASSERT_EQ(last, begin);
+	ASSERT_EQ(Iter_Next(iter, first), begin);
+	ASSERT_EQ(Iter_Prev(iter, first), begin);
+	ASSERT_EQ(Iter_Next(iter, last), begin);
+	ASSERT_EQ(Iter_Prev(iter, last), begin);
 	ASSERT(Iter_Excludes(iter, 0));
 	ASSERT(Iter_Excludes(iter, 1));
 	ASSERT(Iter_Excludes(iter, 2));
@@ -5176,7 +5180,7 @@ static stock
 		//printf("i 0 = %d", i);
 		total += i;
 	}
-	ASSERT_EQ(total, 5 + 6 + 7 + 8 + 9);
+	ASSERT_EQ(total, 35); // 5 + 6 + 7 + 8 + 9
 
 	/*total = ( 10 -1+1);
 	printf("%d", total);
@@ -5193,7 +5197,7 @@ static stock
 		//printf("i 1 = %d", i);
 		total += i;
 	}
-	ASSERT_EQ(total, 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10);
+	ASSERT_EQ(total, 52); // 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10
 
 	total = 0;
 	foreach (new i : .. 10)
@@ -5201,7 +5205,7 @@ static stock
 		//printf("i 2 = %d", i);
 		total += i;
 	}
-	ASSERT_EQ(total, 0 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9);
+	ASSERT_EQ(total, 45); // 0 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9
 
 	total = 0;
 	foreach (new i : -5 .. -1)
@@ -5209,7 +5213,7 @@ static stock
 		//printf("i 3 = %d", i);
 		total += i;
 	}
-	ASSERT_EQ(total, -5 + -4 + -3 + -2);
+	ASSERT_EQ(total, -14); // -5 + -4 + -3 + -2
 
 	total = 0;
 	foreach (new i : -1 .. -5)
@@ -5217,7 +5221,7 @@ static stock
 		//printf("i 4 = %d", i);
 		total += i;
 	}
-	ASSERT_EQ(total, -4 + -3 + -2 + -1);
+	ASSERT_EQ(total, -10); // -4 + -3 + -2 + -1
 }
 
 @test(.group = "y_iterate") y_iterate_Array()
@@ -5230,7 +5234,7 @@ static stock
 	{
 		total += i;
 	}
-	ASSERT_EQ(total, 5 + 6 + 7 + 8);
+	ASSERT_EQ(total, 26); // 5 + 6 + 7 + 8
 }
 
 @iterfunc(.start = 5) y_iterate@iterfunc_1(cur)

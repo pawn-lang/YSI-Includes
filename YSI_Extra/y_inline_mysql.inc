@@ -213,7 +213,7 @@ FINAL__ MySQL:YSI_gsSQL = MySQL_Connect("127.0.0.1", "root", "root", "y_inline_m
 	{
 		inline CreateResult()
 		{
-			printf("MySQL CREATE A: %d", Cache_NumRows());
+			//printf("MySQL CREATE A: %d", Cache_NumRows());
 		}
 		for (new i = 0; i != 100; ++i)
 		{
@@ -226,21 +226,21 @@ FINAL__ MySQL:YSI_gsSQL = MySQL_Connect("127.0.0.1", "root", "root", "y_inline_m
 						v;
 					if (n)
 					{
-						printf("MySQL SELECT A: %d", Cache_NumRows());
+						//printf("MySQL SELECT A: %d", Cache_NumRows());
 						do
 						{
 							--n;
 							Cache_GetValueInt(n, "ARow", v);
-							printf("    - %d: %d", n, v);
+							//printf("    - %d: %d", n, v);
 						}
 						while (n);
 					}
 					else
 					{
-						printf("MySQL SELECT A: 0");
+						//printf("MySQL SELECT A: 0");
 					}
 				}
-				printf("MySQL INSERT A: %d", Cache_NumRows());
+				//printf("MySQL INSERT A: %d", Cache_NumRows());
 				MySQL_PQueryInline(YSI_gsSQL, using inline SelectResult, "SELECT * FROM table1;");
 			}
 			MySQL_TQueryInline(YSI_gsSQL, using inline CreateResult, "CREATE TABLE IF NOT EXISTS table1 ( ARow int );");
@@ -258,7 +258,7 @@ FINAL__ MySQL:YSI_gsSQL = MySQL_Connect("127.0.0.1", "root", "root", "y_inline_m
 	{
 		inline const CreateResult()
 		{
-			printf("MySQL CREATE B: %d", Cache_NumRows());
+			//printf("MySQL CREATE B: %d", Cache_NumRows());
 		}
 		for (new i = 0; i != 100; ++i)
 		{
@@ -278,7 +278,7 @@ FINAL__ MySQL:YSI_gsSQL = MySQL_Connect("127.0.0.1", "root", "root", "y_inline_m
 		{
 			inline InsertResult()
 			{
-				printf("MySQL INSERT B: %d", Cache_NumRows());
+				//printf("MySQL INSERT B: %d", Cache_NumRows());
 			}
 			MySQL_TQueryInline(YSI_gsSQL, using inline InsertResult, "INSERT INTO table1 VALUES (7);");
 		}
@@ -296,7 +296,7 @@ FINAL__ MySQL:YSI_gsSQL = MySQL_Connect("127.0.0.1", "root", "root", "y_inline_m
 		{
 			inline const SelectResult()
 			{
-				printf("MySQL SELECT B: %d", Cache_NumRows());
+				//printf("MySQL SELECT B: %d", Cache_NumRows());
 			}
 			MySQL_PQueryInline(YSI_gsSQL, using inline SelectResult, "SELECT * FROM table1;");
 		}

@@ -73,8 +73,8 @@ Optional plugins:
 
 // TODO: Two dialog IDs - one for `Dialog_ShowCallback`, one for `Dialog_Show`.
 // NEVER re-use `_A<_yD@>`
-#define YSI_DIALOG_ID_1 _A<@_yD>
-#define YSI_DIALOG_ID_2 _A<_@yD>
+const YSI_DIALOG_ID_1 = _A<@_yD>;
+const YSI_DIALOG_ID_2 = _A<_@yD>;
 
 #define YSI_DIALOG_NONE (Func:0<iiiis>)
 #define YSI_DIALOG_MASK (Func:cellmax<iiiis>)
@@ -175,32 +175,34 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 __COMPILER_TAG_DATA(F@_@iis, 0);
 __COMPILER_TAG_DATA(F@_@iiiis, 0);
 
-HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+// `playerid, dialogid, response, listitem, inputtext[]`, but shorter (because
+// otherwise the old compiler crashes...)
+HOOK__ OnDialogResponse(p,d,r,l,i[])
 {
-	#pragma unused dialogid
+	#pragma unused d
 	// Apparently there's a hack to alter this.
-	dialogid = YSI_g_sPlayerDialog[playerid];
-	Debug_Print1("Dialog_OnDialogResponse called: %d %d %d %d %s", playerid, dialogid, response, listitem, inputtext);
-	if (dialogid == YSI_DIALOG_ID_1)
+	d = YSI_g_sPlayerDialog[p];
+	Debug_Print1("Dialog_OnDialogResponse called: %d %d %d %d %s", p, d, r, l, i);
+	if (d == YSI_DIALOG_ID_1)
 	{
-		// Can't be `YSI_DIALOG_INVALID`, because `dialogid == YSI_DIALOG_ID_1.
-		if (YSI_g_sPlayerCallback[playerid])
+		// Can't be `YSI_DIALOG_INVALID`, because `d == YSI_DIALOG_ID_1.
+		if (YSI_g_sPlayerCallback[p])
 		{
 			new
-				Func:callback<iiiis> = YSI_g_sPlayerCallback[playerid];
-			YSI_g_sPlayerCallback[playerid] = YSI_DIALOG_NONE;
+				Func:callback<iiiis> = YSI_g_sPlayerCallback[p];
+			YSI_g_sPlayerCallback[p] = YSI_DIALOG_NONE;
 			// Totally blank the stored dialog information, after making a local
 			// copy of it for the sake of calling the callback.  This is so that
 			// we don't free the memory for the callback prematurely.
-			BROADCAST_FUNC__ Dialog_Set(playerid, -1);
+			BROADCAST_FUNC__ Dialog_Set(p, -1);
 			// Call the callback.
 			if (Indirect_GetMeta(callback) == _:tagof (F@_@iiiis:))
 			{
-				Indirect_Call(_:callback, tagof (F@_@iiiis:), playerid, YSI_DIALOG_ID_1, response, listitem, IsNull(inputtext) ? NULL : inputtext);
+				Indirect_Call(_:callback, tagof (F@_@iiiis:), p, YSI_DIALOG_ID_1, r, l, IsNull(i) ? NULL : i);
 			}
 			else
 			{
-				Indirect_Call(_:callback, tagof (F@_@iis:), response, listitem, IsNull(inputtext) ? NULL : inputtext);
+				Indirect_Call(_:callback, tagof (F@_@iis:), r, l, IsNull(i) ? NULL : i);
 			}
 			// Free the data.
 			Indirect_Release(callback);
