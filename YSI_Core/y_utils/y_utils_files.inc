@@ -396,9 +396,12 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 				strcat(test, __COMPILER_PACK".gitkeep");
 				if ((file = fopen(test, io_write)))
 				{
-					// Found `YSI/dir/`.
-					StrCpy(YSI_gsDefaultDirs[dir], path[18]),
 					fclose(file);
+				}
+				if (fexist(test))
+				{
+					// Found `YSI/dir/`.
+					StrCpy(YSI_gsDefaultDirs[dir], path[18]);
 				}
 				else
 				{
@@ -424,7 +427,7 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 							// Found nothing.
 							YSI_gsDefaultDirs[dir][0] = '\0';
 						}
-					//#endif
+					#endif
 				}
 			}
 		}

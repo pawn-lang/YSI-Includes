@@ -194,6 +194,8 @@ stock ORM_SaveInline(ORM:id, Func:cb<>)
 #define MySQL_Connect mysql_connect
 #define MySQL_Close mysql_close
 #define MySQL_Log mysql_log
+#define Cache_NumRows cache_num_rows
+#define Cache_GetValueInt cache_get_value_int
 
 public OnQueryError(errorid, const error[], const callback[], const query[], MySQL:handle)
 {
@@ -201,19 +203,104 @@ public OnQueryError(errorid, const error[], const callback[], const query[], MyS
 	printf("    %s, %s", callback, query);
 }
 
-@test(.group = "y_inline_mysql") MySQL_PQueryInline()
+FINAL__ MySQL:YSI_gsSQL = MySQL_Connect("127.0.0.1", "root", "root", "y_inline_mysql");
+
+@test(.group = "y_inline_mysql") MySQL_PQueryInline0()
 {
 	MySQL_Log(ERROR | WARNING | INFO | DEBUG);
-	new MySQL:sql = MySQL_Connect("127.0.0.1", "root", "", "y_inline_mysql");
-	ASSERT_NE(sql, MYSQL_INVALID_HANDLE);
-	if (sql)
+	ASSERT_NZ(YSI_gsSQL);
+	if (YSI_gsSQL)
 	{
-		inline const MySQLResult()
+		inline CreateResult()
 		{
-			
+			printf("MySQL CREATE A: %d", Cache_NumRows());
 		}
-		MySQL_PQueryInline(sql, using inline MySQLResult, "CREATE TABLE IF NOT EXIST table1 ( Row int );");
-		MySQL_Close(sql);
+		for (new i = 0; i != 100; ++i)
+		{
+			inline const InsertResult()
+			{
+				inline SelectResult()
+				{
+					new
+						n = Cache_NumRows(),
+						v;
+					if (n)
+					{
+						printf("MySQL SELECT A: %d", Cache_NumRows());
+						do
+						{
+							--n;
+							Cache_GetValueInt(n, "ARow", v);
+							printf("    - %d: %d", n, v);
+						}
+						while (n);
+					}
+					else
+					{
+						printf("MySQL SELECT A: 0");
+					}
+				}
+				printf("MySQL INSERT A: %d", Cache_NumRows());
+				MySQL_PQueryInline(YSI_gsSQL, using inline SelectResult, "SELECT * FROM table1;");
+			}
+			MySQL_TQueryInline(YSI_gsSQL, using inline CreateResult, "CREATE TABLE IF NOT EXISTS table1 ( ARow int );");
+			MySQL_TQueryInline(YSI_gsSQL, using inline InsertResult, "INSERT INTO table1 VALUES (7);");
+		}
+		//MySQL_Close(YSI_gsSQL);
+	}
+}
+
+@test(.group = "y_inline_mysql") MySQL_PQueryInline1()
+{
+	MySQL_Log(ERROR | WARNING | INFO | DEBUG);
+	ASSERT_NZ(YSI_gsSQL);
+	if (YSI_gsSQL)
+	{
+		inline const CreateResult()
+		{
+			printf("MySQL CREATE B: %d", Cache_NumRows());
+		}
+		for (new i = 0; i != 100; ++i)
+		{
+			MySQL_TQueryInline(YSI_gsSQL, using inline CreateResult, "CREATE TABLE IF NOT EXISTS table1 ( ARow int );");
+		}
+		//MySQL_Close(YSI_gsSQL);
+	}
+}
+
+@test(.group = "y_inline_mysql") MySQL_PQueryInline2()
+{
+	MySQL_Log(ERROR | WARNING | INFO | DEBUG);
+	ASSERT_NZ(YSI_gsSQL);
+	if (YSI_gsSQL)
+	{
+		for (new i = 0; i != 100; ++i)
+		{
+			inline InsertResult()
+			{
+				printf("MySQL INSERT B: %d", Cache_NumRows());
+			}
+			MySQL_TQueryInline(YSI_gsSQL, using inline InsertResult, "INSERT INTO table1 VALUES (7);");
+		}
+		//MySQL_Close(YSI_gsSQL);
+	}
+}
+
+@test(.group = "y_inline_mysql") MySQL_PQueryInline3()
+{
+	MySQL_Log(ERROR | WARNING | INFO | DEBUG);
+	ASSERT_NZ(YSI_gsSQL);
+	if (YSI_gsSQL)
+	{
+		for (new i = 0; i != 100; ++i)
+		{
+			inline const SelectResult()
+			{
+				printf("MySQL SELECT B: %d", Cache_NumRows());
+			}
+			MySQL_PQueryInline(YSI_gsSQL, using inline SelectResult, "SELECT * FROM table1;");
+		}
+		//MySQL_Close(YSI_gsSQL);
 	}
 }
 

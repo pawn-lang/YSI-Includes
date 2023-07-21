@@ -1620,7 +1620,7 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__("Inline_MaybeConst_", 0, false, YSI_gscSpecifier_i, AMX_Ref(func[E_INDIRECTION_ALWAYS_NULL]));
+	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__("Inline_MaybeConst_", 0, false, YSI_gscSpecifier_i, AMX_Ref(func[E_INLINE_CALL:E_INDIRECTION_ALWAYS_NULL]));
 }
 
 /*-------------------------------------------------------------------------*//**
