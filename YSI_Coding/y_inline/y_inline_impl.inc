@@ -1634,10 +1634,10 @@ static stock Callback_Claim_(func[E_INLINE_CALL])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+const E_INLINE_CALL_diff = (_:E_INLINE_CALL_FLAGS - _:E_INLINE_CALL_PARAMS) * cellbytes;
+
 static Callback_CallHandler_(...)
 {
-	const E_INLINE_CALL_diff = (_:E_INLINE_CALL_FLAGS - _:E_INLINE_CALL_PARAMS) * cellbytes;
-	
 	// This is called by `@`, and given the above enum in `INDIRECTION_DATA`.
 	// Get the size, and update `INDIRECTION_DATA` to point to the data.
 	#emit LOAD.alt         INDIRECTION_DATA    // 2
