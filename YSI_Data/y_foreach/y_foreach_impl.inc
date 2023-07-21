@@ -1349,24 +1349,68 @@ stock
 	size -= 8;
 	for (count = 0; count <= size; count += 8)
 	{
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2], array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3], array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4], array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5], array[count + 6] < 0 ? -(array[count + 6] & cellmax) : array[count + 6], array[count + 7] < 0 ? -(array[count + 7] & cellmax) : array[count + 7]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2],
+			array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3],
+			array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4],
+			array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5],
+			array[count + 6] < 0 ? -(array[count + 6] & cellmax) : array[count + 6],
+			array[count + 7] < 0 ? -(array[count + 7] & cellmax) : array[count + 7]
+		);
 	}
 	switch (count - size)
 	{
 	case 1:
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2], array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3], array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4], array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5], array[count + 6] < 0 ? -(array[count + 6] & cellmax) : array[count + 6]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2],
+			array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3],
+			array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4],
+			array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5],
+			array[count + 6] < 0 ? -(array[count + 6] & cellmax) : array[count + 6]
+		);
 	case 2:
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2], array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3], array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4], array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2],
+			array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3],
+			array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4],
+			array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5]
+		);
 	case 3:
-		printf("        %8d, %8d, %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2], array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3], array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4]);
+		printf("        %8d, %8d, %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2],
+			array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3],
+			array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4]
+		);
 	case 4:
-		printf("        %8d, %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2], array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3]);
+		printf("        %8d, %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2],
+			array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3]
+		);
 	case 5:
-		printf("        %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2]);
+		printf("        %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2]
+		);
 	case 6:
-		printf("        %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1]);
+		printf("        %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1]
+		);
 	case 7:
-		printf("        %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0]);
+		printf("        %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0]
+		);
 	}
 }
 
@@ -1396,71 +1440,203 @@ stock
 	printf("    Counts  :");
 	for (count = 0; count <= slots; count += 8)
 	{
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d, %8d,", counts[count + 0], counts[count + 1], counts[count + 2], counts[count + 3], counts[count + 4], counts[count + 5], counts[count + 6], counts[count + 7]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d, %8d,",
+			counts[count + 0],
+			counts[count + 1],
+			counts[count + 2],
+			counts[count + 3],
+			counts[count + 4],
+			counts[count + 5],
+			counts[count + 6],
+			counts[count + 7]
+		);
 	}
 	switch (count - slots)
 	{
 	case 1:
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d,", counts[count + 0], counts[count + 1], counts[count + 2], counts[count + 3], counts[count + 4], counts[count + 5], counts[count + 6]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d,",
+			counts[count + 0],
+			counts[count + 1],
+			counts[count + 2],
+			counts[count + 3],
+			counts[count + 4],
+			counts[count + 5],
+			counts[count + 6]
+		);
 	case 2:
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d,", counts[count + 0], counts[count + 1], counts[count + 2], counts[count + 3], counts[count + 4], counts[count + 5]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d,",
+			counts[count + 0],
+			counts[count + 1],
+			counts[count + 2],
+			counts[count + 3],
+			counts[count + 4],
+			counts[count + 5]
+		);
 	case 3:
-		printf("        %8d, %8d, %8d, %8d, %8d,", counts[count + 0], counts[count + 1], counts[count + 2], counts[count + 3], counts[count + 4]);
+		printf("        %8d, %8d, %8d, %8d, %8d,",
+			counts[count + 0],
+			counts[count + 1],
+			counts[count + 2],
+			counts[count + 3],
+			counts[count + 4]
+		);
 	case 4:
-		printf("        %8d, %8d, %8d, %8d,", counts[count + 0], counts[count + 1], counts[count + 2], counts[count + 3]);
+		printf("        %8d, %8d, %8d, %8d,",
+			counts[count + 0],
+			counts[count + 1],
+			counts[count + 2],
+			counts[count + 3]
+		);
 	case 5:
-		printf("        %8d, %8d, %8d,", counts[count + 0], counts[count + 1], counts[count + 2]);
+		printf("        %8d, %8d, %8d,",
+			counts[count + 0],
+			counts[count + 1],
+			counts[count + 2]
+		);
 	case 6:
-		printf("        %8d, %8d,", counts[count + 0], counts[count + 1]);
+		printf("        %8d, %8d,",
+			counts[count + 0],
+			counts[count + 1]
+		);
 	case 7:
-		printf("        %8d,", counts[count + 0]);
+		printf("        %8d,",
+			counts[count + 0]
+		);
 	}
 	printf("    Total   : %d", total);
 	printf("    Free    : %d", size - total);
 	printf("    Initials:");
 	for (count = 0; count <= slots; count += 8)
 	{
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d, %8d,", array[size + count + 0], array[size + count + 1], array[size + count + 2], array[size + count + 3], array[size + count + 4], array[size + count + 5], array[size + count + 6], array[size + count + 7]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d, %8d,",
+			array[size + count + 0],
+			array[size + count + 1],
+			array[size + count + 2],
+			array[size + count + 3],
+			array[size + count + 4],
+			array[size + count + 5],
+			array[size + count + 6],
+			array[size + count + 7]
+		);
 	}
 	switch (count - slots)
 	{
 	case 1:
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d,", array[size + count + 0], array[size + count + 1], array[size + count + 2], array[size + count + 3], array[size + count + 4], array[size + count + 5], array[size + count + 6]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d,",
+			array[size + count + 0],
+			array[size + count + 1],
+			array[size + count + 2],
+			array[size + count + 3],
+			array[size + count + 4],
+			array[size + count + 5],
+			array[size + count + 6]
+		);
 	case 2:
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d,", array[size + count + 0], array[size + count + 1], array[size + count + 2], array[size + count + 3], array[size + count + 4], array[size + count + 5]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d,",
+			array[size + count + 0],
+			array[size + count + 1],
+			array[size + count + 2],
+			array[size + count + 3],
+			array[size + count + 4],
+			array[size + count + 5]
+		);
 	case 3:
-		printf("        %8d, %8d, %8d, %8d, %8d,", array[size + count + 0], array[size + count + 1], array[size + count + 2], array[size + count + 3], array[size + count + 4]);
+		printf("        %8d, %8d, %8d, %8d, %8d,",
+			array[size + count + 0],
+			array[size + count + 1],
+			array[size + count + 2],
+			array[size + count + 3],
+			array[size + count + 4]
+		);
 	case 4:
-		printf("        %8d, %8d, %8d, %8d,", array[size + count + 0], array[size + count + 1], array[size + count + 2], array[size + count + 3]);
+		printf("        %8d, %8d, %8d, %8d,",
+			array[size + count + 0],
+			array[size + count + 1],
+			array[size + count + 2],
+			array[size + count + 3]
+		);
 	case 5:
-		printf("        %8d, %8d, %8d,", array[size + count + 0], array[size + count + 1], array[size + count + 2]);
+		printf("        %8d, %8d, %8d,",
+			array[size + count + 0],
+			array[size + count + 1],
+			array[size + count + 2]
+		);
 	case 6:
-		printf("        %8d, %8d,", array[size + count + 0], array[size + count + 1]);
+		printf("        %8d, %8d,",
+			array[size + count + 0],
+			array[size + count + 1]
+		);
 	case 7:
-		printf("        %8d,", array[size + count + 0]);
+		printf("        %8d,",
+			array[size + count + 0]
+		);
 	}
 	printf("    Contents:");
 	size -= 8;
 	for (count = 0; count <= size; count += 8)
 	{
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2], array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3], array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4], array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5], array[count + 6] < 0 ? -(array[count + 6] & cellmax) : array[count + 6], array[count + 7] < 0 ? -(array[count + 7] & cellmax) : array[count + 7]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2],
+			array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3],
+			array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4],
+			array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5],
+			array[count + 6] < 0 ? -(array[count + 6] & cellmax) : array[count + 6],
+			array[count + 7] < 0 ? -(array[count + 7] & cellmax) : array[count + 7]
+		);
 	}
 	switch (count - size)
 	{
 	case 1:
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2], array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3], array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4], array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5], array[count + 6] < 0 ? -(array[count + 6] & cellmax) : array[count + 6]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2],
+			array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3],
+			array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4],
+			array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5],
+			array[count + 6] < 0 ? -(array[count + 6] & cellmax) : array[count + 6]
+		);
 	case 2:
-		printf("        %8d, %8d, %8d, %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2], array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3], array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4], array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5]);
+		printf("        %8d, %8d, %8d, %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2],
+			array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3],
+			array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4],
+			array[count + 5] < 0 ? -(array[count + 5] & cellmax) : array[count + 5]
+		);
 	case 3:
-		printf("        %8d, %8d, %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2], array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3], array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4]);
+		printf("        %8d, %8d, %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2],
+			array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3],
+			array[count + 4] < 0 ? -(array[count + 4] & cellmax) : array[count + 4]
+		);
 	case 4:
-		printf("        %8d, %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2], array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3]);
+		printf("        %8d, %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2],
+			array[count + 3] < 0 ? -(array[count + 3] & cellmax) : array[count + 3]
+		);
 	case 5:
-		printf("        %8d, %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1], array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2]);
+		printf("        %8d, %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1],
+			array[count + 2] < 0 ? -(array[count + 2] & cellmax) : array[count + 2]
+		);
 	case 6:
-		printf("        %8d, %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0], array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1]);
+		printf("        %8d, %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0],
+			array[count + 1] < 0 ? -(array[count + 1] & cellmax) : array[count + 1]
+		);
 	case 7:
-		printf("        %8d,", array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0]);
+		printf("        %8d,",
+			array[count + 0] < 0 ? -(array[count + 0] & cellmax) : array[count + 0]
+		);
 	}
 }
 

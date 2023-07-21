@@ -781,6 +781,8 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 	ASSERT_EQ(Iter_RandomFree(iter<1>), cellmin);
 }
 
+#endinput
+
 @test(.group = "y_iterate") y_iter_RandomFree3()
 {
 	new

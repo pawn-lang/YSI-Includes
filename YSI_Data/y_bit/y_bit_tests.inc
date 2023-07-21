@@ -235,11 +235,15 @@ Optional plugins:
 	Bit_Set(bitArray, 13, true);
 	FOREACH__ (new b : Bits(bitArray))
 	{
-		ASSERT(b == 5 || b == 7 || b == 9 || b == 11 || b == 13);
+		new
+			bool:pass = b == 5 || b == 7 || b == 9 || b == 11 || b == 13;
+		ASSERT(pass);
 	}
 	FOREACH__ (new b : Blanks(bitArray))
 	{
-		ASSERT(!(b == 5 || b == 7 || b == 9 || b == 11 || b == 13));
+		new
+			bool:pass = b == 5 || b == 7 || b == 9 || b == 11 || b == 13;
+		ASSERT(!pass);
 	}
 }
 

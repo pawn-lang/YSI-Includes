@@ -235,7 +235,7 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 		)
 	
 	#define Cell_HasZeroByte(%0) \
-		__emit(                         \
+		(bool:__emit(                   \
 			LOAD.U.pri  %0             ,\
 			INVERT                     ,\
 			MOVE.alt                   ,\
@@ -244,10 +244,10 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 			AND                        ,\
 			CONST.alt   YSI_g_c80s     ,\
 			AND                         \
-		)
+		))
 	
 	#define Cell_HasSpaceByte(%0) \
-		__emit(                         \
+		(bool:__emit(                   \
 			LOAD.U.pri  %0             ,\
 			CONST.alt   YSI_g_c20s     ,\
 			XOR                        ,\
@@ -257,7 +257,7 @@ stock Cell_Abs(GLOBAL_TAG_TYPES:number, tag = tagof (number))
 			AND                        ,\
 			CONST.alt   YSI_g_c80s     ,\
 			AND                         \
-		)
+		))
 	#endinput
 #endif
 
@@ -346,7 +346,7 @@ stock Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
+stock bool:Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
 {
 	// return (data - 0x01010101) & ~data & 0x80808080;
 	#emit LOAD.S.pri           data
@@ -359,7 +359,7 @@ stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
 	#emit AND
 	#emit RETN
 	
-	__pragma("naked");
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -377,7 +377,7 @@ stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Cell_HasSpaceByte(GLOBAL_TAG_TYPES:data)
+stock bool:Cell_HasSpaceByte(GLOBAL_TAG_TYPES:data)
 {
 	// return (data - 0x01010101) & ~data & 0x80808080;
 	#emit LOAD.S.pri           data
@@ -391,6 +391,6 @@ stock Cell_HasSpaceByte(GLOBAL_TAG_TYPES:data)
 	#emit AND
 	#emit RETN
 	
-	__pragma("naked");
+	return false;
 }
 
