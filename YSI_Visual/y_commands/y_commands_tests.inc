@@ -870,31 +870,34 @@ YCMD:ycmdtest2(playerid, params[], help) = ycmdtest1;
 	ASK("Can you not use /ycmdtest10?");
 }
 
-final Group:groupCommandTest = Group_Create("y_commands_group");
+#if defined Group_Create
 
-@cmd(.group = groupCommandTest) ycmdtest16(playerid, params[], help)
-{
-	SendClientMessage(playerid, 0xFF0000AA, "/ycmdtest16 called");
-	return 1;
-}
+	final Group:groupCommandTest = Group_Create("y_commands_group");
 
-@testinit() y_commands_perm16(playerid)
-{
-	Group_SetPlayer(groupCommandTest, playerid, true);
-}
+	@cmd(.group = groupCommandTest) ycmdtest16(playerid, params[], help)
+	{
+		SendClientMessage(playerid, 0xFF0000AA, "/ycmdtest16 called");
+		return 1;
+	}
 
-@test(.group = "y_commands") y_commands_perm16(playerid)
-{
-	ASK("Can you use /ycmdtest16?");
-}
+	@testinit() y_commands_perm16(playerid)
+	{
+		Group_SetPlayer(groupCommandTest, playerid, true);
+	}
 
-@testinit() y_commands_perm17(playerid)
-{
-	Group_SetPlayer(groupCommandTest, playerid, false);
-}
+	@test(.group = "y_commands") y_commands_perm16(playerid)
+	{
+		ASK("Can you use /ycmdtest16?");
+	}
 
-@test(.group = "y_commands") y_commands_perm17(playerid)
-{
-	ASK("Can you not use /ycmdtest16?");
-}
+	@testinit() y_commands_perm17(playerid)
+	{
+		Group_SetPlayer(groupCommandTest, playerid, false);
+	}
+
+	@test(.group = "y_commands") y_commands_perm17(playerid)
+	{
+		ASK("Can you not use /ycmdtest16?");
+	}
+#endif
 

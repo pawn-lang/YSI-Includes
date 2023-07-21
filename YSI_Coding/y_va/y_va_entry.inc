@@ -273,10 +273,10 @@ stock bool:Server_CallNative(const name[], &ret, const specifier[], GLOBAL_TAG_T
 	stock bool:va_SendRconCommand(const fmat[], GLOBAL_TAG_TYPES:...)
 	{
 		if (YSI_CheckNumargs__(1))
-			return bool:SendRconCommand(fmat);
+			return bool:YSI_SendRconCommand__(fmat);
 		return
 			format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(1)),
-			bool:SendRconCommand(YSI_UNSAFE_HUGE_STRING);
+			bool:YSI_SendRconCommand__(YSI_UNSAFE_HUGE_STRING);
 	}
 
 	stock bool:va_SetGameModeText(const fmat[], GLOBAL_TAG_TYPES:...)
