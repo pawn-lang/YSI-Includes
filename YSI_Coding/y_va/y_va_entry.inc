@@ -115,18 +115,6 @@ stock bool:va_SetVehicleNumberPlate(vehicleid, const fmat[], GLOBAL_TAG_TYPES:..
 		bool:SetVehicleNumberPlate(vehicleid, YSI_UNSAFE_HUGE_STRING);
 }
 
-stock bool:Server_CallNative(const name[], &ret, const specifier[], GLOBAL_TAG_TYPES:...)
-{
-	// This call creates the filterscript.
-	if (Server_HasNative(name))
-	{
-		CallRemoteFunction("N__", specifier, ___(3));
-		ret = getproperty(27, "R__");
-		return true;
-	}
-	return false;
-}
-
 #if defined _INC_open_mp
 	native PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, const fmat[], GLOBAL_TAG_TYPES:...) = CreatePlayerTextDraw;
 	native va_SetPlayerChatBubble(playerid, const fmat[], colour, Float:drawDistance, expireTime, GLOBAL_TAG_TYPES:...) = SetPlayerChatBubble;

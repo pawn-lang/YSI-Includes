@@ -1,8 +1,4 @@
-#if defined _INC_y_serverdata
-	#endinput
-#endif
-
-/*+
+/**
  * <library
  *   name="y_serverdata"
  *   version="1.0"
@@ -96,22 +92,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_core
-	#tryinclude "..\YSI_Core\y_core\y_core_entry"
+#if !defined _INC_y_serverdata
+	#tryinclude "y_serverdata\y_serverdata_entry"
 #endif
-#if !defined _INC_y_core
-	#tryinclude "YSI_Core\y_core\y_core_entry"
+#if !defined _INC_y_serverdata
+	#tryinclude "YSI_Coding\y_serverdata\y_serverdata_entry"
 #endif
-#if !defined _INC_y_core
-	#tryinclude "YSI\YSI_Core\y_core\y_core_entry"
+#if !defined _INC_y_serverdata
+	#tryinclude "YSI\YSI_Coding\y_serverdata\y_serverdata_entry"
 #endif
-#if !defined _INC_y_core
-	#tryinclude <YSI_Core\y_core\y_core_entry>
+#if !defined _INC_y_serverdata
+	#tryinclude <YSI_Coding\y_serverdata\y_serverdata_entry>
 #endif
-#if !defined _INC_y_core
-	#tryinclude <YSI\YSI_Core\y_core\y_core_entry>
+#if !defined _INC_y_serverdata
+	#tryinclude <YSI\YSI_Coding\y_serverdata\y_serverdata_entry>
 #endif
-#if !defined _INC_y_core
+#if !defined _INC_y_serverdata
 	#error Could not find y_serverdata
 #endif
 
