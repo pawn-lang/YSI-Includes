@@ -109,7 +109,7 @@ Optional plugins:
 #define WEAPON_FIRE_TYPE_CAMERA         5
 
 //#if !defined Weapon_IsValid
-stock Weapon_IsValid(weaponid)
+stock bool:Weapon_IsValid(weaponid)
 {
     return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46);
 }
@@ -206,7 +206,7 @@ static stock YSI_g_WeaponFireType[47] = {
 
 stock Weapon_GetFireType(weaponid)
 {
-    return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? YSI_g_WeaponFireType[weaponid] : (-1);
+    return Weapon_IsValid(weaponid) ? YSI_g_WeaponFireType[weaponid] : (-1);
 }
 
 static stock Float:YSI_g_MinWeaponRange[47] = {
@@ -229,9 +229,9 @@ static stock Float:YSI_g_MinWeaponRange[47] = {
     40.0, //{"Grenade", 16, 8, 342 },
     40.0, //{"Tear Gas", 17, 8, 343 },
     40.0, //{"Molotov Cocktail", 18, 8, 344 },
-    WEAPONDATA_INVALID_RETURN, //{"No gun", 19, -1, 0 },
-    WEAPONDATA_INVALID_RETURN, //{"No gun", 20, -1, 0 },
-    WEAPONDATA_INVALID_RETURN, //{"No gun", 21, -1, 0 },
+    0.0, //{"No gun", 19, -1, 0 },
+    0.0, //{"No gun", 20, -1, 0 },
+    0.0, //{"No gun", 21, -1, 0 },
     30.0, //{"Colt .45", 22, 2, 346 },
     30.0, //{"Silenced Colt .45", 23, 2, 347 },
     30.0, //{"Desert Eagle", 24, 2, 348 },
@@ -261,7 +261,7 @@ static stock Float:YSI_g_MinWeaponRange[47] = {
 
 stock Float:Weapon_GetMinRange(weaponid)
 {
-    return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? YSI_g_MinWeaponRange[weaponid] : (-1);
+    return Weapon_IsValid(weaponid) ? YSI_g_MinWeaponRange[weaponid] : (-1);
 }
 
 static stock Float:YSI_g_MaxWeaponRange[47] = {
@@ -316,7 +316,7 @@ static stock Float:YSI_g_MaxWeaponRange[47] = {
 
 stock Float:Weapon_GetMaxRange(weaponid)
 {
-    return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? YSI_g_MaxWeaponRange[weaponid] : (-1);
+    return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (-1);
 }
 
 static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
@@ -494,7 +494,7 @@ static stock YSI_g_WeaponProAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 stock bool:Weapon_GetProAnimGroup(weaponid, dest[], size = sizeof (dest))
 {
     dest[0] = '\0';
-    if ((weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46))
+    if (Weapon_IsValid(weaponid))
     {
         strcat(dest, YSI_g_WeaponProAnimGroups[weaponid], size);
         return true;
@@ -549,12 +549,12 @@ stock bool:Weapon_IsRifle(weaponid)
 
 stock Weapon_GetSlot(weaponid)
 {
-    return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? YSI_g_WeaponSlots[weaponid] : (WEAPONDATA_INVALID_RETURN);
+    return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (WEAPONDATA_INVALID_RETURN);
 }
 
 stock Weapon_GetModelID(weaponid)
 {
-    return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? YSI_g_WeaponModels[weaponid] : (WEAPONDATA_INVALID_RETURN);
+    return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (WEAPONDATA_INVALID_RETURN);
 }
 
 stock Weapon_GetIDFromModelID(modelid)
@@ -619,7 +619,7 @@ stock WeaponType:Weapon_GetType(weaponid)
             return WEAPON_TYPE_DETONATOR;
     }
     return WEAPON_TYPE_UNKNOWN;*/
-    if(!(weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46))
+    if (!Weapon_IsValid(weaponid))
     {
         // To prevent returning -2 instead.
         return WeaponType:(-1);
@@ -679,7 +679,7 @@ static stock Float:YSI_g_WeaponDamage[47] = {
 
 stock Float:Weapon_GetDamage(weaponid)
 {
-    return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? YSI_g_WeaponDamage[weaponid] : WEAPONDATA_INVALID_RETURN;
+    return Weapon_IsValid(weaponid) ? YSI_g_WeaponDamage[weaponid] : WEAPONDATA_INVALID_RETURN;
 }
 
 static stock YSI_g_WeaponClipSize[47] = {
@@ -734,7 +734,7 @@ static stock YSI_g_WeaponClipSize[47] = {
 
 stock Float:Weapon_GetClipSize(weaponid)
 {
-    return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46) ? YSI_g_WeaponClipSize[weaponid] : WEAPONDATA_INVALID_RETURN;
+    return Weapon_IsValid(weaponid) ? YSI_g_WeaponClipSize[weaponid] : WEAPONDATA_INVALID_RETURN;
 }
 
 static stock YSI_g_WeaponIconsNames[47][32] =
@@ -788,7 +788,7 @@ static stock YSI_g_WeaponIconsNames[47][32] =
 stock bool:Weapon_GetTxdIconName(weaponid, dest[], size = sizeof (dest))
 {
     dest[0] = '\0';
-    if ((weaponid >= 0 && weaponid <= 18 || weaponid >= 22 && weaponid <= 46))
+    if (Weapon_IsValid(weaponid))
     {
         strcat(dest, YSI_g_WeaponIconsNames[weaponid], size);
         return true;
