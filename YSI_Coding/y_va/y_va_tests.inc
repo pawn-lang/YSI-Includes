@@ -507,24 +507,3 @@ static stock va_return_Pass(const message[], va_args<>)
 	ASSERT_SAME(str, "<prefix> Something, 5");
 }
 
-@test(.group = "y_rconfix") Server_HasNative()
-{
-	ASSERT(Server_HasNative("heapspace"));
-	ASSERT(Server_HasNative("random"));
-	ASSERT(Server_HasNative("SendRconCommand"));
-	ASSERT(!Server_HasNative("MODFASDFSDGGDSD"));
-	ASSERT(Server_HasNative("print"));
-	ASSERT(!Server_HasNative("GGFDFFFD99i3k"));
-	ASSERT(!Server_HasNative("$$"));
-}
-
-@test(.group = "y_rconfix") Server_CallNative()
-{
-	new ret;
-	ASSERT(Server_CallNative("clamp", ret, "iii", 50, 12, 100));
-	ASSERT_EQ(ret, 50);
-	ASSERT(Server_CallNative("clamp", ret, "iii", 50, 70, 100));
-	ASSERT_EQ(ret, 70);
-	ASSERT(!Server_CallNative("plpplplplpl", ret, "iii", 50, 70, 100));
-}
-

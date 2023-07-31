@@ -1,6 +1,7 @@
 #if defined _INC_y_serverdata
 	#endinput
 #endif
+#define _INC_y_serverdata
 
 /**
  * <library
@@ -493,4 +494,8 @@ stock y_rconfix_Unload() <_ALS : _ALS_go>
 {
 	YSI_SendRconCommand__("unloadfs ../scriptfiles/ysi_aux_runtime");
 }
+
+#if defined YSI_TESTS
+	#include "y_serverdata_tests"
+#endif
 

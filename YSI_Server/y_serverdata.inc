@@ -96,16 +96,16 @@ Optional plugins:
 	#tryinclude "y_serverdata\y_serverdata_entry"
 #endif
 #if !defined _INC_y_serverdata
-	#tryinclude "YSI_Coding\y_serverdata\y_serverdata_entry"
+	#tryinclude "YSI_Server\y_serverdata\y_serverdata_entry"
 #endif
 #if !defined _INC_y_serverdata
-	#tryinclude "YSI\YSI_Coding\y_serverdata\y_serverdata_entry"
+	#tryinclude "YSI\YSI_Server\y_serverdata\y_serverdata_entry"
 #endif
 #if !defined _INC_y_serverdata
-	#tryinclude <YSI_Coding\y_serverdata\y_serverdata_entry>
+	#tryinclude <YSI_Server\y_serverdata\y_serverdata_entry>
 #endif
 #if !defined _INC_y_serverdata
-	#tryinclude <YSI\YSI_Coding\y_serverdata\y_serverdata_entry>
+	#tryinclude <YSI\YSI_Server\y_serverdata\y_serverdata_entry>
 #endif
 #if !defined _INC_y_serverdata
 	#error Could not find y_serverdata
