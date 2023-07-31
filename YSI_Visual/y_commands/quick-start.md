@@ -19,7 +19,10 @@ You can create a command alias by doing:
 YCMD:alias(playerid, params[], help) = original_commandname;
 ```
 
-Or:
+# Backwards compatibility
+
+Many existing SA:MP command processors already are using the syntax below, we all know and love, therefore it is available even in YSI: 
+
 ```pawn
 CMD:name(playerid, params[])
 {
