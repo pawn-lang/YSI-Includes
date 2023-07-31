@@ -231,7 +231,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 				default:
 				{
 					__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_ID;
-					if (PS_IS_PLAYER_CONNECTED(_:addr))
+					if (Iter_Contains(Player, _:addr))
 					{
 						return _:addr;
 					}
@@ -270,7 +270,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 					--__ps_pointer;
 					return -1;
 				}
-				if (PS_IS_PLAYER_CONNECTED(cur))
+				if (Iter_Contains(Player, cur))
 				{
 					return cur;
 				}
@@ -283,7 +283,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 						--__ps_pointer;
 						return -1;
 					}
-					if (PS_IS_PLAYER_CONNECTED(cur))
+					if (Iter_Contains(Player, cur))
 					{
 						return cur;
 					}
@@ -302,7 +302,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 					--__ps_pointer;
 					return -1;
 				}
-				if (PS_IS_PLAYER_CONNECTED(cur))
+				if (Iter_Contains(Player, cur))
 				{
 					return cur;
 				}
@@ -315,7 +315,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 						--__ps_pointer;
 						return -1;
 					}
-					if (PS_IS_PLAYER_CONNECTED(cur))
+					if (Iter_Contains(Player, cur))
 					{
 						return cur;
 					}
@@ -445,7 +445,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 						--__ps_pointer;
 						return -1;
 					}
-					if (PS_IS_PLAYER_CONNECTED(cur))
+					if (Iter_Contains(Player, cur))
 					{
 						return cur;
 					}
@@ -467,7 +467,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 						--__ps_pointer;
 						return -1;
 					}
-					if (PS_IS_PLAYER_CONNECTED(cur))
+					if (Iter_Contains(Player, cur))
 					{
 						return cur;
 					}
@@ -495,7 +495,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 							--__ps_pointer;
 							return -1;
 						}
-						if (PS_IS_PLAYER_CONNECTED(cur))
+						if (Iter_Contains(Player, cur))
 						{
 							return cur;
 						}
@@ -557,7 +557,8 @@ stock bool:__PS_A(@PlayerSet:addr, PlayerArray:ret<MAX_PLAYERS>)
 
 // This SHOULD handle excess parameters correctly, simply because I left out the
 // extra brackets.
-#define PSF:%0(%1) %0(__ps_addr_t:__ps_data[e_PLAYER_SET_HACK_PA]=__ps_addr_t:%1)
+#define @PSF()%0(%1) %0 PP_DEFER (__ps_addr_t:__ps_data[e_PLAYER_SET_HACK_PA]=__ps_addr_t:%1)
+#define PSF:%0(%1) @PSF()%0(%1)
 
 // This redefines e_PLAYER_SET_HACK_DATA in the case of passing player arrays.
 #define e_PLAYER_SET_HACK_PA]=__ps_addr_t:@%0) e_PLAYER_SET_HACK_DATA]=__ps_addr_t:%0)
@@ -565,4 +566,8 @@ stock bool:__PS_A(@PlayerSet:addr, PlayerArray:ret<MAX_PLAYERS>)
 // Don't actually need the "@".
 #define __ps_data[e_PLAYER_SET_HACK_DATA]=%0<%1> __ps_addr_t:__PS_C(%0,%1)
 #define __PS_C(@%0,%1) __PS_C(%0,%1)
+
+#if defined YSI_TESTS
+	#include "y_playerset_tests"
+#endif
 

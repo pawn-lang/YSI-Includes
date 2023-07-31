@@ -84,12 +84,6 @@ Optional plugins:
 #define PA_TYPE_ID                      (-3)
 #define PA_TYPE_PA                      (-4)
 
-#if defined _YSI_SPECIAL_DEBUG
-	#define PS_IS_PLAYER_CONNECTED(%0) (%0 != INVALID_PLAYER_ID)
-#else
-	#define PS_IS_PLAYER_CONNECTED IsPlayerConnected
-#endif
-
 // Redefined later on.  This is just for internal use.
 #define PlayerArray:%0<%1> Bit:%0[%1]
 
@@ -154,7 +148,7 @@ stock Iter_Func@PA(start, const PlayerArray:data<>)
 		// I'd like to replace this with code which doesn't call
 		// IsPlayerConnected and doesn't use "goto", but it avoids massive tail
 		// recursion (well, it is tail recursion which I've inlined).
-		if (PS_IS_PLAYER_CONNECTED(ret))
+		if (Iter_Contains(Player, ret))
 		{
 			return ret;
 		}
@@ -172,7 +166,7 @@ stock Iter_Func@PA(start, const PlayerArray:data<>)
 		{
 			new
 				ret = ((i - 1) * cellbits) + Cell_GetLowestBit(cur);
-			if (PS_IS_PLAYER_CONNECTED(ret))
+			if (Iter_Contains(Player, ret))
 			{
 				return ret;
 			}

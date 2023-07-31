@@ -250,12 +250,6 @@ Optional plugins:
 	#error "Please include a_samp or a_npc before foreach"
 #endif
 
-#if defined _YSI_SPECIAL_DEBUG
-	#define PS_IS_PLAYER_CONNECTED(%0) (%0 != INVALID_PLAYER_ID)
-#else
-	#define PS_IS_PLAYER_CONNECTED IsPlayerConnected
-#endif
-
 #define INVALID_ITERATOR_SLOT (cellmin)
 #define ITER_NONE             (cellmin)
 

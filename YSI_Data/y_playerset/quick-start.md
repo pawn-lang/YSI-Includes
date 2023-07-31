@@ -63,9 +63,10 @@ ShowTextToAdmins(const text[])
 }
 ```
 
-But you still end up with multiple just slightly incompatible functions.  YSI already has a lot of code for dealing with sets of players: y_groups (for pre-defined named groups), and y_playerarray (for bit arrays of players).  y_playerset abstracts over these further to allow you to write a single function that can take a single player id, an array of players, or a groups:
+But you still end up with multiple just slightly incompatible functions.  YSI already has a lot of code for dealing with sets of players: y_groups (for pre-defined named groups), and y_playerarray (for bit arrays of players).  y_playerset abstracts over these further to allow you to write a single function that can take a single player id, an array of players, or a groups.  You do need to tell the compiler this, through a simple decorator `#define` (Note the use of `(` in the define):
 
 ```pawn
+// Sadly `@PSF() SendText()` here doesn't yet work.
 SentText(@PlayerSet:players, const text[])
 {
 	foreach (new playerid : PS(players))
@@ -73,9 +74,59 @@ SentText(@PlayerSet:players, const text[])
 		// Real message code.
 	}
 }
+
+// `PSF` stands for `PlayerSetFunction`.
+#define SentText( @PSF() SentText(
 ```
 
 Using `@PlayerSet` you can now call this function in a wide range of manners:
 
 ```pawn
-SendText
+SendText(player, "Hi one player.");
+```
+
+```pawn
+new Group:admins = Group_Create("admins");
+SendText(admins, "Hi admins.");
+```
+
+Passing arrays needs `@` prefix:
+
+```pawn
+new PlayerArray:jailed<MAX_PLAYERS>;
+SendText(@jailed, "Hi jailed.");
+```
+
+```pawn
+new list[MAX_PLAYERS];
+list[0] = player0;
+list[1] = player5;
+list[2] = player88;
+list[3] = INVALID_PLAYER_ID;
+SendText(list, "Hi random three players.");
+```
+
+```pawn
+new bool:flags[MAX_PLAYERS];
+flags[player0] = true;
+flags[player5] = true;
+flags[player88] = true;
+SendText(list, "Hi same random three players.");
+```
+
+```pawn
+enum E_PLAYER_DATA
+{
+	E_PLAYER_DATA_SOMETHING,
+	bool:E_PLAYER_DATA_ADMIN,
+	E_PLAYER_DATA_OTHER,
+}
+
+new gPlayerData[MAX_PLAYERS][E_PLAYER_DATA];
+
+gPlayerData[player0][E_PLAYER_DATA_ADMIN] = true;
+gPlayerData[player5][E_PLAYER_DATA_ADMIN] = true;
+gPlayerData[player88][E_PLAYER_DATA_ADMIN] = true;
+SendText(gPlayerData<E_PLAYER_DATA_ADMIN>, "Hi same random three players.");
+```
+
