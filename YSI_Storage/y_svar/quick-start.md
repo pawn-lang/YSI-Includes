@@ -11,7 +11,7 @@ Contents
 3	Restrictions
 4	Advanced
 
-##Example
+## Example
 
 ```pawn
 #define MODE_NAME "SavedText"
