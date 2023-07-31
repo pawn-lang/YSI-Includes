@@ -221,7 +221,7 @@ y_rconfix_Load() <>
 // We are just re-using a random state here.  This automata is always set to
 // `_ALS_go` basically instantly, in many different includes, so we can just
 // abuse that fact to avoid creating another one.
-stock y_rconfix_Load() <_ALS : _ALS_no>
+stock y_rconfix_Unload() <_ALS : _ALS_no>
 {
 	return 0;
 }
