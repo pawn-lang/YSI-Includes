@@ -109,26 +109,28 @@ stock Race_Create(laps = 0, entry = 0, countdown = 3, bool:arial = false,
                   world = 0, bool:restart = false)
 ```
 Parameters:
-laps = 0
+- laps = 0
 The number of laps to run the race for. If this value is "0" then the race is a straight shot to some point. If the value is anything other than "0" then the start checkpoint is also the end checkpoint.  Default value: 0
-entry = 0
+- entry = 0
 How much a race costs to enter. Set to 0 for a custom entry/prize system. The prize money is relative to the entry cost and the number of people who entered - the first three positions win by default.  Default value: 0
-countdown = 3
+- countdown = 3
 When the race starts players are frozen in place and a timer counting down is shown. By default this goes from 3.  Default value: 3
-arial = 0
+- arial = 0
 Is this race for planes (i.e. should it use the donut checkpoints instead of the regular vehicle ones).  Default value: 0
-fixedPrize = false
+- fixedPrize = false
 Use the default inbuilt prize money system.  Default value: false
-exitTime = 0
+- exitTime = 0
 How many seconds can a player be out of their vehicle during a race before they are disqualified? 0 is infinite.  Default value: 0
-interior = 0
+- interior = 0
 Is the race in an interior? And if so, which one.  Default value: 0
-world = 0
+- world = 0
 The virtual world to host the race in.  Default value: 0
-restart = false
+- restart = false
 By default, once a race is completed it will be deleted from the system. Set this parameter to "true" to enable the race to be reused.  Default value: false
+
 Return:
-An identifier for the race
+- An identifier for the race
+
 Notes:
 As mentioned above, this function has a number of optional parameters, listed here. All of these options also have equivalent "Race_SetXXX" functions that can be called instead.
    
@@ -139,10 +141,11 @@ stock Race_Destroy(slot, bool:refund = false)
 ```
 
 Parameters:
-slot
+- slot
 The race to destroy.
-refund = false
+- refund = false
 Should players be given their money back if the race hasn't started yet.  Default value: false
+
 Notes:
 This removes a race from the system - the race can have started or not.
    
@@ -152,14 +155,15 @@ This removes a race from the system - the race can have started or not.
 foreign Race_AddCheckpoint(raceid, Float:x, Float:y, Float:z)
 ```
 Parameters:
-raceid
+- raceid
 The race to add a checkpoint to.
-Float:x
+- Float:x
 The x location of the checkpoint.
-Float:y
+- Float:y
 The y location of the checkpoint.
-Float:z
+- Float:z
 The z location of the checkpoint.
+
 Notes:
 A race is made by first setting one up with Race_Create, then adding sequential checkpoints to it. This function adds the checkpoints, assuming that one checkpoint immediately follows the previously added one for the current race.
    
@@ -169,16 +173,17 @@ A race is made by first setting one up with Race_Create, then adding sequential 
 foreign Race_AddStart(raceid, Float:x, Float:y, Float:z, Float:a)
 ```
 Parameters:
-raceid
+- raceid
 The race to add a start point to.
-Float:x
+- Float:x
 The x location of the start point.
-Float:y
+- Float:y
 The y location of the start point.
-Float:z
+- Float:z
 The z location of the start point.
-Float:a
+- Float:a
 The facing angle for the start point.
+
 Notes:
 As well as points to follow, a race needs a starting grid. This function creates one point on that starting grid.
    
@@ -189,8 +194,9 @@ foreign Race_IsActive(raceid)
 ```
 
 Parameters:
-raceid
+- raceid
 The race to check.
+
 Notes:
 Is there a race already stored in this slot?
    
@@ -200,10 +206,11 @@ Is there a race already stored in this slot?
 foreign Race_PlayerJoin(playerid, race)
 ```
 Parameters:
-playerid
+- playerid
 The player to add to a race.
-race
+- race
 The race to join.
+
 Notes:
 Adds a player to a race that has not yet begun. Note the odd parameter order.
    
@@ -213,10 +220,11 @@ Adds a player to a race that has not yet begun. Note the odd parameter order.
 forward Race_PlayerLeave(playerid, bool:refund = false)
 ```
 Parameters:
-playerid
+- playerid
 The player to remove from a race.
-refund = false
+- refund = false
 Should they get their money back.  Default value: false
+
 Notes:
 Remove a player from a race that has not yet begun.
    
@@ -226,11 +234,12 @@ foreign Race_SetPlayer(race, playerid, bool:set)
 ```
 
 Parameters:
-race
+- race
 The race to join or leave.
-playerid
+- playerid
 The player to remove from, or add to, a race.
-set
+- set
 Add or remove them.
+
 Notes:
 This function is now the preferred method of adding people to, and removing them from, a race. The parameter order is more sensible than the other functions, it can remove people from races that are already running, and it is the correct interface for y_groups.
