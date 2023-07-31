@@ -482,12 +482,6 @@ public OnYSIInit()
 	#if !defined YSI_NO_MASTER
 		getproperty(8, YSI_EMPTY, YSIM_STRING + 1, YSI_g_sModuleName),
 		deleteproperty(8, YSI_EMPTY, YSIM_STRING + 1);
-		// This will fix `OnRconCommand` for the gamemode, so we can use the `module` commands.  It
-		// also takes up a filterscript slot, a fact we can abuse to get swap space while reloading
-		// modules (thus, even if you have the maximum modules loaded, you can still reload one).
-		#if _YSI_SAFE_STARTUP
-			y_rconfix_Load();
-		#endif
 	#endif
 	// Properties get lost between script changes so we need to force a rebuild.
 	@_ = 0,
@@ -511,8 +505,16 @@ public OnYSIInit()
 	#endif
 	// Make sure this is called before all other YSI initialisations, at least all the ones which
 	// use the master system.
-	CallLocalFunction("OnMasterSystemInit", "i", Master_ID()),
+	CallLocalFunction("OnMasterSystemInit", "i", Master_ID());
 	Master_OnYSIInit();
+	#if !defined YSI_NO_MASTER
+		// This will fix `OnRconCommand` for the gamemode, so we can use the `module` commands.  It
+		// also takes up a filterscript slot, a fact we can abuse to get swap space while reloading
+		// modules (thus, even if you have the maximum modules loaded, you can still reload one).
+		#if _YSI_SAFE_STARTUP
+			y_rconfix_Load();
+		#endif
+	#endif
 	return 1;
 }
 

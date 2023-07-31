@@ -368,9 +368,28 @@ global bool:Server_HasNative(const string:name[])
 	return false;
 }
 
-/**
+/*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
- */
+ * <remarks>
+ *   Not remote, but does call a remote function.  If that passes, THEN is does
+ *   a normal `CallRemoteFunction` to the special native invocation function.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+stock bool:Server_CallNative(const name[], &ret, const specifier[], GLOBAL_TAG_TYPES:...)
+{
+	// This call creates the filterscript.
+	if (Server_HasNative(name))
+	{
+		CallRemoteFunction("N__", specifier, ___(3));
+		ret = getproperty(27, "R__");
+		return true;
+	}
+	return false;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ *//*------------------------------------------------------------------------**/
 public R__(const data[], length)
 {
 	if (YSI_g_sRequestedData)
@@ -379,6 +398,28 @@ public R__(const data[], length)
 		YSI_g_sRequestedData = 0;
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *   Stores a large amount of data in a random large space of allocated memory.
+ *   Note that calling any `Server_XNative` function will invalidate this
+ *   temporary storate space.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_WriteData(const data[], length = sizeof (data));
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_serverdata</library>
+ * <remarks>
+ *   Retrieves a large amount of data from a random large space of allocated
+ *   memory.  Note that calling any `Server_XNative` function will invalidate
+ *   this temporary storate space.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward Server_ReadData(address, data[], length = sizeof (data));
 
 foreign void:YAR_DoAuxRuntimeLoad();
 
@@ -448,7 +489,7 @@ global void:YAR_DoAuxRuntimeLoad()
 		// Store the current open.mp version (if there is one).
 		YSI_g_sByteCode[sizeof (YSI_g_sByteCode) - 1] = __OPEN_MP_VERSION;
 		// Store our master ID (so we know who dumped this file).
-		YSI_g_sByteCode[sizeof (YSI_g_sByteCode) - 2] = @_;
+		YSI_g_sByteCode[sizeof (YSI_g_sByteCode) - 2] = Master_ID();
 		// Rewrite the bytecode to include the name of the new native.
 		YAR_WriteNative("heapspace");
 		YSI_g_sLastNative = "native";
@@ -484,7 +525,11 @@ global void:YAR_DoAuxRuntimeLoad()
 
 y_rconfix_Load() <_ALS : _ALS_go>
 {
-	YAR_DoAuxRuntimeLoad();
+	if (Master_ID())
+	{
+		// The master system is initialised.
+		YAR_DoAuxRuntimeLoad();
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
