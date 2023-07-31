@@ -3,14 +3,6 @@
 y_svar is BY FAR the simplest way of creating data that is saved for a server. It is very similar to y_uvar, but saves data that is server-wide, not per-player. Declaring an array with svar instead of new (or other methods) means that the variable is automatically (automagically) saved when the mode ends and loaded again when the mode restarts.
 
 
-Contents
-1	Example
-2	Use
-2.1	static
-2.2	Saving
-3	Restrictions
-4	Advanced
-
 ## Example
 
 ```pawn
