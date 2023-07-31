@@ -105,10 +105,6 @@ enum e_PLAYER_SET_TYPE:
 	e_PLAYER_SET_TYPE_ID,
 	// "PA" is a YSI player array.
 	e_PLAYER_SET_TYPE_PA,
-	// "BOOL" is an array of true/false.
-	e_PLAYER_SET_TYPE_BOOL,
-	// "ARRAY" is just an array of elements.
-	e_PLAYER_SET_TYPE_ARRAY,
 	// "CUSTOM" is used to identify fields in an enum.
 	e_PLAYER_SET_TYPE_CUSTOM,
 	e_PLAYER_SET_TYPE_PLAYERS,
@@ -166,10 +162,9 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 			return -1;
 		}
 		++__ps_pointer;
-		new
-			begin = __ps_data[e_PLAYER_SET_HACK_DATA][0];
+		cur = __ps_data[e_PLAYER_SET_HACK:0];
 		// Is this a single value element (group or ID).
-		if (_:addr == begin)
+		if (_:addr == cur)
 		{
 			// Increase the stack pointer for recursive/multi-layered calls.
 			// Should really add error-checking code for overflows.
@@ -245,102 +240,59 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 		}
 		else
 		{
-			// It's an array - _:addr contains the address of the target.
-			memcpy(__ps_stack[__ps_pointer], __ps_data[e_PLAYER_SET_HACK_DATA], 0, MAX_PLAYERS * 4);
 			// Try to determine what sort of array it is.  Note that there are three
-			// possible types.
-			if (begin == PA_TYPE_PA)
+			// possible types.  Convert them all to `PlayerArray` for simplicity.
+			if (cur == PA_TYPE_PA)
 			{
-				// Easy to handle - the systems were designed for each other.
-				// This one needs work...  Err - what work?
-				__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_PA;
-				cur = Iter_Func@PA(-1, Bit:__ps_stack[__ps_pointer]);
-				if (cur == -1)
-				{
-					--__ps_pointer;
-				}
-				return cur;
+				// Copy the existing player array.
+				memcpy(__ps_stack[__ps_pointer], __ps_data[e_PLAYER_SET_HACK_DATA], 0, MAX_PLAYERS * 4);
 			}
-			else if (begin & 0xFF0000FF == 0x0F0000F0)
-			{
-				__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_CUSTOM;
-				cur = begin >>> 8 & 0x0000FFFF;
-				if (cur == INVALID_PLAYER_ID & 0x0000FFFF)
-				{
-					--__ps_pointer;
-					return -1;
-				}
-				if (Iter_Contains(Player, cur))
-				{
-					return cur;
-				}
-				addr = __ps_addr_t:0;
-				while (++_:addr != MAX_PLAYERS)
-				{
-					cur = __ps_stack[__ps_pointer][_:addr];
-					if (cur == INVALID_PLAYER_ID)
-					{
-						--__ps_pointer;
-						return -1;
-					}
-					if (Iter_Contains(Player, cur))
-					{
-						return cur;
-					}
-				}
-				--__ps_pointer;
-				return -1;
-			}
-			else if (begin > 1 || __ps_data[e_PLAYER_SET_HACK_DATA][1] > 1 || __ps_data[e_PLAYER_SET_HACK_DATA][2] > 1)
+			else if (cur > 1 || __ps_data[e_PLAYER_SET_HACK:1] > 1 || __ps_data[e_PLAYER_SET_HACK:2] > 1)
 			{
 				// List of players.  One of the first three will normally be greater
 				// than 1 in a list of players.
-				__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_ARRAY;
-				cur = begin;
-				if (cur == INVALID_PLAYER_ID)
-				{
-					--__ps_pointer;
-					return -1;
-				}
-				if (Iter_Contains(Player, cur))
-				{
-					return cur;
-				}
-				addr = __ps_addr_t:0;
+				addr = __ps_addr_t:-1;
+				cur = 0;
 				while (++_:addr != MAX_PLAYERS)
 				{
-					cur = __ps_stack[__ps_pointer][_:addr];
-					if (cur == INVALID_PLAYER_ID)
+					// Initialise and assign the array in parallel.
+					__ps_stack[__ps_pointer][(_:addr + 1) % MAX_PLAYERS] = 0;
+					// Don't add any players after `INVALID_PLAYER_ID`, but DO
+					// continue the loop to finish the array initialisation.
+					if (cur != INVALID_PLAYER_ID)
 					{
-						--__ps_pointer;
-						return -1;
-					}
-					if (Iter_Contains(Player, cur))
-					{
-						return cur;
+						cur = __ps_data[e_PLAYER_SET_HACK:addr];
+						if (cur != INVALID_PLAYER_ID && Iter_Contains(Player, cur))
+						{
+							PA_Let(Bit:__ps_stack[__ps_pointer], cur);
+						}
 					}
 				}
-				--__ps_pointer;
-				return -1;
+				__ps_stack[__ps_pointer][0] = PA_TYPE_PA;
 			}
 			else
 			{
 				// Boolean array.
-				__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_BOOL;
-				// Find the first set player.
-				FOREACH__ (cur : Player)
+				addr = __ps_addr_t:-1;
+				while (++_:addr != MAX_PLAYERS)
 				{
-					// Now ANY true value is true.
-					if (__ps_data[e_PLAYER_SET_HACK_DATA][cur])
+					// Initialise and assign the array in parallel.
+					__ps_stack[__ps_pointer][(_:addr + 1) % MAX_PLAYERS] = 0;
+					if (__ps_data[e_PLAYER_SET_HACK:addr] && Iter_Contains(Player, _:addr))
 					{
-						//_:addr = i;
-						return cur;
+						PA_Let(Bit:__ps_stack[__ps_pointer], _:addr);
 					}
 				}
-				// No players specified.
-				--__ps_pointer;
-				return -1;
+				__ps_stack[__ps_pointer][0] = PA_TYPE_PA;
 			}
+			// Easy to handle - the systems were designed for each other.
+			__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_PA;
+			cur = Iter_Func@PA(-1, Bit:__ps_stack[__ps_pointer]);
+			if (cur == -1)
+			{
+				--__ps_pointer;
+			}
+			return cur;
 		}
 		// Will have returned by this point.
 	}
@@ -400,111 +352,6 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 			}
 			return cur;
 		}
-		case e_PLAYER_SET_TYPE_BOOL:
-		{
-			for ( ; ; )
-			{
-				cur = Iter_Next(Player, cur);
-				if (cur == Iter_End(Player))
-				{
-					--__ps_pointer;
-					return -1;
-				}
-				if (__ps_stack[__ps_pointer][cur])
-				{
-					// Don't need to check if they're connected as the data
-					// comes directly from "foreach".
-					break;
-				}
-				// Could add extra late checks here (Error, not Warning, now).
-			}
-			return cur;
-		}
-		case e_PLAYER_SET_TYPE_ID:
-		{
-			--__ps_pointer;
-			return -1;
-		}
-		case e_PLAYER_SET_TYPE_ARRAY:
-		{
-			addr = __ps_addr_t:-1;
-			while (++_:addr != MAX_PLAYERS)
-			{
-				if (__ps_stack[__ps_pointer][_:addr] == cur)
-				{
-					break;
-				}
-			}
-			if (_:addr != MAX_PLAYERS)
-			{
-				while (++_:addr != MAX_PLAYERS)
-				{
-					cur = __ps_stack[__ps_pointer][_:addr];
-					if (cur == INVALID_PLAYER_ID)
-					{
-						--__ps_pointer;
-						return -1;
-					}
-					if (Iter_Contains(Player, cur))
-					{
-						return cur;
-					}
-				}
-			}
-			--__ps_pointer;
-			return -1;
-		}
-		case e_PLAYER_SET_TYPE_CUSTOM:
-		{
-			if (cur == __ps_stack[__ps_pointer][0] >>> 8 & 0x0000FFFF)
-			{
-				addr = __ps_addr_t:0;
-				while (++_:addr != MAX_PLAYERS)
-				{
-					cur = __ps_stack[__ps_pointer][_:addr];
-					if (cur == INVALID_PLAYER_ID)
-					{
-						--__ps_pointer;
-						return -1;
-					}
-					if (Iter_Contains(Player, cur))
-					{
-						return cur;
-					}
-				}
-				--__ps_pointer;
-				return -1;
-			}
-			else
-			{
-				addr = __ps_addr_t:0;
-				while (++_:addr != MAX_PLAYERS)
-				{
-					if (__ps_stack[__ps_pointer][_:addr] == cur)
-					{
-						break;
-					}
-				}
-				if (_:addr != MAX_PLAYERS)
-				{
-					while (++_:addr != MAX_PLAYERS)
-					{
-						cur = __ps_stack[__ps_pointer][_:addr];
-						if (cur == INVALID_PLAYER_ID)
-						{
-							--__ps_pointer;
-							return -1;
-						}
-						if (Iter_Contains(Player, cur))
-						{
-							return cur;
-						}
-					}
-				}
-				--__ps_pointer;
-				return -1;
-			}
-		}
 	}
 	--__ps_pointer;
 	return -1;
@@ -518,25 +365,13 @@ stock __PS_C(source[MAX_PLAYERS][], idx)
 	static
 		sFake[MAX_PLAYERS] = {(INVALID_PLAYER_ID << 8) | 0x0F0000F0};
 	new
-		ret = (__ps_data[e_PLAYER_SET_HACK_DATA] = sFake),
-		e_PLAYER_SET_HACK:i = e_PLAYER_SET_HACK:0;
+		ret = (__ps_data[e_PLAYER_SET_HACK_DATA] = sFake);
 	FOREACH__ (new playerid : Player)
 	{
 		if (source[playerid][idx])
 		{
-			if (i)
-			{
-				__ps_data[i++] = playerid;
-			}
-			else
-			{
-				__ps_data[i++] = (playerid << 8) | 0x0F0000F0;
-			}
+			PA_Let(Bit:__ps_data, playerid);
 		}
-	}
-	if (i < e_PLAYER_SET_HACK:MAX_PLAYERS)
-	{
-		__ps_data[i] = INVALID_PLAYER_ID;
 	}
 	return ret;
 }
