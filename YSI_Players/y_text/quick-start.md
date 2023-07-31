@@ -3,11 +3,13 @@
 ## Introduction
 
 y_text is the single most complex library in YSI 3.0, but using it is (hopefully) very simple. The library works on the idea from HTML/CSS/JavaScript of separation of content, style and logic. Most modes contain code like this:
-
+```
 SendClientMessage(playerid, COLOUR_RED, "Hello there");
+```
 That's all well and good, and VERY common. But if you have a typo you need to recompile your mode, if you want to change the colour you need to recompile your mode, and changing how the text displays (for example converting to text draws) is a lot more work. y_text on the other hand has just one display method:
-
+```
 Text_Send(playerid, $HELLO_MESSAGE);
+```
 The "HELLO_MESSAGE" text is defined in files, along with the style of the text, and can come in multiple languages, making this more equivalent to:
 ```
 switch (PlayerLanguage(playerid))
@@ -137,7 +139,9 @@ enum E_PLAYER_DATA
 
 new
     gPlayerData[MAX_PLAYERS][E_PLAYER_DATA];
-Often you will want to send a message to everyone for whom "E_PLAYER_DATA_ADMIN" is true. This is (in "y_text" speak) a "custom" array:
+
+
+// Often you will want to send a message to everyone for whom "E_PLAYER_DATA_ADMIN" is true. This is (in "y_text" speak) a "custom" array:
 
 stock Func()
 {
@@ -246,11 +250,12 @@ This is an XML file holding the style information for all text entries in the gi
 #### style
 "style" can be any of the following:
 
-client - Use "SendClientMessage".
-0 - 6 - Use "GameText" styles 0 - 6.
-draw - Use "TextDraw".
-3d - Use 3d text (not fully supported yet).
-player - Use "SendPlayerMessage".
+- client - Use "SendClientMessage".
+- 0 - 6 - Use "GameText" styles 0 - 6.
+- draw - Use "TextDraw".
+- 3d - Use 3d text (not fully supported yet).
+- player - Use "SendPlayerMessage".
+
 The other options depend on the selected style
 
 #### Style "client"
@@ -304,14 +309,14 @@ These are not yet fully supported.
 "Text_Send" can take format parameters, and it has been extended with a greater number than the default "format" function.
 
 ### Specifiers
-b - Boolean. This now works for negative numbers.
-c - Character.
-d, i - Integer (Decimal).
-f - Float.
-g - IEEE float (has "NAN" and "INFINITY").
-h, x - Hex (heX). This now works for negative numbers.
-l - Logical ("true" or "false"). Any number not 0 will be displayed as "true", 0 will be "false".
-n - commaNd. This was chosen as "%n" as it was the first new one added and at the time "%n" caused a crash in "format" (and "%c" was taken). In YSI commands can be renamed and different people can have different names for the same command. Using this will always give the correct name for the current player. The commands are specified using their "YCMD" syntax:
+- b - Boolean. This now works for negative numbers.
+- c - Character.
+- d, i - Integer (Decimal).
+- f - Float.
+- g - IEEE float (has "NAN" and "INFINITY").
+- h, x - Hex (heX). This now works for negative numbers.
+- l - Logical ("true" or "false"). Any number not 0 will be displayed as "true", 0 will be "false".
+- n - commaNd. This was chosen as "%n" as it was the first new one added and at the time "%n" caused a crash in "format" (and "%c" was taken). In YSI commands can be renamed and different people can have different names for the same command. Using this will always give the correct name for the current player. The commands are specified using their "YCMD" syntax:
 ```
 [comms]
 COMM_MESSAGE = Command /%n
