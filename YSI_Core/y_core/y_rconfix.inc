@@ -111,12 +111,12 @@ static stock const
 // We are just re-using a random state here.  This automata is always set to
 // `_ALS_go` basically instantly, in many different includes, so we can just
 // abuse that fact to avoid creating another one.
-y_rconfix_Load() <_ALS : _ALS_no>
+Server_LoadRconFix() <_ALS : _ALS_no>
 {
 }
 
 // Set this to the fallback state, in case no other include is used.
-y_rconfix_Load() <>
+Server_LoadRconFix() <>
 {
 	if (Server_IsSAMP())
 	{
@@ -220,11 +220,11 @@ y_rconfix_Load() <>
 // We are just re-using a random state here.  This automata is always set to
 // `_ALS_go` basically instantly, in many different includes, so we can just
 // abuse that fact to avoid creating another one.
-stock y_rconfix_Unload() <_ALS : _ALS_no>
+stock Server_UnloadRconFix() <_ALS : _ALS_no>
 {
 }
 
-stock y_rconfix_Unload() <>
+stock Server_UnloadRconFix() <>
 {
 	if (Server_IsSAMP())
 	{

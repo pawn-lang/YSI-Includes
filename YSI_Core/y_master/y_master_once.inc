@@ -512,7 +512,7 @@ public OnYSIInit()
 		// also takes up a filterscript slot, a fact we can abuse to get swap space while reloading
 		// modules (thus, even if you have the maximum modules loaded, you can still reload one).
 		#if _YSI_SAFE_STARTUP
-			y_rconfix_Load();
+			Server_LoadRconFix();
 		#endif
 	#endif
 	return 1;
@@ -698,7 +698,7 @@ forward OnMasterSystemClose(id);
 		#if _YSI_SAFE_STARTUP
 			// Free up a temporary filterscript slot for the swapping.  Handily,
 			// we have one spare.
-			y_rconfix_Unload();
+			Server_UnloadRconFix();
 		#endif
 		// We can't just use the default `reloads` command, because that will clear memory before
 		// the reload, thus we'll loose data.  Instead, we use a hack to load the FS twice at once!
@@ -718,7 +718,7 @@ forward OnMasterSystemClose(id);
 			{
 				Debug_Fatal("Could not reload module \"%s\"", module);
 				#if _YSI_SAFE_STARTUP
-					y_rconfix_Load();
+					Server_LoadRconFix();
 				#endif
 				return false;
 			}

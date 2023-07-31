@@ -174,7 +174,7 @@ public OnPlayerConnect(playerid)
 	{
 		if (Script_IsGameMode())
 		{
-			y_rconfix_Load();
+			Server_LoadRconFix();
 		}
 		#if defined Android_OnYSIInit
 			Android_OnYSIInit();

@@ -280,7 +280,7 @@ static stock const
 /**
  * <library>y_serverdata</library>
  */
-static stock bool:YAR_DumpFile()
+static stock bool:Server_DumpFile()
 {
 	new
 		File:f = fopen("ysi_aux_runtime.amx", io_write);
@@ -296,7 +296,7 @@ static stock bool:YAR_DumpFile()
 /**
  * <library>y_serverdata</library>
  */
-static stock YAR_WriteNative(const name[])
+static stock Server_WriteNative(const name[])
 {
 	// Data should always be aligned, I think.
 	new
@@ -329,9 +329,9 @@ global bool:Server_HasNative(const string:name[])
 		return true;
 	}
 	
-	YAR_WriteNative(name);
+	Server_WriteNative(name);
 	
-	if (!YAR_DumpFile())
+	if (!Server_DumpFile())
 	{
 		return false;
 	}
@@ -358,8 +358,8 @@ global bool:Server_HasNative(const string:name[])
 	if (YSI_g_sLastNative[0] != '-')
 	{
 		// Reset to the previous version (known safe).
-		YAR_WriteNative(YSI_g_sLastNative);
-		if (YAR_DumpFile())
+		Server_WriteNative(YSI_g_sLastNative);
+		if (Server_DumpFile())
 		{
 			YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
 		}
@@ -421,7 +421,7 @@ forward Server_WriteData(const data[], length = sizeof (data));
 
 forward Server_ReadData(address, data[], length = sizeof (data));
 
-foreign void:YAR_DoAuxRuntimeLoad();
+foreign void:Server_DoAuxRuntimeLoad();
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
@@ -436,7 +436,7 @@ foreign void:YAR_DoAuxRuntimeLoad();
  *//*------------------------------------------------------------------------**/
 
 // I can't remember if `static global` is a thing, but it should be.
-global void:YAR_DoAuxRuntimeLoad()
+global void:Server_DoAuxRuntimeLoad()
 {
 	if (fexist("callbackfix") || fexist("ysi_aux_runtime"))
 	{
@@ -491,12 +491,12 @@ global void:YAR_DoAuxRuntimeLoad()
 		// Store our master ID (so we know who dumped this file).
 		YSI_g_sByteCode[sizeof (YSI_g_sByteCode) - 2] = Master_ID();
 		// Rewrite the bytecode to include the name of the new native.
-		YAR_WriteNative("heapspace");
+		Server_WriteNative("heapspace");
 		YSI_g_sLastNative = "native";
 	}
 	
 	// Always re-dump the file if we get to here.
-	YAR_DumpFile();
+	Server_DumpFile();
 	YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
 	if (fexist("ysi_aux_runtime.amx"))
 	{
@@ -523,12 +523,12 @@ global void:YAR_DoAuxRuntimeLoad()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-y_rconfix_Load() <_ALS : _ALS_go>
+Server_LoadRconFix() <_ALS : _ALS_go>
 {
 	if (Master_ID())
 	{
 		// The master system is initialised.
-		YAR_DoAuxRuntimeLoad();
+		Server_DoAuxRuntimeLoad();
 	}
 }
 
@@ -539,7 +539,7 @@ y_rconfix_Load() <_ALS : _ALS_go>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock y_rconfix_Unload() <_ALS : _ALS_go>
+stock Server_UnloadRconFix() <_ALS : _ALS_go>
 {
 	YSI_SendRconCommand__("unloadfs ../scriptfiles/ysi_aux_runtime");
 }
