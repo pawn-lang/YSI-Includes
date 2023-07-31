@@ -8,4 +8,4 @@ For test builds, the following define will vastly increase compile times by ommi
 ```
 The full set of colours included by default are shown in the attached image.
 
-<img height="300" align="center" src="https://static.wikia.nocookie.net/ysi/images/6/65/Y_colours.png/revision/latest/scale-to-width-down/1000?cb=20130205002244">
+<img height="500" align="center" src="https://static.wikia.nocookie.net/ysi/images/6/65/Y_colours.png/revision/latest/scale-to-width-down/1000?cb=20130205002244">
