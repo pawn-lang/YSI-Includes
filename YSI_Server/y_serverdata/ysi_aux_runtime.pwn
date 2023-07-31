@@ -69,8 +69,8 @@ native YSI();
 
 // Custom versions of natives, some of which allow us to pass raw addresses.
 native bool:SetProperty(id, const name[], value, const string[]) = setproperty;
-native StrCmp(const string1[], const string2[], bool:ignorecase, length) = strcmp;
-native bool:MemCpy(dest, const src[], index, bytes, max) = memcpy;
+native StringCompare(const string1[], const string2[], bool:ignorecase, length) = strcmp;
+native bool:MemoryCopy(dest, const src[], index, bytes, max) = memcpy;
 
 native CallRemoteFunction(const function[], const specifier[], ...) = CallRemoteFunction;
 
@@ -91,6 +91,11 @@ new
 	gAllocated = 0;
 
 new const
+	// The master ID.  Not of this script, but of the script that generated this
+	// code.  Use `42` by default as that is what an earlier version of this
+	// code always returned, so this remains backwards-compatible.  It is also
+	// not a power of two, therefore not a valid Master ID.
+	_@ = 42,
 	// This is written by our loader, NOT the server.  We do this just to save
 	// space in the header from not needing to make this `public`.  To
 	// facilitate this, it is the very last thing in the file.
@@ -159,7 +164,7 @@ public S__(const data[], length)
 		#emit STOR.pri     gAllocated
 
 		// gAllocated is the return address.  The first cell is the length.
-		MemCpy(dest, data, 0, length, SPACE_IN_MB * 1024 * 1024 / cellbytes);
+		MemoryCopy(dest, data, 0, length, SPACE_IN_MB * 1024 * 1024 / cellbytes);
 	}
 	else
 	{
@@ -202,10 +207,10 @@ public OnFilterScriptInit()
 public OnRconCommand(const cmd[])
 {
 	// The smallest I could make the assembly without `#emit`.
-	if (StrCmp(cmd, FIXES_RESPONSE, true, cellmax) == 0)
+	if (StringCompare(cmd, FIXES_RESPONSE, true, cellmax) == 0)
 	{
 		// We used to use padding, but now the FS isn't packed (unfortunatley).
-		return !SetProperty(27, FIXES_RESPONSE, 27, NATIVE);
+		return !SetProperty(27, FIXES_RESPONSE, _@, NATIVE);
 	}
 	return 0;
 }

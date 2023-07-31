@@ -1367,7 +1367,9 @@ stock bool:INI_WriteHex(INI:file, const name[], data)
 {
 	Debug_Print3("INI_WriteHex called: %i, \"%s\", %i", _:file, name, data);
 	return
-		format(Q@, sizeof (Q@), "0x%04x%04x", data >>> 16, data & 0xFFFF),
+		(data < 0)
+			? format(Q@, sizeof (Q@), "0x%x%07x", data >>> 28, data & 0x0FFFFFFF)
+			: format(Q@, sizeof (Q@), "0x%x", data),
 		INI_AddToBuffer(file, name, Q@);
 }
 
@@ -1383,9 +1385,11 @@ stock bool:INI_WriteHex(INI:file, const name[], data)
 stock bool:INI_WriteBin(INI:file, const name[], data)
 {
 	Debug_Print3("INI_WriteBin called: %i, \"%s\", %i", _:file, name, data);
-	if (data < 0) format(Q@, sizeof (Q@), "0b1%031b", data & 0x7FFFFFFF);
-	else format(Q@, sizeof (Q@), "0b%b", data);
-	return INI_AddToBuffer(file, name, Q@);
+	return
+		(data < 0)
+			? format(Q@, sizeof (Q@), "0b%b%028b", data >>> 28, data & 0x0FFFFFFF)
+			: format(Q@, sizeof (Q@), "0b%b", data),
+		INI_AddToBuffer(file, name, Q@);
 }
 
 /*-------------------------------------------------------------------------*//**
