@@ -186,5 +186,5 @@ stock Iter_Func@PA(start, const PlayerArray:data<>)
 
 #undef PlayerArray
 
-#define PlayerArray:%0<%1> Bit:%0[bits<%1>+1]={Bit:PA_TYPE_PA,Bit:0,Bit:0,...}//={Bit:-1}
+#define PlayerArray:%0<%1> Bit:%0[bits<%1>+1]//={Bit:PA_TYPE_PA,Bit:0,Bit:0,...}//={Bit:-1}
 
