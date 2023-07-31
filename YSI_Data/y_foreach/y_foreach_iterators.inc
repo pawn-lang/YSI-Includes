@@ -93,6 +93,7 @@ Optional plugins:
 		#if _FOREACH_STREAMED
 			ITERATOR__ StreamedPlayer[MAX_PLAYERS]<MAX_PLAYERS>,
 		#endif
+		ITERATOR__ RCON<MAX_PLAYERS>,
 		ITERATOR__ Player<MAX_PLAYERS>;
 #endif
 
@@ -588,6 +589,7 @@ stock Iter_All_Internal(const array[], size, value)
 			#endif
 			#if _FOREACH_PLAYERS
 				Iter_Clear(Player);
+				Iter_Clear(RCON);
 				#if _FOREACH_STREAMED
 					Iter_InitAndClear(StreamedPlayer);
 				#endif
@@ -617,6 +619,10 @@ stock Iter_All_Internal(const array[], size, value)
 						{
 					#if _FOREACH_PLAYERS
 							Iter_Add(Player, i);
+							if (IsPlayerAdmin(i))
+							{
+								Iter_Add(RCON, i);
+							}
 							#if _FOREACH_STREAMED
 								for (new j = 0; j != MAX_PLAYERS; ++j)
 								{
@@ -702,6 +708,50 @@ stock Iter_All_Internal(const array[], size, value)
 	#define _ALS_OnPlayerConnect
 	#define OnPlayerConnect(%0) CHAIN_PUBLIC:Iter_OnPlayerConnect(%0)
 	CHAIN_FORWARD:Iter_OnPlayerConnect(playerid) = 1;
+
+	/*-------------------------------------------------------------------------*//**
+	 * <library>y_iterate</library>
+	 * <param name="playerid">Player who joined.</param>
+	 * <remarks>
+	 *   Adds a player to the loop data.  Now sorts the list too.  Note that I found
+	 *   the most bizzare bug ever (I *think* it may be a compiler but, but it
+	 *   requires further investigation), basically it seems that multiple variables
+	 *   were being treated as the same variable (namely @YSII_EgotS and
+	 *   @YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
+	 *   same).  Adding print statements which reference these variables seem to fix
+	 *   the problem, and I've tried to make sure that the values will never actually
+	 *   get printed.
+	 * </remarks>
+	 *//*------------------------------------------------------------------------**/
+
+	#if _FOREACH_PLAYERS
+		public OnRconLoginAttempt(ip[], password[], success)
+		{
+			Debug_Print1("Iter_OnRconLoginAttempt called: %s, %s, %d", ip, password, success);
+			if (success)
+			{
+				// Rebuild the iterator.
+				FOREACH__ (new i : Player)
+				{
+					if (IsPlayerAdmin(i))
+					{
+						// Add all admins.  It doesn't matter if they're already
+						// added, since `Iter_Add` has internal checks for that.
+						Iter_Add(RCON, i);
+					}
+				}
+			}
+			Debug_Print2("Iter_OnRconLoginAttempt end");
+			return Iter_OnRconLoginAttempt(ip, password, success);
+		}
+		
+		#if defined _ALS_OnRconLoginAttempt
+			#undef OnRconLoginAttempt
+		#endif
+		#define _ALS_OnRconLoginAttempt
+		#define OnRconLoginAttempt(%0) CHAIN_PUBLIC:Iter_OnRconLoginAttempt(%0)
+		CHAIN_FORWARD:Iter_OnRconLoginAttempt(ip[], password[], success) = 1;
+	#endif
 	
 	/*---------------------------------------------------------------------*//**
 	 * <library>y_iterate</library>
@@ -731,6 +781,7 @@ stock Iter_All_Internal(const array[], size, value)
 			{
 		#if _FOREACH_PLAYERS
 				Iter_Remove(Player, playerid);
+				Iter_Remove(RCON, playerid);
 		#endif
 			}
 			return ret;
@@ -954,9 +1005,13 @@ static stock const
 		// Because there may be multiple scripts running, we need to tell all of
 		// them when a vehicle is created or destroyed.
 		if (add)
+		{
 			Iter_Add(Vehicle, vehicleid);
+		}
 		else
+		{
 			Iter_Remove(Vehicle, vehicleid);
+		}
 	}
 	
 	stock Iter_CreateVehicle(modelid, Float:x, Float:y, Float:z, Float:angle, color1, color2, respawn_delay, YSI_ADD_SIREN_TAG:addSiren = false)

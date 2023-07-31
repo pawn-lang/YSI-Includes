@@ -397,6 +397,8 @@ foreach (new admin : Admin())
 }
 ```
 
+Note that `RCON` already exists as a built-in iterator for exactly this usage.
+
 ### Invisible Special Iterators
 
 A normal iterator loop is:
@@ -1185,6 +1187,14 @@ that library in a group.  For example, to loop over all the commands enabled in 
 
 ```pawn
 foreach (new i : Group_Command[groupid])
+```
+
+### `RCON`
+
+Every player logged in as an RCON admin:
+
+```pawn
+foreach (new i : RCON)
 ```
 
 ## You don't need n-dimensional arrays.
