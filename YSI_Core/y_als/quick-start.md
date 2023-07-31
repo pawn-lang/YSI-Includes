@@ -5,14 +5,6 @@ ALS (the Advanced Library System) is a well established standard for hooking cal
 Some of the "improvements" here may seem minimal, but in a large library like YSI which can hook any given callback multiple times (and it does hook them all in at least one place), it makes a big time saving.
 
 
-Contents
-1	Errors
-2	Example
-2.1	Explanation
-3	Justification
-4	Print Example
-
-
 ## Errors
 ### Use ALS_MAKE not ALS_PREFIX
 
