@@ -113,7 +113,6 @@ static stock const
 // abuse that fact to avoid creating another one.
 y_rconfix_Load() <_ALS : _ALS_no>
 {
-	return 0;
 }
 
 // Set this to the fallback state, in case no other include is used.
@@ -223,7 +222,6 @@ y_rconfix_Load() <>
 // abuse that fact to avoid creating another one.
 stock y_rconfix_Unload() <_ALS : _ALS_no>
 {
-	return 0;
 }
 
 stock y_rconfix_Unload() <>

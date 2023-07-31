@@ -149,8 +149,8 @@ Optional plugins:
 #include "..\..\YSI_Core\y_core\y_core_entry"
 #include "..\..\YSI_Coding\y_va"
 
-#define MASTER 
-
+#define MASTER 54
+#define YSIM_U_DISABLE
 #include "..\..\YSI_Core\y_master"
 
 forward R__(const data[], length);
@@ -316,10 +316,12 @@ static stock YAR_WriteNative(const name[])
 	while (YSI_g_sByteCode[o] > (cellmax >>> (charbits - 1)));
 }
 
+foreign bool:Server_HasNative(const string:name[]);
+
 /**
  * <library>y_serverdata</library>
  */
-global bool:Server_HasNative(const name[])
+global bool:Server_HasNative(const string:name[])
 {
 	if (strcmp(name, YSI_g_sLastNative) == 0)
 	{
@@ -378,6 +380,8 @@ public R__(const data[], length)
 	}
 }
 
+foreign void:YAR_DoAuxRuntimeLoad();
+
 /*-------------------------------------------------------------------------*//**
  * <library>y_serverdata</library>
  * <remarks>
@@ -391,7 +395,7 @@ public R__(const data[], length)
  *//*------------------------------------------------------------------------**/
 
 // I can't remember if `static global` is a thing, but it should be.
-global YAR_DoAuxRuntimeLoad()
+global void:YAR_DoAuxRuntimeLoad()
 {
 	if (fexist("callbackfix") || fexist("ysi_aux_runtime"))
 	{
@@ -444,7 +448,7 @@ global YAR_DoAuxRuntimeLoad()
 		// Store the current open.mp version (if there is one).
 		YSI_g_sByteCode[sizeof (YSI_g_sByteCode) - 1] = __OPEN_MP_VERSION;
 		// Store our master ID (so we know who dumped this file).
-		YSI_g_sByteCode[sizeof (YSI_g_sByteCode) - 2] = _@;
+		YSI_g_sByteCode[sizeof (YSI_g_sByteCode) - 2] = @_;
 		// Rewrite the bytecode to include the name of the new native.
 		YAR_WriteNative("heapspace");
 		YSI_g_sLastNative = "native";
@@ -498,4 +502,6 @@ stock y_rconfix_Unload() <_ALS : _ALS_go>
 #if defined YSI_TESTS
 	#include "y_serverdata_tests"
 #endif
+
+#include "..\..\YSI_Core\y_master"
 

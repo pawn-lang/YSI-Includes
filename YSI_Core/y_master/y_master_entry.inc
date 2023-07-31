@@ -107,8 +107,14 @@ Optional plugins:
 	Debug_CodeX{static stock const _POPPED_MASTER = MASTER;}
 #endif
 
+#if !defined MASTER
+	#error Invalid MASTER ID.
+	#endinput
+#endif
+
 #if MASTER < 0 || MASTER >= MAX_MASTERS
 	#error Invalid MASTER ID.
+	#endinput
 #endif
 
 #if defined _INC_y_master
