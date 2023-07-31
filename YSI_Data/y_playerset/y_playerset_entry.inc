@@ -344,7 +344,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 		}
 		// Will have returned by this point.
 	}
-	Debug_Print3("__PS_N called: %i, %i", _:addr, cur);
+	Debug_Print3("__PS_N called: %i, %i, %i", _:addr, cur, __ps_type{__ps_pointer});
 	// Each mode has a different end condition.
 	switch (__ps_type{__ps_pointer})
 	{

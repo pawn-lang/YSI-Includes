@@ -87,7 +87,7 @@ Optional plugins:
 // Redefined later on.  This is just for internal use.
 #define PlayerArray:%0<%1> Bit:%0[%1]
 
-#define PA_INIT:%1, Bit:PA_TYPE_PA,Bit:(-1*_:%1),Bit:(-1*_:%1),
+//#define PA_INIT:%1, Bit:PA_TYPE_PA,Bit:(-1*_:%1),Bit:(-1*_:%1),
 
 stock PA_Init(Bit:a[], bool:init = false, s = bits<MAX_PLAYERS>)
 {
@@ -186,5 +186,5 @@ stock Iter_Func@PA(start, const PlayerArray:data<>)
 
 #undef PlayerArray
 
-#define PlayerArray:%0<%1> Bit:%0[bits<%1>+1]//={Bit:-1}
+#define PlayerArray:%0<%1> Bit:%0[bits<%1>+1]={Bit:PA_TYPE_PA,Bit:0,Bit:0,...}//={Bit:-1}
 
