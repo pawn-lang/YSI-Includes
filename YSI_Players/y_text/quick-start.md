@@ -327,7 +327,9 @@ stock Func(playerid)
     // Show the player what "YCMD:hi" is called for them.
     Text_Send(playerid, $COMM_MESSAGE, YCMD:hi);
 }
+```
 q - player ("q" is near "p", and "p" is unavailable for historical reasons). Show a player's name (I was sick of writing "GetPlayerName"):
+```
 [player]
 PLAYER_MESSAGE = Player %d is %q
 loadtext file[player];
