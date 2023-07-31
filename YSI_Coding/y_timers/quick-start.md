@@ -3,25 +3,10 @@
 This include allows you to quickly and easily define timer functions, that is functions which are to be called after a given time. The library provides two systems: tasks, which are functions that run all the time in the background (for example streamers); and timers, which are functions you can start, stop, and call on a delay at will.
 
 
-Contents
-1	Example
-1.1	Without y_timers
-1.2	With y_timers
-1.3	Comparison
-2	Tasks
-2.1	Calling
-2.2	Notes
-3	Timers
-3.1	Calling
-3.2	Control
-3.3	Overrides
-3.4	Arrays and Strings
-
-
 ## Example
 
 ### Without y_timers
-```
+```pawn
 #include <a_samp>
 
 forward RepeatingTimer();
@@ -44,7 +29,7 @@ main()
 }
 ```
 ### With y_timers
-```
+```pawn
 #include <YSI\y_timers>
 
 task RepeatingTimer[1000]()
@@ -74,7 +59,7 @@ The compiler can check function parameters and function names are correct.
 ## Tasks
 
 Tasks are functions that are called constantly at a given period. Defining these is now VERY simple:
-```
+```pawn
 #include <YSI\y_timers>
 
 task RepeatingFunction1[1000]()
@@ -93,7 +78,7 @@ ptask RepeatingFunction3[500](playerid)
 }
 ```
 That is literally it. The full format is:
-```
+```pawn
 task FUNCTION_NAME[DELAY]()
 {
 	CODE();
@@ -108,7 +93,7 @@ A task is called after the given delay constantly, so RepeatingFunction1 above w
 
 ### Calling
 If you need to, you can still call timer functions directly:
-```
+```pawn
 #include <YSI\y_timers>
 
 task RepeatingFunction[1000]()
@@ -128,7 +113,7 @@ The balancing algorithm is not perfect. If you have one timer at 400ms and one a
 
 ## Timers
 Timers (as ever) allow you to call functions after a given time, without needing to mess about with SetTimerEx:
-```
+```pawn
 #include <YSI\y_timers>
 
 timer DelayedTimer[500](playerid)
@@ -142,14 +127,14 @@ main()
 }
 ```
 That will call DelayedTimer after 500ms, passing the value 42. The full format of the definition is:
-```
+```pawn
 timer FUNCTION_NAME[DELAY](PARAMETERS)
 {
 	CODE();
 }
 ```
 The delay parameter can be anything that becomes a number - a macro sum, a constant, or even something using one of the parameters to the function:
-```
+```pawn
 timer Timer1[6 * 4]()
 {
 }
@@ -171,7 +156,7 @@ There are three ways of calling timer functions:
 
 ### defer
 This calls the function once after the time defined on the function:
-```
+```pawn
 main()
 {
 	defer DelayedFunction(42);
@@ -182,7 +167,7 @@ main()
 
 This calls the timer repeatedly after the delay defined on the timer. This is similar to tasks but you can stop the timer again:
 
-```
+```pawn
 main()
 {
 	repeat DelayedFunction(42);
@@ -195,7 +180,7 @@ main()
 ### Normal call
 
 This simply calls the function instantly like a normal function:
-```
+```pawn
 main()
 {
 	DelayedFunction(42);
@@ -208,7 +193,7 @@ The repeat example above gave one more little command: stop. This, quite simply,
 
 ### Overrides
 The two timer calls above can have their times changed from the defaults:
-```
+```pawn
 #include <YSI\y_timers>
 
 timer DelayedFunction[1000](playerid)
@@ -235,7 +220,7 @@ main()
 ### Arrays and Strings
 
 Due to a bug in SetTimerEx you can not pass strings or arrays to delayed functions. I will admit this is my fault as I'm the one who wrote SetTimerEx in the first place, but it's not the fault of this library. However, this problem is now fixed, for both strings and arrays, when using y_timers:
-```
+```pawn
 #include <YSI\y_timers>
 
 // Arrays must ALWAYS be followed by their length.
