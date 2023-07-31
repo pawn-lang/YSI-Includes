@@ -93,7 +93,7 @@ Optional plugins:
 		#if _FOREACH_STREAMED
 			ITERATOR__ StreamedPlayer[MAX_PLAYERS]<MAX_PLAYERS>,
 		#endif
-		ITERATOR__ RCON<MAX_PLAYERS>,
+		ITERATOR__ RconAdmin<MAX_PLAYERS>,
 		ITERATOR__ Player<MAX_PLAYERS>;
 #endif
 
@@ -589,7 +589,7 @@ stock Iter_All_Internal(const array[], size, value)
 			#endif
 			#if _FOREACH_PLAYERS
 				Iter_Clear(Player);
-				Iter_Clear(RCON);
+				Iter_Clear(RconAdmin);
 				#if _FOREACH_STREAMED
 					Iter_InitAndClear(StreamedPlayer);
 				#endif
@@ -621,7 +621,7 @@ stock Iter_All_Internal(const array[], size, value)
 							Iter_Add(Player, i);
 							if (IsPlayerAdmin(i))
 							{
-								Iter_Add(RCON, i);
+								Iter_Add(RconAdmin, i);
 							}
 							#if _FOREACH_STREAMED
 								for (new j = 0; j != MAX_PLAYERS; ++j)
@@ -737,7 +737,7 @@ stock Iter_All_Internal(const array[], size, value)
 					{
 						// Add all admins.  It doesn't matter if they're already
 						// added, since `Iter_Add` has internal checks for that.
-						Iter_Add(RCON, i);
+						Iter_Add(RconAdmin, i);
 					}
 				}
 			}
@@ -781,7 +781,7 @@ stock Iter_All_Internal(const array[], size, value)
 			{
 		#if _FOREACH_PLAYERS
 				Iter_Remove(Player, playerid);
-				Iter_Remove(RCON, playerid);
+				Iter_Remove(RconAdmin, playerid);
 		#endif
 			}
 			return ret;

@@ -397,7 +397,7 @@ foreach (new admin : Admin())
 }
 ```
 
-Note that `RCON` already exists as a built-in iterator for exactly this usage.
+Note that `RconAdmin` already exists as a built-in iterator for exactly this usage.
 
 ### Invisible Special Iterators
 
@@ -1194,7 +1194,7 @@ foreach (new i : Group_Command[groupid])
 Every player logged in as an RCON admin:
 
 ```pawn
-foreach (new i : RCON)
+foreach (new i : RconAdmin)
 ```
 
 ## You don't need n-dimensional arrays.
