@@ -63,10 +63,10 @@ ShowTextToAdmins(const text[])
 }
 ```
 
-But you still end up with multiple just slightly incompatible functions.  YSI already has a lot of code for dealing with sets of players: y_groups (for pre-defined named groups), and y_playerarray (for bit arrays of players).  y_playerset abstracts over these further to allow you to write a single function that can take a single player id, an array of players, or a groups.  You do need to tell the compiler this, through a simple decorator `#define` (Note the use of `(` in the define):
+But you still end up with multiple just slightly incompatible functions.  YSI already has a lot of code for dealing with sets of players: y_groups (for pre-defined named groups), and y_playerarray (for bit arrays of players).  y_playerset abstracts over these further to allow you to write a single function that can take a single player id, an array of players, or a groups.  You do need to tell the compiler this, through a simple decorator `#define` (Note the use of `(` and no space in the define):
 
 ```pawn
-// Sadly `@PSF() SendText()` here doesn't yet work.
+// Sadly `@PSF()SendText()` here doesn't yet work.
 SentText(@PlayerSet:players, const text[])
 {
 	foreach (new playerid : PS(players))
@@ -76,7 +76,7 @@ SentText(@PlayerSet:players, const text[])
 }
 
 // `PSF` stands for `PlayerSetFunction`.
-#define SentText( @PSF() SentText(
+#define SentText( @PSF()SentText(
 ```
 
 Using `@PlayerSet` you can now call this function in a wide range of manners:
