@@ -147,6 +147,7 @@ Optional plugins:
 #define callback: F@_@:
 
 stock
+	YSI_g_sCodSize,
 	InlineRet:YSI_gInlineRet = InlineRet:0;
 
 stock Callback_Return_(value)
@@ -291,7 +292,35 @@ stock Inline_EBC__(owner, tag)
 
 stock operator*(@Ik:func, ebc)
 {
-	Indirect_SetOwner(func, ebc);
+	// This operator crashes the compiler if we try to call another function
+	// from inside it.  Why?  No clue, but as a result I've had to completely
+	// inline the code in here.  It is not a good situation!  This is very
+	// internal `indirection` implementation details, which should not be
+	// exposed here, but there's not really another choice - just calling any
+	// other function, even a local empty one, causes the crash.
+	new tmp = _:func;
+	if (tmp >= YSI_g_sCodSize)
+	{
+		// Get the data at `func - COD`.
+		#emit LOAD.S.pri   tmp
+		#emit LOAD.alt     YSI_g_sCodSize
+		#emit SUB
+		#emit MOVE.alt
+		#emit LOAD.I
+		#emit STOR.S.pri   tmp
+		if (tmp)
+		{
+			// Probably a string.
+			return _:func;
+		}
+		{}
+		#emit STOR.S.alt   tmp
+		// Store the owner.
+		tmp += E_INDIRECTION_OWNER__;
+		ebc |= cellmin;
+		#emit LOAD.S.pri   ebc
+		#emit SREF.S.pri   tmp
+	}
 	return _:func;
 }
 
@@ -690,6 +719,14 @@ public OnCodeInit()
 				// Ensure this function is included.  It causes HUGE issues when not.
 				new tmp[2];
 				strunpack(tmp, tmp);
+			}
+			if (!YSI_g_sCodSize)
+			{
+				AddressofResolve();
+				new
+					amxhdr[AMX_HDR];
+				GetAmxHeader(amxhdr);
+				YSI_g_sCodSize = amxhdr[AMX_HDR_DAT] - amxhdr[AMX_HDR_COD];
 			}
 			
 			new scanner[CodeScanner];
