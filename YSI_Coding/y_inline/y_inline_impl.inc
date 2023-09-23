@@ -287,7 +287,7 @@ stock Inline_EBC__(owner, tag)
 {
 	// 8 bits for the tag (max 256), 23 for the ID (max 4,194,303 * 2), 1 for an
 	// indirection.inc internal flag.
-	return (owner | (tag & 0x3FF << 23));
+	return (owner | (tag << 23)) & cellmax;
 }
 
 stock operator*(@Ik:func, ebc)
