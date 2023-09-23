@@ -72,7 +72,6 @@ Optional plugins:
 */
 
 #define EBC__(%0,%1) (%1)$(Inline_EBC__(_:(%0),_:tagof(%0)))
-#define Inline_EBC__(_:(%8(%0,%1)),_:tagof(%9)) Inline_EBC__((_:(%0)|(_:(%1)<<12)),_:tagof(%8%0))
 
 static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA], const f[] = "")
 {
