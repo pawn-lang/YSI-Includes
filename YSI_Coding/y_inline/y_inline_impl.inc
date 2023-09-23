@@ -235,7 +235,6 @@ Func()
 }
 
 // Rewrite "Inline_Start()" with entry code and a jump over the whole inline.
-
 // Rewrite "Inline_Def" with 
 
 // Where:
@@ -280,17 +279,17 @@ forward Inline_MaybeConst_(ResolvedAlloc:slot);
 #define CALL@Callback_Return_%8() Callback_Return_%8(0)
 
 // Never had to fake an operator call for `addressof` before.
-#define CALL@Inline_operatorMul%8() ((@Ik:0)*%8(0))
+#define CALL@Inline_operatorMul%8() ((@Ix:0)*%8(0))
 #define CALL@Inline_EBC__%8() Inline_EBC__%8(0,0)
 
 stock Inline_EBC__(owner, tag)
 {
 	// 8 bits for the tag (max 256), 23 for the ID (max 4,194,303 * 2), 1 for an
-  // indirection.inc internal flag.
+	// indirection.inc internal flag.
 	return (owner | (tag & 0x3FF << 23));
 }
 
-stock operator*(@Ik:func, ebc)
+stock operator*(@Ix:func, ebc)
 {
 	// This operator crashes the compiler if we try to call another function
 	// from inside it.  Why?  No clue, but as a result I've had to completely
@@ -1127,7 +1126,7 @@ Note:
 //   SetTimerInline((Inline_UI_(Code) * (EBC(playerid)), Code), 1000, false);
 //
 // So that tags are preserved.
-#define @Ix:%0,%1$(%2) %0*(%2),%1
+#define @Ix:%0,%1$(%2) @Ix:%0*(%2),%1
 
 forward EBC(GLOBAL_TAG_TYPES:owner, F@_@:func, tag = tagof (owner));
 #define EBC(%0,%1) EBC PP_DEFER(%0,F@_@:@I0:(%1))
