@@ -658,7 +658,7 @@ stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
+stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, &Float:outX, &Float:outY)
 {
 	new Float:minX = centreX - radius, Float:minY = centreY - radius;
 	new Float:maxX = centreX + radius, Float:maxY = centreY + radius;
@@ -690,7 +690,7 @@ stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Flo
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
+stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, &Float:outX, &Float:outY)
 {
 	new Float:randA = RandomFloat(360.0);
 	new Float:randD = RandomFloat(radius);
@@ -714,7 +714,7 @@ stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Flo
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomPointInCircleDistributed(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
+stock RandomPointInCircleDistributed(Float:centreX, Float:centreY, Float:radius, &Float:outX, &Float:outY)
 {
 	new Float:randA = RandomFloat(360.0);
 	new Float:randD = radius * floatsqrt(RandomFloat(1.0));
