@@ -93,6 +93,7 @@ Optional plugins:
 #define HASH_MAP_DATA (3)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="str">String to hash.</param>
  * <param name="hash">Desination of the hash.</param>
  * <remarks>
@@ -105,6 +106,7 @@ FUNC_PAWNDOC(HashMap_Hash(str[],&hash));
 #define HashMap_Hash(%0,%1) (%1=YHash(%0))
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="m">Hash map to initialise.</param>
  * <param name="target">Array to point in to.</param>
  * <param name="slot">Second dimension slot of the hashed data.</param>
@@ -119,6 +121,7 @@ FUNC_PAWNDOC(HashMap_Hash(str[],&hash));
 FUNC_PAWNDOC(HashMap_Init(HashMap:m<>, target[][], slot));
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="m">Hash map to initialise.</param>
  * <param name="target">Address of the hashmap data.</param>
  * <param name="size1">Number of entries.</param>
@@ -174,6 +177,7 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 #define HashMap_Init(%0,%1,%2) _HashMap_Init(%0, %1[0][(%2)], sizeof (%1), sizeof (%1[]) * cellbytes, %1[0][(%2) - (%2)])
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="m">Hash map to get a free slot in.</param>
  * <returns>
  *   The index of a currently unused slot.
@@ -203,6 +207,7 @@ stock HashMap_GetUnused(HashMap:m<>)
 	return -1;
 }
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="m">Hash map to get a free slot in.</param>
  * <returns>
  *   The index of a currently unused slot.
@@ -234,6 +239,7 @@ stock HashMap_AddUnused(HashMap:m<>, value)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="str">String to get the size of.</param>
  * <returns>
  *   The number of BYTES this string takes up including the NULL.
@@ -248,6 +254,7 @@ FUNC_PAWNDOC(HashMap_ByteLen(str[]));
 #define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (__cell_shift * _:!ispacked((%0))))
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="ignorecase"></param>
  * <param name="hash"></param>
  * <param name="m"></param>
@@ -337,6 +344,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="ignorecase"></param>
  * <param name="m"></param>
  * <param name="str"></param>
@@ -354,46 +362,7 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], value, bool:ignorecase = false)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="m">The hash map to search.</param>
- * <param name="str">The key to find.</param>
- * <returns>
- *   Does this hash map contain the given value?
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-stock bool:HashMap_Has(HashMap:m<>, const str[], bool:ignorecase = false)
-{
-	return HashMap_GetWithHash(m, str, YHash(str, .sensitive = !ignorecase), ignorecase) != -1;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <param name="m">The hash map to search.</param>
- * <param name="str">The key to find.</param>
- * <param name="hash">The hashed key.</param>
- * <returns>
- *   Does this hash map contain the given value?
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-stock bool:HashMap_HasWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = false)
-{
-	return HashMap_GetWithHash(m, str, hash, ignorecase) != -1;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <param name="m">The hash map to search.</param>
- * <param name="str">The key to find.</param>
- * <returns>
- *   The value associated with this key in the given hash map.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-stock HashMap_Get(HashMap:m<>, const str[], bool:ignorecase = false)
-{
-	return HashMap_GetWithHash(m, str, YHash(str, .sensitive = !ignorecase), ignorecase);
-}
-
-/*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="m">The hash map to search.</param>
  * <param name="str">The key to find.</param>
  * <param name="hash">The hashed key.</param>
@@ -455,6 +424,50 @@ stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = fals
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
+ * <param name="m">The hash map to search.</param>
+ * <param name="str">The key to find.</param>
+ * <returns>
+ *   The value associated with this key in the given hash map.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock HashMap_Get(HashMap:m<>, const str[], bool:ignorecase = false)
+{
+	return HashMap_GetWithHash(m, str, YHash(str, .sensitive = !ignorecase), ignorecase);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
+ * <param name="m">The hash map to search.</param>
+ * <param name="str">The key to find.</param>
+ * <returns>
+ *   Does this hash map contain the given value?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:HashMap_Has(HashMap:m<>, const str[], bool:ignorecase = false)
+{
+	return HashMap_GetWithHash(m, str, YHash(str, .sensitive = !ignorecase), ignorecase) != -1;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
+ * <param name="m">The hash map to search.</param>
+ * <param name="str">The key to find.</param>
+ * <param name="hash">The hashed key.</param>
+ * <returns>
+ *   Does this hash map contain the given value?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:HashMap_HasWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = false)
+{
+	return HashMap_GetWithHash(m, str, hash, ignorecase) != -1;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="m">The hash map to modify.</param>
  * <param name="str">The key to remove from the hash map.</param>
  * <remarks>
@@ -590,6 +603,7 @@ static stock HashMap_GetBranchEnd(cur, &height, &parent, dir)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="m">Hash map to modify.</param>
  * <param name="value">Value to remove.</param>
  * <remarks>
@@ -613,6 +627,7 @@ stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_hashmap</library>
  * <param name="m">The hash map to modify.</param>
  * <param name="str">The key to modify.</param>
  * <param name="value">The new value for the given key.</param>
@@ -628,8 +643,11 @@ stock HashMap_Set(HashMap:m<>, const str[], const value)
 	new
 		hash = YHash(str, .sensitive = true);
 	return
+		// Remove the data this key points to.
 		HashMap_RemoveKeyWithHash(m, str, hash),
+		// Remove any keys that point to this value.
 		HashMap_RemoveValue(m, value),
+		// Add the pair, now unique in both directions.
 		HashMap_AddWithHash(m, str, hash, value);
 }
 

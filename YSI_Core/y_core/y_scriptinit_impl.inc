@@ -1382,6 +1382,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 						Debug_Error("YSI code cache write failed");
 				}
 			#endif
+				Server_RestartLongCall();
 				Server_EnableLongCall();
 		}
 	}

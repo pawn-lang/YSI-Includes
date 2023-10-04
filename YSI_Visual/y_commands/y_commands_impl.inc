@@ -100,6 +100,14 @@ enum e_COMMAND_FLAGS
 	e_COMMAND_FLAG_PRI = 0x08000000,
 	// Is an alternative.
 	e_COMMAND_FLAG_ALT = 0x10000000,
+	// Is an inline, or more strictly it is a per-player defined function called
+	// via `indirection.inc`.  In this case the use of the permissions changes
+	// to represent whether the player had a personal command with this name.
+	// However, this data may become stale when you're using `EBC` as the
+	// command may have stopped exsting another way in the interim.  To check
+	// this we always need to iterate through the list of inlines to find the
+	// one for this player, then check it is valid.
+	e_COMMAND_FLAG_INLINE = 0x20000000
 }
 
 enum E_COMMAND
@@ -113,11 +121,54 @@ enum E_COMMAND
 	E_COMMAND_HASH_MAP[HASH_MAP_DATA],
 	// _E_COMMAND_PAD_0, _E_COMMAND_PAD_1,
 	
-	// Who can use this command?
+	// Who can use this command?  For inlines, the players currently with one.
 	PlayerArray:E_COMMAND_USERS<MAX_PLAYERS>,
+	// Meta-data.
 	e_COMMAND_FLAGS:E_COMMAND_FLAGS,
-	// Function pointer.
-	E_COMMAND_POINTER
+	// Function pointer, or for inlines the index of the first entry to search.
+	E_COMMAND_POINTER,
+	// The base case for altnames.
+	E_COMMAND_PARENT,
+	// Circular linked list of the same name commands.
+	E_COMMAND_NEXT
+}
+
+enum e_COMMAND_INLINE_FLAGS
+{
+	// The player for whom this variant is defined.
+	e_COMMAND_INLINE_FLAG_PLAYER = 0xFFFF,
+	// If this is set this is a function that only takes a single string
+	// parameter, and is an inline in the current script.  We do this so that we
+	// can call that code way more directly, or at least slightly more directly,
+	// since we still need to go through the inline handler.  And actually,
+	// since we still need to go through the handler anyway to set up the stack
+	// and frame we can short-circuit a few other calls as well - no need to
+	// check if this is a pointer and no need to do any tag-based parameter
+	// resolution.  Now expanded to special-case all the variants.
+	e_COMMAND_INLINE_FLAG_INL_ISI = 0x10000,
+	e_COMMAND_INLINE_FLAG_INL_IS = 0x20000,
+	e_COMMAND_INLINE_FLAG_INL_S = 0x30000,
+	// Normal function pointer.
+	e_COMMAND_INLINE_FLAG_PTR_ISI = 0x40000,
+	e_COMMAND_INLINE_FLAG_PTR_IS = 0x50000,
+	e_COMMAND_INLINE_FLAG_PTR_S = 0x60000,
+	// String name.
+	e_COMMAND_INLINE_FLAG_STR_ISI = 0x70000,
+	e_COMMAND_INLINE_FLAG_STR_IS = 0x80000,
+	e_COMMAND_INLINE_FLAG_STR_S = 0x90000,
+	// Mask for the switch.
+	e_COMMAND_INLINE_FLAG_TYPE = 0xF0000
+}
+
+enum E_COMMAND_INLINE
+{
+	// The pointer.
+	Func:E_COMMAND_INLINE_POINTER<sii>,
+	// The player that this version is valid for
+	E_COMMAND_INLINE_NEXT,
+	// Any special flags for this call.  We can use this to slightly optimise
+	// the most common case of call.
+	e_COMMAND_INLINE_FLAGS:E_COMMAND_INLINE_FLAGS
 }
 
 enum e_COMMAND_ERRORS
@@ -132,7 +183,7 @@ enum e_COMMAND_ERRORS
 	COMMAND_DISABLED      = 7 , // All commands are disabled for this player.
 	COMMAND_BAD_PREFIX    = 8 , // Used "/" instead of "#", or something similar.
 	COMMAND_INVALID_INPUT = 10, // Didn't type "/something".
-	COMMAND_SILENT        = 11, // Just end.  Don't call the command or print anything.
+	COMMAND_SILENT        = 11  // Just end.  Don't call the command or print anything.
 }
 
 enum e_SYSTEM_SETTINGS:(<<= 1)
@@ -169,6 +220,7 @@ static stock
 	BitArray:YSI_g_sPrefixes<128>,
 	YSI_g_sHighestID = 0,
 	YSI_g_sReturnBuffer[YSI_MAX_STRING],
+	YSI_g_sStubPointer,
 	// Quickly reference and store commands by name.
 	HashMap:YSI_g_sCommandMap<>;
 
@@ -439,8 +491,7 @@ FOREIGN__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit);
 GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 {
 	static
-		sCmd[64],
-		sHash = 0;
+		sCmd[64];
 
 	if (!_Command_IsValid(oidx))
 	{
@@ -448,6 +499,7 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 	}
 	// Check the pointer is valid.
 	new
+		hash,
 		id = YSI_g_sCommands[oidx][E_COMMAND_POINTER];
 	// The command we are pointing to is already an alternate for a third
 	// command - point this new command at the parent.
@@ -456,45 +508,48 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 		Debug_Warning("Command_AddAlt: Using grandparent for alternate `/%s`", cmd);
 		oidx = id & ~cellmin;
 	}
-
-	Puny_EncodeHash(sCmd, cmd, sHash, .delimiter = '@');
-
-	// Now point this new command at the real (software) command.
-	strpack(sCmd, sCmd, cellmax);
-	if ((id = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash)) == COMMAND_NOT_FOUND)
+	
+	if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
 	{
-		// Command doesn't already exist, add it.
-		if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
+		Debug_Error("Could not add alt command to array.");
+		return COMMAND_NOT_FOUND;
+	}
+	// Save the command's pointer.
+	YSI_g_sCommands[id][E_COMMAND_POINTER] = cellmin | oidx;
+	// Copy the master script information.  Note that this won't be kept up
+	// to date with new scripts unfortunately.
+	MASTER_COPY<id, oidx>
+	
+	Puny_EncodeHash(sCmd, cmd, hash, .delimiter = '@');
+	
+	// Now point this new command at the real (software) command.
+	strpack(sCmd, sCmd, cellmax),
+	if ((oidx = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, hash)) != COMMAND_NOT_FOUND)
+	{
+		// There's another command with this name already, add us to the linked
+		// list of lookups for the name.
+		HashMap_RemoveKeyWithHash(YSI_g_sCommandMap, sCmd, hash),
+		YSI_g_sCommands[id][E_COMMAND_NEXT] = oidx;
+	}
+	HashMap_AddWithHash(YSI_g_sCommandMap, sCmd, hash, id);
+	// This sets the prefix even when that feature is disabled, because
+	// there's literally no overhead in doing so.
+	YSI_g_sCommands[id][E_COMMAND_FLAGS] = e_COMMAND_FLAG_ALT | (e_COMMAND_FLAGS:'/'),
+	// Save the new highest ID for loops later.
+	YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1),
+	// Add all players, or defer to y_groups.
+	if (inherit)
+	{
+		YSI_g_sCommands[id][E_COMMAND_FLAGS] |= e_COMMAND_FLAG_INHERIT;
+	}
+	else
+	{
+		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
+		NO_GROUPS<Command>(id)
 		{
-			Debug_Error("Could not add alt command to array.");
-			return COMMAND_NOT_FOUND;
+			PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
 		}
-		// This sets the prefix even when that feature is disabled, because
-		// there's literally no overhead in doing so.
-		YSI_g_sCommands[id][E_COMMAND_FLAGS] = e_COMMAND_FLAG_ALT | (e_COMMAND_FLAGS:'/'),
-		// Save the new highest ID for loops later.
-		YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1),
-		// Save the command's pointer.
-		YSI_g_sCommands[id][E_COMMAND_POINTER] = cellmin | oidx,
-		// Add this command to the hash map (does the name too).
-		HashMap_Add(YSI_g_sCommandMap, sCmd, id);
-		// Add all players, or defer to y_groups.
-		if (inherit)
-		{
-			YSI_g_sCommands[id][E_COMMAND_FLAGS] |= e_COMMAND_FLAG_INHERIT;
-		}
-		else
-		{
-			PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
-			NO_GROUPS<Command>(id)
-			{
-				PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
-			}
-			
-		}
-		// Copy the master script information.  Note that this won't be kept up
-		// to date with new scripts unfortunately.
-		MASTER_COPY<id, oidx>
+		
 	}
 	return id;
 }
@@ -1950,6 +2005,74 @@ HOOK__ OnScriptExit()
 
 */
 
+native Command_CallRemoteFunction(func, const specifiers[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <remarks>
+ *   Call a command, by quickly determining its type.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Command_FastCall(cmd[], playerid, params[], help)
+{
+	switch (cmd[E_COMMAND_INLINE_FLAGS] & e_COMMAND_INLINE_FLAG_TYPE)
+	{
+	case e_COMMAND_INLINE_FLAG_INL_ISI:
+	{
+		return @.func(playerid, params, help);
+	}
+	case e_COMMAND_INLINE_FLAG_INL_IS:
+	{
+		return @.func(playerid, params);
+	}
+	case e_COMMAND_INLINE_FLAG_INL_S:
+	{
+		return @.func(params);
+	}
+	case e_COMMAND_INLINE_FLAG_PTR_ISI:
+	{
+		#emit PUSH.S help
+		#emit PUSH.S params
+		#emit PUSH.S playerid
+		#emit PUSH.S __3_cells
+		#emit LOAD.S.pri func
+		#emit SCRTL __cip
+		#emit RETN
+	}
+	case e_COMMAND_INLINE_FLAG_PTR_IS:
+	{
+		#emit PUSH.S params
+		#emit PUSH.S playerid
+		#emit PUSH.S __2_cells
+		#emit LOAD.S.pri func
+		#emit SCRTL __cip
+		#emit RETN
+	}
+	case e_COMMAND_INLINE_FLAG_PTR_S:
+	{
+		#emit PUSH.S params
+		#emit PUSH.S __1_cells
+		#emit LOAD.S.pri func
+		#emit SCRTL __cip
+		#emit RETN
+	}
+	case e_COMMAND_INLINE_FLAG_STR_ISI:
+	{
+		// TODO: Proper masterify.
+		return Command_CallRemoteFunction(func, "isi", playerid, params, help);
+	}
+	case e_COMMAND_INLINE_FLAG_STR_IS:
+	{
+		return Command_CallRemoteFunction(func, "is", playerid, params);
+	}
+	case e_COMMAND_INLINE_FLAG_STR_S:
+	{
+		return Command_CallRemoteFunction(func, "s", params);
+	}
+	}
+}
+
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
@@ -2256,6 +2379,7 @@ native Command_Strcat_(dest[], src, len) = strcat;
  * <param name="group">An optional group that has exclusive use of this command.</param>
  * <param name="disabled">Not usable by default.</param>
  * <param name="hidden">Not listed in command loops.</param>
+ * <param name="id">Variable to return the ID in.</param>
  * <library>y_commands</library>
  * <returns>
  *   The name of a command for a single player.
@@ -2299,29 +2423,14 @@ native Command_Strcat_(dest[], src, len) = strcat;
  *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
-	stock Command_Decorator__(const __COMPILER_NAMED.string:func__[], const __COMPILER_NAMED.string:name[] = "", __COMPILER_NAMED.altcnt__ = 0, __COMPILER_NAMED.altptr__ = 0, __COMPILER_NAMED.prefix = '/', __COMPILER_NAMED.Group:group = Group:0, __COMPILER_NAMED.bool:disabled = false, __COMPILER_NAMED.bool:hidden = false)
+	stock Command_Decorator__(const __COMPILER_NAMED.string:func__[], const __COMPILER_NAMED.string:name[] = "", __COMPILER_NAMED.altcnt__ = 0, __COMPILER_NAMED.altptr__ = 0, __COMPILER_NAMED.prefix = '/', __COMPILER_NAMED.Group:group = Group:0, __COMPILER_NAMED.bool:disabled = false, __COMPILER_NAMED.bool:hidden = false, __COMPILER_NAMED.&id = 0)
 #else
-	stock Command_Decorator__(const __COMPILER_NAMED.string:func__[], const __COMPILER_NAMED.string:name[] = "", __COMPILER_NAMED.altcnt__ = 0, __COMPILER_NAMED.altptr__ = 0, __COMPILER_NAMED.Group:group = Group:0, __COMPILER_NAMED.bool:disabled = false, __COMPILER_NAMED.bool:hidden = false)
+	stock Command_Decorator__(const __COMPILER_NAMED.string:func__[], const __COMPILER_NAMED.string:name[] = "", __COMPILER_NAMED.altcnt__ = 0, __COMPILER_NAMED.altptr__ = 0, __COMPILER_NAMED.Group:group = Group:0, __COMPILER_NAMED.bool:disabled = false, __COMPILER_NAMED.bool:hidden = false, __COMPILER_NAMED.&id = 0)
 #endif
 {
 	state y_groups : y_groups_exists;
-	new cmd = Command_GetID(func__);
+	new id = Command_GetID(func__);
 	new str[FUNCTION_LENGTH];
-	if (IsNull(name))
-	{
-		// Use `func__` for everything.
-	}
-	else
-	{
-		// `func__` remains the canonical internal name, but isn't what the
-		// user types.  This is simply implemented as another alternate name
-		// with the original name completely disabled for all players.
-		Command_AddAlt(cmd, name, true);
-		// Remove all players.
-		// TODO: Set the group default.
-		Command_SetDisabled(cmd, true),
-		Command_SetHidden(cmd, true);
-	}
 	while (altcnt__--)
 	{
 		// Add alternate versions of this command.
@@ -2329,31 +2438,33 @@ native Command_Strcat_(dest[], src, len) = strcat;
 		str[0] = '\0',
 		Command_Strcat_(str, altptr__ + AMX_Read(altptr__), FUNCTION_LENGTH),
 		altptr__ += cellbytes;
-		new aid = Command_AddAlt(cmd, str);
-		Command_SetDisabled(aid, disabled),
-		Command_SetHidden(aid, hidden);
-		if (group)
-		{
-			Command_DecoratorGroup__(aid, group);
-		}
+		new aid = Command_AddAlt(id, str);
+		// A simple `Command_SetDisabled(aid, disabled);` would seem to make more
+		// sense in these following lines, and be more readable, but this way is
+		// much faster in the enabled case.
+		if (disabled) Command_SetDisabled(aid, true);
+		if (hidden) Command_SetHidden(aid, true);
+		if (group) Command_DecoratorGroup__(aid, group);
 	}
-	if (group)
+	if (!IsNull(name))
 	{
-		// There's a group given, as the only users of this command.
-		Command_DecoratorGroup__(cmd, group);
+		// Remove all players.
+		// TODO: Set the group default.
+		Command_SetDisabled(id, true),
+		Command_SetHidden(id, true);
+		// `func__` remains the canonical internal name, but isn't what the
+		// user types.  This is simply implemented as another alternate name
+		// with the original name completely disabled for all players.
+		id = Command_AddAlt(id, name, true);
 	}
-	if (disabled)
-	{
-		// Disable this command initially.
-		Command_SetDisabled(cmd, true);
-	}
-	if (hidden)
-	{
-		// TODO:  We don't actually currently have a way to mark a command as
-		// hidden.  Things like `foreach (new c : Command(playerid))` will loop
-		// through all the commands the player can use, regardless of anything.
-		Command_SetHidden(cmd, true);
-	}
+	// There's a group given, as the only users of this command.
+	if (group) Command_DecoratorGroup__(id, group);
+	// Disable this command initially.
+	if (disabled) Command_SetDisabled(id, true);
+	// TODO:  We don't actually currently have a way to mark a command as
+	// hidden.  Things like `foreach (new c : Command(playerid))` will loop
+	// through all the commands the player can use, regardless of anything.
+	if (hidden) Command_SetHidden(id, true);
 }
 
 // Un-inline the alt commands array.
