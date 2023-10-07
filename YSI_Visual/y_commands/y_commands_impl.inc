@@ -516,17 +516,20 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 	oidx |= cellmin,
 	YSI_g_sCommands[id][E_COMMAND_POINTER] = oidx;
 	
-	if (strfind(cmd, "@") == -1)
+	//if (strfind(cmd, "@") == -1)
+	//{
+	//	strpack(sCmd, cmd, cellmax),
+	//	hash = BernsteinHash(cmd);
+	//}
+	//else
+	Puny_EncodeHash(sCmd, cmd, hash, .delimiter = '@'),
+	strpack(sCmd, sCmd, cellmax);
+	Debug_Print5("Command_AddAlt: packed %s, %s", sCmd, cmd);
+	Debug_Print5("Command_AddAlt: unpacked %s, %s", unpack(sCmd), unpack(cmd));
+	if (strcmp(sCmd, cmd))
 	{
-		strpack(sCmd, cmd, cellmax),
-		hash = BernsteinHash(cmd);
-	}
-	else
-	{
-		Puny_EncodeHash(sCmd, cmd, hash, .delimiter = '@'),
 		// There is any punycode command.
-		YSI_g_sSystemSettings |= e_COMM_FLAG_PUNYCODE,
-		strpack(sCmd, sCmd, cellmax);
+		YSI_g_sSystemSettings |= e_COMM_FLAG_PUNYCODE;
 	}
 
 	// Add all players, or defer to y_groups.
@@ -695,7 +698,32 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			return sRet;
 	}
 	// Get the hashed version of the decoded string, skipping the possible  "/".
-	sPos = Puny_EncodeHash(sCmd, cmdtext[_:sRet], sHash, sizeof (sCmd), '@') + _:sRet;
+	if (YSI_g_sSystemSettings & e_COMM_FLAG_PUNYCODE)
+	{
+		sPos = Puny_EncodeHash(sCmd, cmdtext[_:sRet], sHash, sizeof (sCmd), '@') + _:sRet;
+	}
+	else if (sRet)
+	{
+		// Very custom implementation.  Inlined and stops at any whitespace.
+		sPos = 0,
+		sHash = 5381;
+		while ((_:sFlags = cmdtext[++sPos]) > ' ')
+		{
+			sCmd[sPos - 1] = _:sFlags,
+			sHash = sHash * 33 ^ _:sFlags;
+		}
+	}
+	else
+	{
+		// Very custom implementation.  Inlined and stops at any whitespace.
+		sPos = -1,
+		sHash = 5381;
+		while ((_:sFlags = cmdtext[++sPos]) > ' ')
+		{
+			sCmd[sPos] = _:sFlags,
+			sHash = sHash * 33 ^ _:sFlags;
+		}
+	}
 	while (cmdtext[sPos] == ' ') ++sPos; // Better/slower: ('\0' < cmdtext[sPos] <= ' ').
 	// Find the command in the array.
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash);
@@ -1129,6 +1157,9 @@ GLOBAL__ Command_Find(const string:cmd[])
 		sHash = 0;
 
 	Puny_EncodeHash(sCmd, cmd, sHash, .delimiter = '@');
+	Debug_Print5("Command_Find: hash %s, %d, %d", sCmd, sHash, BernsteinHash(cmd));
+	//printf("Command_Find: hash 1, %d", BernsteinHash(cmd));
+	//printf("Command_Find: hash 2, %d", sHash);
 
 	Debug_Print5("Command_Find: return %d", HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash));
 	return HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash);
@@ -2504,17 +2535,13 @@ GLOBAL__ Command_Add__(const string:cmd[], ptr)
 	Debug_Print2("Command_Add: %s, %d", Unpack(cmd), ptr);
 	if (strfind(cmd, "@") == -1)
 	{
-		strpack(packed, cmd, cellmax),
-		hash = BernsteinHash(cmd),
-		id = HashMap_GetWithHash(YSI_g_sCommandMap, packed, hash);
-	}
-	else
-	{
-		Puny_EncodeHash(packed, cmd, hash, .delimiter = '@'),
-		id = HashMap_GetWithHash(YSI_g_sCommandMap, packed, hash),
 		// There is any punycode command.
 		YSI_g_sSystemSettings |= e_COMM_FLAG_PUNYCODE;
 	}
+	// We don't need to use `Puny_EncodeHash` here since the input is already
+	// correctly encoded.
+	hash = BernsteinHash(cmd),
+	id = HashMap_GetWithHash(YSI_g_sCommandMap, cmd, hash);
 	Debug_Print5("Command_Add: found %d", id);
 	if (id == COMMAND_NOT_FOUND)
 	{
@@ -2531,8 +2558,9 @@ GLOBAL__ Command_Add__(const string:cmd[], ptr)
 		// Save the command's pointer.
 		YSI_g_sCommands[id][E_COMMAND_POINTER] = ptr,
 		// This should always be the first command of this name.
-		YSI_g_sCommands[id][E_COMMAND_NEXT] = COMMAND_NOT_FOUND;
+		YSI_g_sCommands[id][E_COMMAND_NEXT] = COMMAND_NOT_FOUND,
 		// Add this command to the hash map (does the name too).
+		strpack(packed, cmd, cellmax),
 		HashMap_AddWithHash(YSI_g_sCommandMap, packed, hash, id),
 		// Add all players, or defer to y_groups.
 		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);

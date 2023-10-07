@@ -161,14 +161,16 @@ Optional plugins:
 
 @test(.group = "y_commands") y_commands_Perms2()
 {
+	Command_AddAltNamed("y_commands_1", "y_commands_alt0");
+	Command_AddAltNamed("y_commands_1", "y_cómmańds_ąlt2");
 	new
-		id = Command_Find("y_cómmańds_ąlt");
+		id = Command_Find("y_cómmańds_ąlt2");
 	Command_SetPlayer(id, 101, false);
 	ASSERT(!Command_GetPlayer(id, 101));
-	ASSERT(!Command_GetPlayerNamed("y_cómmańds_ąlt", 101));
-	Command_SetPlayerNamed("y_cómmańds_ąlt", 101, true);
+	ASSERT(!Command_GetPlayerNamed("y_cómmańds_ąlt2", 101));
+	Command_SetPlayerNamed("y_cómmańds_ąlt2", 101, true);
 	ASSERT(Command_GetPlayer(id, 101));
-	ASSERT(Command_GetPlayerNamed("y_cómmańds_ąlt", 101));
+	ASSERT(Command_GetPlayerNamed("y_cómmańds_ąlt2", 101));
 }
 
 //@test(.group = "y_commands") y_commands_Find()
