@@ -5300,57 +5300,75 @@ static stock
 	new playerid = 0;
 	foreach (new i : Vehicle)
 	{
+		#pragma unused i
 	}
 	foreach (new i : LocalVehicle)
 	{
+		#pragma unused i
 	}
 	foreach (new i : StreamedVehicle[playerid])
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehicleOccupant)
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehicleOccupant[vehicleid])
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehicleDriver)
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehicleDriver[vehicleid])
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehiclePassenger)
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehiclePassenger[vehicleid])
 	{
+		#pragma unused i
 	}
 	foreach (new i : Vehicle)
 	{
+		#pragma unused i
 	}
 	foreach (new i : LocalVehicle)
 	{
+		#pragma unused i
 	}
 	foreach (new i : StreamedVehicle[playerid])
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehicleOccupant())
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehicleOccupant(vehicleid))
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehicleDriver())
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehicleDriver(vehicleid))
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehiclePassenger())
 	{
+		#pragma unused i
 	}
 	foreach (new i : VehiclePassenger(vehicleid))
 	{
+		#pragma unused i
 	}
 }
 

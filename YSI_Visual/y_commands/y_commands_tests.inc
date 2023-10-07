@@ -112,14 +112,25 @@ Optional plugins:
 	ASSERT_ZE(strlen(Command_GetName(-1)));
 }
 
+@test(.group = "y_commands") y_commands_Find()
+{
+	new
+		id = YCMD:y_commands_1;
+	ASSERT_NE(id, COMMAND_NOT_FOUND);
+}
+
 @test(.group = "y_commands") y_commands_AddAlt()
 {
 	new
 		id1 = YCMD:y_commands_1,
 		id2 = Command_AddAlt(id1, "y_commands_alt1"),
 		id3 = Command_AddAltNamed("y_commands_1", "y_commands_alt1");
+	ASSERT_NE(id1, COMMAND_NOT_FOUND);
 	ASSERT_NE(id1, id2);
 	ASSERT_NE(id2, COMMAND_NOT_FOUND);
+	// The semantics of this has now changed...  We can have two alt commands
+	// with the same name pointing to the same command.  Quite why you would, I
+	// don't know...  Actually, maybe we should special-case that.
 	ASSERT_EQ(id2, id3);
 }
 
@@ -159,6 +170,13 @@ Optional plugins:
 	ASSERT(Command_GetPlayer(id, 101));
 	ASSERT(Command_GetPlayerNamed("y_cómmańds_ąlt", 101));
 }
+
+//@test(.group = "y_commands") y_commands_Find()
+//{
+//	new
+//		id = Command_Find("y_cómmańds_ąlt");
+//	ASSERT_NE(id, COMMAND_NOT_FOUND);
+//}
 
 static stock
 	YSI_g_sRemovableRan = 0;
@@ -387,11 +405,11 @@ YCMD:y_commands_12(playerid, cmdtext[], help) = y_commands_10;
 	call OnPlayerCommandText(80, "/y_commands_8 70");
 	//printf("gSomeVar: %d", gSomeVar);
 	ASSERT_EQ(gSomeVar, 150);
-	ASSERT_NE(YCMD:y_commands_4, COMMAND_NOT_FOUND);
-	ASSERT_NE(YCMD:y_commands_6, COMMAND_NOT_FOUND);
-	ASSERT_NE(YCMD:y_commands_8, COMMAND_NOT_FOUND);
-	ASSERT_EQ(YCMD:y_commands_10, COMMAND_NOT_FOUND);
-	ASSERT_EQ(YCMD:y_commands_12, COMMAND_NOT_FOUND);
+	ASSERT_NE(_:YCMD:y_commands_4, COMMAND_NOT_FOUND);
+	ASSERT_NE(_:YCMD:y_commands_6, COMMAND_NOT_FOUND);
+	ASSERT_NE(_:YCMD:y_commands_8, COMMAND_NOT_FOUND);
+	ASSERT_EQ(_:YCMD:y_commands_10, COMMAND_NOT_FOUND);
+	ASSERT_EQ(_:YCMD:y_commands_12, COMMAND_NOT_FOUND);
 }
 
 static stock

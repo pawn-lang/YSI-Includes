@@ -223,24 +223,21 @@ static stock E_SCRIPTINIT_STATE:_@E_SCRIPTINIT_STATE() { return E_SCRIPTINIT_STA
 static
 	E_SCRIPTINIT_STATE:YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_NONE;
 
-#if defined _DEBUG
-	#if _DEBUG > 0
-		#tryinclude "..\..\amx\disasm"
-		#tryinclude <amx_assembly\disasm>
-		#tryinclude "..\..\amx_assembly\disasm"
-		#tryinclude "..\..\..\amx_assembly\disasm"
-		#tryinclude "disasm"
-		#tryinclude <disasm>
+#if defined DEBUG_DUMP
+	#tryinclude "..\..\amx\disasm"
+	#tryinclude <amx_assembly\disasm>
+	#tryinclude "..\..\amx_assembly\disasm"
+	#tryinclude "..\..\..\amx_assembly\disasm"
+	#tryinclude "disasm"
+	#tryinclude <disasm>
 
-		#if !defined DISASM_INC
-			#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
-		#endif
-
-		// Dump the final assembly of this script so we can inspect it.
-		#define DEBUG_MAYBE_DUMP(%0,%2); ScriptInit_Dump(%0,%2);
+	#if !defined DISASM_INC
+		#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
 	#endif
-#endif
-#if !defined DEBUG_MAYBE_DUMP
+
+	// Dump the final assembly of this script so we can inspect it.
+	#define DEBUG_MAYBE_DUMP(%0,%2); ScriptInit_Dump(%0,%2);
+#else
 	#define DEBUG_MAYBE_DUMP(%0,%1);
 #endif
 
