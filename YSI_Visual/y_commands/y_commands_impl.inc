@@ -1660,15 +1660,42 @@ FOREIGN__ void:Command_Remove(func);
 
 GLOBAL__ void:Command_Remove(func)
 {
-	// Annoyingly, this is actually better with "HashMap_RemoveKey", but then we
-	// don't have the ID for later use.
-	if (HashMap_RemoveValue(YSI_g_sCommandMap, func))
+	// Step one: Get the name as well.  We need both now.
+	new
+		name[64],
+		hash,
+		start;
+	strcat(name, YSI_g_sCommands[func][E_COMMAND_NAME]);
+	new
+		hash = BernsteinHash(name),
+		start = HashMap_GetWithHash(YSI_g_sCommandMap, name, hash);
+	if (start == func)
 	{
-		#if defined Y_COMMANDS_USE_CHARS
-			Command_FlushPrefixes(_Command_GetPrefix(func)),
-		#endif
-		YSI_g_sCommands[func][E_COMMAND_POINTER] = -1;
+		// We have found the first one.
+		HashMap_RemoveKeyWithHash(YSI_g_sCommandMap, name, hash),
+		start = YSI_g_sCommands[func][E_COMMAND_NEXT];
+		if (start != COMMAND_NOT_FOUND)
+		{
+			// There are more.  We need to replace the pointer.
+			HashMap_AddWithHash(YSI_g_sCommandMap, name, hash, start);
+		}
 	}
+	else
+	{
+		while (start != COMMAND_NOT_FOUND && (hash = YSI_g_sCommands[start][E_COMMAND_NEXT]) != func)
+		{
+			start = hash;
+		}
+		if (start != COMMAND_NOT_FOUND)
+		{
+			YSI_g_sCommands[start][E_COMMAND_NEXT] = YSI_g_sCommands[func][E_COMMAND_NEXT];
+		}
+	}
+	#if defined Y_COMMANDS_USE_CHARS
+		Command_FlushPrefixes(_Command_GetPrefix(func)),
+	#endif
+	YSI_g_sCommands[func][E_COMMAND_POINTER] = -1,
+	YSI_g_sCommands[func][E_COMMAND_NAME] = '\0';
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1681,11 +1708,13 @@ GLOBAL__ void:Command_Remove(func)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ void:Command_RemoveNamed(const string:func[]);
+FOREIGN__ void:Command_RemoveNamed(const string:name[]);
 
-GLOBAL__ void:Command_RemoveNamed(const string:func[])
+GLOBAL__ void:Command_RemoveNamed(const string:name[])
 {
-	Command_Remove(Command_Find(func));
+	new
+		func = Command_Find(name);
+	Command_Remove(func);
 }
 
 /*-------------------------------------------------------------------------*//**
