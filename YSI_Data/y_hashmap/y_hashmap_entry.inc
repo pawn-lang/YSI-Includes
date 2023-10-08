@@ -83,6 +83,9 @@ Optional plugins:
 
 // The hashmap tests are vast.  Only include them when explicitly requested.
 #if defined YSI_TESTS
+	// We need more heap space for one test.  Include this to get it without
+	// potentially breaking other tests.
+	#include "..\..\YSI_Coding\y_malloc"
 	#include "y_hashmap_tests"
 #endif
 
