@@ -531,11 +531,7 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 	static
 		sCmd[64];
 
-	if (!_Command_IsValid(oidx))
-	{
-		return COMMAND_NOT_FOUND;
-	}
-	if (_Command_IsInline(oidx))
+	if (!_Command_IsValid(oidx) || _Command_IsInline(oidx))
 	{
 		return COMMAND_NOT_FOUND;
 	}
@@ -1363,7 +1359,7 @@ FOREIGN__ void:Command_SetPlayer(c, p, bool:s);
 GLOBAL__ void:Command_SetPlayer(c, p, bool:s)
 {
 	Debug_Print2("Command_SetPlayer called: %i, %i, %i", c, p, s);
-	if (_Command_IsValid(c) && VALID_PLAYERID(p))
+	if (_Command_IsValid(c) && !_Command_IsInline(c) && VALID_PLAYERID(p))
 	{
 		Debug_Print5("Command_SetPlayer: valid");
 		PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
@@ -1540,7 +1536,7 @@ FOREIGN__ void:Command_Touch(command);
 
 GLOBAL__ void:Command_Touch(command)
 {
-	if (_Command_IsValid(command))
+	if (_Command_IsValid(command) && !_Command_IsInline(command))
 	{
 		NO_GROUPS<Command>(command)
 		{
@@ -1739,7 +1735,7 @@ FOREIGN__ void:Command_Remove(func);
 
 GLOBAL__ void:Command_Remove(func)
 {
-	if (!_Command_IsValid(func))
+	if (!_Command_IsValid(func) || _Command_IsInline(func))
 	{
 		return;
 	}
@@ -2164,7 +2160,7 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
 	
 	GLOBAL__ Command_GetPrefix(c)
 	{
-		if (_Command_IsValid(c)) return _Command_GetPrefix(c);
+		if (_Command_IsValid(c) && !_Command_IsInline(c)) return _Command_GetPrefix(c);
 		return '/';
 	}
 	
@@ -2255,7 +2251,7 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
 	{
 		if (Command_IsValidPrefix(prefix))
 		{
-			if (_Command_IsValid(c))
+			if (_Command_IsValid(c) && !_Command_IsInline(c))
 			{
 				// Set this command's prefix, and add the prefix to the list.
 				new
