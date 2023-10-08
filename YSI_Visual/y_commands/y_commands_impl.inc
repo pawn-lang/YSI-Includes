@@ -234,8 +234,8 @@ static stock const
 	YSI_gscISI[] = "isi",
 	YSI_gscISII[] = "isii",
 	YSI_gscISIII[] = "isiii",
-	YSI_gscCommand_FastCallS[] = "Command_FastCallS";
-	YSI_gscCommand_FastCallIS[] = "Command_FastCallIS";
+	YSI_gscCommand_FastCallS[] = "Command_FastCallS",
+	YSI_gscCommand_FastCallIS[] = "Command_FastCallIS",
 	YSI_gscCommand_FastCallISI[] = "Command_FastCallISI";
 
 // Why are these parameters in a seemingly random order?  To reduce duplication
@@ -243,6 +243,16 @@ static stock const
 forward Command_FastCallS(Func:func<s>, string:params[], master);
 forward Command_FastCallIS(playerid, string:params[], master, Func:func<is>);
 forward Command_FastCallISI(playerid, string:params[], help, master, Func:func<isi>);
+
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <remarks>
+ *   <c>funcidx</c> by pointer not name.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+native Command_FuncIDX(func) = funcidx;
 
 // "YCMD:" macros.  The true core is "YSIM_COMMAND", which is in "y_master".
 #define _YCMD_0:(_:_YCMD_1:_YCMD_2:_YCMD_3:%0(%1[]%2) YSIM_COMMAND %0(%1[]%2)
@@ -1072,28 +1082,36 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			// This is in another script, or multiple scripts.
 			// Call the command in another script.  If no particular script
 			// is set up as the "master", call it in the first one found...
-			CallRemoteFunction(sCmd, YSI_gscISII, playerid, cmdtext[sPos] ? cmdtext[sPos] : NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>)),
-			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
+			sRet = ((cmdtext[sPos]
+				? CallRemoteFunction(sCmd, YSI_gscISII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>))
+				: CallRemoteFunction(sCmd, YSI_gscISII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>))),
+				(e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN)));
 		}
 		else switch (sFlags & e_COMMAND_FLAG_ARGS)
 		{
 		case e_COMMAND_FLAG_ARGS_IS:
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline IS %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
-			CallRemoteFunction(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, cmdtext[sPos] ? cmdtext[sPos] : NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash),
-			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
+			sRet = (cmdtext[sPos]
+				? CallRemoteFunction(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash)
+				: CallRemoteFunction(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash),
+				(e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN)));
 		}
 		case e_COMMAND_FLAG_ARGS_S
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline S %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
-			CallRemoteFunction(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, cmdtext[sPos] ? cmdtext[sPos] : NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>)),
-			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
+			sRet = (cmdtext[sPos]
+				? CallRemoteFunction(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>))
+				: CallRemoteFunction(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>)),
+				(e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN)));
 		}
 		case e_COMMAND_FLAG_ARGS_ISI:
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline ISI %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
-			CallRemoteFunction(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, cmdtext[sPos] ? cmdtext[sPos] : NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash),
-			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
+			sRet = (cmdtext[sPos]
+				? CallRemoteFunction(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash)
+				: CallRemoteFunction(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash),
+				(e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN)));
 		}
 		default:
 		{
@@ -2376,12 +2394,6 @@ HOOK__ OnScriptExit()
     88 88       88  "Y888 `"Ybbd8"' 88         88       88 `"8bbdP"Y8 88  
 
 */
-
-// `CallLocalFunction` by pointer not name.
-native Command_CallLocalFunction(func, const specifiers[], GLOBAL_TAG_TYPES:...) = CallLocalFunction;
-
-// `funcidx` by pointer not name.
-native Command_FuncIDX(func) = funcidx;
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
