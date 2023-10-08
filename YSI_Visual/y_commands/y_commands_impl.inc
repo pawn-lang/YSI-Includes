@@ -172,9 +172,9 @@ enum E_COMMAND
 enum E_COMMAND_INLINE
 {
 	// The pointer.
-	Func:E_COMMAND_INLINE_POINTER<sii>,
+	E_COMMAND_INLINE_POINTER,
 	// The script that this callback is in.
-	E_COMMAND_INLINE_MASTER,
+	Bit:E_COMMAND_INLINE_MASTER,
 	// Any special flags for this call.  We can use this to slightly optimise
 	// the most common case of call.
 	e_COMMAND_FLAGS:E_COMMAND_INLINE_FLAGS
@@ -854,6 +854,23 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			// call any command for any player, but these commands don't have
 			// permissions, they literally don't exist for other players.
 			sRet = COMMAND_UNDEFINED;
+			FOREACH__ (sHash : YSI_g_sPlayerCommands<playerid>)
+			{
+				if (_:(YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == YSI_g_sCurrentID)
+				{
+						// Found it.
+					#if YSIM_HAS_MASTER
+						// Fake the master data so that the correct script is used.
+						YSI_g_sMasterData[YSI_g_sCurrentID] = YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_MASTER],
+					#endif
+						sHash = _:YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_POINTER],
+						sRet = COMMAND_OK;
+						break;
+				}
+			}
+			// We must confirm that the command was actually found first.
+			if (sRet == COMMAND_OK && (sRet = Command_OnReceived(COMMAND_OK, playerid, cmdtext)) == COMMAND_OK)
+				break;
 		}
 		}
 		if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
@@ -1465,10 +1482,21 @@ static stock Command_Find__(const string:cmd[], playerid)
 		default:
 		{
 			// Anything inline.  Only matters for players.
-			if (candidate == COMMAND_NOT_FOUND && playerid != INVALID_PLAYER_ID && PA_Get(YSI_g_sCommands[id][E_COMMAND_USERS], playerid))
+			if (candidate == COMMAND_NOT_FOUND && VALID_PLAYERID(playerid) && PA_Get(YSI_g_sCommands[id][E_COMMAND_USERS], playerid))
 			{
 				// This player has an inline in the list so find it.  Also there
-				// isn't a better option already.
+				// isn't a better option already.  We loop through all the per-
+				// player commands for this player and check if any of the point
+				// to the current ID as their parent.
+				FOREACH__ (candidate : YSI_g_sPlayerCommands<playerid>)
+				{
+					if (_:(YSI_g_sInlineCommands[candidate][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == id)
+					{
+						// Found it.
+						candidate = id;
+						break;
+					}
+				}
 			}
 		}
 		}
@@ -2680,6 +2708,77 @@ static stock Command_GetEmptySlot()
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
+ * <param name="c">The command name to add.</param>
+ * <param name="p">The player this command is for.</param>
+ * <param name="i">The command's implementation.</param>
+ * <param name="f">Flags.</param>
+ * <returns>
+ *   The command's ID.
+ * </returns>
+ * <remarks>
+ *   Multiple commands for different players with the same name may return the
+ *   same ID.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FOREIGN__ Command_AddCallback__(const string:c[],p,i,f);
+
+GLOBAL__ Command_AddCallback__(const string:c[],p,i,f)
+{
+	
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <param name="cmd">The command name to add.</param>
+ * <param name="playerid">The player this command is for.</param>
+ * <param name="ptr">The command's implementation.</param>
+ * <param name="tag">The type of command call to use.</param>
+ * <returns>
+ *   The command's ID.
+ * </returns>
+ * <remarks>
+ *   Multiple commands for different players with the same name may return the
+ *   same ID.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Command_AddCallback(const string:cmd[], playerid, {F@_@s, F@_@is, F@_@isi}:ptr, tag = tagof (ptr))
+{
+	// This code is done locally because the inline may always reside in local
+	// assigned memory.
+	const
+		Func:tagS<s>,
+		Func:tagIS<is>,
+		Func:tagISI<isi>;
+	new
+		e_COMMAND_FLAGS:flags = e_COMMAND_FLAG_NONE;
+	switch (tag)
+	{
+	case (tagof (tagS)):
+		flags = e_COMMAND_FLAG_ARGS_S;
+	case (tagof (tagIS)):
+		flags = e_COMMAND_FLAG_ARGS_IS;
+	case (tagof (tagISI)):
+		flags = e_COMMAND_FLAG_ARGS_ISI;
+	}
+	switch (Indirect_GetType(ptr))
+	{
+	case 1:
+		flags |= e_COMMAND_FLAG_TYPE_INL;
+	case 2:
+		flags |= e_COMMAND_FLAG_TYPE_STR;
+	case 3:
+		flags |= e_COMMAND_FLAG_TYPE_PTR;
+	}
+	if (Command_AddCallback__(cmd, playerid, _:ptr, _:flags) != COMMAND_NOT_FOUND)
+	{
+		Indirect_Claim(ptr);
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
  * <param name="cmd">The command name to add.</param>
  * <param name="ptr">The command's pointer.</param>
  * <returns>
@@ -2811,7 +2910,7 @@ _Command_GetDisplay_retry:
 		}
 		case e_COMMAND_FLAG_INLINE:
 		{
-			// Allowed primary.
+			// Allowed inline.
 			if (YSI_g_sCommands[funcid][E_COMMAND_USERS][slot] & mask)
 			{
 				return strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
