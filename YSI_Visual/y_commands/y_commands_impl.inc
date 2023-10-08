@@ -897,58 +897,63 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			{
 				Debug_Print5("Command_FastCall: Type INL_ISI");
 				sHash = AMX_Read(sHash + E_INDIRECTION_HANDER__);
-				if (sHash != YSI_g_sStubPointer)
+				if (sHash == YSI_g_sStubPointer)
 				{
-					#emit PUSH.S       help
-					#emit PUSH         sParams
-					#emit PUSH.S       playerid
-					#emit PUSH.C       __3_cells
-					#emit LCTRL        __cip
-					#emit ADD.C        __11_cells
-					#emit LCTRL        __jit_jump
-					#emit PUSH.pri
-					#emit LOAD.pri     sHash
-					#emit SCTRL        __jit_jump
-					#emit SCTRL        __cip
-					#emit STOR.pri     sRet
+					return COMMAND_UNDEFINED;
 				}
+				{}
+				#emit PUSH.S       help
+				#emit PUSH         sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __3_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
 			}
 			case e_COMMAND_FLAG_INL_IS:
 			{
 				Debug_Print5("Command_FastCall: Type INL_IS");
 				sHash = AMX_Read(sHash + E_INDIRECTION_HANDER__);
-				if (sHash != YSI_g_sStubPointer)
+				if (sHash == YSI_g_sStubPointer)
 				{
-					#emit PUSH         sParams
-					#emit PUSH.S       playerid
-					#emit PUSH.C       __2_cells
-					#emit LCTRL        __cip
-					#emit ADD.C        __11_cells
-					#emit LCTRL        __jit_jump
-					#emit PUSH.pri
-					#emit LOAD.pri     sHash
-					#emit SCTRL        __jit_jump
-					#emit SCTRL        __cip
-					#emit STOR.pri     sRet
+					return COMMAND_UNDEFINED;
 				}
+				{}
+				#emit PUSH         sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __2_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
 			}
 			case e_COMMAND_FLAG_INL_S:
 			{
 				Debug_Print5("Command_FastCall: Type INL_S");
 				sHash = AMX_Read(sHash + E_INDIRECTION_HANDER__);
-				if (sHash != YSI_g_sStubPointer)
+				if (sHash == YSI_g_sStubPointer)
 				{
-					#emit PUSH         sParams
-					#emit PUSH.C       __1_cells
-					#emit LCTRL        __cip
-					#emit ADD.C        __11_cells
-					#emit LCTRL        __jit_jump
-					#emit PUSH.pri
-					#emit LOAD.pri     sHash
-					#emit SCTRL        __jit_jump
-					#emit SCTRL        __cip
-					#emit STOR.pri     sRet
+					return COMMAND_UNDEFINED;
 				}
+				{}
+				#emit PUSH.C       __1_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
 			}
 			case e_COMMAND_FLAG_PTR_ISI:
 			{
@@ -998,59 +1003,61 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			case e_COMMAND_FLAG_STR_ISI:
 			{
 				Debug_Print5("Command_FastCall: Type STR_ISI");
-				if ((sHash = Command_FuncIDX(sHash)) != -1)
+				if ((sHash = Command_FuncIDX(sHash)) == -1)
 				{
-					sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
-					#emit PUSH.S       help
-					#emit PUSH         sParams
-					#emit PUSH.S       playerid
-					#emit PUSH.C       __3_cells
-					#emit LCTRL        __cip
-					#emit ADD.C        __11_cells
-					#emit LCTRL        __jit_jump
-					#emit PUSH.pri
-					#emit LOAD.pri     sHash
-					#emit SCTRL        __jit_jump
-					#emit SCTRL        __cip
-					#emit STOR.pri     sRet
+					return COMMAND_UNDEFINED;
 				}
+				sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
+				#emit PUSH.S       help
+				#emit PUSH         sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __3_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
 			}
 			case e_COMMAND_FLAG_STR_IS:
 			{
 				Debug_Print5("Command_FastCall: Type STR_IS");
-				if ((sHash = Command_FuncIDX(sHash)) != -1)
+				if ((sHash = Command_FuncIDX(sHash)) == -1)
 				{
-					sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
-					#emit PUSH         sParams
-					#emit PUSH.S       playerid
-					#emit PUSH.C       __2_cells
-					#emit LCTRL        __cip
-					#emit ADD.C        __11_cells
-					#emit LCTRL        __jit_jump
-					#emit PUSH.pri
-					#emit LOAD.pri     sHash
-					#emit SCTRL        __jit_jump
-					#emit SCTRL        __cip
-					#emit STOR.pri     sRet
+					return COMMAND_UNDEFINED;
 				}
+				sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
+				#emit PUSH         sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __2_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
 			}
 			case e_COMMAND_FLAG_STR_S:
 			{
 				Debug_Print5("Command_FastCall: Type STR_S");
-				if ((sHash = Command_FuncIDX(sHash)) != -1)
+				if ((sHash = Command_FuncIDX(sHash)) == -1)
 				{
-					sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
-					#emit PUSH         sParams
-					#emit PUSH.C       __1_cells
-					#emit LCTRL        __cip
-					#emit ADD.C        __11_cells
-					#emit LCTRL        __jit_jump
-					#emit PUSH.pri
-					#emit LOAD.pri     sHash
-					#emit SCTRL        __jit_jump
-					#emit SCTRL        __cip
-					#emit STOR.pri     sRet
+					return COMMAND_UNDEFINED;
 				}
+				#emit PUSH         sParams
+				#emit PUSH.C       __1_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
 			}
 			case e_COMMAND_FLAG_NRM_ISI:
 			{
@@ -1082,36 +1089,40 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			// This is in another script, or multiple scripts.
 			// Call the command in another script.  If no particular script
 			// is set up as the "master", call it in the first one found...
-			sRet = ((cmdtext[sPos]
-				? CallRemoteFunction(sCmd, YSI_gscISII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>))
-				: CallRemoteFunction(sCmd, YSI_gscISII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>))),
-				(e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN)));
+			if (cmdtext[sPos])
+				CallRemoteFunction(sCmd, YSI_gscISII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+			else
+				CallRemoteFunction(sCmd, YSI_gscISII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		else switch (sFlags & e_COMMAND_FLAG_ARGS)
 		{
 		case e_COMMAND_FLAG_ARGS_IS:
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline IS %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
-			sRet = (cmdtext[sPos]
-				? CallRemoteFunction(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash)
-				: CallRemoteFunction(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash),
-				(e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN)));
+			if (cmdtext[sPos])
+				CallRemoteFunction(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+			else
+				CallRemoteFunction(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
-		case e_COMMAND_FLAG_ARGS_S
+		case e_COMMAND_FLAG_ARGS_S:
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline S %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
-			sRet = (cmdtext[sPos]
-				? CallRemoteFunction(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>))
-				: CallRemoteFunction(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>)),
-				(e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN)));
+			if (cmdtext[sPos])
+				CallRemoteFunction(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+			else
+				CallRemoteFunction(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		case e_COMMAND_FLAG_ARGS_ISI:
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline ISI %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
-			sRet = (cmdtext[sPos]
-				? CallRemoteFunction(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash)
-				: CallRemoteFunction(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash),
-				(e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN)));
+			if (cmdtext[sPos])
+				CallRemoteFunction(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+			else
+				CallRemoteFunction(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		default:
 		{
