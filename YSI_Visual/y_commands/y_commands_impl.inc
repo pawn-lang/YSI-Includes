@@ -552,7 +552,7 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 	Puny_EncodeHash(sCmd, cmd, hash, .delimiter = '@'),
 	strpack(sCmd, sCmd, cellmax);
 	Debug_Print5("Command_AddAlt: packed %s, %s", sCmd, cmd);
-	Debug_Print5("Command_AddAlt: unpacked %s, %s", unpack(sCmd), unpack(cmd));
+	Debug_Print5("Command_AddAlt: unpacked %s, %s", Unpack(sCmd), Unpack(cmd));
 	if (strcmp(sCmd, cmd))
 	{
 		// There is any punycode command.
@@ -753,7 +753,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 	}
 	while (cmdtext[sPos] == ' ') ++sPos; // Better/slower: ('\0' < cmdtext[sPos] <= ' ').
 	// Find the command in the array.
-	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash);
+	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
 	Debug_Print5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd, sPos, sHash, YSI_g_sCurrentID);
 	if (YSI_g_sCurrentID == COMMAND_NOT_FOUND)
 	{
@@ -903,7 +903,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 				}
 				{}
 				#emit PUSH.S       help
-				#emit PUSH         sParams
+				#emit PUSH.C       sParams
 				#emit PUSH.S       playerid
 				#emit PUSH.C       __3_cells
 				#emit LCTRL        __cip
@@ -924,7 +924,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 					return COMMAND_UNDEFINED;
 				}
 				{}
-				#emit PUSH         sParams
+				#emit PUSH.C       sParams
 				#emit PUSH.S       playerid
 				#emit PUSH.C       __2_cells
 				#emit LCTRL        __cip
@@ -959,7 +959,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			{
 				Debug_Print5("Command_FastCall: Type PTR_ISI");
 				#emit PUSH.S       help
-				#emit PUSH         sParams
+				#emit PUSH.C       sParams
 				#emit PUSH.S       playerid
 				#emit PUSH.C       __3_cells
 				#emit LCTRL        __cip
@@ -974,7 +974,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			case e_COMMAND_FLAG_PTR_IS:
 			{
 				Debug_Print5("Command_FastCall: Type PTR_IS");
-				#emit PUSH         sParams
+				#emit PUSH.C       sParams
 				#emit PUSH.S       playerid
 				#emit PUSH.C       __2_cells
 				#emit LCTRL        __cip
@@ -989,7 +989,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			case e_COMMAND_FLAG_PTR_S:
 			{
 				Debug_Print5("Command_FastCall: Type PTR_S");
-				#emit PUSH         sParams
+				#emit PUSH.C       sParams
 				#emit PUSH.C       __1_cells
 				#emit LCTRL        __cip
 				#emit ADD.C        __11_cells
@@ -1009,7 +1009,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 				}
 				sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
 				#emit PUSH.S       help
-				#emit PUSH         sParams
+				#emit PUSH.C       sParams
 				#emit PUSH.S       playerid
 				#emit PUSH.C       __3_cells
 				#emit LCTRL        __cip
@@ -1029,7 +1029,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 					return COMMAND_UNDEFINED;
 				}
 				sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
-				#emit PUSH         sParams
+				#emit PUSH.C       sParams
 				#emit PUSH.S       playerid
 				#emit PUSH.C       __2_cells
 				#emit LCTRL        __cip
@@ -1048,7 +1048,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 				{
 					return COMMAND_UNDEFINED;
 				}
-				#emit PUSH         sParams
+				#emit PUSH.C       sParams
 				#emit PUSH.C       __1_cells
 				#emit LCTRL        __cip
 				#emit ADD.C        __11_cells
@@ -1063,7 +1063,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			{
 				Debug_Print5("Command_FastCall: Type NRM_ISI");
 				#emit PUSH.S       help
-				#emit PUSH         sParams
+				#emit PUSH.C       sParams
 				#emit PUSH.S       playerid
 				#emit PUSH.C       __3_cells
 				#emit LCTRL        __cip
