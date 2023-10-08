@@ -90,7 +90,6 @@ enum e_COMMAND_FLAGS
 {
 	e_COMMAND_FLAG_NONE = 0,
 	e_COMMAND_FLAG_PREFIX = 0xFF,
-	e_COMMAND_FLAG_BITS = 0xFF000000,
 	// Inherit user permissions.
 	e_COMMAND_FLAG_INHERIT = 0x01000000,
 	// Can't be listed.
@@ -98,7 +97,7 @@ enum e_COMMAND_FLAGS
 	// Can't be used by default.
 	e_COMMAND_FLAG_DISABLED = 0x04000000,
 	// Is a primary.
-	e_COMMAND_FLAG_PRI = 0x08000000,
+	e_COMMAND_FLAG_PRI = 0x00000000,
 	// Is an alternative.
 	e_COMMAND_FLAG_ALT = 0x10000000,
 	// Is an inline, or more strictly it is a per-player defined function called
@@ -393,6 +392,20 @@ FUNC_PAWNDOC(bool:_Command_IsValid(command));
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
+ * <param name="command">Command to get for.</param>
+ * <returns>
+ *   Is this command ID a special inline representation?
+ * </returns>
+ * <remarks>
+ *   Internal direct-access check.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FUNC_PAWNDOC(bool:_Command_IsInline(command));
+#define _Command_IsInline(%0) (YSI_g_sCommands[(%0)][E_COMMAND_FLAGS] & e_COMMAND_FLAG_INLINE)
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
  * <param name="idx">Command to test.</param>
  * <remarks>
  *   Checks to see if a character is a possible prefix character.  May use an
@@ -519,6 +532,10 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 		sCmd[64];
 
 	if (!_Command_IsValid(oidx))
+	{
+		return COMMAND_NOT_FOUND;
+	}
+	if (_Command_IsInline(oidx))
 	{
 		return COMMAND_NOT_FOUND;
 	}
@@ -782,7 +799,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 		// Can the player use this command?
 		sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER],
 		sFlags = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_FLAGS];
-		switch (sFlags & (e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INLINE))
+		switch (sFlags & (e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INLINE))
 		{
 		case e_COMMAND_FLAG_DISABLED, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INHERIT:
 		{
@@ -1288,12 +1305,12 @@ GLOBAL__ bool:Command_GetPlayer(cmd, pid)
 	if (_Command_IsValid(cmd) && VALID_PLAYERID(pid))
 	{
 		Debug_Print5("Command_GetPlayer: valid");
-		switch (YSI_g_sCommands[cmd][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+		switch (YSI_g_sCommands[cmd][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INLINE))
 		{
-		case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT:
+		case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT, e_COMMAND_FLAG_INLINE:
 		{
-			// Primary command that isn't indirect, hidden, or disabled.
-			// Alternate command that isn't inherited, hidden, or disabled.
+			// Primary command that isn't indirect or disabled.
+			// Alternate command that isn't inherited or disabled.
 			return PA_Get(YSI_g_sCommands[cmd][E_COMMAND_USERS], pid);
 		}
 		case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
@@ -1411,7 +1428,7 @@ static stock Command_Find__(const string:cmd[], playerid)
 	// this player can use.
 	do
 	{
-		switch (YSI_g_sCommands[id][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INLINE))
+		switch (YSI_g_sCommands[id][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INLINE))
 		{
 		case e_COMMAND_FLAG_DISABLED, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INHERIT:
 		{
@@ -1439,7 +1456,7 @@ static stock Command_Find__(const string:cmd[], playerid)
 			if (candidate == COMMAND_NOT_FOUND && (playerid == INVALID_PLAYER_ID || PA_Get(YSI_g_sCommands[YSI_g_sCommands[id][E_COMMAND_POINTER] & ~cellmin][E_COMMAND_USERS], playerid))
 				candidate = id;
 		}
-		case e_COMMAND_FLAG_INHERIT, e_COMMAND_FLAG_NONE:
+		case e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_INHERIT, e_COMMAND_FLAG_PRI:
 		{
 			// No flags (or only `e_COMMAND_FLAG_INHERIT` on a base command).
 			if (playerid == INVALID_PLAYER_ID || PA_Get(YSI_g_sCommands[id][E_COMMAND_USERS], playerid))
@@ -1836,9 +1853,9 @@ GLOBAL__ YCMD_GetPlayerCommandCount(playerid)
 	{
 		if (_Command_IsActive(i))
 		{
-			switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+			switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INLINE))
 			{
-			case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT:
+			case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT, e_COMMAND_FLAG_INLINE:
 			{
 				// Primary command that isn't indirect, hidden, or disabled.
 				// Alternate command that isn't inherited, hidden, or disabled.
@@ -1981,9 +1998,9 @@ GLOBAL__ string:Command_GetNext(index, playerid)
 		{
 			if (_Command_IsActive(i))
 			{
-				switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+				switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INLINE))
 				{
-				case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT:
+				case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT, e_COMMAND_FLAG_INLINE:
 				{
 					// Primary command that isn't indirect, hidden, or disabled.
 					// Alternate command that isn't inherited, hidden, or disabled.
@@ -2089,9 +2106,9 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
 	{
 		if (_Command_IsActive(i))
 		{
-			switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+			switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INLINE))
 			{
-			case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT:
+			case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_ALT, e_COMMAND_FLAG_INLINE:
 			{
 				// Primary command that isn't indirect, hidden, or disabled.
 				// Alternate command that isn't inherited, hidden, or disabled.
@@ -2749,7 +2766,7 @@ static stock _Command_GetDisplay(funcid, playerid)
 			Bit:mask = PA_Mask(playerid);
 _Command_GetDisplay_retry:
 		// Check if they can use the original version.
-		switch (YSI_g_sCommands[funcid][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+		switch (YSI_g_sCommands[funcid][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INLINE))
 		{
 		case e_COMMAND_FLAG_ALT:
 		{
@@ -2790,6 +2807,15 @@ _Command_GetDisplay_retry:
 				return strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
 			}
 		}
+		case e_COMMAND_FLAG_INLINE:
+		{
+			// Allowed primary.
+			if (YSI_g_sCommands[funcid][E_COMMAND_USERS][slot] & mask)
+			{
+				return strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
+			}
+			return 0;
+		}
 		//case e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN                                                    ,
 		//     e_COMMAND_FLAG_PRI                         | e_COMMAND_FLAG_DISABLED                          ,
 		//     e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED                          :
@@ -2804,7 +2830,7 @@ _Command_GetDisplay_retry:
 		{
 			if (_Command_IsActive(i) && YSI_g_sCommands[i][E_COMMAND_POINTER] == playerid)
 			{
-				switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & e_COMMAND_FLAG_BITS)
+				switch (YSI_g_sCommands[i][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_HIDDEN | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INLINE))
 				{
 				case e_COMMAND_FLAG_ALT:
 				{
