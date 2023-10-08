@@ -921,3 +921,80 @@ YCMD:ycmdtest2(playerid, params[], help) = ycmdtest1;
 	}
 #endif
 
+static stock
+	YSI_g_sy_commands_EnableableA = COMMAND_NOT_FOUND,
+	YSI_g_sy_commands_EnableableB = COMMAND_NOT_FOUND;
+
+YCMD:y_commands_enableablea(playerid, params[], help)
+{
+}
+
+YCMD:y_commands_alternativea(playerid, params[], help) = y_commands_enableablea;
+
+@test(.group = "y_commands") y_commands_Disable()
+{
+	new str[YSI_MAX_STRING];
+	YSI_g_sy_commands_EnableableA = YCMD:y_commands_enableablea;
+	str = Command_GetDisplay(YSI_g_sy_commands_EnableableA, 0);
+	ASSERT_SAME(str, "y_commands_enableablea");
+	str = Command_GetDisplayNamed("y_commands_alternativea", 0);
+	ASSERT_SAME(str, "y_commands_alternativea");
+	Command_SetDisabled(YSI_g_sy_commands_EnableableA, true);
+	str = Command_GetDisplay(YSI_g_sy_commands_EnableableA, 0);
+	ASSERT_SAME(str, "y_commands_alternativea");
+	str = Command_GetDisplayNamed("y_commands_alternativea", 0);
+	ASSERT_SAME(str, "y_commands_alternativea");
+	Command_SetDisabled(YCMD:y_commands_alternativea, true);
+	str = Command_GetDisplay(YSI_g_sy_commands_EnableableA, 0);
+	ASSERT_SAME(str, "");
+	str = Command_GetDisplayNamed("y_commands_alternativea", 0);
+	ASSERT_SAME(str, "");
+	Command_SetDisabled(YSI_g_sy_commands_EnableableA, false);
+	str = Command_GetDisplay(YSI_g_sy_commands_EnableableA, 0);
+	ASSERT_SAME(str, "y_commands_enableablea");
+	str = Command_GetDisplayNamed("y_commands_alternativea", 0);
+	ASSERT_SAME(str, "y_commands_enableablea");
+	ASSERT(Command_GetDisabled(YCMD:y_commands_alternativea));
+	ASSERT(!Command_GetDisabled(YSI_g_sy_commands_EnableableA));
+	Command_SetDisabled(YCMD:y_commands_alternativea, false);
+	str = Command_GetDisplay(YSI_g_sy_commands_EnableableA, 0);
+	ASSERT_SAME(str, "y_commands_enableablea");
+	str = Command_GetDisplayNamed("y_commands_alternativea", 0);
+	ASSERT_SAME(str, "y_commands_alternativea");
+}
+
+@cmd(.alts = { "y_commands_alternativeb" }, .id = YSI_g_sy_commands_EnableableB) y_commands_enableableb(playerid, params[], help)
+{
+}
+
+@test(.group = "y_commands") y_commands_DisableB()
+{
+	new str[YSI_MAX_STRING];
+	str = Command_GetDisplay(YSI_g_sy_commands_EnableableB, 0);
+	ASSERT_SAME(str, "y_commands_enableableb");
+	str = Command_GetDisplayNamed("y_commands_alternativeb", 0);
+	ASSERT_SAME(str, "y_commands_alternativeb");
+	Command_SetDisabled(YSI_g_sy_commands_EnableableB, true);
+	str = Command_GetDisplay(YSI_g_sy_commands_EnableableB, 0);
+	ASSERT_SAME(str, "y_commands_alternativeb");
+	str = Command_GetDisplayNamed("y_commands_alternativeb", 0);
+	ASSERT_SAME(str, "y_commands_alternativeb");
+	Command_SetDisabled(YCMD:y_commands_alternativeb, true);
+	str = Command_GetDisplay(YSI_g_sy_commands_EnableableB, 0);
+	ASSERT_SAME(str, "");
+	str = Command_GetDisplayNamed("y_commands_alternativeb", 0);
+	ASSERT_SAME(str, "");
+	Command_SetDisabled(YSI_g_sy_commands_EnableableB, false);
+	str = Command_GetDisplay(YSI_g_sy_commands_EnableableB, 0);
+	ASSERT_SAME(str, "y_commands_enableableb");
+	str = Command_GetDisplayNamed("y_commands_alternativeb", 0);
+	ASSERT_SAME(str, "y_commands_enableableb");
+	ASSERT(Command_GetDisabled(YCMD:y_commands_alternativeb));
+	ASSERT(!Command_GetDisabled(YSI_g_sy_commands_EnableableB));
+	Command_SetDisabled(YCMD:y_commands_alternativeb, false);
+	str = Command_GetDisplay(YSI_g_sy_commands_EnableableB, 0);
+	ASSERT_SAME(str, "y_commands_enableableb");
+	str = Command_GetDisplayNamed("y_commands_alternativeb", 0);
+	ASSERT_SAME(str, "y_commands_alternativeb");
+}
+

@@ -543,8 +543,12 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 	// command - point this new command at the parent.
 	if (id & cellmin)
 	{
-		Debug_Warning("Command_AddAlt: Using grandparent for alternate `/%s`", cmd);
 		oidx = id & ~cellmin;
+		if (_Command_IsInline(oidx))
+		{
+			return COMMAND_NOT_FOUND;
+		}
+		Debug_Warning("Command_AddAlt: Using grandparent for alternate `/%s`", cmd);
 	}
 	
 	if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
@@ -2754,9 +2758,11 @@ GLOBAL__ Command_Add__(const string:cmd[], ptr)
 
 static stock _Command_GetDisplay(funcid, playerid)
 {
+	Debug_Print4("_Command_GetDisplay called: %d %d", funcid, playerid);
 	YSI_g_sReturnBuffer[0] = '\0';
 	if (_Command_IsValid(funcid) && VALID_PLAYERID(playerid))
 	{
+		Debug_Print5("_Command_GetDisplay: valid");
 		new
 			slot = PA_Slot(playerid),
 			Bit:mask = PA_Mask(playerid);
