@@ -155,7 +155,7 @@ public
 #tryinclude <md-sort>
 #if !defined _INC_md_sort
 	#error Download `github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
-#elseif !defined ResetDeepArray_Entry
+#elseif !defined SA_4limit
 	#error Re-download `github.com/oscar-broman/md-sort/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
