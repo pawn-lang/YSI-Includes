@@ -110,6 +110,15 @@ enum e_COMMAND_FLAGS
 	e_COMMAND_FLAG_INLINE = 0x20000000,
 	// The player for whom this variant is defined.  Overlaps earlier data.
 	e_COMMAND_FLAG_PLAYER = 0xFFFF,
+	// Breakdown of the type specialisations.
+	e_COMMAND_FLAG_ARGS_ISI = 0x00000,
+	e_COMMAND_FLAG_ARGS_IS = 0x10000,
+	e_COMMAND_FLAG_ARGS_S = 0x20000,
+	e_COMMAND_FLAG_TYPE_INL = 0xC0000,
+	e_COMMAND_FLAG_TYPE_PTR = 0x80000,
+	e_COMMAND_FLAG_TYPE_STR = 0x40000,
+	e_COMMAND_FLAG_TYPE_NRM = 0x00000,
+	
 	// If this is set this is a function that only takes a single string
 	// parameter, and is an inline in the current script.  We do this so that we
 	// can call that code way more directly, or at least slightly more directly,
@@ -118,21 +127,23 @@ enum e_COMMAND_FLAGS
 	// and frame we can short-circuit a few other calls as well - no need to
 	// check if this is a pointer and no need to do any tag-based parameter
 	// resolution.  Now expanded to special-case all the variants.
-	e_COMMAND_FLAG_INL_ISI = 0x10000,
-	e_COMMAND_FLAG_INL_IS = 0x20000,
-	e_COMMAND_FLAG_INL_S = 0x30000,
+	e_COMMAND_FLAG_INL_ISI = e_COMMAND_FLAG_TYPE_INL | e_COMMAND_FLAG_ARGS_ISI,
+	e_COMMAND_FLAG_INL_IS  = e_COMMAND_FLAG_TYPE_INL | e_COMMAND_FLAG_ARGS_IS,
+	e_COMMAND_FLAG_INL_S   = e_COMMAND_FLAG_TYPE_INL | e_COMMAND_FLAG_ARGS_S,
 	// Normal function pointer.
-	e_COMMAND_FLAG_PTR_ISI = 0x40000,
-	e_COMMAND_FLAG_PTR_IS = 0x50000,
-	e_COMMAND_FLAG_PTR_S = 0x60000,
+	e_COMMAND_FLAG_PTR_ISI = e_COMMAND_FLAG_TYPE_PTR | e_COMMAND_FLAG_ARGS_ISI,
+	e_COMMAND_FLAG_PTR_IS  = e_COMMAND_FLAG_TYPE_PTR | e_COMMAND_FLAG_ARGS_IS,
+	e_COMMAND_FLAG_PTR_S   = e_COMMAND_FLAG_TYPE_PTR | e_COMMAND_FLAG_ARGS_S,
 	// String name.
-	e_COMMAND_FLAG_STR_ISI = 0x70000,
-	e_COMMAND_FLAG_STR_IS = 0x80000,
-	e_COMMAND_FLAG_STR_S = 0x90000,
-	// A normal command.
-	e_COMMAND_FLAG_NRM_ISI = 0xA0000,
-	// Mask for the switch.
-	e_COMMAND_FLAG_TYPE = 0xF0000
+	e_COMMAND_FLAG_STR_ISI = e_COMMAND_FLAG_TYPE_STR | e_COMMAND_FLAG_ARGS_ISI,
+	e_COMMAND_FLAG_STR_IS  = e_COMMAND_FLAG_TYPE_STR | e_COMMAND_FLAG_ARGS_IS,
+	e_COMMAND_FLAG_STR_S   = e_COMMAND_FLAG_TYPE_STR | e_COMMAND_FLAG_ARGS_S,
+	// A normal command (actually works out as `0`).
+	e_COMMAND_FLAG_NRM_ISI = e_COMMAND_FLAG_TYPE_NRM | e_COMMAND_FLAG_ARGS_ISI,
+	// Mask for switches.
+	e_COMMAND_FLAG_ARGS = 0x30000,
+	e_COMMAND_FLAG_DEST = 0xC0000,
+	e_COMMAND_FLAG_TYPE = e_COMMAND_FLAG_ARGS | e_COMMAND_FLAG_DEST
 }
 
 enum E_COMMAND
@@ -221,8 +232,17 @@ static stock const
 	YSI_gscOPCR[] = "OnPlayerCommandReceived",
 	YSI_gscOPCP[] = "OnPlayerCommandPerformed",
 	YSI_gscISI[] = "isi",
-	YSI_gscISIIIII[] = "isiiiii",
-	YSI_gscCommand_FastCall[] = "Command_FastCall__";
+	YSI_gscISII[] = "isii",
+	YSI_gscISIII[] = "isiii",
+	YSI_gscCommand_FastCallS[] = "Command_FastCallS";
+	YSI_gscCommand_FastCallIS[] = "Command_FastCallIS";
+	YSI_gscCommand_FastCallISI[] = "Command_FastCallISI";
+
+// Why are these parameters in a seemingly random order?  To reduce duplication
+// in the number of specifier strings that we need.
+forward Command_FastCallS(Func:func<s>, string:params[], master);
+forward Command_FastCallIS(playerid, string:params[], master, Func:func<is>);
+forward Command_FastCallISI(playerid, string:params[], help, master, Func:func<isi>);
 
 // "YCMD:" macros.  The true core is "YSIM_COMMAND", which is in "y_master".
 #define _YCMD_0:(_:_YCMD_1:_YCMD_2:_YCMD_3:%0(%1[]%2) YSIM_COMMAND %0(%1[]%2)
@@ -262,9 +282,6 @@ static stock const
 // Forwards for optional command callbacks.
 forward e_COMMAND_ERRORS:OnPlayerCommandReceived(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
 forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
-
-forward Command_FastCall__(playerid, params[], bool:help, master, e_COMMAND_FLAGS:flags, func, bool:unique);
-forward e_COMMAND_ERRORS:Command_FastCall(e_COMMAND_FLAGS:flags, func, playerid, string:params[], bool:help, bool:unique);
 
 /*
 
@@ -663,7 +680,7 @@ stock Command_AddAlt(oidx, const string:cmd[], bool:inherit = false)
 static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext[], help)
 {
 	static
-		sCmd[64] = "",
+		sCmd[64] = "@yC_",
 		sPos = 0,
 		e_COMMAND_ERRORS:sRet = COMMAND_ZERO_RET,
 		sHash = 0,
@@ -700,7 +717,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 	// Get the hashed version of the decoded string, skipping the possible  "/".
 	if (YSI_g_sSystemSettings & e_COMM_FLAG_PUNYCODE)
 	{
-		sPos = Puny_EncodeHash(sCmd, cmdtext[_:sRet], sHash, sizeof (sCmd), '@') + _:sRet;
+		sPos = Puny_EncodeHash(sCmd[4], cmdtext[_:sRet], sHash, sizeof (sCmd) - 4, '@') + _:sRet;
 	}
 	else if (sRet)
 	{
@@ -709,7 +726,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 		sHash = 5381;
 		while ((_:sFlags = cmdtext[++sPos]) > ' ')
 		{
-			sCmd[sPos - 1] = _:sFlags,
+			sCmd[sPos + 3] = _:sFlags,
 			sHash = sHash * 33 ^ _:sFlags;
 		}
 	}
@@ -720,7 +737,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 		sHash = 5381;
 		while ((_:sFlags = cmdtext[++sPos]) > ' ')
 		{
-			sCmd[sPos] = _:sFlags,
+			sCmd[sPos + 4] = _:sFlags,
 			sHash = sHash * 33 ^ _:sFlags;
 		}
 	}
@@ -854,21 +871,234 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 				sParams[144];
 			sParams[0] = '\0',
 			strcat(sParams, cmdtext[sPos]),
-			sRet = Command_FastCall(sFlags, sHash, playerid, sParams, bool:(help & 1), true);
+			// Strip out all other flags.
+			help &= 1;
+			//sRet = Command_FastCall(sFlags, sHash, playerid, sParams, bool:(help & 1), true);
+			//Debug_Print4("Command_FastCall called: %08x, %08x, %d, \"%s\", %d, %d", _:flags, func, playerid, params, help, unique);
+			//#pragma unused params
+			// `params` is NOT `const` here.  This is NOT a mistake.  I mean...
+			// ultimately it IS a mistake, since it is done that way to account
+			// for commands themselves not having `const` parameters.  But
+			// beyond that, no.
+			// Only call this in the correct script.
+			switch (sFlags & e_COMMAND_FLAG_TYPE)
+			{
+			case e_COMMAND_FLAG_INL_ISI:
+			{
+				Debug_Print5("Command_FastCall: Type INL_ISI");
+				sHash = AMX_Read(sHash + E_INDIRECTION_HANDER__);
+				if (sHash != YSI_g_sStubPointer)
+				{
+					#emit PUSH.S       help
+					#emit PUSH         sParams
+					#emit PUSH.S       playerid
+					#emit PUSH.C       __3_cells
+					#emit LCTRL        __cip
+					#emit ADD.C        __11_cells
+					#emit LCTRL        __jit_jump
+					#emit PUSH.pri
+					#emit LOAD.pri     sHash
+					#emit SCTRL        __jit_jump
+					#emit SCTRL        __cip
+					#emit STOR.pri     sRet
+				}
+			}
+			case e_COMMAND_FLAG_INL_IS:
+			{
+				Debug_Print5("Command_FastCall: Type INL_IS");
+				sHash = AMX_Read(sHash + E_INDIRECTION_HANDER__);
+				if (sHash != YSI_g_sStubPointer)
+				{
+					#emit PUSH         sParams
+					#emit PUSH.S       playerid
+					#emit PUSH.C       __2_cells
+					#emit LCTRL        __cip
+					#emit ADD.C        __11_cells
+					#emit LCTRL        __jit_jump
+					#emit PUSH.pri
+					#emit LOAD.pri     sHash
+					#emit SCTRL        __jit_jump
+					#emit SCTRL        __cip
+					#emit STOR.pri     sRet
+				}
+			}
+			case e_COMMAND_FLAG_INL_S:
+			{
+				Debug_Print5("Command_FastCall: Type INL_S");
+				sHash = AMX_Read(sHash + E_INDIRECTION_HANDER__);
+				if (sHash != YSI_g_sStubPointer)
+				{
+					#emit PUSH         sParams
+					#emit PUSH.C       __1_cells
+					#emit LCTRL        __cip
+					#emit ADD.C        __11_cells
+					#emit LCTRL        __jit_jump
+					#emit PUSH.pri
+					#emit LOAD.pri     sHash
+					#emit SCTRL        __jit_jump
+					#emit SCTRL        __cip
+					#emit STOR.pri     sRet
+				}
+			}
+			case e_COMMAND_FLAG_PTR_ISI:
+			{
+				Debug_Print5("Command_FastCall: Type PTR_ISI");
+				#emit PUSH.S       help
+				#emit PUSH         sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __3_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
+			}
+			case e_COMMAND_FLAG_PTR_IS:
+			{
+				Debug_Print5("Command_FastCall: Type PTR_IS");
+				#emit PUSH         sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __2_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
+			}
+			case e_COMMAND_FLAG_PTR_S:
+			{
+				Debug_Print5("Command_FastCall: Type PTR_S");
+				#emit PUSH         sParams
+				#emit PUSH.C       __1_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
+			}
+			case e_COMMAND_FLAG_STR_ISI:
+			{
+				Debug_Print5("Command_FastCall: Type STR_ISI");
+				if ((sHash = Command_FuncIDX(sHash)) != -1)
+				{
+					sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
+					#emit PUSH.S       help
+					#emit PUSH         sParams
+					#emit PUSH.S       playerid
+					#emit PUSH.C       __3_cells
+					#emit LCTRL        __cip
+					#emit ADD.C        __11_cells
+					#emit LCTRL        __jit_jump
+					#emit PUSH.pri
+					#emit LOAD.pri     sHash
+					#emit SCTRL        __jit_jump
+					#emit SCTRL        __cip
+					#emit STOR.pri     sRet
+				}
+			}
+			case e_COMMAND_FLAG_STR_IS:
+			{
+				Debug_Print5("Command_FastCall: Type STR_IS");
+				if ((sHash = Command_FuncIDX(sHash)) != -1)
+				{
+					sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
+					#emit PUSH         sParams
+					#emit PUSH.S       playerid
+					#emit PUSH.C       __2_cells
+					#emit LCTRL        __cip
+					#emit ADD.C        __11_cells
+					#emit LCTRL        __jit_jump
+					#emit PUSH.pri
+					#emit LOAD.pri     sHash
+					#emit SCTRL        __jit_jump
+					#emit SCTRL        __cip
+					#emit STOR.pri     sRet
+				}
+			}
+			case e_COMMAND_FLAG_STR_S:
+			{
+				Debug_Print5("Command_FastCall: Type STR_S");
+				if ((sHash = Command_FuncIDX(sHash)) != -1)
+				{
+					sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
+					#emit PUSH         sParams
+					#emit PUSH.C       __1_cells
+					#emit LCTRL        __cip
+					#emit ADD.C        __11_cells
+					#emit LCTRL        __jit_jump
+					#emit PUSH.pri
+					#emit LOAD.pri     sHash
+					#emit SCTRL        __jit_jump
+					#emit SCTRL        __cip
+					#emit STOR.pri     sRet
+				}
+			}
+			case e_COMMAND_FLAG_NRM_ISI:
+			{
+				Debug_Print5("Command_FastCall: Type NRM_ISI");
+				#emit PUSH.S       help
+				#emit PUSH         sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __3_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
+			}
+			// Does nothing
+			default:
+			{
+				return COMMAND_UNDEFINED;
+			}
+			}
 		}
 	#if YSIM_HAS_MASTER
-		else
+		else if (sFlags & e_COMMAND_FLAG_DEST == e_COMMAND_FLAG_TYPE_NRM)
 		{
-			Debug_Print5("Commands_OnPlayerCommandText: Remote %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
+			Debug_Print5("Commands_OnPlayerCommandText: Normal %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
 			// This is in another script, or multiple scripts.
 			// Call the command in another script.  If no particular script
 			// is set up as the "master", call it in the first one found...
-			sRet = e_COMMAND_ERRORS:Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>);
-			if (cmdtext[sPos])
-				CallRemoteFunction(YSI_gscCommand_FastCall, YSI_gscISIIIII, playerid, cmdtext[sPos], help & 1, _:sRet, sFlags, sHash, _:sRet == _:MASTER_GET<YSI_g_sCurrentID>);
-			else
-				CallRemoteFunction(YSI_gscCommand_FastCall, YSI_gscISIIIII, playerid, NULL, help & 1, _:sRet, sFlags, sHash, _:sRet == _:MASTER_GET<YSI_g_sCurrentID>);
+			CallRemoteFunction(sCmd, YSI_gscISII, playerid, cmdtext[sPos] ? cmdtext[sPos] : NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>)),
 			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
+		}
+		else switch (sFlags & e_COMMAND_FLAG_ARGS)
+		{
+		case e_COMMAND_FLAG_ARGS_IS:
+		{
+			Debug_Print5("Commands_OnPlayerCommandText: Inline IS %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
+			CallRemoteFunction(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, cmdtext[sPos] ? cmdtext[sPos] : NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash),
+			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
+		}
+		case e_COMMAND_FLAG_ARGS_S
+		{
+			Debug_Print5("Commands_OnPlayerCommandText: Inline S %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
+			CallRemoteFunction(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, cmdtext[sPos] ? cmdtext[sPos] : NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>)),
+			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
+		}
+		case e_COMMAND_FLAG_ARGS_ISI:
+		{
+			Debug_Print5("Commands_OnPlayerCommandText: Inline ISI %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
+			CallRemoteFunction(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, cmdtext[sPos] ? cmdtext[sPos] : NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash),
+			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
+		}
+		default:
+		{
+			return COMMAND_UNDEFINED;
+		}
 		}
 	#endif
 	Debug_Print5("Command_ReProces: Result = %d %d %d", _:sRet, Command_ErrorRet(sRet), _:COMMAND_OK);
@@ -2156,240 +2386,45 @@ native Command_FuncIDX(func) = funcidx;
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
- *   Call a command, by quickly determining its type.
+ *   Call an inline command remotely, with a known type.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock e_COMMAND_ERRORS:Command_FastCall(e_COMMAND_FLAGS:flags, func, playerid, string:params[], bool:help, bool:unique)
+public Command_FastCallS(Func:func<s>, string:params[], master)
 {
-	Debug_Print4("Command_FastCall called: %08x, %08x, %d, \"%s\", %d, %d", _:flags, func, playerid, params, help, unique);
-	#pragma unused params
-	// `params` is NOT `const` here.  This is NOT a mistake.  I mean...
-	// ultimately it IS a mistake, since it is done that way to account for
-	// commands themselves not having `const` parameters.  But beyond that, no.
-	// Only call this in the correct script.
-	switch (flags & e_COMMAND_FLAG_TYPE)
+	if (Master_ID() == master)
 	{
-	case e_COMMAND_FLAG_INL_ISI:
-	{
-		Debug_Print5("Command_FastCall: Type INL_ISI");
-		func = AMX_Read(func + E_INDIRECTION_HANDER__);
-		if (func != YSI_g_sStubPointer)
-		{
-			#emit PUSH.S       help
-			#emit PUSH.S       params
-			#emit PUSH.S       playerid
-			#emit PUSH.C       __3_cells
-			#emit LCTRL        __cip
-			#emit ADD.C        __11_cells
-			#emit LCTRL        __jit_jump
-			#emit PUSH.pri
-			#emit LOAD.S.pri   func
-			#emit SCTRL        __jit_jump
-			#emit SCTRL        __cip
-			#emit RETN
-			// TODO: Proper returns.  I already have master code for this!
-		}
+		setproperty(8, YSIM_RETURN, @.func(params));
 	}
-	case e_COMMAND_FLAG_INL_IS:
-	{
-		Debug_Print5("Command_FastCall: Type INL_IS");
-		func = AMX_Read(func + E_INDIRECTION_HANDER__);
-		if (func != YSI_g_sStubPointer)
-		{
-			#emit PUSH.S       params
-			#emit PUSH.S       playerid
-			#emit PUSH.C       __2_cells
-			#emit LCTRL        __cip
-			#emit ADD.C        __11_cells
-			#emit LCTRL        __jit_jump
-			#emit PUSH.pri
-			#emit LOAD.S.pri   func
-			#emit SCTRL        __jit_jump
-			#emit SCTRL        __cip
-			#emit RETN
-			// TODO: Proper returns.  I already have master code for this!
-		}
-	}
-	case e_COMMAND_FLAG_INL_S:
-	{
-		Debug_Print5("Command_FastCall: Type INL_S");
-		func = AMX_Read(func + E_INDIRECTION_HANDER__);
-		if (func != YSI_g_sStubPointer)
-		{
-			#emit PUSH.S       params
-			#emit PUSH.C       __1_cells
-			#emit LCTRL        __cip
-			#emit ADD.C        __11_cells
-			#emit LCTRL        __jit_jump
-			#emit PUSH.pri
-			#emit LOAD.S.pri   func
-			#emit SCTRL        __jit_jump
-			#emit SCTRL        __cip
-			#emit RETN
-			// TODO: Proper returns.  I already have master code for this!
-		}
-	}
-	case e_COMMAND_FLAG_PTR_ISI:
-	{
-		Debug_Print5("Command_FastCall: Type PTR_ISI");
-		#emit PUSH.S       help
-		#emit PUSH.S       params
-		#emit PUSH.S       playerid
-		#emit PUSH.C       __3_cells
-		#emit LCTRL        __cip
-		#emit ADD.C        __11_cells
-		#emit LCTRL        __jit_jump
-		#emit PUSH.pri
-		#emit LOAD.S.pri   func
-		#emit SCTRL        __jit_jump
-		#emit SCTRL        __cip
-		#emit RETN
-	}
-	case e_COMMAND_FLAG_PTR_IS:
-	{
-		Debug_Print5("Command_FastCall: Type PTR_IS");
-		#emit PUSH.S       params
-		#emit PUSH.S       playerid
-		#emit PUSH.C       __2_cells
-		#emit LCTRL        __cip
-		#emit ADD.C        __11_cells
-		#emit LCTRL        __jit_jump
-		#emit PUSH.pri
-		#emit LOAD.S.pri   func
-		#emit SCTRL        __jit_jump
-		#emit SCTRL        __cip
-		#emit RETN
-	}
-	case e_COMMAND_FLAG_PTR_S:
-	{
-		Debug_Print5("Command_FastCall: Type PTR_S");
-		#emit PUSH.S       params
-		#emit PUSH.C       __1_cells
-		#emit LCTRL        __cip
-		#emit ADD.C        __11_cells
-		#emit LCTRL        __jit_jump
-		#emit PUSH.pri
-		#emit LOAD.S.pri   func
-		#emit SCTRL        __jit_jump
-		#emit SCTRL        __cip
-		#emit RETN
-	}
-	case e_COMMAND_FLAG_STR_ISI:
-	{
-		Debug_Print5("Command_FastCall: Type STR_ISI");
-		if ((func = Command_FuncIDX(func)) != -1)
-		{
-			func = AMX_Read(func * __defsize_cells + AMX_HEADER_PUBLICS);
-			#emit PUSH.S       help
-			#emit PUSH.S       params
-			#emit PUSH.S       playerid
-			#emit PUSH.C       __3_cells
-			#emit LCTRL        __cip
-			#emit ADD.C        __11_cells
-			#emit LCTRL        __jit_jump
-			#emit PUSH.pri
-			#emit LOAD.S.pri   func
-			#emit SCTRL        __jit_jump
-			#emit SCTRL        __cip
-			#emit RETN
-		}
-	}
-	case e_COMMAND_FLAG_STR_IS:
-	{
-		Debug_Print5("Command_FastCall: Type STR_IS");
-		if ((func = Command_FuncIDX(func)) != -1)
-		{
-			func = AMX_Read(func * __defsize_cells + AMX_HEADER_PUBLICS);
-			#emit PUSH.S       params
-			#emit PUSH.S       playerid
-			#emit PUSH.C       __2_cells
-			#emit LCTRL        __cip
-			#emit ADD.C        __11_cells
-			#emit LCTRL        __jit_jump
-			#emit PUSH.pri
-			#emit LOAD.S.pri   func
-			#emit SCTRL        __jit_jump
-			#emit SCTRL        __cip
-			#emit RETN
-		}
-	}
-	case e_COMMAND_FLAG_STR_S:
-	{
-		Debug_Print5("Command_FastCall: Type STR_S");
-		if ((func = Command_FuncIDX(func)) != -1)
-		{
-			func = AMX_Read(func * __defsize_cells + AMX_HEADER_PUBLICS);
-			#emit PUSH.S       params
-			#emit PUSH.C       __1_cells
-			#emit LCTRL        __cip
-			#emit ADD.C        __11_cells
-			#emit LCTRL        __jit_jump
-			#emit PUSH.pri
-			#emit LOAD.S.pri   func
-			#emit SCTRL        __jit_jump
-			#emit SCTRL        __cip
-			#emit RETN
-		}
-	}
-	case e_COMMAND_FLAG_NRM_ISI:
-	{
-		if (unique)
-		{
-			Debug_Print5("Command_FastCall: Type NRM_ISI a");
-			#emit PUSH.S       help
-			#emit PUSH.S       params
-			#emit PUSH.S       playerid
-			#emit PUSH.C       __3_cells
-			#emit LCTRL        __cip
-			#emit ADD.C        __11_cells
-			#emit LCTRL        __jit_jump
-			#emit PUSH.pri
-			#emit LOAD.S.pri   func
-			#emit SCTRL        __jit_jump
-			#emit SCTRL        __cip
-			#emit RETN
-		}
-		else if ((func = Command_FuncIDX(func)) != -1)
-		{
-			Debug_Print5("Command_FastCall: Type NRM_ISI b");
-			func = AMX_Read(func * __defsize_cells + AMX_HEADER_PUBLICS);
-			#emit PUSH.S       help
-			#emit PUSH.S       params
-			#emit PUSH.S       playerid
-			#emit PUSH.C       __3_cells
-			#emit LCTRL        __cip
-			#emit ADD.C        __11_cells
-			#emit LCTRL        __jit_jump
-			#emit PUSH.pri
-			#emit LOAD.S.pri   func
-			#emit SCTRL        __jit_jump
-			#emit SCTRL        __cip
-			#emit RETN
-		}
-		Debug_Code5{else Debug_Print5("Command_FastCall: Type NRM_ISI c");}
-	}
-	// Does nothing
-	default:
-	{
-		return COMMAND_UNDEFINED;
-	}
-	}
-	return COMMAND_ZERO_RET;
 }
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
  * <remarks>
- *   Call a command, by quickly determining its type.
+ *   Call an inline command remotely, with a known type.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-public Command_FastCall__(playerid, string:params[], bool:help, master, e_COMMAND_FLAGS:flags, func, bool:unique)
+public Command_FastCallIS(playerid, string:params[], master, Func:func<is>)
 {
 	if (Master_ID() == master)
 	{
-		setproperty(8, YSIM_RETURN, _:Command_FastCall(flags, func, playerid, params, help, unique));
+		setproperty(8, YSIM_RETURN, @.func(playerid, params));
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <remarks>
+ *   Call an inline command remotely, with a known type.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+public Command_FastCallISI(playerid, string:params[], help, master, Func:func<isi>)
+{
+	if (Master_ID() == master)
+	{
+		setproperty(8, YSIM_RETURN, @.func(playerid, params, help));
 	}
 }
 
