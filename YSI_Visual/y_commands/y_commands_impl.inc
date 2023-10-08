@@ -88,6 +88,7 @@ Optional plugins:
 
 enum e_COMMAND_FLAGS
 {
+	e_COMMAND_FLAG_NONE = 0,
 	e_COMMAND_FLAG_PREFIX = 0xFF,
 	e_COMMAND_FLAG_BITS = 0xFF000000,
 	// Inherit user permissions.
@@ -108,16 +109,16 @@ enum e_COMMAND_FLAGS
 	// this we always need to iterate through the list of inlines to find the
 	// one for this player, then check it is valid.
 	e_COMMAND_FLAG_INLINE = 0x20000000,
-	// The player for whom this variant is defined.  Overlaps earlier data.
-	e_COMMAND_FLAG_PLAYER = 0xFFFF,
+	// A reference to the original command with this name.
+	e_COMMAND_FLAG_PARENT = 0x0FFFFF,
 	// Breakdown of the type specialisations.
-	e_COMMAND_FLAG_ARGS_ISI = 0x00000,
-	e_COMMAND_FLAG_ARGS_IS = 0x10000,
-	e_COMMAND_FLAG_ARGS_S = 0x20000,
-	e_COMMAND_FLAG_TYPE_INL = 0xC0000,
-	e_COMMAND_FLAG_TYPE_PTR = 0x80000,
-	e_COMMAND_FLAG_TYPE_STR = 0x40000,
-	e_COMMAND_FLAG_TYPE_NRM = 0x00000,
+	e_COMMAND_FLAG_ARGS_ISI = 0x000000,
+	e_COMMAND_FLAG_ARGS_IS = 0x100000,
+	e_COMMAND_FLAG_ARGS_S = 0x200000,
+	e_COMMAND_FLAG_TYPE_INL = 0xC00000,
+	e_COMMAND_FLAG_TYPE_PTR = 0x800000,
+	e_COMMAND_FLAG_TYPE_STR = 0x400000,
+	e_COMMAND_FLAG_TYPE_NRM = 0x000000,
 	
 	// If this is set this is a function that only takes a single string
 	// parameter, and is an inline in the current script.  We do this so that we
@@ -141,8 +142,8 @@ enum e_COMMAND_FLAGS
 	// A normal command (actually works out as `0`).
 	e_COMMAND_FLAG_NRM_ISI = e_COMMAND_FLAG_TYPE_NRM | e_COMMAND_FLAG_ARGS_ISI,
 	// Mask for switches.
-	e_COMMAND_FLAG_ARGS = 0x30000,
-	e_COMMAND_FLAG_DEST = 0xC0000,
+	e_COMMAND_FLAG_ARGS = 0x300000,
+	e_COMMAND_FLAG_DEST = 0xC00000,
 	e_COMMAND_FLAG_TYPE = e_COMMAND_FLAG_ARGS | e_COMMAND_FLAG_DEST
 }
 
@@ -173,8 +174,8 @@ enum E_COMMAND_INLINE
 {
 	// The pointer.
 	Func:E_COMMAND_INLINE_POINTER<sii>,
-	// The player that this version is valid for
-	E_COMMAND_INLINE_NEXT,
+	// The script that this callback is in.
+	E_COMMAND_INLINE_MASTER,
 	// Any special flags for this call.  We can use this to slightly optimise
 	// the most common case of call.
 	e_COMMAND_FLAGS:E_COMMAND_INLINE_FLAGS
@@ -224,9 +225,11 @@ static stock
 	YSI_g_sReturnBuffer[YSI_MAX_STRING],
 	YSI_g_sStubPointer,
 	// Quickly reference and store commands by name.
-	HashMap:YSI_g_sCommandMap<>;
+	HashMap:YSI_g_sCommandMap<>,
+	Iterator:YSI_g_sPlayerCommands<MAX_PLAYERS, MAX_COMMANDS>;
 
 static stock __declspec(dist_master) YSI_g_sCommands[MAX_COMMANDS][E_COMMAND];
+static stock __declspec(dist_master) YSI_g_sInlineCommands[MAX_COMMANDS][E_COMMAND_INLINE];
 
 static stock const
 	YSI_gscOPCR[] = "OnPlayerCommandReceived",
@@ -385,7 +388,7 @@ FUNC_PAWNDOC(bool:_Command_IsActive(command));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-//#define _Command_IsValid(%0) ((0 <= (%0) < YSI_g_sHighestID) && _Command_IsActive(%0))
+FUNC_PAWNDOC(bool:_Command_IsValid(command));
 #define _Command_IsValid(%0) (IS_IN_RANGE((%0), 0, MAX_COMMANDS) && _Command_IsActive(%0))
 
 /*-------------------------------------------------------------------------*//**
@@ -763,107 +766,81 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 	// this player can use.
 	for ( ; ; )
 	{
-		#if defined Y_COMMANDS_USE_CHARS
-			// Have a prefix, but not the right one.  Calling this function
-			// directly always works for all possible command prefixes.
-			if (sRet && _Command_GetPrefix(YSI_g_sCurrentID) != cmdtext[0])
-			{
-				if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
-				{
-					return Command_OnReceived(COMMAND_BAD_PREFIX, playerid, cmdtext);
-				}
-				continue;
-			}
-		#endif
+		//#if defined Y_COMMANDS_USE_CHARS
+		//	// Have a prefix, but not the right one.  Calling this function
+		//	// directly always works for all possible command prefixes.
+		//	if (sRet && _Command_GetPrefix(YSI_g_sCurrentID) != cmdtext[0])
+		//	{
+		//		if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
+		//		{
+		//			return Command_OnReceived(COMMAND_BAD_PREFIX, playerid, cmdtext);
+		//		}
+		//		continue;
+		//	}
+		//#endif
 		//Debug_Print5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, playerid));
 		// Can the player use this command?
 		sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER],
 		sFlags = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_FLAGS];
-		if (sFlags & e_COMMAND_FLAG_INLINE)
+		switch (sFlags & (e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INLINE))
 		{
-			// This is an indirect function, defined for a single player.  The
-			// `help & 2` below will override normal permissions to allow you to
-			// call any command for any player, but these commands don't have
-			// permissions, they literally don't exist for other players.
-			if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
-				// There is no command by this name for this player.
-				return Command_OnReceived(COMMAND_UNDEFINED, playerid, cmdtext);
-		}
-		else if (help & 2)
-		{
-			// Permissions are ignored, callbacks aren't.
-			if ((sRet = Command_OnReceived(COMMAND_OK, playerid, cmdtext)) == COMMAND_OK)
-			{
-				// Check if this is an alternate command and get the parent pointer.
-				if (sFlags & e_COMMAND_FLAG_ALT)
-				{
-					YSI_g_sCurrentID = sHash & ~cellmin,
-					sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER];
-				}
-				break;
-			}
-			if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
-				return sRet;
-		}
-		else switch (sFlags & (e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT))
-		{
-		case e_COMMAND_FLAG_DISABLED:
+		case e_COMMAND_FLAG_DISABLED, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INHERIT:
 		{
 			// Disabled primary commands.
-			if ((sRet = Command_OnReceived(COMMAND_DENIED, playerid, cmdtext)) == COMMAND_OK)
+			if ((sRet = Command_OnReceived((help & 2) ? COMMAND_OK : COMMAND_DENIED, playerid, cmdtext)) == COMMAND_OK)
 				break;
-			else if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
-				return sRet;
 		}
 		case e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
 		{
 			// Disabled alternate commands.  We still get the primary as the call
 			// to `Command_OnReceived` may result in it being called.
-			if ((sRet = Command_OnReceived(COMMAND_DENIED, playerid, cmdtext)) == COMMAND_OK)
+			if ((sRet = Command_OnReceived((help & 2) ? COMMAND_OK : COMMAND_DENIED, playerid, cmdtext)) == COMMAND_OK)
 			{
 				YSI_g_sCurrentID = sHash & ~cellmin,
 				sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER];
 				break;
 			}
-			else if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
-				return sRet;
 		}
 		case e_COMMAND_FLAG_ALT:
 		{
 			// Alternate command with its own permissions.
-			sRet = PA_Get(YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_USERS], playerid) ? COMMAND_OK : COMMAND_DENIED;
+			sRet = (help & 2) || PA_Get(YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_USERS], playerid) ? COMMAND_OK : COMMAND_DENIED;
 			if ((sRet = Command_OnReceived(sRet, playerid, cmdtext)) == COMMAND_OK)
 			{
 				YSI_g_sCurrentID = sHash & ~cellmin,
 				sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER];
 				break;
 			}
-			else if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
-				return sRet;
 		}
 		case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
 		{
 			// Alternate command with inherited permissions.
-			sRet = PA_Get(YSI_g_sCommands[sHash & ~cellmin][E_COMMAND_USERS], playerid) ? COMMAND_OK : COMMAND_DENIED;
+			sRet = (help & 2) || PA_Get(YSI_g_sCommands[sHash & ~cellmin][E_COMMAND_USERS], playerid) ? COMMAND_OK : COMMAND_DENIED;
 			if ((sRet = Command_OnReceived(sRet, playerid, cmdtext)) == COMMAND_OK)
 			{
 				YSI_g_sCurrentID = sHash & ~cellmin,
 				sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER];
 				break;
 			}
-			else if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
-				return sRet;
+		}
+		case e_COMMAND_FLAG_INHERIT, e_COMMAND_FLAG_NONE:
+		{
+			// No flags.
+			sRet = (help & 2) || PA_Get(YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_USERS], playerid) ? COMMAND_OK : COMMAND_DENIED;
+			if ((sRet = Command_OnReceived(sRet, playerid, cmdtext)) == COMMAND_OK)
+				break;
 		}
 		default:
 		{
-			// No flags.
-			sRet = PA_Get(YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_USERS], playerid) ? COMMAND_OK : COMMAND_DENIED;
-			if ((sRet = Command_OnReceived(sRet, playerid, cmdtext)) == COMMAND_OK)
-				break;
-			else if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
-				return sRet;
+			// This is an indirect function, defined for a single player.  The
+			// `help & 2` above will override normal permissions to allow you to
+			// call any command for any player, but these commands don't have
+			// permissions, they literally don't exist for other players.
+			sRet = COMMAND_UNDEFINED;
 		}
 		}
+		if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
+			return sRet;
 	}
 	Debug_Print5("Commands_OnPlayerCommandText: Read %d", YSI_g_sCurrentID);
 	Debug_Print5("Commands_OnPlayerCommandText: Master %d %d", Master_ID(), _:MASTER_GET<YSI_g_sCurrentID>);
@@ -1397,6 +1374,91 @@ GLOBAL__ void:Command_SetPlayerNamed(const string:f[],p,bool:s)
 	Command_SetPlayer(Command_Find(f), p, s);
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <param name="cmd">The command name to find.</param>
+ * <param name="playerid">Whose permissions to check or <c>INVALID_PLAYER_ID</c>.</param>
+ * <returns>
+ *   The ID, or <c>ID | cellmin</c> for inline commands, or
+ *   <c>COMMAND_NOT_FOUND</c> if there isn't one.  Returns "true" commands if
+ *   possible, i.e. not alts if both exist.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+static stock Command_Find__(const string:cmd[], playerid)
+{
+	new
+		id,
+		candidate = COMMAND_NOT_FOUND;
+	if (YSI_g_sSystemSettings & e_COMM_FLAG_PUNYCODE)
+	{
+		new
+			encoded[64],
+			hash;
+		Puny_EncodeHash(encoded, cmd, hash, sizeof (encoded), '@'),
+		id = HashMap_GetWithHash(YSI_g_sCommandMap, encoded, hash);
+	}
+	else
+	{
+		id = HashMap_Get(YSI_g_sCommandMap, cmd);
+	}
+	Debug_Print4("Command_Find__ called: %s, %d, %d, %d", cmd, playerid, alts, id);
+	if (id == COMMAND_NOT_FOUND)
+	{
+		return COMMAND_NOT_FOUND;
+	}
+	// Loop through all the commands with this name and find the first one that
+	// this player can use.
+	do
+	{
+		switch (YSI_g_sCommands[id][E_COMMAND_FLAGS] & (e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INLINE))
+		{
+		case e_COMMAND_FLAG_DISABLED, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INHERIT:
+		{
+			// These are only disabled for players, not if we test globally.
+			// `e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INHERIT` should be
+			// invalid, but don't fail this code just in case.
+			if (playerid == INVALID_PLAYER_ID)
+				candidate = id;
+		}
+		case e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
+		{
+			// These are only disabled for players, not if we test globally.
+			if (candidate == COMMAND_NOT_FOUND && playerid == INVALID_PLAYER_ID)
+				candidate = id;
+		}
+		case e_COMMAND_FLAG_ALT:
+		{
+			// Alternate command with its own permissions.
+			if (candidate == COMMAND_NOT_FOUND && (playerid == INVALID_PLAYER_ID || PA_Get(YSI_g_sCommands[id][E_COMMAND_USERS], playerid)))
+				candidate = id;
+		}
+		case e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT:
+		{
+			// Alternate command with inherited permissions.
+			if (candidate == COMMAND_NOT_FOUND && (playerid == INVALID_PLAYER_ID || PA_Get(YSI_g_sCommands[YSI_g_sCommands[id][E_COMMAND_POINTER] & ~cellmin][E_COMMAND_USERS], playerid))
+				candidate = id;
+		}
+		case e_COMMAND_FLAG_INHERIT, e_COMMAND_FLAG_NONE:
+		{
+			// No flags (or only `e_COMMAND_FLAG_INHERIT` on a base command).
+			if (playerid == INVALID_PLAYER_ID || PA_Get(YSI_g_sCommands[id][E_COMMAND_USERS], playerid))
+				candidate = id;
+		}
+		default:
+		{
+			// Anything inline.  Only matters for players.
+			if (candidate == COMMAND_NOT_FOUND && playerid != INVALID_PLAYER_ID && PA_Get(YSI_g_sCommands[id][E_COMMAND_USERS], playerid))
+			{
+				// This player has an inline in the list so find it.  Also there
+				// isn't a better option already.
+			}
+		}
+		}
+	}
+	while ((id = YSI_g_sCommands[id][E_COMMAND_NEXT]) != COMMAND_NOT_FOUND);
+	return candidate;
+}
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
@@ -1660,11 +1722,13 @@ FOREIGN__ void:Command_Remove(func);
 
 GLOBAL__ void:Command_Remove(func)
 {
+	if (!_Command_IsValid(func))
+	{
+		return;
+	}
 	// Step one: Get the name as well.  We need both now.
 	new
-		name[64],
-		hash,
-		start;
+		name[64];
 	strcat(name, YSI_g_sCommands[func][E_COMMAND_NAME]);
 	new
 		hash = BernsteinHash(name),
