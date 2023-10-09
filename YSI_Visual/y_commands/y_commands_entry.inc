@@ -137,6 +137,7 @@ Optional plugins:
 
 #include "..\..\YSI_Coding\y_hooks"
 #include "..\..\YSI_Coding\y_inline"
+#include "..\..\YSI_Coding\y_remote"
 
 // Include the main implementation.
 #include "y_commands_impl"

@@ -2898,6 +2898,28 @@ stock Command_AddCallback(const string:cmd[], playerid, {F@_@s, F@_@is, F@_@isi}
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
+ * <param name="o">The owning entity for EBC callbacks.</param>
+ * <param name="i">The inline itself.</param>
+ * <returns>
+ *   -
+ * </returns>
+ * <remarks>
+ *   This handles the remote cleanup.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+REMOTE_FUNC__ bool:Command_TryRelease__(owner, ptr)
+{
+	if (owner == cellmin || Indirect_GetOwner(ptr) == owner)
+	{
+		Indirect_Release(owner);
+		return true;
+	}
+	return false;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
  * <param name="c">The command name to remove.</param>
  * <param name="p">The player this command is for.</param>
  * <param name="o">The owning entity for EBC callbacks.</param>
@@ -2912,14 +2934,74 @@ stock Command_AddCallback(const string:cmd[], playerid, {F@_@s, F@_@is, F@_@isi}
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Command_RemoveCallback(const string:c[],p,o,i);
+FOREIGN__ Command_RemoveCallback__(const string:c[],p,o,i);
 
-GLOBAL__ Command_RemoveCallback(const string:c[],p,o,i)
+GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
 {
-	if (o == cellmin)
-	{
-		// Easy version.  Specifying the function directly.
-	}
+	// TODO: Use the name!
+	#if YSIM_HAS_MASTER
+		new
+			m = Master_Caller();
+	#endif
+		if (o == cellmin)
+		{
+			if (i == 0)
+			{
+				// Just everything for this player!
+				FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
+				{
+					i = YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER];
+					// Remove it.
+					#if YSIM_HAS_MASTER
+						Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+						TARGET_FUNC__ Command_TryRelease__<YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER]>(cellmin, i);
+					#else
+						Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+						Indirect_Release(i);
+					#endif
+				}
+			}
+			else
+			{
+				FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
+				{
+					if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER] == i)
+					{
+						// Remove it.
+						#if YSIM_HAS_MASTER
+							if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] == m)
+							{
+								Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+								TARGET_FUNC__ Command_TryRelease__<m>(cellmin, i);
+							}
+						#else
+							Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+							Indirect_Release(i);
+						#endif
+					}
+				}
+			}
+		}
+		else
+		{
+			FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
+			{
+				i = YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER];
+				// Remove it.
+				#if YSIM_HAS_MASTER
+					if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] == m && TARGET_FUNC__ Command_TryRelease__<m>(o, i))
+					{
+						Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+					}
+				#else
+					if (Indirect_GetOwner(i) == o)
+					{
+						Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+						Indirect_Release(i);
+					}
+				#endif
+			}
+		}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2937,7 +3019,7 @@ GLOBAL__ Command_RemoveCallback(const string:c[],p,o,i)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Command_RemoveCallback(const string:cmd[], playerid, {_, F@_@s, F@_@is, F@_@isi}:owner = 0, tag = tagof (owner))
+stock Command_RemoveCallback(const string:cmd[], playerid, {_, F@_@s, F@_@is, F@_@isi}:owner = cellmin, tag = tagof (owner))
 {
 	if (tag == tagof (tag)) // tagof (_:)
 	{
