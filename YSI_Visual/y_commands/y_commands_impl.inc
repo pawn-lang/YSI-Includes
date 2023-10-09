@@ -2939,68 +2939,124 @@ FOREIGN__ Command_RemoveCallback__(const string:c[],p,o,i);
 GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
 {
 	// TODO: Use the name!
-	#if YSIM_HAS_MASTER
-		new
-			m = Master_Caller();
-	#endif
-		if (o == cellmin)
+		if (i != 0)
 		{
-			if (i == 0)
-			{
-				// Just everything for this player!
-				FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
-				{
-					i = YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER];
-					// Remove it.
-					#if YSIM_HAS_MASTER
-						Iter_Remove(YSI_g_sPlayerCommands<p>, id);
-						TARGET_FUNC__ Command_TryRelease__<YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER]>(cellmin, i);
-					#else
-						Iter_Remove(YSI_g_sPlayerCommands<p>, id);
-						Indirect_Release(i);
-					#endif
-				}
-			}
-			else
-			{
+			// Given an exact pointer.  Don't worry about anything else, just
+			// remove exactly this one.
+			#if YSIM_HAS_MASTER
+				new
+					m = Master_Caller(),
+			#endif
+				o = COMMAND_NOT_FOUND; // Unknown.
 				FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
 				{
 					if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER] == i)
 					{
-						// Remove it.
+							// Remove it.
 						#if YSIM_HAS_MASTER
+							// We need to check the origin script as well.  It
+							// is possible that two different ones give the same
+							// pointer in their own memory spaces.
 							if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] == m)
 							{
+						#endif
+								o = YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT,
 								Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+						#if YSIM_HAS_MASTER
 								TARGET_FUNC__ Command_TryRelease__<m>(cellmin, i);
 							}
 						#else
-							Iter_Remove(YSI_g_sPlayerCommands<p>, id);
 							Indirect_Release(i);
 						#endif
 					}
 				}
+				if (o != COMMAND_NOT_FOUND)
+				{
+					FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
+					{
+						if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT == o)
+						{
+							// Another command has the same parent.  Don't
+							// remove this player from the list.
+							return;
+						}
+					}
+					PA_Set(YSI_g_sCommands[o][E_COMMAND_USERS], p, false);
+				}
+		}
+		else if (IsNull(c))
+		{
+			// No command specified.  Remove everything for this player.
+			FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
+			{
+				// Remove it.
+				#if YSIM_HAS_MASTER
+					TARGET_FUNC__ Command_TryRelease__<YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER]>(cellmin, YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]),
+				#else
+					Indirect_Release(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]),
+				#endif
+					PA_Set(YSI_g_sCommands[YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT][E_COMMAND_USERS], p, false),
+					Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+			}
+		}
+		else if (o == cellmin)
+		{
+			// No owner specified.  Remove all instances of this command.
+			i = COMMAND_NOT_FOUND; // TODO: Find
+			if (i != COMMAND_NOT_FOUND && PA_Get(YSI_g_sCommands[i][E_COMMAND_USERS], p))
+			{
+				FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
+				{
+					if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT == i)
+					{
+						// Remove it.
+						#if YSIM_HAS_MASTER
+							TARGET_FUNC__ Command_TryRelease__<YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER]>(cellmin, YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]),
+						#else
+							Indirect_Release(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]),
+						#endif
+							Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+					}
+				}
+				PA_Set(YSI_g_sCommands[i][E_COMMAND_USERS], p, false);
 			}
 		}
 		else
 		{
-			FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
-			{
-				i = YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER];
-				// Remove it.
-				#if YSIM_HAS_MASTER
-					if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] == m && TARGET_FUNC__ Command_TryRelease__<m>(o, i))
+			#if YSIM_HAS_MASTER
+				new
+					m = Master_Caller(),
+			#endif
+				i = COMMAND_NOT_FOUND; // TODO: Find
+				if (i != COMMAND_NOT_FOUND && PA_Get(YSI_g_sCommands[i][E_COMMAND_USERS], p))
+				{
+					FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
 					{
-						Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+						#if YSIM_HAS_MASTER
+							if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT == i && YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] == m && TARGET_FUNC__ Command_TryRelease__<m>(o, YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]))
+							{
+								Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+							}
+						#else
+							if (Indirect_GetOwner(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]) == o)
+							{
+								Iter_Remove(YSI_g_sPlayerCommands<p>, id);
+								Indirect_Release(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]);
+							}
+						#endif
 					}
-				#else
-					if (Indirect_GetOwner(i) == o)
+					PA_Set(YSI_g_sCommands[i][E_COMMAND_USERS], p, false);
+					FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
 					{
-						Iter_Remove(YSI_g_sPlayerCommands<p>, id);
-						Indirect_Release(i);
+						if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT == i)
+						{
+							// Another command has the same parent.  Don't
+							// remove this player from the list.
+							return;
+						}
 					}
-				#endif
-			}
+					PA_Set(YSI_g_sCommands[i][E_COMMAND_USERS], p, false);
+				}
 		}
 }
 
