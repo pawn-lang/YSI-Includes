@@ -115,6 +115,8 @@ enum e_COMMAND_FLAGS
 	e_COMMAND_FLAG_ARGS_IS = 0x100000,
 	e_COMMAND_FLAG_ARGS_S = 0x200000,
 	e_COMMAND_FLAG_TYPE_INL = 0xC00000,
+	e_COMMAND_FLAG_TYPE_PTR = 0x800000,
+	e_COMMAND_FLAG_TYPE_STR = 0x400000,
 	e_COMMAND_FLAG_TYPE_NRM = 0x000000,
 	
 	// If this is set this is a function that only takes a single string
@@ -129,6 +131,13 @@ enum e_COMMAND_FLAGS
 	e_COMMAND_FLAG_INL_IS  = e_COMMAND_FLAG_TYPE_INL | e_COMMAND_FLAG_ARGS_IS,
 	e_COMMAND_FLAG_INL_S   = e_COMMAND_FLAG_TYPE_INL | e_COMMAND_FLAG_ARGS_S,
 	// Normal function pointer.
+	e_COMMAND_FLAG_PTR_ISI = e_COMMAND_FLAG_TYPE_PTR | e_COMMAND_FLAG_ARGS_ISI,
+	e_COMMAND_FLAG_PTR_IS  = e_COMMAND_FLAG_TYPE_PTR | e_COMMAND_FLAG_ARGS_IS,
+	e_COMMAND_FLAG_PTR_S   = e_COMMAND_FLAG_TYPE_PTR | e_COMMAND_FLAG_ARGS_S,
+	// String name.
+	e_COMMAND_FLAG_STR_ISI = e_COMMAND_FLAG_TYPE_STR | e_COMMAND_FLAG_ARGS_ISI,
+	e_COMMAND_FLAG_STR_IS  = e_COMMAND_FLAG_TYPE_STR | e_COMMAND_FLAG_ARGS_IS,
+	e_COMMAND_FLAG_STR_S   = e_COMMAND_FLAG_TYPE_STR | e_COMMAND_FLAG_ARGS_S,
 	// A normal command (actually works out as `0`).
 	e_COMMAND_FLAG_NRM_ISI = e_COMMAND_FLAG_TYPE_NRM | e_COMMAND_FLAG_ARGS_ISI,
 	// Mask for switches.
@@ -906,24 +915,176 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			{
 			case e_COMMAND_FLAG_INL_ISI:
 			{
-				Debug_Print5("Command_FastCall: Type INL_ISI %08x %08x", sHash, AMX_Read(sHash - YSI_g_sCodSize));
-				INDIRECTION_DATA = sHash,
-				INDIRECTION_TAG = tagof(tagISI),
-				sRet = Indirect_Call__(Indirect_Meta(), playerid, sParams, help);
+				Debug_Print5("Command_FastCall: Type INL_ISI %08x %08x", sHash, AMX_Read(sHash - YSI_g_sCodSize + E_INDIRECTION_HANDER__));
+				INDIRECTION_DATA = sHash - YSI_g_sCodSize,
+				//INDIRECTION_TAG = tagof(tagISI),
+				sHash = AMX_Read(INDIRECTION_DATA + E_INDIRECTION_HANDER__);
+				if (sHash == YSI_g_sStubPointer)
+				{
+					return COMMAND_UNDEFINED;
+				}
+				{}
+				#emit PUSH.ADR     help
+				#emit PUSH.C       sParams
+				#emit PUSH.ADR     playerid
+				#emit PUSH.C       __3_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
 			}
 			case e_COMMAND_FLAG_INL_IS:
 			{
-				Debug_Print5("Command_FastCall: Type INL_IS %08x %08x", sHash, AMX_Read(sHash - YSI_g_sCodSize));
-				INDIRECTION_DATA = sHash,
-				INDIRECTION_TAG = tagof(tagIS),
-				sRet = Indirect_Call__(Indirect_Meta(), playerid, sParams);
+				Debug_Print5("Command_FastCall: Type INL_IS %08x %08x", sHash, AMX_Read(sHash - YSI_g_sCodSize + E_INDIRECTION_HANDER__));
+				INDIRECTION_DATA = sHash - YSI_g_sCodSize,
+				//INDIRECTION_TAG = tagof(tagIS),
+				sHash = AMX_Read(INDIRECTION_DATA + E_INDIRECTION_HANDER__);
+				if (sHash == YSI_g_sStubPointer)
+				{
+					return COMMAND_UNDEFINED;
+				}
+				{}
+				#emit PUSH.C       sParams
+				#emit PUSH.ADR     playerid
+				#emit PUSH.C       __2_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
 			}
 			case e_COMMAND_FLAG_INL_S:
 			{
-				Debug_Print5("Command_FastCall: Type INL_S %08x %08x", sHash, AMX_Read(sHash - YSI_g_sCodSize));
-				INDIRECTION_DATA = sHash,
-				INDIRECTION_TAG = tagof(tagS),
-				sRet = Indirect_Call__(Indirect_Meta(), sParams);
+				Debug_Print5("Command_FastCall: Type INL_S %08x %08x", sHash, AMX_Read(sHash - YSI_g_sCodSize + E_INDIRECTION_HANDER__));
+				INDIRECTION_DATA = sHash - YSI_g_sCodSize,
+				//INDIRECTION_TAG = tagof(tagS),
+				sHash = AMX_Read(INDIRECTION_DATA + E_INDIRECTION_HANDER__);
+				if (sHash == YSI_g_sStubPointer)
+				{
+					return COMMAND_UNDEFINED;
+				}
+				{}
+				#emit PUSH.C       sParams
+				#emit PUSH.C       __1_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
+			}
+			case e_COMMAND_FLAG_PTR_ISI:
+			{
+				Debug_Print5("Command_FastCall: Type PTR_ISI");
+				#emit PUSH.S       help
+				#emit PUSH.C       sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __3_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
+			}
+			case e_COMMAND_FLAG_PTR_IS:
+			{
+				Debug_Print5("Command_FastCall: Type PTR_IS");
+				#emit PUSH.C       sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __2_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
+			}
+			case e_COMMAND_FLAG_PTR_S:
+			{
+				Debug_Print5("Command_FastCall: Type PTR_S");
+				#emit PUSH.C       sParams
+				#emit PUSH.C       __1_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
+			}
+			case e_COMMAND_FLAG_STR_ISI:
+			{
+				Debug_Print5("Command_FastCall: Type STR_ISI");
+				if ((sHash = Command_FuncIDX(sHash - YSI_g_sCodSize)) == -1)
+				{
+					return COMMAND_UNDEFINED;
+				}
+				sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
+				#emit PUSH.S       help
+				#emit PUSH.C       sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __3_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
+			}
+			case e_COMMAND_FLAG_STR_IS:
+			{
+				Debug_Print5("Command_FastCall: Type STR_IS");
+				if ((sHash = Command_FuncIDX(sHash - YSI_g_sCodSize)) == -1)
+				{
+					return COMMAND_UNDEFINED;
+				}
+				sHash = AMX_Read(sHash * __defsize_cells + AMX_HEADER_PUBLICS);
+				#emit PUSH.C       sParams
+				#emit PUSH.S       playerid
+				#emit PUSH.C       __2_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
+			}
+			case e_COMMAND_FLAG_STR_S:
+			{
+				Debug_Print5("Command_FastCall: Type STR_S");
+				if ((sHash = Command_FuncIDX(sHash - YSI_g_sCodSize)) == -1)
+				{
+					return COMMAND_UNDEFINED;
+				}
+				#emit PUSH.C       sParams
+				#emit PUSH.C       __1_cells
+				#emit LCTRL        __cip
+				#emit ADD.C        __11_cells
+				#emit LCTRL        __jit_jump
+				#emit PUSH.pri
+				#emit LOAD.pri     sHash
+				#emit SCTRL        __jit_jump
+				#emit SCTRL        __cip
+				#emit STOR.pri     sRet
 			}
 			case e_COMMAND_FLAG_NRM_ISI:
 			{
@@ -2709,7 +2870,7 @@ stock Command_AddCallback(const string:cmd[], playerid, {F@_@s, F@_@is, F@_@isi}
 		tagofIS = tagof (tagIS),
 		tagofISI = tagof (tagISI);
 	new
-		e_COMMAND_FLAGS:flags = e_COMMAND_FLAG_TYPE_INL;
+		e_COMMAND_FLAGS:flags = e_COMMAND_FLAG_INLINE;
 	// The compiler really doesn't like `tagof` in `case`.
 	switch (tag)
 	{
@@ -2719,6 +2880,15 @@ stock Command_AddCallback(const string:cmd[], playerid, {F@_@s, F@_@is, F@_@isi}
 		flags |= e_COMMAND_FLAG_ARGS_IS;
 	case tagofISI:
 		flags |= e_COMMAND_FLAG_ARGS_ISI;
+	}
+	switch (Indirect_GetType(ptr))
+	{
+	case 1:
+		flags |= e_COMMAND_FLAG_TYPE_INL;
+	case 2:
+		flags |= e_COMMAND_FLAG_TYPE_STR;
+	case 3:
+		flags |= e_COMMAND_FLAG_TYPE_PTR;
 	}
 	if (Command_AddCallback__(cmd, playerid, _:ptr, _:flags) != COMMAND_NOT_FOUND)
 	{
