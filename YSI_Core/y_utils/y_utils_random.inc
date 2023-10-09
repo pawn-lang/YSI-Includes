@@ -634,7 +634,7 @@ stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius
 	for (sx = 0; sx != sy; ++sx)
 	{
 		randA = RandomFloat(360.0);
-		randD = radius * floatsqrt(RandomFloat(1.0));
+		randD = radius * floatsqroot(RandomFloat(1.0));
 		xs[sx] = randD * floatsin(randA, degrees) + centreX;
 		ys[sx] = randD * floatsin(randA, degrees) + centreY;
 	}
@@ -658,7 +658,7 @@ stock RandomPointsInCircleDistributed(Float:centreX, Float:centreY, Float:radius
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
+stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, &Float:outX, &Float:outY)
 {
 	new Float:minX = centreX - radius, Float:minY = centreY - radius;
 	new Float:maxX = centreX + radius, Float:maxY = centreY + radius;
@@ -690,7 +690,7 @@ stock RandomPointInCircleSampled(Float:centreX, Float:centreY, Float:radius, Flo
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
+stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, &Float:outX, &Float:outY)
 {
 	new Float:randA = RandomFloat(360.0);
 	new Float:randD = RandomFloat(radius);
@@ -714,10 +714,10 @@ stock RandomPointInCircleCentred(Float:centreX, Float:centreY, Float:radius, Flo
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock RandomPointInCircleDistributed(Float:centreX, Float:centreY, Float:radius, Float:outX, Float:outY)
+stock RandomPointInCircleDistributed(Float:centreX, Float:centreY, Float:radius, &Float:outX, &Float:outY)
 {
 	new Float:randA = RandomFloat(360.0);
-	new Float:randD = radius * floatsqrt(RandomFloat(1.0));
+	new Float:randD = radius * floatsqroot(RandomFloat(1.0));
 	outX = randD * floatsin(randA, degrees) + centreX;
 	outY = randD * floatsin(randA, degrees) + centreY;
 }
