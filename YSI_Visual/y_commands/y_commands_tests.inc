@@ -1000,12 +1000,12 @@ YCMD:y_commands_alternativea(playerid, params[], help) = y_commands_enableablea;
 
 @test(.group = "y_commands") y_commands_AddCallback()
 {
+	static
+		var = 0;
 	call OnPlayerConnect(202);
 	call OnPlayerConnect(203);
 	ASSERT_ZE(Command_ReProcess(202, "/inline_cmd_1 200", 0));
 	ASSERT_ZE(Command_ReProcess(203, "/inline_cmd_1 200", 0));
-	static
-		var = 0;
 	inline inline_cmd_1(string:params[])
 	{
 		var += strval(params);
@@ -1016,5 +1016,22 @@ YCMD:y_commands_alternativea(playerid, params[], help) = y_commands_enableablea;
 	ASSERT_NZ(Command_ReProcess(202, "/inline_cmd_1 200", 0));
 	ASSERT_ZE(Command_ReProcess(203, "/inline_cmd_1 200", 0));
 	ASSERT_EQ(var, 200);
+	inline inline_cmd_2(playerid, string:params[], help)
+	{
+		var += playerid;
+		var += strval(params);
+		var += help ? 10 : 11;
+		@return 1;
+	}
+	var = 0;
+	Command_AddCallback("inline_cmd_1", 203, using inline inline_cmd_2);
+	ASSERT_NZ(Command_ReProcess(202, "/inline_cmd_1 200", 0));
+	ASSERT_NZ(Command_ReProcess(203, "/inline_cmd_1 200", 0));
+	ASSERT_EQ(var, 200 + 200 + 11 + 203);
+	var = 0;
+	Command_AddCallback("inline_cmd_1", 202, using inline inline_cmd_2);
+	ASSERT_NZ(Command_ReProcess(202, "/inline_cmd_1 200", 0));
+	ASSERT_NZ(Command_ReProcess(203, "/inline_cmd_1 200", 0));
+	ASSERT_EQ(var, 200 + 11 + 202 + 200 + 11 + 203);
 }
 
