@@ -2934,9 +2934,9 @@ REMOTE_FUNC__ bool:Command_TryRelease__(owner, ptr)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Command_RemoveCallback__(const string:c[],p,o,i);
+FOREIGN__ void:Command_RemoveCallback__(const string:c[],p,o,i);
 
-GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
+GLOBAL__ void:Command_RemoveCallback__(const string:c[],p,o,i)
 {
 	if (i != 0)
 	{
@@ -2944,7 +2944,7 @@ GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
 		// remove exactly this one.
 		#if YSIM_HAS_MASTER
 			new
-				m = Master_Caller(),
+				m = Master_Caller();
 		#endif
 			o = COMMAND_NOT_FOUND; // Unknown.
 			FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
@@ -2956,11 +2956,11 @@ GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
 						// We need to check the origin script as well.  It
 						// is possible that two different ones give the same
 						// pointer in their own memory spaces.
-						if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] == m)
+						if (YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] == Bit:m)
 						{
 					#endif
 							o = YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT,
-							Iter_Remove(YSI_g_sPlayerCommands<p>, id),
+							Iter_Remove(YSI_g_sPlayerCommands<p>, id);
 					#if YSIM_HAS_MASTER
 							TARGET_FUNC__ Command_TryRelease__<m>(cellmin, i);
 						}
@@ -2973,7 +2973,7 @@ GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
 			{
 				FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
 				{
-					if ((YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == o)
+					if ((YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == e_COMMAND_FLAGS:o)
 					{
 						// Another command has the same parent.  Don't
 						// remove this player from the list.
@@ -2990,9 +2990,9 @@ GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
 		{
 			// Remove it.
 			#if YSIM_HAS_MASTER
-				TARGET_FUNC__ Command_TryRelease__<YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER]>(cellmin, YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]),
+				TARGET_FUNC__ Command_TryRelease__<_:YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER]>(cellmin, YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]);
 			#else
-				Indirect_Release(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]),
+				Indirect_Release(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]);
 			#endif
 				PA_Set(YSI_g_sCommands[YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT][E_COMMAND_USERS], p, false),
 				Iter_Remove(YSI_g_sPlayerCommands<p>, id);
@@ -3015,13 +3015,13 @@ GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
 		{
 			FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
 			{
-				if ((YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == i)
+				if ((YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == e_COMMAND_FLAGS:i)
 				{
 					// Remove it.
 					#if YSIM_HAS_MASTER
-						TARGET_FUNC__ Command_TryRelease__<YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER]>(cellmin, YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]),
+						TARGET_FUNC__ Command_TryRelease__<_:YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER]>(cellmin, YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]);
 					#else
-						Indirect_Release(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]),
+						Indirect_Release(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]);
 					#endif
 						Iter_Remove(YSI_g_sPlayerCommands<p>, id);
 				}
@@ -3033,7 +3033,7 @@ GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
 	{
 		#if YSIM_HAS_MASTER
 			new
-				m = Master_Caller(),
+				m = Master_Caller();
 		#endif
 			Puny_EncodeHash(YSI_g_sCommandName, c, i, .delimiter = '@'),
 			i = HashMap_GetWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, i);
@@ -3052,12 +3052,12 @@ GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
 					#if YSIM_HAS_MASTER
 						// Only the originating script can remove a callback
 						// with a specified owner.
-						if ((YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == i && YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] == m && TARGET_FUNC__ Command_TryRelease__<m>(o, YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]))
+						if ((YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == e_COMMAND_FLAGS:i && YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] == Bit:m && TARGET_FUNC__ Command_TryRelease__<m>(o, YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]))
 						{
 							Iter_Remove(YSI_g_sPlayerCommands<p>, id);
 						}
 					#else
-						if ((YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == i && Indirect_GetOwner(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]) == o)
+						if ((YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == e_COMMAND_FLAGS:i && Indirect_GetOwner(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]) == o)
 						{
 							Indirect_Release(YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER]),
 							Iter_Remove(YSI_g_sPlayerCommands<p>, id);
@@ -3066,7 +3066,7 @@ GLOBAL__ Command_RemoveCallback__(const string:c[],p,o,i)
 				}
 				FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
 				{
-					if ((YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == i)
+					if ((YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == e_COMMAND_FLAGS:i)
 					{
 						// Another command has the same parent.  Don't
 						// remove this player from the list.
