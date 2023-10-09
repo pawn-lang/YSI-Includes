@@ -1033,11 +1033,13 @@ YCMD:y_commands_alternativea(playerid, params[], help) = y_commands_enableablea;
 	ASSERT_NZ(Command_ReProcess(202, "/inline_cmd_1 200", 0));
 	ASSERT_NZ(Command_ReProcess(203, "/inline_cmd_1 200", 0));
 	ASSERT_EQ(var, 200 + 11 + 202 + 200 + 11 + 203);
+	Command_AddCallback("inline_cmd_2", 202, using inline inline_cmd_2);
 	Command_RemoveCallback("inline_cmd_1", 202);
 	var = 0;
-	Command_AddCallback("inline_cmd_1", 203, using inline inline_cmd_2);
 	ASSERT_ZE(Command_ReProcess(202, "/inline_cmd_1 200", 0));
 	ASSERT_NZ(Command_ReProcess(203, "/inline_cmd_1 200", 0));
 	ASSERT_EQ(var, 200 + 11 + 203);
+	ASSERT_NZ(Command_ReProcess(202, "/inline_cmd_2 300", 0));
+	ASSERT_EQ(var, 300 + 11 + 202 + 200 + 11 + 203);
 }
 
