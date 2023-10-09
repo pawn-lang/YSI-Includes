@@ -225,6 +225,9 @@ static stock
 	YSI_g_sStubPointer,
 	// Quickly reference and store commands by name.
 	HashMap:YSI_g_sCommandMap<>,
+	// These two MUST be adjacent in memory.
+	YSI_g_sCommandPrefix[4] = { '@', 'y', 'C', '_' },
+	YSI_g_sCommandName[60],
 	Iterator:YSI_g_sPlayerCommands<MAX_PLAYERS, MAX_COMMANDS>;
 
 static stock __declspec(dist_master) YSI_g_sCommands[MAX_COMMANDS][E_COMMAND];
@@ -528,9 +531,6 @@ FOREIGN__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit);
 
 GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 {
-	static
-		sCmd[64];
-
 	if (!_Command_IsValid(oidx) || _Command_IsInline(oidx))
 	{
 		return COMMAND_NOT_FOUND;
@@ -565,15 +565,15 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 	
 	//if (strfind(cmd, "@") == -1)
 	//{
-	//	strpack(sCmd, cmd, cellmax),
+	//	strpack(YSI_g_sCommandName, cmd, cellmax),
 	//	hash = BernsteinHash(cmd);
 	//}
 	//else
-	Puny_EncodeHash(sCmd, cmd, hash, .delimiter = '@'),
-	strpack(sCmd, sCmd, cellmax);
-	Debug_Print5("Command_AddAlt: packed %s, %s", sCmd, cmd);
-	Debug_Print5("Command_AddAlt: unpacked %s, %s", Unpack(sCmd), Unpack(cmd));
-	if (strcmp(sCmd, cmd))
+	Puny_EncodeHash(YSI_g_sCommandName, cmd, hash, .delimiter = '@'),
+	strpack(YSI_g_sCommandName, YSI_g_sCommandName, cellmax);
+	Debug_Print5("Command_AddAlt: packed %s, %s", YSI_g_sCommandName, cmd);
+	Debug_Print5("Command_AddAlt: unpacked %s, %s", Unpack(YSI_g_sCommandName), Unpack(cmd));
+	if (strcmp(YSI_g_sCommandName, cmd))
 	{
 		// There is any punycode command.
 		YSI_g_sSystemSettings |= e_COMM_FLAG_PUNYCODE;
@@ -594,7 +594,7 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 	}
 
 	// Now point this new command at the real (software) command.
-	inherit = bool:HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, hash),
+	inherit = bool:HashMap_GetWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, hash),
 	YSI_g_sCommands[id][E_COMMAND_NEXT] = _:inherit;
 	if (_:inherit != COMMAND_NOT_FOUND)
 	{
@@ -613,12 +613,12 @@ GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 		}
 		while ((_:inherit = YSI_g_sCommands[_:inherit][E_COMMAND_NEXT]) != COMMAND_NOT_FOUND);
 		// Otherwise add us to the linked list of lookups for the name.
-		HashMap_RemoveKeyWithHash(YSI_g_sCommandMap, sCmd, hash);
+		HashMap_RemoveKeyWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, hash);
 	}
 
 	// This is the point at which the slot is marked as in use.  Returning
 	// before this will not remove it from the available list.
-	HashMap_AddWithHash(YSI_g_sCommandMap, sCmd, hash, id),
+	HashMap_AddWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, hash, id),
 	// This sets the prefix even when that feature is disabled, because
 	// there's literally no overhead in doing so.
 	YSI_g_sCommands[id][E_COMMAND_FLAGS] = e_COMMAND_FLAG_ALT | (e_COMMAND_FLAGS:'/') | e_COMMAND_FLAG_NRM_ISI,
@@ -710,7 +710,6 @@ stock Command_AddAlt(oidx, const string:cmd[], bool:inherit = false)
 static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext[], help)
 {
 	static
-		sCmd[64] = "@yC_",
 		sPos = 0,
 		e_COMMAND_ERRORS:sRet = COMMAND_ZERO_RET,
 		sHash = 0,
@@ -747,7 +746,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 	// Get the hashed version of the decoded string, skipping the possible  "/".
 	if (YSI_g_sSystemSettings & e_COMM_FLAG_PUNYCODE)
 	{
-		sPos = Puny_EncodeHash(sCmd[4], cmdtext[_:sRet], sHash, sizeof (sCmd) - 4, '@') + _:sRet;
+		sPos = Puny_EncodeHash(YSI_g_sCommandName, cmdtext[_:sRet], sHash, sizeof (YSI_g_sCommandName), '@') + _:sRet;
 	}
 	else if (sRet)
 	{
@@ -756,7 +755,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 		sHash = 5381;
 		while ((_:sFlags = cmdtext[++sPos]) > ' ')
 		{
-			sCmd[sPos + 3] = _:sFlags,
+			YSI_g_sCommandName[sPos - 1] = _:sFlags,
 			sHash = sHash * 33 ^ _:sFlags;
 		}
 	}
@@ -767,14 +766,14 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 		sHash = 5381;
 		while ((_:sFlags = cmdtext[++sPos]) > ' ')
 		{
-			sCmd[sPos + 4] = _:sFlags,
+			YSI_g_sCommandName[sPos] = _:sFlags,
 			sHash = sHash * 33 ^ _:sFlags;
 		}
 	}
 	while (cmdtext[sPos] == ' ') ++sPos; // Better/slower: ('\0' < cmdtext[sPos] <= ' ').
 	// Find the command in the array.
-	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
-	Debug_Print5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd, sPos, sHash, YSI_g_sCurrentID);
+	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, sHash);
+	Debug_Print5("Commands_OnPlayerCommandText: %s, %d, %d, %d", YSI_g_sCommandName, sPos, sHash, YSI_g_sCurrentID);
 	if (YSI_g_sCurrentID == COMMAND_NOT_FOUND)
 	{
 		return Command_OnReceived(COMMAND_UNDEFINED, playerid, cmdtext);
@@ -1100,10 +1099,12 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			// This is in another script, or multiple scripts.
 			// Call the command in another script.  If no particular script
 			// is set up as the "master", call it in the first one found...
+			// Using `YSI_g_sCommandPrefix` here has a buffer overflow in to
+			// `YSI_g_sCommandName`, which is what we want.
 			if (cmdtext[sPos])
-				CallRemoteFunction(sCmd, YSI_gscISII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				CallRemoteFunction(YSI_g_sCommandPrefix, YSI_gscISII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			else
-				CallRemoteFunction(sCmd, YSI_gscISII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				CallRemoteFunction(YSI_g_sCommandPrefix, YSI_gscISII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		else switch (sFlags & e_COMMAND_FLAG_ARGS)
@@ -1519,16 +1520,15 @@ GLOBAL__ Command_Find(const string:cmd[])
 {
 	Debug_Print2("Command_Find called: %s", cmd);
 	static
-		sCmd[64] = "",
 		sHash = 0;
 
-	Puny_EncodeHash(sCmd, cmd, sHash, .delimiter = '@');
-	Debug_Print5("Command_Find: hash %s, %d, %d", sCmd, sHash, BernsteinHash(cmd));
+	Puny_EncodeHash(YSI_g_sCommandName, cmd, sHash, .delimiter = '@');
+	Debug_Print5("Command_Find: hash %s, %d, %d", YSI_g_sCommandName, sHash, BernsteinHash(cmd));
 	//printf("Command_Find: hash 1, %d", BernsteinHash(cmd));
 	//printf("Command_Find: hash 2, %d", sHash);
 
-	Debug_Print5("Command_Find: return %d", HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash));
-	return HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash);
+	Debug_Print5("Command_Find: return %d", HashMap_GetWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, sHash));
+	return HashMap_GetWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, sHash);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2725,7 +2725,85 @@ FOREIGN__ Command_AddCallback__(const string:c[],p,i,f);
 
 GLOBAL__ Command_AddCallback__(const string:c[],p,i,f)
 {
+	new
+		hash,
+		id = Iter_Alloc(YSI_g_sPlayerCommands<p>);
+	if (id == INVALID_ITERATOR_SLOT)
+	{
+		Debug_Error("Could not add inline command to array.");
+		return COMMAND_NOT_FOUND;
+	}
 	
+	Puny_EncodeHash(YSI_g_sCommandName, c, hash, .delimiter = '@'),
+	strpack(YSI_g_sCommandName, YSI_g_sCommandName, cellmax);
+	Debug_Print5("Command_AddCallback: packed %s, %s", YSI_g_sCommandName, c);
+	Debug_Print5("Command_AddCallback: unpacked %s, %s", Unpack(YSI_g_sCommandName), Unpack(c));
+	
+	// Check if there is already an inline entry point for this command.
+	new
+		parent = HashMap_GetWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, hash),
+		tmp = parent;
+	while (parent != COMMAND_NOT_FOUND)
+	{
+		if (YSI_g_sCommands[parent][E_COMMAND_FLAGS] & e_COMMAND_FLAG_INLINE)
+		{
+			break;
+		}
+		parent = YSI_g_sCommands[parent][E_COMMAND_NEXT];
+	}
+	if (parent == COMMAND_NOT_FOUND)
+	{
+		if ((parent = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
+		{
+			Debug_Error("Could not add inline command to array.");
+			return COMMAND_NOT_FOUND;
+		}
+		if ((YSI_g_sCommands[parent][E_COMMAND_NEXT] = tmp) != COMMAND_NOT_FOUND)
+		{
+			HashMap_RemoveKeyWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, hash);
+		}
+		if (strcmp(YSI_g_sCommandName, c))
+		{
+			// There is any punycode command.
+			YSI_g_sSystemSettings |= e_COMM_FLAG_PUNYCODE;
+		}
+		HashMap_AddWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, hash, parent),
+		// This sets the prefix even when that feature is disabled, because
+		// there's literally no overhead in doing so.
+		YSI_g_sCommands[parent][E_COMMAND_FLAGS] = e_COMMAND_FLAG_INLINE | (e_COMMAND_FLAGS:'/'),
+		// Save the new highest ID for loops later.
+		YSI_g_sHighestID = max(YSI_g_sHighestID, parent + 1),
+		PA_FastInit(YSI_g_sCommands[parent][E_COMMAND_USERS]);
+		NO_GROUPS<Command>(parent)
+		{
+			PA_Init(YSI_g_sCommands[parent][E_COMMAND_USERS], false);
+		}
+	}
+	
+	FOREACH__ (tmp : YSI_g_sPlayerCommands<p>)
+	{
+		if ((YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == (e_COMMAND_FLAGS:parent))
+		{
+			if (tmp != id)
+			{
+				// This is a different inline with the same parent, but comes
+				// before our new one.  Swap everything.  We haven't actually
+				// set the new command's data yet, so only need to move.
+				YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER] = YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_POINTER],
+				YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] = YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_MASTER],
+				YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] = YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_FLAGS],
+				id = tmp;
+			}
+			break;
+		}
+	}
+	
+	return
+		PA_Set(YSI_g_sCommands[parent][E_COMMAND_USERS], p, true),
+		YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER] = i,
+		YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] = Bit:Master_Caller(),
+		YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] = e_COMMAND_FLAGS:(f | parent),
+		parent;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2752,15 +2830,15 @@ stock Command_AddCallback(const string:cmd[], playerid, {F@_@s, F@_@is, F@_@isi}
 		Func:tagIS<is>,
 		Func:tagISI<isi>;
 	new
-		e_COMMAND_FLAGS:flags = e_COMMAND_FLAG_NONE;
+		e_COMMAND_FLAGS:flags = e_COMMAND_FLAG_INLINE;
 	switch (tag)
 	{
 	case (tagof (tagS)):
-		flags = e_COMMAND_FLAG_ARGS_S;
+		flags |= e_COMMAND_FLAG_ARGS_S;
 	case (tagof (tagIS)):
-		flags = e_COMMAND_FLAG_ARGS_IS;
+		flags |= e_COMMAND_FLAG_ARGS_IS;
 	case (tagof (tagISI)):
-		flags = e_COMMAND_FLAG_ARGS_ISI;
+		flags |= e_COMMAND_FLAG_ARGS_ISI;
 	}
 	switch (Indirect_GetType(ptr))
 	{
