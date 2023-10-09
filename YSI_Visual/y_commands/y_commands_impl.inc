@@ -2898,6 +2898,66 @@ stock Command_AddCallback(const string:cmd[], playerid, {F@_@s, F@_@is, F@_@isi}
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
+ * <param name="c">The command name to remove.</param>
+ * <param name="p">The player this command is for.</param>
+ * <param name="o">The owning entity for EBC callbacks.</param>
+ * <param name="i">The inline itself.</param>
+ * <returns>
+ *   -
+ * </returns>
+ * <remarks>
+ *   We need to call in to the owning script for each candidate because the
+ *   allocated memory is there.  They will return whether this should be
+ *   removed and do the local memory deallocation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FOREIGN__ Command_RemoveCallback(const string:c[],p,o,i);
+
+GLOBAL__ Command_RemoveCallback(const string:c[],p,o,i)
+{
+	if (o == cellmin)
+	{
+		// Easy version.  Specifying the function directly.
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <param name="cmd">The command name to remove.</param>
+ * <param name="playerid">The player this command is for.</param>
+ * <param name="owner">The owning entity for EBC callbacks.</param>
+ * <returns>
+ *   -
+ * </returns>
+ * <remarks>
+ *   We need to call in to the owning script for each candidate because the
+ *   allocated memory is there.  They will return whether this should be
+ *   removed and do the local memory deallocation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Command_RemoveCallback(const string:cmd[], playerid, {_, F@_@s, F@_@is, F@_@isi}:owner = 0, tag = tagof (owner))
+{
+	if (tag == tagof (tag)) // tagof (_:)
+	{
+		// A specified owner, not a function.
+		// A pointer of `0` should in theory be a valid inline function, but
+		// points to the start of COD where the public return code is, so we
+		// assume it isn't a valid pointer.  Plus `owner` isn't `cellmin`.
+		Command_RemoveCallback__(cmd, playerid, owner, 0);
+	}
+	else
+	{
+		// Much simpler - we only need to find an exact matching function.  We
+		// use `cellmin` because that bit can never be set by an owner - it is
+		// reserved by `indirection.inc`.
+		Command_RemoveCallback__(cmd, playerid, cellmin, owner);
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
  * <param name="cmd">The command name to add.</param>
  * <param name="ptr">The command's pointer.</param>
  * <returns>

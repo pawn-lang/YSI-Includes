@@ -82,7 +82,9 @@ Optional plugins:
 #undef EBC
 
 // The true definition which relies on a better compiler.
-#define EBC(%0,%1) (%1)$(Inline_EBC__(_:(%0),_:tagof(%0)))
+#define EBC(%0) Inline_EBC__(_:(%0),_:tagof(%0))
+
+#define Inline_EBC__(_:(%0,%1),_:tagof(%0,%1)) (%1)$(Inline_EBC__(_:(%0),_:tagof(%0)))
 
 // Common EBC tags.
 __COMPILER_TAG_DATA(Vehicle, INVALID_VEHICLE_ID);
