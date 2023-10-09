@@ -1009,6 +1009,7 @@ YCMD:y_commands_alternativea(playerid, params[], help) = y_commands_enableablea;
 	inline inline_cmd_1(string:params[])
 	{
 		var += strval(params);
+		@return 1;
 	}
 	var = 0;
 	Command_AddCallback("inline_cmd_1", 202, using inline inline_cmd_1);
