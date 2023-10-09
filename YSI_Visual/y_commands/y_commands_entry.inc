@@ -136,6 +136,7 @@ Optional plugins:
 #endif
 
 #include "..\..\YSI_Coding\y_hooks"
+#include "..\..\YSI_Coding\y_inline"
 
 // Include the main implementation.
 #include "y_commands_impl"

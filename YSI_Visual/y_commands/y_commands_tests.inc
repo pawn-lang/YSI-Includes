@@ -998,3 +998,22 @@ YCMD:y_commands_alternativea(playerid, params[], help) = y_commands_enableablea;
 	ASSERT_SAME(str, "y_commands_alternativeb");
 }
 
+@test(.group = "y_commands") y_commands_AddCallback()
+{
+	call OnPlayerConnect(202);
+	call OnPlayerConnect(203);
+	ASSERT_ZE(Command_ReProcess(202, "/inline_cmd_1 200", 0));
+	ASSERT_ZE(Command_ReProcess(203, "/inline_cmd_1 200", 0));
+	static
+		var = 0;
+	inline inline_cmd_1(string:params[])
+	{
+		var += strval(params);
+	}
+	var = 0;
+	Command_AddCallback("inline_cmd_1", 202, using inline inline_cmd_1);
+	ASSERT_NZ(Command_ReProcess(202, "/inline_cmd_1 200", 0));
+	ASSERT_ZE(Command_ReProcess(203, "/inline_cmd_1 200", 0));
+	ASSERT_EQ(var, 200);
+}
+

@@ -218,6 +218,7 @@ static stock __declspec(distributed) YSI_g_sErrorMessages[e_COMMAND_ERRORS][144]
 static stock __declspec(dist_special) PlayerArray:YSI_g_sDisabledPlayers<MAX_PLAYERS>;
 
 static stock
+	YSI_g_sCodSize = 0,
 	YSI_g_sCurrentID = COMMAND_NOT_FOUND,
 	BitArray:YSI_g_sPrefixes<128>,
 	YSI_g_sHighestID = 0,
@@ -531,6 +532,7 @@ FOREIGN__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit);
 
 GLOBAL__ Command_AddAlt__(oidx, const string:cmd[], bool:inherit)
 {
+	Debug_Print2("Command_AddAlt called: %d, %s, %d", oidx, cmd, inherit);
 	if (!_Command_IsValid(oidx) || _Command_IsInline(oidx))
 	{
 		return COMMAND_NOT_FOUND;
@@ -862,6 +864,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 						// Fake the master data so that the correct script is used.
 						YSI_g_sMasterData[YSI_g_sCurrentID] = YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_MASTER],
 					#endif
+						sFlags = _:YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_FLAGS],
 						sHash = _:YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_POINTER],
 						sRet = COMMAND_OK;
 						break;
@@ -905,8 +908,9 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			{
 			case e_COMMAND_FLAG_INL_ISI:
 			{
-				Debug_Print5("Command_FastCall: Type INL_ISI");
-				sHash = AMX_Read(sHash + E_INDIRECTION_HANDER__);
+				Debug_Print5("Command_FastCall: Type INL_ISI %08x %08x", sHash, AMX_Read(sHash - YSI_g_sCodSize + E_INDIRECTION_HANDER__));
+				INDIRECTION_DATA = sHash - YSI_g_sCodSize,
+				sHash = AMX_Read(sHash - YSI_g_sCodSize + E_INDIRECTION_HANDER__);
 				if (sHash == YSI_g_sStubPointer)
 				{
 					return COMMAND_UNDEFINED;
@@ -927,8 +931,9 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			}
 			case e_COMMAND_FLAG_INL_IS:
 			{
-				Debug_Print5("Command_FastCall: Type INL_IS");
-				sHash = AMX_Read(sHash + E_INDIRECTION_HANDER__);
+				Debug_Print5("Command_FastCall: Type INL_IS %08x %08x", sHash, AMX_Read(sHash - YSI_g_sCodSize + E_INDIRECTION_HANDER__));
+				INDIRECTION_DATA = sHash - YSI_g_sCodSize,
+				sHash = AMX_Read(sHash - YSI_g_sCodSize + E_INDIRECTION_HANDER__);
 				if (sHash == YSI_g_sStubPointer)
 				{
 					return COMMAND_UNDEFINED;
@@ -948,8 +953,9 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			}
 			case e_COMMAND_FLAG_INL_S:
 			{
-				Debug_Print5("Command_FastCall: Type INL_S");
-				sHash = AMX_Read(sHash + E_INDIRECTION_HANDER__);
+				Debug_Print5("Command_FastCall: Type INL_S %08x %08x", sHash, AMX_Read(sHash - YSI_g_sCodSize + E_INDIRECTION_HANDER__));
+				INDIRECTION_DATA = sHash - YSI_g_sCodSize,
+				sHash = AMX_Read(sHash - YSI_g_sCodSize + E_INDIRECTION_HANDER__);
 				if (sHash == YSI_g_sStubPointer)
 				{
 					return COMMAND_UNDEFINED;
@@ -1013,7 +1019,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			case e_COMMAND_FLAG_STR_ISI:
 			{
 				Debug_Print5("Command_FastCall: Type STR_ISI");
-				if ((sHash = Command_FuncIDX(sHash)) == -1)
+				if ((sHash = Command_FuncIDX(sHash - YSI_g_sCodSize)) == -1)
 				{
 					return COMMAND_UNDEFINED;
 				}
@@ -1034,7 +1040,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			case e_COMMAND_FLAG_STR_IS:
 			{
 				Debug_Print5("Command_FastCall: Type STR_IS");
-				if ((sHash = Command_FuncIDX(sHash)) == -1)
+				if ((sHash = Command_FuncIDX(sHash - YSI_g_sCodSize)) == -1)
 				{
 					return COMMAND_UNDEFINED;
 				}
@@ -1054,7 +1060,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			case e_COMMAND_FLAG_STR_S:
 			{
 				Debug_Print5("Command_FastCall: Type STR_S");
-				if ((sHash = Command_FuncIDX(sHash)) == -1)
+				if ((sHash = Command_FuncIDX(sHash - YSI_g_sCodSize)) == -1)
 				{
 					return COMMAND_UNDEFINED;
 				}
@@ -2450,6 +2456,14 @@ HOOK__ OnYSIInit()
 	}
 	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
+	if (!YSI_g_sCodSize)
+	{
+		AddressofResolve();
+		new
+			amxhdr[AMX_HDR];
+		GetAmxHeader(amxhdr);
+		YSI_g_sCodSize = amxhdr[AMX_HDR_DAT] - amxhdr[AMX_HDR_COD];
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2725,6 +2739,7 @@ FOREIGN__ Command_AddCallback__(const string:c[],p,i,f);
 
 GLOBAL__ Command_AddCallback__(const string:c[],p,i,f)
 {
+	Debug_Print2("Command_AddCallback called: %s, %d, %08x, %d", c, p, i, f);
 	new
 		hash,
 		id = Iter_Alloc(YSI_g_sPlayerCommands<p>);
@@ -2753,6 +2768,7 @@ GLOBAL__ Command_AddCallback__(const string:c[],p,i,f)
 	}
 	if (parent == COMMAND_NOT_FOUND)
 	{
+		Debug_Print5("Command_AddCallback: New command name");
 		if ((parent = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
 		{
 			Debug_Error("Could not add inline command to array.");
@@ -2780,24 +2796,30 @@ GLOBAL__ Command_AddCallback__(const string:c[],p,i,f)
 		}
 	}
 	
-	FOREACH__ (tmp : YSI_g_sPlayerCommands<p>)
+	// Check if they already have an inline command with this name.
+	if (PA_Get(YSI_g_sCommands[parent][E_COMMAND_USERS], p))
 	{
-		if ((YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == (e_COMMAND_FLAGS:parent))
+		Debug_Print5("Command_AddCallback: Has existing command");
+		FOREACH__ (tmp : YSI_g_sPlayerCommands<p>)
 		{
-			if (tmp != id)
+			if ((YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == (e_COMMAND_FLAGS:parent))
 			{
-				// This is a different inline with the same parent, but comes
-				// before our new one.  Swap everything.  We haven't actually
-				// set the new command's data yet, so only need to move.
-				YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER] = YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_POINTER],
-				YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] = YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_MASTER],
-				YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] = YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_FLAGS],
-				id = tmp;
+				if (tmp != id)
+				{
+					// This is a different inline with the same parent, but comes
+					// before our new one.  Swap everything.  We haven't actually
+					// set the new command's data yet, so only need to move.
+					YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER] = YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_POINTER],
+					YSI_g_sInlineCommands[id][E_COMMAND_INLINE_MASTER] = YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_MASTER],
+					YSI_g_sInlineCommands[id][E_COMMAND_INLINE_FLAGS] = YSI_g_sInlineCommands[tmp][E_COMMAND_INLINE_FLAGS],
+					id = tmp;
+				}
+				break;
 			}
-			break;
 		}
 	}
 	
+	Debug_Print5("Command_AddCallback: return %d, %d, %d, %d", parent, id, _:Master_Caller(), _:(f | parent));
 	return
 		PA_Set(YSI_g_sCommands[parent][E_COMMAND_USERS], p, true),
 		YSI_g_sInlineCommands[id][E_COMMAND_INLINE_POINTER] = i,
@@ -2826,18 +2848,26 @@ stock Command_AddCallback(const string:cmd[], playerid, {F@_@s, F@_@is, F@_@isi}
 	// This code is done locally because the inline may always reside in local
 	// assigned memory.
 	const
-		Func:tagS<s>,
-		Func:tagIS<is>,
-		Func:tagISI<isi>;
+		Func:tagS<s> = Func:0<s>,
+		Func:tagIS<is> = Func:0<is>,
+		Func:tagISI<isi> = Func:0<isi>;
+	// Apparently being using in `tagof` doesn't mark them as used (which is
+	// somewhat understandable, that's usually a mistake).
+	#pragma unused tagS, tagIS, tagISI
+	const
+		tagofS = tagof (tagS),
+		tagofIS = tagof (tagIS),
+		tagofISI = tagof (tagISI);
 	new
 		e_COMMAND_FLAGS:flags = e_COMMAND_FLAG_INLINE;
+	// The compiler really doesn't like `tagof` in `case`.
 	switch (tag)
 	{
-	case (tagof (tagS)):
+	case tagofS:
 		flags |= e_COMMAND_FLAG_ARGS_S;
-	case (tagof (tagIS)):
+	case tagofIS:
 		flags |= e_COMMAND_FLAG_ARGS_IS;
-	case (tagof (tagISI)):
+	case tagofISI:
 		flags |= e_COMMAND_FLAG_ARGS_ISI;
 	}
 	switch (Indirect_GetType(ptr))

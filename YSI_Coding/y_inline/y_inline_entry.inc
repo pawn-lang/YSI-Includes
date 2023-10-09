@@ -98,8 +98,8 @@ CHAIN_HOOK(Inline)
 #if defined YSI_TESTS
 	#include "..\y_hooks"
 	//#include "..\..\YSI_Extra\y_inline_bcrypt"
-	#include "..\..\YSI_Extra\y_inline_mysql"
-	#include "..\..\YSI_Extra\y_inline_requests"
+	//#include "..\..\YSI_Extra\y_inline_mysql"
+	//#include "..\..\YSI_Extra\y_inline_requests"
 	#include "..\..\YSI_Extra\y_inline_timers"
 	#include "y_inline_tests"
 #endif
