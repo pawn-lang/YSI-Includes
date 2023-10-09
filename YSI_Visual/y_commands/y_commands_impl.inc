@@ -871,7 +871,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 						// Fake the master data so that the correct script is used.
 						YSI_g_sMasterData[YSI_g_sCurrentID] = YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_MASTER],
 					#endif
-						sFlags = _:YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_FLAGS],
+						sFlags = YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_FLAGS],
 						sHash = _:YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_POINTER],
 						sRet = COMMAND_OK;
 						break;
