@@ -223,7 +223,6 @@ static stock
 	BitArray:YSI_g_sPrefixes<128>,
 	YSI_g_sHighestID = 0,
 	YSI_g_sReturnBuffer[YSI_MAX_STRING],
-	YSI_g_sStubPointer,
 	// Quickly reference and store commands by name.
 	HashMap:YSI_g_sCommandMap<>,
 	// These two MUST be adjacent in memory.
@@ -864,21 +863,58 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			sRet = COMMAND_UNDEFINED;
 			FOREACH__ (sHash : YSI_g_sPlayerCommands<playerid>)
 			{
-				if (_:(YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_FLAGS] & e_COMMAND_FLAG_PARENT) == YSI_g_sCurrentID)
+				sFlags = YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_FLAGS];
+				if (_:(sFlags & e_COMMAND_FLAG_PARENT) == YSI_g_sCurrentID)
 				{
+						sRet = e_COMMAND_FLAGS:YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_POINTER];
 						// Found it.
 					#if YSIM_HAS_MASTER
 						// Fake the master data so that the correct script is used.
-						YSI_g_sMasterData[YSI_g_sCurrentID] = YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_MASTER],
+						YSI_g_sMasterData[YSI_g_sCurrentID] = YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_MASTER];
+						if (MASTER_EXCLUSIVE<YSI_g_sCurrentID>)
 					#endif
-						sFlags = YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_FLAGS],
-						sHash = _:YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_POINTER],
-						sRet = COMMAND_OK;
-						break;
+						{
+							if (Indirect_IsValid(_:sRet))
+							{
+								sHash = _:sRet,
+								sRet = COMMAND_OK;
+								break;
+							}
+							else
+							{
+								// Release any dangling pointers.
+								Indirect_Release(_:sRet),
+								Iter_Remove(YSI_g_sPlayerCommands<playerid>, sHash),
+								sRet = COMMAND_DENIED;
+							}
+						}
+					#if YSIM_HAS_MASTER
+						else
+						{
+							if (TARGET_FUNC__ Command_TryRelease__<YSI_g_sMasterData[YSI_g_sCurrentID]>(-1, _:sRet))
+							{
+								// Release any dangling pointers.
+								Iter_Remove(YSI_g_sPlayerCommands<playerid>, sHash),
+								sRet = COMMAND_DENIED;
+							}
+							else
+							{
+								sHash = _:sRet,
+								sRet = COMMAND_OK;
+								break;
+							}
+						}
+					#endif
 				}
 			}
 			// We must confirm that the command was actually found first.
-			if (sRet == COMMAND_OK && (sRet = Command_OnReceived(COMMAND_OK, playerid, cmdtext)) == COMMAND_OK)
+			if (sRet == COMMAND_DENIED)
+			{
+				// A command was removed, and no alternative was found.
+				PA_Set(YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_USERS], playerid, false),
+				sRet = COMMAND_UNDEFINED;
+			}
+			else if (sRet == COMMAND_OK && (sRet = Command_OnReceived(COMMAND_OK, playerid, cmdtext)) == COMMAND_OK)
 				break;
 		}
 		}
@@ -919,11 +955,6 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 				INDIRECTION_DATA = sHash - YSI_g_sCodSize,
 				//INDIRECTION_TAG = tagof(tagISI),
 				sHash = AMX_Read(INDIRECTION_DATA + E_INDIRECTION_HANDER__);
-				if (sHash == YSI_g_sStubPointer)
-				{
-					return COMMAND_UNDEFINED;
-				}
-				{}
 				#emit PUSH.ADR     help
 				#emit PUSH.C       sParams
 				#emit PUSH.ADR     playerid
@@ -943,11 +974,6 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 				INDIRECTION_DATA = sHash - YSI_g_sCodSize,
 				//INDIRECTION_TAG = tagof(tagIS),
 				sHash = AMX_Read(INDIRECTION_DATA + E_INDIRECTION_HANDER__);
-				if (sHash == YSI_g_sStubPointer)
-				{
-					return COMMAND_UNDEFINED;
-				}
-				{}
 				#emit PUSH.C       sParams
 				#emit PUSH.ADR     playerid
 				#emit PUSH.C       __2_cells
@@ -966,11 +992,6 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 				INDIRECTION_DATA = sHash - YSI_g_sCodSize,
 				//INDIRECTION_TAG = tagof(tagS),
 				sHash = AMX_Read(INDIRECTION_DATA + E_INDIRECTION_HANDER__);
-				if (sHash == YSI_g_sStubPointer)
-				{
-					return COMMAND_UNDEFINED;
-				}
-				{}
 				#emit PUSH.C       sParams
 				#emit PUSH.C       __1_cells
 				#emit LCTRL        __cip
@@ -2427,7 +2448,6 @@ HOOK__ OnYSIInit()
 {
 	Debug_Print1("Command_OnYSIInit called");
 	// Cache the pointer for faster checks later.
-	YSI_g_sStubPointer = Indirect_GetStubPointer();
 	YSI_g_sSystemSettings = e_SYSTEM_SETTINGS:((1 << _:COMMAND_OK - 1) | (1 << _:COMMAND_SILENT - 1));
 	#if YSIM_NOT_CLIENT
 		#if defined Y_COMMANDS_USE_CHARS
@@ -2910,7 +2930,7 @@ stock Command_AddCallback(const string:cmd[], playerid, {F@_@s, F@_@is, F@_@isi}
 
 REMOTE_FUNC__ bool:Command_TryRelease__(owner, ptr)
 {
-	if (owner == cellmin || Indirect_GetOwner(ptr) == owner)
+	if (owner == cellmin || Indirect_GetOwner(ptr) == owner || !Indirect_IsValid(ptr))
 	{
 		Indirect_Release(owner);
 		return true;
