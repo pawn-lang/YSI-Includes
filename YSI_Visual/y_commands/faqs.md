@@ -62,7 +62,7 @@ CMD:arrest(playerid, params[])
 	new targetid;
 	if (sscanf(params, "u", targetid) || targetid == INVALID_PLAYER_ID)
 		return SendClientMessage(playerid, COLOUR_FAILURE, "Could not find the target!");
-	// Put them in jail.
+	// Put them in gaol.
 	SetPlayerPos(targetid, 1084.3, 2250.6, 503.4);
 	SendClientMessage(playerid, COLOUR_GREETING, "Player arrested!");
 	SendClientMessage(targetid, COLOUR_GREETING, "You were arrested!");
@@ -92,7 +92,7 @@ CMD:arrest(playerid, params[])
 	new targetid;
 	if (sscanf(params, "u", targetid) || targetid == INVALID_PLAYER_ID)
 		return SendClientMessage(playerid, COLOUR_FAILURE, "Could not find the target!");
-	// Put them in jail.
+	// Put them in gaol.
 	SetPlayerPos(targetid, 1084.3, 2250.6, 503.4);
 	SendClientMessage(playerid, COLOUR_GREETING, "Player arrested!");
 	SendClientMessage(targetid, COLOUR_GREETING, "You were arrested!");
@@ -126,7 +126,7 @@ YCMD:arrest(playerid, params[], help)
 	new targetid;
 	if (sscanf(params, "u", targetid) || targetid == INVALID_PLAYER_ID)
 		return SendClientMessage(playerid, COLOUR_FAILURE, "Could not find the target!");
-	// Put them in jail.
+	// Put them in gaol.
 	SetPlayerPos(targetid, 1084.3, 2250.6, 503.4);
 	SendClientMessage(playerid, COLOUR_GREETING, "Player arrested!");
 	SendClientMessage(targetid, COLOUR_GREETING, "You were arrested!");
@@ -168,7 +168,7 @@ The correct way to handle this, with y_commands, ZCMD, or just any other code at
 ```pawn
 DoArrest(playerid, targetid)
 {
-	// Put them in jail.
+	// Put them in gaol.
 	SetPlayerPos(targetid, 1084.3, 2250.6, 503.4);
 	SendClientMessage(playerid, COLOUR_GREETING, "Player arrested!");
 	SendClientMessage(targetid, COLOUR_GREETING, "You were arrested!");

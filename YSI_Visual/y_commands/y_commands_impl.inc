@@ -2938,8 +2938,11 @@ FOREIGN__ void:Command_RemoveCallback__(const string:c[],p,o,i);
 
 GLOBAL__ void:Command_RemoveCallback__(const string:c[],p,o,i)
 {
+	Debug_Print2("Command_RemoveCallback called: %s, %d, %d, %08x", c, p, o, i);
+	// TODO: I need to 
 	if (i != 0)
 	{
+		Debug_Print5("Command_RemoveCallback: Exact pointer");
 		// Given an exact pointer.  Don't worry about anything else, just
 		// remove exactly this one.
 		#if YSIM_HAS_MASTER
@@ -2985,6 +2988,7 @@ GLOBAL__ void:Command_RemoveCallback__(const string:c[],p,o,i)
 	}
 	else if (IsNull(c))
 	{
+		Debug_Print5("Command_RemoveCallback: All for player");
 		// No command specified.  Remove everything for this player.
 		FOREACH__ (new id : YSI_g_sPlayerCommands<p>)
 		{
@@ -3000,6 +3004,7 @@ GLOBAL__ void:Command_RemoveCallback__(const string:c[],p,o,i)
 	}
 	else if (o == cellmin)
 	{
+		Debug_Print5("Command_RemoveCallback: All for command");
 		// No owner specified.  Remove all instances of this command.
 		Puny_EncodeHash(YSI_g_sCommandName, c, i, .delimiter = '@'),
 		i = HashMap_GetWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, i);
@@ -3031,6 +3036,7 @@ GLOBAL__ void:Command_RemoveCallback__(const string:c[],p,o,i)
 	}
 	else
 	{
+		Debug_Print5("Command_RemoveCallback: Owned for command");
 		#if YSIM_HAS_MASTER
 			new
 				m = Master_Caller();

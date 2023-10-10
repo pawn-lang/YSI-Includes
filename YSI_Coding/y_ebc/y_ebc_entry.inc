@@ -83,8 +83,10 @@ Optional plugins:
 
 // The true definition which relies on a better compiler.
 #define EBC(%0) Inline_EBC__(_:(%0),_:tagof(%0))
+#define TBC(%0) Inline_EBC__(_:(%0),(_:-1,)) // `_:` is one of the oldest macros
+// in YSI, and removes trailing commas in cases like this.
 
-#define Inline_EBC__(_:(%0,%1),_:tagof(%0,%1)) (%1)$(Inline_EBC__(_:(%0),_:tagof(%0)))
+#define Inline_EBC__(_:(%0,%1),%2(%3,%9)) (%1)$(Inline_EBC__(_:(%0),%2(%3)))
 
 // Common EBC tags.
 __COMPILER_TAG_DATA(Vehicle, INVALID_VEHICLE_ID);

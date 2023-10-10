@@ -32,20 +32,20 @@ There are three states that an entity can be in a group:
 
 * `UNDEF` means that the group doesn't have any effect on this entity.  Being in this group doesn't allow of prevent you from doing something (default for created groups).  If you are only in `UNDEF` groups (including the global group) you by default can't use an entity.  If you are in one `UNDEF` group and one `ALLOW` group, the `ALLOW` will be used and enable the entity for the player.
 
-* `DENY` means that anyone in this group is absolutely NOT allowed to use an entity.  This overrides `ALLOW`, so if you're in a group with `ALLOW` set on an area, and another group with `DENY` set on the same area, you can't use the area.  A good example of this is a `jailed` group, who can't use most commands:
+* `DENY` means that anyone in this group is absolutely NOT allowed to use an entity.  This overrides `ALLOW`, so if you're in a group with `ALLOW` set on an area, and another group with `DENY` set on the same area, you can't use the area.  A good example of this is a `gaoled` group, who can't use most commands:
 
 ```pawn
-final gJailed = Group_Create("jailed");
+final gGaoled = Group_Create("gaoled");
 
-Group_SetCommandDefault(gJailed, DENY);
+Group_SetCommandDefault(gGaoled, DENY);
 
 // Override the default for just this one command.
-Group_SetCommand(gJailed, YCMD:appeal, ALLOW);
+Group_SetCommand(gGaoled, YCMD:appeal, ALLOW);
 
-// /jail
-YCMD:jail()
+// /gaol
+YCMD:gaol()
 {
-	Group_SetPlayer(gJailed, badPlayer, true); // Can no longer use commands.
+	Group_SetPlayer(gGaoled, badPlayer, true); // Can no longer use commands.
 }
 ```
 

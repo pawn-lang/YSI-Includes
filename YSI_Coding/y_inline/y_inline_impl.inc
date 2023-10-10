@@ -283,11 +283,34 @@ forward Inline_MaybeConst_(ResolvedAlloc:slot);
 #define CALL@Inline_operatorMul%8() ((@Ik:0)*%8(0))
 #define CALL@Inline_EBC__%8() Inline_EBC__%8(0,0)
 
+forward Inline_TBC__(timerID);
+
+public Inline_TBC__(timerID)
+{
+	// Destroy inlines with this owner.
+	Indirect_Disconnect((timerID | (0x1FF << 22)) & cellmax);
+}
+
 stock Inline_EBC__(owner, tag)
 {
-	// 8 bits for the tag (max 256), 23 for the ID (max 4,194,303 * 2), 1 for an
-	// indirection.inc internal flag.
-	return (owner | (tag << 23)) & cellmax;
+	if (tag == -1)
+	{
+		// Flag timers as tag `0xFF` with an upper bit set.
+		static
+			timerID = -1;
+		return
+			++timerID,
+			//// Set a timer to kill this inline eventually.
+			YSI_SetTimerEx__("Inline_TBC__", owner, false, "i", timerID),
+			(timerID | (0x1FF << 22)) & cellmax;
+	}
+	else
+	{
+		// 8 bits for the tag (max 256), 23 for the ID (max 4,194,303 * 2), 1
+		// for an indirection.inc internal flag.  A tag of `255` is reserved
+		// for TBC, i.e. timers.
+		return (owner | (tag << 23)) & cellmax;
+	}
 }
 
 stock operator*(@Ik:func, ebc)
