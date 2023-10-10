@@ -289,6 +289,8 @@ While we spoke a lot about precedence when one player can use multiple variation
 }
 ```
 
+While the priorities of which variation of a command is called is normally handled by permissions and declaration orders returning `COMMAND_OK` or something not `COMMAND_OK` from `OnPlayerCommandReceived` will again override these selections.  As will passing the `override` parameter to `Command_ReProcess`.
+
 ## Inline Commands
 
 More specifically, these are per-player commands, or dynamic commands.  They allow you to add and remove commands for a single player at any time based on any conditions you like; and, more importantly, you can use inline functions!  Let's expand the earlier `/pm` command with a `/r` command to quickly reply to the last PM sent:
@@ -323,39 +325,19 @@ More specifically, these are per-player commands, or dynamic commands.  They all
 
 This implementation is fully compatible with the `pm_gaoled__` version earlier, again showing how edits in one part of your code can be done without touching other areas at all.
 
-One problem with this version is that it will slowly run out of memory, because a new version of `/r` is created every time the target gets a PM, we can solve this in several ways:
-
-1.  Just remove old versions before creating the new command:
+One problem with this version is that it will slowly run out of memory, because a new version of `/r` is created every time the target gets a PM, we can solve this  by just removing the old versions before creating the new command:
 
 ```pawn
 	// Just in case, remove any old versions of `/r`:
 	Command_RemoveCallback("r", tagetid);
 ```
 
-2.  A new extension to EBC which adds a lightweight timer as the owner (`TBC` = Timer Based Callback, sadly I couldn't fit it to my other brother's initials):
-
-```pawn
-	// Expire this command after one minute.
-	Command_AddCallback("r", tagetid, TBC(60000, using inline SendReply));
-```
-
-In which case you may want a fallback for after that callback expires:
-
-```pawn
-@cmd() r(playerid, string:params[], help)
-{
-	SendClientMessage(playerid, COLOUR_FAILURE, "No recent message to reply to.");
-	return 1;
-}
-```
-
-3. Manually track and remove the old versions.  But this is more effort.
-
 Notes:
 
 * You may have noticed that the command only has `params`.  This is a new feature - you can create the callback with `params[]`, `playerid, params[]`, or `playerid, params[], help` and all variants will be correctly called.
 * `@return` is used instead of `return`.  This is exactly the same, but bypasses some limitations with using `return` inside `inline`.
-* Because `TBC` will remove the command eventually, and the latest added version of an inline callback always take precedence (you can remove the new version and the old version will be used again until it too is removed, so you can create a stack of commands), we can create a full chat system very simply:
+* If you add two inlines to the same command the latest added version of an inline callback always take precedence.  You can remove the new version and the old version will be used again until it too is removed, so you can create a stack of commands.
+* We can create a full chat system very simply:
 
 ```pawn
 @cmd() r(playerid, string:params[], help)
@@ -371,6 +353,9 @@ static SendPM(from, to, string:msg[])
 	SendClientMessage(from, COLOUR_GREETING, "Sent");
 	SendClientMessage(to, COLOUR_GREETING, "Message from %s:", ReturnPlayerName(from));
 	SendClientMessage(to, COLOUR_GREETING, msg);
+	
+	// Remove any old version of this command for this player.
+	Command_RemoveCallback("r", to);
 	
 	// Set up a reply command.
 	inline const SendReply(string:reply[])
@@ -397,6 +382,8 @@ static SendPM(from, to, string:msg[])
 	return 1;
 }
 ```
+
+Here we introduce `TBC`, an extension to `EBC` that adds a special timer case to callback ownership.  `TBC` will invalidate the callback after (in this example) 60000ms, i.e. one minute.  So after that time the command will no longer work.  Like `EBC` `TBC` only invalidates the callback, it does not free up the memory, because there's no guarantee that there are no other pointers to the function which can still be used to invoke it.  For example y_dialog will keep a pointer to the callback for a player's currently shown dialog.  If an EBC owner invalidates that callback we don't want y_dialog to crash when it tries to call it.  Thus the user of the callback must know when to free them.  Fortunately, in y_commands this is the case and callbacks marked as no longer required will be (eventually) freed.  The fact that they are no longer valid is also used when determining which variant to call.
 
 ## Enhanced `/buy` Command.
 
