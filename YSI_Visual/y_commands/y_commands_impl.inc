@@ -688,6 +688,34 @@ stock Command_AddAlt(oidx, const string:cmd[], bool:inherit = false)
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
+ * <param name="owner">The owning entity for EBC callbacks.</param>
+ * <param name="ptr">The inline itself.</param>
+ * <returns>
+ *   -
+ * </returns>
+ * <remarks>
+ *   This handles the remote cleanup.  An owner of <c>cellmin</c> means "always"
+ *   while an owner of <c>-1</c> means "if invalid".
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+REMOTE_FUNC__ bool:Command_TryRelease__(owner, ptr)
+{
+	switch (owner)
+	{
+	case cellmin:
+		{}
+	case -1:
+		if (Indirect_IsValid(ptr)) return false;
+	default:
+		if (Indirect_GetOwner(ptr) != owner) return false;
+	}
+	Indirect_Release(owner);
+	return true;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
  * <param name="p">(playerid) - Player who entered the command.</param>
  * <param name="c">(cmdtext) - Text entered.</param>
  * <param name="h">
@@ -866,7 +894,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 				sFlags = YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_FLAGS];
 				if (_:(sFlags & e_COMMAND_FLAG_PARENT) == YSI_g_sCurrentID)
 				{
-						sRet = e_COMMAND_FLAGS:YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_POINTER];
+						sRet = e_COMMAND_ERRORS:YSI_g_sInlineCommands[sHash][E_COMMAND_INLINE_POINTER];
 						// Found it.
 					#if YSIM_HAS_MASTER
 						// Fake the master data so that the correct script is used.
@@ -891,7 +919,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 					#if YSIM_HAS_MASTER
 						else
 						{
-							if (TARGET_FUNC__ Command_TryRelease__<YSI_g_sMasterData[YSI_g_sCurrentID]>(-1, _:sRet))
+							if (TARGET_FUNC__ Command_TryRelease__<_:YSI_g_sMasterData[YSI_g_sCurrentID]>(-1, _:sRet))
 							{
 								// Release any dangling pointers.
 								Iter_Remove(YSI_g_sPlayerCommands<playerid>, sHash),
@@ -2914,28 +2942,6 @@ stock Command_AddCallback(const string:cmd[], playerid, {F@_@s, F@_@is, F@_@isi}
 	{
 		Indirect_Claim(ptr);
 	}
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_commands</library>
- * <param name="o">The owning entity for EBC callbacks.</param>
- * <param name="i">The inline itself.</param>
- * <returns>
- *   -
- * </returns>
- * <remarks>
- *   This handles the remote cleanup.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-REMOTE_FUNC__ bool:Command_TryRelease__(owner, ptr)
-{
-	if (owner == cellmin || Indirect_GetOwner(ptr) == owner || !Indirect_IsValid(ptr))
-	{
-		Indirect_Release(owner);
-		return true;
-	}
-	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
