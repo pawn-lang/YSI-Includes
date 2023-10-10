@@ -100,8 +100,8 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 #define YSI_VERSION_RESPO               2
 
 #define YSI_VERSION_MAJOR               5
-#define YSI_VERSION_MINOR               07
-#define YSI_VERSION_BUILD               3082
+#define YSI_VERSION_MINOR               08
+#define YSI_VERSION_BUILD               2320
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 
@@ -611,7 +611,7 @@ static stock YVers_PrintHeader()
 	GetConsoleVarAsString("version", version, sizeof (version));
 	if (version[0])
 	{
-		format(version, sizeof (version), "Server:      %s (%s)", version, Server_IsWindowsHost() ? YSI_gscWindows : YSI_gscLinux);
+		format(version, sizeof (version), "Server:      %s (%c)", version, Server_IsWindowsHost() ? 'W' : 'L');
 	}
 	else
 	{
