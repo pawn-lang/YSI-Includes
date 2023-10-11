@@ -88,7 +88,6 @@ Optional plugins:
 
 enum e_COMMAND_FLAGS
 {
-	e_COMMAND_FLAG_NONE = 0,
 	e_COMMAND_FLAG_PREFIX = 0xFF,
 	// Inherit user permissions.
 	e_COMMAND_FLAG_INHERIT = 0x01000000,
@@ -836,7 +835,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 		sFlags = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_FLAGS];
 		switch (sFlags & (e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_ALT | e_COMMAND_FLAG_INHERIT | e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INLINE))
 		{
-		case e_COMMAND_FLAG_DISABLED, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_INHERIT:
+		case e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_DISABLED | e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_INHERIT:
 		{
 			// Disabled primary commands.
 			if ((sRet = Command_OnReceived((help & 2) ? COMMAND_OK : COMMAND_DENIED, playerid, cmdtext)) == COMMAND_OK)
@@ -875,9 +874,10 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 				break;
 			}
 		}
-		case e_COMMAND_FLAG_INHERIT, e_COMMAND_FLAG_NONE:
+		case e_COMMAND_FLAG_PRI, e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_INHERIT:
 		{
-			// No flags.
+			// Technically `e_COMMAND_FLAG_PRI | e_COMMAND_FLAG_INHERIT` is an
+			// invalid combination, but don't worry about that here.
 			sRet = (help & 2) || PA_Get(YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_USERS], playerid) ? COMMAND_OK : COMMAND_DENIED;
 			if ((sRet = Command_OnReceived(sRet, playerid, cmdtext)) == COMMAND_OK)
 				break;
