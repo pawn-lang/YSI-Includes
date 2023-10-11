@@ -1043,3 +1043,25 @@ YCMD:y_commands_alternativea(playerid, params[], help) = y_commands_enableablea;
 	ASSERT_EQ(var, 300 + 11 + 202 + 200 + 11 + 203);
 }
 
+static
+	gScriptTotal = 0;
+
+@cmd() scriptcom1(playerid, params[])
+{
+	gScriptTotal = gScriptTotal + strval(params) + strval(params[2]);
+	return 1;
+}
+
+@cmd() scriptcom2(playerid, params[])
+{
+	gScriptTotal = gScriptTotal + strval(params) * strval(params[2]);
+	return 1;
+}
+
+@test(.group = "y_commands") y_commands_RunScript()
+{
+	gScriptTotal = 0;
+	ASSERT(Command_RunScript(202, "/scriptcom1 5 6 ; /scriptcom2 5 6 ; /scriptcom1 8 9"));
+	ASSERT_EQ(gScriptTotal, 5 + 6 + 5 * 6 + 8 + 9);
+}
+

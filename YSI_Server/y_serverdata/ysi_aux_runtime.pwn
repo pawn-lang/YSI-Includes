@@ -72,7 +72,7 @@ native bool:SetProperty(id, const name[], value, const string[]) = setproperty;
 native StringCompare(const string1[], const string2[], bool:ignorecase, length) = strcmp;
 native bool:MemoryCopy(dest, const src[], index, bytes, max) = memcpy;
 
-native CallRemoteFunction(const function[], const specifier[], ...) = CallRemoteFunction;
+native CallRemoteFunction(const function[], const specifier[], ...);
 
 // Reserve space in the header for a function name up to 63 characters.
 new const

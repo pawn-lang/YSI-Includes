@@ -737,6 +737,14 @@ REMOTE_FUNC__ bool:Command_TryRelease__(owner, ptr)
 
 static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext[], help)
 {
+	Debug_Print1("Commands_OnPlayerCommandText called: %d %s", playerid, cmdtext);
+	// Check for a valid player.
+	#if !defined Y_COMMANDS_NO_IPC
+		if (!IsPlayerConnected(playerid))
+		{
+			return Command_OnReceived(COMMAND_NO_PLAYER, playerid, cmdtext);
+		}
+	#endif
 	const
 		Func:tagS<s> = Func:0<s>,
 		Func:tagIS<is> = Func:0<is>,
@@ -746,33 +754,21 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 	#pragma unused tagS, tagIS, tagISI
 	static
 		sPos = 0,
-		e_COMMAND_ERRORS:sRet = COMMAND_ZERO_RET,
+		e_COMMAND_ERRORS:sRet = COMMAND_OK,
 		sHash = 0,
 		e_COMMAND_FLAGS:sFlags = e_COMMAND_FLAGS:0;
-	// Check that the input is a valid command.  Note that changing the command
-	// prefix here would be VERY trivial!
-	if ((_:sRet = _:_Command_IsPrefix(cmdtext[0]))) // Relies on "true = 1" later on!
+	// Skip whitespace.
+	new
+		prefix = cmdtext[0];
+	if (!(sRet = e_COMMAND_ERRORS:_Command_IsPrefix(prefix)))
 	{
-		if (!cmdtext[1])
-		{
-			return Command_OnReceived(COMMAND_INVALID_INPUT, playerid, cmdtext);
-		}
+		prefix = '\0';
 	}
-	else
+	while (cmdtext[sRet] == ' ') ++sRet;
+	if (0 <= cmdtext[sRet] <= 1)
 	{
-		if (IsNull(cmdtext))
-		{
-			return Command_OnReceived(COMMAND_INVALID_INPUT, playerid, NULL);
-		}
+		return Command_OnReceived(COMMAND_INVALID_INPUT, playerid, cmdtext);
 	}
-	// Check for a valid player.
-	#if !defined Y_COMMANDS_NO_IPC
-		if (!IsPlayerConnected(playerid))
-		{
-			return Command_OnReceived(COMMAND_NO_PLAYER, playerid, cmdtext);
-		}
-	#endif
-	Debug_Print1("Commands_OnPlayerCommandText called: %d %s", playerid, cmdtext);
 	if (PA_Get(YSI_g_sDisabledPlayers, playerid))
 	{
 		if ((sRet = Command_OnReceived(COMMAND_DISABLED, playerid, cmdtext)) != COMMAND_OK)
@@ -783,28 +779,18 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 	{
 		sPos = Puny_EncodeHash(YSI_g_sCommandName, cmdtext[_:sRet], sHash, sizeof (YSI_g_sCommandName), '@') + _:sRet;
 	}
-	else if (sRet)
-	{
-		// Very custom implementation.  Inlined and stops at any whitespace.
-		sPos = 0,
-		sHash = 5381;
-		while ((_:sFlags = cmdtext[++sPos]) > ' ')
-		{
-			YSI_g_sCommandName[sPos - 1] = _:sFlags,
-			sHash = sHash * 33 ^ _:sFlags;
-		}
-	}
 	else
 	{
-		// Very custom implementation.  Inlined and stops at any whitespace.
-		sPos = -1,
+		sPos = sRet,
 		sHash = 5381;
-		while ((_:sFlags = cmdtext[++sPos]) > ' ')
+		while ((_:sFlags = cmdtext[sPos]) > ' ')
 		{
-			YSI_g_sCommandName[sPos] = _:sFlags,
-			sHash = sHash * 33 ^ _:sFlags;
+			YSI_g_sCommandName[sPos - sRet] = _:sFlags,
+			sHash = sHash * 33 ^ _:sFlags,
+			++sPos;
 		}
 	}
+	// Skip whitespace.
 	while (cmdtext[sPos] == ' ') ++sPos; // Better/slower: ('\0' < cmdtext[sPos] <= ' ').
 	// Find the command in the array.
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, YSI_g_sCommandName, sHash);
@@ -817,18 +803,15 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 	// this player can use.
 	for ( ; ; )
 	{
-		//#if defined Y_COMMANDS_USE_CHARS
-		//	// Have a prefix, but not the right one.  Calling this function
-		//	// directly always works for all possible command prefixes.
-		//	if (sRet && _Command_GetPrefix(YSI_g_sCurrentID) != cmdtext[0])
-		//	{
-		//		if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
-		//		{
-		//			return Command_OnReceived(COMMAND_BAD_PREFIX, playerid, cmdtext);
-		//		}
-		//		continue;
-		//	}
-		//#endif
+		#if defined Y_COMMANDS_USE_CHARS
+			// Have a prefix, but not the right one.  Calling this function
+			// directly always works for all possible command prefixes.
+			if (prefix && _Command_GetPrefix(YSI_g_sCurrentID) != prefix)
+			{
+				if ((YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_NEXT]) == COMMAND_NOT_FOUND)
+					return Command_OnReceived(COMMAND_BAD_PREFIX, playerid, cmdtext);
+			}
+		#endif
 		//Debug_Print5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, playerid));
 		// Can the player use this command?
 		sHash = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER],
@@ -1168,9 +1151,9 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			// Using `YSI_g_sCommandPrefix` here has a buffer overflow in to
 			// `YSI_g_sCommandName`, which is what we want.
 			if (cmdtext[sPos])
-				CallRemoteFunction(YSI_g_sCommandPrefix, YSI_gscISII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				YSI_CallRemoteFunction__(YSI_g_sCommandPrefix, YSI_gscISII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			else
-				CallRemoteFunction(YSI_g_sCommandPrefix, YSI_gscISII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				YSI_CallRemoteFunction__(YSI_g_sCommandPrefix, YSI_gscISII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		else switch (sFlags & e_COMMAND_FLAG_ARGS)
@@ -1179,27 +1162,27 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline IS %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
 			if (cmdtext[sPos])
-				CallRemoteFunction(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
 			else
-				CallRemoteFunction(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
 			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		case e_COMMAND_FLAG_ARGS_S:
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline S %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
 			if (cmdtext[sPos])
-				CallRemoteFunction(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			else
-				CallRemoteFunction(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		case e_COMMAND_FLAG_ARGS_ISI:
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline ISI %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
 			if (cmdtext[sPos])
-				CallRemoteFunction(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
 			else
-				CallRemoteFunction(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
 			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		default:
@@ -1210,9 +1193,50 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 	#endif
 	Debug_Print5("Command_ReProces: Result = %d %d %d", _:sRet, Command_ErrorRet(sRet), _:COMMAND_OK);
 	if (YSI_g_sSystemSettings & e_COMM_FLAG_OPCP)
-		sRet = e_COMMAND_ERRORS:CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, playerid, cmdtext, _:sRet);
+		sRet = e_COMMAND_ERRORS:YSI_CallRemoteFunction__(YSI_gscOPCP, YSI_gscISI, playerid, cmdtext, _:sRet);
 	Debug_Print5("Command_ReProces: Return = %d %d %d", playerid, _:sRet, Command_ErrorRet(sRet));
 	return sRet;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_commands</library>
+ * <param name="playerid">The player to run the script for.</param>
+ * <param name="cmdtext">The script.</param>
+ * <returns>
+ *   true - success or hidden fail.
+ *   false - fail.
+ * </returns>
+ * <remarks>
+ *   Run a series of commands separated by <c>;</c>s.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+FOREIGN__ bool:Command_RunScript(playerid, const string:cmdtext[]);
+
+GLOBAL__ bool:Command_RunScript(playerid, const string:cmdtext[])
+{
+	for (new end = -1, start = cellmax; start; )
+	{
+		end = strfind(cmdtext, ";", false, (start = end + 1));
+		// `Command_ReProcess__` doesn't expect leading spaces, and shouldn't
+		// really.  So deal with them here.
+		while ('\0' < cmdtext[start] <= ' ')
+		{
+			++start;
+		}
+		if (end == -1)
+		{
+			return Command_ReProcess__(playerid, cmdtext[start], 0) == COMMAND_OK;
+		}
+		else
+		{
+			_YSI_ConstMod(cmdtext[end], '\0'),
+			start = Command_ReProcess__(playerid, cmdtext[start], 0) == COMMAND_OK,
+			_YSI_ConstMod(cmdtext[end], ';');
+		}
+	}
+	
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2262,9 +2286,9 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
 		return '/';
 	}
 	
-	FOREIGN__ Command_GetPrefixNamed(string:c[]);
+	FOREIGN__ Command_GetPrefixNamed(const string:c[]);
 	
-	GLOBAL__ Command_GetPrefixNamed(string:c[])
+	GLOBAL__ Command_GetPrefixNamed(const string:c[])
 	{
 		return Command_GetPrefix(Command_Find(c));
 	}
@@ -2375,9 +2399,9 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
  *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
-	FOREIGN__ bool:Command_SetPrefixNamed(string:c[], prefix);
+	FOREIGN__ bool:Command_SetPrefixNamed(const string:c[], prefix);
 	
-	GLOBAL__ bool:Command_SetPrefixNamed(string:c[], prefix)
+	GLOBAL__ bool:Command_SetPrefixNamed(const string:c[], prefix)
 	{
 		return Command_SetPrefix(Command_Find(c), prefix);
 	}
@@ -3443,6 +3467,9 @@ native Command_Strcat_(dest[], src, len) = strcat;
 	// hidden.  Things like `foreach (new c : Command(playerid))` will loop
 	// through all the commands the player can use, regardless of anything.
 	if (hidden) Command_SetHidden(id, true);
+	#if defined Y_COMMANDS_USE_CHARS
+		Command_SetPrefix(id, prefix);
+	#endif
 }
 
 // Un-inline the alt commands array.

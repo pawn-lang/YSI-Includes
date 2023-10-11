@@ -198,6 +198,24 @@ native _YSI_ConstCpy__(const dst[], const src[], index, numbytes, maxlength) = m
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
+ *   Case-correct <c>CallRemoteFunction</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+native YSI_CallRemoteFunction__(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_samp_natives</library>
+ * <remarks>
+ *   Case-correct <c>CallLocalFunction</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+native YSI_CallLocalFunction__(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallLocalFunction;
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_samp_natives</library>
+ * <remarks>
  *   Case-correct <c>strunpack</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
