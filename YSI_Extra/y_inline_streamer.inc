@@ -93,13 +93,15 @@ Optional plugins:
 
 // In some versions the tags are wrong.
 #if defined STREAMER_ENABLE_TAGS
-	#define CB_STREAMER_TAG_OBJECT DynamicObject
-	#define CB_STREAMER_TAG_CP DynamicCP
-	#define CB_STREAMER_TAG_AREA DynamicArea
+	#define STREAMER_TAG_OBJECT DynamicObject
+	#define STREAMER_TAG_CP DynamicCP
+	#define STREAMER_TAG_RACE_CP DynamicRaceCP
+	#define STREAMER_TAG_AREA DynamicArea
 #else
-	#define CB_STREAMER_TAG_OBJECT _
-	#define CB_STREAMER_TAG_CP _
-	#define CB_STREAMER_TAG_AREA _
+	#define STREAMER_TAG_OBJECT _
+	#define STREAMER_TAG_CP _
+	#define STREAMER_TAG_RACE_CP _
+	#define STREAMER_TAG_AREA _
 #endif
 
 #if !defined STREAMER_TYPE
@@ -221,9 +223,9 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 #if defined E_STREAMER_CUSTOM
 	#define E_YSI_DYNAMIC_CALLBACK E_STREAMER_CUSTOM(0x59534921) // YSI!
 
-	forward OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid);
+	forward OnDynamicObjectMoved(STREAMER_TAG_OBJECT:objectid);
 
-	public OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
+	public OnDynamicObjectMoved(STREAMER_TAG_OBJECT:objectid)
 	{
 		new ret = 0;
 		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_CALLBACK))
@@ -248,11 +250,11 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	#endif
 	#define OnDynamicObjectMoved( Inline_OnDynamicObjectMoved(
 	#if defined Inline_OnDynamicObjectMoved
-		forward Inline_OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid);
+		forward Inline_OnDynamicObjectMoved(STREAMER_TAG_OBJECT:objectid);
 	#endif
 
 	// Hook stoping and destroying objects to remove the callbacks.
-	stock Inline_StopDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
+	stock Inline_StopDynamicObject(STREAMER_TAG_OBJECT:objectid)
 	{
 		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_CALLBACK))
 		{
@@ -272,8 +274,9 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	#define StopDynamicObject( Inline_StopDynamicObject(
 
 	// Hook stoping and destroying objects to remove the callbacks.
-	stock Inline_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
+	stock Inline_DestroyDynamicObject(STREAMER_TAG_OBJECT:objectid)
 	{
+		Indirect_Disconnect(EBC(DynamicObject:objectid));
 		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_CALLBACK))
 		{
 			new Func:cb<i> = Func:Streamer_GetIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_CALLBACK)<i>;
@@ -290,7 +293,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	#endif
 	#define DestroyDynamicObject( Inline_DestroyDynamicObject(
 
-	stock MoveDynamicObjectCallback(CB_STREAMER_TAG_OBJECT:objectid, Func:onMoved<i>, Float:x, Float:y, Float:z, Float:speed, Float:rx = -1000.0, Float:ry = -1000.0, Float:rz = -1000.0)
+	stock MoveDynamicObjectCallback(STREAMER_TAG_OBJECT:objectid, Func:onMoved<i>, Float:x, Float:y, Float:z, Float:speed, Float:rx = -1000.0, Float:ry = -1000.0, Float:rz = -1000.0)
 	{
 		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_CALLBACK))
 		{
@@ -303,10 +306,131 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 		return MoveDynamicObject(objectid, x, y, z, speed, rx, ry, rz);
 	}
 	
+	// Hook destroying CPs to remove the callbacks.
+	stock Inline_DestroyDynamicCP(STREAMER_TAG_CP:checkpointid)
+	{
+		Indirect_Disconnect(EBC(DynamicCP:checkpointid));
+		if (Streamer_HasIntData(STREAMER_TYPE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK))
+		{
+			new Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK)<ii>;
+			Streamer_RemoveIntData(STREAMER_TYPE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK);
+			Indirect_Release(cb);
+		}
+		return DestroyDynamicCP(checkpointid);
+	}
+
+	#if defined _ALS_DestroyDynamicCP
+		#undef DestroyDynamicCP
+	#else
+		#define _ALS_DestroyDynamicCP
+	#endif
+	#define DestroyDynamicCP( Inline_DestroyDynamicCP(
+
+	stock STREAMER_TAG_CP:CreateDynamicCPCallback(Func:onEnter<ii>, Float:x, Float:y, Float:z, Float:size, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = STREAMER_CP_SD, STREAMER_TAG_AREA:areaid = STREAMER_TAG_AREA:-1, priority = 0)
+	{
+		// Swap any old callback for the new one.
+		new
+			STREAMER_TAG_CP:checkpointid = CreateDynamicCP(x, y, z, size, worldid, interiorid, playerid, streamdistance, areaid, priority);
+		if (Streamer_HasIntData(STREAMER_TYPE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK))
+		{
+			new
+				Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK)<ii>;
+			Indirect_Release(cb);
+		}
+		Streamer_SetIntData(STREAMER_TYPE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK, _:onEnter);
+		Indirect_Claim(onEnter);
+		return checkpointid;
+	}
+
+	// Hook destroying Pickups to remove the callbacks.
+	stock Inline_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
+	{
+		Indirect_Disconnect(EBC(DynamicPickup:pickupid));
+		if (Streamer_HasIntData(STREAMER_TYPE_PICKUP, pickupid, E_YSI_DYNAMIC_CALLBACK))
+		{
+			new Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_PICKUP, pickupid, E_YSI_DYNAMIC_CALLBACK)<ii>;
+			Streamer_RemoveIntData(STREAMER_TYPE_PICKUP, pickupid, E_YSI_DYNAMIC_CALLBACK);
+			Indirect_Release(cb);
+		}
+		return DestroyDynamicPickup(pickupid);
+	}
+
+	#if defined _ALS_DestroyDynamicPickup
+		#undef DestroyDynamicPickup
+	#else
+		#define _ALS_DestroyDynamicPickup
+	#endif
+	#define DestroyDynamicPickup( Inline_DestroyDynamicPickup(
+
+	stock STREAMER_TAG_PICKUP:CreateDynamicPickupCallback(Func:onEnter<ii>, modelid, type, Float:x, Float:y, Float:z, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = STREAMER_PICKUP_SD, STREAMER_TAG_AREA:areaid = STREAMER_TAG_AREA:-1, priority = 0)
+	{
+		// Swap any old callback for the new one.
+		new
+			STREAMER_TAG_PICKUP:pickupid = CreateDynamicPickup(modelid, type, x, y, z, worldid, interiorid, playerid, streamdistance, areaid, priority);
+		if (Streamer_HasIntData(STREAMER_TYPE_PICKUP, pickupid, E_YSI_DYNAMIC_CALLBACK))
+		{
+			new
+				Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_PICKUP, pickupid, E_YSI_DYNAMIC_CALLBACK)<ii>;
+			Indirect_Release(cb);
+		}
+		Streamer_SetIntData(STREAMER_TYPE_PICKUP, pickupid, E_YSI_DYNAMIC_CALLBACK, _:onEnter);
+		Indirect_Claim(onEnter);
+		return pickupid;
+	}
+
+	// Hook destroying RaceCPs to remove the callbacks.
+	stock Inline_DestroyDynamicRaceCP(STREAMER_TAG_RACE_CP:checkpointid)
+	{
+		Indirect_Disconnect(EBC(DynamicRaceCP:checkpointid));
+		if (Streamer_HasIntData(STREAMER_TYPE_RACE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK))
+		{
+			new Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_RACE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK)<ii>;
+			Streamer_RemoveIntData(STREAMER_TYPE_RACE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK);
+			Indirect_Release(cb);
+		}
+		return DestroyDynamicRaceCP(checkpointid);
+	}
+
+	#if defined _ALS_DestroyDynamicRaceCP
+		#undef DestroyDynamicRaceCP
+	#else
+		#define _ALS_DestroyDynamicRaceCP
+	#endif
+	#define DestroyDynamicRaceCP( Inline_DestroyDynamicRaceCP(
+
+	stock STREAMER_TAG_RACE_CP:CreateDynamicRaceCPCallback(Func:onEnter<ii>, type, Float:x, Float:y, Float:z, Float:nextx, Float:nexty, Float:nextz, Float:size, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = STREAMER_RACE_CP_SD, STREAMER_TAG_AREA:areaid = STREAMER_TAG_AREA:-1, priority = 0)
+	{
+		// Swap any old callback for the new one.
+		new
+			STREAMER_TAG_RACE_CP:checkpointid = CreateDynamicRaceCP(type, x, y, z, nextx, nexty, nextz, size, worldid, interiorid, playerid, streamdistance, areaid, priority);
+		if (Streamer_HasIntData(STREAMER_TYPE_RACE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK))
+		{
+			new
+				Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_RACE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK)<ii>;
+			Indirect_Release(cb);
+		}
+		Streamer_SetIntData(STREAMER_TYPE_RACE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK, _:onEnter);
+		Indirect_Claim(onEnter);
+		return checkpointid;
+	}
+
+	// Hook destroying Areas to remove the callbacks.
+	stock Inline_DestroyDynamicArea(STREAMER_TAG_AREA:areaid)
+	{
+		Indirect_Disconnect(EBC(DynamicArea:areaid));
+		if (Streamer_HasIntData(STREAMER_TYPE_AREA, areaid, E_YSI_DYNAMIC_CALLBACK))
+		{
+			new Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_AREA, areaid, E_YSI_DYNAMIC_CALLBACK)<ii>;
+			Streamer_RemoveIntData(STREAMER_TYPE_AREA, areaid, E_YSI_DYNAMIC_CALLBACK);
+			Indirect_Release(cb);
+		}
+		return DestroyDynamicArea(areaid);
+	}
+
 	static stock STREAMER_TAG_AREA:Inline_CreateAreaCallback(Func:onEnter<ii>, STREAMER_TAG_AREA:areaid)
 	{
 		// Swap any old callback for the new one.
-		if (Streamer_HasIntData(STREAMER_TYPE_AREA, objectid, E_YSI_DYNAMIC_CALLBACK))
+		if (Streamer_HasIntData(STREAMER_TYPE_AREA, areaid, E_YSI_DYNAMIC_CALLBACK))
 		{
 			new
 				Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_AREA, areaid, E_YSI_DYNAMIC_CALLBACK)<ii>;
@@ -341,9 +465,9 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 		SparseArray:YSI_g_sDynamicCP<>,
 		SparseArray:YSI_g_sDynamicArea<>;
 
-	forward OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid);
+	forward OnDynamicObjectMoved(STREAMER_TAG_OBJECT:objectid);
 
-	public OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
+	public OnDynamicObjectMoved(STREAMER_TAG_OBJECT:objectid)
 	{
 		new
 			Func:cb<i>,
@@ -367,11 +491,11 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	#endif
 	#define OnDynamicObjectMoved( Inline_OnDynamicObjectMoved(
 	#if defined Inline_OnDynamicObjectMoved
-		forward Inline_OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid);
+		forward Inline_OnDynamicObjectMoved(STREAMER_TAG_OBJECT:objectid);
 	#endif
 
 	// Hook stoping and destroying objects to remove the callbacks.
-	stock Inline_StopDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
+	stock Inline_StopDynamicObject(STREAMER_TAG_OBJECT:objectid)
 	{
 		new
 			Func:cb<i>;
@@ -390,8 +514,9 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	#define StopDynamicObject( Inline_StopDynamicObject(
 
 	// Hook stoping and destroying objects to remove the callbacks.
-	stock Inline_DestroyDynamicObject(CB_STREAMER_TAG_OBJECT:objectid)
+	stock Inline_DestroyDynamicObject(STREAMER_TAG_OBJECT:objectid)
 	{
+		Indirect_Disconnect(EBC(DynamicObject:objectid));
 		new
 			Func:cb<i>;
 		if (Sparse_Exchange(YSI_g_sDynamicObjectMoved, _:objectid, _:cb))
@@ -408,7 +533,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	#endif
 	#define DestroyDynamicObject( Inline_DestroyDynamicObject(
 
-	stock MoveDynamicObjectCallback(CB_STREAMER_TAG_OBJECT:objectid, Func:onMoved<i>, Float:x, Float:y, Float:z, Float:speed, Float:rx = -1000.0, Float:ry = -1000.0, Float:rz = -1000.0)
+	stock MoveDynamicObjectCallback(STREAMER_TAG_OBJECT:objectid, Func:onMoved<i>, Float:x, Float:y, Float:z, Float:speed, Float:rx = -1000.0, Float:ry = -1000.0, Float:rz = -1000.0)
 	{
 		// Swap any old callback for the new one.
 		new
@@ -422,10 +547,11 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	}
 
 	// Hook destroying CPs to remove the callbacks.
-	stock Inline_DestroyDynamicCP(CB_STREAMER_TAG_CP:checkpointid)
+	stock Inline_DestroyDynamicCP(STREAMER_TAG_CP:checkpointid)
 	{
+		Indirect_Disconnect(EBC(DynamicCP:checkpointid));
 		new
-			Func:cb<i>;
+			Func:cb<ii>;
 		if (Sparse_Exchange(YSI_g_sDynamicCP, _:checkpointid, _:cb))
 		{
 			Indirect_Release(cb);
@@ -440,11 +566,11 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	#endif
 	#define DestroyDynamicCP( Inline_DestroyDynamicCP(
 
-	stock CreateDynamicCPCallback(Func:onEnter<ii>, Float:x, Float:y, Float:z, Float:size, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = STREAMER_CP_SD, CB_STREAMER_TAG_AREA:areaid = CB_STREAMER_TAG_AREA:-1, priority = 0)
+	stock STREAMER_TAG_CP:CreateDynamicCPCallback(Func:onEnter<ii>, Float:x, Float:y, Float:z, Float:size, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = STREAMER_CP_SD, STREAMER_TAG_AREA:areaid = STREAMER_TAG_AREA:-1, priority = 0)
 	{
 		// Swap any old callback for the new one.
 		new
-			CB_STREAMER_TAG_CP:checkpointid = CreateDynamicCP(x, y, z, size, worldid, interiorid, playerid, streamdistance, areaid, priority),
+			STREAMER_TAG_CP:checkpointid = CreateDynamicCP(x, y, z, size, worldid, interiorid, playerid, streamdistance, areaid, priority),
 			Func:cb<ii>;
 		if (Sparse_Exchange(YSI_g_sDynamicCP, checkpointid, _:cb, _:onEnter))
 		{
@@ -454,9 +580,78 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 		return checkpointid;
 	}
 
-	// Hook destroying Areas to remove the callbacks.
-	stock Inline_DestroyDynamicArea(CB_STREAMER_TAG_AREA:areaid)
+	// Hook destroying Pickups to remove the callbacks.
+	stock Inline_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 	{
+		Indirect_Disconnect(EBC(DynamicPickup:pickupid));
+		new
+			Func:cb<ii>;
+		if (Sparse_Exchange(YSI_g_sDynamicPickup, _:pickupid, _:cb))
+		{
+			Indirect_Release(cb);
+		}
+		return DestroyDynamicPickup(pickupid);
+	}
+
+	#if defined _ALS_DestroyDynamicPickup
+		#undef DestroyDynamicPickup
+	#else
+		#define _ALS_DestroyDynamicPickup
+	#endif
+	#define DestroyDynamicPickup( Inline_DestroyDynamicPickup(
+
+	stock STREAMER_TAG_PICKUP:CreateDynamicPickupCallback(Func:onEnter<ii>, modelid, type, Float:x, Float:y, Float:z, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = STREAMER_PICKUP_SD, STREAMER_TAG_AREA:areaid = STREAMER_TAG_AREA:-1, priority = 0)
+	{
+		// Swap any old callback for the new one.
+		new
+			STREAMER_TAG_PICKUP:pickupid = CreateDynamicPickup(modelid, type, x, y, z, worldid, interiorid, playerid, streamdistance, areaid, priority),
+			Func:cb<ii>;
+		if (Sparse_Exchange(YSI_g_sDynamicPickup, pickupid, _:cb, _:onEnter))
+		{
+			Indirect_Release(cb);
+		}
+		Indirect_Claim(onEnter);
+		return pickupid;
+	}
+
+	// Hook destroying RaceCPs to remove the callbacks.
+	stock Inline_DestroyDynamicRaceCP(STREAMER_TAG_RACE_CP:checkpointid)
+	{
+		Indirect_Disconnect(EBC(DynamicRaceCP:checkpointid));
+		new
+			Func:cb<ii>;
+		if (Sparse_Exchange(YSI_g_sDynamicRaceCP, _:checkpointid, _:cb))
+		{
+			Indirect_Release(cb);
+		}
+		return DestroyDynamicRaceCP(checkpointid);
+	}
+
+	#if defined _ALS_DestroyDynamicRaceCP
+		#undef DestroyDynamicRaceCP
+	#else
+		#define _ALS_DestroyDynamicRaceCP
+	#endif
+	#define DestroyDynamicRaceCP( Inline_DestroyDynamicRaceCP(
+
+	stock STREAMER_TAG_RACE_CP:CreateDynamicRaceCPCallback(Func:onEnter<ii>, type, Float:x, Float:y, Float:z, Float:nextx, Float:nexty, Float:nextz, Float:size, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = STREAMER_RACE_CP_SD, STREAMER_TAG_AREA:areaid = STREAMER_TAG_AREA:-1, priority = 0)
+	{
+		// Swap any old callback for the new one.
+		new
+			STREAMER_TAG_RACE_CP:checkpointid = CreateDynamicRaceCP(type, x, y, z, nextx, nexty, nextz, size, worldid, interiorid, playerid, streamdistance, areaid, priority),
+			Func:cb<ii>;
+		if (Sparse_Exchange(YSI_g_sDynamicRaceCP, checkpointid, _:cb, _:onEnter))
+		{
+			Indirect_Release(cb);
+		}
+		Indirect_Claim(onEnter);
+		return checkpointid;
+	}
+
+	// Hook destroying Areas to remove the callbacks.
+	stock Inline_DestroyDynamicArea(STREAMER_TAG_AREA:areaid)
+	{
+		Indirect_Disconnect(EBC(DynamicArea:areaid));
 		new
 			Func:cb<ii>;
 		if (Sparse_Exchange(YSI_g_sDynamicArea, _:areaid, _:cb))
