@@ -484,3 +484,13 @@ Finally a fallback command (which is also used to provide `/help buy` if no othe
 }
 ```
 
+## Scripting
+
+The function `Command_RunScript` can chain several commands together, separated by semi-colons:
+
+```pawn
+Command_RunScript(playerid, "/scriptcom1 5 6 ; /scriptcom2 5 6 ; /scriptcom1 8 9");
+```
+
+Why?  ¯\\\_(ツ)\_/¯
+
