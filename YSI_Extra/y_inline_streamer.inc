@@ -94,14 +94,22 @@ Optional plugins:
 // In some versions the tags are wrong.
 #if defined STREAMER_ENABLE_TAGS
 	#define STREAMER_TAG_OBJECT DynamicObject
+	#define STREAMER_TAG_PICKUP DynamicPickup
 	#define STREAMER_TAG_CP DynamicCP
 	#define STREAMER_TAG_RACE_CP DynamicRaceCP
+	#define STREAMER_TAG_MAP_ICON DynamicMapIcon
+	#define STREAMER_TAG_3D_TEXT_LABEL DynamicText3D
 	#define STREAMER_TAG_AREA DynamicArea
+	#define STREAMER_TAG_ACTOR DynamicActor
 #else
 	#define STREAMER_TAG_OBJECT _
+	#define STREAMER_TAG_PICKUP _
 	#define STREAMER_TAG_CP _
 	#define STREAMER_TAG_RACE_CP _
+	#define STREAMER_TAG_MAP_ICON _
+	#define STREAMER_TAG_3D_TEXT_LABEL _
 	#define STREAMER_TAG_AREA _
+	#define STREAMER_TAG_ACTOR _
 #endif
 
 #if !defined STREAMER_TYPE
@@ -681,6 +689,54 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 		return areaid;
 	}
 #endif
+
+// Hook destroying MapIcons to remove the callbacks.
+stock Inline_DestroyDynamicMapIcon(STREAMER_TAG_MAP_ICON:iconid)
+{
+	Indirect_Disconnect(EBC(DynamicMapIcon:iconid));
+	return DestroyDynamicMapIcon(iconid);
+}
+
+#if defined _ALS_DestroyDynamicMapIcon
+	#undef DestroyDynamicMapIcon
+#else
+	#define _ALS_DestroyDynamicMapIcon
+#endif
+#define DestroyDynamicMapIcon( Inline_DestroyDynamicMapIcon(
+
+// Hook destroying 3DTextLabels to remove the callbacks.
+stock Inline_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
+{
+	Indirect_Disconnect(EBC(DynamicText3D:id));
+	return DestroyDynamic3DTextLabel(id);
+}
+
+#if defined _ALS_DestroyDynamic3DTextLabel
+	#undef DestroyDynamic3DTextLabel
+#else
+	#define _ALS_DestroyDynamic3DTextLabel
+#endif
+#define DestroyDynamic3DTextLabel( Inline_DestroyDynamic3DTextLabel(
+
+// Hook destroying Actors to remove the callbacks.
+stock Inline_DestroyDynamicActor(STREAMER_TAG_ACTOR:actorid)
+{
+	Indirect_Disconnect(EBC(DynamicActor:actorid));
+	new
+		Func:cb<ii>;
+	if (Sparse_Exchange(YSI_g_sDynamicActor, _:actorid, _:cb))
+	{
+		Indirect_Release(cb);
+	}
+	return DestroyDynamicActor(actorid);
+}
+
+#if defined _ALS_DestroyDynamicActor
+	#undef DestroyDynamicActor
+#else
+	#define _ALS_DestroyDynamicActor
+#endif
+#define DestroyDynamicActor( Inline_DestroyDynamicActor(
 
 stock STREAMER_TAG_AREA:CreateDynamicCircleCallback(Func:onEnter<ii>, Float:x, Float:y, Float:size, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
 {

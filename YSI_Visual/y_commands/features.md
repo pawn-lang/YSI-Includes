@@ -397,7 +397,7 @@ public OnPlayerLeaveDynamicArea(playerid, DynamicArea:areaid)
 {
 	// Destroy all commands for this player in this area.  `EBC()` without a `using` expression will
 	// just return the encoded owner to be compared against.  
-	Command_RemoveCallback("", playerid, EBC(areaid));
+	Command_RemoveCallback("", playerid, EBC(DynamicArea:areaid));
 	return 1;
 }
 ```
@@ -428,7 +428,7 @@ DynamicArea:CreateBuyableHouse(Float:x, Float:y, Float:z, price)
 		@return 1;
 	}
 	
-	return Streamer_CreateSphereCallback(using inline OnEnter, x, y, z, 30.0);
+	return CreateDynamicSphereCallback(using inline OnEnter, x, y, z, 30.0);
 }
 ```
 
@@ -463,7 +463,7 @@ CreateAmmunation(Float:x1, Float:y1, Float:x2, Float:y2)
 		@return 1;
 	}
 	
-	Streamer_CreateRectCallback(using inline OnEnter, x1, y1, x2, y2);
+	CreateDynamicRectangleCallback(using inline OnEnter, x1, y1, x2, y2);
 }
 ```
 
