@@ -1046,13 +1046,13 @@ YCMD:y_commands_alternativea(playerid, params[], help) = y_commands_enableablea;
 static
 	gScriptTotal = 0;
 
-@cmd() scriptcom1(playerid, params[])
+@cmd() scriptcom1(playerid, params[], help)
 {
 	gScriptTotal = gScriptTotal + strval(params) + strval(params[2]);
 	return 1;
 }
 
-@cmd() scriptcom2(playerid, params[])
+@cmd() scriptcom2(playerid, params[], help)
 {
 	gScriptTotal = gScriptTotal + strval(params) * strval(params[2]);
 	return 1;

@@ -93,6 +93,7 @@ __COMPILER_TAG_DATA(Vehicle, INVALID_VEHICLE_ID);
 __COMPILER_TAG_DATA(Player, INVALID_PLAYER_ID);
 __COMPILER_TAG_DATA(Object, INVALID_OBJECT_ID);
 __COMPILER_TAG_DATA(PlayerObject, INVALID_OBJECT_ID);
+__COMPILER_TAG_DATA(Pickup, INVALID_PICKUP);
 
 stock EBC_Deactivate_(owner, tag)
 {
@@ -159,4 +160,28 @@ stock bool:EBC_DestroyPlayerObject(playerid, objectid)
 #endif
 #define _ALS_DestroyPlayerObject
 #define DestroyPlayerObject( EBC_DestroyPlayerObject(
+
+stock bool:EBC_bool:DestroyPickup(pickupid)
+{
+	EBC_Deactivate(pickupid, tagof(Pickup:));
+	return bool:DestroyPickup(pickupid);
+}
+
+#if defined _ALS_DestroyPickup
+	#undef DestroyPickup
+#endif
+#define _ALS_DestroyPickup
+#define DestroyPickup( EBC_DestroyPickup(
+
+//stock bool:EBC_DisablePlayerCheckpoint(playerid)
+//{
+//	EBC_Deactivate(playerid, tagof(Checkpoint:));
+//	return bool:DisablePlayerCheckpoint(playerid);
+//}
+//
+//#if defined _ALS_DisablePlayerCheckpoint
+//	#undef DisablePlayerCheckpoint
+//#endif
+//#define _ALS_DisablePlayerCheckpoint
+//#define DisablePlayerCheckpoint( EBC_DisablePlayerCheckpoint(
 

@@ -107,9 +107,16 @@ Optional plugins:
 	#define STREAMER_TAG_CP _
 	#define STREAMER_TAG_RACE_CP _
 	#define STREAMER_TAG_MAP_ICON _
-	#define STREAMER_TAG_3D_TEXT_LABEL _
 	#define STREAMER_TAG_AREA _
 	#define STREAMER_TAG_ACTOR _
+
+	#if defined STREAMER_REMOVE_TEXT3D_TAG
+		#define STREAMER_TAG_3D_TEXT_LABEL _
+	#elseif defined STREAMER_USE_DYNAMIC_TEXT3D_TAG
+		#define STREAMER_TAG_3D_TEXT_LABEL DynamicText3D
+	#else
+		#define STREAMER_TAG_3D_TEXT_LABEL Text3D
+	#endif
 #endif
 
 #if !defined STREAMER_TYPE
@@ -284,7 +291,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	// Hook stoping and destroying objects to remove the callbacks.
 	stock Inline_DestroyDynamicObject(STREAMER_TAG_OBJECT:objectid)
 	{
-		Indirect_Disconnect(EBC(DynamicObject:objectid));
+		Indirect_Disconnect(Inline_EBC__(_:objectid, tagof (DynamicObject:)));
 		if (Streamer_HasIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_CALLBACK))
 		{
 			new Func:cb<i> = Func:Streamer_GetIntData(STREAMER_TYPE_OBJECT, objectid, E_YSI_DYNAMIC_CALLBACK)<i>;
@@ -317,7 +324,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	// Hook destroying CPs to remove the callbacks.
 	stock Inline_DestroyDynamicCP(STREAMER_TAG_CP:checkpointid)
 	{
-		Indirect_Disconnect(EBC(DynamicCP:checkpointid));
+		Indirect_Disconnect(Inline_EBC__(_:checkpointid, tagof (DynamicCP:)));
 		if (Streamer_HasIntData(STREAMER_TYPE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK))
 		{
 			new Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK)<ii>;
@@ -353,7 +360,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	// Hook destroying Pickups to remove the callbacks.
 	stock Inline_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 	{
-		Indirect_Disconnect(EBC(DynamicPickup:pickupid));
+		Indirect_Disconnect(Inline_EBC__(_:pickupid, tagof (DynamicPickup:)));
 		if (Streamer_HasIntData(STREAMER_TYPE_PICKUP, pickupid, E_YSI_DYNAMIC_CALLBACK))
 		{
 			new Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_PICKUP, pickupid, E_YSI_DYNAMIC_CALLBACK)<ii>;
@@ -389,7 +396,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	// Hook destroying RaceCPs to remove the callbacks.
 	stock Inline_DestroyDynamicRaceCP(STREAMER_TAG_RACE_CP:checkpointid)
 	{
-		Indirect_Disconnect(EBC(DynamicRaceCP:checkpointid));
+		Indirect_Disconnect(Inline_EBC__(_:checkpointid, tagof (DynamicRaceCP:)));
 		if (Streamer_HasIntData(STREAMER_TYPE_RACE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK))
 		{
 			new Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_RACE_CP, checkpointid, E_YSI_DYNAMIC_CALLBACK)<ii>;
@@ -425,7 +432,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	// Hook destroying Areas to remove the callbacks.
 	stock Inline_DestroyDynamicArea(STREAMER_TAG_AREA:areaid)
 	{
-		Indirect_Disconnect(EBC(DynamicArea:areaid));
+		Indirect_Disconnect(Inline_EBC__(_:areaid, tagof (DynamicArea:)));
 		if (Streamer_HasIntData(STREAMER_TYPE_AREA, areaid, E_YSI_DYNAMIC_CALLBACK))
 		{
 			new Func:cb<ii> = Func:Streamer_GetIntData(STREAMER_TYPE_AREA, areaid, E_YSI_DYNAMIC_CALLBACK)<ii>;
@@ -471,6 +478,8 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	static stock
 		SparseArray:YSI_g_sDynamicObjectMoved<>,
 		SparseArray:YSI_g_sDynamicCP<>,
+		SparseArray:YSI_g_sDynamicRaceCP<>,
+		SparseArray:YSI_g_sDynamicPickup<>,
 		SparseArray:YSI_g_sDynamicArea<>;
 
 	forward OnDynamicObjectMoved(STREAMER_TAG_OBJECT:objectid);
@@ -524,7 +533,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	// Hook stoping and destroying objects to remove the callbacks.
 	stock Inline_DestroyDynamicObject(STREAMER_TAG_OBJECT:objectid)
 	{
-		Indirect_Disconnect(EBC(DynamicObject:objectid));
+		Indirect_Disconnect(Inline_EBC__(_:objectid, tagof (DynamicObject:)));
 		new
 			Func:cb<i>;
 		if (Sparse_Exchange(YSI_g_sDynamicObjectMoved, _:objectid, _:cb))
@@ -557,7 +566,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	// Hook destroying CPs to remove the callbacks.
 	stock Inline_DestroyDynamicCP(STREAMER_TAG_CP:checkpointid)
 	{
-		Indirect_Disconnect(EBC(DynamicCP:checkpointid));
+		Indirect_Disconnect(Inline_EBC__(_:checkpointid, tagof (DynamicCP:)));
 		new
 			Func:cb<ii>;
 		if (Sparse_Exchange(YSI_g_sDynamicCP, _:checkpointid, _:cb))
@@ -591,7 +600,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	// Hook destroying Pickups to remove the callbacks.
 	stock Inline_DestroyDynamicPickup(STREAMER_TAG_PICKUP:pickupid)
 	{
-		Indirect_Disconnect(EBC(DynamicPickup:pickupid));
+		Indirect_Disconnect(Inline_EBC__(_:pickupid, tagof (DynamicPickup:)));
 		new
 			Func:cb<ii>;
 		if (Sparse_Exchange(YSI_g_sDynamicPickup, _:pickupid, _:cb))
@@ -625,7 +634,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	// Hook destroying RaceCPs to remove the callbacks.
 	stock Inline_DestroyDynamicRaceCP(STREAMER_TAG_RACE_CP:checkpointid)
 	{
-		Indirect_Disconnect(EBC(DynamicRaceCP:checkpointid));
+		Indirect_Disconnect(Inline_EBC__(_:checkpointid, tagof (DynamicRaceCP:)));
 		new
 			Func:cb<ii>;
 		if (Sparse_Exchange(YSI_g_sDynamicRaceCP, _:checkpointid, _:cb))
@@ -659,7 +668,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 	// Hook destroying Areas to remove the callbacks.
 	stock Inline_DestroyDynamicArea(STREAMER_TAG_AREA:areaid)
 	{
-		Indirect_Disconnect(EBC(DynamicArea:areaid));
+		Indirect_Disconnect(Inline_EBC__(_:areaid, tagof (DynamicArea:)));
 		new
 			Func:cb<ii>;
 		if (Sparse_Exchange(YSI_g_sDynamicArea, _:areaid, _:cb))
@@ -693,7 +702,7 @@ stock bool:YSI_Streamer_RemoveFloatData(STREAMER_TYPE:type, STREAMER_ALL_TAGS:id
 // Hook destroying MapIcons to remove the callbacks.
 stock Inline_DestroyDynamicMapIcon(STREAMER_TAG_MAP_ICON:iconid)
 {
-	Indirect_Disconnect(EBC(DynamicMapIcon:iconid));
+	Indirect_Disconnect(Inline_EBC__(_:iconid, tagof (DynamicMapIcon:)));
 	return DestroyDynamicMapIcon(iconid);
 }
 
@@ -707,7 +716,7 @@ stock Inline_DestroyDynamicMapIcon(STREAMER_TAG_MAP_ICON:iconid)
 // Hook destroying 3DTextLabels to remove the callbacks.
 stock Inline_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 {
-	Indirect_Disconnect(EBC(DynamicText3D:id));
+	Indirect_Disconnect(Inline_EBC__(_:id, tagof (DynamicText3D:)));
 	return DestroyDynamic3DTextLabel(id);
 }
 
@@ -721,13 +730,7 @@ stock Inline_DestroyDynamic3DTextLabel(STREAMER_TAG_3D_TEXT_LABEL:id)
 // Hook destroying Actors to remove the callbacks.
 stock Inline_DestroyDynamicActor(STREAMER_TAG_ACTOR:actorid)
 {
-	Indirect_Disconnect(EBC(DynamicActor:actorid));
-	new
-		Func:cb<ii>;
-	if (Sparse_Exchange(YSI_g_sDynamicActor, _:actorid, _:cb))
-	{
-		Indirect_Release(cb);
-	}
+	Indirect_Disconnect(Inline_EBC__(_:actorid, tagof (DynamicActor:)));
 	return DestroyDynamicActor(actorid);
 }
 
@@ -740,36 +743,36 @@ stock Inline_DestroyDynamicActor(STREAMER_TAG_ACTOR:actorid)
 
 stock STREAMER_TAG_AREA:CreateDynamicCircleCallback(Func:onEnter<ii>, Float:x, Float:y, Float:size, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
 {
-	return Inline_CreateAreaCallback(onEnter, CreateDynamicCircleCallback(x, y, size, worldid, interiorid, playerid, priority);
+	return Inline_CreateAreaCallback(onEnter, CreateDynamicCircle(x, y, size, worldid, interiorid, playerid, priority));
 }
 
 stock STREAMER_TAG_AREA:CreateDynamicCylinderCallback(Func:onEnter<ii>, Float:x, Float:y, Float:minz, Float:maxz, Float:size, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
 {
-	return Inline_CreateAreaCallback(onEnter, CreateDynamicCylinderCallback(x, y, minz, maxz, size, worldid, interiorid, playerid, priority);
+	return Inline_CreateAreaCallback(onEnter, CreateDynamicCylinder(x, y, minz, maxz, size, worldid, interiorid, playerid, priority));
 }
 
 stock STREAMER_TAG_AREA:CreateDynamicSphereCallback(Func:onEnter<ii>, Float:x, Float:y, Float:z, Float:size, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
 {
-	return Inline_CreateAreaCallback(onEnter, CreateDynamicSphereCallback(x, y, z, size, worldid, interiorid, playerid, priority);
+	return Inline_CreateAreaCallback(onEnter, CreateDynamicSphere(x, y, z, size, worldid, interiorid, playerid, priority));
 }
 
 stock STREAMER_TAG_AREA:CreateDynamicRectangleCallback(Func:onEnter<ii>, Float:minx, Float:miny, Float:maxx, Float:maxy, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
 {
-	return Inline_CreateAreaCallback(onEnter, CreateDynamicRectangleCallback(minx, miny, maxx, maxy, worldid, interiorid, playerid, priority);
+	return Inline_CreateAreaCallback(onEnter, CreateDynamicRectangle(minx, miny, maxx, maxy, worldid, interiorid, playerid, priority));
 }
 
 stock STREAMER_TAG_AREA:CreateDynamicCuboidCallback(Func:onEnter<ii>, Float:minx, Float:miny, Float:minz, Float:maxx, Float:maxy, Float:maxz, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
 {
-	return Inline_CreateAreaCallback(onEnter, CreateDynamicCuboidCallback(minx, miny, minz, maxx, maxy, maxz, worldid, interiorid, playerid, priority);
+	return Inline_CreateAreaCallback(onEnter, CreateDynamicCuboid(minx, miny, minz, maxx, maxy, maxz, worldid, interiorid, playerid, priority));
 }
 
 stock STREAMER_TAG_AREA:CreateDynamicCubeCallback(Func:onEnter<ii>, Float:minx, Float:miny, Float:minz, Float:maxx, Float:maxy, Float:maxz, worldid = -1, interiorid = -1, playerid = -1, priority = 0)
 {
-	return Inline_CreateAreaCallback(onEnter, CreateDynamicCubeCallback(minx, miny, minz, maxx, maxy, maxz, worldid, interiorid, playerid, priority);
+	return Inline_CreateAreaCallback(onEnter, CreateDynamicCube(minx, miny, minz, maxx, maxy, maxz, worldid, interiorid, playerid, priority));
 }
 
 stock STREAMER_TAG_AREA:CreateDynamicPolygonCallback(Func:onEnter<ii>, const Float:points[], Float:minz = -FLOAT_INFINITY, Float:maxz = FLOAT_INFINITY, maxpoints = sizeof (points), worldid = -1, interiorid = -1, playerid = -1, priority = 0)
 {
-	return Inline_CreateAreaCallback(onEnter, CreateDynamicPolygonCallback(points, minz, maxz, maxpoints, worldid, interiorid, playerid, priority);
+	return Inline_CreateAreaCallback(onEnter, CreateDynamicPolygon(points, minz, maxz, maxpoints, worldid, interiorid, playerid, priority));
 }
 

@@ -785,7 +785,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 		sHash = 5381;
 		while ((_:sFlags = cmdtext[sPos]) > ' ')
 		{
-			YSI_g_sCommandName[sPos - sRet] = _:sFlags,
+			YSI_g_sCommandName[sPos - _:sRet] = _:sFlags,
 			sHash = sHash * 33 ^ _:sFlags,
 			++sPos;
 		}
