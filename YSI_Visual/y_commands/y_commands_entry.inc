@@ -136,13 +136,14 @@ Optional plugins:
 #endif
 
 #include "..\..\YSI_Coding\y_hooks"
-#include "..\..\YSI_Coding\y_inline"
+#include "..\..\YSI_Server\y_thirdpartyinclude\y_indirection"
 #include "..\..\YSI_Coding\y_remote"
 
 // Include the main implementation.
 #include "y_commands_impl"
 
 #if defined YSI_TESTS
+	#include "..\..\YSI_Coding\y_inline"
 	#include "y_commands_tests"
 #endif
 

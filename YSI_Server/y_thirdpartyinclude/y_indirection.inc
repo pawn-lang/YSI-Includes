@@ -1,7 +1,7 @@
-#if defined _INC_y_thirdparty_codeparse
+#if defined _INC_y_thirdparty_indirection
 	#endinput
 #endif
-#define _INC_y_thirdparty_codeparse
+#define _INC_y_thirdparty_indirection
 
 /*+
  * <library
@@ -90,30 +90,20 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-// Manually fix earlier versions.
-#if !defined _INC_code_parse_inc
-	#undef u@
+#tryinclude <indirection\indirection>
+#tryinclude <indirection-master\indirection>
+#tryinclude <indirection-master\indirection-master\indirection>
+#tryinclude "..\..\indirection\indirection"
+#tryinclude "..\..\indirection-master\indirection"
+#tryinclude "..\..\indirection-master\indirection-master\indirection"
+#tryinclude "..\..\..\indirection\indirection"
+#tryinclude "..\..\..\indirection-master\indirection"
+#tryinclude "..\..\..\indirection-master\indirection-master\indirection"
+#tryinclude "indirection"
+#tryinclude <indirection>
+#if !defined _INC_indirection
+	#error Download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
+#elseif !defined Indirect_IsValid
+	#error Re-download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
-#tryinclude <code-parse\code-parse>
-#tryinclude <code-parse.inc\code-parse>
-#tryinclude <code-parse.inc-master\code-parse>
-#tryinclude <code-parse.inc-master\code-parse.inc-master\code-parse>
-#tryinclude "..\..\code-parse\code-parse"
-#tryinclude "..\..\code-parse.inc\code-parse"
-#tryinclude "..\..\code-parse.inc-master\code-parse"
-#tryinclude "..\..\code-parse.inc-master\code-parse.inc-master\code-parse"
-#tryinclude "..\..\..\code-parse\code-parse"
-#tryinclude "..\..\..\code-parse.inc\code-parse"
-#tryinclude "..\..\..\code-parse.inc-master\code-parse"
-#tryinclude "..\..\..\code-parse.inc-master\code-parse.inc-master\code-parse"
-#tryinclude "code-parse"
-#tryinclude <code-parse>
-#if defined _INC_code_parse_inc
-	#undef u@
-#else
-	#error Download `github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
-//#elseif !defined __code_parse_u@_1
-//	#error Re-download `github.com/Y-Less/code-parse.inc/archive/refs/heads/master.zip` and extract it to `include\`.
-#endif
-#define u@$ 1]);
 
