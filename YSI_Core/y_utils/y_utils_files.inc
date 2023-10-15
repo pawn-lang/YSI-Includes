@@ -373,7 +373,11 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 	stock ResolveYSIScriptfileDirs()
 	{
 		new
-			bool:first = true,
+			#if defined _DEBUG
+				#if _DEBUG > 0
+					bool:first = true,
+				#endif
+			#endif
 			path[38] = __COMPILER_UNPACK"     /scriptfiles/", // The `18`s below are this length.
 			test[YSI_DIR_LENGTH + 8],
 			File:file = fopen(".doesntexist/YSI", io_read);
@@ -410,12 +414,16 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 						fcreatedir(path[18]);
 						StrCpy(YSI_gsDefaultDirs[dir], path[18]);
 					#else
-						if (first)
-						{
-							Server_PrintIntroPart(" Missing YSI scriptfiles directories: ", YSI_EMPTY),
-							first = false;
-						}
-						Server_PrintIntroPart(path);
+						#if defined _DEBUG
+							#if _DEBUG > 0
+								if (first)
+								{
+									Server_PrintIntroPart(" Missing YSI scriptfiles directories: ", YSI_EMPTY),
+									first = false;
+								}
+								Server_PrintIntroPart(path);
+							#endif
+						#endif
 						if ((file = fopen(test[4], io_write)))
 						{
 							// Found `dir/`.
@@ -431,10 +439,14 @@ stock GetYSIScriptfilesDir(E_YSI_DIR:dir)
 				}
 			}
 		}
-		if (!first)
-		{
-			Server_FinishIntroPart();
-		}
+		#if defined _DEBUG
+			#if _DEBUG > 0
+				if (!first)
+				{
+					Server_FinishIntroPart();
+				}
+			#endif
+		#endif
 	}
 #endif
 

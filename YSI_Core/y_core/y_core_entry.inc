@@ -76,6 +76,14 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#define YSI_VERSION_RESPO               2
+
+#define YSI_VERSION_MAJOR               5
+#define YSI_VERSION_MINOR               08
+#define YSI_VERSION_BUILD               4328
+
+#define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
+
 // These includes are in quite a strict order, since there's a lot of inter-
 // dependencies.  That's why they're all together in here.
 

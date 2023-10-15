@@ -97,14 +97,6 @@ CHAIN_HOOK(YVers)
 // Amazingly, this fixes hooking OnYSIInit...
 CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 
-#define YSI_VERSION_RESPO               2
-
-#define YSI_VERSION_MAJOR               5
-#define YSI_VERSION_MINOR               08
-#define YSI_VERSION_BUILD               2320
-
-#define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
-
 #if defined YSI_NO_VERSION_CHECK && !defined _YSI_NO_VERSION_CHECK
 	#define _YSI_NO_VERSION_CHECK
 #endif
@@ -635,7 +627,8 @@ static stock YVers_PrintHeader()
 		Server_PrintIntroPart(version);
 	#endif
 	Server_PrintIntroPart(YSI_EMPTY),
-	Server_PrintIntroPart("YSI:         v" YSI_VERSION);
+	format(version, sizeof (version), "YSI:         v%02d.%02d.%04d", YSI_VERSION_MAJOR, YSI_VERSION_MINOR, YSI_VERSION_BUILD),
+	Server_PrintIntroPart(version);
 	#if defined YSI_NO_MASTER
 		Server_PrintIntroPart("Master:      <none>");
 	#else
@@ -721,14 +714,18 @@ static stock YVers_PrintHeader()
 			YSI_gLockData[x / 3] = x * 10,
 			YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
 		#endif
-			YVers_PrintHeader();
-		#if _YSI_SAFE_STARTUP
-			Server_PrintIntroMessage(
-				"Unable to check the latest YSI version",
-				"- please watch the forums and github:",
-				YSI_EMPTY,
-				"         https://git.io/5.x"
-			);
+		#if defined _DEBUG
+			#if _DEBUG > 0
+				YVers_PrintHeader();
+				#if _YSI_SAFE_STARTUP
+					Server_PrintIntroMessage(
+						"Unable to check the latest YSI version",
+						"- please watch the forums and github:",
+						YSI_EMPTY,
+						"         https://git.io/5.x"
+					);
+				#endif
+			#endif
 		#endif
 		return 1;
 	}
@@ -751,7 +748,11 @@ stock YVers_StartCheck()
 		YSI_gLockData[0] -= 1,
 		YSI_gLockData[1] = YSI_gLockData[0] + 7;
 	#endif
-	YVers_PrintHeader();
+	#if defined _DEBUG
+		#if _DEBUG > 0
+			YVers_PrintHeader();
+		#endif
+	#endif
 	//YSI_Print__(" |                                      | ");
 	//YSI_Print__(" |  Checking the latest YSI version..   | ");
 	//YSI_Print__(YSI_gscSpacer);

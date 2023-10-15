@@ -143,7 +143,7 @@ static stock Timer_InlineCount(Func:func<>, time, count)
 	else
 	{
 		// Call after meta.
-		Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineCount<tF@_@:iii>, time, false, YSI_gcIIII, _:func, time, count));
+		Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineCount<tF@_@:ii>, time, false, YSI_gcIII, _:func, time, count));
 		@.func();
 	}
 }
@@ -200,7 +200,7 @@ stock Timer_CreateCallback(Func:func<>, initialOrTime, timeOrCount = 0, count = 
 	// the initial offset time.
 	// Repeat N times.
 	Indirect_Claim(func);
-	Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineCount<tF@_@:iii>, initialOrTime, false, YSI_gcIIII, _:func, timeOrCount, count));
+	Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineCount<tF@_@:ii>, initialOrTime, false, YSI_gcIII, _:func, timeOrCount, count));
 	return _:func;
 }
 

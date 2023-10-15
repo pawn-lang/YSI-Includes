@@ -2162,7 +2162,7 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 	}
 }
 
-#define CALL@Inline_OnAsmError%8() Inline_OnAsmError%8(YSI_EMPTY, AsmError:0)
+#define CALL@Inline_OnAsmError%8() Inline_OnAsmError%8("", AsmError:0)
 #define P@AsmError: P@
 
 static stock Inline_OnAsmError(const ctx[AsmContext], AsmError:error)

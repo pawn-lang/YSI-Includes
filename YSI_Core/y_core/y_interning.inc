@@ -174,16 +174,6 @@ stock const
 /*-------------------------------------------------------------------------*//**
  * <library>y_interning</library>
  * <remarks>
- *   The string <c>isiii</c> defined just once for repeated use.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock const
-	YSI_gcISIII[] = "isiii";
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_interning</library>
- * <remarks>
  *   The string <c>iiiiiiiiiiiiiiiii</c> defined just once for repeated use.
  *   Yes, believe it or not this ridiculous string is used in YSI!
  * </remarks>

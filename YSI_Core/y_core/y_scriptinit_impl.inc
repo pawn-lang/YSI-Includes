@@ -658,6 +658,10 @@ static stock const
 	/**
 	 * <library>y_scriptinit</library>
 	 */
+	YSI_gsc38[] =   " | %38s | ",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscPreInitFile[] = "pre-init",
 	/**
 	 * <library>y_scriptinit</library>
@@ -893,7 +897,6 @@ forward Server_Abort(reason);
 	#define Server_Abort(%0) (__emit(LOAD.U.pri %0, HALT 0))
 #endif
 
-native YSI_VAPrintF(const fmt[], addr) = printf;
 forward bool:fautocleanup(const name[], maxAge);
 
 /*-------------------------------------------------------------------------*//**
@@ -920,7 +923,11 @@ static stock ScriptInit_Dump(const filename[], const message[])
 		new file[48];
 		format(file, sizeof (file), "%s%s.%d.asm", GetYSIScriptfilesDir(E_YSI_DIR_DEBUG), filename, YSI_gsStartTime);
 	#if _YSI_SAFE_STARTUP
-		Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_SPACE, YSI_gscInitMsgD),
+		#if defined _DEBUG
+			#if _DEBUG > 0
+				Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_SPACE, YSI_gscInitMsgD),
+			#endif
+		#endif
 		Server_DisableLongCall();
 	#endif
 		if (DisasmWrite(file))
@@ -929,9 +936,13 @@ static stock ScriptInit_Dump(const filename[], const message[])
 			fautocleanup(file, 60 * 60 * 24 * 7);
 		}
 	#if _YSI_SAFE_STARTUP
-		Server_EnableLongCall(),
-		Server_PrintIntroPart(YSI_SPACE, YSI_gscDone),
-		Server_FinishIntroPart();
+		Server_EnableLongCall();
+		#if defined _DEBUG
+			#if _DEBUG > 0
+				Server_PrintIntroPart(YSI_SPACE, YSI_gscDone),
+				Server_FinishIntroPart();
+			#endif
+		#endif
 	#endif
 }
 
@@ -1014,7 +1025,7 @@ stock Server_PrintIntroMessage(...)
 			#emit ADD
 			#emit LOAD.I
 			#emit STOR.S.pri     a
-			YSI_VAPrintF(" | %38s | ", a);
+			YSI_PrintF__(YSI_gsc38, a);
 		}
 		// Footer.
 		YSI_Print__(YSI_gscSpacer);
@@ -1069,7 +1080,7 @@ stock Server_PrintIntroPart(...)
 			#emit ADD
 			#emit LOAD.I
 			#emit STOR.S.pri     a
-			YSI_VAPrintF(" | %38s | ", a);
+			YSI_PrintF__(YSI_gsc38, a);
 		}
 }
 
@@ -1233,14 +1244,26 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 		#endif
 	#endif
 	{
-		#if !_YSI_SAFE_STARTUP
-			printf("Unsafe YSI signed by: %s", YSI_gcUnsafeStartupContract);
+		#if _YSI_SAFE_STARTUP
+			#if defined _DEBUG
+				#if _DEBUG <= 0
+					YSI_PrintF__("YSI v%02d.%02d.%04d", YSI_VERSION_MAJOR, YSI_VERSION_MINOR, YSI_VERSION_BUILD);
+				#endif
+			#else
+				YSI_PrintF__("YSI v%02d.%02d.%04d", YSI_VERSION_MAJOR, YSI_VERSION_MINOR, YSI_VERSION_BUILD);
+			#endif
+		#else
+			YSI_PrintF__("Unsafe YSI signed by: %s", YSI_gcUnsafeStartupContract);
 		#endif
 		if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
 		{
 			// Loaded from a file.
 			#if _YSI_SAFE_STARTUP
-				Server_PrintIntroMessage("   File loaded from YSI code cache.");
+				#if defined _DEBUG
+					#if _DEBUG > 0
+						Server_PrintIntroMessage("   File loaded from YSI code cache.");
+					#endif
+				#endif
 			#endif
 				R@("OnCachedInit", YSI_EMPTY);
 		}
@@ -1283,31 +1306,36 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 			#endif
 				Server_DisableLongCall();
 			#if _YSI_SAFE_STARTUP
-				if (jit)
-				{
-					Server_PrintIntroPart(
-						"  Generating code, this may take a",
-						"         little bit of time.",
-						YSI_SPACE,
-						YSI_gscInitMsgD
-					);
-				}
-				else
-				{
-					Server_PrintIntroPart(
-						"  Generating code, this may take a",
-						" little bit of time.  Note that this",
-						" code generation works best with the",
-						"    JIT plugin, which you are not",
-						"    currently using.  Get it here:",
-						YSI_SPACE,
-						"      https://git.io/jit-plugin",
-						YSI_SPACE,
-						YSI_gscInitMsgD
-					);
-				}
-				new t0, t1;
-				t0 = GetTickCount();
+				#if defined _DEBUG
+					#if _DEBUG > 0
+						if (jit)
+						{
+							Server_PrintIntroPart(
+								"  Generating code, this may take a",
+								"         little bit of time.",
+								YSI_SPACE,
+								YSI_gscInitMsgD
+							);
+						}
+						else
+						{
+							Server_PrintIntroPart(
+								"  Generating code, this may take a",
+								" little bit of time.  Note that this",
+								" code generation works best with the",
+								"    JIT plugin, which you are not",
+								"    currently using.  Get it here:",
+								YSI_SPACE,
+								"      https://git.io/jit-plugin",
+								YSI_SPACE,
+								YSI_gscInitMsgD
+							);
+						}
+						new t0, t1;
+						t0 = GetTickCount();
+					#endif
+				#endif
+				#pragma unused jit
 			#else
 				#pragma unused jit
 			#endif
@@ -1316,12 +1344,15 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				ScriptInit_OnCodeInit();
 			#endif
 			#if _YSI_SAFE_STARTUP
-				t1 = GetTickCount();
-				//printf("Script Initialisation: %d", t1 - t0);
-				new str[32];
-				format(str, sizeof (str), "            Done in %dms!", t1 - t0);
-				Server_PrintIntroPart(YSI_SPACE, str);
-				Server_FinishIntroPart();
+				#if defined _DEBUG
+					#if _DEBUG > 0
+						t1 = GetTickCount();
+						new str[32];
+						format(str, sizeof (str), "            Done in %dms!", t1 - t0);
+						Server_PrintIntroPart(YSI_SPACE, str);
+						Server_FinishIntroPart();
+					#endif
+				#endif
 			#endif
 			#if defined ScriptInit_OnYSIInit
 				ScriptInit_OnYSIInit();
@@ -1333,47 +1364,63 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 				// written out, thus loaded in next time.
 				YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
 				#if _YSI_SAFE_STARTUP
-					Server_PrintIntroPart(
-						" Dumping \"YSI_CACHE.amx\", this may",
-						"     take a little bit of time.",
-						YSI_SPACE,
-						YSI_gscInitMsgD
-					);
+					#if defined _DEBUG
+						#if _DEBUG > 0
+							Server_PrintIntroPart(
+								" Dumping \"YSI_CACHE.amx\", this may",
+								"     take a little bit of time.",
+								YSI_SPACE,
+								YSI_gscInitMsgD
+							);
+						#endif
+					#endif
 				#endif
 				if (DumpAMX_Write(name))
 				{
 					#if _YSI_SAFE_STARTUP
-						Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
-						Server_FinishIntroPart();
+						#if defined _DEBUG
+							#if _DEBUG > 0
+								Server_PrintIntroPart(YSI_SPACE, YSI_gscDone);
+								Server_FinishIntroPart();
+							#endif
+						#endif
 					#endif
 						// Clear this flag after dumping.  This is so we can tell
 						// when a mode is cached.
 						YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
 					#if _YSI_SAFE_STARTUP
-						Server_PrintIntroMessage(
-							"    File dumped to YSI code cache:",
-							YSI_SPACE,
-							"       scriptfiles/YSI_CACHE.amx",
-							YSI_SPACE,
-							"Load this file instead to skip this",
-							"code optimisation step in the future.",
-							"Note that if you have multiple scripts",
-							"loading at once (i.e. gamemodes,",
-							"filterscripts, and modules) you may",
-							"need to load and cache them",
-							"individually so that they don't",
-							"clobber each other.  If you don't, in",
-							"\"server.cfg\", the following works:",
-							YSI_SPACE,
-							"  gamemode0 ../scriptfiles/YSI_CACHE 1"
-						);
+						#if defined _DEBUG
+							#if _DEBUG > 0
+								Server_PrintIntroMessage(
+									"    File dumped to YSI code cache:",
+									YSI_SPACE,
+									"       scriptfiles/YSI_CACHE.amx",
+									YSI_SPACE,
+									"Load this file instead to skip this",
+									"code optimisation step in the future.",
+									"Note that if you have multiple scripts",
+									"loading at once (i.e. gamemodes,",
+									"filterscripts, and modules) you may",
+									"need to load and cache them",
+									"individually so that they don't",
+									"clobber each other.  If you don't, in",
+									"\"server.cfg\", the following works:",
+									YSI_SPACE,
+									"  gamemode0 ../scriptfiles/YSI_CACHE 1"
+								);
+							#endif
+						#endif
 					#endif
 				}
 				else
 				{
 					#if _YSI_SAFE_STARTUP
-						Server_PrintIntroPart(YSI_SPACE, YSI_gscFailed);
-						Server_FinishIntroPart();
+						#if defined _DEBUG
+							#if _DEBUG > 0
+								Server_PrintIntroPart(YSI_SPACE, YSI_gscFailed);
+								Server_FinishIntroPart();
+							#endif
+						#endif
 					#endif
 						YSI_g_sScriptInitState = tmp;
 						Debug_Error("YSI code cache write failed");
@@ -1437,7 +1484,11 @@ public OnJITCompile()
 	}
 	DEBUG_MAYBE_DUMP(YSI_gscPostInitFile, YSI_gscInitMsgB);
 	#if _YSI_SAFE_STARTUP
-		Server_FinishIntroMessage();
+		#if defined _DEBUG
+			#if _DEBUG > 0
+				Server_FinishIntroMessage();
+			#endif
+		#endif
 	#endif
 	return ret;
 }
