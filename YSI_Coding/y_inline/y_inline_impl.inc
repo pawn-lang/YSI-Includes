@@ -266,10 +266,6 @@ __COMPILER_CONST_STATIC INLINE_PATTERN_2 = _C<_Y_L>;
 __COMPILER_CONST_STATIC INLINE_PATTERN_3 = _C<ess_>;
 __COMPILER_CONST_STATIC INLINE_PATTERN_4 = _C<Cole>;
 
-forward Callback_Release_(ResolvedAlloc:a);
-forward Inline_MaybeFree_(Alloc:slot);
-forward Inline_MaybeConst_(ResolvedAlloc:slot);
-
 #define CALL@I@F%8() I@F%8()
 #define CALL@I@L%8() I@L%8()
 #define CALL@I@K%8() I@K%8(0)
@@ -283,9 +279,10 @@ forward Inline_MaybeConst_(ResolvedAlloc:slot);
 #define CALL@Inline_operatorMul%8() ((@Ik:0)*%8(0))
 #define CALL@Inline_EBC__%8() Inline_EBC__%8(0,0)
 
-forward Inline_TBC__(timerID);
+static stock const
+	YSI_gscSpecifier_i[] = "i";
 
-public Inline_TBC__(timerID)
+static stock Inline_TBC__(timerID)
 {
 	// Destroy inlines with this owner.
 	Indirect_Disconnect((timerID | (0x1FF << 22)) & cellmax);
@@ -301,7 +298,7 @@ stock Inline_EBC__(owner, tag)
 		return
 			++timerID,
 			//// Set a timer to kill this inline eventually.
-			YSI_SetTimerEx__("Inline_TBC__", owner, false, "i", timerID),
+			YSI_SetTimerEx__(&Inline_TBC__<i>, owner, false, YSI_gscSpecifier_i, timerID),
 			(timerID | (0x1FF << 22)) & cellmax;
 	}
 	else
@@ -346,10 +343,6 @@ stock operator*(@Ik:func, ebc)
 	}
 	return _:func;
 }
-
-static stock const
-	YSI_gscSpecifier_i[] = "i",
-	YSI_gscInline_MaybeFree[] = "Inline_MaybeFree_";
 
 static stock
 	YSI_g_sFakeE_INLINE_CALL[E_INLINE_CALL];
@@ -437,14 +430,7 @@ stock operator~(I@T:inlines[], size)
 	YSI_g_sInlineLinkedList = size - YSI_g_sJumpOffset;
 }
 
-public Inline_MaybeFree_(Alloc:slot)
-{
-	// If this function is called, the given inline left the call stack without
-	// being claimed.
-	free(slot);
-}
-
-public Inline_MaybeConst_(ResolvedAlloc:slot)
+static stock Inline_MaybeConst_(ResolvedAlloc:slot)
 {
 	// If this function is called, the given inline has been claimed, but has
 	// left the current scope, so can't have its closure written back to.
@@ -1680,7 +1666,7 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__("Inline_MaybeConst_", 0, false, YSI_gscSpecifier_i, AMX_Ref(func[E_INLINE_CALL:E_INDIRECTION_ALWAYS_NULL]));
+	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx__(&Inline_MaybeConst_<tResolvedAlloc:>, 0, false, YSI_gscSpecifier_i, AMX_Ref(func[E_INLINE_CALL:E_INDIRECTION_ALWAYS_NULL]));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2203,7 +2189,7 @@ static stock Inline_DoCodeGen(const scanner[CodeScanner], const data[E_INLINE_DA
 	AsmEmitPadding(ctx);
 }
 
-public Callback_Release_(ResolvedAlloc:a)
+static stock Callback_Release_(ResolvedAlloc:a)
 {
 	KillTimer(AMX_Read(_:a + E_INLINE_CALL_TIMER__));
 	free(Malloc_Reconcile(a));

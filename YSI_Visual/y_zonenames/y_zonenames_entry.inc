@@ -156,9 +156,7 @@ MASTER_REHOOK__ OnPlayerDeath(playerid, killerid, reason)
 	return 1;
 }
 
-forward ZoneNames_Hide(playerid);
-
-public ZoneNames_Hide(playerid)
+static stock ZoneNames_Hide(playerid)
 {
 	new
 		td = YSI_g_sZNTD[playerid];
@@ -182,7 +180,7 @@ stock ZoneNames_Show(playerid, id)
 		td = Text_GetLastID();
 	if (td != -1)
 	{
-		SetTimerEx("ZoneNames_Hide", 3000, false, "i", playerid),
+		YSI_SetTimerEx__(&ZoneNames_Hide<i>, 3000, false, "i", playerid),
 		YSI_g_sZNTD[playerid] = td;
 	}
 }

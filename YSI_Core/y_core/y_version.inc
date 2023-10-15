@@ -109,8 +109,6 @@ CHAIN_FORWARD:YVers_OnYSIInit() = 1;
 	#define _YSI_NO_VERSION_CHECK
 #endif
 
-forward YVers_Callback(index, code, data[]);
-
 static stock const
 	/**
 	 * <library>y_scriptdata</library>
@@ -780,7 +778,7 @@ stock YVers_StartCheck()
 	//  
 	// This remote script has now been updated to include changelog
 	// information and keeps a record of what IPs are connecting.
-	//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, YSI_EMPTY, "YVers_Callback");
+	//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, YSI_EMPTY, &YVers_Callback<>);
 	return 1;
 }
 
@@ -799,7 +797,7 @@ stock YVers_StartCheck()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-public YVers_Callback(index, code, data[])
+static stock YVers_Callback(index, code, data[])
 {
 	if (code == 200)
 	{

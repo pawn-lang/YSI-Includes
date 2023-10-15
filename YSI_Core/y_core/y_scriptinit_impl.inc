@@ -1693,8 +1693,6 @@ static stock exit_order:_@exit_order() { return exit_order; }
 	}
 #endif
 
-forward ScriptInit_PurgeTemporaries();
-
 forward File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = sizeof (name));
 
 /*-------------------------------------------------------------------------*//**
@@ -1705,7 +1703,7 @@ forward File:ftemporary_(name[], const ext[] = "tmp", const path[] = "", len = s
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-public ScriptInit_PurgeTemporaries()
+static stock ScriptInit_PurgeTemporaries()
 {
 	if (!fexist(YSI_TEMP_FILE_NAME))
 	{
@@ -1769,7 +1767,7 @@ ScriptInit_Purge_clean:
 	fremove(tmp);
 	// Recheck once an hour.
 ScriptInit_Purge_retry:
-	YSI_gsPurgeTimer = YSI_SetTimer__("ScriptInit_PurgeTemporaries", 1000 * 60 * 60, false);
+	YSI_gsPurgeTimer = YSI_SetTimer__(&ScriptInit_PurgeTemporaries<>, 1000 * 60 * 60, false);
 }
 
 /*-------------------------------------------------------------------------*//**
