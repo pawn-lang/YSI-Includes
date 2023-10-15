@@ -118,20 +118,23 @@ native YSI_PrintF__(const format[], GLOBAL_TAG_TYPES:...) = printf;
  *//*------------------------------------------------------------------------**/
 
 static stock const
-	YSI_gscCallback[] = "y_elision";
+	YSI_gscTimerStub[] = "@_yT";
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
  *   This is a tiny stub function to call other public functions via an address
  *   instead of via a name.  This allows the compiler to skip functions that
- *   aren't used at all.  It does require amx-assembly though.
+ *   aren't used at all.  It does require amx-assembly though.  The prefix
+ *   <c>@_yT</c> is used to denote timers in <em>y_timers</em>, so we may as
+ *   well reuse it here for the ultimate timer.  I might even rewrite
+ *   <em>y_timers</em> to use this timer.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-forward y_elision(addr);
+@_yT(addr);
 
-public y_elision(addr)
+@_yT(addr)
 {
 	// Reset the frame.
 	#emit POP.pri
@@ -174,7 +177,7 @@ native YSI_SetTimerEx__(const funcname[], interval, bool:repeating, const format
 
 stock SetTimerAddr(addr, time, bool:repeat)
 {
-	return YSI_SetTimerEx__(YSI_gscCallback, time, repeat, "i", addr);
+	return YSI_SetTimerEx__(YSI_gscTimerStub, time, repeat, "i", addr);
 }
 
 #if defined _ALS_SetTimer
@@ -220,7 +223,7 @@ stock SetTimerExAddr(addr, time, bool:repeat, const fmt[], GLOBAL_TAG_TYPES:...)
 	#emit POP.alt
 	
 	// Replace the parameter count with the target function.
-	#emit CONST.pri    YSI_gscCallback
+	#emit CONST.pri    YSI_gscTimerStub
 	#emit SWAP.pri
 	
 	// Increase the parameter count.
