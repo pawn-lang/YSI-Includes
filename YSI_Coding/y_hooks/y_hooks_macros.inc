@@ -86,6 +86,7 @@ Optional plugins:
 
 */
 
+//#define Y_HOOKS_ADDRESSOF(%0(%1)) (I@=((O@D_:O@A_())?(((_:%0(%1)),O@V_)?1:2):(O@V_)),printf("Y_HOOKS_ADDRESSOF = %08x", I@),I@)
 #define Y_HOOKS_ADDRESSOF(%0(%1)) (O@D_:O@A_())?(((_:%0(%1)),O@V_)?1:2):(O@V_)
 
 //#define @yH_public%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)

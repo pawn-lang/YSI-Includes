@@ -113,6 +113,7 @@ Optional plugins:
 
 // The most first include, since it determines compiler settings that might be
 // used by literally any other include.
+#include "..\..\YSI_Server\y_thirdpartyinclude\y_addressof"
 #include "y_emit"
 #include "y_compilerdata"
 
@@ -334,9 +335,10 @@ stock File:YSI_FOpen__(const filename[], filemode:mode = io_readwrite)
 #include "y_globaltags"
 #include "y_prehook"
 #include "y_stripnumbers"
-#include "y_samp_natives"
 
 #include "y_shortvar"
+#include "y_samp_natives"
+
 #include "y_pp"
 #include "y_als_impl"
 

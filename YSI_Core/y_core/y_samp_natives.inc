@@ -113,6 +113,43 @@ native YSI_PrintF__(const format[], GLOBAL_TAG_TYPES:...) = printf;
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
+ *   The name of the public wrapper function to call.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock const
+	YSI_gscCallback[] = "y_elision";
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_samp_natives</library>
+ * <remarks>
+ *   This is a tiny stub function to call other public functions via an address
+ *   instead of via a name.  This allows the compiler to skip functions that
+ *   aren't used at all.  It does require amx-assembly though.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward y_elision(addr);
+
+public y_elision(addr)
+{
+	// Reset the frame.
+	#emit POP.pri
+	#emit SCTRL        5
+	// Get the return address (always 0).
+	#emit POP.alt
+	// Decrease the parameter count.
+	#emit POP.pri
+	#emit ADD.C        __m1_cell
+	// Get the target address.
+	#emit SWAP.pri
+	#emit PUSH.alt
+	#emit SCTRL        __cip
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_samp_natives</library>
+ * <remarks>
  *   Const-correct <c>SetTimer</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -122,11 +159,90 @@ native YSI_SetTimer__(const funcname[], interval, bool:repeating) = SetTimer;
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
+ *   <c>SetTimer</c> version that takes function addresses, not names.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock SetTimerAddr(addr, time, bool:repeat)
+{
+	return YSI_SetTimerEx(YSI_gscCallback, time, repeat, "i", addr);
+}
+
+#if defined _ALS_SetTimer
+	#undef SetTimer
+#endif
+#define _ALS_SetTimer
+
+#define SetTimer(&%0,%1) SetTimerAddr(&%0,%1)
+#define SetTimerAddr(&%0,%1) SetTimerAddr(_:addressof (%0),%1)
+#define YSI_SetTimer__(&%0,%1) SetTimerAddr(_:addressof (%0),%1)
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_samp_natives</library>
+ * <remarks>
  *   Const-correct <c>SetTimerEx</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 native YSI_SetTimerEx__(const funcname[], interval, bool:repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_samp_natives</library>
+ * <remarks>
+ *   <c>SetTimerEx</c> version that takes function addresses, not names.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock SetTimerExAddr(addr, time, bool:repeat, const fmt[], GLOBAL_TAG_TYPES:...)
+{
+	Q@ = "i",
+	strcat(Q@, sizeof (Q@), fmt));
+	
+	// Shuffle the parameters a bit, so it becomes:
+	// (time, repeat, "i" + fmt, addr)
+	#emit LOAD.S.alt   addr
+	#emit LOAD.S.pri   time
+	#emit STOR.S.pri   addr
+	#emit LOAD.S.pri   repeat
+	#emit STOR.S.pri   time
+	#emit CONST.pri    Q@
+	#emit STOR.S.pri   repeat
+	#emit STOR.S.alt   addr
+	
+	// Restore the frame.
+	#emit POP.pri
+	#emit SCTRL        __frm
+	
+	// Get the return address.
+	#emit POP.alt
+	
+	// Replace the parameter count with the target function.
+	#emit CONST.pri    YSI_gscCallback
+	#emit SWAP.pri
+	
+	// Increase the parameter count.
+	#emit ADD.C        __1_cell
+	#emit PUSH.pri
+	
+	// Call the function.
+	#emit SYSREQ.C     SetTimerEx
+	
+	// Return.
+	#emit PUSH.alt
+	#emit PROC
+	#emit RETN
+	
+	return 0;
+}
+
+#if defined _ALS_SetTimerEx
+	#undef SetTimerEx
+#endif
+#define _ALS_SetTimerEx
+
+#define SetTimerEx(&%0,%1) SetTimerExAddr(&%0,%1)
+#define SetTimerExAddr(&%0,%1) SetTimerExAddr(_:addressof (%0),%1)
+#define YSI_SetTimerEx__(&%0,%1) SetTimerAddr(_:addressof (%0),%1)
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
