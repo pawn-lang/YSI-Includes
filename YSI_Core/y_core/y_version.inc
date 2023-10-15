@@ -620,7 +620,7 @@ static stock YVers_PrintHeader()
 	Script_GetStartString(version),
 	format(version, sizeof (version), "Started:     %s", version),
 	Server_PrintIntroPart(version),
-	Server_PrintIntroPart(""),
+	Server_PrintIntroPart(YSI_EMPTY),
 	Script_GetCompilerString(version, os),
 	format(version, sizeof (version), "Compiler:    %s (%s)", version, os),
 	Server_PrintIntroPart(version),
@@ -634,7 +634,7 @@ static stock YVers_PrintHeader()
 		format(version, sizeof (version), "Built:       %s - %s", __date, __time),
 		Server_PrintIntroPart(version);
 	#endif
-	Server_PrintIntroPart(""),
+	Server_PrintIntroPart(YSI_EMPTY),
 	Server_PrintIntroPart("YSI:         v" YSI_VERSION);
 	#if defined YSI_NO_MASTER
 		Server_PrintIntroPart("Master:      <none>");
@@ -642,7 +642,7 @@ static stock YVers_PrintHeader()
 		format(version, sizeof (version), "Master:      %d", @_),
 		Server_PrintIntroPart(version);
 	#endif
-	Server_PrintIntroPart(""),
+	Server_PrintIntroPart(YSI_EMPTY),
 	Server_GetJITString(version),
 	format(version, sizeof (version), "JIT:         %s", version),
 	Server_PrintIntroPart(version);

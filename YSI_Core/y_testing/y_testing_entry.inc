@@ -221,11 +221,7 @@ static stock
 stock
 	YSI_gCurTestName[FUNCTION_LENGTH];
 
-static stock const
-	YSI_gscStringS[] = "s",
-	YSI_gscString_[] = "";
-
-#define Y_TESTING_S(%0) ((%0) == 1 ? YSI_gscString_ : YSI_gscStringS)
+#define Y_TESTING_S(%0) ((%0) == 1 ? YSI_EMPTY : YSI_gcS)
 
 // Each function type has a dedicated three letter prefix associated with it:
 //   

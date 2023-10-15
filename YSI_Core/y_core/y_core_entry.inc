@@ -114,6 +114,7 @@ Optional plugins:
 // The most first include, since it determines compiler settings that might be
 // used by literally any other include.
 #include "..\..\YSI_Server\y_thirdpartyinclude\y_addressof"
+#include "y_interning"
 #include "y_emit"
 #include "y_compilerdata"
 

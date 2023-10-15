@@ -265,24 +265,6 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 		NULL[2] = "\1";
 #endif
 
-stock const
-	/**
-	 * <library>y_shortvar</library>
-	 * <remarks>
-	 *   A single space in a string, for string interning.  Just a micro-
-	 *   optimisation to use this instead of <c>" "</c> throughout YSI.
-	 * </remarks>
-	 */
-	YSI_SPACE[] = " ",
-	/**
-	 * <library>y_shortvar</library>
-	 * <remarks>
-	 *   An empty string, for string interning.  Just a micro-optimisation to use
-	 *   this instead of <c>""</c> throughout YSI.
-	 * </remarks>
-	 */
-	YSI_EMPTY[] = "";
-
 #if __COMPILER_MODIFIED
 	#endinput
 #endif

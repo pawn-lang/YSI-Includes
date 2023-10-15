@@ -235,9 +235,6 @@ static stock __declspec(dist_master) YSI_g_sInlineCommands[MAX_COMMANDS][E_COMMA
 static stock const
 	YSI_gscOPCR[] = "OnPlayerCommandReceived",
 	YSI_gscOPCP[] = "OnPlayerCommandPerformed",
-	YSI_gscISI[] = "isi",
-	YSI_gscISII[] = "isii",
-	YSI_gscISIII[] = "isiii",
 	YSI_gscCommand_FastCallS[] = "Command_FastCallS",
 	YSI_gscCommand_FastCallIS[] = "Command_FastCallIS",
 	YSI_gscCommand_FastCallISI[] = "Command_FastCallISI";
@@ -362,7 +359,7 @@ FUNC_PAWNDOC(bool:_Command_IsAlt(idx));
 	#define Command_Error(%0,%2) Command_ErrorRet(%2)
 #endif
 
-#define Command_OnReceived(%2,%0,%1) ((YSI_g_sSystemSettings&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),_:(%2))):(%2))
+#define Command_OnReceived(%2,%0,%1) ((YSI_g_sSystemSettings&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gcISI,(%0),(%1),_:(%2))):(%2))
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_commands</library>
@@ -1151,9 +1148,9 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 			// Using `YSI_g_sCommandPrefix` here has a buffer overflow in to
 			// `YSI_g_sCommandName`, which is what we want.
 			if (cmdtext[sPos])
-				YSI_CallRemoteFunction__(YSI_g_sCommandPrefix, YSI_gscISII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				YSI_CallRemoteFunction__(YSI_g_sCommandPrefix, YSI_gcISII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			else
-				YSI_CallRemoteFunction__(YSI_g_sCommandPrefix, YSI_gscISII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				YSI_CallRemoteFunction__(YSI_g_sCommandPrefix, YSI_gcISII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		else switch (sFlags & e_COMMAND_FLAG_ARGS)
@@ -1162,27 +1159,27 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline IS %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
 			if (cmdtext[sPos])
-				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallIS, YSI_gcISII, playerid, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
 			else
-				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallIS, YSI_gscISII, playerid, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallIS, YSI_gcISII, playerid, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
 			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		case e_COMMAND_FLAG_ARGS_S:
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline S %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
 			if (cmdtext[sPos])
-				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallS, YSI_gcISI, sHash, cmdtext[sPos], Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			else
-				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallS, YSI_gscISI, sHash, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallS, YSI_gcISI, sHash, NULL, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		case e_COMMAND_FLAG_ARGS_ISI:
 		{
 			Debug_Print5("Commands_OnPlayerCommandText: Inline ISI %08x %08x (%d, \"%s\", %d)", sFlags, sHash, playerid, cmdtext[sPos], help & 1);
 			if (cmdtext[sPos])
-				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallISI, YSI_gcISIII, playerid, cmdtext[sPos], help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
 			else
-				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallISI, YSI_gscISIII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
+				YSI_CallRemoteFunction__(YSI_gscCommand_FastCallISI, YSI_gcISIII, playerid, NULL, help & 1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>), sHash);
 			sRet = e_COMMAND_ERRORS:getproperty(8, YSIM_RETURN);
 		}
 		default:
@@ -1193,7 +1190,7 @@ static stock e_COMMAND_ERRORS:Command_ReProcess__(playerid, const string:cmdtext
 	#endif
 	Debug_Print5("Command_ReProces: Result = %d %d %d", _:sRet, Command_ErrorRet(sRet), _:COMMAND_OK);
 	if (YSI_g_sSystemSettings & e_COMM_FLAG_OPCP)
-		sRet = e_COMMAND_ERRORS:YSI_CallRemoteFunction__(YSI_gscOPCP, YSI_gscISI, playerid, cmdtext, _:sRet);
+		sRet = e_COMMAND_ERRORS:YSI_CallRemoteFunction__(YSI_gscOPCP, YSI_gcISI, playerid, cmdtext, _:sRet);
 	Debug_Print5("Command_ReProces: Return = %d %d %d", playerid, _:sRet, Command_ErrorRet(sRet));
 	return sRet;
 }

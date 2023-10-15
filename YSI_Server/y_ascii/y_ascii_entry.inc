@@ -116,7 +116,6 @@ enum ASCII_ALIGNMENT_STYLE
 _Y_CORE_STATIC stock ASCII_PrintLinePart(const text[], len, bool:hyphen, ASCII_BORDER_STYLE:border, ASCII_ALIGNMENT_STYLE:alignment, padding = 1)
 {
 	new
-		spacer[] = "",
 		ch0,
 		ch1;
 	// End the string.
@@ -134,7 +133,7 @@ _Y_CORE_STATIC stock ASCII_PrintLinePart(const text[], len, bool:hyphen, ASCII_B
 		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (40 - len) / 2;
 		default: {}
 		}
-		YSI_PrintF__(" |%*s%*s%*s| ", padding, spacer, 40 - padding - padding, text, padding, spacer);
+		YSI_PrintF__(" |%*s%*s%*s| ", padding, YSI_EMPTY, 40 - padding - padding, text, padding, YSI_EMPTY);
 	}
 	case ASCII_BORDER_STYLE_LARGE:
 	{
@@ -143,7 +142,7 @@ _Y_CORE_STATIC stock ASCII_PrintLinePart(const text[], len, bool:hyphen, ASCII_B
 		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (54 - len) / 2;
 		default: {}
 		}
-		YSI_PrintF__("         |%*s%*s%*s|", padding, spacer, 54 - padding - padding, text, padding, spacer);
+		YSI_PrintF__("         |%*s%*s%*s|", padding, YSI_EMPTY, 54 - padding - padding, text, padding, YSI_EMPTY);
 	}
 	case ASCII_BORDER_STYLE_PILLARS:
 	{

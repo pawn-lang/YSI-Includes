@@ -1146,7 +1146,7 @@ Format_Render_start:
 								{
 									CallRemoteFunction(func, "ii", _:l, _j);
 									// Resolve the string.
-									getproperty(8, "", YSIM_STRING, Q@);
+									getproperty(8, YSI_EMPTY, YSIM_STRING, Q@);
 									strunpack(Q@, Q@);
 									if (Q@[0])
 									{
@@ -1189,7 +1189,7 @@ Format_Render_start:
 								{
 									CallRemoteFunction(func, "iii", pid, _:l, _j);
 									// Resolve the string.
-									getproperty(8, "", YSIM_STRING, Q@);
+									getproperty(8, YSI_EMPTY, YSIM_STRING, Q@);
 									strunpack(Q@, Q@);
 									if (Q@[0])
 									{
@@ -1450,7 +1450,7 @@ Format_Render_start:
 									// Get a string if there is one.
 									if (b == 1 || b == 2)
 									{
-										getproperty(8, "", YSIM_STRING, Q@);
+										getproperty(8, YSI_EMPTY, YSIM_STRING, Q@);
 										strunpack(Q@, Q@);
 										if (IsNull(Q@))
 										{

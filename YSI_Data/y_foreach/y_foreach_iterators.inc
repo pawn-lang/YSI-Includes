@@ -878,11 +878,7 @@ static stock const
 	/**
 	 * <library>y_iterate</library>
 	 */
-	YSI_gsIter_ActorDo[] = "Iter_ActorDo",
-	/**
-	 * <library>y_iterate</library>
-	 */
-	YSI_gsii[] = "ii";
+	YSI_gsIter_ActorDo[] = "Iter_ActorDo";
 
 /*
 
@@ -914,7 +910,7 @@ static stock const
 	{
 		new
 			ret = CreateActor(modelid, X, Y, Z, Rotation);
-		CallRemoteFunction(YSI_gsIter_ActorDo, YSI_gsii, true, ret);
+		CallRemoteFunction(YSI_gsIter_ActorDo, YSI_gcII, true, ret);
 		#if _FOREACH_LOCALS
 			Iter_Add(LocalActor, ret);
 		#endif
@@ -930,7 +926,7 @@ static stock const
 	
 	stock Iter_DestroyActor(actorid)
 	{
-		CallRemoteFunction(YSI_gsIter_ActorDo, YSI_gsii, false, actorid);
+		CallRemoteFunction(YSI_gsIter_ActorDo, YSI_gcII, false, actorid);
 		#if _FOREACH_LOCALS
 			Iter_Remove(LocalActor, actorid);
 		#endif
@@ -1026,7 +1022,7 @@ static stock const
 		#endif
 		if (ret)
 		{
-			CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gsii, true, ret);
+			CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gcII, true, ret);
 			#if _FOREACH_LOCALS
 				Iter_Add(LocalVehicle, ret);
 			#endif
@@ -1047,7 +1043,7 @@ static stock const
 			ret = AddStaticVehicle(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2);
 		if (ret)
 		{
-			CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gsii, true, ret);
+			CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gcII, true, ret);
 			#if _FOREACH_LOCALS
 				Iter_Add(LocalVehicle, ret);
 			#endif
@@ -1074,7 +1070,7 @@ static stock const
 		#endif
 		if (ret)
 		{
-			CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gsii, true, ret);
+			CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gcII, true, ret);
 			#if _FOREACH_LOCALS
 				Iter_Add(LocalVehicle, ret);
 			#endif
@@ -1091,7 +1087,7 @@ static stock const
 	
 	stock Iter_DestroyVehicle(vehicleid)
 	{
-		CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gsii, false, vehicleid);
+		CallRemoteFunction(YSI_gsIter_VehicleDo, YSI_gcII, false, vehicleid);
 		#if _FOREACH_LOCALS
 			Iter_Remove(LocalVehicle, vehicleid);
 		#endif

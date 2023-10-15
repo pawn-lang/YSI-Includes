@@ -149,10 +149,6 @@ static stock const
 	/**
 	 * <library>y_shortfunc</library>
 	 */
-	YSI_g_sPropEmpty[] = "",
-	/**
-	 * <library>y_shortfunc</library>
-	 */
 	YSI_g_sYSIM_STRING = YSIM_STRING,
 	/**
 	 * <library>y_shortfunc</library>
@@ -249,7 +245,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	{
 		// Get the return value.  Already have most of the parameters pushed,
 		// just modify one of them (the name).
-		#emit CONST.pri    YSI_g_sPropEmpty
+		#emit CONST.pri    YSI_EMPTY
 		#emit STOR.S.pri   __local2_offset
 		#emit LOAD.pri     YSI_g_sYSIM_STRING
 		#emit STOR.S.pri   __local1_offset
@@ -359,7 +355,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// Push the current master ID on to the master stack.  Returns the old
 	// master ID stored in the property, which we can shove on to the heap to
 	// restore later.
-	#emit PUSH.C       YSI_g_sPropEmpty
+	#emit PUSH.C       YSI_EMPTY
 	#emit PUSH         @_
 	#emit PUSH.C       YSI_g_sPropCaller
 	#emit PUSH.C       8 // Property group, not in cells.
@@ -516,7 +512,7 @@ stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 {
 	Debug_Print5("T@ called: %s", ret);
 	// Return possibly multiple values remotely.
-	setproperty(8, YSI_g_sPropEmpty, YSIM_STRING, ret);
+	setproperty(8, YSI_EMPTY, YSIM_STRING, ret);
 	for (new i = 1, j = numargs(); i != j; ++i)
 	{
 		Debug_Print7("T@: loop %d = %d", i, getarg(i));

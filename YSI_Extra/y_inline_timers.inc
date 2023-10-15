@@ -95,29 +95,19 @@ Optional plugins:
 	#error Could not find y_inline
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_inline_timers</library>
+ *//*------------------------------------------------------------------------**/
+
 static stock
 	YSI_gsCalls = 0;
 
-static stock Timer_InlineCount(Func:func<>, time, count, due)
-{
-	--count;
-	@.func();
-	if (count == 0)
-	{
-		Indirect_Release(func);
-		Debug_Print7("y_inlineTimerCount ending: %d (%d)", _:func, ++YSI_gsCalls);
-	}
-	else
-	{
-		// Run again, to track the count.  Reduce jitter by tracking due times.
-		//printf("%d %d %d", time, due, GetTickCount());
-		new timer = time + (due - GetTickCount());
-		//printf("delay = %d", timer);
-		timer = YSI_SetTimerEx__(&Timer_InlineCount<tF@_@:iii>, timer < 0 ? 0 : timer, false, "iiii", _:func, time, count, due + time);
-		Indirect_SetMeta(func, timer);
-		Debug_Print7("y_inlineTimerCount calls: %d (%d), %d", _:func, ++YSI_gsCalls, timer);
-	}
-}
+/*-------------------------------------------------------------------------*//**
+ * <library>y_inline_timers</library>
+ * <remarks>
+ *   Internal function to just be called repeatedly.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Timer_InlineRepeat(Func:func<>)
 {
@@ -125,19 +115,41 @@ static stock Timer_InlineRepeat(Func:func<>)
 	@.func();
 }
 
-static stock Timer_InlineStart(Func:func<>, time, due)
+/*-------------------------------------------------------------------------*//**
+ * <library>y_inline_timers</library>
+ * <remarks>
+ *   Internal function to allow initial offset times.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Timer_InlineCount(Func:func<>, time, count)
 {
-	// Initial repeating timer, to set the time offset.
-	//printf("%d %d %d", time, due, GetTickCount());
-	new timer = time + (due - GetTickCount());
-	//printf("delay = %d", timer);
-	timer = YSI_SetTimerEx__(&Timer_InlineRepeat<tF@_@:>, timer < 0 ? 0 : timer, true, "i", _:func);
-	Indirect_SetMeta(func, timer);
-	// Call the function after setting the meta, incase it kills the timer.
-	@.func();
+	--count;
+	if (count == -1)
+	{
+		// Initial repeating timer, to set the time offset.
+		//printf("delay = %d", timer);
+		Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineRepeat<tF@_@:>, time, true, "i", _:func));
+		// Call the function after setting the meta, incase it kills the timer.
+		@.func();
+	}
+	if (count == 0)
+	{
+		// Call before release.
+		@.func();
+		Indirect_Release(func);
+		Debug_Print7("y_inlineTimerCount ending: %d (%d)", _:func, ++YSI_gsCalls);
+	}
+	else
+	{
+		// Call after meta.
+		Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineCount<tF@_@:iii>, time, false, YSI_gcIIII, _:func, time, count));
+		@.func();
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_inline_timers</library>
  * <param name="func">Function to call on a timer.</param>
  * <param name="initial">Delay before first call.</param>
  * <param name="time">Delay between subsequent calls.</param>
@@ -184,20 +196,11 @@ stock Timer_CreateCallback(Func:func<>, initialOrTime, timeOrCount = 0, count = 
 	{
 		return 0;
 	}
-	if (count == 0)
-	{
-		// Repeat forever, but DON'T repeat here, this is just the initial offset time.
-		Indirect_Claim(func);
-		new timer = YSI_SetTimerEx__(&Timer_InlineStart<tF@_@:ii>, initialOrTime, false, "iii", _:func, timeOrCount, GetTickCount() + initialOrTime);
-		Indirect_SetMeta(func, timer);
-	}
-	else
-	{
-		// Repeat N times.
-		Indirect_Claim(func);
-		new timer = YSI_SetTimerEx__(&Timer_InlineCount<tF@_@:iii>, initialOrTime, false, "iiii", _:func, timeOrCount, count, GetTickCount() + initialOrTime);
-		Indirect_SetMeta(func, timer);
-	}
+	// `0` means "repeat forever", but DON'T repeat here, this is just to set
+	// the initial offset time.
+	// Repeat N times.
+	Indirect_Claim(func);
+	Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineCount<tF@_@:iii>, initialOrTime, false, YSI_gcIIII, _:func, timeOrCount, count));
 	return _:func;
 }
 
@@ -206,6 +209,13 @@ stock Timer_CreateCallback(Func:func<>, initialOrTime, timeOrCount = 0, count = 
 	#pragma warning push
 	#pragma warning disable 234
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_inline_timers</library>
+ * <remarks>
+ *   Old way to create an inline timer.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Timer_CreateCallback`.
 stock SetCallbackTimer(Func:func<>, initialOrTime, timeOrCount = 0, count = -1)
@@ -218,6 +228,7 @@ stock SetCallbackTimer(Func:func<>, initialOrTime, timeOrCount = 0, count = -1)
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_inline_timers</library>
  * <param name="func">Timer to kill.</param>
  * <remarks>
  *   Kill a timer created by <c>SetCallbackTimer</c>.  Normal <c>KillTimer</c>
@@ -237,6 +248,15 @@ stock Timer_KillCallback(func)
 	#pragma warning push
 	#pragma warning disable 234
 #endif
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_inline_timers</library>
+ * <param name="func">Timer to kill.</param>
+ * <remarks>
+ *   Kill a timer created by <c>SetCallbackTimer</c>.  Normal <c>KillTimer</c>
+ *   won't work for them.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Timer_KillCallback`.
 stock KillCallbackTimer(func)

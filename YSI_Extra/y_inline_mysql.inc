@@ -96,7 +96,6 @@ Optional plugins:
 #endif
 
 static stock const
-	YSI_gs_CALLBACK_ii[] = "ii",
 	YSI_gs_INDIRECT_FROM_CALLBACK[] = "Indirect_FromCallback";
 
 stock MySQL_PQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
@@ -104,7 +103,7 @@ stock MySQL_PQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPE
 	new ret = mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
 	if (ret)
 	{
-		ret = mysql_pquery(handle, YSI_UNSAFE_HUGE_STRING, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gs_CALLBACK_ii, _:cb, true);
+		ret = mysql_pquery(handle, YSI_UNSAFE_HUGE_STRING, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gcII, _:cb, true);
 		if (ret)
 		{
 			Indirect_Claim(cb);
@@ -118,7 +117,7 @@ stock MySQL_TQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPE
 	new ret = mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
 	if (ret)
 	{
-		ret = mysql_tquery(handle, YSI_UNSAFE_HUGE_STRING, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gs_CALLBACK_ii, _:cb, true);
+		ret = mysql_tquery(handle, YSI_UNSAFE_HUGE_STRING, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gcII, _:cb, true);
 		if (ret)
 		{
 			Indirect_Claim(cb);
@@ -129,7 +128,7 @@ stock MySQL_TQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPE
 
 stock ORM_SelectInline(ORM:id, Func:cb<>)
 {
-	new ret = orm_select(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gs_CALLBACK_ii, _:cb, true);
+	new ret = orm_select(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gcII, _:cb, true);
 	if (ret)
 	{
 		Indirect_Claim(cb);
@@ -139,7 +138,7 @@ stock ORM_SelectInline(ORM:id, Func:cb<>)
 
 stock ORM_UpdateInline(ORM:id, Func:cb<>)
 {
-	new ret = orm_update(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gs_CALLBACK_ii, _:cb, true);
+	new ret = orm_update(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gcII, _:cb, true);
 	if (ret)
 	{
 		Indirect_Claim(cb);
@@ -149,7 +148,7 @@ stock ORM_UpdateInline(ORM:id, Func:cb<>)
 
 stock ORM_InsertInline(ORM:id, Func:cb<>)
 {
-	new ret = orm_insert(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gs_CALLBACK_ii, _:cb, true);
+	new ret = orm_insert(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gcII, _:cb, true);
 	if (ret)
 	{
 		Indirect_Claim(cb);
@@ -159,7 +158,7 @@ stock ORM_InsertInline(ORM:id, Func:cb<>)
 
 stock ORM_DeleteInline(ORM:id, Func:cb<>)
 {
-	new ret = orm_delete(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gs_CALLBACK_ii, _:cb, true);
+	new ret = orm_delete(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gcII, _:cb, true);
 	if (ret)
 	{
 		Indirect_Claim(cb);
@@ -169,7 +168,7 @@ stock ORM_DeleteInline(ORM:id, Func:cb<>)
 
 stock ORM_LoadInline(ORM:id, Func:cb<>)
 {
-	new ret = orm_load(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gs_CALLBACK_ii, _:cb, true);
+	new ret = orm_load(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gcII, _:cb, true);
 	if (ret)
 	{
 		Indirect_Claim(cb);
@@ -179,7 +178,7 @@ stock ORM_LoadInline(ORM:id, Func:cb<>)
 
 stock ORM_SaveInline(ORM:id, Func:cb<>)
 {
-	new ret = orm_save(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gs_CALLBACK_ii, _:cb, true);
+	new ret = orm_save(id, YSI_gs_INDIRECT_FROM_CALLBACK, YSI_gcII, _:cb, true);
 	if (ret)
 	{
 		Indirect_Claim(cb);

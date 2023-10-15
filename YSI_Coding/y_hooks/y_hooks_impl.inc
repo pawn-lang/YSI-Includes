@@ -2398,7 +2398,7 @@ stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &
 	// the stack the final parameter won't be the string we passed here, but
 	// `a` from the extra parameters above.  But that's fine - either way it
 	// points to nothing.
-	return Hooks_RegisterNPSHook(compressedFormat, address, "", order);
+	return Hooks_RegisterNPSHook(compressedFormat, address, YSI_EMPTY, order);
 }
 
 stock _yH@(compressedFormat, address, order = cellmin, &a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0, &g = 0) <>
