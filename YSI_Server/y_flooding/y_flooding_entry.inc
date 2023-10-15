@@ -233,7 +233,7 @@ static Flooding_CheckIP(playerid, ip[])
 						cmd[22] = "banip ";
 					strcat(cmd, ip);
 					SendRconCommand(cmd);
-					YSI_SetTimerEx__(&Flooding_UnbanIP<i>, 10000, false, "i", ip32);
+					YSI_SetTimerEx__(&Flooding_UnbanIP, 10000, false, "i", ip32);
 				}
 				case e_FLOOD_ACTION_OTHER:
 				{

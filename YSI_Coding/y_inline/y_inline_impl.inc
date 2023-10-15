@@ -298,7 +298,7 @@ stock Inline_EBC__(owner, tag)
 		return
 			++timerID,
 			//// Set a timer to kill this inline eventually.
-			YSI_SetTimerEx__(&Inline_TBC__<i>, owner, false, YSI_gscSpecifier_i, timerID),
+			YSI_SetTimerEx__(&Inline_TBC__, owner, false, YSI_gscSpecifier_i, timerID),
 			(timerID | (0x1FF << 22)) & cellmax;
 	}
 	else
@@ -428,6 +428,13 @@ stock operator~(I@T:inlines[], size)
 	// original code (but less explicit).  For reference - it gets the previous
 	// in-scope inline from the linked list, as a data segment address.
 	YSI_g_sInlineLinkedList = size - YSI_g_sJumpOffset;
+}
+
+static stock Inline_MaybeFree_(Alloc:slot)
+{
+	// If this function is called, the given inline left the call stack without
+	// being claimed.
+	free(slot);
 }
 
 static stock Inline_MaybeConst_(ResolvedAlloc:slot)
@@ -1223,7 +1230,7 @@ stock Function:GetRemoteFunction(const func[], const spec[], tag = 0)
 	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_RemoteHandler_<x>));
 	mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(&Inline_MaybeFree_<tAlloc:>, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
 	if (tag)
@@ -1281,7 +1288,7 @@ stock Function:GetLocalFunction(const func[], const spec[], tag = 0)
 	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_LocalHandler_<x>));
 	mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx__(&Inline_MaybeFree_<tAlloc:>, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
 	if (tag)
@@ -1400,7 +1407,7 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_CallHandler_<x>));
 				mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
 				mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-				mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
+				mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(&Inline_MaybeFree_<tAlloc:>, 0, false, YSI_gscSpecifier_i, _:closure));
 				mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 				mset(closure, _:E_INDIRECTION_METADATA, 0);
 				mset(closure, _:E_INDIRECTION_TAG, tag);
@@ -2247,7 +2254,7 @@ stock Inline_UI_(const &header, tag)
 	mset(closure, _:E_INDIRECTION_HANDER, _:addressof (Callback_CallHandler_<x>));
 	mset(closure, _:E_INDIRECTION_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INDIRECTION_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(YSI_gscInline_MaybeFree, 0, false, YSI_gscSpecifier_i, _:closure));
+	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx__(&Inline_MaybeFree_<tAlloc:>, 0, false, YSI_gscSpecifier_i, _:closure));
 	mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 	mset(closure, _:E_INDIRECTION_METADATA, 0);
 	mset(closure, _:E_INDIRECTION_TAG, tag);

@@ -180,7 +180,7 @@ stock ZoneNames_Show(playerid, id)
 		td = Text_GetLastID();
 	if (td != -1)
 	{
-		YSI_SetTimerEx__(&ZoneNames_Hide<i>, 3000, false, "i", playerid),
+		YSI_SetTimerEx__(&ZoneNames_Hide, 3000, false, "i", playerid),
 		YSI_g_sZNTD[playerid] = td;
 	}
 }
