@@ -494,7 +494,7 @@ public OnYSIInit()
 	new
 		masters = getproperty(8, YSIM_MASTER) | getproperty(5, YSI_FIXES_gscSingleProperty);
 	@_ = Cell_GetLowestEmpty(masters);
-	Debug_Info("YSI Script ID: %d", @_);
+	Debug_Info("Script ID: %d", @_);
 	setproperty(8, YSIM_MASTER, masters | Master_ID());
 	Debug_Code1{if (!Master_ID()) Debug_Error("MasterID not assigned");}
 	#if !defined YSI_NO_MASTER

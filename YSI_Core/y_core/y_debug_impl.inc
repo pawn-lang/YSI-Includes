@@ -702,74 +702,6 @@ stock Debug_PrintArray(arr[], size = sizeof (arr))
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_debug</library>
- * <remarks>
- *   Does some strange mangling of <c>YSI_FILTERSCRIPT</c> because at one point
- *   I found a compiler bug where the first automata in the script could
- *   conflict with the first variable in the script.  I don't know what
- *   triggered it, and it has never shown up since I messed about with this file
- *   to try mangle some things.  Never the less, if it ever happens again this
- *   code might detect it.  Actually, that's less likely now, since that
- *   variable is now very unlikely to be the first in the script ever.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-public OnCodeInit()
-{
-	Debug_SetState();
-	new
-		s = 0;
-	// Test the ADDRESS of the variable, not the value.
-	#emit CONST.pri @_
-	#emit STOR.S.pri s
-	if (s)
-	{
-		//goto Debug_OnCodeInit_no_fault();
-		#if defined Debug_OnCodeInit
-			return Debug_OnCodeInit();
-		#else
-			return 1;
-		#endif
-	}
-	Debug_Fatal("@_ == 0");
-	while (s != 10000000) ++s;
-	#emit CONST.pri 0
-	#emit SCTRL     __cip
-	return 1;
-}
-
-#undef OnCodeInit
-#define OnCodeInit Debug_OnCodeInit
-#if defined Debug_OnCodeInit
-	forward Debug_OnCodeInit();
-#endif
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_debug</library>
- * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
- * <remarks>
- *   Mostly exists to define the full range of <c>ysi_debug</c> states.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static stock Debug_SetState() <ysi_debug : off>
-{
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_debug</library>
- * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
- * <remarks>
- *   Mostly exists to define the full range of <c>ysi_debug</c> states.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static stock Debug_SetState() <>
-{
-	state ysi_debug : on;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_debug</library>
  * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
  * <remarks>
  *   Get the current debug state.
@@ -801,7 +733,7 @@ stock bool:Debug_GetState() <>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Debug_Enable() <ysi_debug : off>
+stock bool:Debug_Enable()
 {
 	state ysi_debug : on;
 	return true;
@@ -810,35 +742,11 @@ stock bool:Debug_Enable() <ysi_debug : off>
 /*-------------------------------------------------------------------------*//**
  * <library>y_debug</library>
  * <remarks>
- *   Turn on level 0 prints.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock bool:Debug_Enable() <>
-{
-	return false;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_debug</library>
- * <remarks>
  *   Turn off level 0 prints.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Debug_Disable() <ysi_debug : off>
-{
-	return false;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_debug</library>
- * <remarks>
- *   Turn off level 0 prints.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock bool:Debug_Disable() <>
+stock bool:Debug_Disable()
 {
 	state ysi_debug : off;
 	return true;

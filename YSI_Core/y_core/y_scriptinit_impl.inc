@@ -668,7 +668,7 @@ static stock const
 	 */
 	YSI_gscPostInitFile[] = "post-init";
 
-native Debug_PrintF__(const fmat[], arg) = printf;
+native ScriptInit_PrintF__(const fmat[], arg) = printf;
 
 static stock
 	/**
@@ -1023,7 +1023,7 @@ stock Server_PrintIntroMessage(...)
 			#emit ADD
 			#emit LOAD.I
 			#emit STOR.S.pri     a
-			Debug_PrintF__(YSI_gsc38, a);
+			ScriptInit_PrintF__(YSI_gsc38, a);
 		}
 		// Footer.
 		YSI_Print__(YSI_gscSpacer);
@@ -1078,7 +1078,7 @@ stock Server_PrintIntroPart(...)
 			#emit ADD
 			#emit LOAD.I
 			#emit STOR.S.pri     a
-			Debug_PrintF__(YSI_gsc38, a);
+			ScriptInit_PrintF__(YSI_gsc38, a);
 		}
 }
 
@@ -1235,6 +1235,7 @@ stock Server_GetLongCallDefault()
 
 static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 {
+	Debug_Enable();
 	#if defined _DEBUG
 		#if _DEBUG > 0
 			new preHeap, postHeap;
@@ -1244,7 +1245,9 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 	{
 		#if _YSI_SAFE_STARTUP
 			#if __debug <= 0
-				YSI_PrintF__("YSI v%02d.%02d.%04d", YSI_VERSION_MAJOR, YSI_VERSION_MINOR, YSI_VERSION_BUILD);
+				printf("A");
+				Debug_Info("Version: %02d.%02d.%04d", YSI_VERSION_MAJOR, YSI_VERSION_MINOR, YSI_VERSION_BUILD);
+				printf("B");
 			#endif
 		#else
 			YSI_PrintF__("Unsafe YSI signed by: %s", YSI_gcUnsafeStartupContract);
@@ -2150,6 +2153,9 @@ stock bool:Server_UpgradeCrashDetect()
 	#emit RETN
 	return false;
 }
+
+// Don't let anyone else call this function.
+#define ScriptInit_PrintF__ ScriptInit_PrintF
 
 #if __COMPILER___EMIT_U
 	#endinput
