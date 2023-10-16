@@ -658,11 +658,17 @@ static stock const
 	/**
 	 * <library>y_scriptinit</library>
 	 */
+	YSI_gsc38[] =   " | %38s | ",
+	/**
+	 * <library>y_scriptinit</library>
+	 */
 	YSI_gscPreInitFile[] = "pre-init",
 	/**
 	 * <library>y_scriptinit</library>
 	 */
 	YSI_gscPostInitFile[] = "post-init";
+
+native Debug_PrintF__(const fmat[], arg) = printf;
 
 static stock
 	/**
@@ -1017,7 +1023,7 @@ stock Server_PrintIntroMessage(...)
 			#emit ADD
 			#emit LOAD.I
 			#emit STOR.S.pri     a
-			YSI_PrintF__(" | %38s | ", a);
+			Debug_PrintF__(YSI_gsc38, a);
 		}
 		// Footer.
 		YSI_Print__(YSI_gscSpacer);
@@ -1072,7 +1078,7 @@ stock Server_PrintIntroPart(...)
 			#emit ADD
 			#emit LOAD.I
 			#emit STOR.S.pri     a
-			YSI_PrintF__(" | %38s | ", a);
+			Debug_PrintF__(YSI_gsc38, a);
 		}
 }
 
