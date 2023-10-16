@@ -437,7 +437,7 @@ stock Profiling_RunAll()
 	endTime = GetTickCount();
 	printf("*** Time: %dms", endTime - startTime);
 	PROFILE_REPORT(YSI_SPACE);
-	CallLocalFunction("OnProfilingsComplete", "i", profilings);
+	CallLocalFunction("OnProfilingsComplete", YSI_gcI, profilings);
 	#if defined PROFILE_AUTO_EXIT
 		SendRconCommand("exit");
 	#endif

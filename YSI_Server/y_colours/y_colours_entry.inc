@@ -141,7 +141,7 @@ public void:_SetColoursCanHaveSpaces(bool:set)
 stock SetColoursCanHaveSpaces(bool:set)
 {
 	// Set this true/false in ALL scripts, since the text system is distributed.
-	CallRemoteFunction("_SetColoursCanHaveSpaces", "i", set);
+	CallRemoteFunction("_SetColoursCanHaveSpaces", YSI_gcI, set);
 	//return 1;
 }
 

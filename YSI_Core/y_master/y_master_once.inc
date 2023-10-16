@@ -505,7 +505,7 @@ public OnYSIInit()
 	#endif
 	// Make sure this is called before all other YSI initialisations, at least all the ones which
 	// use the master system.
-	CallLocalFunction("OnMasterSystemInit", "i", Master_ID());
+	CallLocalFunction("OnMasterSystemInit", YSI_gcI, Master_ID());
 	Master_OnYSIInit();
 	#if !defined YSI_NO_MASTER
 		// This will fix `OnRconCommand` for the gamemode, so we can use the `module` commands.  It
@@ -574,7 +574,7 @@ public OnScriptExit()
 	#endif
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~Master_ID()),
 	Master_OnScriptExit(),
-	CallRemoteFunction("OnMasterSystemClose", "i", Master_ID());
+	CallRemoteFunction("OnMasterSystemClose", YSI_gcI, Master_ID());
 	#if !defined YSI_NO_MASTER
 		YSI_gModuleShutdown = true;
 		if (!Script_IsFilterscript())

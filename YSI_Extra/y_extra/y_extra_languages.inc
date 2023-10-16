@@ -90,7 +90,7 @@ YCMD:language(playerid, params[], help)
 	{
 		new
 			lang = 0;
-		if (sscanf(params, "i", lang))
+		if (sscanf(params, YSI_gcI, lang))
 		{
 			new
 				c = _:Langs_GetLanguageCount(),

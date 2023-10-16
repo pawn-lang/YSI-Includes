@@ -1935,7 +1935,7 @@ YCMD:buy(playerid, params[], help)
 							}
 							else if (YSI_g_sRebuyDelay)
 							{
-								YSI_SetTimerEx__("Property_ResetRebuy", YSI_g_sRebuyDelay, false, "i", prop);
+								YSI_SetTimerEx__("Property_ResetRebuy", YSI_g_sRebuyDelay, false, YSI_gcI, prop);
 								#if defined _YSI_VISUAL_PICKUPS
 									if (Property_GetOption(5, flag))
 										Pickup_Show(cpid, 0);

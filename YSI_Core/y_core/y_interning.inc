@@ -134,12 +134,32 @@ stock const
 /*-------------------------------------------------------------------------*//**
  * <library>y_interning</library>
  * <remarks>
+ *   The string <c>f</c> defined just once for repeated use.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock const
+	YSI_gcF[] = "f";
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_interning</library>
+ * <remarks>
  *   The string <c>s</c> defined just once for repeated use.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock const
 	YSI_gcS[] = "s";
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_interning</library>
+ * <remarks>
+ *   The string <c>si</c> defined just once for repeated use.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock const
+	YSI_gcSI[] = "si";
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_interning</library>

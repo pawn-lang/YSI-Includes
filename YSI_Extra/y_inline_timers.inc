@@ -129,7 +129,7 @@ static stock Timer_InlineCount(Func:func<>, time, count)
 	{
 		// Initial repeating timer, to set the time offset.
 		//printf("delay = %d", timer);
-		Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineRepeat<tF@_@:>, time, true, "i", _:func));
+		Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineRepeat<tF@_@:>, time, true, YSI_gcI, _:func));
 		// Call the function after setting the meta, incase it kills the timer.
 		@.func();
 	}

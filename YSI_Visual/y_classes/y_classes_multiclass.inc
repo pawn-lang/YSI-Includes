@@ -305,7 +305,7 @@ GLOBAL__ void:Class_Goto(playerid, playerclass)
 			if ((time - YSI_g_sLastRefuse[playerid]) >= 500)
 			{
 				new
-					ret = CallRemoteFunction("Class_OnPlayerRequestSpawn", "i", playerid);
+					ret = CallRemoteFunction("Class_OnPlayerRequestSpawn", YSI_gcI, playerid);
 				Debug_Print4("Class_OnPlayerRequestSpawn() return: %d", ret);
 				if (ret)
 				{

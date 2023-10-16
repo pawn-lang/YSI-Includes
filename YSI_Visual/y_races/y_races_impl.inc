@@ -649,7 +649,7 @@ _Y_RACES_STATIC Race_CheckEnd(slot)
 	//YSI_g_sRaceData[slot][E_RACE_RACER_COUNT]--;
 	if (!(--YSI_g_sRaceData[slot][E_RACE_RACER_COUNT]))
 	{
-		CallRemoteFunction("OnRaceEnd", "i", slot);
+		CallRemoteFunction("OnRaceEnd", YSI_gcI, slot);
 		if (YSI_g_sRaceData[slot][E_RACE_FLAGS] & e_RACE_FLAGS_RESTART)
 		{
 			YSI_g_sRaceData[slot][E_RACE_FLAGS] &= ~e_RACE_FLAGS_STARTED;

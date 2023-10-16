@@ -134,12 +134,15 @@ static stock const
 
 @_yT(addr);
 
+static moskmdfkod;
+
 @_yT(addr)
 {
 	// Reset the frame.
 	#emit POP.pri
 	#emit SCTRL        5
 	// Get the return address (always 0).
+	printf("1");
 	#emit POP.alt
 	// Decrease the parameter count.
 	#emit POP.pri
@@ -147,6 +150,9 @@ static stock const
 	// Get the target address.
 	#emit SWAP.pri
 	#emit PUSH.alt
+	#emit STOR.pri moskmdfkod
+	printf("2: %08x", moskmdfkod);
+	#emit LOAD.pri moskmdfkod
 	#emit SCTRL        __cip
 }
 
@@ -175,9 +181,10 @@ native YSI_SetTimerEx__(const funcname[], interval, bool:repeating, const format
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock SetTimerAddr(addr, time, bool:repeat)
+stock SetTimerAddr(addr, const name[], time, bool:repeat)
 {
-	return YSI_SetTimerEx__(YSI_gscTimerStub, time, repeat, "i", addr);
+	printf("Setting timer %s = %08x", name, addr);
+	return YSI_SetTimerEx__(YSI_gscTimerStub, time, repeat, YSI_gcI, addr);
 }
 
 #if defined _ALS_SetTimer
@@ -186,11 +193,12 @@ stock SetTimerAddr(addr, time, bool:repeat)
 #define _ALS_SetTimer
 
 // Force all function passed to `SetTimer` to have no parameters.
-#define @yS2:addressof(%0<%9><>) @yS2:addressof(%0<>)
+//#define @yS2:addressof(%0<%9><>) @yS2:addressof(%0<>)
+#define @yS2:addressof(%0<%9><>),%9, @yS2:addressof(%0<>),#%0,
 
-#define SetTimer(&%0,%1) SetTimerAddr(_:@yS2:addressof(%0<>),%1)
-#define YSI_SetTimer__(&%0,%1) SetTimerAddr(_:@yS2:addressof(%0<>),%1)
-#define SetTimerAddr(&%0,%1) SetTimerAddr(_:@yS2:addressof(%0<>),%1)
+#define SetTimer(&%0,%1) SetTimerAddr(_:@yS2:addressof(%0<>),#%0,%1)
+#define YSI_SetTimer__(&%0,%1) SetTimerAddr(_:@yS2:addressof(%0<>),#%0,%1)
+#define SetTimerAddr(&%0,%1) SetTimerAddr(_:@yS2:addressof(%0<>),#%0,%1)
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
@@ -199,10 +207,11 @@ stock SetTimerAddr(addr, time, bool:repeat)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock SetTimerExAddr(addr, time, bool:repeat, const fmt[], GLOBAL_TAG_TYPES:...)
+stock SetTimerExAddr(addr, const name[], time, bool:repeat, const fmt[], GLOBAL_TAG_TYPES:...)
 {
 	Q@ = "i",
 	strcat(Q@, fmt, sizeof (Q@));
+	printf("Setting timer %s = %08x, %s, %s", name, addr, fmt, Q@);
 	
 	// Shuffle the parameters a bit, so it becomes:
 	// (time, repeat, "i" + fmt, addr)
@@ -248,14 +257,16 @@ stock SetTimerExAddr(addr, time, bool:repeat, const fmt[], GLOBAL_TAG_TYPES:...)
 
 // Normal addressof.
 // TODO: Extract the format specifier.
-#define @yS0:@yS1:addressof(%0<%8>) addressof(%0<%8>)
+//#define @yS0:@yS1:addressof(%0<%8>) addressof(%0<%8>)
+#define @yS0:@yS1:addressof(%0<%8>),#%9, addressof(%0<%8>),#%0,
 // Ensure the parameters are correct.
 #define Y_HOOKS_ADDRESSOF(%0(%1)) (O@D_:O@A_())?(((_:%0(%1)),O@V_)?1:2):(O@V_)
-#define @yS1:addressof(%0),%1,%2,%3,%4) (Y_HOOKS_ADDRESSOF(%0(%4))),%1,%2,%3,%4)
+//#define @yS1:addressof(%0),%1,%2,%3,%4) (Y_HOOKS_ADDRESSOF(%0(%4))),%1,%2,%3,%4)
+#define @yS1:addressof(%0),#%9,%1,%2,%3,%4) (Y_HOOKS_ADDRESSOF(%0(%4))),#%0,%1,%2,%3,%4)
 
-#define SetTimerEx(&%0,%1) SetTimerExAddr(_:@yS0:@yS1:addressof(%0),%1)
-#define YSI_SetTimerEx__(&%0,%1) SetTimerExAddr(_:@yS0:@yS1:addressof(%0),%1)
-#define SetTimerExAddr(&%0,%1) SetTimerExAddr(_:@yS0:@yS1:addressof(%0),%1)
+#define SetTimerEx(&%0,%1) SetTimerExAddr(_:@yS0:@yS1:addressof(%0),#%0,%1)
+#define YSI_SetTimerEx__(&%0,%1) SetTimerExAddr(_:@yS0:@yS1:addressof(%0),#%0,%1)
+#define SetTimerExAddr(&%0,%1) SetTimerExAddr(_:@yS0:@yS1:addressof(%0),#%0,%1)
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>

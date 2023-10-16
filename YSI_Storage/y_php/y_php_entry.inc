@@ -355,13 +355,13 @@ public _PHP_Result(index, response, data[])
 								// Number.
 								/*if (data[i - 1] & 0x40)
 								{
-									CallRemoteFunction(sFunc, "f", flen);
+									CallRemoteFunction(sFunc, YSI_gcF, flen);
 								}
 								else
 								{
-									CallRemoteFunction(sFunc, "i", flen);
+									CallRemoteFunction(sFunc, YSI_gcI, flen);
 								}*/
-								CallRemoteFunction(sFunc, "i", flen);
+								CallRemoteFunction(sFunc, YSI_gcI, flen);
 								++i;
 							}
 							else
@@ -465,13 +465,13 @@ public _PHP_Result(index, response, data[])
 						else if (data[i] == '1')
 						{
 							Debug_Print5("_PHP_Result: Got true.");
-							CallRemoteFunction(sFunc, "i", sTrue);
+							CallRemoteFunction(sFunc, YSI_gcI, sTrue);
 							++i;
 						}
 						else
 						{
 							Debug_Print5("_PHP_Result: Got false.");
-							CallRemoteFunction(sFunc, "i", sFalse);
+							CallRemoteFunction(sFunc, YSI_gcI, sFalse);
 							++i;
 						}
 					}

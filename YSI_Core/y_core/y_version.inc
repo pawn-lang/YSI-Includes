@@ -714,17 +714,15 @@ static stock YVers_PrintHeader()
 			YSI_gLockData[x / 3] = x * 10,
 			YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
 		#endif
-		#if defined _DEBUG
-			#if _DEBUG > 0
-				YVers_PrintHeader();
-				#if _YSI_SAFE_STARTUP
-					Server_PrintIntroMessage(
-						"Unable to check the latest YSI version",
-						"- please watch the forums and github:",
-						YSI_EMPTY,
-						"         https://git.io/5.x"
-					);
-				#endif
+		#if __debug > 0
+			YVers_PrintHeader();
+			#if _YSI_SAFE_STARTUP
+				Server_PrintIntroMessage(
+					"Unable to check the latest YSI version",
+					"- please watch the forums and github:",
+					YSI_EMPTY,
+					"         https://git.io/5.x"
+				);
 			#endif
 		#endif
 		return 1;
@@ -748,10 +746,8 @@ stock YVers_StartCheck()
 		YSI_gLockData[0] -= 1,
 		YSI_gLockData[1] = YSI_gLockData[0] + 7;
 	#endif
-	#if defined _DEBUG
-		#if _DEBUG > 0
-			YVers_PrintHeader();
-		#endif
+	#if __debug > 0
+		YVers_PrintHeader();
 	#endif
 	//YSI_Print__(" |                                      | ");
 	//YSI_Print__(" |  Checking the latest YSI version..   | ");

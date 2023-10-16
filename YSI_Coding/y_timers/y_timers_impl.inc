@@ -344,13 +344,13 @@ stock _y@T:_Timer_D(const func[], interval, const {_, _@yT}:action, who, results
 				{
 					if (!results[who])
 					{
-						results[who] = YSI_SetTimerEx__(func, interval, true, "i", who);
+						results[who] = YSI_SetTimerEx__(func, interval, true, YSI_gcI, who);
 					}
 				}
 			}
 			else if (!results[who])
 			{
-				results[who] = YSI_SetTimerEx__(func, interval, true, "i", who);
+				results[who] = YSI_SetTimerEx__(func, interval, true, YSI_gcI, who);
 			}
 		}
 	}

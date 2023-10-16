@@ -1162,7 +1162,7 @@ stock TD_Update(Style:id, bool:pos = false)
 	// Update the apperance after a load of updates have been applied.
 	if (YSI_g_sTDData[id][E_TD_DATA_UPDATE] == -1)
 	{
-		YSI_g_sTDData[id][E_TD_DATA_UPDATE] = YSI_SetTimerEx__("TD_UpdateInternal", 1, false, "i", _:id);
+		YSI_g_sTDData[id][E_TD_DATA_UPDATE] = YSI_SetTimerEx__("TD_UpdateInternal", 1, false, YSI_gcI, _:id);
 	}
 }
 
