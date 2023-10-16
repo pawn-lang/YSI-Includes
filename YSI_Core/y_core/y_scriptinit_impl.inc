@@ -1245,9 +1245,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 	{
 		#if _YSI_SAFE_STARTUP
 			#if __debug <= 0
-				printf("A");
 				Debug_Info("Version: %02d.%02d.%04d", YSI_VERSION_MAJOR, YSI_VERSION_MINOR, YSI_VERSION_BUILD);
-				printf("B");
 			#endif
 		#else
 			YSI_PrintF__("Unsafe YSI signed by: %s", YSI_gcUnsafeStartupContract);
