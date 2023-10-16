@@ -1216,6 +1216,8 @@ stock Server_GetLongCallDefault()
 	#endif
 #endif
 
+forward bool:Debug_Enable();
+
 #if !defined _ALS_OnCachedInit
 	forward OnCachedInit();
 #endif
