@@ -80,7 +80,7 @@ Optional plugins:
 
 #define YSI_VERSION_MAJOR               5
 #define YSI_VERSION_MINOR               08
-#define YSI_VERSION_BUILD               4328
+#define YSI_VERSION_BUILD               4329
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 
