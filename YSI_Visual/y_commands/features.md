@@ -50,7 +50,7 @@ YCMD:i(playerid, params[], help) = me;
 
 ## `@cmd()`
 
-`YCMD:` looks like a tag, which has a meaning in pawn and shouldn't be used to declare special function types.  Thus YSI is moving towards decorators, which are function-like prefixes to function names starting with `@`.  You can always identify a decoarated function as `@decorator() function()`, as opposed to `Tag:function()` which is ambiguous.  To declare a basic command use `@cmd()` (or `@command()`, they're synonyms):
+`YCMD:` looks like a tag, which has a meaning in pawn and shouldn't be used to declare special function types.  Thus YSI is moving towards decorators, which are function-like prefixes to function names starting with `@`.  You can always identify a decorated function as `@decorator() function()`, as opposed to `Tag:function()` which is ambiguous.  To declare a basic command use `@cmd()` (or `@command()`, they're synonyms):
 
 ```pawn
 @cmd() jump(playerid, params[], help)
