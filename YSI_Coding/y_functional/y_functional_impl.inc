@@ -104,3 +104,22 @@ LAM@4```()
 #define LAM@2(%0);|||%5}} LAM@2(%0)LAM@5:%5;}
 #define LAM@5:%4; ;}LAM@5(%4);
 
+#define LAMBDA<%0>%1(%2$%3$%4) _:LAM@A:LAM@B:LAM@C:<%0>%1 PP_DEFER(%2$%3$%4)
+
+// Detect `&`.
+#define LAM@A:LAM@B:LAM@C:<%0>%1(%2$&%3$%4) %1(%2addressof(%3<%0>)%4)
+
+// Detect lambdas.
+#define LAM@B:LAM@C:<%0>%1(%2${%3}$%4) NAMBDA_%0:%1(%2{%3}%4)
+
+// This is not recursive thanks to `PP_DEFER` above.
+#define LAM@C:<%0>%1(%2$%3$%4) %1(%2%3%4)
+
+#define NAMBDA_i: _NU_LAMBDA|||i|||new _0|||0,|||
+#define NAMBDA_ii: _NU_LAMBDA|||ii|||new _0,_1|||0,0,|||
+#define NAMBDA_iii: _NU_LAMBDA|||iii|||new _0,_1,_2|||0,0,0,|||
+#define NAMBDA_iiii: _NU_LAMBDA|||iiii|||new _0,_1,_2,_3|||0,0,0,0,|||
+#define NAMBDA_iiiii: _NU_LAMBDA|||iiiii|||new _0,_1,_2,_3,_4|||0,0,0,0,0,|||
+
+#define _NU_LAMBDA|||%0|||%6|||%5|||%1(%2{%3}%4)%8; LAM@0()%8;{{{LAM@1();new I@T:_@YSII=I@T(~~"...YSII"),F@_@%0:YSII=F@_@%0:_@YSII;for(%6;I@F();)while(I@L(%5I@K(1)))Callback_Return_(_:(%3));LAM@2(%1(%2(Inline_UI_(_:YSII),YSII)%4));|||}}LAM@4```()}
+

@@ -1,6 +1,87 @@
-## Concepts
+## Lambdas
 
-There are several concepts to understand before using this library, they are common in functional programming circles, but PAWN isn't functional programming.  Basically, they are just odd names for common structures.  I'm not going to explain WHY things have these names, there are reasons though.
+A "lambda" is a function declared inline, that is, inside a call to another function.  In javascript they look like this:
+
+```javascript
+array.map((idx) => idx + 1)
+```
+
+Here this is a function:
+
+```javascript
+(idx) => idx + 1
+```
+
+It is (almost\*) the same as:
+
+```javascript
+function (idx) {
+  return idx + 1;
+}
+```
+
+*y_functional* also introduces basic lambdas, though with slightly different syntax.  Instead of specifying the parameters, they are automatically named `_0`, `_1`, etc.  A function like `Map` takes a function that only needs a single parameter, so a passed lambda only has `_0`:
+
+```pawn
+Map({ _0 + 1 }, array);
+```
+
+Thanks to the underlying use of *y_inline* (or, more strictly, *indirection.inc*) these are all equivalent:
+
+```pawn
+public AddOne(n)
+{
+	return n + 1;
+}
+
+Map(using public AddOne, array);
+```
+
+```pawn
+static stock AddOne(n)
+{
+	return n + 1;
+}
+
+Map(&AddOne, array);
+```
+
+```pawn
+inline AddOne(n)
+{
+	return n + 1;
+}
+
+Map(using inline AddOne, array);
+```
+
+And, ultimately, these are all just a loop (but, especially with the lambda, way simpler):
+
+```pawn
+for (new i = 0; i != sizeof (array); ++i)
+{
+	array[i] + 1;
+}
+```
+
+Now, the keen-eyed amongst you may have noticed something there - `array[i] + 1` doesn't actually do anything.  It adds `1` to an array, then, what?  The result doesn't go anywhere (and indeed, this would be a compiler warning).  You need to save the result:
+
+```pawn
+for (new i = 0; i != sizeof (array); ++i)
+{
+	dest[i] = array[i] + 1;
+}
+```
+
+Which in `Map` terms translates to\*\*:
+
+```pawn
+Map({ _0 + 1 }, array, dest);
+```
+
+## Functions
+
+As well as lambdas, this library provides several functions for quickly manipulating arrays.  They are common in functional programming circles, but PAWN isn't functional programming.  Often they are just odd names for common structures (I'm not going to explain WHY things have these names, there are reasons though).
 
 ### `Map`
 
@@ -16,7 +97,7 @@ for (new i = 0; i != sizeof (array); ++i)
 }
 ```
 
-Using **y_functional**, instead you pass an expression to run for every element of the array, an array to run the code on, and an array to store the results in:
+Using *y_functional*, instead you pass an expression to run for every element of the array, an array to run the code on, and an array to store the results in:
 
 ```pawn
 Map({_0 + 7}, array, dest);
@@ -166,7 +247,7 @@ scan = {
 };
 ```
 
-Note that `0` appears twice in the output because that is both the initial value of `total` AND the first value in the input array.
+Note that `0` appears twice in the output because that is both the initial value of `total` AND the first value in the input array.  If you know that your input always has at least one value (which, to be fair, arrays in pawn always should) you can use `Scan1`, which doesn't take an initial value\*\*\*.
 
 ### `Filter`
 
@@ -220,9 +301,6 @@ for (new i = 0; i != sizeof (array); ++i)
 }
 ```
 
-
-
-
 ## Combinations
 
 These functions can be quite quickly built up to do complex code.  You could use a `zip` and a `fold` to find the distance between two points.  The normal code for this is:
@@ -246,7 +324,7 @@ DistanceBetweenPoints(Float:p0[3], Float:p1[3])
 }
 ```
 
-With **y_functional**:
+With *y_functional*:
 
 ```pawn
 DistanceBetweenPoints(Float:p0[3], Float:p1[3])
@@ -277,4 +355,66 @@ DistanceBetweenPoints(Float:p0[3], Float:p1[3])
 	return floatsqroot(sq);
 }
 ```
+
+## Creating Your Own Functions
+
+You can write a function that takes a lambda in much the same way as a normal function that takes an inline, but sadly you need an extra define to recognise the `{}` syntax (this define gives you `&` syntax too for free):
+
+```pawn
+Filter(Func:f<i>, const input[], output[], inputSize = sizeof (input), outputSize = sizeof (output))
+{
+	new len = min(inputSize, outputSize), count = 0;
+	for (new i = 0; i != len; ++i)
+	{
+		if (@.cb(input[i]))
+		{
+			output[count++] = input[i];
+		}
+	}
+	return count;
+}
+
+// `LAMBDA` is the lambda-making macro.  If your function returns anything other than `_:` you also
+// need to specify this:
+//
+//   #define Filter(%0,%1) Float:LAMBDA<i>Filter($%0$,%1)
+//
+// `<i>` is the type of the function to accept (in this case, taking just one parameter).
+// `$%x$` is the placeholder for the parameter that accepts a function.  If it was not the first
+// parameter this would look something like:
+//
+//   #define Filter(%0,%1,%2,%3) LAMBDA<i>Filter(%0,%1,$%2$,%3)
+//
+// `%1` is just "the rest of the parameters".  You technically don't need this and can do:
+//
+//   #define Filter(%0, LAMBDA<i>Filter($%0$,
+//
+// Although this macro looks recursive, because you replace `Filter(...)` with `Filter(...)` the
+// `LAMBDA` macro does some magic to ensure it isn't (it uses `PP_DEFER`).
+#define Filter(%0,%1) LAMBDA<i>Filter($%0$,%1)
+```
+
+You can now call this function as:
+
+```pawn
+new arr[] = {6, 7, 1, 5, 7, 2};
+new res[sizeof (arr)];
+Filter({ _0 > 3 }, arr, res);
+```
+
+And it will return `4` directly, and this in `res`:
+
+```
+{ 6, 7, 5, 7 }
+```
+
+\* I'm not going to go in to the pros and cons of auto-`this`-binding here.
+
+\*\* I'm considering adopting Slice's *md-sort* syntax for array outputs, but haven't yet:
+
+```pawn
+Map({ _0 + 1 }, array) -> dest;
+```
+
+\*\*\* Because `0` doesn't affect `+` at all you can chain as many of them together as you like with no side-effects.  The same applies to `1` and `*`, making `(0, +)` and `(1, *)` special pairs of value and operator.  These pairs are called "monoids", which is the first important part of the meme definition of "monads" being "a monoid in the category of endofunctors".  So while `(0, +)` and `(1, *)` are monoids in the category of real numbers, a monad is then a pair of operator and value that doesn't change the result, but operating on (certain special types of) functions instead.  You do not need to know any of this!
 
