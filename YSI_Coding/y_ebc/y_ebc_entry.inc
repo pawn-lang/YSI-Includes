@@ -161,7 +161,7 @@ stock bool:EBC_DestroyPlayerObject(playerid, objectid)
 #define _ALS_DestroyPlayerObject
 #define DestroyPlayerObject( EBC_DestroyPlayerObject(
 
-stock bool:EBC_bool:DestroyPickup(pickupid)
+stock bool:EBC_DestroyPickup(pickupid)
 {
 	EBC_Deactivate(pickupid, tagof(Pickup:));
 	return bool:DestroyPickup(pickupid);
