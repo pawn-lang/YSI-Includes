@@ -927,8 +927,12 @@ static stock ScriptInit_Dump(const filename[], const message[])
 	#if _YSI_SAFE_STARTUP
 		#if __debug > 0
 			Server_PrintIntroPart(message, YSI_gscInitMsgC, YSI_SPACE, YSI_gscInitMsgD),
+		#else
+			#pragma unused message
 		#endif
 		Server_DisableLongCall();
+	#else
+		#pragma unused message
 	#endif
 		if (DisasmWrite(file))
 		{

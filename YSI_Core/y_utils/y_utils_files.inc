@@ -330,7 +330,7 @@ static stock
 	 * <library>y_utils - files</library>
 	 */
 	YSI_gsDefaultDirs[E_YSI_DIR][YSI_DIR_LENGTH] = {
-#if _DEBUG
+#if _DEBUG || defined DEBUG_DUMP
 		__COMPILER_PACK _YSI_DEFAULT_DIR_PREFIX "/debug/",
 #endif
 #if defined YSI_TESTS

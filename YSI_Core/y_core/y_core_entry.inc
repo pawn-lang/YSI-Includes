@@ -249,7 +249,7 @@ stock const
 
 enum E_YSI_DIR
 {
-#if _DEBUG
+#if _DEBUG || defined DEBUG_DUMP
 	E_YSI_DIR_DEBUG,
 #endif
 #if defined YSI_TESTS
