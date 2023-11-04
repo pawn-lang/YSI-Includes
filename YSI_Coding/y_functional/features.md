@@ -374,24 +374,24 @@ Filter(Func:f<i>, const input[], output[], inputSize = sizeof (input), outputSiz
 	return count;
 }
 
-// `LAMBDA` is the lambda-making macro.  If your function returns anything other than `_:` you also
-// need to specify this:
+// `@lambda` is the lambda-making decorator.  If your function returns anything other than `_:` you
+// also need to specify this:
 //
-//   #define Filter(%0,%1) Float:LAMBDA<i>Filter($%0$,%1)
+//   #define Filter(%9) Float:@lambda(0, "i") Filter(%9)
 //
-// `<i>` is the type of the function to accept (in this case, taking just one parameter).
-// `$%x$` is the placeholder for the parameter that accepts a function.  If it was not the first
-// parameter this would look something like:
+// `0` is the index of the parameter that will take a function.  Here it is the first parameter, so
+// index 0.  This uses some internal magic to allow you to have the function at up to position 31.
 //
-//   #define Filter(%0,%1,%2,%3) LAMBDA<i>Filter(%0,%1,$%2$,%3)
+// `"i"` is the type of the function to accept (in this case, taking just one parameter).
 //
-// `%1` is just "the rest of the parameters".  You technically don't need this and can do:
+// `%9` is just "the rest of the parameters".  You technically don't need this and can do:
 //
-//   #define Filter(%0, LAMBDA<i>Filter($%0$,
+//   #define Filter( @lambda(0, "i") Filter(
 //
 // Although this macro looks recursive, because you replace `Filter(...)` with `Filter(...)` the
-// `LAMBDA` macro does some magic to ensure it isn't (it uses `PP_DEFER`).
-#define Filter(%0,%1) LAMBDA<i>Filter($%0$,%1)
+// `@lambda` macro does some magic to ensure it isn't (it uses `PP_DEFER`).  But this means the lone
+// `(` in the second example is VERY important!
+#define Filter(%9) @lambda(0, "i") Filter(%9)
 ```
 
 You can now call this function as:
