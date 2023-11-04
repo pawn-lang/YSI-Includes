@@ -270,7 +270,7 @@ FUNC_NewLambda1(Func:f<ii>, a, b)
 	return @.f(a, b);
 }
 
-#define FUNC_NewLambda1(%0,%1,%2) LAMBDA<ii>FUNC_NewLambda1($%0$,%1,%2)
+#define FUNC_NewLambda1(%0,%1,%2) @lambda("ii") FUNC_NewLambda1($%0$,%1,%2)
 
 FUNC_NewLambda1_(a, b)
 {
@@ -297,7 +297,7 @@ FUNC_NewLambda2(const string:s[], Func:f<ii>, d)
 	return @.f(strval(s), d);
 }
 
-#define FUNC_NewLambda2(%0,%1,%2) LAMBDA<ii>FUNC_NewLambda2(%0,$%1$,%2)
+#define FUNC_NewLambda2(%0,%1,%2) @lambda("ii") FUNC_NewLambda2(%0,$%1$,%2)
 
 FUNC_NewLambda2_(s, d)
 {

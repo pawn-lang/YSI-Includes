@@ -104,7 +104,7 @@ LAM@4```()
 #define LAM@2(%0);|||%5}} LAM@2(%0)LAM@5:%5;}
 #define LAM@5:%4; ;}LAM@5(%4);
 
-#define LAMBDA<%0>%1(%2$%3$%4) _:LAM@A:LAM@B:LAM@C:<%0>%1 PP_DEFER(%2$%3$%4)
+#define @lambda("%0")%1(%2$%3$%4) _:LAM@A:LAM@B:LAM@C:<%0>%1 PP_DEFER(%2$%3$%4)
 
 // Detect `&`.
 #define LAM@A:LAM@B:LAM@C:<%0>%1(%2$&%3$%4) %1(%2addressof(%3<%0>)%4)
