@@ -265,5 +265,59 @@ static FUNC_FoldL_nested_Add(a, b)
 	ASSERT_EQ(ret, 99);
 }
 
+FUNC_NewLambda1(Func:f<ii>, a, b)
+{
+	return @.f(a, b);
+}
+
+#define FUNC_NewLambda1(%0,%1,%2) LAMBDA<ii>FUNC_NewLambda1($%0$,%1,%2)
+
+FUNC_NewLambda1_(a, b)
+{
+	return a * 2 + b * 2;
+}
+
+@test(.group = "y_functional") FUNC_NewLambda1()
+{
+	new ret;
+	ret = FUNC_NewLambda1({ _0 - _1 }, 100, 80);
+	ASSERT_EQ(ret, 20);
+	ret = FUNC_NewLambda1(&FUNC_NewLambda1_, 10, 66);
+	ASSERT_EQ(ret, 152);
+	inline const F(a, b)
+	{
+		@return b * 7 + a;
+	}
+	ret = FUNC_NewLambda1(using inline F, 2, 6);
+	ASSERT_EQ(ret, 44);
+}
+
+FUNC_NewLambda2(const string:s[], Func:f<ii>, d)
+{
+	return @.f(strval(s), d);
+}
+
+#define FUNC_NewLambda2(%0,%1,%2) LAMBDA<ii>FUNC_NewLambda2(%0,$%1$,%2)
+
+FUNC_NewLambda2_(s, d)
+{
+	return s * 2 + d * 2;
+}
+
+@test(.group = "y_functional") FUNC_NewLambda2()
+{
+	new ret;
+	ret = FUNC_NewLambda2("100", { _0 - _1 }, 70);
+	ASSERT_EQ(ret, 30);
+	ret = FUNC_NewLambda2("15", &FUNC_NewLambda2_, 66);
+	ASSERT_EQ(ret, 162);
+	inline const F(s, d)
+	{
+		@return d * 7 + s;
+	}
+	ret = FUNC_NewLambda2("3", using inline F, 6);
+	ASSERT_EQ(ret, 45);
+}
+
 #undef FUNC_CHECK_ARR
 
