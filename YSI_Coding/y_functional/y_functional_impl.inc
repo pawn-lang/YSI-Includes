@@ -77,7 +77,7 @@ Optional plugins:
 #define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||iiii|||new _0,_1,_2,_3|||0,0,0,0,|||<%9>{%0}(%1)%8;
 #define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||iiiii|||new _0,_1,_2,_3,_4|||0,0,0,0,0,|||<%9>{%0}(%1)%8;
 
-#define _DO_LAMBDA|||%4|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{{{LAM@1();new I@T:_@YSII=I@T(~~"...YSII"),F@_@%4:YSII=F@_@%4:_@YSII;for(%6;I@F();)while(I@L(%5I@K(1)))Callback_Return_(_:(%0));LAM@2(%9((Inline_UI_(_:YSII),YSII)%1));|||}}LAM@4```()}
+#define _DO_LAMBDA|||%4|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{{{LAM@1();new I@T:_@YSII=I@T(~~"...YSII"),F@_@%4:YSII=F@_@%4:_@YSII;for(%6;I@F();)while(I@L(%5I@K(1)))Callback_Return_(_:(%0));LAM@2(%9((Inline_UI_(_:YSII,0),YSII)%1));|||}}LAM@4```()}
 
 #if 0
 
@@ -89,7 +89,7 @@ LAM@0()%8;
 		for(%6;I@F();)
 			while(I@L(%5I@K()))
 				Callback_Return_(_:(%0));
-		LAM@2(%9((Inline_UI_(_:YSII),YSII)%1));
+		LAM@2(%9((Inline_UI_(_:YSII,0),YSII)%1));
 	}
 }
 LAM@4```()
@@ -121,5 +121,5 @@ LAM@4```()
 #define NAMBDA_iiii: _NU_LAMBDA|||iiii|||new _0,_1,_2,_3|||0,0,0,0,|||
 #define NAMBDA_iiiii: _NU_LAMBDA|||iiiii|||new _0,_1,_2,_3,_4|||0,0,0,0,0,|||
 
-#define _NU_LAMBDA|||%0|||%6|||%5|||%1(%2{%3}%4)%8; LAM@0()%8;{{{LAM@1();new I@T:_@YSII=I@T(~~"...YSII"),F@_@%0:YSII=F@_@%0:_@YSII;for(%6;I@F();)while(I@L(%5I@K(1)))Callback_Return_(_:(%3));LAM@2(%1(%2(Inline_UI_(_:YSII),YSII)%4));|||}}LAM@4```()}
+#define _NU_LAMBDA|||%0|||%6|||%5|||%1(%2{%3}%4)%8; LAM@0()%8;{{{LAM@1();new I@T:_@YSII=I@T(~~"...YSII"),F@_@%0:YSII=F@_@%0:_@YSII;for(%6;I@F();)while(I@L(%5I@K(1)))Callback_Return_(_:(%3));LAM@2(%1(%2(Inline_UI_(_:YSII,0),YSII)%4));|||}}LAM@4```()}
 
