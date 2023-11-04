@@ -76,6 +76,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\..\YSI_Core\y_utils"
 #include "..\y_thirdpartyinclude\y_codeparse"
 
 #define @decorator__(%2)(%3)%0(%1) FUNC_PARSER(DECORATOR__,ARR_CST:STR_CST:NUM_CST:)(%0(%1))(%0)(%1)()()(%2)(%3)
