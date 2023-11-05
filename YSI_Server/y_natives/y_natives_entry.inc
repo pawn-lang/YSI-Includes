@@ -91,51 +91,153 @@ if (defined("MAYBE_CreateDynamicCircle"))
 }
 */
 
-#define _yN@%0\32; _yN@
+#define _@yN%0\32; _@yN
 
-#define @native(%3)%0(%1); @decorator__(NATIVE_DECORATOR)(%3)%0(%1)
+#define @native(%3)%0(%1) @decorator__(yN@_:yN_@:)(%3)%0(%1)
 
 // TODO: `void:` and `string:` return support.
-#define NATIVE_IDXOF(%0(%1)) (_:((O@B_())?(((%0(%1)),O@V_)?1:2):(O@V_)))
 
-#define NATIVE_DECORATOR:%8$("%0")(%1)(%2)(%3)(%4)(%5) %8$native %1_yN@%2(%3)=heapspace;stock %1%2(%3){static s=1;if(s)s=yN@_(#%0,NATIVE_IDXOF(_yN@%2(%5)));return _yN@%2(%5);}
+#define yN@_:yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5); %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=1;return _yN@(%0,.s=s),%1_@yN%2();}
+#define yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5) %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=3;return _yN@(%0,.s=s,.f=_:addressof(_@%2<%4>)),%1_@yN%2();}%1_@%2(%3)
 
-stock yN@_(const string:name[], idx)
+//#define NATIVE_DECORATOR:%8$("%0")(%1)(%2)(%3)(%4)(%5) %8$native %1_@yN%2(%3)=heapspace;stock %1%2(%3){static s=1;if(s)s=_yN@(#%0,NATIVE_IDXOF(_@yN%2(%5)));return _@yN%2(%5);}
+
+//stock _y@N(ret)
+//{
+//	// When this is called the true return value is still in `alt`.  Get it out
+//	// as quickly as possible!
+//	#emit POP.pri // Get the original caller's frame.
+//	#emit SCTRL        __frm
+//	#emit MOVE.pri
+//	// Discard two values (now the return address is safely in `pri`).
+//	#emit STACK        __2_cells
+//	#emit SWAP.pri // Get the return value and save the address.
+//	
+//}
+
+stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 {
-	// Request the native address.
-	new
-		addrLow,
-		addrHigh;
-	if (Server_GetNative(name, addrLow, addrHigh))
+	// This code doesn't use 
+	switch (s)
 	{
-		//printf("Found native %d (%d) with address %d, %d", idx, AMX_GetEntryFromNativeIndex(idx), addrLow, addrHigh);
-		// The native exists.  Write both components of the address pointer,
-		// despite the fact that we may only need one depending on what server
-		// bit-width we're running on (not worth working it out).
-		idx = AMX_GetEntryFromNativeIndex(idx),
-		AMX_Write(idx, addrLow);
-		#if cellbits == 32
-			// If we are running on a 32-bit machine this code does nothing.  If
-			// we are running on a 64-bit machine this will write the second
-			// cell of the stored pointer.  Pointer entires are `cellbits + 32`
-			// long, not a constant two cells.  If this were 64-bit we'd need to
-			// do awkward masking to write the upper bytes.  However, if this
-			// were a 64-bit script we wouldn't need to write the second address
-			// at all so there's no danger of clobbering data in either case.
-			AMX_Write(idx + 4, addrHigh);
-		#else
-			#pragma unused addrHigh
-		#endif
-	}
-	else
+	// These values are all odd because they can't be addresses.
+	case -1, -3, -5:
+		// Request the native address.
+		new
+			addrLow,
+			addrHigh;
+		// `-1` - No fallback.
+		// `-3` - No warnings.
+		// `-5` - Warnings and fallback.
+		if (Server_GetNative(name, addrLow, addrHigh))
+		{
+			// Get the next `SYSREQ.C` opcode to read the index from.
+			// Shamelessly ripped from amx-assembly (but I wrote it in the first
+			// place, so I said it was OK).
+			new
+				ctx[DisasmContext];
+			DisasmInit(ctx, GetCurrentFrameReturn());
+			while (DisasmNext(ctx))
+			{
+#if OPCODE_HAS_O2
+				if (ctx[DisasmContext_opcode] == OP_SYSREQ_C || ctx[DisasmContext_opcode] == OP_SYSREQ_N)
+#else
+				if (ctx[DisasmContext_opcode] == OP_SYSREQ_C)
+#endif
+				{
+					new
+						idx = DisasmGetOperand(ctx);
+					//printf("Found native %d (%d) with address %d, %d", idx, AMX_GetEntryFromNativeIndex(idx), addrLow, addrHigh);
+					// The native exists.  Write both components of the address
+					// pointer, despite the fact that we may only need one
+					// depending on what server bit-width we're running on (not
+					// worth working it out).
+					idx = AMX_GetEntryFromNativeIndex(idx),
+					AMX_Write(idx, addrLow);
+					#if cellbits == 32
+						// If we are running on a 32-bit machine this code does
+						// nothing.  If we are running on a 64-bit machine this
+						// will write the second cell of the stored pointer.
+						// Pointer entires are `cellbits + 32` long, not a
+						// constant two cells.  If this were 64-bit we'd need to
+						// do awkward masking to write the upper bytes.
+						// However, if this were a 64-bit script we wouldn't
+						// need to write the second address at all so there's no
+						// danger of clobbering data in either case.
+						AMX_Write(idx + 4, addrHigh);
+					#else
+						#pragma unused addrHigh
+					#endif
+					// Now store the address of the `SYSREQ` in `s` so that we
+					// can jump to it later (this is to maintain JIT
+					// compatibility since we can't write `SYSREQ.C` any more).
+					break;
+				}
+			}
+		}
+		else
+		{
+			if (s == -3)
+			{
+				// Fallback mode.  Don't print the errors here.
+			}
+			else if (IsNull(requires)
+			{
+				// Don't replace anything.  The server will fall back to calling
+				// `heapspace`, which is essentially a no-op.
+				Debug_PrintF("Attempting to call non-existant native `%s`.", name);
+			}
+			else
+			{
+				// Don't replace anything.  The server will fall back to calling
+				// `heapspace`, which is essentially a no-op.
+				Debug_PrintF("Attempting to call non-existant native `%s`; %s required.", name, requires);
+			}
+			if (s == -1)
+			{
+				s = -7;
+				// Jump straight back to the calling function.
+				#emit STACK        __7_cells
+				#emit CONST.pri    0
+				#emit RETN
+				return 0;
+			}
+			// Get the next `PROC` opcode (dangerous...).
+			// Call the fallback (now in `s`).
+			// Make it negative.
+			//return 0;
+			s = -9
+			// Use the fallback function.
+			#emit STACK        __6_cells // Dump the function header.
+			#emit POP.alt                // Get `f`.
+			#emit POP.pri                // Dump data.
+			#emit POP.pri
+			#emit SCTRL        __frm     // Reset the frame pointer.
+			#emit MOVE.pri
+			#emit SCTRL        __cip     // Jump to the fallback code.
+		}
+	case -7:
 	{
-		// Don't replace anything.  The server will fall back to calling
-		// `heapspace`, which is essentially a no-op.
-		Debug_PrintF("Attempting to call non-existant native `%s`", name);
+		// Previously failed, no fallback.
+		#emit STACK        __7_cells
+		#emit CONST.pri    0
+		#emit RETN
+		return 0;
 	}
-	
-	// Never repeat this code.
-	return 0;
+	case -9:
+	{
+		// Use the fallback function.
+		#emit STACK        __6_cells // Dump the function header.
+		#emit POP.alt                // Get `f`.
+		#emit POP.pri                // Dump data.
+		#emit POP.pri
+		#emit SCTRL        __frm     // Reset the frame pointer.
+		#emit MOVE.pri
+		#emit SCTRL        __cip     // Jump to the fallback code.
+	}
+	}
+	// Call the native.
+	return 1;
 }
 
 #if defined YSI_TESTS
