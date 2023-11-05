@@ -76,10 +76,11 @@ Optional plugins:
 @test(.group = "y_natives") NATIVE_floatmul()
 {
 	ASSERT_EQ(NATIVE_floatmul(5.0, 6.0), 30.0);
-	ASSERT_EQ(NATIVE_floatmul(5.0, 6.0), 30.0);
-	ASSERT_EQ(NATIVE_floatmul(5.0, 6.0), 30.0);
-	ASSERT_EQ(NATIVE_floatmul(5.0, 6.0), 30.0);
-	ASSERT_EQ(NATIVE_floatmul(5.0, 6.0), 30.0);
-	ASSERT_EQ(NATIVE_floatmul(5.0, 6.0), 30.0);
+	ASSERT_EQ(NATIVE_floatmul(5.0, 7.0), 35.0);
+	ASSERT_EQ(NATIVE_floatmul(5.0, 8.0), 40.0);
+	ASSERT_EQ(NATIVE_floatmul(4.0, 6.0), 24.0);
+	ASSERT_EQ(NATIVE_floatmul(3.0, 6.0), 18.0);
+	ASSERT_EQ(NATIVE_floatmul(2.0, 6.0), 12.0);
+	ASSERT_EQ(NATIVE_floatmul(7.0, 6.0), 42.0);
 }
 
