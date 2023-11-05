@@ -374,11 +374,11 @@ global bool:Server_GetNative(const string:name[], &addrLow, &addrHigh)
 	deleteproperty(27, YSI_gscResultA);
 	if (YSI_g_sLastNative[0] == '-')
 	{
-		YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
+		SendRconCommand(__const("loadfs ../scriptfiles/ysi_aux_runtime"));
 	}
 	else
 	{
-		YSI_SendRconCommand__("reloadfs ../scriptfiles/ysi_aux_runtime");
+		SendRconCommand(__const("reloadfs ../scriptfiles/ysi_aux_runtime"));
 	}
 	if (existproperty(27, YSI_gscResultA))
 	{
@@ -397,7 +397,7 @@ global bool:Server_GetNative(const string:name[], &addrLow, &addrHigh)
 		Server_WriteNative(YSI_g_sLastNative);
 		if (Server_DumpFile())
 		{
-			YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
+			SendRconCommand(__const("loadfs ../scriptfiles/ysi_aux_runtime"));
 		}
 	}
 
@@ -492,13 +492,13 @@ global void:Server_DoAuxRuntimeLoad()
 		// unknown RCON command error.
 		// Test if the fix has already been loaded.
 		setproperty(27, YSI_gscOnClientCheckResponse, 0);
-		YSI_SendRconCommand__(YSI_gscOnClientCheckResponse);
+		SendRconCommand(__const(YSI_gscOnClientCheckResponse));
 		// Another script has already loaded one of the two.  Unload them both.
 		new res = getproperty(27, YSI_gscOnClientCheckResponse);
 		if (res == 27)
 		{
 			// rconfix.
-			YSI_SendRconCommand__("unloadfs ../scriptfiles/callbackfix");
+			SendRconCommand(__const("unloadfs ../scriptfiles/callbackfix"));
 		}
 		else if (res == Master_ID())
 		{
@@ -513,7 +513,7 @@ global void:Server_DoAuxRuntimeLoad()
 			// when I originally wrote the callbackfix FS, this does mean that
 			// we will never have any conflicts.  This could also be `42` from
 			// the old version of the AUX runtime.
-			YSI_SendRconCommand__("unloadfs ../scriptfiles/ysi_aux_runtime");
+			SendRconCommand(__const("unloadfs ../scriptfiles/ysi_aux_runtime"));
 		}
 	}
 	// Now clear to load our new version.
@@ -544,7 +544,7 @@ global void:Server_DoAuxRuntimeLoad()
 	
 	// Always re-dump the file if we get to here.
 	Server_DumpFile();
-	YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
+	SendRconCommand(__const("loadfs ../scriptfiles/ysi_aux_runtime"));
 	if (fexist("ysi_aux_runtime.amx"))
 	{
 		#if defined YSI_FIX_CALLBACKS
@@ -588,7 +588,7 @@ Server_LoadRconFix() <_ALS : _ALS_go>
 
 stock Server_UnloadRconFix() <_ALS : _ALS_go>
 {
-	YSI_SendRconCommand__("unloadfs ../scriptfiles/ysi_aux_runtime");
+	SendRconCommand(__const("unloadfs ../scriptfiles/ysi_aux_runtime"));
 }
 
 #if defined YSI_TESTS

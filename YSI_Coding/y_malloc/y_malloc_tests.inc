@@ -319,6 +319,6 @@ public y_malloc_Deferred(Alloc:alloc)
 	{
 		mset(alloc, i, i * 2);
 	}
-	YSI_SetTimerEx__("y_malloc_Deferred", 10, false, "i", _:alloc);
+	SetTimerEx(__const("y_malloc_Deferred"), 10, false, __const(YSI_gcI), _:alloc);
 }
 

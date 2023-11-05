@@ -89,13 +89,13 @@ static stock GangZoneDoPulse(playerid, zone, from, to, time, stage, delay, time2
 	if (stage == time)
 	{
 		GangZoneShowForPlayer(playerid, zone, to);
-		SetPVarInt(playerid, YSI_g_sTimer, YSI_SetTimerEx__(&GangZoneDoPulse, delay, false, YSI_gcIIIIIIIIIIIIIIIII, playerid, zone, from, to, time, stage, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1));
+		SetPVarInt(playerid, YSI_g_sTimer, SetTimerEx(&GangZoneDoPulse, delay, false, __const(YSI_gcIIIIIIIIIIIIIIIII), playerid, zone, from, to, time, stage, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1));
 		return;
 	}
 	else if (stage == 0)
 	{
 		GangZoneShowForPlayer(playerid, zone, from);
-		SetPVarInt(playerid, YSI_g_sTimer, YSI_SetTimerEx__(&GangZoneDoPulse, delay2, false, YSI_gcIIIIIIIIIIIIIIIII, playerid, zone, from, to, time, 0, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1));
+		SetPVarInt(playerid, YSI_g_sTimer, SetTimerEx(&GangZoneDoPulse, delay2, false, __const(YSI_gcIIIIIIIIIIIIIIIII), playerid, zone, from, to, time, 0, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1));
 		return;
 	}
 	if (stage > time)
@@ -110,7 +110,7 @@ static stock GangZoneDoPulse(playerid, zone, from, to, time, stage, delay, time2
 		//Debug_Print7("GangZoneDoPulse: %d %d %x %x %x %x", playerid, zone, r & 0xFF, g & 0xFF, b & 0xFF, a & 0xFF);
 		GangZoneShowForPlayer(playerid, zone, ((r1 * multiplier / time2 + r0) << 24) | (((g1 * multiplier / time2 + g0) & 0xFF) << 16) | (((b1 * multiplier / time2 + b0) & 0xFF) << 8) | ((a1 * multiplier / time2 + a0) & 0xFF));
 		//GangZoneShowForPlayer(playerid, zone, (r << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | (a & 0xFF));
-		SetPVarInt(playerid, YSI_g_sTimer, YSI_SetTimerEx__(&GangZoneDoPulse, ZONE_PULSE_STAGE_TIME, false, YSI_gcIIIIIIIIIIIIIIIII, playerid, zone, from, to, time, stage, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1));
+		SetPVarInt(playerid, YSI_g_sTimer, SetTimerEx(&GangZoneDoPulse, ZONE_PULSE_STAGE_TIME, false, __const(YSI_gcIIIIIIIIIIIIIIIII), playerid, zone, from, to, time, stage, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1));
 	}
 	else
 	{
@@ -122,7 +122,7 @@ static stock GangZoneDoPulse(playerid, zone, from, to, time, stage, delay, time2
 		//	a = a1 * stage / time + a0;
 		//Debug_Print7("GangZoneDoPulse: %d %d %x %x %x %x", playerid, zone, r & 0xFF, g & 0xFF, b & 0xFF, a & 0xFF);
 		GangZoneShowForPlayer(playerid, zone, ((r1 * stage / time + r0) << 24) | (((g1 * stage / time + g0) & 0xFF) << 16) | (((b1 * stage / time + b0) & 0xFF) << 8) | ((a1 * stage / time + a0) & 0xFF));
-		SetPVarInt(playerid, YSI_g_sTimer, YSI_SetTimerEx__(&GangZoneDoPulse, ZONE_PULSE_STAGE_TIME, false, YSI_gcIIIIIIIIIIIIIIIII, playerid, zone, from, to, time, stage, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1));
+		SetPVarInt(playerid, YSI_g_sTimer, SetTimerEx(&GangZoneDoPulse, ZONE_PULSE_STAGE_TIME, false, __const(YSI_gcIIIIIIIIIIIIIIIII), playerid, zone, from, to, time, stage, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1));
 	}
 	return;
 }
@@ -175,7 +175,7 @@ stock _GangZonePulse(@PlayerSet:ps, zone, from, to, time, delay = ZONE_PULSE_STA
 		GangZoneShowForPlayer(p, zone, from);
 		// Don't delay at the start (because that's just silly, it already is
 		// that colour).
-		SetPVarInt(p, YSI_g_sTimer, YSI_SetTimerEx__(&GangZoneDoPulse, ZONE_PULSE_STAGE_TIME, false, YSI_gcIIIIIIIIIIIIIIIII, p, zone, from, to, time, 0, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1));
+		SetPVarInt(p, YSI_g_sTimer, SetTimerEx(&GangZoneDoPulse, ZONE_PULSE_STAGE_TIME, false, __const(YSI_gcIIIIIIIIIIIIIIIII), p, zone, from, to, time, 0, delay, time2, delay2, r0, g0, b0, a0, r1, g1, b1, a1));
 	}
 }
 

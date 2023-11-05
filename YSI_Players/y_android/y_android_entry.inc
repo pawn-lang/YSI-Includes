@@ -127,14 +127,12 @@ public OnClientCheckResponse(playerid, actionid, memaddr, retndata)
 	return 1;
 }
 
-forward OnAndroidTimer(playerid);
-
-public OnAndroidTimer(playerid)
+static stock OnAndroidTimer(playerid)
 {
 	if (YSI_g_sIsAndroid[playerid] != true)
 	{
 		YSI_g_sIsAndroid[playerid] = true;
-		CallRemoteFunction("OnAndroidCheck", "ii", playerid, true);
+		CallRemoteFunction(__const("OnAndroidCheck"), __const(YSI_gcII), playerid, true);
 	}
 //#if defined Android_OnAndroidTimer
 //	Android_OnAndroidTimer(playerid);
@@ -161,7 +159,7 @@ public OnPlayerConnect(playerid)
 	if (!Script_IsFilterscript())
 	{
 		YSI_SendClientCheck__(playerid, 0x48, 0, 0, 2);
-		YSI_g_sTimers[playerid] = YSI_SetTimerEx__("OnAndroidTimer", 10000, false, YSI_gcI, playerid);
+		YSI_g_sTimers[playerid] = SetTimerEx(&OnAndroidTimer<i>, 10000, false, __const(YSI_gcI), playerid);
 	}
 #if defined Android_OnPlayerConnect
 	Android_OnPlayerConnect(playerid);

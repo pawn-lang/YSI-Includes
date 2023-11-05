@@ -93,35 +93,23 @@ if (defined("MAYBE_CreateDynamicCircle"))
 
 #define _@yN%0\32; _@yN
 
-#define @native(%3)%0(%1) @decorator__(yN@_:yN_@:)(%3)%0(%1)
+#define @native(%3)%0(%1) @decorator__(yN@_:yN_@)(%3)%0(%1)
 
 // TODO: `void:` and `string:` return support.
 
-#define yN@_:yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5); %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=1;return _yN@(%0,.s=s),%1_@yN%2();}
-#define yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5) %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=3;return _yN@(%0,.s=s,.f=_:addressof(_@%2<%4>)),%1_@yN%2();}%1_@%2(%3)
-
-//#define NATIVE_DECORATOR:%8$("%0")(%1)(%2)(%3)(%4)(%5) %8$native %1_@yN%2(%3)=heapspace;stock %1%2(%3){static s=1;if(s)s=_yN@(#%0,NATIVE_IDXOF(_@yN%2(%5)));return _@yN%2(%5);}
-
-//stock _y@N(ret)
-//{
-//	// When this is called the true return value is still in `alt`.  Get it out
-//	// as quickly as possible!
-//	#emit POP.pri // Get the original caller's frame.
-//	#emit SCTRL        __frm
-//	#emit MOVE.pri
-//	// Discard two values (now the return address is safely in `pri`).
-//	#emit STACK        __2_cells
-//	#emit SWAP.pri // Get the return value and save the address.
-//	
-//}
+#define yN@_:yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5); %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=-1;return _yN@(%0,.s=s),%1_@yN%2();}
+#define yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5) %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=-3;return _yN@(%0,.s=s,.f=_:addressof(_@%2<%4>)),%1_@yN%2();}%1_@%2(%3)
 
 stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 {
+	Debug_Print4("_yN@ called: %s, %d, %s, %d", name, s, requires, f);
 	// This code doesn't use 
 	switch (s)
 	{
 	// These values are all odd because they can't be addresses.
 	case -1, -3, -5:
+	{
+		Debug_Print5("_yN@: Looking up the native");
 		// Request the native address.
 		new
 			addrLow,
@@ -131,6 +119,7 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 		// `-5` - Warnings and fallback.
 		if (Server_GetNative(name, addrLow, addrHigh))
 		{
+			Debug_Print5("_yN@: Found native at %08x, %08x", addrLow, addrHigh);
 			// Get the next `SYSREQ.C` opcode to read the index from.
 			// Shamelessly ripped from amx-assembly (but I wrote it in the first
 			// place, so I said it was OK).
@@ -145,15 +134,15 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 				if (ctx[DisasmContext_opcode] == OP_SYSREQ_C)
 #endif
 				{
-					new
-						idx = DisasmGetOperand(ctx);
-					//printf("Found native %d (%d) with address %d, %d", idx, AMX_GetEntryFromNativeIndex(idx), addrLow, addrHigh);
+					s = DisasmGetOperand(ctx);
 					// The native exists.  Write both components of the address
 					// pointer, despite the fact that we may only need one
 					// depending on what server bit-width we're running on (not
 					// worth working it out).
-					idx = AMX_GetEntryFromNativeIndex(idx),
-					AMX_Write(idx, addrLow);
+					f = AMX_GetEntryFromNativeIndex(s),
+					AMX_Write(f, addrLow);
+					Debug_Print5("_yN@: Found SYSREQ at %d, %08x", s, f);
+					//printf("Found native %d (%d) with address %d, %d", s, f, addrLow, addrHigh);
 					#if cellbits == 32
 						// If we are running on a 32-bit machine this code does
 						// nothing.  If we are running on a 64-bit machine this
@@ -164,7 +153,7 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 						// However, if this were a 64-bit script we wouldn't
 						// need to write the second address at all so there's no
 						// danger of clobbering data in either case.
-						AMX_Write(idx + 4, addrHigh);
+						AMX_Write(f + 4, addrHigh);
 					#else
 						#pragma unused addrHigh
 					#endif
@@ -181,7 +170,7 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 			{
 				// Fallback mode.  Don't print the errors here.
 			}
-			else if (IsNull(requires)
+			else if (IsNull(requires))
 			{
 				// Don't replace anything.  The server will fall back to calling
 				// `heapspace`, which is essentially a no-op.
@@ -197,18 +186,15 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 			{
 				s = -7;
 				// Jump straight back to the calling function.
-				#emit STACK        __7_cells
+				#emit STACK        __9_cells
 				#emit CONST.pri    0
 				#emit RETN
 				return 0;
 			}
-			// Get the next `PROC` opcode (dangerous...).
-			// Call the fallback (now in `s`).
-			// Make it negative.
-			//return 0;
-			s = -9
+			// Call the fallback
+			s = -9;
 			// Use the fallback function.
-			#emit STACK        __6_cells // Dump the function header.
+			#emit STACK        __8_cells // Dump the function header.
 			#emit POP.alt                // Get `f`.
 			#emit POP.pri                // Dump data.
 			#emit POP.pri
@@ -216,6 +202,7 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 			#emit MOVE.pri
 			#emit SCTRL        __cip     // Jump to the fallback code.
 		}
+	}
 	case -7:
 	{
 		// Previously failed, no fallback.
@@ -236,7 +223,21 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 		#emit SCTRL        __cip     // Jump to the fallback code.
 	}
 	}
+	{}
+	Debug_Print5("_yN@: Calling native %d", s);
 	// Call the native.
+	#emit LREF.S.pri   s
+	#emit STACK        __7_cells
+	#emit MOVE.alt
+	#emit POP.pri
+	#emit SCTRL        __frm     // Reset the frame pointer.
+	#emit MOVE.pri
+	#emit POP.alt
+	#emit SYSREQ.pri
+	#emit PUSH.alt
+	#emit PROC
+	#emit RETN
+	
 	return 1;
 }
 

@@ -379,7 +379,7 @@ stock bool:User_ConfirmEmail(playerid, string:email[])
 			}
 			// Defer the call, so it looks like a callback in the same way as
 			// confirming a password.  Check the length first.
-			YSI_SetTimerEx__("OnConfirmEmail", 0, false, "ii", playerid, len == end - start && strcmp(YSI_g_sUserEmail[playerid], email[start], false, len) == 0);
+			SetTimerEx(__const("OnConfirmEmail"), 0, false, __const(YSI_gcII), playerid, len == end - start && strcmp(YSI_g_sUserEmail[playerid], email[start], false, len) == 0);
 			return true;
 		}
 	}

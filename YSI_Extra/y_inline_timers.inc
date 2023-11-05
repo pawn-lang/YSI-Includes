@@ -129,7 +129,7 @@ static stock Timer_InlineCount(Func:func<>, time, count)
 	{
 		// Initial repeating timer, to set the time offset.
 		//printf("delay = %d", timer);
-		Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineRepeat<tF@_@:>, time, true, YSI_gcI, _:func));
+		Indirect_SetMeta(func, SetTimerEx(&Timer_InlineRepeat<tF@_@:>, time, true, __const(YSI_gcI), _:func));
 		// Call the function after setting the meta, incase it kills the timer.
 		@.func();
 	}
@@ -143,7 +143,7 @@ static stock Timer_InlineCount(Func:func<>, time, count)
 	else
 	{
 		// Call after meta.
-		Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineCount<tF@_@:ii>, time, false, YSI_gcIII, _:func, time, count));
+		Indirect_SetMeta(func, SetTimerEx(&Timer_InlineCount<tF@_@:ii>, time, false, __const(YSI_gcIII), _:func, time, count));
 		@.func();
 	}
 }
@@ -200,7 +200,7 @@ stock Timer_CreateCallback(Func:func<>, initialOrTime, timeOrCount = 0, count = 
 	// the initial offset time.
 	// Repeat N times.
 	Indirect_Claim(func);
-	Indirect_SetMeta(func, YSI_SetTimerEx__(&Timer_InlineCount<tF@_@:ii>, initialOrTime, false, YSI_gcIII, _:func, timeOrCount, count));
+	Indirect_SetMeta(func, SetTimerEx(&Timer_InlineCount<tF@_@:ii>, initialOrTime, false, __const(YSI_gcIII), _:func, timeOrCount, count));
 	return _:func;
 }
 

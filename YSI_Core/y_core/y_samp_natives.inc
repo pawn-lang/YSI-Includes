@@ -153,31 +153,13 @@ static stock const
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
  * <remarks>
- *   Const-correct <c>SetTimer</c>.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-native YSI_SetTimer__(const funcname[], interval, bool:repeating) = SetTimer;
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_samp_natives</library>
- * <remarks>
- *   Const-correct <c>SetTimerEx</c>.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-native YSI_SetTimerEx__(const funcname[], interval, bool:repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_samp_natives</library>
- * <remarks>
  *   <c>SetTimer</c> version that takes function addresses, not names.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock SetTimerAddr(addr, time, bool:repeat)
 {
-	return YSI_SetTimerEx__(YSI_gscTimerStub, time, repeat, YSI_gcI, addr);
+	return SetTimerEx(__const(YSI_gscTimerStub), time, repeat, __const(YSI_gcI), addr);
 }
 
 #if defined _ALS_SetTimer
@@ -189,8 +171,6 @@ stock SetTimerAddr(addr, time, bool:repeat)
 #define @yS2:addressof(%0<%9><>) @yS2:addressof(%0<>)
 
 #define SetTimer(&%0,%1) SetTimerAddr(_:@yS2:addressof(%0<>),%1)
-#define YSI_SetTimer__(&%0,%1) SetTimerAddr(_:@yS2:addressof(%0<>),%1)
-//#define SetTimerAddr(&%0,%1) SetTimerAddr(_:@yS2:addressof(%0<>),%1)
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
@@ -252,8 +232,6 @@ stock SetTimerExAddr(dummy__ = 0, time, bool:repeat, const fmt[], addr, GLOBAL_T
 #define @yS1:addressof(%0),%1) (Y_HOOKS_ADDRESSOF(%0(%1))),%1)
 
 #define SetTimerEx(&%0,%1,%2,%3,%4) SetTimerExAddr(_,%1,%2,%3,_:@yS0:@yS1:addressof(%0),%4)
-#define YSI_SetTimerEx__(&%0,%1,%2,%3,%4) SetTimerExAddr(_,%1,%2,%3,_:@yS0:@yS1:addressof(%0),%4)
-//#define SetTimerExAddr(&%0,%1,%2,%3,%4) SetTimerExAddr(_,%1,%2,%3,_:@yS0:@yS1:addressof(%0),%4)
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
@@ -275,15 +253,6 @@ native YSI_HTTP__(index, HTTP_METHOD:method, const url[], const data[], const ca
  *//*------------------------------------------------------------------------**/
 
 native YSI_Format__(dest[], size = sizeof (dest), const format[], GLOBAL_TAG_TYPES:...) = format;
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_samp_natives</library>
- * <remarks>
- *   Const-correct <c>SendRconCommand</c>.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-native YSI_SendRconCommand__(const str[]) = SendRconCommand;
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_samp_natives</library>
@@ -363,23 +332,6 @@ native _YSI_FGetChar__(File:handle, value, bool:utf8 = true) = fgetchar;
 
 #if !defined DIALOG_STYLE
 	#define DIALOG_STYLE: _:
-#endif
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_samp_natives</library>
- * <remarks>
- *   Const- and tag-correct <c>ShowPlayerDialog</c>.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-#if defined _ALS_ShowPlayerDialog
-	static stock Dialog_ShowPlayerNative__(playerid, dialogid, DIALOG_STYLE:style, const caption[], const info[], const button1[], const button2[])
-	{
-		return false;
-	}
-	#define Dialog_ShowPlayerNative ShowPlayerDialog
-#else
-	native bool:Dialog_ShowPlayerNative(playerid, dialogid, DIALOG_STYLE:style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
 #endif
 
 /*-------------------------------------------------------------------------*//**

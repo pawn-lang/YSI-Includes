@@ -150,9 +150,6 @@ _Y_RACES_STATIC stock
 	YSI_g_sCPIndex,
 	Iterator:YSI_g_sRacePeople[MAX_RACES]<MAX_PLAYERS>;
 
-forward Race_Countdown(race, time);
-forward Race_Timeout(playerid);
-
 loadtext core[ysi_race];
 
 /*-------------------------------------------------------------------------*//**
@@ -590,7 +587,7 @@ GLOBAL__ void:Race_SetEntry(raceid, cost)
 
 _Y_RACES_STATIC Race_Dropout(playerid)
 {
-	YSI_SetTimerEx__("Race_Timeout", (YSI_g_sRaceData[(YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE])][E_RACE_FLAGS] & e_RACE_FLAGS_EXIT_TIME), false, "i", playerid);
+	SetTimerEx(&Race_Timeout, (YSI_g_sRaceData[(YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE])][E_RACE_FLAGS] & e_RACE_FLAGS_EXIT_TIME), false, __const(YSI_gcI), playerid);
 	YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE] |= RACE_PLAYER_OUT;
 	YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TOUT] = GetTickCount();
 }
@@ -615,7 +612,7 @@ _Y_RACES_STATIC Race_Rejoin(playerid)
  *   player fails the race.
  *//*------------------------------------------------------------------------**/
 
-public Race_Timeout(playerid)
+static stock Race_Timeout(playerid)
 {
 	if (YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE] & RACE_PLAYER_OUT) Race_Exit(playerid);
 }
@@ -878,13 +875,13 @@ GLOBAL__ Race_Start(race)
  * <param name="time">Seconds remaining.</param>
  *//*------------------------------------------------------------------------**/
 
-public Race_Countdown(race, time)
+static stock Race_Countdown(race, time)
 {
 	if (!(YSI_g_sRaceData[race][E_RACE_FLAGS] & e_RACE_FLAGS_ACTIVE)) return;
 	if (time)
 	{
 		Text_Send(YSI_g_sRacers[race], $YSI_RACE_COUNTDOWN, time);
-		YSI_SetTimerEx__("Race_Countdown", 1000, false, "ii", race, time - 1);
+		SetTimerEx(&Race_Countdown, 1000, false, __const(YSI_gcII), race, time - 1);
 	}
 	else
 	{

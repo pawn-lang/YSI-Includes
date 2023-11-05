@@ -1803,7 +1803,7 @@ ScriptInit_Purge_clean:
 	fremove(tmp);
 	// Recheck once an hour.
 ScriptInit_Purge_retry:
-	YSI_gsPurgeTimer = YSI_SetTimer__(&ScriptInit_PurgeTemporaries<>, 1000 * 60 * 60, false);
+	YSI_gsPurgeTimer = SetTimer(&ScriptInit_PurgeTemporaries<>, 1000 * 60 * 60, false);
 }
 
 /*-------------------------------------------------------------------------*//**

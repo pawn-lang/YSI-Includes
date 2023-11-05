@@ -122,7 +122,7 @@ Server_LoadRconFix() <>
 	{
 		// Test if the fix has already been loaded.
 		setproperty(27, YSI_gscOnClientCheckResponse, 0);
-		YSI_SendRconCommand__(YSI_gscOnClientCheckResponse);
+		SendRconCommand(__const(YSI_gscOnClientCheckResponse));
 		if (getproperty(27, YSI_gscOnClientCheckResponse) != 0)
 		{
 			return;
@@ -197,7 +197,7 @@ Server_LoadRconFix() <>
 		}
 		if (fexist(YSI_gscRconFixFS))
 		{
-			YSI_SendRconCommand__("loadfs ../scriptfiles/callbackfix");
+			SendRconCommand(__const("loadfs ../scriptfiles/callbackfix"));
 			#if defined YSI_FIX_CALLBACKS
 				state OnClientCheckResponse : OnClientCheckResponse_GM;
 			#endif
@@ -228,7 +228,7 @@ stock Server_UnloadRconFix() <>
 {
 	if (Server_IsSAMP())
 	{
-		YSI_SendRconCommand__("unloadfs ../scriptfiles/callbackfix");
+		SendRconCommand(__const("unloadfs ../scriptfiles/callbackfix"));
 	}
 }
 
