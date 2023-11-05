@@ -1,8 +1,3 @@
-#if defined _INC_y_decorator
-	#endinput
-#endif
-#define _INC_y_decorator
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -76,21 +71,10 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Core\y_utils"
-#include "..\y_thirdpartyinclude\y_codeparse"
+@native("floatmul") Float:NATIVE_floatmul(Float:a, Float:b);
 
-#define @decorator__(%2)(%3)%0(%1) FUNC_PARSER(DECORATOR__,ARR_CST:STR_CST:NUM_CST:RET_TAG:)(%0(%1))(%1)()()(%2)(%3)
-
-#define DECORATOR___ARR(%9,%9,%5,%9)%8$(%1)(%6)(%7) %8$(%1)(%6a)(%7,%5)
-#define DECORATOR___STR(%9,%9,%5,%9)%8$(%1)(%6)(%7) %8$(%1)(%6s)(%7,%5)
-#define DECORATOR___NUM(%9,%9,%5)%8$(%1)(%6)(%7)    %8$(%1)(%6i)(%7,%5)
-
-#define DECORATOR___END(%0)%8$(%1)(%6)(,%7)(%2)(%3) %2:%8$(%3)(_:)(%0)(%1)(%6)(%7)
-#define DECORATOR___NUL(%0)%8$()()()(%2)(%3)        %2:%8$(%3)(_:)(%0)(%1)()()
-
-#define DECORATOR___END_TAG(%5,%0)%8$(%1)(%6)(,%7)(%2)(%3) %2:%8$(%3)(%5)(%0)(%1)(%6)(%7)
-#define DECORATOR___NUL_TAG(%5,%0)%8$()()()(%2)(%3)        %2:%8$(%3)(%5)(%0)(%1)()()
-
-#define DECORATOR___END_VOD(%0)%8$(%1)(%6)(,%7)(%2)(%3) %2:%8$(%3)(void:)(%0)(%1)(%6)(%7)
-#define DECORATOR___NUL_VOD(%0)%8$()()()(%2)(%3)        %2:%8$(%3)(void:)(%0)(%1)()()
+@test(.group = "y_natives") NATIVE_floatmul()
+{
+	ASSERT_EQ(NATIVE_floatmul(5.0, 6.0), 30.0);
+}
 
