@@ -162,3 +162,13 @@ Optional plugins:
 	ASSERT(!Server_CallNative("plpplplplpl", ret, "iii", 50, 70, 100));
 }
 
+@test(.group = "y_rconfix") Server_GetNative()
+{
+	new idx = nativeidxof(getproperty<>);
+	new ptr = AMX_GetEntryPointer(AMX_GetEntryFromNativeIndex(idx));
+	new a, b;
+	ASSERT(Server_GetNative("getproperty", a, b));
+	//printf("%d, %d, %d, %d", idx, ptr, a, b);
+	ASSERT_EQ(ptr, a);
+}
+

@@ -46,6 +46,7 @@ const
 		#error Unknown bit width.
 	#endif
 	cellbytes = cellbits / charbits,
+	__dat = 1,
 	__hea = 2,
 	__stk = 4;
 
@@ -79,7 +80,8 @@ new const
 	// This is at DAT address 0, which is brilliant for locating it.  It is also
 	// dead space before the native name is written to it, so put something in.
 	NATIVE[64 char] = !" ISYixuArailuR ymitn( ,e2 )c 320xelA_Y\" sseLoC \"\0.el",
-	RESULT[] = !"R__",
+	RESULT_A[] = !"R__",
+	RESULT_B[] = !"Q__",
 	AI[] = !"ai",
 	IIII[] = !"iiii",
 	// Use the same string for everything, so we only need one.  And pack it.
@@ -124,7 +126,7 @@ public N__()
 	// Save the return value.
 	#emit PUSH.C       NATIVE
 	#emit PUSH.pri
-	#emit PUSH.C       RESULT
+	#emit PUSH.C       RESULT_A
 	#emit PUSH.C       27
 	#emit PUSH.C       args
 	#emit SYSREQ.C     SetProperty
@@ -146,7 +148,7 @@ public S__(const data[], length)
 	if (gAvailable > length)
 	{
 		gAvailable = gAvailable - length - 1;
-		SetProperty(27, RESULT, gAllocated, NATIVE);
+		SetProperty(27, RESULT_A, gAllocated, NATIVE);
 
 		new dest = 0;
 		// First, re-allocate the heap.
@@ -170,7 +172,7 @@ public S__(const data[], length)
 	{
 		// We don't need the last parameter, so it doesn't matter what it is.
 		// Save some space by re-using something irrelevant.
-		SetProperty(27, RESULT, 0, NATIVE);
+		SetProperty(27, RESULT_A, 0, NATIVE);
 	}
 }
 
@@ -189,7 +191,7 @@ public G__(address)
 	#emit ADD.C        cellbytes
 	#emit PUSH.pri
 	#emit PUSH.C       AI
-	#emit PUSH.C       RESULT
+	#emit PUSH.C       RESULT_A
 	#emit PUSH.C       args
 	#emit SYSREQ.C     CallRemoteFunction
 	#emit STACK        clear
@@ -197,8 +199,40 @@ public G__(address)
 
 public OnFilterScriptInit()
 {
-	// Force the `NATIVE` data to be in the output.
-	SetProperty(27, RESULT, 0, NATIVE);
+	{
+		new
+			addr;
+		// The first half of the address.
+		#emit LCTRL        __dat
+		#emit NEG
+		// Get the pointer to the natives table.
+		#emit ADD.C        36 // NOT 9 * cellbytes, the header doesn't change.
+		#emit STOR.S.pri   addr
+		#emit LREF.S.alt   addr
+		#emit LCTRL        __dat
+		#emit SUB.alt
+		// Load the first cell of the first native.
+		#emit STOR.S.pri   addr
+		#emit LREF.S.pri   addr
+		#emit STOR.S.pri   addr
+		SetProperty(27, RESULT_A, addr, RESULT_A);
+		// The second half of the address.
+		#emit LCTRL        __dat
+		#emit NEG
+		#emit ADD.C        36 // NOT 9 * cellbytes, the header doesn't change.
+		#emit STOR.S.pri   addr
+		#emit LREF.S.alt   addr
+		#emit LCTRL        __dat
+		#emit SUB.alt
+		// Load the second cell of the first native.
+		#emit ADD.C        cellbytes
+		#emit STOR.S.pri   addr
+		#emit LREF.S.pri   addr
+		#emit STOR.S.pri   addr
+		SetProperty(27, RESULT_B, addr, RESULT_B);
+	}
+	// Clear the local stack.
+	{}
 	#emit LCTRL        __hea
 	#emit STOR.pri     gAllocated
 }

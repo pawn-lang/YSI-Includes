@@ -1,22 +1,9 @@
 #if defined _INC_y_natives
 	#endinput
 #endif
+#define _INC_y_natives
 
-/**
- * <library
- *   name="y_natives"
- *   version="0.1"
- *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary="Define runtime detected natives."
- * >
- *   <summary pawndoc="true">
- *     This library uses the enhanced <em>pawndoc.xsl</em> from
- *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
- *     This XSL has features such as library and markdown support, and will not
- *     render this message when used.
- *   </summary>
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	
@@ -89,22 +76,51 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_natives
-	#tryinclude "y_natives\y_natives_entry"
-#endif
-#if !defined _INC_y_natives
-	#tryinclude "YSI_Server\y_natives\y_natives_entry"
-#endif
-#if !defined _INC_y_natives
-	#tryinclude "YSI\YSI_Server\y_natives\y_natives_entry"
-#endif
-#if !defined _INC_y_natives
-	#tryinclude <YSI_Server\y_natives\y_natives_entry>
-#endif
-#if !defined _INC_y_natives
-	#tryinclude <YSI\YSI_Server\y_natives\y_natives_entry>
-#endif
-#if !defined _INC_y_natives
-	#error Could not find y_natives
-#endif
+#include "..\..\YSI_Core\y_utils"
+#include "..\y_decorator"
+#include "..\y_serverdata"
+#include "..\y_thirdpartyinclude\y_codeparse"
+
+/*
+@native("CreateDynamicCircle") STREAMER_TAG_AREA:MAYBE_CreateDynamicCircle(Float:x, Float:y, Float:size, worldid = -1, interiorid = -1, playerid = -1, priority = 0);
+
+if (defined("MAYBE_CreateDynamicCircle"))
+{
+	MAYBE_CreateDynamicCircle(0.0, 0.0, 10.0);
+}
+*/
+
+#define _yN@%0\32; _yN@
+
+#define @native(%3)%0(%1); @decorator__(NATIVE_DECORATOR)(%3)%0(%1)
+
+// TODO: `void:` and `string:` return support.
+#define NATIVE_DECORATOR:%8$("%0")(%1)(%2)(%3)(%4) %8$native _yN@%1(%2)=heapspace;stock %1(%2){static s=1;if(s)s=yN@_(#%0,nativeidxof(_yN@%1<%3>));return _yN@%1(%4);}
+
+stock yN@_(const string:name[], idx)
+{
+	// Request the native address.
+	new
+		addrLow,
+		addrHigh;
+	if (Server_GetNative(name, addrLow, addrHigh))
+	{
+		// The native exists.  Write both components of the address pointer,
+		// despite the fact that we may only need one depending on what server
+		// bit-width we're running on (not worth working it out).
+	}
+	else
+	{
+		// Don't replace anything.  The server will fall back to calling
+		// `heapspace`, which is essentially a no-op.
+		P:F("Attempting to call non-existant native `%s`", name);
+	}
+	
+	// If there is one, insert it as the pointer for native `idx`.
+	
+	// Otherwise show an error.
+	
+	// Never repeat this code.
+	return 0;
+}
 

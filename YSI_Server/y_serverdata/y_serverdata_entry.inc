@@ -170,17 +170,17 @@ static
 	/**
 	 * <library>y_serverdata</library>
 	 */
-	// This is an AMX encoded in to an array.  See the end of this file for the
-	// source (and feel free to recompile the source to verify that it is in
+	// This is an AMX encoded in to an array.  See the adjacent `.pwn` file for
+	// the source (and feel free to recompile the source to verify that it is in
 	// fact the same thing).
 	YSI_g_sByteCode[] = {
-		__asm(28,05,00,00), __asm(E0,F1,08,08), __asm(10,00,08,00), __asm(14,01,00,00),
-		__asm(AC,04,00,00), __asm(28,05,00,00), __asm(28,05,00,08), __asm(FF,FF,FF,FF),
+		__asm(0C,06,00,00), __asm(E0,F1,08,08), __asm(10,00,08,00), __asm(14,01,00,00),
+		__asm(8C,05,00,00), __asm(0C,06,00,00), __asm(0C,06,00,08), __asm(FF,FF,FF,FF),
 		__asm(38,00,00,00), __asm(70,00,00,00), __asm(98,00,00,00), __asm(98,00,00,00),
 		__asm(98,00,00,00), __asm(98,00,00,00), __asm(08,00,00,00), __asm(9A,00,00,00),
 		__asm(F4,01,00,00), __asm(9E,00,00,00), __asm(34,00,00,00), __asm(A2,00,00,00),
-		__asm(30,03,00,00), __asm(A6,00,00,00), __asm(50,02,00,00), __asm(BC,00,00,00),
-		__asm(A4,02,00,00), __asm(CF,00,00,00), __asm(94,00,00,00), __asm(DD,00,00,00),
+		__asm(10,04,00,00), __asm(A6,00,00,00), __asm(50,02,00,00), __asm(BC,00,00,00),
+		__asm(84,03,00,00), __asm(CF,00,00,00), __asm(94,00,00,00), __asm(DD,00,00,00),
 		__asm(00,00,00,00), __asm(E1,00,00,00), __asm(00,00,00,00), __asm(E5,00,00,00),
 		__asm(00,00,00,00), __asm(F1,00,00,00), __asm(00,00,00,00), __asm(F8,00,00,00),
 		__asm(00,00,00,00), __asm(0B,01,00,00), __asm(15,00,43,5F), __asm(5F,00,47,5F),
@@ -192,8 +192,8 @@ static
 		__asm(00,6D,65,6D), __asm(63,70,79,00), __asm(43,61,6C,6C), __asm(52,65,6D,6F),
 		__asm(74,65,46,75), __asm(6E,63,74,69), __asm(6F,6E,00,73), __asm(74,72,63,6D),
 		__asm(70,00,00,00), __asm(78,00,00,00), __asm(00,00,00,00), __asm(2E,00,00,00),
-		__asm(1F,00,00,00), __asm(02,00,00,00), __asm(0F,00,00,00), __asm(70,00,00,00),
-		__asm(0B,00,00,00), __asm(00,00,00,02), __asm(0F,00,00,00), __asm(6C,00,00,00),
+		__asm(1F,00,00,00), __asm(02,00,00,00), __asm(0F,00,00,00), __asm(74,00,00,00),
+		__asm(0B,00,00,00), __asm(00,00,00,02), __asm(0F,00,00,00), __asm(70,00,00,00),
 		__asm(59,00,00,00), __asm(30,00,00,00), __asm(2A,00,00,00), __asm(7B,00,00,00),
 		__asm(00,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00), __asm(24,00,00,00),
 		__asm(27,00,00,00), __asm(40,00,00,00), __asm(27,00,00,00), __asm(1B,00,00,00),
@@ -201,19 +201,19 @@ static
 		__asm(2C,00,00,00), __asm(14,00,00,00), __asm(2B,00,00,00), __asm(1F,00,00,00),
 		__asm(04,00,00,00), __asm(4E,00,00,00), __asm(20,00,00,00), __asm(04,00,00,00),
 		__asm(78,00,00,00), __asm(00,00,00,00), __asm(2E,00,00,00), __asm(01,00,00,00),
-		__asm(6C,00,00,00), __asm(04,00,00,00), __asm(10,00,00,00), __asm(3E,00,00,00),
+		__asm(70,00,00,00), __asm(04,00,00,00), __asm(10,00,00,00), __asm(3E,00,00,00),
 		__asm(B4,01,00,00), __asm(03,00,00,00), __asm(10,00,00,00), __asm(02,00,00,00),
-		__asm(6C,00,00,00), __asm(50,00,00,00), __asm(0C,00,00,00), __asm(01,00,00,00),
-		__asm(4F,00,00,00), __asm(0F,00,00,00), __asm(6C,00,00,00), __asm(27,00,00,00),
-		__asm(00,00,00,00), __asm(28,00,00,00), __asm(70,00,00,00), __asm(27,00,00,00),
+		__asm(70,00,00,00), __asm(50,00,00,00), __asm(0C,00,00,00), __asm(01,00,00,00),
+		__asm(4F,00,00,00), __asm(0F,00,00,00), __asm(70,00,00,00), __asm(27,00,00,00),
+		__asm(00,00,00,00), __asm(28,00,00,00), __asm(74,00,00,00), __asm(27,00,00,00),
 		__asm(40,00,00,00), __asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00),
 		__asm(10,00,00,00), __asm(7B,00,00,00), __asm(01,00,00,00), __asm(2C,00,00,00),
 		__asm(14,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00), __asm(01,00,00,00),
-		__asm(70,00,00,00), __asm(57,00,00,00), __asm(04,00,00,00), __asm(11,00,00,00),
+		__asm(74,00,00,00), __asm(57,00,00,00), __asm(04,00,00,00), __asm(11,00,00,00),
 		__asm(FC,FF,FF,FF), __asm(04,00,00,00), __asm(10,00,00,00), __asm(45,00,00,00),
 		__asm(02,00,00,00), __asm(4E,00,00,00), __asm(20,00,00,00), __asm(02,00,00,00),
-		__asm(04,00,00,00), __asm(10,00,00,00), __asm(14,00,00,00), __asm(70,00,00,00),
-		__asm(0F,00,00,00), __asm(70,00,00,00), __asm(27,00,00,00), __asm(00,00,00,02),
+		__asm(04,00,00,00), __asm(10,00,00,00), __asm(14,00,00,00), __asm(74,00,00,00),
+		__asm(0F,00,00,00), __asm(74,00,00,00), __asm(27,00,00,00), __asm(00,00,00,02),
 		__asm(29,00,00,00), __asm(10,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00),
 		__asm(29,00,00,00), __asm(0C,00,00,00), __asm(29,00,00,00), __asm(FC,FF,FF,FF),
 		__asm(27,00,00,00), __asm(14,00,00,00), __asm(7B,00,00,00), __asm(02,00,00,00),
@@ -223,40 +223,54 @@ static
 		__asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00), __asm(10,00,00,00),
 		__asm(7B,00,00,00), __asm(01,00,00,00), __asm(2C,00,00,00), __asm(14,00,00,00),
 		__asm(59,00,00,00), __asm(30,00,00,00), __asm(2E,00,00,00), __asm(01,00,00,00),
-		__asm(70,00,00,00), __asm(20,00,00,00), __asm(02,00,00,00), __asm(03,00,00,00),
+		__asm(74,00,00,00), __asm(20,00,00,00), __asm(02,00,00,00), __asm(03,00,00,00),
 		__asm(0C,00,00,00), __asm(24,00,00,00), __asm(57,00,00,00), __asm(04,00,00,00),
-		__asm(24,00,00,00), __asm(27,00,00,00), __asm(44,00,00,00), __asm(27,00,00,00),
+		__asm(24,00,00,00), __asm(27,00,00,00), __asm(48,00,00,00), __asm(27,00,00,00),
 		__asm(40,00,00,00), __asm(27,00,00,00), __asm(10,00,00,00), __asm(7B,00,00,00),
 		__asm(03,00,00,00), __asm(2C,00,00,00), __asm(14,00,00,00), __asm(59,00,00,00),
 		__asm(30,00,00,00), __asm(2E,00,00,00), __asm(27,00,00,00), __asm(00,00,00,00),
-		__asm(27,00,00,00), __asm(00,00,00,00), __asm(27,00,00,00), __asm(40,00,00,00),
+		__asm(1F,00,00,00), __asm(01,00,00,00), __asm(55,00,00,00), __asm(57,00,00,00),
+		__asm(24,00,00,00), __asm(11,00,00,00), __asm(FC,FF,FF,FF), __asm(08,00,00,00),
+		__asm(FC,FF,FF,FF), __asm(1F,00,00,00), __asm(01,00,00,00), __asm(50,00,00,00),
+		__asm(11,00,00,00), __asm(FC,FF,FF,FF), __asm(07,00,00,00), __asm(FC,FF,FF,FF),
+		__asm(11,00,00,00), __asm(FC,FF,FF,FF), __asm(27,00,00,00), __asm(40,00,00,00),
+		__asm(29,00,00,00), __asm(FC,FF,FF,FF), __asm(27,00,00,00), __asm(40,00,00,00),
 		__asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00), __asm(10,00,00,00),
 		__asm(7B,00,00,00), __asm(01,00,00,00), __asm(2C,00,00,00), __asm(14,00,00,00),
-		__asm(1F,00,00,00), __asm(02,00,00,00), __asm(0F,00,00,00), __asm(70,00,00,00),
+		__asm(1F,00,00,00), __asm(01,00,00,00), __asm(55,00,00,00), __asm(57,00,00,00),
+		__asm(24,00,00,00), __asm(11,00,00,00), __asm(FC,FF,FF,FF), __asm(08,00,00,00),
+		__asm(FC,FF,FF,FF), __asm(1F,00,00,00), __asm(01,00,00,00), __asm(50,00,00,00),
+		__asm(57,00,00,00), __asm(04,00,00,00), __asm(11,00,00,00), __asm(FC,FF,FF,FF),
+		__asm(07,00,00,00), __asm(FC,FF,FF,FF), __asm(11,00,00,00), __asm(FC,FF,FF,FF),
+		__asm(27,00,00,00), __asm(44,00,00,00), __asm(29,00,00,00), __asm(FC,FF,FF,FF),
+		__asm(27,00,00,00), __asm(44,00,00,00), __asm(27,00,00,00), __asm(1B,00,00,00),
+		__asm(27,00,00,00), __asm(10,00,00,00), __asm(7B,00,00,00), __asm(01,00,00,00),
+		__asm(2C,00,00,00), __asm(14,00,00,00), __asm(2C,00,00,00), __asm(04,00,00,00),
+		__asm(1F,00,00,00), __asm(02,00,00,00), __asm(0F,00,00,00), __asm(74,00,00,00),
 		__asm(59,00,00,00), __asm(30,00,00,00), __asm(2E,00,00,00), __asm(27,00,00,00),
 		__asm(FF,FF,FF,7F), __asm(27,00,00,00), __asm(01,00,00,00), __asm(27,00,00,00),
-		__asm(50,00,00,00), __asm(29,00,00,00), __asm(0C,00,00,00), __asm(27,00,00,00),
+		__asm(54,00,00,00), __asm(29,00,00,00), __asm(0C,00,00,00), __asm(27,00,00,00),
 		__asm(10,00,00,00), __asm(7B,00,00,00), __asm(04,00,00,00), __asm(2C,00,00,00),
-		__asm(14,00,00,00), __asm(36,00,00,00), __asm(28,03,00,00), __asm(27,00,00,00),
-		__asm(00,00,00,00), __asm(28,00,00,00), __asm(74,00,00,00), __asm(27,00,00,00),
-		__asm(50,00,00,00), __asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00),
+		__asm(14,00,00,00), __asm(36,00,00,00), __asm(08,04,00,00), __asm(27,00,00,00),
+		__asm(00,00,00,00), __asm(28,00,00,00), __asm(78,00,00,00), __asm(27,00,00,00),
+		__asm(54,00,00,00), __asm(27,00,00,00), __asm(1B,00,00,00), __asm(27,00,00,00),
 		__asm(10,00,00,00), __asm(7B,00,00,00), __asm(01,00,00,00), __asm(2C,00,00,00),
 		__asm(14,00,00,00), __asm(54,00,00,00), __asm(30,00,00,00), __asm(59,00,00,00),
-		__asm(30,00,00,00), __asm(2E,00,00,00), __asm(01,00,00,00), __asm(78,00,00,00),
-		__asm(35,00,00,00), __asm(4C,03,00,00), __asm(59,00,00,00), __asm(30,00,00,00),
+		__asm(30,00,00,00), __asm(2E,00,00,00), __asm(01,00,00,00), __asm(7C,00,00,00),
+		__asm(35,00,00,00), __asm(2C,04,00,00), __asm(59,00,00,00), __asm(30,00,00,00),
 		__asm(85,00,00,00), __asm(18,00,00,00), __asm(85,00,00,00), __asm(14,00,00,00),
 		__asm(85,00,00,00), __asm(10,00,00,00), __asm(85,00,00,00), __asm(0C,00,00,00),
-		__asm(27,00,00,00), __asm(48,00,00,00), __asm(27,00,00,00), __asm(50,00,00,00),
+		__asm(27,00,00,00), __asm(4C,00,00,00), __asm(27,00,00,00), __asm(54,00,00,00),
 		__asm(27,00,00,00), __asm(18,00,00,00), __asm(7B,00,00,00), __asm(03,00,00,00),
 		__asm(2C,00,00,00), __asm(1C,00,00,00), __asm(30,00,00,00), __asm(59,53,49,20),
 		__asm(41,75,78,69), __asm(6C,69,61,72), __asm(79,20,52,75), __asm(6E,74,69,6D),
 		__asm(65,2C,20,28), __asm(63,29,20,32), __asm(30,32,33,20), __asm(41,6C,65,78),
 		__asm(20,22,59,5F), __asm(4C,65,73,73), __asm(22,20,43,6F), __asm(6C,65,2E,00),
 		__asm(00,00,00,00), __asm(00,00,00,00), __asm(00,00,00,00), __asm(00,5F,5F,52),
-		__asm(00,00,69,61), __asm(69,69,69,69), __asm(00,00,00,00), __asm(45,58,49,46),
-		__asm(6E,4F,5F,53), __asm(65,69,6C,43), __asm(68,43,74,6E), __asm(52,6B,63,65),
-		__asm(6F,70,73,65), __asm(00,65,73,6E), __asm(00,00,00,02), __asm(00,00,00,00),
-		__asm(2A,00,00,00), __asm(00,00,00,00)
+		__asm(00,5F,5F,51), __asm(00,00,69,61), __asm(69,69,69,69), __asm(00,00,00,00),
+		__asm(45,58,49,46), __asm(6E,4F,5F,53), __asm(65,69,6C,43), __asm(68,43,74,6E),
+		__asm(52,6B,63,65), __asm(6F,70,73,65), __asm(00,65,73,6E), __asm(00,00,00,02),
+		__asm(00,00,00,00), __asm(2A,00,00,00), __asm(00,00,00,00)
 	},
 	/**
 	 * <library>y_serverdata</library>
@@ -265,9 +279,25 @@ static
 	/**
 	 * <library>y_serverdata</library>
 	 */
+	YSI_g_sLastAddressA = 0,
+	/**
+	 * <library>y_serverdata</library>
+	 */
+	YSI_g_sLastAddressB = 0,
+	/**
+	 * <library>y_serverdata</library>
+	 */
 	YSI_g_sRequestedData = 0;
 
 static stock const
+	/**
+	 * <library>y_serverdata</library>
+	 */
+	YSI_gscResultA[] = "R__",
+	/**
+	 * <library>y_serverdata</library>
+	 */
+	YSI_gscResultB[] = "Q__",
 	/**
 	 * <library>y_serverdata</library>
 	 */
@@ -303,7 +333,7 @@ static stock Server_WriteNative(const name[])
 		pack[64 char],
 		i = -1,
 		// The data array we write the new name in to.  This is found strictly
-		// at the start of DAT, so is at `*0x10`.
+		// at the start of DAT, so is at `*0x10` (always, 32- and 64-bit).
 		o = __32(YSI_g_sByteCode[16 / cellbytes]);
 	o = o / cellbytes - 1;
 	strpack(pack, name);
@@ -316,17 +346,20 @@ static stock Server_WriteNative(const name[])
 	while (YSI_g_sByteCode[o] > (cellmax >>> (charbits - 1)));
 }
 
-foreign bool:Server_HasNative(const string:name[]);
+foreign bool:Server_GetNative(const string:name[], &addrLow, &addrHigh);
 
 /**
  * <library>y_serverdata</library>
  */
-global bool:Server_HasNative(const string:name[])
+global bool:Server_GetNative(const string:name[], &addrLow, &addrHigh)
 {
 	if (strcmp(name, YSI_g_sLastNative) == 0)
 	{
 		// The script is already loaded with this native.  Can just call it.
-		return true;
+		return
+			addrLow = YSI_g_sLastAddressA,
+			addrHigh = YSI_g_sLastAddressB,
+			true;
 	}
 	
 	Server_WriteNative(name);
@@ -338,7 +371,7 @@ global bool:Server_HasNative(const string:name[])
 	
 	// Reload the FS, and test that it did load.  If it didn't the native we
 	// want to use probably doesn't exist.
-	deleteproperty(27, "R__");
+	deleteproperty(27, YSI_gscResultA);
 	if (YSI_g_sLastNative[0] == '-')
 	{
 		YSI_SendRconCommand__("loadfs ../scriptfiles/ysi_aux_runtime");
@@ -347,13 +380,16 @@ global bool:Server_HasNative(const string:name[])
 	{
 		YSI_SendRconCommand__("reloadfs ../scriptfiles/ysi_aux_runtime");
 	}
-	if (existproperty(27, "R__"))
+	if (existproperty(27, YSI_gscResultA))
 	{
 		// Succeeded, the new native must exist.
 		// Cache it.
-		YSI_g_sLastNative[0] = '\0',
-		strcat(YSI_g_sLastNative, name);
-		return true;
+		return
+			YSI_g_sLastNative[0] = '\0',
+			strcat(YSI_g_sLastNative, name),
+			addrLow = YSI_g_sLastAddressA = getproperty(27, YSI_gscResultA),
+			addrHigh = YSI_g_sLastAddressB = getproperty(27, YSI_gscResultB),
+			true;
 	}
 	if (YSI_g_sLastNative[0] != '-')
 	{
@@ -366,6 +402,17 @@ global bool:Server_HasNative(const string:name[])
 	}
 
 	return false;
+}
+
+/**
+ * <library>y_serverdata</library>
+ */
+stock bool:Server_HasNative(const string:name[])
+{
+	new
+		a,
+		b;
+	return Server_GetNative(name, a, b);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -381,7 +428,7 @@ stock bool:Server_CallNative(const name[], &ret, const specifier[], GLOBAL_TAG_T
 	if (Server_HasNative(name))
 	{
 		CallRemoteFunction("N__", specifier, ___(3));
-		ret = getproperty(27, "R__");
+		ret = getproperty(27, YSI_gscResultA);
 		return true;
 	}
 	return false;

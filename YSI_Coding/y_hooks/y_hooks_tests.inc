@@ -135,7 +135,7 @@ static
 
 HOOK__ OnScriptInit()
 {
-	print("hi");
+	//print("hi");
 	y_hooks_OnScriptInit_called = true;
 }
 
