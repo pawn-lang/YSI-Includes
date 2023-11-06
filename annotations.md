@@ -350,3 +350,5 @@ Because `@task__` has three named parameters the annotation does too:
 
 Some annotations in YSI use a slightly more complex method for achieving this effect.  I'd like to pretend that some of this is because they're secretly doing more advanced things behind the scenes, but a lot of it is just because I hadn't come up with the helper/`@init()` method yet.
 
+To simplify another aspect of writing a decorator, i.e. analysing the function's parameters, there is now the [y_decorator library](https://github.com/pawn-lang/YSI-Includes/blob/5.x/YSI_Server/y_decorator/quick-start.md) which provides some basic code analysis for you.  For more advanced options you can use [code-parse.inc](https://github.com/Y-Less/code-parse.inc).
+
