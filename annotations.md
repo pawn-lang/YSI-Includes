@@ -188,6 +188,8 @@ Optional named parameters:
 * `initial` - How long before the first call, if it is different to the normal call delay time.
 * `repeat` - Number of times to repeat, `0` for default (forever when called with `repeat` and once when called with `defer`).
 
+Side-note:  In default pawn there is a function called `settimer`, different to SA:MP/open.mp's `SetTimer`, which only takes a delay time, not a target function.  This can only call a single function, and that function is called `@timer()`.  Here `@` is used in its role as an alternative to `public` (the `@` remains part of the name, so `@timer()` is the same as `public @timer()` and all functions starting with `@` are always `public`).  In open.mp and any other uses of YSI `settimer` is not used, and neither is the `@` prefix for publics (with the notable exception of YSI internals, hence *y_hooks* for example currently using the function name prefix of `@yH_`).  Even if you wanted to write a function called `@timer()` the `@timer` annotation would most likely not conflict because of the double `()()` detected by the declaration `#define @timer(%3)%0(%1)`.
+
 ### `@remote()`
 
 A function maybe called in another script, like `CallRemoteFunction`, but without the need to manage specifier strings, and thus with compile-time checking of parameters.
