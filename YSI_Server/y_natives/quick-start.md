@@ -1,6 +1,6 @@
 ## Introduction
 
-This include finally allows you to declare natives for components, then detect whether they exist, and if not provide a fallback or other response.  Just using `native` will cause a mode to fail to load when it is missing a component (with very few details on what component is needed).  This include instead bypasses that and allows code to run, and gives programmers more control over what to do in the case of a missing (possibly required) component.
+This include finally allows you to declare natives for components, then detect whether they exist, and if not provide a fallback or other response.  Just using `native` will cause a mode to fail to load when it is missing a component (in the default SA:MP server this gives very few details on exactly what is missing, but this is improved by both plugins and open.mp).  This include instead bypasses that and allows code to run, and gives programmers more control over what to do in the case of a missing (possibly required) component.
 
 ### Example 1: A required component
 
