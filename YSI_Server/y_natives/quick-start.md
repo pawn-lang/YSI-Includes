@@ -28,7 +28,13 @@ main()
 }
 ```
 
-The true ("external") name of the native is the first parameter of the `@native` decorator, then the called function should have a slightly different name (here `TRY_CreateDynamicObject`).
+The true ("external") name of the native is the first parameter of the `@native` decorator, then the called function should have a slightly different name; the "internal" name, here `TRY_CreateDynamicObject`.  Normal `native` syntax for the same would be:
+
+```pawn
+native STREAMER_TAG_OBJECT:TRY_CreateDynamicObject(/* params */) = CreateDynamicObject;
+```
+
+I went back and forth on using that syntax or the chosen decorator syntax, but since this is a decorator I think it is best to stick to the [well documented decorator syntax](https://github.com/pawn-lang/YSI-Includes/blob/5.x/annotations.md).
 
 ### Example 2: Checking first
 
