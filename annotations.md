@@ -288,7 +288,7 @@ We start with the macro, which almost always has the same pattern.  Bear in mind
 
 To make a timer we need two things - a timer function and a way to call the timer function.  The former is just a public function, the latter is some code that must be run when the mode starts.  There are many ways to get code to run at mode start, but the simplest is actually another annotation - `@init()`.  So we write a function with an `@init()` annotation to start the timer, and a second function with a normal `public` declaration as the code itself.  Note that because of the way `@init()` works we can actually give these two functions the same name, but that isn't always the case.  In short, we want the code above to become:
 
-```
+```pawn
 forward OneSecond();
 
 @init() OneSecond()
@@ -304,7 +304,7 @@ public OneSecond()
 
 To use the `.interval` syntax with this structure we can create a helper function that takes all the same parameters as we want to make available to users of the annotation, with all the correct names, and do everything in there instead:
 
-```
+```pawn
 @task__(const func__[], interval = 1000, bool:repeat = true, copies = 1)
 {
 	while (copies--)
