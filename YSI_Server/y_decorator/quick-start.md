@@ -1,6 +1,6 @@
 ## Introduction
 
-This library makes one aspect of writing ["decorators" (aka "annotations"](https://github.com/pawn-lang/YSI-Includes/blob/5.x/annotations.md) simpler.  This gives compile-time analysis of function parameter types and provides them to your decorator automatically.  For more advanced analysis you should use [code-parse.inc](https://github.com/Y-Less/code-parse.inc), which this library uses underneath.
+This library makes one aspect of writing ["decorators" (aka "annotations")](https://github.com/pawn-lang/YSI-Includes/blob/5.x/annotations.md) simpler.  This gives compile-time analysis of function parameter types and provides them to your decorator automatically.  For more advanced analysis you should use [code-parse.inc](https://github.com/Y-Less/code-parse.inc), which this library uses underneath.
 
 ### Example 1
 
