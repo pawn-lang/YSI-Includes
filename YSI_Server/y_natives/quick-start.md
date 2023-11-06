@@ -101,6 +101,7 @@ If you provide no fallback a fatal error will be printed in the console (a fatal
 
 @native("frename") Float:floatmod(Float:numerator, Float:denominator)
 {
+	#pragma unused numerator, denominator
 	printf("No `floatmod` implementation found.");
 	// This is trivially easy to implement in pawn, but that's not the example.
 	return 0.0;
@@ -113,7 +114,7 @@ This message will be printed every time the function is called, as opposed to th
 ```pawn
 #include <YSI_Server\y_natives>
 
-@native("frename", .print = true) Float:floatmod(Float:numerator, Float:divisor)
+@native("frename", .print = true) Float:floatmod(Float:numerator, Float:denominator)
 {
 	// See, I told you.
 	return floatfract(numerator / denominator) * denominator;
