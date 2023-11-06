@@ -92,3 +92,38 @@ Alternatively, instead of printing a message or explicitly checking for some fun
 }
 ```
 
+### Fallbacks Vs. Messages
+
+If you provide no fallback a fatal error will be printed in the console (a fatal error in YSI also halts the script, because what else can be done if a function you are trying to use doesn't exist?)  A less fatal method would be to provide a fallback function that does nothing but print an error:
+
+```pawn
+#include <YSI_Server\y_natives>
+
+@native("frename") Float:floatmod(Float:numerator, Float:denominator)
+{
+	printf("No `floatmod` implementation found.");
+	// This is trivially easy to implement in pawn, but that's not the example.
+	return 0.0;
+}
+```
+
+This message will be printed every time the function is called, as opposed to the default message which is only printed the first time.  You can also force the default message to print even when there is a fallback implementation:
+
+
+```pawn
+#include <YSI_Server\y_natives>
+
+@native("frename", .print = true) Float:floatmod(Float:numerator, Float:divisor)
+{
+	// See, I told you.
+	return floatfract(numerator / denominator) * denominator;
+}
+```
+
+In that case only a warning will be used instead of a fatal error.  As documented elsewhere `.print = true` is standard pawn syntax and allows for giving just one optional argument and leaving the rest as default.  This is common in decorators.
+
+
+
+
+
+
