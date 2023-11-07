@@ -77,100 +77,130 @@ Optional plugins:
 */
 
 // Unify the two BCrypt plugins in to a single API.
-#if defined bcrypt_included
-	stock _YSI_gHashID = 0;
+stock _YSI_gHashID = 0;
 
-	forward _YSI_BCryptCheckDone(extra, ptr);
-	forward _YSI_BCryptHashDone(extra, ptr, hashid);
+forward _YSI_BCryptCheckDone(extra, ptr);
+forward _YSI_BCryptHashDone(extra, ptr, hashid);
 
-	native bool:_YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
-	native bool:_YSI_BCryptCheck(const password[], const hash[], const callback[], const format[], ...) = bcrypt_check;
-	native bool:_YSI_BCryptHash(const password[], cost, const callback[], const format[], ...) = bcrypt_hash;
-	native bool:_YSI_BCryptIsEqual() = bcrypt_is_equal;
+// Plugin version 1.
+@native("bcrypt_get_hash", .print = false) bool:_YSI_BCryptGetHashA(hash[]);
+@native("bcrypt_check", .print = false) bool:_YSI_BCryptCheckA(const password[], const hash[], const callback[], const format[], ...);
+@native("bcrypt_hash", .print = false) bool:_YSI_BCryptHashA(const password[], cost, const callback[], const format[], ...);
+@native("bcrypt_is_equal", .print = false) bool:_YSI_BCryptIsEqualA();
 
-	// Fix the missing native.
-	stock bool:BCrypt_GetHash(hash[], size = sizeof (hash))
+// Plugin version 2.
+@native("bcrypt_get_hash", .print = false) bool:_YSI_BCryptGetHashB(hash[], size);
+@native("bcrypt_verify", .print = false) bool:_YSI_BCryptCheckB(extra, const callback[], const password[], const hash[]);
+@native("bcrypt_hash", .print = false) bool:_YSI_BCryptHashB(extra, const callback[], const password[], cost);
+
+static stock BCrypt_GetPlugin()
+{
+	static plugin = -1;
+	if (plugin == -1)
 	{
-		// The native doesn't take a size parameter, so check it here.
-		assert(size >= 61);
-		return _YSI_BCryptGetHash(hash);
+		if (Server_HasNative("bcrypt_is_equal"))
+		{
+			plugin = 1;
+		}
+		else if (Server_HasNative("bcrypt_verify"))
+		{
+			plugin = 2;
+		}
+		else
+		{
+			Debug_PrintE("Neither BCrypt plugin is loaded.  Load one!")
+			plugin = 0;
+		}
 	}
+	return plugin;
+}
 
-	#if __COMPILER_WARNING_SUPPRESSION
-		// On old compilers, only issue the warning at the call site.
-		#pragma warning push
-		#pragma warning disable 234
-	#endif
+public _YSI_BCryptCheckDone(extra, ptr)
+{
+	// Call the original function.
+	new success = _YSI_BCryptIsEqual();
+	// See below for why this line is commented.  It IS passed, secretly.
+	//#emit PUSH.S       success
+	#pragma unused success
+	#emit PUSH.S       extra
+	#emit PUSH.C       __2_cells
+	#emit LCTRL        __cip
+	#emit ADD.C        __9_cells
+	#emit LCTRL        __jit_jump
+	#emit PUSH.pri
+	#emit LOAD.S.pri   ptr
+	#emit SCTRL        __cip
+	// Fun fact.  If we just got rid of `PUSH.S success` and added `RETN` right here, the code
+	// would still work because the `new` pushes the result on to the stack, then we push it a
+	// second time.
+	//
+	// ...So do it, and let the callee clean up for us.
+	#emit RETN
+}
 
-	// Plus keep the original version for backwards-compatibility.
-	#pragma deprecated Use `BCrypt_GetHash`.
-	native bool:YSI_BCryptGetHash(hash[]) = bcrypt_get_hash;
-	#define YSI_BCryptGetHash(%0,%1) YSI_BCryptGetHash(%0)
-	#define _ALS_YSI_BCryptGetHash
+public _YSI_BCryptHashDone(extra, ptr, hashid)
+{
+	// Call the original function.
+	#emit PUSH.S       hashid
+	#emit PUSH.S       extra
+	#emit PUSH.C       __2_cells
+	#emit LCTRL        __cip
+	#emit ADD.C        __9_cells
+	#emit LCTRL        __jit_jump
+	#emit PUSH.pri
+	#emit LOAD.S.pri   ptr
+	#emit SCTRL        __cip
+}
 
-	#if __COMPILER_WARNING_SUPPRESSION
-		#pragma warning pop
-	#endif
-
-	public _YSI_BCryptCheckDone(extra, ptr)
+stock bool:BCrypt_GetHash(hash[], size = sizeof (hash))
+{
+	// One plugin doesn't take a size parameter, so check it here.
+	assert(size >= 61);
+	switch (BCrypt_GetPlugin())
 	{
-		// Call the original function.
-		new success = _YSI_BCryptIsEqual();
-		// See below for why this line is commented.  It IS passed, secretly.
-		//#emit PUSH.S       success
-		#pragma unused success
-		#emit PUSH.S       extra
-		#emit PUSH.C       __2_cells
-		#emit LCTRL        __cip
-		#emit ADD.C        __9_cells
-		#emit LCTRL        __jit_jump
-		#emit PUSH.pri
-		#emit LOAD.S.pri   ptr
-		#emit SCTRL        __cip
-		// Fun fact.  If we just got rid of `PUSH.S success` and added `RETN` right here, the code
-		// would still work because the `new` pushes the result on to the stack, then we push it a
-		// second time.
-		//
-		// ...So do it, and let the callee clean up for us.
-		#emit RETN
+	case 1:
+		return _YSI_BCryptGetHashA(hash);
+	case 2:
+		return _YSI_BCryptGetHashB(hash, size);
+	default:
+		// None found.
+		return false;
 	}
+}
 
-	public _YSI_BCryptHashDone(extra, ptr, hashid)
+stock bool:BCrypt_Check(extra, const callback[], const password[], const hash[])
+{
+	switch (BCrypt_GetPlugin())
 	{
-		// Call the original function.
-		#emit PUSH.S       hashid
-		#emit PUSH.S       extra
-		#emit PUSH.C       __2_cells
-		#emit LCTRL        __cip
-		#emit ADD.C        __9_cells
-		#emit LCTRL        __jit_jump
-		#emit PUSH.pri
-		#emit LOAD.S.pri   ptr
-		#emit SCTRL        __cip
-	}
-
-	stock bool:BCrypt_Check(extra, const callback[], const password[], const hash[])
+	case 1:
 	{
 		new ptr;
-		return AMX_GetPublicPointer(0, ptr, callback, true) && _YSI_BCryptCheck(password, hash, "_YSI_BCryptCheckDone", "ii", extra, ptr);
+		return AMX_GetPublicPointer(0, ptr, callback, true) && _YSI_BCryptCheckA(password, hash, "_YSI_BCryptCheckDone", "ii", extra, ptr);
 	}
+	case 2:
+		return _YSI_BCryptCheckB(extra, callback, password, hash);
+	default:
+		// None found.
+		return 0;
+	}
+}
 
-	stock BCrypt_Hash(extra, const callback[], const password[], cost)
+stock BCrypt_Hash(extra, const callback[], const password[], cost)
+{
+	switch (BCrypt_GetPlugin())
+	{
+	case 1:
 	{
 		new ptr;
 		return
 			++_YSI_gHashID,
-			AMX_GetPublicPointer(0, ptr, callback, true) && _YSI_BCryptHash(password, cost, "_YSI_BCryptHashDone", "iii", extra, ptr, _YSI_gHashID) ? _YSI_gHashID : 0;
+			AMX_GetPublicPointer(0, ptr, callback, true) && _YSI_BCryptHashA(password, cost, "_YSI_BCryptHashDone", "iii", extra, ptr, _YSI_gHashID) ? _YSI_gHashID : 0;
 	}
-#elseif defined _samp_bcrypt_included
-	// I've never had to de-const a native before!
-	// Wait, that's not true - `GetPlayerName` is over-const!
-	native bool:BCrypt_GetHash(hash[], size = sizeof (hash)) = bcrypt_get_hash;
-	native bool:BCrypt_Check(extra, const callback[], const password[], const hash[]) = bcrypt_verify;
-	native bool:BCrypt_Hash(extra, const callback[], const password[], cost) = bcrypt_hash;
-#else
-	// We used to not have an error for this case, just gave undefined errors.  But now they must
-	// include it explicitly, so add a real error.
-	#error Please include either BCrypt plugin first.
-#endif
+	case 2:
+		return _YSI_BCryptHashB(extra, callback, password, cost);
+	default:
+		// None found.
+		return false;
+	}
+}
 

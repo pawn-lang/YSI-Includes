@@ -100,7 +100,7 @@ if (defined("MAYBE_CreateDynamicCircle"))
 #define yN@_:yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5); %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=-1;return _yN@(%0,.s=s),%1_@yN%2();}
 #define yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5) %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=-3;return _yN@(%0,.s=s,.f=_:addressof(_@%2<%4>)),%1_@yN%2();}%1_@%2(%3)
 
-stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
+stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0, print = -1)
 {
 	Debug_Print4("_yN@ called: %s, %d, %s, %d", name, s, requires, f);
 	// This code doesn't use 
@@ -166,9 +166,10 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 		}
 		else
 		{
-			if (s == -3)
+			if (s == -3 ? print != 1 : print == 0)
 			{
-				// Fallback mode.  Don't print the errors here.
+				// Fallback mode.  Don't print the errors here unless we
+				// explicitly said to.
 			}
 			else if (IsNull(requires))
 			{
@@ -186,7 +187,7 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 			{
 				s = -7;
 				// Jump straight back to the calling function.
-				#emit STACK        __9_cells
+				#emit STACK        __10_cells
 				#emit CONST.pri    0
 				#emit RETN
 				return 0;
@@ -198,6 +199,7 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 			#emit POP.alt                // Get `f`.
 			#emit POP.pri                // Dump data.
 			#emit POP.pri
+			#emit POP.pri
 			#emit SCTRL        __frm     // Reset the frame pointer.
 			#emit MOVE.pri
 			#emit SCTRL        __cip     // Jump to the fallback code.
@@ -206,7 +208,7 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 	case -7:
 	{
 		// Previously failed, no fallback.
-		#emit STACK        __7_cells
+		#emit STACK        __8_cells
 		#emit CONST.pri    0
 		#emit RETN
 		return 0;
@@ -218,6 +220,7 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 		#emit POP.alt                // Get `f`.
 		#emit POP.pri                // Dump data.
 		#emit POP.pri
+		#emit POP.pri
 		#emit SCTRL        __frm     // Reset the frame pointer.
 		#emit MOVE.pri
 		#emit SCTRL        __cip     // Jump to the fallback code.
@@ -227,7 +230,7 @@ stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0)
 	Debug_Print5("_yN@: Calling native %d", s);
 	// Call the native.
 	#emit LREF.S.pri   s
-	#emit STACK        __7_cells
+	#emit STACK        __8_cells
 	#emit MOVE.alt
 	#emit POP.pri
 	#emit SCTRL        __frm     // Reset the frame pointer.
