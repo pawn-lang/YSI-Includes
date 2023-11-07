@@ -93,7 +93,7 @@ forward _YSI_BCryptHashDone(extra, ptr, hashid);
 @native("bcrypt_verify", .print = false) bool:_YSI_BCryptCheckB(extra, const callback[], const password[], const hash[]);
 @native("bcrypt_hash", .print = false) bool:_YSI_BCryptHashB(extra, const callback[], const password[], cost);
 
-static stock BCrypt_GetPlugin()
+stock BCrypt_GetPlugin()
 {
 	static plugin = -1;
 	if (plugin == -1)
@@ -118,7 +118,7 @@ static stock BCrypt_GetPlugin()
 public _YSI_BCryptCheckDone(extra, ptr)
 {
 	// Call the original function.
-	new success = _YSI_BCryptIsEqual();
+	new success = _YSI_BCryptIsEqualA();
 	// See below for why this line is commented.  It IS passed, secretly.
 	//#emit PUSH.S       success
 	#pragma unused success
