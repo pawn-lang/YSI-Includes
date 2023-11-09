@@ -124,7 +124,7 @@ Optional plugins:
 
 // The most first include, since it determines compiler settings that might be
 // used by literally any other include.
-#include "..\..\YSI_Server\y_thirdpartyinclude\y_addressof"
+#include "..\..\YSI_Server\y_thirdpartyinclude\y3_addressof"
 #include "y_interning"
 #include "y_emit"
 #include "y_compilerdata"
@@ -711,7 +711,7 @@ stock _YSI_ConstMod(const &var, const val)
 #endif
 
 #if defined YSI_YES_MODE_CACHE
-	#include "..\..\YSI_Server\y_thirdpartyinclude\y_thirdpartyinclude_entry"
+	#include "..\..\YSI_Server\y_thirdpartyinclude\y3_thirdpartyinclude_entry"
 #endif
 
 /*-------------------------------------------------------------------------*//**

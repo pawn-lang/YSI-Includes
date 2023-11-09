@@ -76,115 +76,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_inline
-	#tryinclude "..\YSI_Coding\y_inline\y_inline_entry"
+#if !defined _INC_y_inline_bcrypt
+	#tryinclude "y_inline_bcrypt\y_inline_bcrypt_entry"
 #endif
-#if !defined _INC_y_inline
-	#tryinclude "YSI_Coding\y_inline\y_inline_entry"
+#if !defined _INC_y_inline_bcrypt
+	#tryinclude "YSI_Extra\y_inline_bcrypt\y_inline_bcrypt_entry"
 #endif
-#if !defined _INC_y_inline
-	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
+#if !defined _INC_y_inline_bcrypt
+	#tryinclude "YSI\YSI_Extra\y_inline_bcrypt\y_inline_bcrypt_entry"
 #endif
-#if !defined _INC_y_inline
-	#tryinclude <YSI_Coding\y_inline\y_inline_entry>
+#if !defined _INC_y_inline_bcrypt
+	#tryinclude <YSI_Extra\y_inline_bcrypt\y_inline_bcrypt_entry>
 #endif
-#if !defined _INC_y_inline
-	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
+#if !defined _INC_y_inline_bcrypt
+	#tryinclude <YSI\YSI_Extra\y_inline_bcrypt\y_inline_bcrypt_entry>
 #endif
-#if !defined _INC_y_inline
-	#error Could not find y_inline
+#if !defined _INC_y_inline_bcrypt
+	#error Could not find y_inline_bcrypt
 #endif
-
-#if !defined _INC_y_bcrypt
-	#tryinclude ".\y_bcrypt"
-#endif
-#if !defined _INC_y_bcrypt
-	#tryinclude "YSI_Extra\y_bcrypt"
-#endif
-#if !defined _INC_y_bcrypt
-	#tryinclude "YSI\YSI_Extra\y_bcrypt"
-#endif
-#if !defined _INC_y_bcrypt
-	#tryinclude <YSI_Extra\y_bcrypt>
-#endif
-#if !defined _INC_y_bcrypt
-	#tryinclude <YSI\YSI_Extra\y_bcrypt>
-#endif
-#if !defined _INC_y_bcrypt
-	#error Could not find y_bcrypt
-#endif
-
-forward _Inline_BCryptCheckDone(Func:cb<i>, success);
-forward _Inline_BCryptHashDone(Func:cb<si>, hashid);
-
-public _Inline_BCryptCheckDone(Func:cb<i>, success)
-{
-	// `success` may be uninitialised.
-	if (success == -1)
-	{
-		success = _YSI_BCryptIsEqualA();
-	}
-	success = @.cb(success);
-	Indirect_Release(cb);
-	return _:success;
-}
-
-public _Inline_BCryptHashDone(Func:cb<si>, hashid)
-{
-	new hash[61];
-	// If the plugin is anything other than `1` or `2` this can't be called
-	// so there's no need for extra checks.
-	switch (BCrypt_GetPlugin())
-	{
-	case 1:
-		_YSI_BCryptGetHashA(hash);
-	case 2:
-		_YSI_BCryptGetHashB(hash);
-	}
-	hashid = @.cb(hash, hashid),
-	Indirect_Release(cb);
-	return hashid;
-}
-
-stock bool:BCrypt_CheckInline(const password[], const hash[], Func:cb<i>)
-{
-	switch (BCrypt_GetPlugin())
-	{
-	case 1:
-		if (_YSI_BCryptCheckA(password, hash, "_Inline_BCryptCheckDone", "ii", _:cb, -1))
-		{
-			Indirect_Claim(cb);
-			return true;
-		}
-	case 2:
-		if (_YSI_BCryptCheckB(_:cb, "_Inline_BCryptCheckDone", password, hash))
-		{
-			Indirect_Claim(cb);
-			return true;
-		}
-	}
-	return false;
-}
-
-stock BCrypt_HashInline(const password[], cost = 12, {F@_@s, F@_@si}:cb) // Func:cb<s> | Func:cb<si>
-{
-	switch (BCrypt_GetPlugin())
-	{
-	case 1:
-		if (_YSI_BCryptHashA(password, cost, "_Inline_BCryptHashDone", "ii", _:cb, ++_YSI_gHashID))
-		{
-			Indirect_Claim(cb);
-			// Return the hashid.
-			return _YSI_gHashID;
-		}
-	case 1:
-		if ((cost = _YSI_BCryptHashB(_:cb, "_Inline_BCryptHashDone", password, cost)))
-		{
-			Indirect_Claim(cb);
-			// Return the hashid.
-			return cost;
-		}
-	}
-	return 0;
-}
 

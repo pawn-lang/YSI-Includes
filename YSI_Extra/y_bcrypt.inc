@@ -76,131 +76,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-// Unify the two BCrypt plugins in to a single API.
-stock _YSI_gHashID = 0;
-
-forward _YSI_BCryptCheckDone(extra, ptr);
-forward _YSI_BCryptHashDone(extra, ptr, hashid);
-
-// Plugin version 1.
-@native("bcrypt_get_hash", .print = false) bool:_YSI_BCryptGetHashA(hash[]);
-@native("bcrypt_check", .print = false) bool:_YSI_BCryptCheckA(const password[], const hash[], const callback[], const format[], ...);
-@native("bcrypt_hash", .print = false) bool:_YSI_BCryptHashA(const password[], cost, const callback[], const format[], ...);
-@native("bcrypt_is_equal", .print = false) bool:_YSI_BCryptIsEqualA();
-
-// Plugin version 2.
-@native("bcrypt_get_hash", .print = false) bool:_YSI_BCryptGetHashB(hash[], size);
-@native("bcrypt_verify", .print = false) bool:_YSI_BCryptCheckB(extra, const callback[], const password[], const hash[]);
-@native("bcrypt_hash", .print = false) bool:_YSI_BCryptHashB(extra, const callback[], const password[], cost);
-
-stock BCrypt_GetPlugin()
-{
-	static plugin = -1;
-	if (plugin == -1)
-	{
-		if (Server_HasNative("bcrypt_is_equal"))
-		{
-			plugin = 1;
-		}
-		else if (Server_HasNative("bcrypt_verify"))
-		{
-			plugin = 2;
-		}
-		else
-		{
-			Debug_PrintE("Neither BCrypt plugin is loaded.  Load one!")
-			plugin = 0;
-		}
-	}
-	return plugin;
-}
-
-public _YSI_BCryptCheckDone(extra, ptr)
-{
-	// Call the original function.
-	new success = _YSI_BCryptIsEqualA();
-	// See below for why this line is commented.  It IS passed, secretly.
-	//#emit PUSH.S       success
-	#pragma unused success
-	#emit PUSH.S       extra
-	#emit PUSH.C       __2_cells
-	#emit LCTRL        __cip
-	#emit ADD.C        __9_cells
-	#emit LCTRL        __jit_jump
-	#emit PUSH.pri
-	#emit LOAD.S.pri   ptr
-	#emit SCTRL        __cip
-	// Fun fact.  If we just got rid of `PUSH.S success` and added `RETN` right here, the code
-	// would still work because the `new` pushes the result on to the stack, then we push it a
-	// second time.
-	//
-	// ...So do it, and let the callee clean up for us.
-	#emit RETN
-}
-
-public _YSI_BCryptHashDone(extra, ptr, hashid)
-{
-	// Call the original function.
-	#emit PUSH.S       hashid
-	#emit PUSH.S       extra
-	#emit PUSH.C       __2_cells
-	#emit LCTRL        __cip
-	#emit ADD.C        __9_cells
-	#emit LCTRL        __jit_jump
-	#emit PUSH.pri
-	#emit LOAD.S.pri   ptr
-	#emit SCTRL        __cip
-}
-
-stock bool:BCrypt_GetHash(hash[], size = sizeof (hash))
-{
-	// One plugin doesn't take a size parameter, so check it here.
-	assert(size >= 61);
-	switch (BCrypt_GetPlugin())
-	{
-	case 1:
-		return _YSI_BCryptGetHashA(hash);
-	case 2:
-		return _YSI_BCryptGetHashB(hash, size);
-	default:
-		// None found.
-		return false;
-	}
-}
-
-stock bool:BCrypt_Check(extra, const callback[], const password[], const hash[])
-{
-	switch (BCrypt_GetPlugin())
-	{
-	case 1:
-	{
-		new ptr;
-		return AMX_GetPublicPointer(0, ptr, callback, true) && _YSI_BCryptCheckA(password, hash, "_YSI_BCryptCheckDone", "ii", extra, ptr);
-	}
-	case 2:
-		return _YSI_BCryptCheckB(extra, callback, password, hash);
-	default:
-		// None found.
-		return 0;
-	}
-}
-
-stock BCrypt_Hash(extra, const callback[], const password[], cost)
-{
-	switch (BCrypt_GetPlugin())
-	{
-	case 1:
-	{
-		new ptr;
-		return
-			++_YSI_gHashID,
-			AMX_GetPublicPointer(0, ptr, callback, true) && _YSI_BCryptHashA(password, cost, "_YSI_BCryptHashDone", "iii", extra, ptr, _YSI_gHashID) ? _YSI_gHashID : 0;
-	}
-	case 2:
-		return _YSI_BCryptHashB(extra, callback, password, cost);
-	default:
-		// None found.
-		return false;
-	}
-}
+#if !defined _INC_y_bcrypt
+	#tryinclude "y_bcrypt\y_bcrypt_entry"
+#endif
+#if !defined _INC_y_bcrypt
+	#tryinclude "YSI_Extra\y_bcrypt\y_bcrypt_entry"
+#endif
+#if !defined _INC_y_bcrypt
+	#tryinclude "YSI\YSI_Extra\y_bcrypt\y_bcrypt_entry"
+#endif
+#if !defined _INC_y_bcrypt
+	#tryinclude <YSI_Extra\y_bcrypt\y_bcrypt_entry>
+#endif
+#if !defined _INC_y_bcrypt
+	#tryinclude <YSI\YSI_Extra\y_bcrypt\y_bcrypt_entry>
+#endif
+#if !defined _INC_y_bcrypt
+	#error Could not find y_bcrypt
+#endif
 

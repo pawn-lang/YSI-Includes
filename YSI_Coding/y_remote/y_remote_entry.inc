@@ -77,7 +77,7 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Server\y_thirdpartyinclude\y_codeparse"
+#include "..\..\YSI_Server\y_thirdpartyinclude\y3_codeparse"
 #include "y_remote_macros"
 
 #if defined YSI_TESTS

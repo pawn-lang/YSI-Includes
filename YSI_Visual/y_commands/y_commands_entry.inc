@@ -136,7 +136,7 @@ Optional plugins:
 #endif
 
 #include "..\..\YSI_Coding\y_hooks"
-#include "..\..\YSI_Server\y_thirdpartyinclude\y_indirection"
+#include "..\..\YSI_Server\y_thirdpartyinclude\y3_indirection"
 #include "..\..\YSI_Coding\y_remote"
 
 // Include the main implementation.

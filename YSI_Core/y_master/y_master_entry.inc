@@ -75,7 +75,7 @@ Optional plugins:
 
 #if !defined _INC_y_master
 	#include "..\y_utils"
-	#include "..\..\YSI_Server\y_thirdpartyinclude\y_codeparse"
+	#include "..\..\YSI_Server\y_thirdpartyinclude\y3_codeparse"
 
 	CHAIN_HOOK(Master)
 	#undef CHAIN_ORDER

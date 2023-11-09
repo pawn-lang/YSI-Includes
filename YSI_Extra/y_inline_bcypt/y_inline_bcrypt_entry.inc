@@ -1,23 +1,9 @@
-#if defined _INC_y_thirdpartyinclude
+#if defined _INC_y_inline_bcrypt
 	#endinput
 #endif
-#define _INC_y_thirdpartyinclude
+#define _INC_y_inline_bcrypt
 
-/*+
- * <library
- *   name="y_thirdpartyinclude"
- *   version="1.0"
- *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary="Try and include all YSI dependencies, looking in as many places as needed."
- * >
- *   <summary pawndoc="true">
- *     This library uses the enhanced <em>pawndoc.xsl</em> from
- *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
- *     This XSL has features such as library and markdown support, and will not
- *     render this message when used.
- *   </summary>
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	
@@ -91,29 +77,80 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Server\y_thirdpartyinclude\y3_indirection"
+#include "..\y_bcrypt\y_bcrypt_natives"
 
-#if __COMPILER_WARNING_SUPPRESSION
-	#pragma warning push
-	#pragma warning disable 231
-#endif
+forward _Inline_BCryptCheckDone(Func:cb<i>, success);
+forward _Inline_BCryptHashDone(Func:cb<si>, hashid);
 
-#include "y3_addressof"
-#include "y3_amx_assembly"
-#include "y3_formatex"
-#include "y3_md_sort"
-#include "y3_codeparse"
-#include "y3_indirection"
+public _Inline_BCryptCheckDone(Func:cb<i>, success)
+{
+	// `success` may be uninitialised.
+	if (success == -1)
+	{
+		success = _YSI_BCryptIsEqualA();
+	}
+	success = @.cb(success);
+	Indirect_Release(cb);
+	return _:success;
+}
 
-// "y_thirdpartyinclude_tests" is NOT included here when tests are active, because it complicates
-// dependency orders massively!
+public _Inline_BCryptHashDone(Func:cb<si>, hashid)
+{
+	new hash[61];
+	// If the plugin is anything other than `1` or `2` this can't be called
+	// so there's no need for extra checks.
+	switch (BCrypt_GetPlugin())
+	{
+	case 1:
+		_YSI_BCryptGetHashA(hash);
+	case 2:
+		_YSI_BCryptGetHashB(hash);
+	}
+	hashid = @.cb(hash, hashid),
+	Indirect_Release(cb);
+	return hashid;
+}
 
-#if __COMPILER_WARNING_SUPPRESSION
-	#pragma warning pop
-#endif
+stock bool:BCrypt_CheckInline(const password[], const hash[], Func:cb<i>)
+{
+	switch (BCrypt_GetPlugin())
+	{
+	case 1:
+		if (_YSI_BCryptCheckA(password, hash, "_Inline_BCryptCheckDone", "ii", _:cb, -1))
+		{
+			Indirect_Claim(cb);
+			return true;
+		}
+	case 2:
+		if (_YSI_BCryptCheckB(_:cb, "_Inline_BCryptCheckDone", password, hash))
+		{
+			Indirect_Claim(cb);
+			return true;
+		}
+	}
+	return false;
+}
 
-#include "..\..\YSI_Storage\y_dumpamx\y_dumpamx_entry"
-
-#if defined YSI_TESTS
-	#include "y_thirdpartyinclude_tests"
-#endif
+stock BCrypt_HashInline(const password[], cost = 12, {F@_@s, F@_@si}:cb) // Func:cb<s> | Func:cb<si>
+{
+	switch (BCrypt_GetPlugin())
+	{
+	case 1:
+		if (_YSI_BCryptHashA(password, cost, "_Inline_BCryptHashDone", "ii", _:cb, ++_YSI_gHashID))
+		{
+			Indirect_Claim(cb);
+			// Return the hashid.
+			return _YSI_gHashID;
+		}
+	case 1:
+		if ((cost = _YSI_BCryptHashB(_:cb, "_Inline_BCryptHashDone", password, cost)))
+		{
+			Indirect_Claim(cb);
+			// Return the hashid.
+			return cost;
+		}
+	}
+	return 0;
+}
 

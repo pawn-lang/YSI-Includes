@@ -1,23 +1,9 @@
-#if defined _INC_y_thirdparty_indirection
+#if defined _INC_y_bcrypt_natives
 	#endinput
 #endif
-#define _INC_y_thirdparty_indirection
+#define _INC_y_bcrypt_natives
 
-/*+
- * <library
- *   name="y_thirdpartyinclude"
- *   version="1.0"
- *   license="(c) 2022 YSI contibutors, licensed under MPL 1.1"
- *   summary="Try and include all YSI dependencies, looking in as many places as needed."
- * >
- *   <summary pawndoc="true">
- *     This library uses the enhanced <em>pawndoc.xsl</em> from
- *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
- *     This XSL has features such as library and markdown support, and will not
- *     render this message when used.
- *   </summary>
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	
@@ -90,20 +76,42 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#tryinclude <indirection\indirection>
-#tryinclude <indirection-master\indirection>
-#tryinclude <indirection-master\indirection-master\indirection>
-#tryinclude "..\..\indirection\indirection"
-#tryinclude "..\..\indirection-master\indirection"
-#tryinclude "..\..\indirection-master\indirection-master\indirection"
-#tryinclude "..\..\..\indirection\indirection"
-#tryinclude "..\..\..\indirection-master\indirection"
-#tryinclude "..\..\..\indirection-master\indirection-master\indirection"
-#tryinclude "indirection"
-#tryinclude <indirection>
-#if !defined _INC_indirection
-	#error Download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
-#elseif !defined Indirect_IsValid
-	#error Re-download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
-#endif
+#include "..\..\YSI_Server\y_natives"
+#include "..\..\YSI_Server\y_serverdata"
+
+// Unify the two BCrypt plugins in to a single API.
+stock _YSI_gHashID = 0;
+
+// Plugin version 1.
+@native("bcrypt_get_hash", .print = false) bool:_YSI_BCryptGetHashA(hash[]);
+@native("bcrypt_check", .print = false) bool:_YSI_BCryptCheckA(const password[], const hash[], const callback[], const format[], ...);
+@native("bcrypt_hash", .print = false) bool:_YSI_BCryptHashA(const password[], cost, const callback[], const format[], ...);
+@native("bcrypt_is_equal", .print = false) bool:_YSI_BCryptIsEqualA();
+
+// Plugin version 2.
+@native("bcrypt_get_hash", .print = false) bool:_YSI_BCryptGetHashB(hash[], size);
+@native("bcrypt_verify", .print = false) bool:_YSI_BCryptCheckB(extra, const callback[], const password[], const hash[]);
+@native("bcrypt_hash", .print = false) bool:_YSI_BCryptHashB(extra, const callback[], const password[], cost);
+
+stock BCrypt_GetPlugin()
+{
+	static plugin = -1;
+	if (plugin == -1)
+	{
+		if (Server_HasNative("bcrypt_is_equal"))
+		{
+			plugin = 1;
+		}
+		else if (Server_HasNative("bcrypt_verify"))
+		{
+			plugin = 2;
+		}
+		else
+		{
+			Debug_PrintE("Neither BCrypt plugin is loaded.  Load one!")
+			plugin = 0;
+		}
+	}
+	return plugin;
+}
 

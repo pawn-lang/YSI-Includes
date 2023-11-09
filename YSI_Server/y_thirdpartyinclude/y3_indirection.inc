@@ -1,7 +1,7 @@
-#if defined _INC_y_thirdpartyinclude
+#if defined _INC_y_thirdparty_indirection
 	#endinput
 #endif
-#define _INC_y_thirdpartyinclude
+#define _INC_y_thirdparty_indirection
 
 /*+
  * <library
@@ -90,30 +90,36 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Core\y_utils"
-
-#if __COMPILER_WARNING_SUPPRESSION
-	#pragma warning push
-	#pragma warning disable 231
+#tryinclude <indirection\indirection>
+#tryinclude <indirection-master\indirection>
+#tryinclude <indirection-master\indirection-master\indirection>
+#tryinclude "..\..\indirection\indirection"
+#tryinclude "..\..\indirection-master\indirection"
+#tryinclude "..\..\indirection-master\indirection-master\indirection"
+#tryinclude "..\..\..\indirection\indirection"
+#tryinclude "..\..\..\indirection-master\indirection"
+#tryinclude "..\..\..\indirection-master\indirection-master\indirection"
+#tryinclude "indirection"
+#tryinclude <indirection>
+#if !defined _INC_indirection
+	#error Download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
+#elseif !defined Indirect_IsValid
+	#error Re-download `github.com/Y-Less/indirection/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
-#include "y3_addressof"
-#include "y3_amx_assembly"
-#include "y3_formatex"
-#include "y3_md_sort"
-#include "y3_codeparse"
-#include "y3_indirection"
+public OnCodeInit()
+{
+	Indirect_Init();
+	#if defined Y3I_OnCodeInit
+		return Y3I_OnCodeInit();
+	#else
+		return 1;
+	#endif
+}
 
-// "y_thirdpartyinclude_tests" is NOT included here when tests are active, because it complicates
-// dependency orders massively!
-
-#if __COMPILER_WARNING_SUPPRESSION
-	#pragma warning pop
-#endif
-
-#include "..\..\YSI_Storage\y_dumpamx\y_dumpamx_entry"
-
-#if defined YSI_TESTS
-	#include "y_thirdpartyinclude_tests"
+#undef OnCodeInit
+#define OnCodeInit Y3I_OnCodeInit
+#if defined Y3I_OnCodeInit
+	forward Y3I_OnCodeInit();
 #endif
 

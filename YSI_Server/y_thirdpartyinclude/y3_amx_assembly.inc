@@ -499,3 +499,19 @@ Optional plugins:
 	#error Re-download `github.com/Zeex/amx_assembly/archive/refs/heads/master.zip` and extract it to `include\`.
 #endif
 
+public OnCodeInit()
+{
+	AddressofResolve();
+	#if defined Y3A_OnCodeInit
+		return Y3A_OnCodeInit();
+	#else
+		return 1;
+	#endif
+}
+
+#undef OnCodeInit
+#define OnCodeInit Y3A_OnCodeInit
+#if defined Y3A_OnCodeInit
+	forward Y3A_OnCodeInit();
+#endif
+

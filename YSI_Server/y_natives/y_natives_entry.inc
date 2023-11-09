@@ -79,8 +79,8 @@ Optional plugins:
 #include "..\..\YSI_Core\y_utils"
 #include "..\y_decorator"
 #include "..\y_serverdata"
-#include "..\y_thirdpartyinclude\y_codeparse"
-#include "..\y_thirdpartyinclude\y_amx-assembly"
+#include "..\y_thirdpartyinclude\y3_codeparse"
+#include "..\y_thirdpartyinclude\y3_amx_assembly"
 
 /*
 @native("CreateDynamicCircle") STREAMER_TAG_AREA:MAYBE_CreateDynamicCircle(Float:x, Float:y, Float:size, worldid = -1, interiorid = -1, playerid = -1, priority = 0);
