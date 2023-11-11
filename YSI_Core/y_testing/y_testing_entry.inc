@@ -402,9 +402,59 @@ stock
 //#define _y@Q0000%0\32; _y@Q0000
 
 /*-------------------------------------------------------------------------*//**
- * <param name="name">Name of the current function.</param>
+ * <library>y_testing</library>
+ * <param name="a">The first string to compare.</param>
+ * <param name="b">The second string to compare.</param>
  * <remarks>
- *   Gets a reference to the 
+ *   A wrapper for <c>strcmp</c> that takes a pointer instead of a string.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+native Testing_StrCmp__(const a[], b, bool:ignoreCase = false, length = cellmax) = strcmp;
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
+ * <param name="name">Name of the current test.</param>
+ * <remarks>
+ *   If <c>JUST_TEST</c> is defined this confirms whether the current test is
+ *   in the list of desired tests.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock bool:Testing_ShouldRun(const name[], ...)
+{
+	new
+		n = numargs() - 1,
+		addr,
+		str;
+	#emit ADDR.pri         __param1_offset
+	#emit STOR.S.pri       addr
+	while (n--)
+	{
+		#emit LREF.S.pri       addr
+		#emit STOR.S.pri       str
+		addr += cellbytes;
+		if (Testing_StrCmp__(name, str) == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+// Detect multiple parameters and convert them all to strings.
+#define Testing_ShouldRun(%0""#%1,%2) Testing_ShouldRun(%0#%1,""#%2)
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
+ * <param name="name">Name of the current function.</param>
+ * <param name="run">Should we actually do this test?</param>
+ * <param name="group">Which group of tests is this a member of?</param>
+ * <param name="slow">Does this take a long time?  If so, usually skip.</param>
+ * <remarks>
+ *   Called from inside a test to initialise the information for the test.  May
+ *   force-end the test if it isn't to be run now.  This state variation just
+ *   collects the initial information for determining whether we should run it.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -415,7 +465,7 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 	#pragma unused slow, group
 	// Never skip a `JUST_TEST` test, even if it is slow and we don't want
 	// slow tests.  Always `[2]`, even with string packing.
-	if (!run || strcmp(name[2], #JUST_TEST))
+	if (!run || !Testing_ShouldRun(name[2], ""#JUST_TEST))
 #elseif defined RUN_SLOW_TESTS
 	#pragma unused name, slow
 	if (!run)
@@ -470,6 +520,19 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 	#emit RETN
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
+ * <param name="name">Name of the current function.</param>
+ * <param name="run">Should we actually do this test?</param>
+ * <param name="group">Which group of tests is this a member of?</param>
+ * <param name="slow">Does this take a long time?  If so, usually skip.</param>
+ * <remarks>
+ *   Called from inside a test to initialise the information for the test.  May
+ *   force-end the test if it isn't to be run now.  This state variation
+ *   actually starts the execution.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock _Testing_Start(const name[], run = true, const group[] = "", slow = false) <y_testing_phase : y_testing_phase_call>
 {
 	#pragma unused run, group, slow
@@ -490,9 +553,10 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
  * <param name="playerid">Player to ask a question to.</param>
  * <param name="str">What to ask.</param>
- * <param name="va_args">Additional data.</param>
+ * <param name="...">Additional data.</param>
  * <remarks>
  *   Calls a dialog to ask the player if the given test actually passed.
  * </remarks>
@@ -572,6 +636,15 @@ stock _Testing_Start(const name[], run = true, const group[] = "", slow = false)
 	}
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
+ * <param name="x">The test result.</param>
+ * <param name="str">The failure message.</param>
+ * <remarks>
+ *   Prints the result of an <c>ASSERT</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused str
@@ -619,9 +692,9 @@ stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="name">Name of the current function.</param>
+ * <library>y_testing</library>
  * <remarks>
- *   Gets a reference to the 
+ *   Called at the end of a test to validate global state changes.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -643,6 +716,7 @@ stock bool:_Testing_End()
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
  * <param name="tests">Number of tests run.</param>
  * <param name="fails">Number of tests which failed.</param>
  * <param name="buffer">The name of the first test which failed.</param>
@@ -782,6 +856,7 @@ stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p 
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
  * <param name="playerid">Player to test on.</param>
  * <param name="idx">Next test to run.</param>
  * <param name="tests">Number of tests run.</param>
@@ -1175,6 +1250,13 @@ forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 	#define OnRuntimeError(%0) CHAIN_PUBLIC:Testing_OnRuntimeError(%0)
 #endif
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
+ * <remarks>
+ *   Explicitly runs all registered tests.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Testing_RunAll()
 {
 	// Disable error messages (as we're likely to generate them).
@@ -1235,12 +1317,27 @@ stock Testing_RunAll()
 
 // Meta tests.
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
+ * <remarks>
+ *   A hook to test that <c>ASSERT</c> itself works.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 stock Testing_TestRedirect(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 	ASSERT(x == bool:YSI_g_sTestResult);
 	ASSERT(str[0] != '\0');
 	ASSERT(!strcmp(str, "%s %s", false, 5));
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
+ * <remarks>
+ *   Reduces the number of seen failures, to test that failures themselves work
+ *   without failing the entire suite.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Testing_SurpressOneFail()
 {
@@ -1304,10 +1401,24 @@ stock Testing_SurpressOneFail()
 	++YSI_g_sTestResult;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
+ * <remarks>
+ *   Returns the number <c>7</c>, for testing purposes.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock y_testing_Return7()
 {
 	return 7;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_testing</library>
+ * <remarks>
+ *   Returns the string <c>"Hello"</c>, for testing purposes.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock y_testing_ReturnHello()
 {

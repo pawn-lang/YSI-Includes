@@ -162,6 +162,7 @@ forward bool:INI_FindCallback(const cb[]);
 	@INI_%0_%1(%2)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_ini</library>
  * <param name="name">Name of the INI key.</param>
  * <param name="variable">Variable to fill with integer value.</param>
  *//*------------------------------------------------------------------------**/
@@ -171,6 +172,7 @@ FUNC_PAWNDOC(INI_Int(const name[],&variable));
 	if (!strcmp((%1), name, true)) return %2 = strval(value)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_ini</library>
  * <param name="name">Name of the INI key.</param>
  * <param name="variable">Variable to fill with float value.</param>
  *//*------------------------------------------------------------------------**/
@@ -180,6 +182,7 @@ FUNC_PAWNDOC(INI_Float(const name[],&Float:variable));
 	if (!strcmp((%1), name, true)) return _:(%2 = floatstr(value))
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_ini</library>
  * <param name="name">Name of the INI key.</param>
  * <param name="variable">Variable to fill with hex value.</param>
  *//*------------------------------------------------------------------------**/
@@ -189,6 +192,7 @@ FUNC_PAWNDOC(INI_Hex(const name[],&variable));
 	if (!strcmp((%1), name, true)) return %2 = hexstr(value)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_ini</library>
  * <param name="name">Name of the INI key.</param>
  * <param name="variable">Variable to fill with binary value.</param>
  *//*------------------------------------------------------------------------**/
@@ -198,6 +202,7 @@ FUNC_PAWNDOC(INI_Bin(const name[],&variable));
 	if (!strcmp((%1), name, true)) return %2 = binstr(value)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_ini</library>
  * <param name="name">Name of the INI key.</param>
  * <param name="variable">Variable to fill with string value.</param>
  * <param name="len">Optional string length.</param>
@@ -215,6 +220,7 @@ FUNC_PAWNDOC(INI_String(const name[],variable[]));
 #define INI_CHECK_LEN:StrCpy(%0,%1,%2) StrCpy(%0,%2,%1)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_ini</library>
  * <param name="name">Name of the INI key.</param>
  * <param name="variable">Variable to fill with string value.</param>
  *//*------------------------------------------------------------------------**/
@@ -224,6 +230,7 @@ FUNC_PAWNDOC(INI_Bool(const name[],&bool:variable));
 	if (!strcmp((%1), name, true)) return %2 = BoolStr(value)
 
 /*-------------------------------------------------------------------------*//**
+ * <library>y_ini</library>
  * <param name="name">Name of the INI key.</param>
  * <param name="">Variable to fill with array value.</param>
  *//*------------------------------------------------------------------------**/
@@ -254,7 +261,20 @@ FUNC_PAWNDOC(INI_Array(const name[],variable[]));
 
 #define INI_SkipWhitespace(%0,%1) while (IS_IN_RANGE(%0[%1], '\0' + 1, ' ' + 1)) ++%1
 
-static stock INI_WriteTag(File:file, const tag[], format[])
+/*-------------------------------------------------------------------------*//**
+ * <library>y_ini</library>
+ * <summary>
+ *   INI_WriteTag(file, tag, inherits);
+ * </summary>
+ * <param name="file">The file to write to.</param>
+ * <param name="tag">The tag (<c>[tag]</c>) to write.</param>
+ * <param name="inherits">Optional parent tag (<c>: parent</c>).</param>
+ * <remarks>
+ *   Actually writes data to a file.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock INI_WriteTag(File:file, const tag[], inherits[])
 {
 	if (YSI_g_sTagNeeded)
 	{
@@ -262,11 +282,11 @@ static stock INI_WriteTag(File:file, const tag[], format[])
 		fwrite(file, "["),
 		fwrite(file, tag),
 		YSI_g_sTagNeeded = false;
-		if (format[0])
+		if (inherits[0])
 		{
 			fwrite(file, "] : "),
-			fwrite(file, format),
-			format[0] = '\0';
+			fwrite(file, inherits),
+			inherits[0] = '\0';
 		}
 		else
 		{
@@ -299,13 +319,17 @@ static stock INI_WriteTag(File:file, const tag[], format[])
 
 /*-------------------------------------------------------------------------*//**
  * <param name="fmt">The function name format.</param>
- * <param name="fileOrTag">The first parameter.</param>
- * <param name="tagOrFile">The second parameter.</param>
+ * <param name="fileOrTag">The first callback parameter.</param>
+ * <param name="tagOrFile">The second callback parameter.</param>
  * <returns>
  *   Was the function found?
  * </returns>
  * <remarks>
- *   Gets a callback given a partial function name and a tag name.
+ *   Gets a callback given a partial function name and a tag name.  Because
+ *   open.mp added parameter count checking for <c>format</c> and similar the
+ *   old trick used of simply passing all the parameters and not formatting some
+ *   of them broke.  Thus there are now several variations of this function for
+ *   different parameter counts.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -324,6 +348,22 @@ static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFil
 	return INI_FindCallback(cb);
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="fmt">The function name format.</param>
+ * <param name="fileOrTag">The first callback parameter.</param>
+ * <param name="tagOrFile">The second callback parameter.</param>
+ * <returns>
+ *   Was the function found?
+ * </returns>
+ * <remarks>
+ *   Gets a callback given a partial function name and a tag name.  Because
+ *   open.mp added parameter count checking for <c>format</c> and similar the
+ *   old trick used of simply passing all the parameters and not formatting some
+ *   of them broke.  Thus there are now several variations of this function for
+ *   different parameter counts.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFile[]) <y_ini_get:y_ini_get_1>
 {
 	#pragma unused tagOrFile
@@ -339,6 +379,22 @@ static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFil
 	return INI_FindCallback(cb);
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="fmt">The function name format.</param>
+ * <param name="fileOrTag">The first callback parameter.</param>
+ * <param name="tagOrFile">The second callback parameter.</param>
+ * <returns>
+ *   Was the function found?
+ * </returns>
+ * <remarks>
+ *   Gets a callback given a partial function name and a tag name.  Because
+ *   open.mp added parameter count checking for <c>format</c> and similar the
+ *   old trick used of simply passing all the parameters and not formatting some
+ *   of them broke.  Thus there are now several variations of this function for
+ *   different parameter counts.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFile[]) <y_ini_get:y_ini_get_2>
 {
 	new
@@ -352,6 +408,22 @@ static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFil
 	Debug_Print5("INI_GetCallback<y_ini_get_2>: Find callback %s", cb);
 	return INI_FindCallback(cb);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="fmt">The function name format.</param>
+ * <param name="fileOrTag">The first callback parameter.</param>
+ * <param name="tagOrFile">The second callback parameter.</param>
+ * <returns>
+ *   Was the function found?
+ * </returns>
+ * <remarks>
+ *   Gets a callback given a partial function name and a tag name.  Because
+ *   open.mp added parameter count checking for <c>format</c> and similar the
+ *   old trick used of simply passing all the parameters and not formatting some
+ *   of them broke.  Thus there are now several variations of this function for
+ *   different parameter counts.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFile[]) <y_ini_get:y_ini_get_n>
 {
@@ -372,6 +444,19 @@ static stock bool:INI_GetCallback(const fmt[], const fileOrTag[], const tagOrFil
     88 88       88  "Y888 `"Ybbd8"' 88         88       88 `"8bbdP"Y8 88  
 
 */
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_ini</library>
+ * <summary>
+ *   INI_GetTag(cur, tag);
+ * </summary>
+ * <param name="cur">The first known tag in the linked list.</param>
+ * <param name="tag">The tag name to find.</param>
+ * <remarks>
+ *   Tries to find a tag name in the linked list of known tags already seen in
+ *   the file.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Alloc:INI_GetTag(Alloc:cur, const tag[])
 {
@@ -401,6 +486,20 @@ static stock Alloc:INI_GetTag(Alloc:cur, const tag[])
 		return NO_ALLOC;
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <library>y_ini</library>
+ * <summary>
+ *   INI_GetKey(cur, key, prev);
+ * </summary>
+ * <param name="cur">The first known key in the linked list.</param>
+ * <param name="key">The key to find.</param>
+ * <param name="prev">Return value for the previous key in the list.</param>
+ * <remarks>
+ *   Tries to find an entry key name in the linked list of known keys already
+ *   seen in the file.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Alloc:INI_GetKey(Alloc:cur, const key[], &Alloc:prev)
 {
