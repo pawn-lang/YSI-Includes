@@ -261,7 +261,7 @@ stock Player_IsRegistered(playerid)
 
 HOOK__ OnYSIInit()
 {
-	switch (ftouch(USER_FILE_PATH "index.YSI"))
+	switch (YSI_ftouch__(USER_FILE_PATH "index.YSI"))
 	{
 		case -1:
 		{

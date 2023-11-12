@@ -988,7 +988,7 @@ static stock bool:INI_SetTag_(INI:file, const tag[])
 stock INI:INI_Open(const filename[])
 {
 	Debug_Print3("INI:INI_Open called: \"%s\"", filename);
-	if (ftouch(filename) == -1)
+	if (YSI_ftouch__(filename) == -1)
 	{
 		Debug_Warning("INI_Open could not find or create file %s", filename);
 	}

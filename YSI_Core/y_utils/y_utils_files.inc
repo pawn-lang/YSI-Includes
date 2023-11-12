@@ -104,32 +104,32 @@ Optional plugins:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#if !defined ftouch || defined y_utils_ftouch
-	stock ftouch(const string:filename[])
+stock YSI_ftouch__(const string:filename[])
+{
+	if (fexist(filename))
 	{
-		if (fexist(filename))
+		return 0;
+	}
+	else
+	{
+		new
+			File:f = fopen(filename, io_write);
+		if (f)
 		{
-			return 0;
+			fclose(f);
+			return 1;
 		}
 		else
 		{
-			new
-				File:f = fopen(filename, io_write);
-			if (f)
-			{
-				fclose(f);
-				return 1;
-			}
-			else
-			{
-				return -1;
-			}
+			return -1;
 		}
 	}
+}
 
-	static stock y_utils_ftouch()
-	{
-	}	
+#if !defined ftouch
+	// Turns out there's a bug in open.mp's `ftouch`, for now.
+	#define ftouch( YSI_ftouch__(
+	#define _ALS_ftouch
 #endif
 
 /*-------------------------------------------------------------------------*//**

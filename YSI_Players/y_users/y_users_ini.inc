@@ -275,7 +275,7 @@ stock Player_IsRegistered(playerid)
 
 HOOK__ OnYSIInit()
 {
-	switch (ftouch(USER_FILE_PATH "index.YSI"))
+	switch (YSI_ftouch__(USER_FILE_PATH "index.YSI"))
 	{
 		case -1:
 		{
@@ -286,14 +286,14 @@ HOOK__ OnYSIInit()
 			if (Player_CreateNewID())
 			{
 				// Don't need upgrades.
-				if (ftouch(USER_FILE_PATH "y_users_v2_1.YSI") == -1)
+				if (YSI_ftouch__(USER_FILE_PATH "y_users_v2_1.YSI") == -1)
 				{
 					Debug_Error("Could not touch upgrade file 1.");
 					// Use "else" so we don't try do upgrade 2 without upgrade
 					// 1.  That would really mess up the files (that don't yet
 					// exist, but could do).
 				}
-				else if (ftouch(USER_FILE_PATH "y_users_v2_2.YSI") == -1)
+				else if (YSI_ftouch__(USER_FILE_PATH "y_users_v2_2.YSI") == -1)
 				{
 					Debug_Error("Could not touch upgrade file 2.");
 				}
@@ -1255,7 +1255,7 @@ static stock Player_CreateNewID()
 static stock Users_DoUpgrade0()
 {
 	// Only ever do this upgrade once.
-	switch (ftouch(USER_FILE_PATH "y_users_v2_1.YSI"))
+	switch (YSI_ftouch__(USER_FILE_PATH "y_users_v2_1.YSI"))
 	{
 		case -1:
 		{
@@ -1371,7 +1371,7 @@ static stock Users_DoUpgrade0()
 static stock Users_DoUpgrade1()
 {
 	// Only ever do this upgrade once.
-	switch (ftouch(USER_FILE_PATH "y_users_v2_2.YSI"))
+	switch (YSI_ftouch__(USER_FILE_PATH "y_users_v2_2.YSI"))
 	{
 		// case 0: Already exists.
 		case -1:
