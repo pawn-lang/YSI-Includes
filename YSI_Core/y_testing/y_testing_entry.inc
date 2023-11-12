@@ -401,49 +401,55 @@ stock
 //#define _Q@y0000%0\32; _Q@y0000
 //#define _y@Q0000%0\32; _y@Q0000
 
-/*-------------------------------------------------------------------------*//**
- * <library>y_testing</library>
- * <param name="a">The first string to compare.</param>
- * <param name="b">The second string to compare.</param>
- * <remarks>
- *   A wrapper for <c>strcmp</c> that takes a pointer instead of a string.
- * </remarks>
- *//*------------------------------------------------------------------------**/
+///*-------------------------------------------------------------------------*//**
+// * <library>y_testing</library>
+// * <param name="a">The first string to compare.</param>
+// * <param name="b">The second string to compare.</param>
+// * <remarks>
+// *   A wrapper for <c>strcmp</c> that takes a pointer instead of a string.
+// * </remarks>
+// *//*------------------------------------------------------------------------**/
+//
+//native Testing_StrCmp__(const a[], b, bool:ignoreCase = false, length = cellmax) = strcmp;
+//
+///*-------------------------------------------------------------------------*//**
+// * <library>y_testing</library>
+// * <param name="name">Name of the current test.</param>
+// * <remarks>
+// *   If <c>JUST_TEST</c> is defined this confirms whether the current test is
+// *   in the list of desired tests.
+// * </remarks>
+// *//*------------------------------------------------------------------------**/
+//
+//static stock bool:Testing_ShouldRun(const name[], ...)
+//{
+//	new
+//		n = numargs() - 1,
+//		addr,
+//		str;
+//	#emit ADDR.pri         __param1_offset
+//	#emit STOR.S.pri       addr
+//	while (n--)
+//	{
+//		#emit LREF.S.pri       addr
+//		#emit STOR.S.pri       str
+//		addr += cellbytes;
+//		if (Testing_StrCmp__(name, str) == 0)
+//		{
+//			return true;
+//		}
+//	}
+//	return false;
+//}
+//
+//// Detect multiple parameters and convert them all to strings.
+//#define Testing_ShouldRun(%0""#%1,%2) Testing_ShouldRun(%0#%1,""#%2)
 
-native Testing_StrCmp__(const a[], b, bool:ignoreCase = false, length = cellmax) = strcmp;
-
-/*-------------------------------------------------------------------------*//**
- * <library>y_testing</library>
- * <param name="name">Name of the current test.</param>
- * <remarks>
- *   If <c>JUST_TEST</c> is defined this confirms whether the current test is
- *   in the list of desired tests.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static stock bool:Testing_ShouldRun(const name[], ...)
-{
-	new
-		n = numargs() - 1,
-		addr,
-		str;
-	#emit ADDR.pri         __param1_offset
-	#emit STOR.S.pri       addr
-	while (n--)
-	{
-		#emit LREF.S.pri       addr
-		#emit STOR.S.pri       str
-		addr += cellbytes;
-		if (Testing_StrCmp__(name, str) == 0)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-// Detect multiple parameters and convert them all to strings.
-#define Testing_ShouldRun(%0""#%1,%2) Testing_ShouldRun(%0#%1,""#%2)
+// Until I work out the macro for `Testing_ShouldRun` to stringise multiple
+// arguments, despite them being given in `JUST_TEST`, which is evaluated later
+// in the pre-processing step, just alias this to `strcmp` and stick with the
+// old method.
+#define Testing_ShouldRun(%0,%1) (!strcmp(%0,%1))
 
 /*-------------------------------------------------------------------------*//**
  * <library>y_testing</library>

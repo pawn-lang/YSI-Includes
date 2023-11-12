@@ -951,25 +951,43 @@ public INI_PUB_Inl_(string:name[], string:value[])
 		fclose(f);
 	}
 
+	printf("a:");
+	if ((f = fopen(MakeYINITestPath("test10.ini"), io_read)))
+	{
+		while (fread(f, str)) printf(str);
+		fclose(f);
+	}
+
 	new INI:i = INI_Open(MakeYINITestPath("test10.ini"));
 	INI_SetTag(i, "tag_with_parent");
 	INI_RemoveEntry(i, "value");
 	INI_Close(i);
+
+	printf("b:");
+	if ((f = fopen(MakeYINITestPath("test10.ini"), io_read)))
+	{
+		while (fread(f, str)) printf(str);
+		fclose(f);
+	}
 
 	f = fopen(MakeYINITestPath("test10.ini"), io_read);
 	ASSERT(!!f);
 	if (f)
 	{
 		fread(f, str);
+		printf("Read file: %s", str);
 		StripNL(str);
 		ASSERT_SAME(str, "[tag_with_parent]");
 		fread(f, str);
+		printf("Read file: %s", str);
 		StripNL(str);
 		ASSERT_SAME(str, "value_four=Some_semi_colons");
 		fread(f, str);
+		printf("Read file: %s", str);
 		StripNL(str);
 		ASSERT_SAME(str, "value_three=Some\\;semi\\;colons");
 		fread(f, str);
+		printf("Read file: %s", str);
 		StripNL(str);
 		ASSERT_SAME(str, "");
 		fclose(f);

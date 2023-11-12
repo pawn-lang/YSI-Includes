@@ -1690,46 +1690,55 @@ INI_ReadFile_cont:
 
 static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_reading_yyyy, y_ini:y_ini_reading_nyyy>
 {
+	Debug_Print5("INI_HandleEntry<y_ini:y_ini_reading_yyy> called: %s, %s", key, value);
 	@.YSI_g_sCB_issss(YSI_g_sExtra, YSI_g_sFile, YSI_g_sTag, key, value);
 }
 
 static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_reading_yyyn, y_ini:y_ini_reading_nyyn>
 {
+	Debug_Print5("INI_HandleEntry<y_ini:y_ini_reading_yyn> called: %s, %s", key, value);
 	@.YSI_g_sCB_isss(YSI_g_sExtra, YSI_g_sTag, key, value);
 }
 
 static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_reading_yyny, y_ini:y_ini_reading_nyny>
 {
+	Debug_Print5("INI_HandleEntry<y_ini:y_ini_reading_yny> called: %s, %s", key, value);
 	@.YSI_g_sCB_isss(YSI_g_sExtra, YSI_g_sFile, key, value);
 }
 
 static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_reading_yynn, y_ini:y_ini_reading_nynn>
 {
+	Debug_Print5("INI_HandleEntry<y_ini:y_ini_reading_ynn> called: %s, %s", key, value);
 	@.YSI_g_sCB_iss(YSI_g_sExtra, key, value);
 }
 
 static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_reading_ynyy, y_ini:y_ini_reading_nnyy>
 {
+	Debug_Print5("INI_HandleEntry<y_ini:y_ini_reading_nyy> called: %s, %s", key, value);
 	@.YSI_g_sCB_ssss(YSI_g_sFile, YSI_g_sTag, key, value);
 }
 
 static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_reading_ynyn, y_ini:y_ini_reading_nnyn>
 {
+	Debug_Print5("INI_HandleEntry<y_ini:y_ini_reading_nyn> called: %s, %s", key, value);
 	@.YSI_g_sCB_sss(YSI_g_sTag, key, value);
 }
 
 static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_reading_ynny, y_ini:y_ini_reading_nnny>
 {
+	Debug_Print5("INI_HandleEntry<y_ini:y_ini_reading_nny> called: %s, %s", key, value);
 	@.YSI_g_sCB_sss(YSI_g_sFile, key, value);
 }
 
 static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_reading_ynnn, y_ini:y_ini_reading_nnnn>
 {
+	Debug_Print5("INI_HandleEntry<y_ini:y_ini_reading_nnn> called: %s, %s", key, value);
 	@.YSI_g_sCB_ss(key, value);
 }
 
 static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_writing_slow>
 {
+	Debug_Print5("INI_HandleEntry<y_ini:y_ini_writing_slow> called: %s, %s", key, value);
 	// Used when reading.  Checks if the key is being overwritten, and if not
 	// writes it out to the new file.
 	INI_WriteTag(YSI_g_sCurrentFile, YSI_g_sTag, YSI_g_sFormat);
@@ -1746,15 +1755,21 @@ static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_writing_sl
 		// Not deleted.
 		if (INI_KeyListGetValue(mem))
 		{
+			Debug_Print6("INI_HandleEntry<y_ini:y_ini_writing_slow> updated");
 			INI_KeyListRemove(prev, mem),
 			INI_KeyListMakeWritable(mem),
 			fwrite(YSI_g_sCurrentFile, INI_KeyListGetKey(mem)),
 			// Remove this from the list.
 			free(mem);
 		}
+		else
+		{
+			Debug_Print6("INI_HandleEntry<y_ini:y_ini_writing_slow> deleted");
+		}
 	}
 	else
 	{
+		Debug_Print6("INI_HandleEntry<y_ini:y_ini_writing_slow> unchanged");
 		// Write the entry.
 		fwrite(YSI_g_sCurrentFile, key),
 		fwrite(YSI_g_sCurrentFile, "="),
@@ -1765,6 +1780,7 @@ static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_writing_sl
 
 static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_writing_fast>
 {
+	Debug_Print5("INI_HandleEntry<y_ini:y_ini_writing_fast> called: %s, %s", key, value);
 	// Nothing in the current tag is being overwritten, just dump this
 	// key/value pair straight to disk with no extra checks.
 	INI_WriteTag(YSI_g_sCurrentFile, YSI_g_sTag, YSI_g_sFormat);
@@ -2079,12 +2095,14 @@ static stock INI_Flush_(INI:file)
 		// You can't delete the no-tag tag.
 		if (INI_TagListGetEntries(YSI_g_sCurrentTag))
 		{
+			Debug_Print5("INI_Flush_: Writing slow");
 			// Slightly slower, as for every key we need to check if there is a
 			// new value being written.
 			state y_ini:y_ini_writing_slow;
 		}
 		else
 		{
+			Debug_Print5("INI_Flush_: Writing fast");
 			// Nothing to write, just copy all the existing data.
 			YSI_g_sCurrentTag = NO_ALLOC;
 		}
