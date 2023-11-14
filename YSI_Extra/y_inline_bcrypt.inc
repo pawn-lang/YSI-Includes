@@ -1,8 +1,3 @@
-#if defined _INC_y_inline_bcrypt
-	#endinput
-#endif
-#define _INC_y_inline_bcrypt
-
 /*
 Legal:
 	Version: MPL 1.1

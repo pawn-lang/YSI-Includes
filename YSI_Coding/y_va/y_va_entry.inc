@@ -296,10 +296,10 @@ stock bool:va_SetVehicleNumberPlate(vehicleid, const fmat[], GLOBAL_TAG_TYPES:..
 	stock bool:va_ShowPlayerDialog(playerid, dialogid, DIALOG_STYLE:style, const title[], const fmat[], const button1[], const button2[], GLOBAL_TAG_TYPES:...)
 	{
 		if (YSI_CheckNumargs__(7))
-			return bool:Dialog_ShowPlayerNative(playerid, dialogid, style, __const(title), __const(fmat), __const(button1), __const(button2));
+			return bool:ShowPlayerDialog(playerid, dialogid, style, __const(title), __const(fmat), __const(button1), __const(button2));
 		return
 			format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(7)),
-			bool:Dialog_ShowPlayerNative(playerid, dialogid, style, __const(title), YSI_UNSAFE_HUGE_STRING, __const(button1), __const(button2));
+			bool:ShowPlayerDialog(playerid, dialogid, style, __const(title), YSI_UNSAFE_HUGE_STRING, __const(button1), __const(button2));
 	}
 
 	stock Menu:va_CreateMenu(const fmat[], columns, Float:x, Float:y, Float:col1width, Float:col2width = 0.0, GLOBAL_TAG_TYPES:...)
