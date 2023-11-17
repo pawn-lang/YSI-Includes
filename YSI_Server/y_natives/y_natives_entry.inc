@@ -97,8 +97,8 @@ if (defined("MAYBE_CreateDynamicCircle"))
 
 // TODO: `void:` and `string:` return support.
 
-#define yN@_:yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5); %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=-1;return _yN@(%0,.s=s),%1_@yN%2();}
-#define yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5) %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=-3;return _yN@(%0,.s=s,.f=_:addressof(_@%2<%4>)),%1_@yN%2();}%1_@%2(%3)
+#define yN@_:yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5); %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=-1;return _yN@(%0,.s=s),H@(%5),%1_@yN%2();}
+#define yN_@:%8$(%0)(%1)(%2)(%3)(%4)(%5) %8$native _@yN%2()=heapspace;stock %1%2(%3){static s=-3;return _yN@(%0,.s=s,.f=_:addressof(_@%2<%4>)),H@(%5),%1_@yN%2();}%1_@%2(%3)
 
 stock _yN@(const string:name[], &s, const string:requires[] = "", f = 0, print = -1)
 {
