@@ -143,7 +143,7 @@ stock BCrypt_HashInline(const password[], cost = 12, {F@_@s, F@_@si}:cb) // Func
 			// Return the hashid.
 			return _YSI_gHashID;
 		}
-	case 1:
+	case 2:
 		if ((cost = _YSI_BCryptHashB(_:cb, "_Inline_BCryptHashDone", password, cost)))
 		{
 			Indirect_Claim(cb);
