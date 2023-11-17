@@ -105,7 +105,7 @@ public _Inline_BCryptHashDone(Func:cb<si>, hashid)
 	case 1:
 		_YSI_BCryptGetHashA(hash);
 	case 2:
-		_YSI_BCryptGetHashB(hash);
+		_YSI_BCryptGetHashB(hash, sizeof (hash));
 	}
 	hashid = @.cb(hash, hashid),
 	Indirect_Release(cb);
