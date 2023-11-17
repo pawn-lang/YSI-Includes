@@ -108,7 +108,7 @@ stock BCrypt_GetPlugin()
 		}
 		else
 		{
-			Debug_PrintE("Neither BCrypt plugin is loaded.  Load one!")
+			Debug_Error("Neither BCrypt plugin is loaded.  Load one!")
 			plugin = 0;
 		}
 	}
