@@ -88,28 +88,28 @@ Optional plugins:
 
 /*-------------------------------------------------------------------------*//**
  * <param name="arr">The sorted array.</param>
- * <param name="last">The number of elements in the sorted array.</param>
+ * <param name="size">The number of elements in the sorted array.</param>
  * <param name="value">The value to find.</param>
  * <returns>
  *   Does the array contain this value?
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock bool:_Sorted_Contains(arr[], last, value)
+stock bool:_Sorted_Contains(arr[], size, value)
 {
 	new
 		first = 0,
 		mid = 0;
-	while (first < last)
+	while (first < size)
 	{
-		mid = (first + last - 1) / 2;
+		mid = (first + size - 1) / 2;
 		if (arr[mid] < value)
 		{
 			first = mid + 1;
 		}
 		else if (arr[mid] > value)
 		{
-			last = mid;
+			size = mid;
 		}
 		else
 		{
@@ -122,62 +122,62 @@ stock bool:_Sorted_Contains(arr[], last, value)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="arr">The sorted array.</param>
- * <param name="last">The number of elements in the sorted array.</param>
+ * <param name="size">The number of elements in the sorted array.</param>
  * <param name="value">The value to find.</param>
  * <returns>
  *   The index at which the new value should be inserted.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock _Sorted_FindInsert(arr[], last, value)
+stock _Sorted_FindInsert(arr[], size, value)
 {
 	new
 		first = 0,
 		mid = 0;
-	while (first < last)
+	while (first < size)
 	{
-		mid = (first + last - 1) / 2;
+		mid = (first + size - 1) / 2;
 		if (arr[mid] < value)
 		{
 			first = mid + 1;
 		}
 		else if (arr[mid] > value)
 		{
-			last = mid;
+			size = mid;
 		}
 		else
 		{
 			return mid;
 		}
 	}
-	return last;
+	return size;
 }
 #define Sorted_FindInsert SORTED_FUNC_N<Sorted_FindInsert>
 
 /*-------------------------------------------------------------------------*//**
  * <param name="arr">The sorted array.</param>
- * <param name="last">The number of elements in the sorted array.</param>
+ * <param name="size">The number of elements in the sorted array.</param>
  * <param name="value">The value to find.</param>
  * <returns>
  *   The index of the value, or <c>-1</c> if it doesn't exist.
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock _Sorted_Find(arr[], last, value)
+stock _Sorted_Find(arr[], size, value)
 {
 	new
 		first = 0,
 		mid = 0;
-	while (first < last)
+	while (first < size)
 	{
-		mid = (first + last - 1) / 2;
+		mid = (first + size - 1) / 2;
 		if (arr[mid] < value)
 		{
 			first = mid + 1;
 		}
 		else if (arr[mid] > value)
 		{
-			last = mid;
+			size = mid;
 		}
 		else
 		{
