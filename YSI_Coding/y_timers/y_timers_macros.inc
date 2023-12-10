@@ -106,15 +106,15 @@ Optional plugins:
 #define @Yj:%0(%5){%1(%8&%2&%3)%9} @Yj:%0(%5){%1(%8:YSI_gMallocMemory[%2]%3)%9}
 #define @Yv&%0& %0
 
-#define DEFER__%0(%1) (J@=1,I@=-1,Timer:_yT@%0(%1))
+#define DEFER__%0(%1) (J@=1,I@=-1,Timer:@Yq:_yT@%0(%1))
 
-#define REPEAT__%0(%1) (J@=0,I@=-1,Timer:_yT@%0(%1))
+#define REPEAT__%0(%1) (J@=0,I@=-1,Timer:@Yq:_yT@%0(%1))
 
 // Detect explicit repeat counts.
-#define J@=0,I@=-1,Timer:_yT@[%4] J@=(%4),I@=-1,Timer:_yT@
+#define J@=0,I@=-1,Timer:@Yq:_yT@[%4] J@=(%4),I@=-1,Timer:@Yq:_yT@
 
 // Custom time.
-#define Timer:%0[%1](%2) I@=%1,Timer:%0(%2)
+#define @Yq:%0[%1](%2) I@=%1,%0(%2)
 
 #define STOP__%0; {_Timer_F((%0),1);}
 
