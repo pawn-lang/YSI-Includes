@@ -255,6 +255,7 @@ public y_utils_va_return(const str[])
 	ASSERT(!IsRPName("0_0"));
 	ASSERT(!IsRPName("Tim1 Tom"));
 	ASSERT(!IsRPName("Tim_"));
+	ASSERT(!IsRPName("Timothy_"));
 }
 
 @test(.group = "y_utils") IsRPName2()

@@ -196,10 +196,10 @@ static stock YSI_g_WeaponFireType[47] = {
 	WEAPON_FIRE_TYPE_USE, //{"Detonator", 40, 12, 364 },
 	WEAPON_FIRE_TYPE_AREA_EFFECT, //{"Spraycan", 41, 9, 365 },
 	WEAPON_FIRE_TYPE_AREA_EFFECT, //{"Fire Extinguisher", 42, 9, 366 },
-	WEAPON_FIRE_TYPE_AREA_CAMERA, //{"Camera", 43, 9, 367 },
-	WEAPON_FIRE_TYPE_AREA_USE, //{"Night Vis Goggles", 44, 11, 368 },
-	WEAPON_FIRE_TYPE_AREA_USE, //{"Thermal Goggles", 45, 11, 369 },
-	WEAPON_FIRE_TYPE_AREA_USE  //{"Parachute", 46, 11, 371 }
+	WEAPON_FIRE_TYPE_CAMERA, //{"Camera", 43, 9, 367 },
+	WEAPON_FIRE_TYPE_USE, //{"Night Vis Goggles", 44, 11, 368 },
+	WEAPON_FIRE_TYPE_USE, //{"Thermal Goggles", 45, 11, 369 },
+	WEAPON_FIRE_TYPE_USE  //{"Parachute", 46, 11, 371 }
 };
 
 stock Weapon_GetFireType(weaponid)

@@ -112,6 +112,8 @@ stock ReturnPlayerName(playerid)
  *   GetPlayerRPName
  * </summary>
  * <param name="playerid">Player whose name you want to get.</param>
+ * <param name="name">The destination array to save the name in.</param>
+ * <param name="len">The length of the destination.</param>
  * <remarks>
  *   Get a player's name, with <c>_</c> replaced by <c> </c>.
  * </remarks>
@@ -187,7 +189,8 @@ stock GetPlayerRPComponents(playerid, string:names[][], components = sizeof (nam
  *   not <c>james</c>.</param>
  * <param name="longNames">Allow more than two name parts?</param>
  * <remarks>
- *   Is this name in the form <c>First_Last</c>?
+ *   Is this name in the form <c>First_Last</c>?  Note this doesn't handle names
+ *   like "MacLeod", nor double-barralled surnames like "Smith-Thompson".
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
