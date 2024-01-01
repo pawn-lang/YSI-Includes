@@ -339,20 +339,20 @@ stock bool:va_SetVehicleNumberPlate(vehicleid, const fmat[], GLOBAL_TAG_TYPES:..
 	{
 		// If you get an error here, update your includes!
 		if (YSI_CheckNumargs__(10))
-			return bool:SetObjectMaterialText(objectid, __const(fmat), materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
+			return bool:SetObjectMaterialText(objectid, __const(fmat), materialIndex, materialSize, __const(fontFace), fontSize, bold, fontColour, backgroundColour, textalignment);
 		return
 			format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(10)),
-			bool:SetObjectMaterialText(objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
+			bool:SetObjectMaterialText(objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, __const(fontFace), fontSize, bold, fontColour, backgroundColour, textalignment);
 	}
 
 	stock bool:va_SetPlayerObjectMaterialText(playerid, objectid, const fmat[], materialIndex = 0, OBJECT_MATERIAL_SIZE:materialSize = OBJECT_MATERIAL_SIZE:90, const fontFace[] = "Arial", fontSize = 24, bool:bold = true, fontColour = 0xFFFFFFFF, backgroundColour = 0, OBJECT_MATERIAL_TEXT_ALIGN:textalignment = OBJECT_MATERIAL_TEXT_ALIGN:0, GLOBAL_TAG_TYPES:...)
 	{
 		// If you get an error here, update your includes!
 		if (YSI_CheckNumargs__(11))
-			return bool:SetPlayerObjectMaterialText(playerid, objectid, __const(fmat), materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
+			return bool:SetPlayerObjectMaterialText(playerid, objectid, __const(fmat), materialIndex, materialSize, __const(fontFace), fontSize, bold, fontColour, backgroundColour, textalignment);
 		return
 			format(YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, fmat, ___(11)),
-			bool:SetPlayerObjectMaterialText(playerid, objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, fontFace, fontSize, bold, fontColour, backgroundColour, textalignment);
+			bool:SetPlayerObjectMaterialText(playerid, objectid, YSI_UNSAFE_HUGE_STRING, materialIndex, materialSize, __const(fontFace), fontSize, bold, fontColour, backgroundColour, textalignment);
 	}
 
 	stock Text3D:va_Create3DTextLabel(const fmat[], colour, Float:x, Float:y, Float:z, Float:drawDistance, virtualWorld, bool:testLOS = false, GLOBAL_TAG_TYPES:...)
