@@ -151,7 +151,7 @@ _Y_CORE_STATIC stock ASCII_PrintLinePart(const text[], len, bool:hyphen, ASCII_B
 		case ASCII_ALIGNMENT_STYLE_CENTRE: padding = (57 - len) / 2;
 		default: {}
 		}
-		YSI_PrintF__("    |||||||%*s%*s%*s|||||||", padding, spacer, 57 - padding - padding, text, padding, spacer);
+		YSI_PrintF__("    |||||||%*s%*s%*s|||||||", padding, YSI_EMPTY, 57 - padding - padding, text, padding, YSI_EMPTY);
 	}
 	}
 	// Reset the string.
