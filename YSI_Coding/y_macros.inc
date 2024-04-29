@@ -1,0 +1,1 @@
+#define SCM SendClientMessage
