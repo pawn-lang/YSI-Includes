@@ -106,11 +106,20 @@ Optional plugins:
 #define WEAPON_FIRE_TYPE_AREA_EFFECT 3
 #define WEAPON_FIRE_TYPE_USE 4
 #define WEAPON_FIRE_TYPE_CAMERA 5
+
+#if !defined WEAPON
+	#define WEAPON: _:
+#endif
+
+#if !defined WEAPON_SLOT
+	#define WEAPON_SLOT: _:
+#endif
+
 //P:D(Weapon_IsValid(weaponid));
 //#define Weapon_IsValid(%0) (%0>=1 && %0<=18 || %0>=21 && %0<=46)
-stock bool:Weapon_IsValid(weaponid)
+stock bool:Weapon_IsValid(WEAPON:weaponid)
 {
-	return (weaponid >= 1 && weaponid <= 18 || weaponid >= 21 && weaponid <= 46);
+	return (weaponid >= WEAPON_BRASSKNUCKLE && weaponid <= WEAPON_MOLOTOV || weaponid >= WEAPON_COLT45 && weaponid <= WEAPON_PARACHUTE);
 }
 
 #if !defined YSI_WEAPDATA_MAX_STRING_SIZE
@@ -119,7 +128,7 @@ stock bool:Weapon_IsValid(weaponid)
 
 //static stock YSI_g_InvalidReturn = -1;
 
-static stock YSI_g_WeaponModels[47] = {
+static stock YSI_g_WeaponModels[WEAPON:47] = {
 	0,331,333,
 	334,335,336,
 	337,338,339,
@@ -141,18 +150,57 @@ static stock YSI_g_WeaponModels[47] = {
 	369,371	
 };
 
-static stock YSI_g_WeaponSlots[47] = {
-	0,0,1,1,1,1,1,1,1,1,
-	10,10,10,10,10,10,8,8,8,
-	WEAPONDATA_INVALID_RETURN,
-	WEAPONDATA_INVALID_RETURN,
-	WEAPONDATA_INVALID_RETURN,
-	2,2,2,3,3,3,4,
-	4,5,5,4,6,6,7,7,7,7,8,12,
-	9,9,9,11,11,11
+static stock WEAPON_SLOT:YSI_g_WeaponSlots[WEAPON:47] = {
+	WEAPON_SLOT_UNARMED, 
+	WEAPON_SLOT_UNARMED,
+	WEAPON_SLOT_MELEE,
+	WEAPON_SLOT_MELEE,
+	WEAPON_SLOT_MELEE,
+	WEAPON_SLOT_MELEE,
+	WEAPON_SLOT_MELEE,
+	WEAPON_SLOT_MELEE,
+	WEAPON_SLOT_MELEE,
+	WEAPON_SLOT_MELEE,
+	WEAPON_SLOT_GIFT,
+	WEAPON_SLOT_GIFT,
+	WEAPON_SLOT_GIFT,
+	WEAPON_SLOT_GIFT,
+	WEAPON_SLOT_GIFT,
+	WEAPON_SLOT_GIFT,
+	WEAPON_SLOT_EXPLOSIVES,
+	WEAPON_SLOT_EXPLOSIVES,
+	WEAPON_SLOT_EXPLOSIVES,
+	WEAPON_SLOT_UNKNOWN,
+	WEAPON_SLOT_UNKNOWN,
+	WEAPON_SLOT_UNKNOWN,
+	WEAPON_SLOT_PISTOL,
+	WEAPON_SLOT_PISTOL,
+	WEAPON_SLOT_PISTOL,
+	WEAPON_SLOT_SHOTGUN,
+	WEAPON_SLOT_SHOTGUN,
+	WEAPON_SLOT_SHOTGUN,
+	WEAPON_SLOT_MACHINE_GUN,
+	WEAPON_SLOT_MACHINE_GUN,
+	WEAPON_SLOT_ASSAULT_RIFLE,
+	WEAPON_SLOT_ASSAULT_RIFLE,
+	WEAPON_SLOT_MACHINE_GUN,
+	WEAPON_SLOT_LONG_RIFLE,
+	WEAPON_SLOT_LONG_RIFLE,
+	WEAPON_SLOT_ARTILLERY,
+	WEAPON_SLOT_ARTILLERY,
+	WEAPON_SLOT_ARTILLERY,
+	WEAPON_SLOT_ARTILLERY,
+	WEAPON_SLOT_EXPLOSIVES,
+	WEAPON_SLOT_DETONATOR,
+	WEAPON_SLOT_EQUIPMENT,
+	WEAPON_SLOT_EQUIPMENT,
+	WEAPON_SLOT_EQUIPMENT,
+	WEAPON_SLOT_GADGET,
+	WEAPON_SLOT_GADGET,
+	WEAPON_SLOT_GADGET
 };
 
-static stock YSI_g_WeaponFireType[47] = {
+static stock YSI_g_WeaponFireType[WEAPON:47] = {
 	WEAPON_FIRE_TYPE_MELEE, //{"Fist", 0, 0, 0 },
 	WEAPON_FIRE_TYPE_MELEE, //{"Brass Knuckles", 1, 0, 331 },
 	WEAPON_FIRE_TYPE_MELEE, //{"Golf Club", 2, 1, 333 },
@@ -202,12 +250,12 @@ static stock YSI_g_WeaponFireType[47] = {
 	WEAPON_FIRE_TYPE_USE  //{"Parachute", 46, 11, 371 }
 };
 
-stock Weapon_GetFireType(weaponid)
+stock Weapon_GetFireType(WEAPON:weaponid)
 {
 	return Weapon_IsValid(weaponid) ? YSI_g_WeaponFireType[weaponid] : (-1);
 }
 
-static stock Float:YSI_g_MinWeaponRange[47] = {
+static stock Float:YSI_g_MinWeaponRange[WEAPON:47] = {
 	1.6, //{"Fist", 0, 0, 0 },
 	1.6, //{"Brass Knuckles", 1, 0, 331 },
 	1.6, //{"Golf Club", 2, 1, 333 },
@@ -257,12 +305,12 @@ static stock Float:YSI_g_MinWeaponRange[47] = {
 	25.0  //{"Parachute", 46, 11, 371 }
 };
 
-stock Float:Weapon_GetMinRange(weaponid)
+stock Float:Weapon_GetMinRange(WEAPON:weaponid)
 {
 	return Weapon_IsValid(weaponid) ? YSI_g_MinWeaponRange[weaponid] : (-1);
 }
 
-static stock Float:YSI_g_MaxWeaponRange[47] = {
+static stock Float:YSI_g_MaxWeaponRange[WEAPON:47] = {
 	1.6, //{"Fist", 0, 0, 0 },
 	1.6, //{"Brass Knuckles", 1, 0, 331 },
 	1.6, //{"Golf Club", 2, 1, 333 },
@@ -312,12 +360,12 @@ static stock Float:YSI_g_MaxWeaponRange[47] = {
 	25.0  //{"Parachute", 46, 11, 371 }
 };
 
-stock Float:Weapon_GetMaxRange(weaponid)
+stock Float:Weapon_GetMaxRange(WEAPON:weaponid)
 {
 	return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (-1);
 }
 
-static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
+static stock YSI_g_WeaponAmmoNames[WEAPON:47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	WEAPONDATA_NO_AMMO, //{"Fist", 0, 0, 0 },
 	WEAPONDATA_NO_AMMO, //{"Brass Knuckles", 1, 0, 331 },
 	WEAPONDATA_NO_AMMO, //{"Golf Club", 2, 1, 333 },
@@ -367,7 +415,7 @@ static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	WEAPONDATA_NO_AMMO  //{"Parachute", 46, 11, 371 }
 };
 
-stock bool:Weapon_GetAmmoName(weaponid, dest[], size = sizeof (dest))
+stock bool:Weapon_GetAmmoName(WEAPON:weaponid, dest[], size = sizeof (dest))
 {
 	dest[0] = '\0';
     if (Weapon_IsValid(weaponid))
@@ -378,7 +426,7 @@ stock bool:Weapon_GetAmmoName(weaponid, dest[], size = sizeof (dest))
     return false;
 }
 
-static stock YSI_g_WeaponAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
+static stock YSI_g_WeaponAnimGroups[WEAPON:47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	"null", //{"Fist", 0, 0, 0 },
 	"null", //{"Brass Knuckles", 1, 0, 331 },
 	"null", //{"Golf Club", 2, 1, 333 },
@@ -428,7 +476,7 @@ static stock YSI_g_WeaponAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	"null"  //{"Parachute", 46, 11, 371 }
 };
 
-stock bool:Weapon_GetAnimGroup(weaponid, dest[], size = sizeof (dest))
+stock bool:Weapon_GetAnimGroup(WEAPON:weaponid, dest[], size = sizeof (dest))
 {
 	dest[0] = '\0';
     if (Weapon_IsValid(weaponid))
@@ -439,7 +487,7 @@ stock bool:Weapon_GetAnimGroup(weaponid, dest[], size = sizeof (dest))
     return false;
 }
 
-static stock YSI_g_WeaponProAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
+static stock YSI_g_WeaponProAnimGroups[WEAPON:47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	"null", //{"Fist", 0, 0, 0 },
 	"null", //{"Brass Knuckles", 1, 0, 331 },
 	"null", //{"Golf Club", 2, 1, 333 },
@@ -489,7 +537,7 @@ static stock YSI_g_WeaponProAnimGroups[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
 	"null"  //{"Parachute", 46, 11, 371 }
 };
 
-stock bool:Weapon_GetProAnimGroup(weaponid, dest[], size = sizeof (dest))
+stock bool:Weapon_GetProAnimGroup(WEAPON:weaponid, dest[], size = sizeof (dest))
 {
 	dest[0] = '\0';
     if (Weapon_IsValid(weaponid))
@@ -500,69 +548,69 @@ stock bool:Weapon_GetProAnimGroup(weaponid, dest[], size = sizeof (dest))
     return false;
 }
 
-stock bool:Weapon_IsAssaultRifle(weaponid)
+stock bool:Weapon_IsAssaultRifle(WEAPON:weaponid)
 {
 	switch(weaponid)
 	{
-		case 30, 31: return true;
+		case WEAPON_AK47, WEAPON_M4: return true;
 	}
 	return false;
 }
 
-stock bool:Weapon_IsPistol(weaponid)
+stock bool:Weapon_IsPistol(WEAPON:weaponid)
 {
 	switch(weaponid)
 	{
-		case 22, 23, 24: return true;
+		case WEAPON_COLT45, WEAPON_SILENCED, WEAPON_DEAGLE: return true;
 	}
 	return false;
 }
 
-stock bool:Weapon_IsShotgun(weaponid)
+stock bool:Weapon_IsShotgun(WEAPON:weaponid)
 {
 	switch(weaponid)
 	{
-		case 25, 26, 27: return true;
+		case WEAPON_SHOTGUN, WEAPON_SAWEDOFF, WEAPON_SHOTGSPA: return true;
 	}
 	return false;
 }
 
-stock bool:Weapon_IsSubmachineGun(weaponid)
+stock bool:Weapon_IsSubmachineGun(WEAPON:weaponid)
 {
 	switch(weaponid)
 	{
-		case 28, 29, 32: return true;
+		case WEAPON_UZI, WEAPON_MP5, WEAPON_TEC9: return true;
 	}
 	return false;
 }
 
-stock bool:Weapon_IsRifle(weaponid)
+stock bool:Weapon_IsRifle(WEAPON:weaponid)
 {
 	switch(weaponid)
 	{
-		case 33, 34: return true;
+		case WEAPON_RIFLE, WEAPON_SNIPER: return true;
 	}
 	return false;
 }
 
-stock Weapon_GetSlot(weaponid)
+stock WEAPON_SLOT:Weapon_GetSlot(WEAPON:weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (WEAPONDATA_INVALID_RETURN);
+	return Weapon_IsValid(weaponid) ? YSI_g_WeaponSlots[weaponid] : (WEAPON_SLOT_UNKNOWN);
 }
 
-stock Weapon_GetModelID(weaponid)
+stock Weapon_GetModelID(WEAPON:weaponid)
 {
 	return Weapon_IsValid(weaponid) ? YSI_g_WeaponModels[weaponid] : (WEAPONDATA_INVALID_RETURN);
 }
 
-stock Weapon_GetIDFromModelID(modelid)
+stock WEAPON:Weapon_GetIDFromModelID(modelid)
 {
-	for(new i; i < 47; i++)
+	for(new WEAPON:i; _:i < 47; i++)
 	{
 		if(YSI_g_WeaponModels[i] == modelid)
 		{
 			return i;
 		}
 	}
-	return WEAPONDATA_INVALID_RETURN;
+	return UNKNOWN_WEAPON;
 }
