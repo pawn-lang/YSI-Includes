@@ -1140,6 +1140,22 @@ Loop over all passengers in any vehicle:
 foreach (new i : VehiclePassenger)
 ```
 
+### `GangZone`
+
+Loop over all gangzones:
+
+```pawn
+foreach (new i : GangZone)
+```
+
+### `LocalGangZone`
+
+Loop over all gangzones created in the current mode:
+
+```pawn
+foreach (new i : LocalGangZone)
+```
+
 ### `Command`
 
 Loop over all y_commands command IDs:

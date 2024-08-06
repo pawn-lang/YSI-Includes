@@ -137,6 +137,14 @@ Optional plugins:
 		ITERATOR__ PlayersFromVehicles<MAX_PLAYERS>;
 #endif
 
+#if _FOREACH_GANGZONES
+	new
+		#if _FOREACH_LOCALS
+			ITERATOR__ LocalGangZone<MAX_GANG_ZONES>,
+		#endif
+		ITERATOR__ GangZone<MAX_GANG_ZONES>;	
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <library>y_iterate</library>
  * <param name="cur">The current iterator step.</param>
@@ -531,9 +539,23 @@ stock Iter_All_Internal(const array[], size, value)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
+#if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS || _FOREACH_GANGZONES
 	public OnYSIInit()
 	{
+		#if _FOREACH_GANGZONES
+			Iter_Clear(GangZone);
+			for (new i = 0; i != MAX_GANG_ZONES; ++i)
+			{
+				#if defined IsValidGangZone
+				if (IsValidGangZone(i))
+				#else
+				if (GangZoneStopFlashForAll(i))
+				#endif
+				{
+					Iter_Add(GangZone, i);
+				}
+			}
+		#endif
 		#if _FOREACH_VEHICLES
 			Iter_Clear(Vehicle);
 			#if _FOREACH_STREAMED
@@ -871,6 +893,10 @@ stock Iter_All_Internal(const array[], size, value)
 #endif
 
 static stock const
+	/**
+	 * <library>y_iterate</library>
+	 */
+	YSI_gsIter_GangZoneDo[] = "Iter_GangZoneDo",
 	/**
 	 * <library>y_iterate</library>
 	 */
@@ -1267,3 +1293,72 @@ static stock const
 	#define Iterator@VehicleDriver iteryield
 #endif
 
+/*
+
+      ,ad8888ba,
+     d8"'    `"8b
+    d8'
+    88             ,adPPYYba,  8b,dPPYba,    ,adPPYb,d8  888888888   ,adPPYba,   8b,dPPYba,    ,adPPYba,  ,adPPYba,
+    88      88888  ""     `Y8  88P'   `"8a  a8"    `Y88       a8P"  a8"     "8a  88P'   `"8a  a8P_____88  I8[    ""
+    Y8,        88  ,adPPPPP88  88       88  8b       88    ,d8P'    8b       d8  88       88  8PP"""""""   `"Y8ba,
+     Y8a.    .a88  88,    ,88  88       88  "8a,   ,d88  ,d8"       "8a,   ,a8"  88       88  "8b,   ,aa  aa    ]8I
+      `"Y88888P"   `"8bbdP"Y8  88       88   `"YbbdP"Y8  888888888   `"YbbdP"'   88       88   `"Ybbd8"'  `"YbbdP"'
+                                             aa,    ,88
+                                              "Y8bbdP"
+
+*/
+
+#if _FOREACH_GANGZONES
+	forward void:Iter_GangZoneDo(bool:add, zoneid);
+	
+	public void:Iter_GangZoneDo(bool:add, zoneid)
+	{
+		// Because there may be multiple scripts running, we need to tell all of
+		// them when a vehicle is created or destroyed.
+		if (add)
+		{
+			Iter_Add(GangZone, zoneid);
+		}
+		else
+		{
+			Iter_Remove(GangZone, zoneid);
+		}
+	}
+
+	stock Iter_GangZoneCreate(Float:minX, Float:minY, Float:maxX, Float:maxY)
+	{
+		new
+			ret = GangZoneCreate(minX, minY, maxX, maxY);
+		if (ret != INVALID_GANG_ZONE)
+		{
+			CallRemoteFunction(YSI_gsIter_GangZoneDo, YSI_gcII, true, ret);
+			#if _FOREACH_LOCALS
+				Iter_Add(LocalGangZone, ret);
+			#endif
+		}
+		return ret;
+	}
+	
+	#if defined _ALS_GangZoneCreate
+		#undef GangZoneCreate
+	#else
+		#define _ALS_GangZoneCreate
+	#endif
+	#define GangZoneCreate Iter_GangZoneCreate
+
+	stock Iter_GangZoneDestroy(zoneid)
+	{
+		CallRemoteFunction(YSI_gsIter_GangZoneDo, YSI_gcII, false, zoneid);
+		#if _FOREACH_LOCALS
+			Iter_Remove(LocalGangZone, zoneid);
+		#endif
+		return GangZoneDestroy(zoneid);
+	}
+	
+	#if defined _ALS_GangZoneDestroy
+		#undef GangZoneDestroy
+	#else
+		#define _ALS_GangZoneDestroy
+	#endif
+	#define GangZoneDestroy Iter_GangZoneDestroy
+#endif

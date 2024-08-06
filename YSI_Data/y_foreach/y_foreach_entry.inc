@@ -286,6 +286,22 @@ Optional plugins:
 #endif
 
 // 
+// _FOREACH_GANGZONES
+// 
+// Should the "GangZone" iterator be included?  "GangZone" loops over all gangzones
+// created on the server, "LocalGangZone" iterates over gangzones created only in
+// the current script.  They are the same when "YSI_NO_MASTER" is declared.
+// Disabled by declaring "FOREACH_NO_GANGZONES".
+// 
+
+#define _FOREACH_GANGZONES 1
+
+#if !defined GangZoneStopFlashForAll || defined FOREACH_NO_GANGZONES
+	#undef _FOREACH_GANGZONES
+	#define _FOREACH_GANGZONES 0
+#endif
+
+// 
 // _FOREACH_VEHICLES
 // 
 // Should the "Vehicle" iterator be included?  "Vehicle" loops over all vehicles
