@@ -11,7 +11,7 @@ inline Inline(pid, did, response, listitem, string:inputtext[])
 {
 	#pragma unused pid, did
 }
-Dialog_ShowCallback(playerid, using inline Inline, "Title", "Caption", "Button 1");
+Dialog_ShowCallback(playerid, using inline Inline, DIALOG_STYLE_MSGBOX, "Title", "Caption", "Button 1");
 ```
 
 However, to save time, this is also valid:
@@ -20,7 +20,7 @@ However, to save time, this is also valid:
 inline Inline(response, listitem, string:inputtext[])
 {
 }
-Dialog_ShowCallback(playerid, using inline Inline, "Title", "Caption", "Button 1");
+Dialog_ShowCallback(playerid, using inline Inline, DIALOG_STYLE_MSGBOX, "Title", "Caption", "Button 1");
 ```
 
 Note that you must either have ALL the parameters or just those three - you can't mix and match any other combinations.  This also won't easily work for `using public` unless you give the type explicitly.
@@ -29,6 +29,6 @@ Note that you must either have ALL the parameters or just those three - you can'
 public Public(response, listitem, string:inputtext[])
 {
 }
-Dialog_ShowCallback(playerid, using public Public<iis>, "Title", "Caption", "Button 1");
+Dialog_ShowCallback(playerid, using public Public<iis>, DIALOG_STYLE_MSGBOX, "Title", "Caption", "Button 1");
 ```
 
