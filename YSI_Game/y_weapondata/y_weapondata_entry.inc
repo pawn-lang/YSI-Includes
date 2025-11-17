@@ -227,9 +227,9 @@ static stock Float:YSI_g_MinWeaponRange[47] = {
 	40.0, //{"Grenade", 16, 8, 342 },
 	40.0, //{"Tear Gas", 17, 8, 343 },
 	40.0, //{"Molotov Cocktail", 18, 8, 344 },
-	WEAPONDATA_INVALID_RETURN, //{"No gun", 19, -1, 0 },
-	WEAPONDATA_INVALID_RETURN, //{"No gun", 20, -1, 0 },
-	WEAPONDATA_INVALID_RETURN, //{"No gun", 21, -1, 0 },
+	Float:(WEAPONDATA_INVALID_RETURN), //{"No gun", 19, -1, 0 },
+	Float:(WEAPONDATA_INVALID_RETURN), //{"No gun", 20, -1, 0 },
+	Float:(WEAPONDATA_INVALID_RETURN), //{"No gun", 21, -1, 0 },
 	30.0, //{"Colt .45", 22, 2, 346 },
 	30.0, //{"Silenced Colt .45", 23, 2, 347 },
 	30.0, //{"Desert Eagle", 24, 2, 348 },
@@ -259,7 +259,7 @@ static stock Float:YSI_g_MinWeaponRange[47] = {
 
 stock Float:Weapon_GetMinRange(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_MinWeaponRange[weaponid] : (-1);
+	return Weapon_IsValid(weaponid) ? YSI_g_MinWeaponRange[weaponid] : (Float:-1);
 }
 
 static stock Float:YSI_g_MaxWeaponRange[47] = {
@@ -282,9 +282,9 @@ static stock Float:YSI_g_MaxWeaponRange[47] = {
 	40.0, //{"Grenade", 16, 8, 342 },
 	40.0, //{"Tear Gas", 17, 8, 343 },
 	40.0, //{"Molotov Cocktail", 18, 8, 344 },
-	WEAPONDATA_INVALID_RETURN, //{"No gun", 19, -1, 0 },
-	WEAPONDATA_INVALID_RETURN, //{"No gun", 20, -1, 0 },
-	WEAPONDATA_INVALID_RETURN, //{"No gun", 21, -1, 0 },
+	Float:(WEAPONDATA_INVALID_RETURN), //{"No gun", 19, -1, 0 },
+	Float:(WEAPONDATA_INVALID_RETURN), //{"No gun", 20, -1, 0 },
+	Float:(WEAPONDATA_INVALID_RETURN), //{"No gun", 21, -1, 0 },
 	35.0, //{"Colt .45", 22, 2, 346 },
 	35.0, //{"Silenced Colt .45", 23, 2, 347 },
 	35.0, //{"Desert Eagle", 24, 2, 348 },
@@ -314,7 +314,7 @@ static stock Float:YSI_g_MaxWeaponRange[47] = {
 
 stock Float:Weapon_GetMaxRange(weaponid)
 {
-	return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (-1);
+	return Weapon_IsValid(weaponid) ? YSI_g_MaxWeaponRange[weaponid] : (Float:-1);
 }
 
 static stock YSI_g_WeaponAmmoNames[47][YSI_WEAPDATA_MAX_STRING_SIZE] = {
